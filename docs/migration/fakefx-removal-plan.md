@@ -1,7 +1,7 @@
 # fakefx（JavaFX 属性体系）彻底移除执行方案
 
-> 状态：**阶段 3（FCLCore 公开 API 全面 StateFlow 化）已完成**——9 个 FCLCore 类的公开 API 全部切换到 kotlinx-coroutines StateFlow（D2），FCL 12 个调用方级联改完，`:FCL:assembleDebug` 构建通过、冒烟 68/68、Config JSON 回环实测一致。记录见 §八；2a/2b 记录见 §六/§七。
-> 分支：`feature/fclcore-stateflow`（阶段 3；基于含阶段 2b 的 `feature/miuix-migration` 系）。
+> 状态：**阶段 4a（设置域 + 主题域业务状态 StateFlow 化）已完成**——FCL setting/ 10 个类与 FCLLibrary Theme 的 observable Property/ObservableList 字段全部切换为 StateFlow（extractor 冒泡改 revisionFlow 直订阅承接），23 个直接调用方级联改完；Config 序列化改手写 @JsonAdapter，JSON 产物与旧管线逐字节一致。构建通过、冒烟 68/68、Config JSON 回环 12 断言全过、主题链路静态核验一致。记录见 §九；阶段 3 记录见 §八；2a/2b 记录见 §六/§七。
+> 分支：`feature/fcl-flow-domain`（阶段 4a；基于含阶段 3 的 `feature/miuix-migration` 系）。
 > 调研日期：2026-08-02。所有数据均用 Grep/Read 实证，命令可复现。
 > 边界声明：本方案只规划移除 fakefx；控件系统（`control/`）与 WebView 保留；6.1 旧代码清理（见 `final-report.md` §6）按本文 §四 的合并点协同执行。
 
@@ -408,3 +408,59 @@ done
 # fakefx 规模
 find FCLCore/src/main/java/com/tungsten/fclcore/fakefx -name "*.java" | xargs wc -l
 ```
+
+---
+
+## 九、阶段 4a 执行记录：设置域 + 主题域业务状态 StateFlow 化（2026-08-02 完成）
+
+分支 `feature/fcl-flow-domain`。范围：`FCL/setting/`（Config、GlobalConfig、Accounts、Controllers、Controller、Profiles、Profile、VersionSetting、DownloadProviders、MenuSetting + AuthlibInjectorServers 调用点）、`FCLLibrary/component/theme/`（Theme；ThemeEngine 无 observable 字段，零改动）及全部直接调用方。本步无 gradle 改动（FCLLibrary 经 FCLCore `api` 传递获得 coroutines）。
+
+### 9.1 逐类变更摘要
+
+| 类 | 变更 |
+|---|---|
+| `Config.java` | 11 个标量 Property → `MutableStateFlow`（`xxxFlow()` 访问器 + get/set 不变）；`configurations` MapProperty → `StateFlow<Map>`（`get/setConfigurations`）；`accountStorages`/`authlibInjectorServers` ObservableList → `StateFlow<List>`（快照只读 + `setAccountStorages`/`add/removeAuthlibInjectorServer`）。**序列化改手写 `@JsonAdapter(Config.Serializer)`**：字段集/声明序/键名/null 处理与原 `JavaFxPropertyTypeAdapterFactory(true,true)` + creators 产物逐字节一致（实测见 9.4）；`CONFIG_GSON` 相应移除 creators/工厂注册（已无 Property 字段）。`fromJson` 去掉 copyProperties 二次实例（反序列化直接建成，语义等价） |
+| `GlobalConfig.java` | 2 个 Property → StateFlow；`fromJson` 的 copyProperties 改显式逐字段拷贝；手写 Serializer 不变（本就值级） |
+| `Accounts.java` | accounts ObservableList(extractor) → `StateFlow<List<Account>>` + `accountsSignalFlow()`（成员增删与元素冒泡均递增）；**阶段 3 的 accountChangeMirror 镜像机制删除**，改为直接订阅每个账户 `revisionFlow()`（冒泡语义承接）；selectedAccount ObjectProperty → StateFlow；globalAccountStorages → StateFlow（subscribe 即存盘 accounts.json） |
+| `Controllers.java` | controllers ObservableList(extractor) + ReadOnlyListWrapper → `StateFlow<List<Controller>>` + `controllersSignalFlow()`；元素冒泡改直接订阅 `Controller.revisionFlow()`；`controllersProperty()` 删除 |
+| `Controller.java` | 7 个标量 Property → StateFlow（`xxxFlow()`）；`implements Observable` → `revisionFlow(): StateFlow<Long>`（字段/分组/分组元素变更均递增）；**viewGroups 保留 ObservableList**（元素 ControlViewGroup 属 control/data 后续批次，冒泡接线不动）；手写 Serializer 本就值级，磁盘格式不变 |
+| `Profiles.kt` | profiles ObservableList(extractor) → `StateFlow<List<Profile>>` + `profilesSignalFlow()` + `add/removeProfile`；selectedProfile 匿名 ObjectProperty（invalidated 校验链）→ MutableStateFlow + `validateSelectedProfile()`（订阅顺序对齐原"失效先于 change"）；selectedVersion ReadOnlyStringWrapper bind/unbind → `subscribeWithCurrent` + cancel（等价语义） |
+| `Profile.java` | name/gameDir/selectedVersion Property → StateFlow；global ReadOnlyWrapper → 构造期定值字段；`implements Observable` → `revisionFlow()`（含全局 VersionSetting 变更冒泡）；手写 Serializer 不变 |
+| `VersionSetting.kt` | 22 个 Property → `MutableStateFlow`（`xxxFlow`），var 读写签名不变；`addPropertyChangedListener(InvalidationListener)` → `(Runnable)`（订阅全部 Flow，同值不触发与原一致） |
+| `MenuSetting.kt` | 31 个 Property → `MutableStateFlow`；同上 |
+| `DownloadProviders.java` | `FXUtils.observeWeak`/`onChangeAndOperate` → `FlowSubscriptions.subscribe`（+ 显式首跑）/`subscribeWithCurrent` |
+| `Theme.java` | 11 个 Property → `MutableStateFlow` + `xxxFlow()`；**保留 `xxxProperty()` 访问器作为迁移接缝**：每个 Flow 一个镜像 Property（subscribeWithCurrent 同步），24 个 FCLLibrary 原生 View 的 `bind(colorProperty())` 链路零改动；`ignoreSkinContainerProperty()` 错误返回 fullscreen 的遗留 bug 原样保留（LauncherSettingViewModel 本就绕开） |
+| `ThemeEngine.java` | 零改动（无 observable 字段；runnables 通知机制保留） |
+
+### 9.2 存盘语义承接方式（红线）
+
+- **Config**：构造函数对每个标量/集合 Flow `subscribe`（跳过当前值=对齐 addListener；Unconfined 发射线程同步执行=时机等价）→ `helper.invalidate()` → ConfigHolder 存盘。同值 set 不发射（与原 Property 同值不失效一致）。
+- **extractor 冒泡**：三处 `observableArrayList(extractor)`（账户/控制器/服务器）全部由"直接订阅元素 revisionFlow → 信号递增/失效"承接，元素移出即 cancel（账户/服务器沿用阶段 3 的 IdentityHashMap 生命周期管理）。
+- **configurations 特例**：原 MapProperty.set 同内容也必失效存盘，StateFlow 同值不发射无法承接；唯一写入方 `Profiles.updateProfileStorages` 在替换后显式调用新增的 `Config.invalidate()`，**触发点与时机不变**（每次 profiles 变更/冒泡一次存盘）。
+- **VersionSetting/MenuSetting**：`addPropertyChangedListener(Runnable)` 订阅全部 Flow（同值不触发）；FCLGameRepository 落盘、GameMenu 写 menu_setting.json、Profile 冒泡 revision 三链路不变。
+- **Controller**：revision 递增汇入 Controllers 信号 → updateControllerStorages 全量落盘，与原先 extractor 冒泡等价。
+- 反序列化赋值发生在 ConfigHolder.init 注册存盘监听之前，无"加载即存盘"风暴（与旧世界一致）。
+
+### 9.3 调用方级联（23 文件）
+
+- **ViewModel**：LauncherSettingViewModel（Config/Theme 桥全删，直连 Flow + setter 写回）、VersionSettingViewModel（17 组 `toMutableStateFlow` 桥 → 直连 `vs.xxxFlow`）、AccountViewModel（列表监听 → signal/serversFlow collect，onCleared 退订随 viewModelScope 自然取消）、VersionListViewModel。
+- **Compose**：FCLTheme.kt / ListItemAnimation.kt（删 observable 桥，直接 `collectAsState` StateFlow）、MainRightMenu / MainScreen / ComposeMainUI、VersionListScreen、MiuixSelectControllerDialog / MiuixAddAuthlibInjectorServerDialog / MiuixAddProfileDialog。
+- **旧 View**：MainActivity.kt（selectedAccount 订阅 onDestroy 取消、selectedVersion 经 lifecycleScope launchIn、删除闲置 WeakListenerHolder）、ControllerManagePage / EditableControllerListAdapter（快照 + 视图回收前 cancel 重订阅）、DownloadUI、AccountListItem、AuthlibInjectorServers、FCLGameRepository（`() ->` lambda）。
+- **control/**：GameMenu.java（MenuSetting 的 11 组 bindBoolean + 2 组 bindSelection + 1 组 bindBidirectional + 3 处 addListener 全部改为订阅/手动双向，同值不触发天然防回环；`bindMenuSettingSwitch/bindMenuSettingSelection` helper；Controller revision 订阅跟随当前控制器换绑）、JVMActivity/ControllerActivity（onDestroy 调 `menu.onDestroy()` 取消全部订阅，防 Activity 泄漏——对齐原 bind 弱引用自动摘除）。
+- 桥接文件 `ui/bridge/*` 保留（control/data、FCLLibrary view 等存量仍在用），`FakeFxStateFlow.kt` 文档示例已更新。
+
+### 9.4 门禁验证
+
+- `:FCL:assembleDebug`：**BUILD SUCCESSFUL**（两轮：首轮发现 GameMenu:387/390 残留 `getController().addListener` 勘察漏点，改 revision 订阅后通过；终验零错误）。
+- observable 冒烟 **68/68** 复跑通过（本步未动 observable 库）。
+- **Config JSON 回环实测**（/tmp/jsonrt4a，12 断言全过）：旧管线（observable Property + 工厂 + creators）与新管线（StateFlow + 手写 Serializer）对同一属性图（15 字段，含 unicode/emoji/转义/空串/null/负数/嵌套 Map/服务器元数据）的序列化产物**逐字节一致**；旧 JSON 分别经旧/新管线回环的产物一致（Map 内 number→Double 为旧管线既有行为，新管线一致复现）；默认图、缺字段（`{}`）、双重回环、取值抽检全过。孪生 harness 与新 `Config.Serializer` 逐行一致，Profile/Server 元素用同构 POJO 抵消（元素序列化器本步未动）。
+- **主题链路静态核验**：取色器改色 → `ThemeEngine.applyColor` → `Theme.setColor` → color/ltColor/dkColor/autoTint 四个 StateFlow 发射 → ①Compose：FCLTheme `collectAsState` 重组 + LauncherSettingViewModel observeIntoState 回流；②原生 View：attachMirrors 镜像 Property → 24 个 view 的既有 `bind(colorProperty())` 跟随，ThemeEngine runnables 机制原样。忽略刘海链路（setIgnoreNotch → 宿主事件 → applyAndSave → setFullscreen → fullscreenFlow 回流）走查一致。动画速度（setAnimationSpeed → saveTheme 订阅 + ListItemAnimation collect）走查一致。
+- 红线：FCLauncher/Terracotta/LWJGL-Pojav/ZipFileSystem/NG-GL4ES 零改动；control/data、manage/download 残余、FCLLibrary 24 view 未动（镜像接缝保编译与行为）。
+
+### 9.5 遗留问题
+
+1. Theme 的镜像 Property 层（11 个）与 `ui/bridge/*`、`FlowObservables` 仍服役于 control/data、FCLLibrary 24 view、AccountListItem 纹理链等存量，随后续批次删除。
+2. Controller.viewGroups 保留 ObservableList（待 control/data 批次）；其冒泡接线（addListener/重挂）不变。
+3. 订阅生命周期：FlowSubscriptions 共享作用域订阅不可取消处（Config/GlobalConfig/Accounts/Controllers/Profiles/VersionSetting/MenuSetting 的静态或随对象存活订阅）与原"长寿命监听"等价；GameMenu/MainActivity/弹窗/适配器均已显式 cancel（见 9.3）。
+4. 无真机：设置读写回环、主题切换、菜单开关双向同步仅编译期 + 静态核验 + 孪生回环兜底，真机项发布前补齐。
+5. 真机风险点（低）：StateFlow 合并语义下高频 set（如进度类）可能合并回调，消费方均幂等；VersionSetting 同值 set 不再触发（与原 Property 一致）。

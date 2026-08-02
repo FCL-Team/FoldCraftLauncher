@@ -5,10 +5,10 @@ import android.content.SharedPreferences
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import com.tungsten.fcl.ui.bridge.collectAsState
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -64,8 +64,9 @@ fun FCLTheme(
  * 环境自解析版 [FCLTheme]（小步骤 3.2 抽取，原逻辑位于 LegacyBridge.createComposeView）：
  * - Light/Dark/FollowSystem 读 SharedPreferences "launcher" 的 themeMode
  *   （与 FCLActivity.applySavedNightMode 同一数据源），并监听变更即时重组；
- * - 主色/内容色经 observable 属性桥（[collectAsState]）观察 ThemeEngine 当前主题，
- *   取色器修改主题色后 Compose 侧实时联动；引擎未初始化时回落默认 token。
+ * - 主色/内容色直接 collect ThemeEngine 主题的 StateFlow（阶段 4a 起 Theme 字段
+ *   已 StateFlow 化，不再经 observable 桥），取色器修改主题色后 Compose 侧实时联动；
+ *   引擎未初始化时回落默认 token。
  *
  * 供独立 Compose 根（LegacyBridge.createComposeView、ui/compose/FCLComposeDialog）
  * 直接使用。
@@ -89,13 +90,13 @@ fun FCLTheme(context: Context, content: @Composable () -> Unit) {
         else -> FCLThemeMode.FollowSystem
     }
 
-    // ThemeEngine 主题色：observable 属性 → Compose State（引擎未初始化时回落默认 token）
+    // ThemeEngine 主题色：StateFlow → Compose State（引擎未初始化时回落默认 token）
     val engineTheme = remember { ThemeEngine.getInstance().theme }
-    val primary = engineTheme?.colorProperty()?.collectAsState()?.value?.toInt()
+    val primary = engineTheme?.colorFlow()?.collectAsState()?.value
         ?.let { Color(it) } ?: FCLThemeTokens.BrandPrimary
-    val color2 = engineTheme?.color2Property()?.collectAsState()?.value?.toInt()
+    val color2 = engineTheme?.color2Flow()?.collectAsState()?.value
         ?.let { Color(it) } ?: FCLThemeTokens.Color2LightDefault
-    val color2Dark = engineTheme?.color2DarkProperty()?.collectAsState()?.value?.toInt()
+    val color2Dark = engineTheme?.color2DarkFlow()?.collectAsState()?.value
         ?.let { Color(it) } ?: FCLThemeTokens.Color2DarkDefault
 
     FCLTheme(mode = mode, primary = primary, color2 = color2, color2Dark = color2Dark, content = content)

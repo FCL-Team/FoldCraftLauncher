@@ -11,17 +11,19 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fclcore.observable.collections.ObservableList;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
+import java.util.List;
+
 public class EditableControllerListAdapter extends FCLAdapter {
 
-    private final ObservableList<Controller> list;
+    private final List<Controller> list;
 
-    public EditableControllerListAdapter(Context context, ObservableList<Controller> list) {
+    public EditableControllerListAdapter(Context context, List<Controller> list) {
         super(context);
         this.list = list;
     }
@@ -31,6 +33,10 @@ public class EditableControllerListAdapter extends FCLAdapter {
         FCLTextView name;
         FCLTextView version;
         FCLImageButton delete;
+        // 阶段 4a：Controller 属性已 StateFlow 化；视图回收重绑前取消旧订阅
+        //（对齐原 bind 重复调用先解绑的语义）。
+        FlowSubscriptions.Subscription nameSubscription;
+        FlowSubscriptions.Subscription versionSubscription;
     }
 
     @Override
@@ -60,8 +66,12 @@ public class EditableControllerListAdapter extends FCLAdapter {
         }
         Controller controller = list.get(i);
         viewHolder.parent.setBackground(controller == ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).getSelectedController() ? getContext().getDrawable(R.drawable.bg_container_transparent_selected) : getContext().getDrawable(R.drawable.bg_container_transparent_clickable));
-        viewHolder.name.stringProperty().bind(controller.nameProperty());
-        viewHolder.version.stringProperty().bind(controller.versionProperty());
+        if (viewHolder.nameSubscription != null)
+            viewHolder.nameSubscription.cancel();
+        viewHolder.nameSubscription = FlowSubscriptions.subscribeWithCurrent(controller.nameFlow(), v -> viewHolder.name.stringProperty().setValue(v));
+        if (viewHolder.versionSubscription != null)
+            viewHolder.versionSubscription.cancel();
+        viewHolder.versionSubscription = FlowSubscriptions.subscribeWithCurrent(controller.versionFlow(), v -> viewHolder.version.stringProperty().setValue(v));
         viewHolder.parent.setOnClickListener(view1 -> {
             ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).setSelectedController(controller);
             notifyDataSetChanged();

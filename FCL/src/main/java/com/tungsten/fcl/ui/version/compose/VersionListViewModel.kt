@@ -51,8 +51,9 @@ class VersionListViewModel(
     private var filterMode: FilterMode = FilterMode.Search("")
 
     init {
-        // 选中版本联动：Profiles.selectedVersion 已绑定到选中 Profile 的 selectedVersionProperty
-        Profiles.selectedVersionProperty().asStateFlow()
+        // 选中版本联动：Profiles.selectedVersion 已 StateFlow 化（阶段 4a，
+        // 跟随选中 Profile 的 selectedVersionFlow，对齐原 bind 语义）
+        Profiles.selectedVersionFlow()
             .observeIntoState { copy(selectedVersion = it) }
         Profiles.registerVersionsListener { loadVersions(it) }
     }

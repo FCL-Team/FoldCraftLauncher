@@ -50,9 +50,11 @@ fun <T> ObservableValue<T>.toStateFlow(
  * 不会触发新的收集），且收集侧写入前先做 `value != newValue` 判断，不会死循环。
  * scope 取消时（如 ViewModel.onCleared）自动 removeListener。
  *
- * 典型用法（Compose 表单字段）：
+ * 典型用法（Compose 表单字段，针对仍走 observable 的遗留数据层——
+ * 阶段 4a 起 Config/VersionSetting/MenuSetting/Theme 已 StateFlow 化，请直接
+ * 消费其 Flow 而非经本桥）：
  * ```kotlin
- * val threads = config.downloadThreadsProperty().toMutableStateFlow(viewModelScope)
+ * val threads = someLegacyProperty.toMutableStateFlow(viewModelScope)
  * // Compose: SliderPreference(value = threads.collectAsStateWithLifecycle().value, ...)
  * ```
  */

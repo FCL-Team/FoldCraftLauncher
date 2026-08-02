@@ -274,6 +274,10 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     protected void onDestroy() {
         Terracotta.setWaiting(this, true);
+        if (menu instanceof GameMenu) {
+            // 阶段 4a：取消 GameMenu 的 MenuSetting Flow 订阅（防 Activity 泄漏）
+            ((GameMenu) menu).onDestroy();
+        }
         super.onDestroy();
     }
 

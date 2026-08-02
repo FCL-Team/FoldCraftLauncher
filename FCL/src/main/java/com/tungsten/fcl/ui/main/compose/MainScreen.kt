@@ -42,7 +42,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.tungsten.fcl.R
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
-import com.tungsten.fcl.ui.bridge.collectAsState
 import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.main.Announcement
@@ -279,7 +278,7 @@ private fun linkifyAnnouncement(text: String) = buildAnnotatedString {
  */
 @Composable
 private fun SkinModelPreview(modifier: Modifier = Modifier) {
-    val account by Accounts.selectedAccountProperty().collectAsState()
+    val account by Accounts.selectedAccountFlow().collectAsState()
     val refreshTick by ComposeMainUI.skinRefreshTick.collectAsState()
     val defaultSkin = remember {
         BitmapFactory.decodeStream(ComposeMainUI::class.java.getResourceAsStream("/assets/img/alex.png"))

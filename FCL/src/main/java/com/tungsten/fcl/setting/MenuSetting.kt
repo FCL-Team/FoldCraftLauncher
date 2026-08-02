@@ -11,290 +11,252 @@ import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
 import com.tungsten.fcl.control.GestureMode
 import com.tungsten.fcl.control.MouseMoveMode
-import com.tungsten.fclcore.observable.InvalidationListener
-import com.tungsten.fclcore.observable.property.BooleanProperty
-import com.tungsten.fclcore.observable.property.DoubleProperty
-import com.tungsten.fclcore.observable.property.IntegerProperty
-import com.tungsten.fclcore.observable.property.ObjectProperty
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty
-import com.tungsten.fclcore.observable.property.SimpleDoubleProperty
-import com.tungsten.fclcore.observable.property.SimpleIntegerProperty
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.lang.reflect.Type
 
+/**
+ * 游戏菜单设置（阶段 4a）：全部属性已 StateFlow 化（`xxxFlow`），var 读写接口签名不变。
+ * [addPropertyChangedListener] 对齐原"任一属性失效即回调"语义（GameMenu 据此落盘
+ * menu_setting.json）。磁盘 JSON 由手写 [Serializer] 产出，格式不变。
+ */
 @JsonAdapter(MenuSetting.Serializer::class)
 class MenuSetting {
-    val autoFitProperty: BooleanProperty = SimpleBooleanProperty(this, "autoFit", true)
+    val autoFitFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
     var isAutoFit: Boolean
-        get() = autoFitProperty.get()
+        get() = autoFitFlow.value
         set(autoFit) {
-            autoFitProperty.set(autoFit)
+            autoFitFlow.value = autoFit
         }
 
-    val autoFitDistProperty: IntegerProperty = SimpleIntegerProperty(this, "autoFitDist", 0)
+    val autoFitDistFlow: MutableStateFlow<Int> = MutableStateFlow(0)
     var autoFitDist: Int
-        get() = autoFitDistProperty.get()
+        get() = autoFitDistFlow.value
         set(autoFitDist) {
-            autoFitDistProperty.set(autoFitDist)
+            autoFitDistFlow.value = autoFitDist
         }
 
-    val lockMenuViewProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "lockMenuView", false)
+    val lockMenuViewFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isLockMenuView: Boolean
-        get() = lockMenuViewProperty.get()
+        get() = lockMenuViewFlow.value
         set(lockMenuView) {
-            lockMenuViewProperty.set(lockMenuView)
+            lockMenuViewFlow.value = lockMenuView
         }
 
-    val hideMenuViewViewProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "hideMenuView", false)
+    val hideMenuViewFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isHideMenuView: Boolean
-        get() = hideMenuViewViewProperty.get()
+        get() = hideMenuViewFlow.value
         set(hideMenuView) {
-            hideMenuViewViewProperty.set(hideMenuView)
+            hideMenuViewFlow.value = hideMenuView
         }
 
-    val showFpsProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "showFps", false)
+    val showFpsFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isShowFps: Boolean
-        get() = showFpsProperty.get()
+        get() = showFpsFlow.value
         set(v) {
-            showFpsProperty.set(v)
+            showFpsFlow.value = v
         }
 
-    val showMemoryProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "showMemory", false)
+    val showMemoryFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isShowMemory: Boolean
-        get() = showMemoryProperty.get()
+        get() = showMemoryFlow.value
         set(v) {
-            showMemoryProperty.set(v)
+            showMemoryFlow.value = v
         }
 
-    val disableSoftKeyAdjustProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "disableSoftKeyAdjust", false)
+    val disableSoftKeyAdjustFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isDisableSoftKeyAdjust: Boolean
-        get() = disableSoftKeyAdjustProperty.get()
+        get() = disableSoftKeyAdjustFlow.value
         set(disableSoftKeyAdjust) {
-            disableSoftKeyAdjustProperty.set(disableSoftKeyAdjust)
+            disableSoftKeyAdjustFlow.value = disableSoftKeyAdjust
         }
 
-    val showLogProperty: BooleanProperty = SimpleBooleanProperty(this, "showLog", false)
+    val showLogFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isShowLog: Boolean
-        get() = showLogProperty.get()
+        get() = showLogFlow.value
         set(showLog) {
-            showLogProperty.set(showLog)
+            showLogFlow.value = showLog
         }
 
-    val autoShowLogProperty: BooleanProperty = SimpleBooleanProperty(this, "autoShowLog", false)
+    val autoShowLogFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isAutoShowLog: Boolean
-        get() = autoShowLogProperty.get()
+        get() = autoShowLogFlow.value
         set(v) {
-            autoShowLogProperty.set(v)
+            autoShowLogFlow.value = v
         }
 
-    val performanceModeProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "performanceMode", false)
+    val performanceModeFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isPerformanceMode
-        get() = performanceModeProperty.get()
+        get() = performanceModeFlow.value
         set(v) {
-            performanceModeProperty.set(v)
+            performanceModeFlow.value = v
         }
 
-    val menuPositionXProperty: DoubleProperty =
-        SimpleDoubleProperty(this, "menuPositionX", 0.5)
+    val menuPositionXFlow: MutableStateFlow<Double> = MutableStateFlow(0.5)
     var menuPositionX: Double
-        get() = menuPositionXProperty.get()
+        get() = menuPositionXFlow.value
         set(menuPositionX) {
-            menuPositionXProperty.set(menuPositionX)
+            menuPositionXFlow.value = menuPositionX
         }
 
-    val menuPositionYProperty: DoubleProperty =
-        SimpleDoubleProperty(this, "menuPositionY", 0.5)
+    val menuPositionYFlow: MutableStateFlow<Double> = MutableStateFlow(0.5)
     var menuPositionY: Double
-        get() = menuPositionYProperty.get()
+        get() = menuPositionYFlow.value
         set(menuPositionY) {
-            menuPositionYProperty.set(menuPositionY)
+            menuPositionYFlow.value = menuPositionY
         }
 
-    val disableGestureProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "disableGesture", false)
+    val disableGestureFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isDisableGesture: Boolean
-        get() = disableGestureProperty.get()
+        get() = disableGestureFlow.value
         set(disableGesture) {
-            disableGestureProperty.set(disableGesture)
+            disableGestureFlow.value = disableGesture
         }
 
-    val disableBEGestureProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "disableBEGesture", false)
+    val disableBEGestureFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isDisableBEGesture: Boolean
-        get() = disableBEGestureProperty.get()
+        get() = disableBEGestureFlow.value
         set(disableBEGesture) {
-            disableBEGestureProperty.set(disableBEGesture)
+            disableBEGestureFlow.value = disableBEGesture
         }
 
-    val gestureModeProperty: ObjectProperty<GestureMode> =
-        SimpleObjectProperty(this, "gestureMode", GestureMode.BUILD)
+    val gestureModeFlow: MutableStateFlow<GestureMode> = MutableStateFlow(GestureMode.BUILD)
     var gestureMode: GestureMode
-        get() = gestureModeProperty.get()
+        get() = gestureModeFlow.value
         set(gestureMode) {
-            gestureModeProperty.set(gestureMode)
+            gestureModeFlow.value = gestureMode
         }
 
-    val disableLeftTouchProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "disableLeftTouch", false)
+    val disableLeftTouchFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isDisableLeftTouch: Boolean
-        get() = disableLeftTouchProperty.get()
-        set(v) {
-            disableLeftTouchProperty.set(v)
+        get() = disableLeftTouchFlow.value
+        set(disableLeftTouch) {
+            disableLeftTouchFlow.value = disableLeftTouch
         }
 
-    val enableGyroscopeProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "enableGyroscope", false)
+    val enableGyroscopeFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isEnableGyroscope: Boolean
-        get() = enableGyroscopeProperty.get()
+        get() = enableGyroscopeFlow.value
         set(enableGyroscope) {
-            enableGyroscopeProperty.set(enableGyroscope)
+            enableGyroscopeFlow.value = enableGyroscope
         }
 
-    val invertGyroscopeProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "invertGyroscope", false)
+    val invertGyroscopeFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isInvertGyroscope: Boolean
-        get() = invertGyroscopeProperty.get()
+        get() = invertGyroscopeFlow.value
         set(v) {
-            invertGyroscopeProperty.set(v)
+            invertGyroscopeFlow.value = v
         }
 
-    val gyroscopeSensitivityProperty: IntegerProperty =
-        SimpleIntegerProperty(this, "gyroscopeSensitivity", 10)
+    val gyroscopeSensitivityFlow: MutableStateFlow<Int> = MutableStateFlow(10)
     var gyroscopeSensitivity: Int
-        get() = gyroscopeSensitivityProperty.get()
+        get() = gyroscopeSensitivityFlow.value
         set(gyroscopeSensitivity) {
-            gyroscopeSensitivityProperty.set(gyroscopeSensitivity)
+            gyroscopeSensitivityFlow.value = gyroscopeSensitivity
         }
 
-    val mouseMoveModeProperty: ObjectProperty<MouseMoveMode> =
-        SimpleObjectProperty(this, "mouseMoveMode", MouseMoveMode.CLICK)
+    val mouseMoveModeFlow: MutableStateFlow<MouseMoveMode> = MutableStateFlow(MouseMoveMode.CLICK)
     var mouseMoveMode: MouseMoveMode
-        get() = mouseMoveModeProperty.get()
+        get() = mouseMoveModeFlow.value
         set(mouseMoveMode) {
-            mouseMoveModeProperty.set(mouseMoveMode)
+            mouseMoveModeFlow.value = mouseMoveMode
         }
 
-    val itemBarWidthProperty: IntegerProperty =
-        SimpleIntegerProperty(this, "itemBarWidth", 0)
+    val itemBarWidthFlow: MutableStateFlow<Int> = MutableStateFlow(0)
     var itemBarWidth: Int
-        get() = itemBarWidthProperty.get()
+        get() = itemBarWidthFlow.value
         set(v) {
-            itemBarWidthProperty.set(v)
+            itemBarWidthFlow.value = v
         }
 
-    val itemBarHeightProperty: IntegerProperty =
-        SimpleIntegerProperty(this, "itemBarHeight", 0)
+    val itemBarHeightFlow: MutableStateFlow<Int> = MutableStateFlow(0)
     var itemBarHeight: Int
-        get() = itemBarHeightProperty.get()
+        get() = itemBarHeightFlow.value
         set(v) {
-            itemBarHeightProperty.set(v)
+            itemBarHeightFlow.value = v
         }
 
-    val windowScaleProperty: DoubleProperty = SimpleDoubleProperty(this, "windowScale", 1.0)
+    val windowScaleFlow: MutableStateFlow<Double> = MutableStateFlow(1.0)
     var windowScale: Double
-        get() = windowScaleProperty.get()
+        get() = windowScaleFlow.value
         set(windowScale) {
-            windowScaleProperty.set(windowScale)
+            windowScaleFlow.value = windowScale
         }
 
-    val cursorOffsetProperty: DoubleProperty =
-        SimpleDoubleProperty(this, "cursorOffset", 0.0)
+    val cursorOffsetFlow: MutableStateFlow<Double> = MutableStateFlow(0.0)
     var cursorOffset: Double
-        get() = cursorOffsetProperty.get()
+        get() = cursorOffsetFlow.value
         set(cursorOffset) {
-            cursorOffsetProperty.set(cursorOffset)
+            cursorOffsetFlow.value = cursorOffset
         }
 
-    val mouseSensitivityProperty: DoubleProperty =
-        SimpleDoubleProperty(this, "mouseSensitivity", 1.0)
+    val mouseSensitivityFlow: MutableStateFlow<Double> = MutableStateFlow(1.0)
     var mouseSensitivity: Double
-        get() = mouseSensitivityProperty.get()
+        get() = mouseSensitivityFlow.value
         set(mouseSensitivity) {
-            mouseSensitivityProperty.set(mouseSensitivity)
+            mouseSensitivityFlow.value = mouseSensitivity
         }
 
-    val mouseSensitivityCursorProperty: DoubleProperty =
-        SimpleDoubleProperty(this, "mouseSensitivityCursor", 2.0)
+    val mouseSensitivityCursorFlow: MutableStateFlow<Double> = MutableStateFlow(2.0)
     var mouseSensitivityCursor: Double
-        get() = mouseSensitivityCursorProperty.get()
+        get() = mouseSensitivityCursorFlow.value
         set(mouseSensitivityCursor) {
-            mouseSensitivityCursorProperty.set(mouseSensitivityCursor)
+            mouseSensitivityCursorFlow.value = mouseSensitivityCursor
         }
 
-    val mouseSizeProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseSize", 15)
+    val mouseSizeFlow: MutableStateFlow<Int> = MutableStateFlow(15)
     var mouseSize: Int
-        get() = mouseSizeProperty.get()
-        set(mouseSize) {
-            mouseSizeProperty.set(mouseSize)
+        get() = mouseSizeFlow.value
+        set(v) {
+            mouseSizeFlow.value = v
         }
 
-    val mouseOffsetXProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseOffsetX", 0)
+    val mouseOffsetXFlow: MutableStateFlow<Int> = MutableStateFlow(0)
     var mouseOffsetX: Int
-        get() = mouseOffsetXProperty.get()
+        get() = mouseOffsetXFlow.value
         set(v) {
-            mouseOffsetXProperty.set(v)
+            mouseOffsetXFlow.value = v
         }
 
-    val mouseOffsetYProperty: IntegerProperty = SimpleIntegerProperty(this, "mouseOffsetY", 0)
+    val mouseOffsetYFlow: MutableStateFlow<Int> = MutableStateFlow(0)
     var mouseOffsetY: Int
-        get() = mouseOffsetYProperty.get()
+        get() = mouseOffsetYFlow.value
         set(v) {
-            mouseOffsetYProperty.set(v)
+            mouseOffsetYFlow.value = v
         }
 
-    val physicalMouseMode: BooleanProperty = SimpleBooleanProperty(this, "physicalMouseMode", false)
+    val physicalMouseModeFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isPhysicalMouseMode: Boolean
-        get() = physicalMouseMode.get()
+        get() = physicalMouseModeFlow.value
         set(v) {
-            physicalMouseMode.set(v)
+            physicalMouseModeFlow.value = v
         }
 
-    val gamepadDeadzoneProperty: DoubleProperty =
-        SimpleDoubleProperty(this, "gamepadDeadzone", 1.0)
+    val gamepadDeadzoneFlow: MutableStateFlow<Double> = MutableStateFlow(1.0)
     var gamepadDeadzone: Double
-        get() = gamepadDeadzoneProperty.get()
+        get() = gamepadDeadzoneFlow.value
         set(gamepadDeadzone) {
-            gamepadDeadzoneProperty.set(gamepadDeadzone)
+            gamepadDeadzoneFlow.value = gamepadDeadzone
         }
 
-    fun addPropertyChangedListener(listener: InvalidationListener?) {
-        autoFitProperty.addListener(listener)
-        autoFitDistProperty.addListener(listener)
-        lockMenuViewProperty.addListener(listener)
-        hideMenuViewViewProperty.addListener(listener)
-        showFpsProperty.addListener(listener)
-        showMemoryProperty.addListener(listener)
-        disableSoftKeyAdjustProperty.addListener(listener)
-        showLogProperty.addListener(listener)
-        autoShowLogProperty.addListener(listener)
-        performanceModeProperty.addListener(listener)
-        menuPositionXProperty.addListener(listener)
-        menuPositionYProperty.addListener(listener)
-        disableGestureProperty.addListener(listener)
-        disableBEGestureProperty.addListener(listener)
-        gestureModeProperty.addListener(listener)
-        disableLeftTouchProperty.addListener(listener)
-        enableGyroscopeProperty.addListener(listener)
-        invertGyroscopeProperty.addListener(listener)
-        gyroscopeSensitivityProperty.addListener(listener)
-        mouseMoveModeProperty.addListener(listener)
-        mouseSensitivityProperty.addListener(listener)
-        mouseSensitivityCursorProperty.addListener(listener)
-        mouseSizeProperty.addListener(listener)
-        mouseOffsetXProperty.addListener(listener)
-        mouseOffsetYProperty.addListener(listener)
-        physicalMouseMode.addListener(listener)
-        itemBarWidthProperty.addListener(listener)
-        itemBarHeightProperty.addListener(listener)
-        windowScaleProperty.addListener(listener)
-        cursorOffsetProperty.addListener(listener)
-        gamepadDeadzoneProperty.addListener(listener)
+    private val allFlows: List<StateFlow<*>> by lazy {
+        listOf(
+            autoFitFlow, autoFitDistFlow, lockMenuViewFlow, hideMenuViewFlow,
+            showFpsFlow, showMemoryFlow, disableSoftKeyAdjustFlow, showLogFlow,
+            autoShowLogFlow, performanceModeFlow, menuPositionXFlow, menuPositionYFlow,
+            disableGestureFlow, disableBEGestureFlow, gestureModeFlow,
+            disableLeftTouchFlow, enableGyroscopeFlow, invertGyroscopeFlow,
+            gyroscopeSensitivityFlow, mouseMoveModeFlow, mouseSensitivityFlow,
+            mouseSensitivityCursorFlow, mouseSizeFlow, mouseOffsetXFlow, mouseOffsetYFlow,
+            physicalMouseModeFlow, itemBarWidthFlow, itemBarHeightFlow, windowScaleFlow,
+            cursorOffsetFlow, gamepadDeadzoneFlow,
+        )
+    }
+
+    /** 对齐原"任一属性失效即回调"语义（同值 set 不触发；订阅不可取消，与原监听一致）。 */
+    fun addPropertyChangedListener(listener: Runnable) {
+        allFlows.forEach { FlowSubscriptions.subscribe(it) { listener.run() } }
     }
 
     class Serializer : JsonSerializer<MenuSetting?>, JsonDeserializer<MenuSetting?> {

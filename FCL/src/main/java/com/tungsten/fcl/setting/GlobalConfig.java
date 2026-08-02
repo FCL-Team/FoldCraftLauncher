@@ -21,17 +21,17 @@ import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fclcore.observable.InvalidationListener;
 import com.tungsten.fclcore.observable.Observable;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.observable.property.SimpleStringProperty;
-import com.tungsten.fclcore.observable.property.StringProperty;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.observable.ObservableHelper;
-import com.tungsten.fclcore.util.observable.PropertyUtils;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.*;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 @JsonAdapter(GlobalConfig.Serializer.class)
 public class GlobalConfig implements Cloneable, Observable {
@@ -43,21 +43,23 @@ public class GlobalConfig implements Cloneable, Observable {
             return null;
         }
         GlobalConfig instance = new GlobalConfig();
-        PropertyUtils.copyProperties(loaded, instance);
+        instance.setAgreementVersion(loaded.getAgreementVersion());
+        instance.setMultiplayerToken(loaded.getMultiplayerToken());
         instance.unknownFields.putAll(loaded.unknownFields);
         return instance;
     }
 
-    private IntegerProperty agreementVersion = new SimpleIntegerProperty();
+    private final MutableStateFlow<Integer> agreementVersion = StateFlowKt.MutableStateFlow(0);
 
-    private StringProperty multiplayerToken = new SimpleStringProperty();
+    private final MutableStateFlow<String> multiplayerToken = StateFlowKt.MutableStateFlow(null);
 
     private final Map<String, Object> unknownFields = new HashMap<>();
 
     private transient ObservableHelper helper = new ObservableHelper(this);
 
     public GlobalConfig() {
-        PropertyUtils.attachListener(this, helper);
+        FlowSubscriptions.subscribe(agreementVersion, v -> helper.invalidate());
+        FlowSubscriptions.subscribe(multiplayerToken, v -> helper.invalidate());
     }
 
     @Override
@@ -80,27 +82,27 @@ public class GlobalConfig implements Cloneable, Observable {
     }
 
     public int getAgreementVersion() {
-        return agreementVersion.get();
+        return agreementVersion.getValue();
     }
 
-    public IntegerProperty agreementVersionProperty() {
+    public StateFlow<Integer> agreementVersionFlow() {
         return agreementVersion;
     }
 
     public void setAgreementVersion(int agreementVersion) {
-        this.agreementVersion.set(agreementVersion);
+        this.agreementVersion.setValue(agreementVersion);
     }
 
     public String getMultiplayerToken() {
-        return multiplayerToken.get();
+        return multiplayerToken.getValue();
     }
 
-    public StringProperty multiplayerTokenProperty() {
+    public StateFlow<String> multiplayerTokenFlow() {
         return multiplayerToken;
     }
 
     public void setMultiplayerToken(String multiplayerToken) {
-        this.multiplayerToken.set(multiplayerToken);
+        this.multiplayerToken.setValue(multiplayerToken);
     }
 
     public static class Serializer implements JsonSerializer<GlobalConfig>, JsonDeserializer<GlobalConfig> {

@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.account.compose
 
 import android.app.Application
+import androidx.lifecycle.viewModelScope
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.setting.ConfigHolder
@@ -10,7 +11,7 @@ import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.AccountFactory
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer
 import com.tungsten.fclcore.auth.offline.OfflineAccount
-import com.tungsten.fclcore.observable.collections.ListChangeListener
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 /**
@@ -20,12 +21,12 @@ import java.util.UUID
  * 行为对齐（interaction-map §8.1/§8.2 逐条）：
  * - 账户列表数据构建：Accounts.getAccounts() → AccountListItem（标题/副标题/头像/纹理的
  *   observable 绑定全部留在 AccountListItem，业务零重写，对齐 AccountUI.refresh :61-76）；
- * - 列表自动刷新：Accounts.getAccounts() 是带 extractor 的 ObservableList（账户属性失效
- *   也会触发列表变更），ListChangeListener 重建条目列表，替代旧 Adapter 的
+ * - 列表自动刷新：阶段 4a 起 Accounts 列表已 StateFlow 化，accountsSignalFlow 任何变化
+ *   （成员增删或账户内部变更，对齐原 extractor 冒泡）即重建条目列表，替代旧 Adapter 的
  *   clear+addAll+notifyDataSetChanged 与静态单例反向 refresh（G10 承接）；
- * - 选中态：Accounts.selectedAccountProperty 经 observable → Flow 单向承接，点击单选 =
+ * - 选中态：Accounts.selectedAccountFlow 单向承接，点击单选 =
  *   写 Accounts.setSelectedAccount（对齐 AccountListAdapter.kt:63-66）；
- * - 外置登录服务器列表：config().getAuthlibInjectorServers() ObservableList 监听自动刷新
+ * - 外置登录服务器列表：config().authlibInjectorServersFlow() 监听自动刷新
  *   （对齐 ServerListAdapter :33-36）；
  * - 删除账户/删除服务器/离线账户改 UUID 的确认弹窗收敛为 UiState 内的 dialog 状态，
  *   确认逻辑逐行对齐旧 Adapter（replaceAccount + setSelectedAccount）。
@@ -34,21 +35,16 @@ class AccountViewModel(
     private val application: Application,
 ) : FCLViewModel<AccountUiState, AccountEvent>(AccountUiState()) {
 
-    private val accountsListener = ListChangeListener<Account> { reloadAccounts() }
-    private val serversListener = ListChangeListener<AuthlibInjectorServer> { reloadServers() }
-
     init {
-        Accounts.selectedAccountProperty().asStateFlow()
+        Accounts.selectedAccountFlow()
             .observeIntoState { copy(selectedAccount = it) }
-        Accounts.getAccounts().addListener(accountsListener)
-        ConfigHolder.config().authlibInjectorServers.addListener(serversListener)
-        reloadAccounts()
-        reloadServers()
-    }
-
-    override fun onCleared() {
-        Accounts.getAccounts().removeListener(accountsListener)
-        ConfigHolder.config().authlibInjectorServers.removeListener(serversListener)
+        // collect 立即发射当前值，初始 reload 已覆盖；viewModelScope 取消即退订（对齐 onCleared removeListener）
+        viewModelScope.launch {
+            Accounts.accountsSignalFlow().collect { reloadAccounts() }
+        }
+        viewModelScope.launch {
+            ConfigHolder.config().authlibInjectorServersFlow().collect { reloadServers() }
+        }
     }
 
     /** 重建账户条目列表（对齐 AccountUI.refresh :63-71；也承接 refreshHook 的手动刷新）。 */
@@ -132,10 +128,10 @@ class AccountViewModel(
         updateState { copy(dialog = AccountDialogState.None) }
     }
 
-    /** 确认删除外置服务器（对齐 ServerListAdapter :83-90，ObservableList 监听自动刷新）。 */
+    /** 确认删除外置服务器（对齐 ServerListAdapter :83-90，Flow 监听自动刷新）。 */
     fun onConfirmDeleteServer() {
         val current = currentState.dialog as? AccountDialogState.DeleteServer ?: return
-        ConfigHolder.config().authlibInjectorServers.remove(current.server)
+        ConfigHolder.config().removeAuthlibInjectorServer(current.server)
         updateState { copy(dialog = AccountDialogState.None) }
     }
 

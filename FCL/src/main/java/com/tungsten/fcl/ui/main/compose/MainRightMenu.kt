@@ -52,7 +52,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.tungsten.fcl.R
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
-import com.tungsten.fcl.ui.bridge.collectAsState
 import com.tungsten.fcl.ui.compose.ShakeState
 import com.tungsten.fcl.ui.compose.rememberShakeState
 import com.tungsten.fcl.ui.compose.shake
@@ -203,7 +202,7 @@ private fun Modifier.entrance(index: Int, animSpeed: Int): Modifier {
 @Composable
 private fun AccountBlock(onClick: () -> Unit) {
     val context = LocalContext.current
-    val account by Accounts.selectedAccountProperty().collectAsState()
+    val account by Accounts.selectedAccountFlow().collectAsState()
     val avatarTick by MainRightMenuBridge.avatarRefreshTick.collectAsStateWithLifecycle()
     val avatarSize = with(LocalDensity.current) { 52.dp.roundToPx() }
     val defaultAvatar = remember {

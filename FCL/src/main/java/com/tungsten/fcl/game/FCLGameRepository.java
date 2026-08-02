@@ -233,7 +233,7 @@ public class FCLGameRepository extends DefaultGameRepository {
 
     private VersionSetting initLocalVersionSetting(String id, VersionSetting vs) {
         localVersionSettings.put(id, vs);
-        vs.addPropertyChangedListener(a -> saveVersionSetting(id));
+        vs.addPropertyChangedListener(() -> saveVersionSetting(id));
         return vs;
     }
 

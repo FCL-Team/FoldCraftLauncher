@@ -82,6 +82,7 @@ import com.tungsten.fclcore.observable.collections.FXCollections;
 import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
@@ -95,10 +96,13 @@ import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -114,6 +118,45 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     private FCLBridge fclBridge;
     private FCLInput fclInput;
     private MenuSetting menuSetting;
+
+    // 阶段 4a：MenuSetting 属性已 StateFlow 化。下面两个 helper 对齐原
+    // FXUtils.bindBoolean/bindSelection 双向绑定（初值同步 + 双向跟随后续变化，
+    // 两侧同值写入均不触发，天然防回环）；订阅在 onDestroy 统一取消
+    //（对齐原 bindBidirectional 弱引用自动摘除，防止 Activity 泄漏）。
+    private final List<FlowSubscriptions.Subscription> menuSettingSubscriptions = new ArrayList<>();
+
+    private void bindMenuSettingSwitch(FCLSwitch fclSwitch, MutableStateFlow<Boolean> flow) {
+        fclSwitch.addCheckedChangeListener();
+        fclSwitch.checkProperty().setValue(flow.getValue());
+        menuSettingSubscriptions.add(FlowSubscriptions.subscribe(flow, v -> fclSwitch.checkProperty().setValue(v)));
+        fclSwitch.checkProperty().addListener((observable, oldValue, newValue) -> flow.setValue(newValue));
+    }
+
+    private <T> void bindMenuSettingSelection(FCLSpinner<T> spinner, MutableStateFlow<T> flow) {
+        spinner.addSelectListener();
+        spinner.selectedItemProperty().setValue(flow.getValue());
+        menuSettingSubscriptions.add(FlowSubscriptions.subscribe(flow, v -> spinner.selectedItemProperty().setValue(v)));
+        spinner.selectedItemProperty().addListener((observable, oldValue, newValue) -> flow.setValue(newValue));
+    }
+
+    /** 由宿主 Activity onDestroy 调用：取消 MenuSetting Flow 订阅（防泄漏）。 */
+    public void onDestroy() {
+        menuSettingSubscriptions.forEach(FlowSubscriptions.Subscription::cancel);
+        menuSettingSubscriptions.clear();
+        if (controllerRevisionSubscription != null) {
+            controllerRevisionSubscription.cancel();
+            controllerRevisionSubscription = null;
+        }
+    }
+
+    private FlowSubscriptions.Subscription controllerRevisionSubscription;
+
+    private void subscribeControllerRevision(FCLSpinner<ControlViewGroup> currentViewGroupSpinner) {
+        if (controllerRevisionSubscription != null)
+            controllerRevisionSubscription.cancel();
+        controllerRevisionSubscription = getController() == null ? null :
+                FlowSubscriptions.subscribe(getController().revisionFlow(), v -> refreshViewGroupList(currentViewGroupSpinner));
+    }
     private int hitResultType = FCLBridge.HIT_RESULT_TYPE_UNKNOWN;
     private int cursorX;
     private int cursorY;
@@ -339,10 +382,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindBoolean(editMode, editModeProperty);
         FXUtils.bindBoolean(showViewBoundaries, showViewBoundariesProperty);
         FXUtils.bindBoolean(hideAllViews, hideAllViewsProperty);
-        FXUtils.bindBoolean(autoFit, menuSetting.getAutoFitProperty());
+        bindMenuSettingSwitch(autoFit, menuSetting.getAutoFitFlow());
 
         autoFitDist.addProgressListener();
-        autoFitDist.progressProperty().bindBidirectional(menuSetting.getAutoFitDistProperty());
+        autoFitDist.progressProperty().setValue(menuSetting.getAutoFitDist());
+        menuSettingSubscriptions.add(FlowSubscriptions.subscribe(menuSetting.getAutoFitDistFlow(), v -> autoFitDist.progressProperty().setValue(v)));
+        autoFitDist.progressProperty().addListener((observable, oldValue, newValue) -> menuSetting.setAutoFitDist(newValue.intValue()));
 
         ArrayList<String> controllerNameList = Controllers.getControllers().stream().map(Controller::getName).collect(Collectors.toCollection(ArrayList::new));
         currentControllerSpinner.setDataList(new ArrayList<>(Controllers.getControllers()));
@@ -352,10 +397,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindSelection(currentControllerSpinner, controllerProperty);
 
         refreshViewGroupList(currentViewGroupSpinner);
-        getController().addListener(i -> refreshViewGroupList(currentViewGroupSpinner));
+        // 阶段 4a：Controller 失效已改为 revisionFlow；跟随当前控制器（切换时换绑并取消旧订阅，
+        // 对齐原"控制器内部变更即刷新分组列表"，且不积累监听）。
+        subscribeControllerRevision(currentViewGroupSpinner);
         controllerProperty.addListener(invalidate -> {
             refreshViewGroupList(currentViewGroupSpinner);
-            getController().addListener(i -> refreshViewGroupList(currentViewGroupSpinner));
+            subscribeControllerRevision(currentViewGroupSpinner);
         });
 
         hideAllViewsProperty.addListener(i -> {
@@ -461,33 +508,33 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             gamepadDisabled = isChecked;
         });
 
-        FXUtils.bindBoolean(lockMenuSwitch, menuSetting.getLockMenuViewProperty());
-        FXUtils.bindBoolean(hideMenuSwitch, menuSetting.getHideMenuViewViewProperty());
-        FXUtils.bindBoolean(disableSoftKeyAdjustSwitch, menuSetting.getDisableSoftKeyAdjustProperty());
-        FXUtils.bindBoolean(disableGestureSwitch, menuSetting.getDisableGestureProperty());
-        FXUtils.bindBoolean(disableBEGestureSwitch, menuSetting.getDisableBEGestureProperty());
-        FXUtils.bindBoolean(disableLeftTouchSwitch, menuSetting.getDisableLeftTouchProperty());
-        FXUtils.bindBoolean(gyroSwitch, menuSetting.getEnableGyroscopeProperty());
-        FXUtils.bindBoolean(gyroInvertSwitch, menuSetting.getInvertGyroscopeProperty());
-        FXUtils.bindBoolean(physicalMouseSwitch, menuSetting.getPhysicalMouseMode());
-        FXUtils.bindBoolean(showLogSwitch, menuSetting.getShowLogProperty());
-        FXUtils.bindBoolean(autoShowLogSwitch, menuSetting.getAutoShowLogProperty());
+        bindMenuSettingSwitch(lockMenuSwitch, menuSetting.getLockMenuViewFlow());
+        bindMenuSettingSwitch(hideMenuSwitch, menuSetting.getHideMenuViewFlow());
+        bindMenuSettingSwitch(disableSoftKeyAdjustSwitch, menuSetting.getDisableSoftKeyAdjustFlow());
+        bindMenuSettingSwitch(disableGestureSwitch, menuSetting.getDisableGestureFlow());
+        bindMenuSettingSwitch(disableBEGestureSwitch, menuSetting.getDisableBEGestureFlow());
+        bindMenuSettingSwitch(disableLeftTouchSwitch, menuSetting.getDisableLeftTouchFlow());
+        bindMenuSettingSwitch(gyroSwitch, menuSetting.getEnableGyroscopeFlow());
+        bindMenuSettingSwitch(gyroInvertSwitch, menuSetting.getInvertGyroscopeFlow());
+        bindMenuSettingSwitch(physicalMouseSwitch, menuSetting.getPhysicalMouseModeFlow());
+        bindMenuSettingSwitch(showLogSwitch, menuSetting.getShowLogFlow());
+        bindMenuSettingSwitch(autoShowLogSwitch, menuSetting.getAutoShowLogFlow());
 
         performanceModeSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            menuSetting.getPerformanceModeProperty().setValue(isChecked);
+            menuSetting.setPerformanceMode(isChecked);
             activity.getWindow().setSustainedPerformanceMode(isChecked);
         });
         performanceModeSwitch.setChecked(menuSetting.isPerformanceMode());
 
-        menuSetting.getHideMenuViewViewProperty().addListener(i -> {
+        menuSettingSubscriptions.add(FlowSubscriptions.subscribe(menuSetting.getHideMenuViewFlow(), v -> {
             menuView.setVisibility(menuSetting.isHideMenuView() ? View.INVISIBLE : View.VISIBLE);
             if (menuSetting.isHideMenuView()) {
                 Toast.makeText(activity, R.string.tip_hide_menu_view, Toast.LENGTH_LONG).show();
             }
-        });
+        }));
 
         showFps.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            menuSetting.getShowFpsProperty().setValue(isChecked);
+            menuSetting.setShowFps(isChecked);
             if (isSimulated()) {
                 return;
             }
@@ -519,7 +566,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }));
 
         showMemory.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            menuSetting.getShowMemoryProperty().setValue(isChecked);
+            menuSetting.setShowMemory(isChecked);
             if (isSimulated()) {
                 return;
             }
@@ -558,14 +605,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }));
 
         logWindow.setVisibility(menuSetting.isShowLog() || (!isSimulated() && menuSetting.isAutoShowLog()));
-        menuSetting.getShowLogProperty().addListener(observable -> {
+        menuSettingSubscriptions.add(FlowSubscriptions.subscribe(menuSetting.getShowLogFlow(), v -> {
             logWindow.setVisibility(menuSetting.isShowLog());
-        });
-        menuSetting.getAutoShowLogProperty().addListener(observable -> {
+        }));
+        menuSettingSubscriptions.add(FlowSubscriptions.subscribe(menuSetting.getAutoShowLogFlow(), v -> {
             if (baseLayout.getBackground() != null) {
                 logWindow.setVisibility(menuSetting.isAutoShowLog());
             }
-        });
+        }));
 
         ArrayList<GestureMode> gestureModeDataList = new ArrayList<>();
         gestureModeDataList.add(GestureMode.BUILD);
@@ -587,8 +634,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         ArrayAdapter<String> mouseMoveModeAdapter = new ArrayAdapter<>(activity, R.layout.item_spinner_small, mouseMoveModeList);
         mouseMoveModeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown_small);
         mouseMoveModeSpinner.setAdapter(mouseMoveModeAdapter);
-        FXUtils.bindSelection(gestureModeSpinner, menuSetting.getGestureModeProperty());
-        FXUtils.bindSelection(mouseMoveModeSpinner, menuSetting.getMouseMoveModeProperty());
+        bindMenuSettingSelection(gestureModeSpinner, menuSetting.getGestureModeFlow());
+        bindMenuSettingSelection(mouseMoveModeSpinner, menuSetting.getMouseMoveModeFlow());
 
         int screenWidth = AndroidUtils.getScreenWidth();
         initSeekbar(itemBarWidthSeekbar, (int) (menuSetting.getItemBarWidth() * 100f / screenWidth), observable -> {
@@ -632,7 +679,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             cursorView.setOffsetY(menuSetting.getMouseOffsetY());
         });
         initSeekbar(gamepadDeadzoneSeekbar, (int) (menuSetting.getGamepadDeadzone() * 100), observable -> menuSetting.setGamepadDeadzone(gamepadDeadzoneSeekbar.progressProperty().get() / 100d));
-        initSeekbar(gyroSensitivitySeekbar, menuSetting.getGyroscopeSensitivityProperty().get(), observable -> menuSetting.setGyroscopeSensitivity(gyroSensitivitySeekbar.progressProperty().get()));
+        initSeekbar(gyroSensitivitySeekbar, menuSetting.getGyroscopeSensitivity(), observable -> menuSetting.setGyroscopeSensitivity(gyroSensitivitySeekbar.progressProperty().get()));
 
         openMultiplayerButton.setOnClickListener(this);
         manageQuickInput.setOnClickListener(this);
@@ -686,7 +733,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             this.menuSetting = new MenuSetting();
         }
 
-        this.menuSetting.addPropertyChangedListener(observable -> {
+        this.menuSetting.addPropertyChangedListener(() -> {
             String content = new GsonBuilder().setPrettyPrinting().create().toJson(menuSetting);
             try {
                 FileUtils.writeText(new File(FCLPath.FILES_DIR + "/menu_setting.json"), content);
@@ -719,10 +766,10 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         touchPad.init(this);
         touchCharInput.setCharacterSender(this, new LwjglCharSender(this));
         initCursorView(activity);
-        menuSetting.getMouseSizeProperty().addListener(observable -> initCursorView(activity));
+        menuSettingSubscriptions.add(FlowSubscriptions.subscribe(menuSetting.getMouseSizeFlow(), v -> initCursorView(activity)));
 
         gyroscope = new Gyroscope(this);
-        gyroscope.enableProperty().bind(menuSetting.getEnableGyroscopeProperty());
+        menuSettingSubscriptions.add(FlowSubscriptions.subscribeWithCurrent(menuSetting.getEnableGyroscopeFlow(), v -> gyroscope.enableProperty().setValue(v)));
 
         viewManager = new ViewManager(this);
 
@@ -780,8 +827,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
     private void initCursorView(FCLActivity activity) {
         ViewGroup.LayoutParams layoutParams = cursorView.getLayoutParams();
-        layoutParams.width = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
-        layoutParams.height = ConvertUtils.dip2px(activity, menuSetting.getMouseSizeProperty().get());
+        layoutParams.width = ConvertUtils.dip2px(activity, menuSetting.getMouseSize());
+        layoutParams.height = ConvertUtils.dip2px(activity, menuSetting.getMouseSize());
         cursorView.setLayoutParams(layoutParams);
         cursorView.setOffsetX(menuSetting.getMouseOffsetX());
         cursorView.setOffsetY(menuSetting.getMouseOffsetX());

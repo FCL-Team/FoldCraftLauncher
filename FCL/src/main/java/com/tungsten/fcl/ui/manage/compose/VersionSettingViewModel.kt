@@ -9,13 +9,12 @@ import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.VersionSetting
 import com.tungsten.fcl.ui.bridge.FCLViewModel
-import com.tungsten.fcl.ui.bridge.toMutableStateFlow
 import com.tungsten.fcl.ui.manage.ManagePageManager
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclcore.event.Event
-import com.tungsten.fclcore.observable.InvalidationListener
 import com.tungsten.fclcore.util.Logging
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import kotlinx.coroutines.CoroutineScope
@@ -44,9 +43,10 @@ data class VersionSettingLoadRequest(
  * 覆盖全局（SettingUI Tab0，globalSetting=true）与单版本（ManageUI Tab0）两种形态。
  *
  * 17 组 observable 绑定承接（interaction-map §4.4，VersionSettingPage.kt:286-350）：
- * - 15 组 VersionSetting 属性（4 String + 10 Boolean + maxMemory）经
- *   `toMutableStateFlow(scope)` 双向桥接：Compose 写 flow.value 即写回属性
- *   （写即持久化语义不变，ConfigHolder/Profile 自动落盘），属性被遗留代码改动流入 Flow；
+ * - 15 组 VersionSetting 属性（4 String + 10 Boolean + maxMemory）：阶段 4a 起
+ *   VersionSetting 属性已是 MutableStateFlow，Compose 写 flow.value 即写 VersionSetting
+ *   （写即持久化语义不变，FCLGameRepository/Profile 自动落盘），同一 Flow collect
+ *   回流刷新 UiState；
  * - 第 16 组 specialSettingSwitch ↔ enableSpecificSettings（局部 BooleanProperty）：
  *   收敛为 UiState 字段 + [setEnableSpecificSettings] 语义化方法（specialize/globalize
  *   联动收在此处）；
@@ -54,8 +54,8 @@ data class VersionSettingLoadRequest(
  *   Compose Slider 直连 state.maxMemory，不再需要中转属性。
  *
  * 重绑策略：旧页面 loadVersion 时 FXUtils.unbindXxx/bindXxx 整页重绑；此处每次
- * [loadVersion] 取消上一个 bindJob（自动 removeListener）并在新子 scope 上重建全部
- * 双向流，等价于整页重绑。
+ * [loadVersion] 取消上一个 bindJob（collect 协程随之取消）并在新子 scope 上重新
+ * collect 全部 Flow，等价于整页重绑。
  *
  * 额外桥接（旧版是"弹窗回调里手动 setText"，新版改为属性流驱动，显示永远与数据一致）：
  * java/controller/graphicsBackend/renderer/driver 5 个显示属性同样以双向流投影进
@@ -93,8 +93,8 @@ class VersionSettingViewModel(
     private var beGestureFlow: MutableStateFlow<Boolean>? = null
     private var vkDriverSystemFlow: MutableStateFlow<Boolean>? = null
 
-    /** maxMemory：IntegerProperty 类型实参为 Number（JavaFX 惯例，bridge-api.md §3.2）。 */
-    private var maxMemoryFlow: MutableStateFlow<Number>? = null
+    /** maxMemory：VersionSetting 的 MutableStateFlow<Int>（阶段 4a）。 */
+    private var maxMemoryFlow: MutableStateFlow<Int>? = null
 
     // 显示属性（弹窗写入后自动回流）
     private var javaFlow: MutableStateFlow<String>? = null
@@ -135,7 +135,7 @@ class VersionSettingViewModel(
             }
         }
 
-        // 整页重绑：取消旧 scope（toMutableStateFlow 的 finally 自动 removeListener）
+        // 整页重绑：取消旧 scope（collect 协程随之取消）
         bindJob?.cancel()
         val job = SupervisorJob(viewModelScope.coroutineContext[Job])
         bindJob = job
@@ -154,41 +154,44 @@ class VersionSettingViewModel(
         }
 
         // ---- 17 组绑定里的 15 组 VersionSetting 属性（4 String + 10 Boolean + maxMemory） ----
-        javaArgsFlow = vs.javaArgsProperty.toMutableStateFlow(scope)
+        // 阶段 4a：VersionSetting 属性已是 MutableStateFlow，直连（写 flow.value 即写
+        // VersionSetting，FCLGameRepository/Profile 经 addPropertyChangedListener 落盘），
+        // 同一 Flow collect 回流刷新 UiState，不再需要 observable 双向桥。
+        javaArgsFlow = vs.javaArgsFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(javaArgs = v) } }
-        minecraftArgsFlow = vs.minecraftArgsProperty.toMutableStateFlow(scope)
+        minecraftArgsFlow = vs.minecraftArgsFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(minecraftArgs = v) } }
-        uuidFlow = vs.uuidProperty.toMutableStateFlow(scope)
+        uuidFlow = vs.uuidFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(uuid = v) } }
-        serverIpFlow = vs.serverIpProperty.toMutableStateFlow(scope)
+        serverIpFlow = vs.serverIpFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(serverIp = v) } }
-        autoMemoryFlow = vs.autoMemoryProperty.toMutableStateFlow(scope)
+        autoMemoryFlow = vs.autoMemoryFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(autoMemory = v) } }
-        isolateGameDirFlow = vs.isolateGameDirProperty.toMutableStateFlow(scope)
+        isolateGameDirFlow = vs.isolateGameDirFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(isolateGameDir = v) } }
-        pojavBigCoreFlow = vs.pojavBigCoreProperty.toMutableStateFlow(scope)
+        pojavBigCoreFlow = vs.pojavBigCoreFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(pojavBigCore = v) } }
-        notCheckGameFlow = vs.notCheckGameProperty.toMutableStateFlow(scope)
+        notCheckGameFlow = vs.notCheckGameFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(notCheckGame = v) } }
-        notCheckJVMFlow = vs.notCheckJVMProperty.toMutableStateFlow(scope)
+        notCheckJVMFlow = vs.notCheckJVMFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(notCheckJVM = v) } }
-        notCheckModFlow = vs.notCheckModProperty.toMutableStateFlow(scope)
+        notCheckModFlow = vs.notCheckModFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(notCheckMod = v) } }
-        debugLogFlow = vs.debugLogProperty.toMutableStateFlow(scope)
+        debugLogFlow = vs.debugLogFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(debugLog = v) } }
-        forceResolutionFlow = vs.forceResolutionProperty.toMutableStateFlow(scope)
+        forceResolutionFlow = vs.forceResolutionFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(forceResolution = v) } }
-        beGestureFlow = vs.beGestureProperty.toMutableStateFlow(scope)
+        beGestureFlow = vs.beGestureFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(beGesture = v) } }
-        vkDriverSystemFlow = vs.vkDriverSystemProperty.toMutableStateFlow(scope)
+        vkDriverSystemFlow = vs.vkDriverSystemFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(vkDriverSystem = v) } }
-        maxMemoryFlow = vs.maxMemoryProperty.toMutableStateFlow(scope)
-            .also { f -> f.collectIntoState(scope) { v -> copy(maxMemory = v.toInt()) } }
+        maxMemoryFlow = vs.maxMemoryFlow
+            .also { f -> f.collectIntoState(scope) { v -> copy(maxMemory = v) } }
 
         // ---- 显示属性（旧版弹窗回调里手动 setText，新版属性流驱动） ----
-        javaFlow = vs.javaProperty.toMutableStateFlow(scope)
+        javaFlow = vs.javaFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(javaName = v) } }
-        controllerFlow = vs.controllerProperty.toMutableStateFlow(scope)
+        controllerFlow = vs.controllerFlow
             .also { f ->
                 f.collectIntoState(scope) { v ->
                     copy(
@@ -201,11 +204,11 @@ class VersionSettingViewModel(
                     )
                 }
             }
-        graphicsBackendFlow = vs.graphicsBackendProperty.toMutableStateFlow(scope)
+        graphicsBackendFlow = vs.graphicsBackendFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(graphicsBackend = v) } }
-        rendererFlow = vs.rendererProperty.toMutableStateFlow(scope)
+        rendererFlow = vs.rendererFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(rendererDes = getRenderer(v).des) } }
-        driverFlow = vs.driverProperty.toMutableStateFlow(scope)
+        driverFlow = vs.driverFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(driver = v) } }
 
         // 控制器名称（对齐 :360-364 的 Controllers.addCallback）
@@ -215,11 +218,10 @@ class VersionSettingViewModel(
 
         // 游戏目录隔离变更联动刷新 Mod/World 页（对齐 :283-289 + :337-339，仅管理页）
         if (notifyRunDirectoryChange) {
-            val listener = InvalidationListener {
+            val subscription = FlowSubscriptions.subscribe(vs.isolateGameDirFlow) {
                 ManagePageManager.instance?.onRunDirectoryChange(profile, newVersionId)
             }
-            vs.isolateGameDirProperty.addListener(listener)
-            job.invokeOnCompletion { vs.isolateGameDirProperty.removeListener(listener) }
+            job.invokeOnCompletion { subscription.cancel() }
         }
 
         loadIcon()
