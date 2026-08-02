@@ -15,6 +15,7 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.compose.FCLDialogs;
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixCreateAccountDialog;
@@ -63,6 +64,24 @@ public class Versions {
         }
     }
 
+    /** 5.1 遗留 L3：下载失败提示（AlertLevel.ALERT 等价于 showAlert 的标题/文案，按钮仅 dismiss）。 */
+    private static void showModpackDownloadFailed(Context context, String url, Exception e) {
+        String title = context.getString(R.string.download_failed);
+        String message = AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + StringUtils.getStackTrace(e);
+        if (ComposeDialogs.USE_COMPOSE_VERSION_OP_ALERTS) {
+            // 5.1 遗留 L3 接入点：Miuix 失败提示弹窗（单按钮，对应遗留唯一的"确定"负按钮）
+            FCLDialogs.showAlert(context, title, message, null, null, null, false);
+        } else {
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+            builder.setCancelable(false);
+            builder.setTitle(title);
+            builder.setMessage(message);
+            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+            builder.create().show();
+        }
+    }
+
     public static void downloadModpackImpl(Context context, FCLUILayout parent, Profile profile, RemoteMod.Version file) {
         Path modpack;
         URL downloadURL;
@@ -70,13 +89,7 @@ public class Versions {
             modpack = Files.createTempFile("modpack", ".zip");
             downloadURL = new URL(file.getFile().getUrl());
         } catch (IOException e) {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-            builder.setCancelable(false);
-            builder.setTitle(context.getString(R.string.download_failed));
-            builder.setMessage(AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
-            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-            builder.create().show();
+            showModpackDownloadFailed(context, file.getFile().getUrl(), e);
             return;
         }
 
@@ -88,13 +101,7 @@ public class Versions {
                     } else if (e instanceof CancellationException) {
                         Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
                     } else {
-                        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-                        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-                        builder.setCancelable(false);
-                        builder.setTitle(context.getString(R.string.download_failed));
-                        builder.setMessage(AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
-                        builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-                        builder.create().show();
+                        showModpackDownloadFailed(context, file.getFile().getUrl(), e);
                     }
                 }).executor();
         if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
@@ -116,19 +123,33 @@ public class Versions {
         boolean isIndependent = profile.getVersionSetting(version).isIsolateGameDir();
         String message = isIndependent ? String.format(context.getString(R.string.version_manage_remove_confirm_independent), version) : String.format(context.getString(R.string.version_manage_remove_confirm), version);
 
-        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-        builder.setMessage(message);
-        builder.setPositiveButton(() -> {
-            ProgressDialog progress = new ProgressDialog(context);
+        Runnable deleteAction = () -> {
+            AppCompatDialog progress;
+            if (ComposeDialogs.USE_COMPOSE_VERSION_OP_ALERTS) {
+                // 5.1 遗留 L2 接入点：Miuix 进度弹窗（对应 FCLLibrary ProgressDialog）
+                progress = FCLDialogs.showProgress(context);
+            } else {
+                progress = new ProgressDialog(context);
+            }
             Task.runAsync(() -> {
                 profile.getRepository().removeVersionFromDisk(version);
             }).whenComplete(Schedulers.androidUIThread(), (e) -> {
                 progress.dismiss();
             }).start();
-        });
-        builder.setNegativeButton(null);
-        builder.create().show();
+        };
+        if (ComposeDialogs.USE_COMPOSE_VERSION_OP_ALERTS) {
+            // 5.1 遗留 L2 接入点：Miuix 删除确认弹窗（onResult=true 执行删除，否则仅 dismiss）
+            FCLDialogs.showAlert(context, null, message, null,
+                    context.getString(com.tungsten.fcllibrary.R.string.dialog_negative),
+                    result -> { if (result) deleteAction.run(); });
+        } else {
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+            builder.setMessage(message);
+            builder.setPositiveButton(deleteAction::run);
+            builder.setNegativeButton(null);
+            builder.create().show();
+        }
     }
 
     public static CompletableFuture<String> renameVersion(Context context, Profile profile, String version) {
@@ -254,16 +275,25 @@ public class Versions {
 
     private static boolean checkVersionForLaunching(Context context, Profile profile, String id) {
         if (id == null || !profile.getRepository().isLoaded() || !profile.getRepository().hasVersion(id)) {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-            builder.setCancelable(false);
-            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-            builder.setTitle(context.getString(R.string.launch_failed));
-            builder.setMessage(context.getString(R.string.version_empty_launch));
-            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+            Runnable jumpToDownload = () -> {
                 MainActivity.getInstance().refreshMenuView(null);
                 MainActivity.getInstance().binding.download.setSelected(true);
-            });
-            builder.create().show();
+            };
+            if (ComposeDialogs.USE_COMPOSE_VERSION_OP_ALERTS) {
+                // 5.1 遗留 L3 接入点：Miuix「未选择版本」提示（唯一按钮 = 确定并跳转下载页）
+                FCLDialogs.showAlert(context, context.getString(R.string.launch_failed),
+                        context.getString(R.string.version_empty_launch),
+                        null, null,
+                        result -> { if (result) jumpToDownload.run(); }, false);
+            } else {
+                FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+                builder.setCancelable(false);
+                builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                builder.setTitle(context.getString(R.string.launch_failed));
+                builder.setMessage(context.getString(R.string.version_empty_launch));
+                builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), jumpToDownload::run);
+                builder.create().show();
+            }
             return false;
         } else {
             return true;

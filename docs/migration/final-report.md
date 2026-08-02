@@ -92,8 +92,8 @@ Compose 页面统一为 `FCLCommonPage(context, id, parent, R.layout.page_compos
 
 | # | 风险/遗留 | 级别 | 处置建议 |
 |---|---|---|---|
-| 6 | DriverSelectDialog 未迁移且无开关（Compose 版本设置页直弹旧窗） | 低 | 与 #7 合并立项，走 FCLDialogs 基座 |
-| 7 | Versions.deleteVersion / checkVersionForLaunching / downloadModpackImpl 失败提示、LauncherHelper 启动进度 TaskDialog 未接开关 | 低 | 同上；LauncherHelper 涉及 titleProperty fakefx 绑定需专项评估 |
+| 6 | ~~DriverSelectDialog 未迁移且无开关~~ **已修复**（USE_COMPOSE_DRIVER_SELECT 双分支） | 低 | 已走 FCLDialogs 基座补迁，待真机验证 |
+| 7 | ~~Versions.deleteVersion / checkVersionForLaunching / downloadModpackImpl 失败提示、LauncherHelper 启动进度 TaskDialog 未接开关~~ **已修复**（USE_COMPOSE_VERSION_OP_ALERTS / USE_COMPOSE_TASK_DIALOG 双分支；titleProperty 预警经核实不存在，见 regression-report §4.2-#1 勘误） | 低 | 同上，待真机验证 |
 | 8 | `check*AarMetadata` 检查被禁用（miuix 要求 minCompileSdk=37 > 项目 35） | 中 | 升级 AGP 9.x + compileSdk 37 后必须移除 FCL/build.gradle.kts 中的禁用块并恢复检查（foundation-deps.md §5） |
 | 9 | glide-compose 1.0.0-alpha.6 为 alpha 构件，未真机验证 | 低 | 首次真机运行含图片页面时留意；零成本回退方案见 bridge-api §4.4 |
 | 10 | 弹窗单槽位不排队（requestAlertDialog 占用返回 false） | 低 | 并发弹窗场景（自动更新+任务失败）真机验证 F9；确需时扩展 Channel |
@@ -141,9 +141,9 @@ Compose 页面统一为 `FCLCommonPage(context, id, parent, R.layout.page_compos
 
 ### 5.4 版本与管理（USE_COMPOSE_VERSION_SETTING / RENAME_VERSION / DUPLICATE_VERSION / WORLD_EXPORT / MOD_INFO / ROLLBACK_MOD / JAVA_MANAGE / RENDERER_SELECT）
 
-- [ ] 版本列表选择/重命名/复制/删除（删除确认为已知遗留旧窗）；全局/单独设置 17 组绑定双向同步
+- [ ] 版本列表选择/重命名/复制/删除（L2 已修复：删除确认走 USE_COMPOSE_VERSION_OP_ALERTS 开关双分支）；全局/单独设置 17 组绑定双向同步
 - [ ] Mod 管理、存档管理、数据包、自动安装器（页面保留原生，同体系弹窗一致）
-- [ ] **DriverSelectDialog 旧窗弹出（已知遗留 L1）**；任务弹窗速度/取消/autoClose/不确定态（F8）
+- [ ] DriverSelectDialog（L1 已修复：USE_COMPOSE_DRIVER_SELECT 开关双分支，真机验证 Miuix 驱动列表选择与回写）；任务弹窗速度/取消/autoClose/不确定态（F8，含 L4 已修复的启动进度弹窗链路）
 
 ### 5.5 游戏内与控制（红线区 + 弹窗开关组）
 
@@ -197,7 +197,7 @@ Compose 页面统一为 `FCLCommonPage(context, id, parent, R.layout.page_compos
 ## 8. 遗留问题与后续行动（按优先级）
 
 1. **真机验收**（最高优先）：§5 清单全量执行；通过前不得执行 6.1 删除、不得发布。
-2. **小步骤补迁**：L1–L4（DriverSelectDialog、Versions 三处、LauncherHelper TaskDialog）统一走既有 FCLDialogs/MiuixTaskDialog 基座。
+2. ~~小步骤补迁 L1–L4~~ **已完成**（DriverSelectDialog、Versions 三处、LauncherHelper TaskDialog 均已走既有 FCLDialogs/MiuixTaskDialog 基座补迁，见 regression-report §4.1）。
 3. **SplashActivity + 2 个 Fragment 迁移**：单独立项（activity-migration §5.1）。
 4. **6.1 清理**：按 §6 顺序执行，每批过门禁。
 5. **构建栈升级**：AGP 9.x + compileSdk 37 后恢复 checkAarMetadata、评估 miuix-blur 引入（minSdk 33 冲突待产品决策）。

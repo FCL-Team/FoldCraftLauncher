@@ -10,12 +10,12 @@
 
 | 状态 | 含义 | activity_ | dialog_ | fragment_ | item_ | menu_ | page_ | ui_ | view_ | 合计 |
 |---|---|---|---|---|---|---|---|---|---|---|
-| ✅ 已 Compose 化（有开关，旧 XML 保留作回滚） | 调用点经 `USE_COMPOSE_*` 开关二选一 | 2 | 38 | 0 | 18 | 0 | 11 | 2 | 12 | **83** |
-| 🟡 保留原生（决策保留，代码路径活跃） | 红线、容器壳、或评估后保留 | 4 | 1 | 2 | 16 | 2 | 16 | 6 | 9 | **56** |
+| ✅ 已 Compose 化（有开关，旧 XML 保留作回滚） | 调用点经 `USE_COMPOSE_*` 开关二选一 | 2 | 38 | 0 | 19 | 0 | 11 | 2 | 12 | **84** |
+| 🟡 保留原生（决策保留，代码路径活跃） | 红线、容器壳、或评估后保留 | 4 | 1 | 2 | 15 | 2 | 16 | 6 | 9 | **55** |
 | 🗑 疑似废弃（孤儿/空壳，待维护者确认删除） | 全仓无活跃引用 | 0 | 3 | 0 | 0 | 0 | 0 | 0 | 0 | **3** |
 | **合计** | | 6 | 42 | 2 | 34 | 2 | 27 | 8 | 21 | **142** |
 
-迁移覆盖率（已 Compose 化 / 总数）：**83 / 142 ≈ 58.5%**；若扣除红线与疑似废弃项，分母为「决策上应迁移」的 83 项时，覆盖率为 **83 / 83 = 100%**——即凡决策迁移的项均已带开关落地，无「应迁未迁」缺口。
+迁移覆盖率（已 Compose 化 / 总数）：**84 / 142 ≈ 59.2%**；若扣除红线与疑似废弃项，分母为「决策上应迁移」的 84 项时，覆盖率为 **84 / 84 = 100%**——即凡决策迁移的项均已带开关落地，无「应迁未迁」缺口（5.1 遗留 L1–L4 已修复后口径）。
 
 补充事实：
 
@@ -80,7 +80,7 @@
 | `dialog_select_keycode.xml` | ✅ | `USE_COMPOSE_SELECT_KEYCODE` → MiuixSelectKeycodeDialog（Miuix 外壳 + AndroidView 包装原生键盘） |
 | `dialog_select_renderer.xml` | ✅ | `USE_COMPOSE_RENDERER_SELECT` → MiuixRendererSelectDialog |
 | `dialog_skip_login.xml` | ✅ | `USE_COMPOSE_SKIP_LOGIN` → MiuixLoginPromptDialogs |
-| `dialog_task.xml` | ✅ | `MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG` → MiuixTaskDialog/FCLTaskDialog（遗留调用点见 §4.2） |
+| `dialog_task.xml` | ✅ | `MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG` → MiuixTaskDialog/FCLTaskDialog（LauncherHelper 启动进度点已随 L4 接入，其余触发点核销见 §4.2） |
 | `dialog_tip_relogin.xml` | ✅ | `USE_COMPOSE_TIP_RELOGIN` → MiuixLoginPromptDialogs |
 | `dialog_translation.xml` | ✅ | `USE_COMPOSE_TRANSLATION` → MiuixTranslationDialog |
 | `dialog_update.xml` | ✅ | `USE_COMPOSE_UPDATE` → MiuixUpdateDialog |
@@ -116,7 +116,7 @@
 | `item_profile.xml` | ✅ | 随 VersionListPage 迁移（`USE_COMPOSE_VERSION_PAGES`） |
 | `item_remote_mod.xml` | ✅ | 随 DownloadPage 迁移（`USE_COMPOSE_DOWNLOAD_PAGES`） |
 | `item_remote_version.xml` | 🟡 | ControllerListAdapter（ControllerRepoPage）保留原生活跃 |
-| `item_renderer.xml` | 🟡 | **DriverSelectDialog 未迁移**（无开关，Compose 版本设置页 VersionSettingHost.kt:60 仍直弹），见 §4.3 |
+| `item_renderer.xml` | ✅ | 随 DriverSelectDialog 迁移（5.1 遗留 L1 已修复：`USE_COMPOSE_DRIVER_SELECT` → MiuixDriverSelectDialog；旧实现与 `USE_COMPOSE_RENDERER_SELECT` 共用此布局） |
 | `item_screenshot_path.xml` | ✅ | 随 ControllerUploadDialog 迁移（`USE_COMPOSE_CONTROLLER_UPLOAD`） |
 | `item_spinner.xml` | 🟡 | FCLSpinner 项，保留原生页面/游戏侧活跃（GameMenu、EditViewDialog 回滚等） |
 | `item_spinner_auto_tint.xml` | 🟡 | 同上（WorldInfoPage、ControllerRepoPage、ModpackInfoPage 等活跃） |
@@ -266,8 +266,10 @@
 | 45 | `ComposeMainUI.USE_COMPOSE_MAIN_UI` | true | `ui/main/compose/ComposeMainUI.kt:48` | MainUI + ui_main |
 | 46 | `ComposeActivities.USE_COMPOSE_WEB` | true | `activity/compose/ComposeActivities.kt:16` | WebActivity View 路径 + activity_web |
 | 47 | `ComposeActivities.USE_COMPOSE_SHELL` | true | ComposeActivities.kt:17 | ShellActivity View 路径 + activity_shell |
+| 48 | `ComposeDialogs.USE_COMPOSE_DRIVER_SELECT` | true | ComposeDialogs.kt:28（5.1 遗留 L1 修复新增） | DriverSelectDialog + item_renderer |
+| 49 | `ComposeDialogs.USE_COMPOSE_VERSION_OP_ALERTS` | true | ComposeDialogs.kt:36（5.1 遗留 L2/L3 修复新增） | Versions.java 内 3 处 FCLAlertDialog + deleteVersion 的 ProgressDialog |
 
-> 合计：ComposeDialogs 40 + MiuixTaskDialog 1 + ComposeVersionPages 2 + SettingPageManager 1 + ComposeDownloadPages 1 + ComposeAccountUI 1 + ComposeMainUI 1 + ComposeActivities 2 = **49 个开关，48 个 true，1 个 false（#21 联机菜单，有意保留原生）**。
+> 合计：ComposeDialogs 42 + MiuixTaskDialog 1 + ComposeVersionPages 2 + SettingPageManager 1 + ComposeDownloadPages 1 + ComposeAccountUI 1 + ComposeMainUI 1 + ComposeActivities 2 = **51 个开关，50 个 true，1 个 false（#21 联机菜单，有意保留原生）**。
 
 ---
 
@@ -282,15 +284,15 @@
 | A. 回滚分支 / 回滚专用类（开关 false 才可达，预期保留） | 25 | ≈70 | 双分支 else 侧（Versions、WorldExportDialog、AccountListItem、JavaManageDialog、OAuthAccountLoginDialog、CreateAccountDialog、ServerListAdapter、OpenFolderDialog、VersionSettingPage、LauncherSettingPage、DownloadPage、UpdateDialog、ButtonStyleAdapter、DirectionStyleAdapter、ViewGroupAdapter 等） |
 | B. 保留原生页面/游戏侧（决策保留，活跃，正常） | 17 | ≈75 | ModListPage(10)、ModUpdatesPage(6)、InstallerListPage(6)、LocalModpackPage(6)、ModpackInstaller(14)、ModpackFileSelectionPage(4)、DatapackListPage(4)、ControllerRepoPage(4)、ControllerDownloadPage(4)、RemoteModpackPage(4)、WorldListPage/WorldListItem(5)、ManagePage(2)、MultiplayerUI(2)、GameMenu(2)、JarExecutorMenu(2)、Controller(setting,4)、EditableControllerListAdapter(2) |
 | C. Compose 侧桥接回退（单槽位占用时的刻意回退，bridge-api §2.3 设计） | 6 | ≈10 | LauncherSettingHost(1)、RemoteModActions(1)、AccountScreen(1)、FCLComposeDialog(1)、MiuixJavaManageDialog(5)、MiuixCreateAccountDialog(2) 等 Miuix 弹窗内部失败提示 |
-| D. **迁移流中的未迁移遗留（无开关，Compose 前台仍弹旧窗）** | 4 | ≈12 | 见下方清单 |
+| D. ~~迁移流中的未迁移遗留（无开关，Compose 前台仍弹旧窗）~~ **已清零（L1–L4 修复后）** | 0 | 0 | 原 4 项遗留已全部接入开关，见下方清单 |
 | E. 启动链路（Splash/运行时，保留原生域，活跃正常） | 3 | ≈5 | SplashActivity(2)、RuntimeFragment(1)、MainActivity(1)、LauncherHelper(10)（LauncherHelper 属启动链路保留原生） |
 
-**D 类清单（建议后续单独立项迁移，本步不修）：**
+**原 D 类清单（L1–L4，现已全部修复，均带独立开关、旧实现保留可回滚）：**
 
-1. `Versions.java:119-131` — **deleteVersion 删除版本二次确认弹窗**：Compose 版本列表页（VersionListScreen.kt:446）与回滚路径共用此方法，无开关，Compose 前台弹出旧 FCLAlertDialog + 旧 ProgressDialog。功能无损（平台 Window 弹窗可正常显示），视觉不统一。
-2. `Versions.java:257-266` — checkVersionForLaunching「未选择版本」提示：启动游戏入口（含 Compose 主页启动按钮）共用，无开关。
-3. `Versions.java:73-79 / 91-97` — downloadModpackImpl 下载失败弹窗：Compose 下载流（RemoteModActions.kt:47）共用，无开关（其 TaskDialog 部分已接开关，失败提示未接）。
-4. `com/mio/ui/dialog/DriverSelectDialog.kt` — 渲染器选择弹窗（对应 item_renderer）：**整个弹窗未迁移、无开关**，Compose 版本设置页（VersionSettingHost.kt:60）与回滚路径（VersionSettingPage.kt:541）均直弹旧实现。注意同族 RendererSelectDialog 已迁（`USE_COMPOSE_RENDERER_SELECT`），DriverSelectDialog 是漏迁项。
+1. ~~`Versions.java:119-131` — deleteVersion 删除版本二次确认弹窗~~ → **L2 已修复**：确认弹窗与删除进度弹窗接 `ComposeDialogs.USE_COMPOSE_VERSION_OP_ALERTS` 双分支（Miuix 侧走 `FCLDialogs.showAlert` / `FCLDialogs.showProgress`）；删除动作（removeVersionFromDisk + UI 线程 dismiss 进度）原样保留，调用方刷新契约不变。
+2. ~~`Versions.java:257-266` — checkVersionForLaunching「未选择版本」提示~~ → **L3 已修复**：同开关双分支；Miuix 侧单按钮（文案同遗留 `dialog_positive`），点击后 refreshMenuView + 跳转下载页动作逐行对齐。
+3. ~~`Versions.java:73-79 / 91-97` — downloadModpackImpl 下载失败弹窗~~ → **L3 已修复**：两处失败提示提取为 `showModpackDownloadFailed`，同开关双分支；取消 Toast 与成功进 LocalModpackPage 链路未动。
+4. ~~`com/mio/ui/dialog/DriverSelectDialog.kt` — 驱动选择弹窗（对应 item_renderer）~~ → **L1 已修复**：新增 `ui/compose/dialog/MiuixDriverSelectDialog.kt`，开关 `ComposeDialogs.USE_COMPOSE_DRIVER_SELECT`；两个调用点（Compose 侧 VersionSettingHost.kt:60、回滚侧 VersionSettingPage.kt:541）均已接双分支。语义对齐：选中项写 `VersionSetting.driver` + `DriverPlugin.selected`，dismiss 后以驱动名回调；取消仅 dismiss。
 
 ### 4.2 TaskDialog 剩余触发点核销（对照 bridge-api.md §6.1 / interaction-map G5）
 
@@ -299,7 +301,7 @@ G5 登记 19 处触发点。经逐点 grep 核实：3.2/3.4 已接开关替换 *
 
 | # | 触发点 | 当前状态 | 核销结论 |
 |---|---|---|---|
-| 1 | `LauncherHelper.java:133`（启动游戏进度） | **活跃遗留，无开关** | 未迁。使用 `titleProperty()` fakefx 绑定 + setCancel 动态切换（bridge-api §6.1 已预警需逐点评估），属启动链路，建议随 deleteVersion 同批立项 |
+| 1 | `LauncherHelper.java:133`（启动游戏进度） | ~~活跃遗留，无开关~~ **已接开关（L4 修复）** | 已接 `MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG` 双分支。勘误：bridge-api §6.1 预警的 `titleProperty()` 绑定 + setCancel 动态切换在当前源码中并不存在——该调用点实际仅用 `setTitle`（静态）+ `TaskCancellationAction.NORMAL`（= no-op，与 `MiuixTaskDialog(context)` 默认取消动作一致）+ `setExecutor(executor, false)` + onStop 手动 dismiss，MiuixTaskDialog 既有 API 全部承接，无需新增 titleProperty 能力 |
 | 2 | `ModpackInstaller.java:35` | 活跃（保留原生向导内） | 页面本身保留原生，旧 TaskDialog 与页面同体系，一致，无需处理 |
 | 3 | `ModpackSelectionPage.java:98` | 活跃（同上） | 同上 |
 | 4 | `ModpackSelectionPage.java:125` | 活跃（同上） | 同上 |
@@ -311,13 +313,13 @@ G5 登记 19 处触发点。经逐点 grep 核实：3.2/3.4 已接开关替换 *
 | 10 | `ControllerDownloadPage.java:199` | 活跃（保留原生页内） | 同上 |
 | 11 | `UpdateDialog.java:121` | 仅回滚可达（`USE_COMPOSE_UPDATE=true` 时 UpdateChecker:93 走 MiuixUpdateDialog，其内部 :139/:144 双分支已接开关） | 已核销（回滚路径） |
 
-结论：剩余 11 处中 **2 处已核销**（仅回滚路径可达），**8 处活跃但与保留原生页面同体系、新旧一致无需处理**，唯一真正的跨体系遗留是 **#1 LauncherHelper 启动游戏进度弹窗**（Compose 主页点启动 → 旧 TaskDialog），与 D 类 deleteVersion 同属「启动/版本操作共用方法未接开关」一组，建议一并立项。
+结论：剩余 11 处中 **3 处已核销**（#5/#11 仅回滚路径可达，#1 LauncherHelper 已接 `USE_COMPOSE_TASK_DIALOG` 双分支，L4 修复），**8 处活跃但与保留原生页面同体系、新旧一致无需处理**；跨体系遗留已清零。
 
 ### 4.3 其他旧 UI 类调用点抽查
 
 - `FCLDialog` 子类旧实现（38 个）全部仅回滚可达或保留原生域内使用，无跨体系遗漏（§2.2 逐一对照）。
-- `DriverSelectDialog` 为唯一发现的「应迁未迁」弹窗（见 §4.1-D4），影响面小（仅版本设置页一处入口），不构成构建/功能阻塞，**本步不做代码改动**，登记为遗留问题。
-- `ProgressDialog`（FCLLibrary）：Versions.deleteVersion/renameVersion/duplicateVersion 内部仍在用；rename/duplicate 已被 Miuix 弹窗包裹（进度在 Miuix 弹窗语义内），deleteVersion 见 §4.1-D1。
+- ~~`DriverSelectDialog` 为唯一发现的「应迁未迁」弹窗~~ → L1 已修复（§4.1-D4），「应迁未迁」弹窗清零。
+- `ProgressDialog`（FCLLibrary）：Versions.deleteVersion/renameVersion/duplicateVersion 内部仍在用；rename/duplicate 已被 Miuix 弹窗包裹（进度在 Miuix 弹窗语义内），deleteVersion 已随 L2 接双分支（Miuix 侧走 `FCLDialogs.showProgress`）。
 - 未发现任何已迁移页面在开关 true 路径下直接 new 旧 FCLDialog 子类（grep `new XxxDialog(` 对照开关分支逐一确认）。
 
 ---
@@ -328,8 +330,8 @@ G5 登记 19 处触发点。经逐点 grep 核实：3.2/3.4 已接开关替换 *
 
 ### 5.1-A 启动游戏
 
-- [ ] A1 版本列表选择版本 → 主页点启动 → 游戏进入画面（涉及：`USE_COMPOSE_MAIN_UI`、`USE_COMPOSE_VERSION_PAGES`；启动进度弹窗为遗留 TaskDialog（§4.2-#1），非回归）
-- [ ] A2 未选版本时点启动 → 「未选择版本」提示弹出并可跳转下载页（遗留 FCLAlertDialog，§4.1-D2，非回归）
+- [ ] A1 版本列表选择版本 → 主页点启动 → 游戏进入画面（涉及：`USE_COMPOSE_MAIN_UI`、`USE_COMPOSE_VERSION_PAGES`；启动进度弹窗已接 `USE_COMPOSE_TASK_DIALOG`，L4 修复后需在真机验证 Miuix 分支进度/取消/失败提示）
+- [ ] A2 未选版本时点启动 → 「未选择版本」提示弹出并可跳转下载页（已接 `USE_COMPOSE_VERSION_OP_ALERTS`，L3 修复；回滚：改 false 复测）
 - [ ] A3 未登录时点启动 → 弹出 Miuix 创建账户弹窗，创建后继续启动（`USE_COMPOSE_CREATE_ACCOUNT`；回滚：改 false 复测）
 - [ ] A4 跳过登录确认、重新登录提示两弹窗文案/按钮行为一致（`USE_COMPOSE_SKIP_LOGIN` / `USE_COMPOSE_TIP_RELOGIN`）
 - [ ] A5 回滚验证：`USE_COMPOSE_MAIN_UI = false` 后主页与启动链路同迁移前
@@ -375,7 +377,7 @@ G5 登记 19 处触发点。经逐点 grep 核实：3.2/3.4 已接开关替换 *
 - [ ] F4 JVMCrashActivity 崩溃页四按钮 + `:crash` 进程语义
 - [ ] F5 主题联动：改主题色/深浅色后全部 Compose 页面与 Web/Shell 即时跟随；三模式（Light/Dark/FollowSystem）切换
 - [ ] F6 设置页全项（LauncherSettingScreen 1073 行旧页面对照）、游戏设置 17 组绑定双向同步、关于/帮助页
-- [ ] F7 版本列表：选择/重命名/复制/删除（删除确认弹窗为遗留 FCLAlertDialog，§4.1-D1，记录但不判失败）/全局设置入口
+- [ ] F7 版本列表：选择/重命名/复制/删除（删除确认弹窗已接 `USE_COMPOSE_VERSION_OP_ALERTS`，L2 修复，真机验证 Miuix 分支确认→进度→列表刷新）/全局设置入口
 - [ ] F8 任务弹窗：下载速度显示、取消语义（executor.cancel + 关闭）、autoClose、进度 <0 不确定态
 - [ ] F9 弹窗单槽位回退：Compose 前台触发并发弹窗时回退 FCLAlertDialog 不丢提示（bridge-api §6.2）
 - [ ] F10 动画：列表入场（animationSpeed 桥接）、按压反馈、页面切换壳层动画无缺口（4.2）
@@ -385,11 +387,11 @@ G5 登记 19 处触发点。经逐点 grep 核实：3.2/3.4 已接开关替换 *
 
 ## 6. 结论与遗留问题
 
-1. **覆盖率**：142 个 layout 中 83 已 Compose 化（全部带独立回滚开关）、56 保留原生（红线/容器/决策保留且活跃）、3 疑似废弃（`dialog_relogin_classic`、`dialog_modpack_selection`、`dialog_world_name`，另附孤儿类 `ModpackSelectionDialog.java`）；「应迁尽迁」口径下覆盖率 100%。
-2. **发现的遗漏（均不阻塞构建与功能，本步未改代码）**：
-   - L1 `DriverSelectDialog` 未迁移且无开关（§4.1-D4）——唯一「应迁未迁」弹窗；
-   - L2 `Versions.deleteVersion` 删除确认弹窗未接开关（§4.1-D1），Compose 版本列表删除时弹旧窗；
-   - L3 `Versions.checkVersionForLaunching` / `downloadModpackImpl` 失败提示未接开关（§4.1-D2/D3）；
-   - L4 `LauncherHelper` 启动进度 TaskDialog 未接开关（§4.2-#1），涉及 titleProperty fakefx 绑定，需专项评估。
-3. **建议**：L1–L4 合并为一个小步骤（统一走 `FCLDialogs.showAlert` / MiuixTaskDialog 既有基座）在真机验收前完成；3 个废弃文件与孤儿类随 6.1 清理删除（见 final-report.md §6）。
-4. **构建门禁**：本步无代码改动；`GRADLE_USER_HOME=E:/gradle-home ./gradlew :FCL:assembleDebug` 结果见 final-report.md §7（与本报告同日执行）。
+1. **覆盖率**：142 个 layout 中 84 已 Compose 化（全部带独立回滚开关）、55 保留原生（红线/容器/决策保留且活跃）、3 疑似废弃（`dialog_relogin_classic`、`dialog_modpack_selection`、`dialog_world_name`，另附孤儿类 `ModpackSelectionDialog.java`）；「应迁尽迁」口径下覆盖率 100%。
+2. ~~**发现的遗漏**~~ **L1–L4 已全部修复（均不阻塞构建与功能，现已接入开关）**：
+   - L1 `DriverSelectDialog` ~~未迁移且无开关~~ → 已修复：新增 `MiuixDriverSelectDialog` + `USE_COMPOSE_DRIVER_SELECT`，两个调用点双分支（§4.1-D4）；
+   - L2 `Versions.deleteVersion` 删除确认弹窗 ~~未接开关~~ → 已修复：接 `USE_COMPOSE_VERSION_OP_ALERTS`，Miuix 侧走 `FCLDialogs.showAlert`/`showProgress`（§4.1-D1）；
+   - L3 `Versions.checkVersionForLaunching` / `downloadModpackImpl` 失败提示 ~~未接开关~~ → 已修复：同开关双分支（§4.1-D2/D3）；
+   - L4 `LauncherHelper` 启动进度 TaskDialog ~~未接开关~~ → 已修复：接 `MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG`；勘误——预警中的 titleProperty fakefx 绑定在当前源码并不存在，实际仅静态 setTitle + NORMAL 取消 + 手动 dismiss，既有 MiuixTaskDialog API 全部承接（§4.2-#1）。
+3. **遗留**：3 个废弃文件与孤儿类随 6.1 清理删除（见 final-report.md §6）。本步修复未做真机验证（环境无真机），L1–L4 的真机对照项已更新至 §5 清单。
+4. **构建门禁**：L1–L4 修复后 `GRADLE_USER_HOME=E:/gradle-home ./gradlew :FCL:assembleDebug` → **BUILD SUCCESSFUL**（155 actionable tasks，编译警告仅过时 API 提示，无新增错误）。
