@@ -50,6 +50,9 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixSkipLoginDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixTipReLoginDialog;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.NativeLibPlugin;
@@ -589,8 +592,22 @@ public final class LauncherHelper {
 
                 CompletableFuture<Task<AuthInfo>> future = new CompletableFuture<>();
                 Schedulers.androidUIThread().execute(() -> {
-                    TipReLoginLoginDialog dialog = new TipReLoginLoginDialog(context, account, future);
-                    dialog.show();
+                    if (ComposeDialogs.USE_COMPOSE_TIP_RELOGIN) {
+                        // 3.2 批 1 接入点：Miuix 凭证过期提示弹窗
+                        new MiuixTipReLoginDialog(context,
+                                () -> {
+                                    try {
+                                        future.complete(Task.completed(account.playOffline()));
+                                    } catch (AuthenticationException e2) {
+                                        future.completeExceptionally(e2);
+                                    }
+                                },
+                                () -> future.completeExceptionally(new CancellationException())
+                        ).show();
+                    } else {
+                        TipReLoginLoginDialog dialog = new TipReLoginLoginDialog(context, account, future);
+                        dialog.show();
+                    }
                 });
                 return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
             } catch (AuthenticationException e) {
@@ -598,8 +615,23 @@ public final class LauncherHelper {
 
                 CompletableFuture<Task<AuthInfo>> future = new CompletableFuture<>();
                 Schedulers.androidUIThread().execute(() -> {
-                    SkipLoginDialog dialog = new SkipLoginDialog(context, account, future);
-                    dialog.show();
+                    if (ComposeDialogs.USE_COMPOSE_SKIP_LOGIN) {
+                        // 3.2 批 1 接入点：Miuix 登录失败（跳过登录）弹窗
+                        new MiuixSkipLoginDialog(context,
+                                () -> future.complete(logIn(context, account)),
+                                () -> {
+                                    try {
+                                        future.complete(Task.completed(account.playOffline()));
+                                    } catch (AuthenticationException e2) {
+                                        future.completeExceptionally(e2);
+                                    }
+                                },
+                                () -> future.completeExceptionally(new CancellationException())
+                        ).show();
+                    } else {
+                        SkipLoginDialog dialog = new SkipLoginDialog(context, account, future);
+                        dialog.show();
+                    }
                 });
                 return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
             }

@@ -16,6 +16,8 @@ import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixOldVersionDialog;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.FileDownloadTask;
@@ -262,8 +264,13 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
             if (controllerVersion.getHistory().isEmpty()) {
                 Toast.makeText(getContext(), getContext().getString(R.string.control_download_history_empty), Toast.LENGTH_SHORT).show();
             } else {
-                OldVersionDialog dialog = new OldVersionDialog(getContext(), controllerVersion.getHistory(), this::download);
-                dialog.show();
+                if (ComposeDialogs.USE_COMPOSE_CONTROLLER_OLD_VERSION) {
+                    // 3.2 批 1 接入点：Miuix 手柄历史版本弹窗
+                    new MiuixOldVersionDialog(getContext(), controllerVersion.getHistory(), this::download).show();
+                } else {
+                    OldVersionDialog dialog = new OldVersionDialog(getContext(), controllerVersion.getHistory(), this::download);
+                    dialog.show();
+                }
             }
         }
         if (view == latest && controllerVersion != null) {
