@@ -70,9 +70,9 @@ import kotlinx.coroutines.flow.StateFlowKt;
  *       故由 Profiles 在替换后显式调用 {@link #invalidate()} 触发存盘，触发点不变。</li>
  * </ul>
  *
- * <p>序列化：字段类型变为 Flow 后 JavaFxPropertyTypeAdapterFactory 不再适用，
+ * <p>序列化：字段类型变为 Flow 后原属性类型适配工厂不再适用，
  * 改用 {@link Serializer} 手写适配，JSON 字段集/字段顺序/值级渲染与原工厂产物
- * 逐字节一致（实测回环见 docs/migration/fakefx-removal-plan.md §九）。</p>
+ * 逐字节一致（实测回环见迁移方案文档 §九）。</p>
  */
 @JsonAdapter(Config.Serializer.class)
 public final class Config implements Cloneable {
@@ -383,7 +383,7 @@ public final class Config implements Cloneable {
 
     /**
      * Config 的值级 JSON 适配器：字段集/字段顺序（按原声明序）/值渲染与
-     * JavaFxPropertyTypeAdapterFactory + creators 的产物逐字节一致。
+     * 原属性类型适配工厂 + creators 的产物逐字节一致。
      * 缺失字段保留构造默认值（与原工厂一致）；JSON null 字符串映射为 null。
      */
     public static final class Serializer implements JsonSerializer<Config>, JsonDeserializer<Config> {

@@ -6,7 +6,6 @@ import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
-import com.tungsten.fclcore.util.gson.observable.factories.JavaFxPropertyTypeAdapterFactory;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 
@@ -95,7 +94,6 @@ public class Controllers {
                 if (DEFAULT_CONTROLLER == null) {
                     String str = IOUtils.readFullyAsString(Controllers.class.getResourceAsStream("/assets/controllers/00000000.json"));
                     DEFAULT_CONTROLLER = new GsonBuilder()
-                            .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                             .setPrettyPrinting()
                             .create().fromJson(str, Controller.class);
                 }
@@ -156,7 +154,6 @@ public class Controllers {
                 try {
                     String str = FileUtils.readText(json);
                     Controller controller = new GsonBuilder()
-                            .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                             .setPrettyPrinting()
                             .create().fromJson(str, Controller.class);
                     if (controller == null) {

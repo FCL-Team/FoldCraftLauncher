@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.StateFlowKt;
  * StateFlow 同值（内容 equals）不发射，与原 ObservableList 同内容 setAll 也发事件的
  * 差异仅在"无变化不通知"，消费方（存盘/刷新）均幂等，无行为差异。</p>
  *
- * <p>与 fakefx 一致：不做隐式线程切换，发射线程即订阅回调线程
+ * <p>与原属性体系一致：不做隐式线程切换，发射线程即订阅回调线程
  * （经 {@code FlowSubscriptions} 订阅时）。</p>
  */
 public final class FlowList<T> implements Iterable<T> {

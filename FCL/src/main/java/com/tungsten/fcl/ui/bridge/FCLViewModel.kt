@@ -2,14 +2,11 @@ package com.tungsten.fcl.ui.bridge
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tungsten.fclcore.observable.property.Property
-import com.tungsten.fclcore.observable.value.ObservableValue
 import com.tungsten.fclcore.util.Logging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,14 +18,13 @@ import java.util.logging.Level
  * 迁移期统一 ViewModel 基类（小步骤 2.3，基于 lifecycle-viewmodel-compose 2.10.0）。
  *
  * 范式（对 interaction-map.md G4/G10 的承接）：
- * - 单一 [uiState]：Compose 页面的唯一渲染数据源，替代原来"View 直接读写 observable 属性 +
+ * - 单一 [uiState]：Compose 页面的唯一渲染数据源，替代原来"View 直接读写共享状态 +
  *   静态单例反向刷新"的网状耦合。页面状态用一个不可变 data class 描述，一律经
  *   [updateState] 以 reducer 方式更新（`updateState { copy(x = v) }`）。
  * - 一次性 [events]：导航、弹 Toast、触发文件选择等"消费一次"的副作用，由 Compose 侧
  *   在 LaunchedEffect 里 collect 后转交 [LegacyBridge] 或宿主 Activity 处理。
- * - observable 承接：遗留配置对象（Config / VersionSetting 等）仍是 observable Property，
- *   用 [asStateFlow] / [asMutableStateFlow] 转成 Flow 后投影进 UiState（单向）或直接
- *   双向桥接（见 docs/migration/bridge-api.md §3 的对照表）。
+ * - 配置对象承接：Config / VersionSetting 等配置对象的 `xxxFlow()`（StateFlow）
+ *   直接投影进 UiState（见 docs/migration/bridge-api.md §3 的对照表）。
  *
  * 子类只需：声明 UiState/Event 两个类型 → 传入初始状态 → 暴露供 Compose 调用的
  * 语义化方法（setXxx / onXxx）。具体示例见 ui/bridge/example/LauncherSettingsViewModel.kt。
@@ -65,9 +61,9 @@ abstract class FCLViewModel<S : Any, E : Any>(initialState: S) : ViewModel() {
 
     /**
      * 把任意 Flow 投影进 [uiState]：每来一个新值就 `updateState { reducer(it) }`。
-     * 这是 observable 属性 → UiState 的标准接法：
+     * 这是配置 StateFlow → UiState 的标准接法：
      * ```kotlin
-     * init { config.xxxProperty().asStateFlow().observeIntoState { copy(xxx = it) } }
+     * init { config.xxxFlow().observeIntoState { copy(xxx = it) } }
      * ```
      */
     protected fun <T> Flow<T>.observeIntoState(reducer: S.(T) -> S) {
@@ -75,15 +71,6 @@ abstract class FCLViewModel<S : Any, E : Any>(initialState: S) : ViewModel() {
             collect { value -> updateState { reducer(value) } }
         }
     }
-
-    /** observable 属性 → 只读 StateFlow 的便捷封装（scope 固定为 viewModelScope）。 */
-    protected fun <T> ObservableValue<T>.asStateFlow(
-        started: SharingStarted = SharingStarted.WhileSubscribed(5_000),
-    ): StateFlow<T> = toStateFlow(viewModelScope, started)
-
-    /** observable Property → 可变 StateFlow 的便捷封装（双向，scope 固定为 viewModelScope）。 */
-    protected fun <T> Property<T>.asMutableStateFlow(): MutableStateFlow<T> =
-        toMutableStateFlow(viewModelScope)
 
     private companion object {
         const val EVENT_BUFFER_CAPACITY = 16

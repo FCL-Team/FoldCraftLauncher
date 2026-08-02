@@ -15,7 +15,7 @@ import java.util.function.Consumer
  * 订阅在共享作用域内收集 Flow，每收到一个值就调用 [Consumer.accept]。
  *
  * 线程模型：作用域使用 [Dispatchers.Unconfined]，回调在**发射线程**上同步执行，
- * 与被替代的 fakefx/observable 监听器语义一致（不做隐式线程切换，
+ * 与被替代的旧属性监听器语义一致（不做隐式线程切换，
  * 需要切线程的调用方自行在回调内调度）。
  *
  * 注意：[StateFlow] 是合并（conflated）流，高频连续发射可能被合并为一次回调；
