@@ -23,6 +23,10 @@ import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
 import com.tungsten.fcl.control.data.DirectionStyles;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixButtonStyleDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixDirectionStyleDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixViewGroupDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -296,9 +300,19 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 FCLButton style = findInfoView(R.id.style);
                 style.setOnClickListener(v -> {
                     ControlButtonStyle targetStyle = ButtonStyles.findStyleByName(data.getStyle().getName());
-                    ButtonStyleDialog dialog = new ButtonStyleDialog(context, true, targetStyle, data::setStyle);
-                    dialog.setGameMenu(menu);
-                    dialog.show();
+                    // 3.2 批 4 接入点：按钮样式选择弹窗按开关双分支（回调逻辑两分支一致）
+                    if (ComposeDialogs.USE_COMPOSE_BUTTON_STYLE) {
+                        MiuixButtonStyleDialog dialog = new MiuixButtonStyleDialog(context, true, targetStyle, s -> {
+                            data.setStyle(s);
+                            return Unit.INSTANCE;
+                        });
+                        dialog.setGameMenu(menu);
+                        dialog.show();
+                    } else {
+                        ButtonStyleDialog dialog = new ButtonStyleDialog(context, true, targetStyle, data::setStyle);
+                        dialog.setGameMenu(menu);
+                        dialog.show();
+                    }
                 });
 
                 FCLTextView styleText = findInfoView(R.id.style_text);
@@ -384,8 +398,17 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                                 selectedViewGroups.add(vg);
                             }
                         }
-                        ViewGroupDialog dialog = new ViewGroupDialog(context, menu, true, selectedViewGroups, viewGroups -> e.setBindViewGroup(FXCollections.observableList(viewGroups.stream().map(ControlViewGroup::getId).collect(Collectors.toList()))));
-                        dialog.show();
+                        // 3.2 批 4 接入点：视图组选择弹窗按开关双分支（回调逻辑两分支一致）
+                        if (ComposeDialogs.USE_COMPOSE_VIEW_GROUP) {
+                            MiuixViewGroupDialog dialog = new MiuixViewGroupDialog(context, menu, true, selectedViewGroups, viewGroups -> {
+                                e.setBindViewGroup(FXCollections.observableList(viewGroups.stream().map(ControlViewGroup::getId).collect(Collectors.toList())));
+                                return Unit.INSTANCE;
+                            });
+                            dialog.show();
+                        } else {
+                            ViewGroupDialog dialog = new ViewGroupDialog(context, menu, true, selectedViewGroups, viewGroups -> e.setBindViewGroup(FXCollections.observableList(viewGroups.stream().map(ControlViewGroup::getId).collect(Collectors.toList()))));
+                            dialog.show();
+                        }
                     });
                 }
 
@@ -576,9 +599,19 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 FCLButton style = findInfoView(R.id.style);
                 style.setOnClickListener(v -> {
                     ControlDirectionStyle target = DirectionStyles.findStyleByName(data.getStyle().getName());
-                    DirectionStyleDialog dialog = new DirectionStyleDialog(context, true, target, data::setStyle);
-                    dialog.setGameMenu(menu);
-                    dialog.show();
+                    // 3.2 批 4 接入点：方向键样式选择弹窗按开关双分支（回调逻辑两分支一致）
+                    if (ComposeDialogs.USE_COMPOSE_DIRECTION_STYLE) {
+                        MiuixDirectionStyleDialog dialog = new MiuixDirectionStyleDialog(context, true, target, s -> {
+                            data.setStyle(s);
+                            return Unit.INSTANCE;
+                        });
+                        dialog.setGameMenu(menu);
+                        dialog.show();
+                    } else {
+                        DirectionStyleDialog dialog = new DirectionStyleDialog(context, true, target, data::setStyle);
+                        dialog.setGameMenu(menu);
+                        dialog.show();
+                    }
                 });
 
                 FCLTextView styleText = findInfoView(R.id.style_text);

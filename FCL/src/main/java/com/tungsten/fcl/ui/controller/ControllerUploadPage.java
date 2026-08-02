@@ -11,6 +11,8 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.download.ControllerIndex;
 import com.tungsten.fcl.control.download.ControllerVersion;
 import com.tungsten.fcl.setting.Controller;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixControllerUploadDialog;
 import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.Schedulers;
@@ -80,8 +82,14 @@ public class ControllerUploadPage extends FCLTempPage implements View.OnClickLis
             joinQQGroup(QQ_GROUP_KEY);
         }
         if (view == share) {
-            ControllerUploadDialog dialog = new ControllerUploadDialog(getContext(), getActivity(), controller, this::share);
-            dialog.show();
+            // 3.2 批 4 接入点：控制器上传弹窗双分支
+            if (ComposeDialogs.USE_COMPOSE_CONTROLLER_UPLOAD) {
+                MiuixControllerUploadDialog dialog = new MiuixControllerUploadDialog(getContext(), getActivity(), controller, this::share);
+                dialog.show();
+            } else {
+                ControllerUploadDialog dialog = new ControllerUploadDialog(getContext(), getActivity(), controller, this::share);
+                dialog.show();
+            }
         }
     }
 

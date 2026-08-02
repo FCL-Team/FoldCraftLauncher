@@ -33,8 +33,12 @@ import com.mio.touchcontroller.TouchController;
 import com.mio.touchcontroller.TouchControllerInputView;
 import com.mio.ui.dialog.GamepadMapDialog;
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixButtonStyleDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixDirectionStyleDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixEditViewDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixGamepadMapDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixQuickInputDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixViewGroupDialog;
 import com.mio.ui.view.CursorView;
 import com.mio.ui.view.DraggableTextView;
 import com.mio.util.AndroidUtilKt;
@@ -923,14 +927,19 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == manageViewGroups) {
-            ViewGroupDialog dialog = new ViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null);
-            dialog.show();
+            // 3.2 批 4 接入点：Miuix 视图组管理弹窗
+            if (ComposeDialogs.USE_COMPOSE_VIEW_GROUP) {
+                new MiuixViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null).show();
+            } else {
+                ViewGroupDialog dialog = new ViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null);
+                dialog.show();
+            }
         }
         if (v == addButton) {
             if (getViewGroup() == null) {
                 Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
             } else {
-                EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, new EditViewDialog.Callback() {
+                EditViewDialog.Callback callback = new EditViewDialog.Callback() {
                     @Override
                     public void onPositive(CustomControl view) {
                         viewManager.addView(view);
@@ -940,15 +949,21 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                     public void onClone(CustomControl view) {
                         // Ignore
                     }
-                }, false);
-                dialog.show();
+                };
+                // 3.2 批 4 接入点：Miuix 控件属性编辑弹窗（按钮）
+                if (ComposeDialogs.USE_COMPOSE_EDIT_VIEW) {
+                    new MiuixEditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, callback, false).show();
+                } else {
+                    EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, callback, false);
+                    dialog.show();
+                }
             }
         }
         if (v == addDirection) {
             if (getViewGroup() == null) {
                 Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
             } else {
-                EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, new EditViewDialog.Callback() {
+                EditViewDialog.Callback callback = new EditViewDialog.Callback() {
                     @Override
                     public void onPositive(CustomControl view) {
                         viewManager.addView(view);
@@ -958,17 +973,33 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                     public void onClone(CustomControl view) {
                         // Ignore
                     }
-                }, false);
-                dialog.show();
+                };
+                // 3.2 批 4 接入点：Miuix 控件属性编辑弹窗（方向键）
+                if (ComposeDialogs.USE_COMPOSE_EDIT_VIEW) {
+                    new MiuixEditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, callback, false).show();
+                } else {
+                    EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, callback, false);
+                    dialog.show();
+                }
             }
         }
         if (v == manageButtonStyle) {
-            ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity(), false, null, null);
-            dialog.show();
+            // 3.2 批 4 接入点：Miuix 按钮样式管理弹窗
+            if (ComposeDialogs.USE_COMPOSE_BUTTON_STYLE) {
+                new MiuixButtonStyleDialog(getActivity(), false, null, null).show();
+            } else {
+                ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity(), false, null, null);
+                dialog.show();
+            }
         }
         if (v == manageDirectionStyle) {
-            DirectionStyleDialog dialog = new DirectionStyleDialog(getActivity(), false, null, null);
-            dialog.show();
+            // 3.2 批 4 接入点：Miuix 方向键样式管理弹窗
+            if (ComposeDialogs.USE_COMPOSE_DIRECTION_STYLE) {
+                new MiuixDirectionStyleDialog(getActivity(), false, null, null).show();
+            } else {
+                DirectionStyleDialog dialog = new DirectionStyleDialog(getActivity(), false, null, null);
+                dialog.show();
+            }
         }
         if (v == openMultiplayerButton) {
             if (multiplayerDialog == null) {

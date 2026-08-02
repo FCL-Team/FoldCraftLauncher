@@ -16,6 +16,8 @@ import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.view.ControlDirection;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixButtonStyleDialog;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
@@ -31,6 +33,8 @@ import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 import java.util.ArrayList;
+
+import kotlin.Unit;
 
 public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickListener {
 
@@ -140,24 +144,47 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             style.getButtonStyle().fillColorPressedProperty().bind(buttonStyle.fillColorPressedProperty());
 
             buttonStyleSet.setOnClickListener(v -> {
-                ButtonStyleDialog dialog = new ButtonStyleDialog(getContext(), true, buttonStyle, style -> {
-                    buttonStyle.setName(style.getName());
-                    buttonStyle.setTextSize(style.getTextSize());
-                    buttonStyle.setTextColor(style.getTextColor());
-                    buttonStyle.setStrokeWidth(style.getStrokeWidth());
-                    buttonStyle.setStrokeColor(style.getStrokeColor());
-                    buttonStyle.setCornerRadius(style.getCornerRadius());
-                    buttonStyle.setFillColor(style.getFillColor());
-                    buttonStyle.setTextSizePressed(style.getTextSizePressed());
-                    buttonStyle.setTextColorPressed(style.getTextColorPressed());
-                    buttonStyle.setStrokeWidthPressed(style.getStrokeWidthPressed());
-                    buttonStyle.setStrokeColorPressed(style.getStrokeColorPressed());
-                    buttonStyle.setCornerRadiusPressed(style.getCornerRadiusPressed());
-                    buttonStyle.setFillColorPressed(style.getFillColorPressed());
-                    changeDirectionStyle();
-                });
-                dialog.setGameMenu(menu);
-                dialog.show();
+                // 3.2 批 4 接入点：按钮样式选择弹窗按开关双分支（回调逻辑两分支一致）
+                if (ComposeDialogs.USE_COMPOSE_BUTTON_STYLE) {
+                    MiuixButtonStyleDialog dialog = new MiuixButtonStyleDialog(getContext(), true, buttonStyle, style -> {
+                        buttonStyle.setName(style.getName());
+                        buttonStyle.setTextSize(style.getTextSize());
+                        buttonStyle.setTextColor(style.getTextColor());
+                        buttonStyle.setStrokeWidth(style.getStrokeWidth());
+                        buttonStyle.setStrokeColor(style.getStrokeColor());
+                        buttonStyle.setCornerRadius(style.getCornerRadius());
+                        buttonStyle.setFillColor(style.getFillColor());
+                        buttonStyle.setTextSizePressed(style.getTextSizePressed());
+                        buttonStyle.setTextColorPressed(style.getTextColorPressed());
+                        buttonStyle.setStrokeWidthPressed(style.getStrokeWidthPressed());
+                        buttonStyle.setStrokeColorPressed(style.getStrokeColorPressed());
+                        buttonStyle.setCornerRadiusPressed(style.getCornerRadiusPressed());
+                        buttonStyle.setFillColorPressed(style.getFillColorPressed());
+                        changeDirectionStyle();
+                        return Unit.INSTANCE;
+                    });
+                    dialog.setGameMenu(menu);
+                    dialog.show();
+                } else {
+                    ButtonStyleDialog dialog = new ButtonStyleDialog(getContext(), true, buttonStyle, style -> {
+                        buttonStyle.setName(style.getName());
+                        buttonStyle.setTextSize(style.getTextSize());
+                        buttonStyle.setTextColor(style.getTextColor());
+                        buttonStyle.setStrokeWidth(style.getStrokeWidth());
+                        buttonStyle.setStrokeColor(style.getStrokeColor());
+                        buttonStyle.setCornerRadius(style.getCornerRadius());
+                        buttonStyle.setFillColor(style.getFillColor());
+                        buttonStyle.setTextSizePressed(style.getTextSizePressed());
+                        buttonStyle.setTextColorPressed(style.getTextColorPressed());
+                        buttonStyle.setStrokeWidthPressed(style.getStrokeWidthPressed());
+                        buttonStyle.setStrokeColorPressed(style.getStrokeColorPressed());
+                        buttonStyle.setCornerRadiusPressed(style.getCornerRadiusPressed());
+                        buttonStyle.setFillColorPressed(style.getFillColorPressed());
+                        changeDirectionStyle();
+                    });
+                    dialog.setGameMenu(menu);
+                    dialog.show();
+                }
             });
         }
 

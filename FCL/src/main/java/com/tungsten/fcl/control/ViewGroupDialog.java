@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ControlViewGroup;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixEditViewGroupDialog;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -69,14 +71,26 @@ public class ViewGroupDialog extends FCLDialog implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == addViewGroup) {
-            EditViewGroupDialog dialog = new EditViewGroupDialog(getContext(), gameMenu, new ControlViewGroup(UUID.randomUUID().toString()), (name, visibility) -> {
-                ControlViewGroup viewGroup = new ControlViewGroup(UUID.randomUUID().toString());
-                viewGroup.setName(name);
-                viewGroup.setVisibility(visibility);
-                gameMenu.getController().addViewGroup(viewGroup);
-                refreshList(select);
-            });
-            dialog.show();
+            // 3.2 批 4 接入点：新增分组弹窗双分支（Miuix/遗留）
+            if (ComposeDialogs.USE_COMPOSE_EDIT_VIEW_GROUP) {
+                MiuixEditViewGroupDialog dialog = new MiuixEditViewGroupDialog(getContext(), gameMenu, new ControlViewGroup(UUID.randomUUID().toString()), (name, visibility) -> {
+                    ControlViewGroup viewGroup = new ControlViewGroup(UUID.randomUUID().toString());
+                    viewGroup.setName(name);
+                    viewGroup.setVisibility(visibility);
+                    gameMenu.getController().addViewGroup(viewGroup);
+                    refreshList(select);
+                });
+                dialog.show();
+            } else {
+                EditViewGroupDialog dialog = new EditViewGroupDialog(getContext(), gameMenu, new ControlViewGroup(UUID.randomUUID().toString()), (name, visibility) -> {
+                    ControlViewGroup viewGroup = new ControlViewGroup(UUID.randomUUID().toString());
+                    viewGroup.setName(name);
+                    viewGroup.setVisibility(visibility);
+                    gameMenu.getController().addViewGroup(viewGroup);
+                    refreshList(select);
+                });
+                dialog.show();
+            }
         }
         if (v == positive) {
             if (callback != null) {

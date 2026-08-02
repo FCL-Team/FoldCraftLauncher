@@ -12,8 +12,12 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlViewGroup;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixAddButtonStyleDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
+
+import kotlin.Unit;
 
 public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener {
 
@@ -70,34 +74,70 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (v == addStyle) {
-            AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), null, false, style -> {
-                ButtonStyles.addStyle(style);
-                refreshList();
-            });
-            dialog.show();
+            // 3.2 批 4 接入点：新增按钮样式弹窗按开关双分支（回调逻辑两分支一致）
+            if (ComposeDialogs.USE_COMPOSE_ADD_BUTTON_STYLE) {
+                MiuixAddButtonStyleDialog dialog = new MiuixAddButtonStyleDialog(getContext(), null, false, style -> {
+                    ButtonStyles.addStyle(style);
+                    refreshList();
+                    return Unit.INSTANCE;
+                });
+                dialog.show();
+            } else {
+                AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), null, false, style -> {
+                    ButtonStyles.addStyle(style);
+                    refreshList();
+                });
+                dialog.show();
+            }
         }
         if (v == editStyle) {
-            AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
-                ControlButtonStyle before = adapter.getSelectedStyle();
-                int i = ButtonStyles.getStyles().indexOf(before);
-                String beforeName = before.getName();
-                ButtonStyles.removeStyles(before);
-                ButtonStyles.addStyle(style, i);
-                refreshList();
-                adapter.setSelectedStyle(style);
-                if (menu != null) {
-                    ControlViewGroup viewGroup = menu.getViewGroup();
-                    if (viewGroup != null) {
-                        viewGroup.getViewData().buttonList().forEach(it -> {
-                            String name = it.getStyle().getName();
-                            if (name.equals(style.getName()) || name.equals(beforeName)) {
-                                it.setStyle(style);
-                            }
-                        });
+            // 3.2 批 4 接入点：编辑按钮样式弹窗按开关双分支（回调逻辑两分支一致）
+            if (ComposeDialogs.USE_COMPOSE_ADD_BUTTON_STYLE) {
+                MiuixAddButtonStyleDialog dialog = new MiuixAddButtonStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
+                    ControlButtonStyle before = adapter.getSelectedStyle();
+                    int i = ButtonStyles.getStyles().indexOf(before);
+                    String beforeName = before.getName();
+                    ButtonStyles.removeStyles(before);
+                    ButtonStyles.addStyle(style, i);
+                    refreshList();
+                    adapter.setSelectedStyle(style);
+                    if (menu != null) {
+                        ControlViewGroup viewGroup = menu.getViewGroup();
+                        if (viewGroup != null) {
+                            viewGroup.getViewData().buttonList().forEach(it -> {
+                                String name = it.getStyle().getName();
+                                if (name.equals(style.getName()) || name.equals(beforeName)) {
+                                    it.setStyle(style);
+                                }
+                            });
+                        }
                     }
-                }
-            });
-            dialog.show();
+                    return Unit.INSTANCE;
+                });
+                dialog.show();
+            } else {
+                AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
+                    ControlButtonStyle before = adapter.getSelectedStyle();
+                    int i = ButtonStyles.getStyles().indexOf(before);
+                    String beforeName = before.getName();
+                    ButtonStyles.removeStyles(before);
+                    ButtonStyles.addStyle(style, i);
+                    refreshList();
+                    adapter.setSelectedStyle(style);
+                    if (menu != null) {
+                        ControlViewGroup viewGroup = menu.getViewGroup();
+                        if (viewGroup != null) {
+                            viewGroup.getViewData().buttonList().forEach(it -> {
+                                String name = it.getStyle().getName();
+                                if (name.equals(style.getName()) || name.equals(beforeName)) {
+                                    it.setStyle(style);
+                                }
+                            });
+                        }
+                    }
+                });
+                dialog.show();
+            }
         }
         if (v == positive) {
             dismiss();
