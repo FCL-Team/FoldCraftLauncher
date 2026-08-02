@@ -1,7 +1,7 @@
 # fakefx（JavaFX 属性体系）彻底移除执行方案
 
-> 状态：调研完成，待用户拍板决策点后执行。
-> 分支：`feature/miuix-theme-fix`。
+> 状态：**阶段 2a（自研极简 observable 库）已完成**——新库 `com.tungsten.fclcore.observable` 落地 FCLCore（89 文件 / 6,926 行），冒烟测试 68/68 通过，`:FCL:assembleDebug` 全量编译通过。调用点未动（阶段 2b 做 import 批量替换）。详见文末 §六。
+> 分支：`feature/fakefx-removal`（基于含 6.1 清理的 `feature/miuix-migration`）。
 > 调研日期：2026-08-02。所有数据均用 Grep/Read 实证，命令可复现。
 > 边界声明：本方案只规划移除 fakefx；控件系统（`control/`）与 WebView 保留；6.1 旧代码清理（见 `final-report.md` §6）按本文 §四 的合并点协同执行。
 
@@ -242,7 +242,55 @@
 
 ---
 
-## 附：复现命令
+## 六、阶段 2a 执行记录：自研极简 observable 库（2026-08-02 完成）
+
+对应本文「阶段 1」（用户侧阶段编号 2a）。决策已拍板：**D1 新建包**（不沿用 fakefx 包名）、**D4 完整实现 extractor 冒泡存盘语义**。本步不改任何调用点，新库与 fakefx 并存。
+
+### 6.1 实证修正（相对 §一 旧数据）
+
+- 6.1 清理后外部引用面收敛：**FCL+FCLCore 共 82 个文件**（旧数据 107）。
+- **新发现：FCLLibrary 有 24 个文件引用 fakefx**（§1.4 红线分析漏扫该模块）。用量集中在 `IntegerPropertyBase/BooleanPropertyBase/DoublePropertyBase/StringPropertyBase/ObjectPropertyBase` 匿名子类（控件属性）+ `SimpleXxx` + 1 处 `Bindings.createObjectBinding` + `StringConverter`。新库已全覆盖，阶段 2b 的 import 替换范围须加上 FCLLibrary。
+- 方法级实证：`FXCollections` 仅 observableArrayList(×4 签名)/observableList/observableMap 被用；`Bindings` 仅 createStringBinding/createBooleanBinding/createObjectBinding/concat/bindContent/unbindContent；Change 的方法级消费几乎为零（监听器多为 `{ reload() }` 形态），`.sort()`/`unmodifiableObservableList`/`bindContentBidirectional` 等均无外部调用，**未实现**。
+
+### 6.2 实现清单（`FCLCore/src/main/java/com/tungsten/fclcore/observable/`，89 文件 / 6,926 行）
+
+| 子包 | 类 | 对齐的 fakefx 类 |
+|---|---|---|
+| 根 | Observable / InvalidationListener / WeakListener / WeakInvalidationListener / NamedArg | beans 同名类 |
+| value | ObservableValue / ChangeListener / WritableValue / WeakChangeListener / ObservableBooleanValue / ObservableNumberValue / Observable{Integer,Long,Float,Double}Value | beans.value 同名类 |
+| binding | ExpressionHelper / BindingHelperObserver / ObjectBinding / BooleanBinding / StringBinding / Bindings（仅 8 个被用方法）/ BidirectionalBinding / ContentBinding | binding.* 与 beans.binding.*（合并两个包） |
+| property | Property / ReadOnlyProperty；Object、String、Boolean、Integer、Long、Float、Double 七系各含 ReadOnly*Property、*Property、*PropertyBase、Simple*Property；ReadOnly{Object,String,Double}Wrapper、ReadOnly{Object,String,Boolean,Integer,Double}PropertyBase；List 系：ReadOnlyListProperty / ListProperty / ListPropertyBase / SimpleListProperty / ReadOnlyListPropertyBase / ReadOnlyListWrapper / ListPropertyHelper（包私有）；Map 系：ReadOnlyMapProperty / MapProperty / MapPropertyBase / SimpleMapProperty / MapPropertyHelper（包私有） | beans.property 同名类 + binding/ListExpressionHelper、MapExpressionHelper |
+| collections | ObservableList / ListChangeListener / WeakListChangeListener / ObservableListBase（合并 ModifiableObservableListBase）/ ObservableListWrapper / ElementObserver / SourceAdapterChange / FXCollections / ObservableMap / MapChangeListener / ObservableMapWrapper / ObservableSet / SetChangeListener / ObservableSetWrapper | collections 同名类（省掉 ObservableSequentialListWrapper、SortableList、NonIterableChange、transformation 等无调用部分） |
+| util | Callback / StringConverter | util 同名类 |
+
+### 6.3 语义对齐关键点（逐条读 fakefx 源码确认）
+
+- **触发时机**：`*PropertyBase.set` 在 bound 状态抛 `"A bound value cannot be set."`；ObjectPropertyBase 用**引用比较**（同引用不触发），StringPropertyBase 用 **equals**，原生类型用值比较。`markInvalid` 只在 valid→invalid 边沿触发一次——**连续两次 set 且中间无 get() 只发一次事件**（与 fakefx 一致，冒烟已验证）；若挂了 ChangeListener，fire 内部 `getValue()` 会使属性重新生效。
+- **ChangeListener vs InvalidationListener**：invalidation 总是触发且先触发；change 仅在 getValue() 与缓存值 **equals 不等**时触发（oldValue/newValue 取自触发前后缓存）。监听内异常转交 `uncaughtExceptionHandler`（同 fakefx）。
+- **bind 单向同步**：bind 立即失效并向 source 注册弱引用 Listener（source 失效 → markInvalid → get() 时取 source 值）；unbind 固化当前值并摘除。
+- **bindBidirectional 防回环**：`updating` 标志 + 双方弱引用（一侧 GC 自动互摘）；传播失败回滚 oldValue；equals/hashCode 与顺序无关，`unbindBidirectional` 靠 equals 匹配移除（冒烟覆盖 a→b、b→a、解绑后互不影响、无死循环）。
+- **extractor 冒泡（D4）**：`observableArrayList(extractor)` 经 ElementObserver（IdentityHashMap + 引用计数）给元素挂失效监听；元素失效 → `beginChange/nextUpdate(i)/endChange` → 列表发 wasUpdated 的 Change + invalidation——**Accounts/Controllers/控件样式的"改元素即存盘"链路语义完整保留**（冒烟覆盖：冒泡、元素移出后摘除）。
+- **ListChangeListener.Change**：wasAdded/wasRemoved/wasReplaced/wasPermutated/wasUpdated、getFrom/getTo/getRemoved/getAddedSubList 语义与 fakefx 逐条对齐；begin/end 块内多次 mutation 合并为一次分发（子变更序列等价，仅不做相邻合并优化）；同一 Change 分发给多个 listener 前逐个 reset。
+- **List/Map 属性**：内容变更冒泡（invalidated + change 收 (current,current) + list/map-change 收原始 Change）；整体替换时 list-change 收 from=0/to=新 size/removed=旧内容的 wasReplaced 变更；Change.getList() 经 SourceAdapterChange 指向属性本身。
+- **弱监听**：WeakInvalidationListener/WeakChangeListener/WeakListChangeListener 目标 GC 后下次触发时自动摘除；helper 添加监听时顺带清理已死的弱监听（对应 fakefx trim）。冒烟含 System.gc 实测。
+- **ObjectBinding/BooleanBinding/StringBinding**：惰性求值 + 缓存，依赖失效 → invalidate → 向自身监听者冒泡；`Bindings.create*` 的 computeValue 异常兜底（false/null/""）与 fakefx 一致；concat 的 null→"null" 语义一致。
+
+### 6.4 验证
+
+- 新包独立 `javac` 编译通过（零外部依赖）。
+- 冒烟测试 `SmokeTest.java`（68 断言）在纯 JVM 运行 **68/68 通过**，覆盖：同值/同引用不触发、valid 边沿单次触发、change vs invalidation 区分与顺序、bind/unbind、bound set 抛异常、双向绑定与防回环、StringBinding 惰性、concat、列表 add/remove/set/clear/setAll 事件形态、extractor 冒泡与摘除、ReadOnlyListWrapper 只读视图事件同步与 Change.getList() 指向、弱监听 GC、ListProperty 内容/整体替换、bindContent/unbindContent 重放、Map/Set 事件、MapProperty 冒泡、多 listener reset。
+- 冒烟脚本存放于 `docs/migration/observable-smoke/SmokeTest.java`（工程无测试源集与 junit 依赖，按最小侵入不新增 gradle 配置；复跑方式见该目录 README）。
+- `:FCL:assembleDebug` 全量编译通过（新代码随 FCLCore 编译）。
+
+### 6.5 遗留问题（交阶段 2b）
+
+1. **FCLLibrary 24 文件**须纳入 import 替换范围（见 6.1）。
+2. `util/fakefx/`（ObservableHelper、BindingMapping 等）与 `util/gson/fakefx/`（JavaFxPropertyTypeAdapterFactory 及 creators）在 2b 需同步移植到新包类型，Config 磁盘 JSON 格式不变的前提是其只依赖 Property 的 getValue/setValue 语义——新库已满足，但需实测回环。
+3. ObservableListBase 未实现 `SubObservableList`（subList 视图事件传播）与 sort 事件——外部无调用；若 2b 中出现再补。
+4. `FXCollections.observableList` 不区分 RandomAccess（统一 ObservableListWrapper）——外部全部传 ArrayList/Arrays.asList，无行为差异。
+5. 阶段 2b 替换后须复核 Kotlin 调用点（SAM 重载消解、`Property.value` 合成属性、`{ arrayOf<Observable>(it) }` extractor lambda）——新库签名与 fakefx 逐方法一致，预期零改动，但需以编译为准。
+
+---
 
 ```bash
 # 各模块 fakefx 引用
