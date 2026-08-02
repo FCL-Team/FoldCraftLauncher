@@ -18,13 +18,10 @@
 package com.tungsten.fclcore.task;
 
 import com.tungsten.fclcore.event.EventManager;
-import com.tungsten.fclcore.observable.property.ReadOnlyDoubleProperty;
-import com.tungsten.fclcore.observable.property.ReadOnlyDoubleWrapper;
-import com.tungsten.fclcore.observable.property.ReadOnlyStringProperty;
-import com.tungsten.fclcore.observable.property.ReadOnlyStringWrapper;
 import com.tungsten.fclcore.util.InvocationDispatcher;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.ReflectionHelper;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fclcore.util.function.ExceptionalFunction;
 import com.tungsten.fclcore.util.function.ExceptionalRunnable;
@@ -40,6 +37,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 /**
  * Disposable task.
@@ -318,11 +319,22 @@ public abstract class Task<T> {
     }
 
     private long lastTime = Long.MIN_VALUE;
-    private final ReadOnlyDoubleWrapper progress = new ReadOnlyDoubleWrapper(this, "progress", -1);
-    private final InvocationDispatcher<Double> progressUpdate = InvocationDispatcher.runOn(Schedulers.androidUIThread(), progress::set);
+    private final MutableStateFlow<Double> progress = StateFlowKt.MutableStateFlow(-1.0);
+    private final InvocationDispatcher<Double> progressUpdate = InvocationDispatcher.runOn(Schedulers.androidUIThread(), progress::setValue);
 
-    public ReadOnlyDoubleProperty progressProperty() {
-        return progress.getReadOnlyProperty();
+    /**
+     * 任务进度（0.0~1.0，负值表示不确定进度）。
+     *
+     * <p>Java 调用方请使用 {@link FlowSubscriptions#subscribe}/{@link FlowSubscriptions#subscribeWithCurrent}
+     * 订阅；订阅回调在发射线程（现为 UI 线程，经 {@link InvocationDispatcher} 调度）执行，
+     * 不做隐式线程切换。</p>
+     */
+    public StateFlow<Double> progressFlow() {
+        return progress;
+    }
+
+    public double getProgress() {
+        return progress.getValue();
     }
 
     protected void updateProgress(long progress, long total) {
@@ -343,11 +355,19 @@ public abstract class Task<T> {
         progressUpdate.accept(progress);
     }
 
-    private final ReadOnlyStringWrapper message = new ReadOnlyStringWrapper(this, "message", null);
-    private final InvocationDispatcher<String> messageUpdate = InvocationDispatcher.runOn(Schedulers.androidUIThread(), message::set);
+    private final MutableStateFlow<String> message = StateFlowKt.MutableStateFlow(null);
+    private final InvocationDispatcher<String> messageUpdate = InvocationDispatcher.runOn(Schedulers.androidUIThread(), message::setValue);
 
-    public final ReadOnlyStringProperty messageProperty() {
-        return message.getReadOnlyProperty();
+    /**
+     * 任务文案。订阅方式见 {@link #progressFlow()}。
+     */
+    public final StateFlow<String> messageFlow() {
+        return message;
+    }
+
+    @Nullable
+    public final String getMessage() {
+        return message.getValue();
     }
 
     protected final void updateMessage(String newMessage) {
@@ -369,11 +389,17 @@ public abstract class Task<T> {
     }
 
     private void doSubTask(Task<?> task) throws Exception {
-        message.bind(task.message);
-        progress.bind(task.progress);
-        task.run();
-        message.unbind();
-        progress.unbind();
+        // 对齐原 bind/unbind 语义：先同步子任务当前值，转发后续变化，结束后摘除转发（保留最后的值）
+        FlowSubscriptions.Subscription messageSubscription =
+                FlowSubscriptions.subscribeWithCurrent(task.messageFlow(), messageUpdate::accept);
+        FlowSubscriptions.Subscription progressSubscription =
+                FlowSubscriptions.subscribeWithCurrent(task.progressFlow(), progressUpdate::accept);
+        try {
+            task.run();
+        } finally {
+            messageSubscription.cancel();
+            progressSubscription.cancel();
+        }
     }
 
     public final TaskExecutor executor() {

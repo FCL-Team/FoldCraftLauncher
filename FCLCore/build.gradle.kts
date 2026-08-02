@@ -42,6 +42,7 @@ kotlin {
 dependencies {
     implementation(project(":FCLauncher"))
     implementation(project(":ZipFileSystem"))
+    api(libs.kotlinx.coroutines.core)
     implementation(libs.nanohttpd)
     implementation(libs.opennbt)
     implementation(libs.xz)

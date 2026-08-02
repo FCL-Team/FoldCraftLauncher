@@ -9,7 +9,6 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.observable.binding.Bindings;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
 import com.tungsten.fclcore.observable.property.ListProperty;
 import com.tungsten.fclcore.observable.property.SimpleListProperty;
 import com.tungsten.fclcore.observable.collections.FXCollections;
@@ -19,6 +18,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.observable.MappedObservableList;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
@@ -148,7 +148,13 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
         Task.runAsync(datapack::loadFromDir)
                 .withRunAsync(Schedulers.androidUIThread(), () -> {
                     if (first) {
-                        itemsProperty.set(MappedObservableList.create(datapack.getInfo(), DatapackInfoObject::new));
+                        // Datapack.info 已 StateFlow 化：镜像到本地 ObservableList，
+                        // 供 MappedObservableList/adapter 既有链路消费；发射在后台加载线程，
+                        // 统一切回 UI 线程再更新列表。
+                        ObservableList<Datapack.Pack> packMirror = FXCollections.observableArrayList();
+                        FlowSubscriptions.subscribeWithCurrent(datapack.infoFlow(), packs ->
+                                Schedulers.androidUIThread().execute(() -> packMirror.setAll(packs)));
+                        itemsProperty.set(MappedObservableList.create(packMirror, DatapackInfoObject::new));
                         first = false;
                     }
                     setLoading(false);
@@ -211,16 +217,10 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
     }
 
     public static class DatapackInfoObject {
-        private final BooleanProperty active;
         private final Datapack.Pack packInfo;
 
         DatapackInfoObject(Datapack.Pack packInfo) {
             this.packInfo = packInfo;
-            this.active = packInfo.activeProperty();
-        }
-
-        public BooleanProperty getActive() {
-            return active;
         }
 
         String getTitle() {

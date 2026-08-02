@@ -33,6 +33,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -72,13 +73,16 @@ import com.tungsten.fclcore.auth.offline.OfflineAccountFactory;
 import com.tungsten.fclcore.auth.yggdrasil.RemoteAuthenticationException;
 import com.tungsten.fclcore.observable.InvalidationListener;
 import com.tungsten.fclcore.observable.Observable;
+import com.tungsten.fclcore.observable.collections.ListChangeListener;
 import com.tungsten.fclcore.observable.property.ObjectProperty;
+import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
 import com.tungsten.fclcore.observable.collections.FXCollections;
 import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.InvocationDispatcher;
 import com.tungsten.fclcore.util.Lang;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.skin.InvalidSkinException;
 
@@ -154,7 +158,33 @@ public final class Accounts {
     private static final String GLOBAL_PREFIX = "$GLOBAL:";
     private static final ObservableList<Map<Object, Object>> globalAccountStorages = FXCollections.observableArrayList();
 
-    private static final ObservableList<Account> accounts = observableArrayList(account -> new Observable[]{account});
+    // 阶段 3：Account 不再实现 Observable（API 已 StateFlow 化）。
+    // 为保持 extractor「账户变更冒泡 → 列表 wasUpdated → 存盘 + UI 刷新」语义，
+    // 这里给每个账户镜像一个随 revisionFlow 翻转的 Observable 信号；
+    // 账户移出列表时取消镜像订阅。
+    private static final Map<Account, SimpleBooleanProperty> accountChangeMirrors = new IdentityHashMap<>();
+    private static final Map<Account, FlowSubscriptions.Subscription> accountChangeSubscriptions = new IdentityHashMap<>();
+
+    private static SimpleBooleanProperty accountChangeMirror(Account account) {
+        SimpleBooleanProperty existing = accountChangeMirrors.get(account);
+        if (existing != null)
+            return existing;
+        SimpleBooleanProperty mirror = new SimpleBooleanProperty(Accounts.class, "accountChanged", false);
+        FlowSubscriptions.Subscription subscription =
+                FlowSubscriptions.subscribe(account.revisionFlow(), revision -> mirror.set(!mirror.get()));
+        accountChangeMirrors.put(account, mirror);
+        accountChangeSubscriptions.put(account, subscription);
+        return mirror;
+    }
+
+    private static void discardAccountChangeMirror(Account account) {
+        FlowSubscriptions.Subscription subscription = accountChangeSubscriptions.remove(account);
+        if (subscription != null)
+            subscription.cancel();
+        accountChangeMirrors.remove(account);
+    }
+
+    private static final ObservableList<Account> accounts = observableArrayList(account -> new Observable[]{accountChangeMirror(account)});
     private static final ObjectProperty<Account> selectedAccount = new SimpleObjectProperty<>(Accounts.class, "selectedAccount");
 
     /**
@@ -327,6 +357,12 @@ public final class Accounts {
         }));
         accounts.addListener(listener);
         accounts.addListener(onInvalidating(Accounts::updateAccountStorages));
+        accounts.addListener((ListChangeListener<Account>) change -> {
+            while (change.next()) {
+                if (change.wasRemoved())
+                    change.getRemoved().forEach(Accounts::discardAccountChangeMirror);
+            }
+        });
 
         initialized = true;
 

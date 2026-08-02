@@ -17,8 +17,6 @@
  */
 package com.tungsten.fclcore.mod;
 
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 
@@ -27,6 +25,10 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public final class LocalModFile implements Comparable<LocalModFile> {
 
@@ -41,7 +43,7 @@ public final class LocalModFile implements Comparable<LocalModFile> {
     private final String url;
     private final String fileName;
     private final String logoPath;
-    private final BooleanProperty activeProperty;
+    private final MutableStateFlow<Boolean> active;
     private RemoteMod.Version remoteVersion;
 
     public LocalModFile(ModManager modManager, LocalMod mod, Path file, String name, Description description) {
@@ -60,23 +62,7 @@ public final class LocalModFile implements Comparable<LocalModFile> {
         this.url = url;
         this.logoPath = logoPath;
 
-        activeProperty = new SimpleBooleanProperty(this, "active", !modManager.isDisabled(file)) {
-            @Override
-            protected void invalidated() {
-                if (isOld()) return;
-
-                Path path = LocalModFile.this.file.toAbsolutePath();
-
-                try {
-                    if (get())
-                        LocalModFile.this.file = modManager.enableMod(path);
-                    else
-                        LocalModFile.this.file = modManager.disableMod(path);
-                } catch (IOException e) {
-                    Logging.LOG.log(Level.SEVERE, "Unable to invert state of mod file " + path, e);
-                }
-            }
-        };
+        active = StateFlowKt.MutableStateFlow(!modManager.isDisabled(file));
 
         fileName = FileUtils.getNameWithoutExtension(ModManager.getModName(file));
 
@@ -135,16 +121,32 @@ public final class LocalModFile implements Comparable<LocalModFile> {
         return logoPath;
     }
 
-    public BooleanProperty activeProperty() {
-        return activeProperty;
+    public StateFlow<Boolean> activeFlow() {
+        return active;
     }
 
     public boolean isActive() {
-        return activeProperty.get();
+        return active.getValue();
     }
 
     public void setActive(boolean active) {
-        activeProperty.set(active);
+        if (this.active.getValue() == active)
+            return;
+
+        this.active.setValue(active);
+
+        if (isOld()) return;
+
+        Path path = file.toAbsolutePath();
+
+        try {
+            if (active)
+                file = modManager.enableMod(path);
+            else
+                file = modManager.disableMod(path);
+        } catch (IOException e) {
+            Logging.LOG.log(Level.SEVERE, "Unable to invert state of mod file " + path, e);
+        }
     }
 
     public String getFileName() {
