@@ -52,6 +52,19 @@
 
 ---
 
+## 🛠️ Miuix 依赖与 Compose 编译要求
+
+启动器 UI 已迁移至 [Miuix](https://github.com/compose-miuix-ui/miuix)（HyperOS 风格 Compose 组件库），构建需满足：
+
+- **Kotlin 2.x + Compose Compiler 插件**：`org.jetbrains.kotlin.plugin.compose`（版本跟随 Kotlin，无需 `kotlinCompilerExtensionVersion`）
+- **Miuix 0.9.3**：`top.yukonga.miuix.kmp:miuix-ui / miuix-icons / miuix-preference`
+- **Compose BOM 2026.06.01**（Compose 1.11.x）、activity-compose 1.13.0、lifecycle-compose 2.10.0
+- 依赖统一由 `gradle/libs.versions.toml`（Version Catalog）管理，禁止在模块构建文件中硬编码坐标
+
+> 迁移期新旧 UI 双栈并存：每个已迁移页面/弹窗均有 `USE_COMPOSE_*` 回滚开关（默认 true），旧实现保留未删。详见 `docs/migration/final-report.md`。
+
+---
+
 ## 📜 开源协议
 
 本项目采用 **[GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html)** 授权
