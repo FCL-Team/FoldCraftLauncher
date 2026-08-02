@@ -15,6 +15,7 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
 import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage;
@@ -73,8 +74,6 @@ public class Versions {
             return;
         }
 
-        TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
-        taskDialog.setTitle(context.getString(R.string.message_downloading));
         TaskExecutor executor = new FileDownloadTask(downloadURL, modpack.toFile())
                 .whenComplete(Schedulers.androidUIThread(), e -> {
                     if (e == null) {
@@ -92,8 +91,18 @@ public class Versions {
                         builder.create().show();
                     }
                 }).executor();
-        taskDialog.setExecutor(executor);
-        taskDialog.show();
+        if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
+            // 3.2 接入点：Miuix 任务弹窗（取消动作 = 内置 dismiss，对应原 AppCompatDialog::dismiss）
+            MiuixTaskDialog taskDialog = new MiuixTaskDialog(context);
+            taskDialog.setTitle(context.getString(R.string.message_downloading));
+            taskDialog.setExecutor(executor);
+            taskDialog.show();
+        } else {
+            TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
+            taskDialog.setTitle(context.getString(R.string.message_downloading));
+            taskDialog.setExecutor(executor);
+            taskDialog.show();
+        }
         executor.start();
     }
 
@@ -181,10 +190,18 @@ public class Versions {
     public static void updateGameAssets(Context context, Profile profile, String version) {
         TaskExecutor executor = new GameAssetDownloadTask(profile.getDependency(), profile.getRepository().getVersion(version), GameAssetDownloadTask.DOWNLOAD_INDEX_FORCIBLY, true)
                 .executor();
-        TaskDialog dialog = new TaskDialog(context, TaskCancellationAction.NORMAL);
-        dialog.setExecutor(executor);
-        dialog.setTitle(context.getString(R.string.version_manage_redownload_assets_index));
-        dialog.show();
+        if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
+            // 3.2 接入点：Miuix 任务弹窗（取消动作 = no-op，对应原 TaskCancellationAction.NORMAL）
+            MiuixTaskDialog dialog = new MiuixTaskDialog(context);
+            dialog.setExecutor(executor);
+            dialog.setTitle(context.getString(R.string.version_manage_redownload_assets_index));
+            dialog.show();
+        } else {
+            TaskDialog dialog = new TaskDialog(context, TaskCancellationAction.NORMAL);
+            dialog.setExecutor(executor);
+            dialog.setTitle(context.getString(R.string.version_manage_redownload_assets_index));
+            dialog.show();
+        }
         executor.start();
     }
 
