@@ -158,6 +158,9 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
     private fun detailsTypeOf(factory: AccountFactory<*>): DetailsType = when (factory) {
         is MicrosoftAccountFactory -> DetailsType.MICROSOFT
         is AuthlibInjectorAccountFactory -> DetailsType.EXTERNAL
+        // 绑定服务器的入口（服务器列表"添加账户"）：必须走 EXTERNAL 表单，
+        // 否则按 OFFLINE 分支登录会把 password=null 传给 Bound 工厂（NPE）
+        is BoundAuthlibInjectorAccountFactory -> DetailsType.EXTERNAL
         else -> DetailsType.OFFLINE
     }
 
