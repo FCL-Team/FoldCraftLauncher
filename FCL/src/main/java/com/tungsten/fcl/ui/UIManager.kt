@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui
 import android.content.Context
 import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.account.AccountUI
+import com.tungsten.fcl.ui.account.compose.ComposeAccountUI
 import com.tungsten.fcl.ui.controller.ControllerUI
 import com.tungsten.fcl.ui.download.DownloadUI
 import com.tungsten.fcl.ui.main.MainUI
@@ -24,7 +25,16 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
 
     private var initialized = false
     lateinit var mainUI: MainUI
-    val accountUI: AccountUI by lazy { AccountUI(context, parent, R.layout.ui_account) }
+    // 阶段三 3.5：ComposeAccountUI.USE_COMPOSE_ACCOUNT_UI 为整体回滚开关（对齐 3.3/3.4 模式），
+    // true = Compose 账户页，false = 旧 AccountUI（ui_account.xml）；类型放宽为 FCLCommonUI，
+    // 既有反向调用点（refresh().start() / switchUI）签名不变。
+    val accountUI: FCLCommonUI by lazy {
+        if (ComposeAccountUI.USE_COMPOSE_ACCOUNT_UI) {
+            ComposeAccountUI(context, parent)
+        } else {
+            AccountUI(context, parent, R.layout.ui_account)
+        }
+    }
     val versionUI: VersionUI by lazy { VersionUI(context, parent, R.layout.ui_version) }
     val manageUI: ManageUI by lazy { ManageUI(context, parent, R.layout.ui_manage) }
     val downloadUI: DownloadUI by lazy { DownloadUI(context, parent, R.layout.ui_download) }
