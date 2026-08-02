@@ -17,6 +17,7 @@ import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixCreateAccountDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixDuplicateVersionDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixRenameVersionDialog;
 import com.tungsten.fcl.ui.account.CreateAccountDialog;
@@ -272,16 +273,24 @@ public class Versions {
     private static void ensureSelectedAccount(Context context, Consumer<Account> action) {
         Account account = Accounts.getSelectedAccount();
         if (account == null) {
-            CreateAccountDialog dialog = new CreateAccountDialog(context, (AccountFactory<?>) null);
-            dialog.setOnDismissListener(dialogInterface -> {
+            android.content.DialogInterface.OnDismissListener dismissListener = dialogInterface -> {
                 Account newAccount = Accounts.getSelectedAccount();
                 if (newAccount == null) {
                     // user cancelled operation
                 } else {
                     action.accept(newAccount);
                 }
-            });
-            dialog.show();
+            };
+            if (ComposeDialogs.USE_COMPOSE_CREATE_ACCOUNT) {
+                // 3.2 批 3 接入点：Miuix 创建账户弹窗
+                MiuixCreateAccountDialog dialog = new MiuixCreateAccountDialog(context, (AccountFactory<?>) null);
+                dialog.setOnDismissListener(dismissListener);
+                dialog.show();
+            } else {
+                CreateAccountDialog dialog = new CreateAccountDialog(context, (AccountFactory<?>) null);
+                dialog.setOnDismissListener(dismissListener);
+                dialog.show();
+            }
         } else {
             action.accept(account);
         }

@@ -13,6 +13,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixCreateAccountDialog;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
@@ -70,8 +72,13 @@ public class ServerListAdapter extends FCLAdapter {
         viewHolder.url.setText(server.getUrl());
         viewHolder.url.setSelected(true);
         viewHolder.parent.setOnClickListener(v -> {
-            CreateAccountDialog dialog = new CreateAccountDialog(getContext(), server);
-            dialog.show();
+            if (ComposeDialogs.USE_COMPOSE_CREATE_ACCOUNT) {
+                // 3.2 批 3 接入点：Miuix 创建账户弹窗（绑定该服务器）
+                new MiuixCreateAccountDialog(getContext(), server).show();
+            } else {
+                CreateAccountDialog dialog = new CreateAccountDialog(getContext(), server);
+                dialog.show();
+            }
         });
         viewHolder.delete.setOnClickListener(v -> {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
