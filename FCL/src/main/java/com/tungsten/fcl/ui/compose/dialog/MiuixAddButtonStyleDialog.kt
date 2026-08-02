@@ -38,6 +38,7 @@ import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog
 import com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
+import kotlinx.coroutines.flow.MutableStateFlow
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
@@ -103,8 +104,9 @@ class MiuixAddButtonStyleDialog(
             setMin(min)
             setMax(max)
             setProgress(get())
-            progressProperty().addListener { _, _, n -> set(n.toInt()) }
-            progressProperty().addListener { revisionState.intValue++ }
+            // 订阅挂到弹窗存活期列表（共享作用域，dismiss 统一取消，对齐原 addListener 不即时回调）
+            subscriptions += FlowSubscriptions.subscribe(progressFlow()) { set(it) }
+            subscriptions += FlowSubscriptions.subscribe(progressFlow()) { revisionState.intValue++ }
         }
     }
 
@@ -144,15 +146,15 @@ class MiuixAddButtonStyleDialog(
         super.dismiss()
     }
 
-    private fun openTextEditDialog(property: com.tungsten.fclcore.observable.property.IntegerProperty, isPercentage: Boolean) {
+    private fun openTextEditDialog(property: MutableStateFlow<Int>, isPercentage: Boolean) {
         val dialog = EditDialog(context) { s ->
             if (s.matches(Regex("\\d+(\\.\\d+)?$"))) {
                 var progress = s.toFloat()
                 if (isPercentage) {
                     progress = if (progress > 100) 100f else progress
-                    property.set((progress * 10).toInt())
+                    property.value = (progress * 10).toInt()
                 } else {
-                    property.set(progress.toInt())
+                    property.value = progress.toInt()
                 }
             }
         }
@@ -289,7 +291,7 @@ class MiuixAddButtonStyleDialog(
                 textAlign = TextAlign.End,
                 modifier = Modifier
                     .width(60.dp)
-                    .clickable { openTextEditDialog(spec.seekBar.progressProperty(), spec.isPercentage) },
+                    .clickable { openTextEditDialog(spec.seekBar.progressFlow(), spec.isPercentage) },
             )
         }
     }

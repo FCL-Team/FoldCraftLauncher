@@ -12,12 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
-import com.tungsten.fclcore.observable.property.DoubleProperty;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
+
+import java.lang.ref.WeakReference;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class FCLPreciseSeekBar extends RelativeLayout {
 
@@ -25,8 +27,8 @@ public class FCLPreciseSeekBar extends RelativeLayout {
     private FCLImageButton add;
     private FCLSeekBar seekBar;
 
-    private BooleanProperty visibilityProperty;
-    private BooleanProperty disableProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
+    private MutableStateFlow<Boolean> disableFlow;
 
     public FCLPreciseSeekBar(@NonNull Context context) {
         super(context);
@@ -142,8 +144,8 @@ public class FCLPreciseSeekBar extends RelativeLayout {
         return seekBar.getPercentProgressValue();
     }
 
-    public final DoubleProperty percentProgressProperty() {
-        return seekBar.percentProgressProperty();
+    public final MutableStateFlow<Double> percentProgressFlow() {
+        return seekBar.percentProgressFlow();
     }
 
     public final void setProgressValue(int progressValue) {
@@ -154,73 +156,67 @@ public class FCLPreciseSeekBar extends RelativeLayout {
         return seekBar.getProgressValue();
     }
 
-    public final IntegerProperty progressProperty() {
-        return seekBar.progressProperty();
+    public final MutableStateFlow<Integer> progressFlow() {
+        return seekBar.progressFlow();
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLPreciseSeekBar> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLPreciseSeekBar self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLPreciseSeekBar s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 
     public final void setDisableValue(boolean disableValue) {
-        disableProperty().set(disableValue);
+        disableFlow().setValue(disableValue);
     }
 
     public final boolean getDisableValue() {
-        return disableProperty == null || disableProperty.get();
+        return disableFlow == null || disableFlow.getValue();
     }
 
-    public final BooleanProperty disableProperty() {
-        if (disableProperty == null) {
-            disableProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> disableFlow() {
+        if (disableFlow == null) {
+            disableFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLPreciseSeekBar> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(disableFlow, v -> {
+                FCLPreciseSeekBar self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean disable = get();
-                        add.setEnabled(!disable);
-                        minus.setEnabled(!disable);
-                        seekBar.setEnabled(!disable);
+                        FCLPreciseSeekBar s = ref.get();
+                        if (s != null) {
+                            boolean disable = s.disableFlow.getValue();
+                            s.add.setEnabled(!disable);
+                            s.minus.setEnabled(!disable);
+                            s.seekBar.setEnabled(!disable);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "disable";
-                }
-            };
+            });
         }
 
-        return disableProperty;
+        return disableFlow;
     }
 }

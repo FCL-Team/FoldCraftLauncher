@@ -238,9 +238,9 @@ public final class TaskListPane extends FCLAdapter {
             state = parent.findViewById(R.id.state);
 
             // 对齐原 bind 语义：先同步当前值，再跟踪后续变化；unbind 时取消订阅
-            progressSubscription = FlowSubscriptions.subscribeWithCurrent(task.progressFlow(), bar.percentProgressProperty()::set);
+            progressSubscription = FlowSubscriptions.subscribeWithCurrent(task.progressFlow(), bar.percentProgressFlow()::setValue);
             title.setText(task.getName());
-            messageSubscription = FlowSubscriptions.subscribeWithCurrent(task.messageFlow(), state.stringProperty()::set);
+            messageSubscription = FlowSubscriptions.subscribeWithCurrent(task.messageFlow(), state.stringFlow()::setValue);
         }
 
         public void unbind() {

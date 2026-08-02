@@ -9,43 +9,41 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+
+import java.lang.ref.WeakReference;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class FCLLinearLayout extends LinearLayoutCompat {
 
     private boolean autoTint;
-    private BooleanProperty visibilityProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
+    private void applyTheme() {
+        if (autoTint) {
+            setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() }));
+        }
+    }
 
-        @Override
-        protected void invalidated() {
-            get();
-            if (autoTint) {
-                setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() }));
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLLinearLayout> ref = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLLinearLayout self = ref.get();
+            if (self != null) {
+                self.applyTheme();
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+        });
+    }
 
     public FCLLinearLayout(@NonNull Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLLinearLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -53,7 +51,7 @@ public class FCLLinearLayout extends LinearLayoutCompat {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLLinearLayout);
         autoTint = typedArray.getBoolean(R.styleable.FCLLinearLayout_auto_linear_background_tint, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLLinearLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -61,7 +59,7 @@ public class FCLLinearLayout extends LinearLayoutCompat {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLLinearLayout);
         autoTint = typedArray.getBoolean(R.styleable.FCLLinearLayout_auto_linear_background_tint, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public void setAutoTint(boolean autoTint) {
@@ -73,34 +71,31 @@ public class FCLLinearLayout extends LinearLayoutCompat {
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLLinearLayout> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLLinearLayout self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLLinearLayout s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 }

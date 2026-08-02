@@ -12,8 +12,6 @@ import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.compose.dialog.MiuixWorldExportDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
-import com.tungsten.fclcore.observable.property.SimpleStringProperty;
-import com.tungsten.fclcore.observable.property.StringProperty;
 import com.tungsten.fclcore.game.World;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
@@ -25,12 +23,15 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.time.Instant;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class WorldListItem {
     private final Context context;
     private final Activity activity;
     private final FCLUILayout parent;
-    private final StringProperty title = new SimpleStringProperty();
-    private final StringProperty subtitle = new SimpleStringProperty();
+    private final MutableStateFlow<String> title = StateFlowKt.MutableStateFlow(null);
+    private final MutableStateFlow<String> subtitle = StateFlowKt.MutableStateFlow(null);
     private final World world;
 
     public WorldListItem(Context context, Activity activity, FCLUILayout parent, World world) {
@@ -42,16 +43,16 @@ public class WorldListItem {
 
         this.world = world;
 
-        title.set(parseColorEscapes(world.getWorldName()));
+        title.setValue(parseColorEscapes(world.getWorldName()));
 
-        subtitle.set(AndroidUtils.getLocalizedText(context, "world_description", world.getFileName(), formatDateTime(context, Instant.ofEpochMilli(world.getLastPlayed())), world.getGameVersion() == null ? context.getString(R.string.message_unknown) : world.getGameVersion()));
+        subtitle.setValue(AndroidUtils.getLocalizedText(context, "world_description", world.getFileName(), formatDateTime(context, Instant.ofEpochMilli(world.getLastPlayed())), world.getGameVersion() == null ? context.getString(R.string.message_unknown) : world.getGameVersion()));
     }
 
-    public StringProperty titleProperty() {
+    public MutableStateFlow<String> titleFlow() {
         return title;
     }
 
-    public StringProperty subtitleProperty() {
+    public MutableStateFlow<String> subtitleFlow() {
         return subtitle;
     }
 

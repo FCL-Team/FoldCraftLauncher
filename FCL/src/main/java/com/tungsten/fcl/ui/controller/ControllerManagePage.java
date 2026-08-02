@@ -25,11 +25,6 @@ import com.tungsten.fcl.ui.compose.dialog.MiuixControllerInfoDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.LayoutConverter;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.observable.binding.Bindings;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.task.Task;
@@ -51,19 +46,21 @@ import java.util.List;
 import java.util.logging.Level;
 
 import kotlin.Unit;
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class ControllerManagePage extends FCLCommonPage implements View.OnClickListener {
 
-    private final BooleanProperty refreshProperty;
+    private final MutableStateFlow<Boolean> refreshProperty;
 
-    private ObjectProperty<Controller> selectedController;
+    private MutableStateFlow<Controller> selectedController;
 
     public Controller getSelectedController() {
-        return selectedController.get();
+        return selectedController.getValue();
     }
 
     public void setSelectedController(Controller selectedController) {
-        this.selectedController.set(selectedController);
+        this.selectedController.setValue(selectedController);
     }
 
     private ListView listView;
@@ -79,7 +76,7 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
 
     public ControllerManagePage(Context context, int id, FCLUILayout parent, int resId) {
         super(context, id, parent, resId);
-        refreshProperty = new SimpleBooleanProperty(false);
+        refreshProperty = StateFlowKt.MutableStateFlow(false);
         create();
     }
 
@@ -88,32 +85,15 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
     }
 
     private void init() {
-        selectedController = new SimpleObjectProperty<Controller>() {
-            {
-                // 阶段 4a：Controllers 列表已 StateFlow 化；任何变化（含元素冒泡）重新校验选中项
-                FlowSubscriptions.subscribe(Controllers.controllersSignalFlow(), signal -> invalidated());
-            }
-
-            @Override
-            protected void invalidated() {
-                if (!Controllers.isInitialized()) return;
-
-                Controller controller = get();
-                if (Controllers.getControllers().isEmpty()) {
-                    if (controller != null) {
-                        set(null);
-                    }
-                } else {
-                    if (!Controllers.getControllers().contains(controller)) {
-                        set(Controllers.getControllers().get(0));
-                    }
-                }
-            }
-        };
+        selectedController = StateFlowKt.MutableStateFlow(null);
+        // 阶段 4a：Controllers 列表已 StateFlow 化；任何变化（含元素冒泡）重新校验选中项
+        FlowSubscriptions.subscribe(Controllers.controllersSignalFlow(), signal -> validateSelectedController());
+        // 对齐原 invalidated()：选中项变化后重新校验（列表为空置 null，不在列表中回退到第一项）
+        FlowSubscriptions.subscribe(selectedController, v -> validateSelectedController());
         if (!Controllers.getControllers().isEmpty()) {
-            selectedController.set(Controllers.getControllers().get(0));
+            selectedController.setValue(Controllers.getControllers().get(0));
         } else {
-            selectedController.set(Controllers.DEFAULT_CONTROLLER);
+            selectedController.setValue(Controllers.DEFAULT_CONTROLLER);
         }
 
         listView = findViewById(R.id.controller_list);
@@ -125,16 +105,25 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
         downloadController.setOnClickListener(this);
 
         FCLLinearLayout infoLayout = findViewById(R.id.info_layout);
-        infoLayout.visibilityProperty().bind(Bindings.createBooleanBinding(() -> selectedController.get() != null, selectedController));
+        infoLayout.visibilityFlow().setValue(selectedController.getValue() != null);
+        FlowSubscriptions.subscribe(selectedController, v -> infoLayout.visibilityFlow().setValue(selectedController.getValue() != null));
 
         FCLTextView nameText = findViewById(R.id.name);
         FCLTextView versionText = findViewById(R.id.version);
         FCLTextView authorText = findViewById(R.id.author);
         FCLTextView descriptionText = findViewById(R.id.description);
-        nameText.stringProperty().bind(Bindings.createStringBinding(() -> selectedController.get() == null ? "" : selectedController.get().getName(), selectedController, refreshProperty));
-        versionText.stringProperty().bind(Bindings.createStringBinding(() -> selectedController.get() == null ? "" : selectedController.get().getVersion(), selectedController, refreshProperty));
-        authorText.stringProperty().bind(Bindings.createStringBinding(() -> selectedController.get() == null ? "" : selectedController.get().getAuthor(), selectedController, refreshProperty));
-        descriptionText.stringProperty().bind(Bindings.createStringBinding(() -> selectedController.get() == null ? "" : selectedController.get().getDescription(), selectedController, refreshProperty));
+        nameText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getName());
+        FlowSubscriptions.subscribe(selectedController, v -> nameText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getName()));
+        FlowSubscriptions.subscribe(refreshProperty, v -> nameText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getName()));
+        versionText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getVersion());
+        FlowSubscriptions.subscribe(selectedController, v -> versionText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getVersion()));
+        FlowSubscriptions.subscribe(refreshProperty, v -> versionText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getVersion()));
+        authorText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getAuthor());
+        FlowSubscriptions.subscribe(selectedController, v -> authorText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getAuthor()));
+        FlowSubscriptions.subscribe(refreshProperty, v -> authorText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getAuthor()));
+        descriptionText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getDescription());
+        FlowSubscriptions.subscribe(selectedController, v -> descriptionText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getDescription()));
+        FlowSubscriptions.subscribe(refreshProperty, v -> descriptionText.stringFlow().setValue(selectedController.getValue() == null ? "" : selectedController.getValue().getDescription()));
 
         upload = findViewById(R.id.upload);
         share = findViewById(R.id.share);
@@ -151,6 +140,21 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
         progress.setVisibility(View.GONE);
     }
 
+    private void validateSelectedController() {
+        if (!Controllers.isInitialized()) return;
+
+        Controller controller = selectedController.getValue();
+        if (Controllers.getControllers().isEmpty()) {
+            if (controller != null) {
+                selectedController.setValue(null);
+            }
+        } else {
+            if (!Controllers.getControllers().contains(controller)) {
+                selectedController.setValue(Controllers.getControllers().get(0));
+            }
+        }
+    }
+
     private void refreshList() {
         EditableControllerListAdapter adapter = new EditableControllerListAdapter(getContext(), Controllers.getControllers());
         listView.setAdapter(adapter);
@@ -160,7 +164,7 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
         Schedulers.androidUIThread().execute(() -> {
             Controllers.addController(controller);
             refreshList();
-            selectedController.set(controller);
+            selectedController.setValue(controller);
         });
     }
 
@@ -168,8 +172,8 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
         Schedulers.androidUIThread().execute(() -> {
             Controllers.removeControllers(controller);
             refreshList();
-            if (controller == selectedController.get()) {
-                selectedController.set(null);
+            if (controller == selectedController.getValue()) {
+                selectedController.setValue(null);
             }
         });
     }
@@ -189,7 +193,7 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             }
         }
 
-        refreshProperty.set(!refreshProperty.get());
+        refreshProperty.setValue(!refreshProperty.getValue());
         old.saveToDisk();
     }
 
@@ -231,7 +235,7 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             UIManager.getInstance().getControllerUI().getPageManager().switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO);
         }
         if (view == upload) {
-            ControllerUploadPage page = new ControllerUploadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_controller_upload, selectedController.get());
+            ControllerUploadPage page = new ControllerUploadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_controller_upload, selectedController.getValue());
             ControllerPageManager.getInstance().showTempPage(page);
         }
         if (view == share) {
@@ -252,7 +256,7 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             );
         }
         if (view == editInfo) {
-            MiuixControllerInfoDialog dialog = new MiuixControllerInfoDialog(getContext(), false, selectedController.get(), (controller) -> changeControllerInfo(selectedController.get(), controller));
+            MiuixControllerInfoDialog dialog = new MiuixControllerInfoDialog(getContext(), false, selectedController.getValue(), (controller) -> changeControllerInfo(selectedController.getValue(), controller));
             dialog.show();
         }
         if (view == editController) {

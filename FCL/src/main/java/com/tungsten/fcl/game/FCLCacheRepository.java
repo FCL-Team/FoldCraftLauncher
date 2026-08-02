@@ -18,29 +18,31 @@
 package com.tungsten.fcl.game;
 
 import com.tungsten.fclcore.download.DefaultCacheRepository;
-import com.tungsten.fclcore.observable.property.SimpleStringProperty;
-import com.tungsten.fclcore.observable.property.StringProperty;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.nio.file.Paths;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class FCLCacheRepository extends DefaultCacheRepository {
 
-    private final StringProperty directory = new SimpleStringProperty();
+    private final MutableStateFlow<String> directory = StateFlowKt.MutableStateFlow(null);
 
     public FCLCacheRepository() {
-        directory.addListener((a, b, t) -> changeDirectory(Paths.get(t)));
+        FlowSubscriptions.subscribe(directory, t -> changeDirectory(Paths.get(t)));
     }
 
     public String getDirectory() {
-        return directory.get();
+        return directory.getValue();
     }
 
-    public StringProperty directoryProperty() {
+    public MutableStateFlow<String> directoryFlow() {
         return directory;
     }
 
     public void setDirectory(String directory) {
-        this.directory.set(directory);
+        this.directory.setValue(directory);
     }
 
     public static final FCLCacheRepository REPOSITORY = new FCLCacheRepository();

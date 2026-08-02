@@ -30,11 +30,11 @@ import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fclcore.auth.CharacterSelector
 import com.tungsten.fclcore.auth.NoSelectedCharacterException
 import com.tungsten.fclcore.auth.yggdrasil.GameProfile
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.util.ConvertUtils
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -52,8 +52,8 @@ import java.util.concurrent.CountDownLatch
  * - finally dismiss()。
  * 与遗留实现逐行等价，调用方（AccountListItem/factory.create 链路的 CountDownLatch 语义）不受影响。
  *
- * setCancelable(false) 一致。头像改用 observable avatarBinding 观察进 Compose 状态
- * （绑定实例由本类强引用，防弱绑定被 GC），初始值即 uuid 默认皮肤，等价遗留异步加载。
+ * setCancelable(false) 一致。头像改用 TexturesLoader.avatarFlow（StateFlow）订阅进 Compose 状态
+ * （Flow 实例由本类强引用，防内部弱引用订阅被 GC），初始值即 uuid 默认皮肤，等价遗留异步加载。
  */
 class MiuixCharacterSelectorDialog(
     context: Context,
@@ -66,8 +66,8 @@ class MiuixCharacterSelectorDialog(
     private val profilesState = mutableStateOf<List<GameProfile>>(emptyList())
     private var service: YggdrasilService? = null
 
-    /** 强引用 observable 头像绑定（observable 内部为弱监听，无强引用会被 GC 导致头像停更）。 */
-    private val avatarBindings = ArrayList<Any>()
+    /** 强引用头像 StateFlow（内部订阅弱引用目标，无强引用会被 GC 导致头像停更）。 */
+    private val avatarFlows = ArrayList<Any>()
 
     init {
         setDialogContent {
@@ -101,16 +101,17 @@ class MiuixCharacterSelectorDialog(
     private fun CharacterRow(service: YggdrasilService, profile: GameProfile) {
         val avatarState = remember { mutableStateOf<Bitmap?>(null) }
         DisposableEffect(profile.id) {
-            val binding = TexturesLoader.avatarBinding(
+            val avatarFlow = TexturesLoader.avatarFlow(
                 service,
                 profile.id,
                 ConvertUtils.dip2px(context, 30f),
             )
-            avatarBindings.add(binding)
-            FXUtils.onChangeAndOperate(binding) { drawable ->
+            avatarFlows.add(avatarFlow)
+            // 对齐 FXUtils.onChangeAndOperate：先同步当前值再跟随后续变化
+            val subscription = FlowSubscriptions.subscribeWithCurrent(avatarFlow) { drawable ->
                 avatarState.value = drawable?.bitmap
             }
-            onDispose { }
+            onDispose { subscription.cancel() }
         }
         Row(
             modifier = Modifier

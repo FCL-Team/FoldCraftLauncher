@@ -29,18 +29,17 @@ import com.tungsten.fcl.control.data.DirectionEventData;
 import com.tungsten.fcl.ui.compose.dialog.MiuixEditViewDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.binding.Bindings;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 /**
  * Custom control direction view.
@@ -48,16 +47,25 @@ import java.util.UUID;
 @SuppressLint("ViewConstructor")
 public class ControlDirection extends RelativeLayout implements CustomView {
 
-    private InvalidationListener notifyListener;
-    private InvalidationListener dataChangeListener;
-    private InvalidationListener boundaryListener;
-    private InvalidationListener visibilityListener;
-    private InvalidationListener alphaListener;
+    private Runnable notifyListener;
+    private Runnable dataChangeListener;
+    private Runnable boundaryListener;
+    private Runnable visibilityListener;
+    private Runnable alphaListener;
 
     // 阶段 4b：数据层监听由 getData().addListener(notifyListener) 改为订阅
     // ControlDirectionData.revisionFlow（失效即递增，语义等价）；data 切换时换绑，
     // removeListener 时取消（对齐原 removeListener 摘除）。
     private FlowSubscriptions.Subscription dataSubscription;
+
+    // 阶段 4c：视图层属性监听改为 Flow 订阅，removeListener 时统一 cancel（对齐原 removeListener 摘除）。
+    private FlowSubscriptions.Subscription notifySubscription;
+    private FlowSubscriptions.Subscription dataChangeSubscription;
+    private FlowSubscriptions.Subscription boundarySubscription;
+    private FlowSubscriptions.Subscription alphaSubscription;
+    // visibility 绑定（对齐原 bind/unbind）与 visibilityListener 订阅；refreshBaseInfo 重绑前先取消旧的。
+    private FlowSubscriptions.Subscription visibilityEventSubscription;
+    private final List<FlowSubscriptions.Subscription> visibilityBindingSubscriptions = new ArrayList<>();
 
     private void subscribeDataRevision(boolean cancelEvents) {
         if (dataSubscription != null) {
@@ -69,6 +77,17 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 cancelAllEvent();
             }
         }));
+    }
+
+    private void cancelVisibilitySubscriptions() {
+        for (FlowSubscriptions.Subscription subscription : visibilityBindingSubscriptions) {
+            subscription.cancel();
+        }
+        visibilityBindingSubscriptions.clear();
+        if (visibilityEventSubscription != null) {
+            visibilityEventSubscription.cancel();
+            visibilityEventSubscription = null;
+        }
     }
 
     @Nullable
@@ -90,34 +109,34 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private static final double ANGLE_8D_OF_6P = 292.5;
     private static final double ANGLE_8D_OF_7P = 337.5;
 
-    private BooleanProperty visibilityProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
 
-    private final BooleanProperty parentVisibilityProperty = new SimpleBooleanProperty(this, "parentVisibility", true);
+    private final MutableStateFlow<Boolean> parentVisibilityFlow = StateFlowKt.MutableStateFlow(true);
 
-    public BooleanProperty parentVisibilityProperty() {
-        return parentVisibilityProperty;
+    public MutableStateFlow<Boolean> parentVisibilityFlow() {
+        return parentVisibilityFlow;
     }
 
     public void setParentVisibility(boolean parentVisibility) {
-        parentVisibilityProperty.set(parentVisibility);
+        parentVisibilityFlow.setValue(parentVisibility);
     }
 
     public boolean isParentVisibility() {
-        return parentVisibilityProperty.get();
+        return parentVisibilityFlow.getValue();
     }
 
-    private final ObjectProperty<ControlDirectionData> dataProperty = new SimpleObjectProperty<>(this, "data", new ControlDirectionData(UUID.randomUUID().toString()));
+    private final MutableStateFlow<ControlDirectionData> dataFlow = StateFlowKt.MutableStateFlow(new ControlDirectionData(UUID.randomUUID().toString()));
 
-    public ObjectProperty<ControlDirectionData> dataProperty() {
-        return dataProperty;
+    public MutableStateFlow<ControlDirectionData> dataFlow() {
+        return dataFlow;
     }
 
     public void setData(ControlDirectionData data) {
-        dataProperty.set(data);
+        dataFlow.setValue(data);
     }
 
     public ControlDirectionData getData() {
-        return dataProperty.get();
+        return dataFlow.getValue();
     }
 
     public ControlDirection(Context context, @Nullable GameMenu menu, boolean displayMode, ViewListener listener) {
@@ -141,25 +160,25 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
         setWillNotDraw(false);
 
-        notifyListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+        notifyListener = () -> Schedulers.androidUIThread().execute(() -> {
             notifyData();
             cancelAllEvent();
         });
-        dataChangeListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+        dataChangeListener = () -> Schedulers.androidUIThread().execute(() -> {
             notifyData();
             cancelAllEvent();
             subscribeDataRevision(true);
         });
-        boundaryListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+        boundaryListener = () -> Schedulers.androidUIThread().execute(() -> {
             boundaryPath = new Path();
             invalidate();
         });
-        visibilityListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
-            if (!visibilityProperty.get()) {
+        visibilityListener = () -> Schedulers.androidUIThread().execute(() -> {
+            if (!visibilityFlow().getValue()) {
                 cancelAllEvent();
             }
         });
-        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+        alphaListener = () -> Schedulers.androidUIThread().execute(() -> {
             if (menu != null) {
                 setAlpha(menu.isHideAllViews() ? 0 : 1);
             }
@@ -171,14 +190,18 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 return;
             }
             if (menu != null) {
-                menu.editModeProperty().addListener(notifyListener);
+                Runnable notifyLocal = notifyListener;
+                notifySubscription = FlowSubscriptions.subscribe(menu.editModeFlow(), v -> notifyLocal.run());
             }
-            dataProperty.addListener(dataChangeListener);
+            Runnable dataListener = dataChangeListener;
+            dataChangeSubscription = FlowSubscriptions.subscribe(dataFlow, v -> dataListener.run());
             subscribeDataRevision(true);
             if (menu != null) {
-                menu.showViewBoundariesProperty().addListener(boundaryListener);
+                Runnable boundary = boundaryListener;
+                boundarySubscription = FlowSubscriptions.subscribe(menu.showViewBoundariesFlow(), v -> boundary.run());
                 setAlpha(menu.isHideAllViews() ? 0 : 1);
-                menu.hideAllViewsProperty().addListener(alphaListener);
+                Runnable alpha = alphaListener;
+                alphaSubscription = FlowSubscriptions.subscribe(menu.hideAllViewsFlow(), v -> alpha.run());
             }
             if (listener != null) {
                 listener.onReady(this);
@@ -202,19 +225,20 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         screenWidth = AndroidUtils.getScreenWidth();
         screenHeight = AndroidUtils.getScreenHeight();
 
-        notifyListener = invalidate -> Schedulers.androidUIThread().execute(this::notifyData);
-        dataChangeListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+        notifyListener = () -> Schedulers.androidUIThread().execute(this::notifyData);
+        dataChangeListener = () -> Schedulers.androidUIThread().execute(() -> {
             notifyData();
             subscribeDataRevision(false);
         });
         boundaryListener = null;
-        visibilityListener = observable -> {
+        visibilityListener = () -> {
         };
         alphaListener = null;
 
         post(() -> {
             notifyData();
-            dataProperty.addListener(dataChangeListener);
+            Runnable dataListener = dataChangeListener;
+            dataChangeSubscription = FlowSubscriptions.subscribe(dataFlow, v -> dataListener.run());
             subscribeDataRevision(false);
         });
     }
@@ -270,17 +294,29 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
         // Visibility
         if (!displayMode && menu != null) {
-            visibilityProperty().unbind();
+            cancelVisibilitySubscriptions();
+            MutableStateFlow<Boolean> visibility = visibilityFlow();
             if (menu.isEditMode()) {
-                visibilityProperty().bind(Bindings.createBooleanBinding(() -> menu.getViewGroup() != null && menu.getViewGroup().getViewData().getDirectionList().stream().anyMatch(it -> it.getId().equals(getData().getId())),
-                        menu.editModeProperty(), menu.viewGroupProperty()));
+                visibility.setValue(menu.getViewGroup() != null && menu.getViewGroup().getViewData().getDirectionList().stream().anyMatch(it -> it.getId().equals(getData().getId())));
+                visibilityBindingSubscriptions.add(FlowSubscriptions.subscribe(menu.editModeFlow(), v ->
+                        visibility.setValue(menu.getViewGroup() != null && menu.getViewGroup().getViewData().getDirectionList().stream().anyMatch(it -> it.getId().equals(getData().getId())))));
+                visibilityBindingSubscriptions.add(FlowSubscriptions.subscribe(menu.viewGroupFlow(), v ->
+                        visibility.setValue(menu.getViewGroup() != null && menu.getViewGroup().getViewData().getDirectionList().stream().anyMatch(it -> it.getId().equals(getData().getId())))));
             } else {
-                visibilityProperty().bind(Bindings.createBooleanBinding(() -> isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
+                visibility.setValue(isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
+                        (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME && menu.getCursorMode() == FCLBridge.CursorDisabled) ||
+                        (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)));
+                visibilityBindingSubscriptions.add(FlowSubscriptions.subscribe(menu.cursorModeFlow(), v ->
+                        visibility.setValue(isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
                                 (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME && menu.getCursorMode() == FCLBridge.CursorDisabled) ||
-                                (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)),
-                        menu.cursorModeProperty(), parentVisibilityProperty()));
+                                (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)))));
+                visibilityBindingSubscriptions.add(FlowSubscriptions.subscribe(parentVisibilityFlow, v ->
+                        visibility.setValue(isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
+                                (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME && menu.getCursorMode() == FCLBridge.CursorDisabled) ||
+                                (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)))));
             }
-            visibilityProperty().addListener(visibilityListener);
+            Runnable listener = visibilityListener;
+            visibilityEventSubscription = FlowSubscriptions.subscribe(visibility, v -> listener.run());
         }
     }
 
@@ -910,28 +946,26 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         });
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            // 弱引用自身：该订阅常驻全局作用域不取消，对齐原 BooleanPropertyBase 自持有监听语义，视图可被 GC
+            WeakReference<ControlDirection> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                ControlDirection self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        ControlDirection s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 
     @Override
@@ -951,13 +985,23 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
     @Override
     public void removeListener() {
-        if (menu != null) {
-            menu.editModeProperty().removeListener(notifyListener);
-            menu.showViewBoundariesProperty().removeListener(boundaryListener);
-            visibilityProperty().removeListener(visibilityListener);
-            menu.hideAllViewsProperty().removeListener(alphaListener);
+        if (notifySubscription != null) {
+            notifySubscription.cancel();
+            notifySubscription = null;
         }
-        dataProperty.removeListener(dataChangeListener);
+        if (boundarySubscription != null) {
+            boundarySubscription.cancel();
+            boundarySubscription = null;
+        }
+        if (alphaSubscription != null) {
+            alphaSubscription.cancel();
+            alphaSubscription = null;
+        }
+        if (dataChangeSubscription != null) {
+            dataChangeSubscription.cancel();
+            dataChangeSubscription = null;
+        }
+        cancelVisibilitySubscriptions();
         if (dataSubscription != null) {
             dataSubscription.cancel();
             dataSubscription = null;

@@ -34,7 +34,6 @@ import com.tungsten.fcl.ui.download.version.InstallFailureAlert
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.download.RemoteVersion
-import com.tungsten.fclcore.observable.InvalidationListener
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.TaskExecutor
 import com.tungsten.fclcore.task.TaskListener
@@ -66,31 +65,32 @@ class VersionInstallInfoStateHolder(
     private val gameVersion: String,
 ) {
 
-    /** 单个加载器条目的 Compose 状态（observable 属性单向桥接，对齐 InstallerItemSkin 绑定）。 */
+    /**
+     * 单个加载器条目的 Compose 状态（镜像 InstallerItem 属性，对齐 InstallerItemSkin 绑定）。
+     * InstallerItem 为保留原生组件（manage/InstallerListPage 同用），其属性已 StateFlow 化；
+     * 镜像不注册监听，改由本 holder 在唯一写入口（[onLoaderSelected]/[onLoaderRemove]）
+     * 写入后同步整体刷新——写入返回时 InstallerItemGroup 互斥联动已传播完毕，
+     * 刷新结果与原监听器逐次回调完全一致。
+     */
     inner class LoaderUi(val item: InstallerItem) {
-        var libraryVersion by mutableStateOf(item.libraryVersion.get())
-        var incompatibleLibraryName by mutableStateOf(item.incompatibleLibraryName.get())
-        var incompatibleWithGame by mutableStateOf(item.incompatibleWithGame.get())
-        var removable by mutableStateOf(item.removable.get())
-        var installable by mutableStateOf(item.installable.get())
+        var libraryVersion by mutableStateOf(item.libraryVersion.value)
+            private set
+        var incompatibleLibraryName by mutableStateOf(item.incompatibleLibraryName.value)
+            private set
+        var incompatibleWithGame by mutableStateOf(item.incompatibleWithGame.value)
+            private set
+        var removable by mutableStateOf(item.removable.value)
+            private set
+        var installable by mutableStateOf(item.installable.value)
+            private set
 
-        init {
-            // 监听器随临时页销毁整体回收，无需反注册
-            item.libraryVersion.addListener(InvalidationListener {
-                libraryVersion = item.libraryVersion.get()
-            })
-            item.incompatibleLibraryName.addListener(InvalidationListener {
-                incompatibleLibraryName = item.incompatibleLibraryName.get()
-            })
-            item.incompatibleWithGame.addListener(InvalidationListener {
-                incompatibleWithGame = item.incompatibleWithGame.get()
-            })
-            item.removable.addListener(InvalidationListener {
-                removable = item.removable.get()
-            })
-            item.installable.addListener(InvalidationListener {
-                installable = item.installable.get()
-            })
+        /** 从 InstallerItem 属性同步全部镜像。 */
+        fun refresh() {
+            libraryVersion = item.libraryVersion.value
+            incompatibleLibraryName = item.incompatibleLibraryName.value
+            incompatibleWithGame = item.incompatibleWithGame.value
+            removable = item.removable.value
+            installable = item.installable.value
         }
     }
 
@@ -118,17 +118,24 @@ class VersionInstallInfoStateHolder(
     fun onLoaderSelected(libraryId: String, remoteVersion: RemoteVersion) {
         selectedVersions[libraryId] = remoteVersion
         val ui = loaders.firstOrNull { it.item.libraryId == libraryId } ?: return
-        ui.item.libraryVersion.set(remoteVersion.selfVersion)
-        ui.item.removable.set(true)
+        ui.item.libraryVersion.value = remoteVersion.selfVersion
+        ui.item.removable.value = true
+        refreshLoaders()
         refreshVersionName()
     }
 
     /** 移除已选加载器（对齐 removeAction :134-138 + reload）。 */
     fun onLoaderRemove(ui: LoaderUi) {
         selectedVersions.remove(ui.item.libraryId)
-        ui.item.libraryVersion.set(null)
-        ui.item.removable.set(false)
+        ui.item.libraryVersion.value = null
+        ui.item.removable.value = false
+        refreshLoaders()
         refreshVersionName()
+    }
+
+    /** 全部条目镜像同步（对齐原 InvalidationListener 回调；组内互斥联动在 set 返回前已同步传播）。 */
+    private fun refreshLoaders() {
+        loaders.forEach { it.refresh() }
     }
 
     /** 加载器项点击（对齐 action :114-133：守卫 + Fabric API 警告 + 打开选择页）。 */

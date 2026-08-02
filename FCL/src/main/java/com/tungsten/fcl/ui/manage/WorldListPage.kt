@@ -17,13 +17,10 @@ import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.RequestCodes
 import com.tungsten.fclauncher.utils.FCLPath
-import com.tungsten.fclcore.observable.Observable
-import com.tungsten.fclcore.observable.property.BooleanProperty
-import com.tungsten.fclcore.observable.property.ListProperty
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty
-import com.tungsten.fclcore.observable.property.SimpleListProperty
-import com.tungsten.fclcore.observable.collections.FXCollections
+import com.tungsten.fcl.util.FlowList
 import com.tungsten.fclcore.game.World
+import com.tungsten.fclcore.util.flow.FlowBindings
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fcllibrary.browser.FileBrowser
@@ -35,6 +32,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -51,10 +49,9 @@ import kotlin.io.path.pathString
 
 class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
     FCLCommonPage(context, id, parent, resId), VersionLoadable, View.OnClickListener {
-    private val itemsProperty: ListProperty<WorldListItem> =
-        SimpleListProperty(FXCollections.observableArrayList())
+    private val itemsProperty = FlowList<WorldListItem>()
 
-    private val showAll: BooleanProperty = SimpleBooleanProperty(this, "showAll", false)
+    private val showAll = MutableStateFlow(false)
 
     private lateinit var savesDir: Path
     private var worlds: MutableList<World?> = mutableListOf()
@@ -70,7 +67,7 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
     fun create() {
         binding = PageManageWorldBinding.bind(contentView)
 
-        showAll.addListener { _: Observable? ->
+        FlowSubscriptions.subscribe(showAll) {
             itemsProperty.setAll(
                 worlds.stream()
                     .filter { world: World? -> isShowAll() || world!!.gameVersion == null || world.gameVersion == gameVersion }
@@ -88,13 +85,13 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
         }
 
         binding.showAll.addCheckedChangeListener()
-        binding.showAll.checkProperty().bindBidirectional(showAll)
+        FlowBindings.bindBidirectional(binding.showAll.checkFlow(), showAll)
         binding.add.setOnClickListener(this)
         binding.refresh.setOnClickListener(this)
         binding.fixPrivate.setOnClickListener(this)
 
         val adapter = WorldListAdapter(context)
-        adapter.listProperty().bind(itemsProperty)
+        FlowSubscriptions.subscribeWithCurrent(itemsProperty.flow()) { adapter.listProperty().setAll(it) }
         binding.recyclerView.setLayoutManager(LinearLayoutManager(context))
         binding.recyclerView.setAdapter(adapter)
     }
@@ -272,6 +269,6 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
         }
 
     fun isShowAll(): Boolean {
-        return showAll.get()
+        return showAll.value
     }
 }

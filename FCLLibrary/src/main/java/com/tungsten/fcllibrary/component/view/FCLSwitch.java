@@ -9,175 +9,164 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+
+import java.lang.ref.WeakReference;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class FCLSwitch extends SwitchCompat {
 
     private boolean fromUserOrSystem = false;
-    private BooleanProperty visibilityProperty;
-    private BooleanProperty checkProperty;
-    private BooleanProperty disableProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
+    private MutableStateFlow<Boolean> checkFlow;
+    private MutableStateFlow<Boolean> disableFlow;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
+    private void applyTheme() {
+        int[][] state = {
+                {
+                        android.R.attr.state_checked
+                },
+                {
 
-        @Override
-        protected void invalidated() {
-            get();
-            int[][] state = {
-                    {
-                            android.R.attr.state_checked
-                    },
-                    {
+                }
+        };
+        int[] color = {
+                ThemeEngine.getInstance().getTheme().getDkColor(),
+                ThemeEngine.getInstance().getTheme().getColor() | 0xFF000000
+        };
+        int[] subColor = {
+                ThemeEngine.getInstance().getTheme().getColor() | 0xFF000000,
+                Color.GRAY
+        };
+        setThumbTintList(new ColorStateList(state, color));
+        setTrackTintList(new ColorStateList(state, subColor));
+        setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+    }
 
-                    }
-            };
-            int[] color = {
-                    ThemeEngine.getInstance().getTheme().getDkColor(),
-                    ThemeEngine.getInstance().getTheme().getColor() | 0xFF000000
-            };
-            int[] subColor = {
-                    ThemeEngine.getInstance().getTheme().getColor() | 0xFF000000,
-                    Color.GRAY
-            };
-            setThumbTintList(new ColorStateList(state, color));
-            setTrackTintList(new ColorStateList(state, subColor));
-            setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLSwitch> ref = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLSwitch self = ref.get();
+            if (self != null) {
+                self.applyTheme();
+            }
+        });
+    }
 
     public void addCheckedChangeListener() {
         setOnCheckedChangeListener((compoundButton, b) -> {
             fromUserOrSystem = true;
-            checkProperty().set(b);
+            checkFlow().setValue(b);
         });
     }
 
     public FCLSwitch(@NonNull Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLSwitch(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLSwitch(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLSwitch> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLSwitch self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLSwitch s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 
     public final void setCheckValue(boolean isChecked) {
-        checkProperty().set(isChecked);
+        checkFlow().setValue(isChecked);
     }
 
     public final boolean getCheckValue() {
-        return checkProperty == null || checkProperty.get();
+        return checkFlow == null || checkFlow.getValue();
     }
 
-    public final BooleanProperty checkProperty() {
-        if (checkProperty == null) {
-            checkProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> checkFlow() {
+        if (checkFlow == null) {
+            checkFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLSwitch> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(checkFlow, v -> {
+                FCLSwitch self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        if (!fromUserOrSystem) {
-                            boolean isCheck = get();
-                            setChecked(isCheck);
+                        FCLSwitch s = ref.get();
+                        if (s != null) {
+                            if (!s.fromUserOrSystem) {
+                                boolean isCheck = s.checkFlow.getValue();
+                                s.setChecked(isCheck);
+                            }
+                            s.fromUserOrSystem = false;
                         }
-                        fromUserOrSystem = false;
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "check";
-                }
-            };
+            });
         }
 
-        return checkProperty;
+        return checkFlow;
     }
 
     public final void setDisableValue(boolean disableValue) {
-        disableProperty().set(disableValue);
+        disableFlow().setValue(disableValue);
     }
 
     public final boolean getDisableValue() {
-        return disableProperty == null || disableProperty.get();
+        return disableFlow == null || disableFlow.getValue();
     }
 
-    public final BooleanProperty disableProperty() {
-        if (disableProperty == null) {
-            disableProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> disableFlow() {
+        if (disableFlow == null) {
+            disableFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLSwitch> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(disableFlow, v -> {
+                FCLSwitch self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean disable = get();
-                        setEnabled(!disable);
+                        FCLSwitch s = ref.get();
+                        if (s != null) {
+                            boolean disable = s.disableFlow.getValue();
+                            s.setEnabled(!disable);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "disable";
-                }
-            };
+            });
         }
 
-        return disableProperty;
+        return disableFlow;
     }
 }

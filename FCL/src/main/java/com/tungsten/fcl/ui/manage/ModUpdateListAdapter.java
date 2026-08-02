@@ -7,17 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.collections.ObservableList;
+import com.tungsten.fcl.util.FlowList;
+import com.tungsten.fclcore.util.flow.FlowBindings;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 public class ModUpdateListAdapter extends FCLAdapter {
 
-    private final ObservableList<ModUpdatesPage.ModUpdateObject> list;
+    private final FlowList<ModUpdatesPage.ModUpdateObject> list;
 
-    public ModUpdateListAdapter(Context context, ObservableList<ModUpdatesPage.ModUpdateObject> list) {
+    public ModUpdateListAdapter(Context context, FlowList<ModUpdatesPage.ModUpdateObject> list) {
         super(context);
         this.list = list;
     }
@@ -27,7 +28,7 @@ public class ModUpdateListAdapter extends FCLAdapter {
         FCLTextView file;
         FCLTextView source;
         FCLTextView desc;
-        BooleanProperty booleanProperty;
+        FlowSubscriptions.Subscription checkSubscription;
     }
 
     @Override
@@ -37,7 +38,7 @@ public class ModUpdateListAdapter extends FCLAdapter {
 
     @Override
     public Object getItem(int i) {
-        return list.get(i);
+        return list.get().get(i);
     }
 
     @SuppressLint("SetTextI18n")
@@ -55,12 +56,12 @@ public class ModUpdateListAdapter extends FCLAdapter {
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        ModUpdatesPage.ModUpdateObject modUpdateObject = list.get(i);
+        ModUpdatesPage.ModUpdateObject modUpdateObject = list.get().get(i);
         viewHolder.checkBox.addCheckedChangeListener();
-        if (viewHolder.booleanProperty != null) {
-            viewHolder.checkBox.checkProperty().unbindBidirectional(viewHolder.booleanProperty);
+        if (viewHolder.checkSubscription != null) {
+            viewHolder.checkSubscription.cancel();
         }
-        viewHolder.checkBox.checkProperty().bindBidirectional(viewHolder.booleanProperty = modUpdateObject.enabledProperty());
+        viewHolder.checkSubscription = FlowBindings.bindBidirectional(viewHolder.checkBox.checkFlow(), modUpdateObject.enabledFlow());
         viewHolder.file.setText(modUpdateObject.getFileName());
         viewHolder.source.setText(modUpdateObject.getSource());
         viewHolder.desc.setText(modUpdateObject.getCurrentVersion() + "  ->  " + modUpdateObject.getTargetVersion());

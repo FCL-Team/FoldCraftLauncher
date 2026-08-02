@@ -17,35 +17,20 @@
  */
 package com.tungsten.fcl.util;
 
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.WeakInvalidationListener;
-import com.tungsten.fclcore.observable.value.ChangeListener;
-import com.tungsten.fclcore.observable.value.WeakChangeListener;
-import com.tungsten.fclcore.observable.collections.ListChangeListener;
-import com.tungsten.fclcore.observable.collections.WeakListChangeListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 弱注册（EventBus registerWeak 等）的强引用兜底容器：只要本持有者存活，
+ * 被弱引用包装的目标就不会被 GC 提前回收。
+ *
+ * <p>阶段 4c：observable 体系的 WeakXxxListener 工厂方法已随 fakefx 移除删除，
+ * 本类仅保留通用的 add/remove 引用管理。</p>
+ */
 public class WeakListenerHolder {
     private final List<Object> refs = new ArrayList<>(0);
 
     public WeakListenerHolder() {
-    }
-
-    public WeakInvalidationListener weak(InvalidationListener listener) {
-        refs.add(listener);
-        return new WeakInvalidationListener(listener);
-    }
-
-    public <T> WeakChangeListener<T> weak(ChangeListener<T> listener) {
-        refs.add(listener);
-        return new WeakChangeListener<>(listener);
-    }
-
-    public <T> WeakListChangeListener<T> weak(ListChangeListener<T> listener) {
-        refs.add(listener);
-        return new WeakListChangeListener<>(listener);
     }
 
     public void add(Object obj) {

@@ -46,7 +46,6 @@ import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.main.Announcement
 import com.tungsten.fcl.ui.theme.FCLThemeTokens
-import com.tungsten.fclcore.observable.value.ChangeListener
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.HttpRequest
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
@@ -288,13 +287,11 @@ private fun SkinModelPreview(modifier: Modifier = Modifier) {
         if (current == null) {
             value = arrayOf(defaultSkin, null)
         } else {
-            val binding = TexturesLoader.textureBinding(current)
-            value = binding.value?.let { arrayOf(it.getOrNull(0), it.getOrNull(1)) }
-            val listener = ChangeListener<Array<Bitmap>> { _, _, newValue ->
+            val flow = TexturesLoader.textureFlow(current)
+            value = flow.value?.let { arrayOf(it.getOrNull(0), it.getOrNull(1)) }
+            flow.collect { newValue ->
                 value = arrayOf(newValue?.getOrNull(0), newValue?.getOrNull(1))
             }
-            binding.addListener(listener)
-            awaitDispose { binding.removeListener(listener) }
         }
     }
     val rendererHolder = remember { arrayOfNulls<SkinRenderer>(1) }

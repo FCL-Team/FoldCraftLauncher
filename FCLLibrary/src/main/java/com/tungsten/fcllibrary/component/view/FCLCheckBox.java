@@ -10,64 +10,62 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatCheckBox;
 
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+
+import java.lang.ref.WeakReference;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class FCLCheckBox extends AppCompatCheckBox {
 
     private boolean autoTint;
     private boolean fromUserOrSystem = false;
     private boolean fromIndeterminate = false;
-    private BooleanProperty visibilityProperty;
-    private BooleanProperty checkProperty;
-    private BooleanProperty indeterminateProperty;
-    private BooleanProperty disableProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
+    private MutableStateFlow<Boolean> checkFlow;
+    private MutableStateFlow<Boolean> indeterminateFlow;
+    private MutableStateFlow<Boolean> disableFlow;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
+    private void applyTheme() {
+        int[][] state = {
+                {
+                        android.R.attr.state_checked
+                },
+                {
 
-        @Override
-        protected void invalidated() {
-            get();
-            int[][] state = {
-                    {
-                            android.R.attr.state_checked
-                    },
-                    {
+                }
+        };
+        int[] color = {
+                ThemeEngine.getInstance().getTheme().getDkColor(),
+                ThemeEngine.getInstance().getTheme().getColor()
+        };
+        setButtonTintList(new ColorStateList(state, color));
+        if (autoTint) {
+            setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+        }
+    }
 
-                    }
-            };
-            int[] color = {
-                    ThemeEngine.getInstance().getTheme().getDkColor(),
-                    ThemeEngine.getInstance().getTheme().getColor()
-            };
-            setButtonTintList(new ColorStateList(state, color));
-            if (autoTint) {
-                setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLCheckBox> ref = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLCheckBox self = ref.get();
+            if (self != null) {
+                self.applyTheme();
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+        });
+    }
 
     public void addCheckedChangeListener() {
         setOnCheckedChangeListener((compoundButton, b) -> {
             if (!fromIndeterminate) {
                 fromUserOrSystem = true;
-                checkProperty().set(b);
-                indeterminateProperty().set(false);
+                checkFlow().setValue(b);
+                indeterminateFlow().setValue(false);
                 fromUserOrSystem = false;
             }
         });
@@ -75,7 +73,7 @@ public class FCLCheckBox extends AppCompatCheckBox {
 
     public FCLCheckBox(@NonNull Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLCheckBox(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -83,7 +81,7 @@ public class FCLCheckBox extends AppCompatCheckBox {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLCheckBox);
         autoTint = typedArray.getBoolean(R.styleable.FCLCheckBox_auto_hint_tint, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLCheckBox(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -91,7 +89,7 @@ public class FCLCheckBox extends AppCompatCheckBox {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLCheckBox);
         autoTint = typedArray.getBoolean(R.styleable.FCLCheckBox_auto_hint_tint, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public void setAutoTint(boolean autoTint) {
@@ -103,139 +101,127 @@ public class FCLCheckBox extends AppCompatCheckBox {
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLCheckBox> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLCheckBox self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLCheckBox s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 
     public final void setCheckValue(boolean isChecked) {
-        checkProperty().set(isChecked);
+        checkFlow().setValue(isChecked);
     }
 
     public final boolean getCheckValue() {
-        return checkProperty == null || checkProperty.get();
+        return checkFlow == null || checkFlow.getValue();
     }
 
-    public final BooleanProperty checkProperty() {
-        if (checkProperty == null) {
-            checkProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> checkFlow() {
+        if (checkFlow == null) {
+            checkFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLCheckBox> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(checkFlow, v -> {
+                FCLCheckBox self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        if (!fromUserOrSystem) {
-                            boolean isCheck = get();
-                            setChecked(isCheck);
+                        FCLCheckBox s = ref.get();
+                        if (s != null) {
+                            if (!s.fromUserOrSystem) {
+                                boolean isCheck = s.checkFlow.getValue();
+                                s.setChecked(isCheck);
+                            }
                         }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "check";
-                }
-            };
+            });
         }
 
-        return checkProperty;
+        return checkFlow;
     }
 
     public final void setIndeterminate(boolean indeterminate) {
-        checkProperty().set(indeterminate);
+        checkFlow().setValue(indeterminate);
     }
 
     public final boolean isIndeterminate() {
-        return indeterminateProperty().get();
+        return indeterminateFlow().getValue();
     }
 
-    public final BooleanProperty indeterminateProperty() {
-        if (indeterminateProperty == null) {
-            indeterminateProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> indeterminateFlow() {
+        if (indeterminateFlow == null) {
+            indeterminateFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLCheckBox> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(indeterminateFlow, v -> {
+                FCLCheckBox self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        if (!fromUserOrSystem) {
-                            fromIndeterminate = true;
-                            if (get()) {
-                                setChecked(true);
-                            } else {
-                                setChecked(checkProperty().get());
+                        FCLCheckBox s = ref.get();
+                        if (s != null) {
+                            if (!s.fromUserOrSystem) {
+                                s.fromIndeterminate = true;
+                                if (s.indeterminateFlow.getValue()) {
+                                    s.setChecked(true);
+                                } else {
+                                    s.setChecked(s.checkFlow().getValue());
+                                }
+                                s.fromIndeterminate = false;
                             }
-                            fromIndeterminate = false;
                         }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "indeterminate";
-                }
-            };
+            });
         }
 
-        return indeterminateProperty;
+        return indeterminateFlow;
     }
 
     public final void setDisableValue(boolean disableValue) {
-        disableProperty().set(disableValue);
+        disableFlow().setValue(disableValue);
     }
 
     public final boolean getDisableValue() {
-        return disableProperty == null || disableProperty.get();
+        return disableFlow == null || disableFlow.getValue();
     }
 
-    public final BooleanProperty disableProperty() {
-        if (disableProperty == null) {
-            disableProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> disableFlow() {
+        if (disableFlow == null) {
+            disableFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLCheckBox> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(disableFlow, v -> {
+                FCLCheckBox self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean disable = get();
-                        setEnabled(!disable);
+                        FCLCheckBox s = ref.get();
+                        if (s != null) {
+                            boolean disable = s.disableFlow.getValue();
+                            s.setEnabled(!disable);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "disable";
-                }
-            };
+            });
         }
 
-        return disableProperty;
+        return disableFlow;
     }
 }

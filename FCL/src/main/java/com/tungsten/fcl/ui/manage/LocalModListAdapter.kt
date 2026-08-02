@@ -19,15 +19,13 @@ import com.tungsten.fcl.ui.compose.dialog.MiuixModRollbackDialog
 import com.tungsten.fcl.ui.download.DownloadPageManager
 import com.tungsten.fcl.ui.download.compose.ComposeDownloadPage
 import com.tungsten.fcl.ui.manage.ModListPage.ModInfoObject
-import com.tungsten.fclcore.observable.Observable
-import com.tungsten.fclcore.observable.property.ListProperty
-import com.tungsten.fclcore.observable.property.SimpleListProperty
-import com.tungsten.fclcore.observable.collections.FXCollections
+import com.tungsten.fcl.util.FlowList
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.Dispatchers
@@ -44,28 +42,23 @@ class LocalModListAdapter(
     val onChecked: () -> Unit
 ) :
     RecyclerView.Adapter<ViewHolder>() {
-    val listProperty: ListProperty<ModInfoObject> = SimpleListProperty(
-        FXCollections.observableArrayList()
-    )
-    val selectedItemsProperty: ListProperty<ModInfoObject?> =
-        SimpleListProperty(
-            FXCollections.observableArrayList<ModInfoObject?>()
-        )
+    val listProperty: FlowList<ModInfoObject> = FlowList()
+    val selectedItemsProperty: FlowList<ModInfoObject?> = FlowList()
 
     val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_cube)!!
     private val jobs = HashMap<Int, Job>()
 
-    fun listProperty(): ListProperty<ModInfoObject> {
+    fun listProperty(): FlowList<ModInfoObject> {
         return listProperty
     }
 
-    fun selectedItemsProperty(): ListProperty<ModInfoObject?> {
+    fun selectedItemsProperty(): FlowList<ModInfoObject?> {
         return selectedItemsProperty
     }
 
     fun selectAll() {
         selectedItemsProperty.clear()
-        selectedItemsProperty.addAll(listProperty)
+        selectedItemsProperty.addAll(listProperty.get())
     }
 
     fun selectInvert() {
@@ -82,13 +75,13 @@ class LocalModListAdapter(
     private var fromSelf = false
 
     init {
-        this.listProperty.addListener { _: Observable? ->
+        FlowSubscriptions.subscribe(listProperty.flow()) {
             fromSelf = true
             selectedItemsProperty.clear()
             fromSelf = false
             notifyDataSetChanged()
         }
-        selectedItemsProperty.addListener { _: Observable? ->
+        FlowSubscriptions.subscribe(selectedItemsProperty.flow()) {
             if (!fromSelf) {
                 notifyDataSetChanged()
             }
@@ -138,7 +131,7 @@ class LocalModListAdapter(
         val binding = ItemLocalModBinding.bind(holder.itemView)
         jobs[position]?.cancel()
         jobs.remove(position)
-        val modInfoObject = listProperty[position]
+        val modInfoObject = listProperty.get()[position]
         binding.parent.backgroundTintList = ColorStateList(
             arrayOf<IntArray?>(intArrayOf()),
             intArrayOf(
@@ -278,6 +271,6 @@ class LocalModListAdapter(
     }
 
     override fun getItemCount(): Int {
-        return listProperty.size
+        return listProperty.size()
     }
 }

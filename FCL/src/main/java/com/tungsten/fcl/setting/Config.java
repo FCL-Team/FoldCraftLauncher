@@ -31,10 +31,7 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.Observable;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
-import com.tungsten.fclcore.util.observable.ObservableHelper;
 import com.tungsten.fclcore.util.gson.FileTypeAdapter;
 
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +44,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import kotlinx.coroutines.flow.MutableStateFlow;
 import kotlinx.coroutines.flow.StateFlow;
@@ -77,7 +75,7 @@ import kotlinx.coroutines.flow.StateFlowKt;
  * 逐字节一致（实测回环见 docs/migration/fakefx-removal-plan.md §九）。</p>
  */
 @JsonAdapter(Config.Serializer.class)
-public final class Config implements Cloneable, Observable {
+public final class Config implements Cloneable {
 
     public static final int CURRENT_UI_VERSION = 0;
 
@@ -121,33 +119,33 @@ public final class Config implements Cloneable, Observable {
 
     private final MutableStateFlow<String> preferredLoginType = StateFlowKt.MutableStateFlow(null);
 
-    private transient ObservableHelper helper = new ObservableHelper(this);
+    // 阶段 4c：ObservableHelper 失效中心改为 Runnable 监听列表（语义不变：
+    // 任一字段 Flow 发射 → invalidate() → ConfigHolder 存盘）。
+    private transient final List<Runnable> listeners = new CopyOnWriteArrayList<>();
 
     public Config() {
-        FlowSubscriptions.subscribe(selectedProfile, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(commonDirectory, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(autoDownloadThreads, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(downloadThreads, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(downloadType, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(autoChooseDownloadType, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(versionListSource, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(selectedAccount, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(accountStorages, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(authlibInjectorServers, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(promptedVersion, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(configVersion, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(uiVersion, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(preferredLoginType, v -> helper.invalidate());
+        FlowSubscriptions.subscribe(selectedProfile, v -> invalidate());
+        FlowSubscriptions.subscribe(commonDirectory, v -> invalidate());
+        FlowSubscriptions.subscribe(autoDownloadThreads, v -> invalidate());
+        FlowSubscriptions.subscribe(downloadThreads, v -> invalidate());
+        FlowSubscriptions.subscribe(downloadType, v -> invalidate());
+        FlowSubscriptions.subscribe(autoChooseDownloadType, v -> invalidate());
+        FlowSubscriptions.subscribe(versionListSource, v -> invalidate());
+        FlowSubscriptions.subscribe(selectedAccount, v -> invalidate());
+        FlowSubscriptions.subscribe(accountStorages, v -> invalidate());
+        FlowSubscriptions.subscribe(authlibInjectorServers, v -> invalidate());
+        FlowSubscriptions.subscribe(promptedVersion, v -> invalidate());
+        FlowSubscriptions.subscribe(configVersion, v -> invalidate());
+        FlowSubscriptions.subscribe(uiVersion, v -> invalidate());
+        FlowSubscriptions.subscribe(preferredLoginType, v -> invalidate());
     }
 
-    @Override
-    public void addListener(InvalidationListener listener) {
-        helper.addListener(listener);
+    public void addListener(Runnable listener) {
+        listeners.add(listener);
     }
 
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        helper.removeListener(listener);
+    public void removeListener(Runnable listener) {
+        listeners.remove(listener);
     }
 
     /**
@@ -156,7 +154,9 @@ public final class Config implements Cloneable, Observable {
      * 需保留原 MapProperty.set 必失效的存盘语义）。
      */
     public void invalidate() {
-        helper.invalidate();
+        for (Runnable listener : listeners) {
+            listener.run();
+        }
     }
 
     public String toJson() {
@@ -303,7 +303,7 @@ public final class Config implements Cloneable, Observable {
         if (serverSubscriptions.containsKey(server))
             return;
         serverSubscriptions.put(server,
-                FlowSubscriptions.subscribe(server.revisionFlow(), revision -> helper.invalidate()));
+                FlowSubscriptions.subscribe(server.revisionFlow(), revision -> invalidate()));
     }
 
     private void detachServerSubscription(AuthlibInjectorServer server) {

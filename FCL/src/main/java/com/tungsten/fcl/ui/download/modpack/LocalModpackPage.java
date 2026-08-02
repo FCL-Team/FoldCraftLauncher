@@ -15,8 +15,6 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.mod.Modpack;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -31,12 +29,15 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class LocalModpackPage extends ModpackPage implements View.OnClickListener {
 
     private final String updateVersion;
     private final File modpackFile;
 
-    private final BooleanProperty installAsVersion = new SimpleBooleanProperty(true);
+    private final MutableStateFlow<Boolean> installAsVersion = StateFlowKt.MutableStateFlow(true);
     private boolean isManuallyCreated = false;
     private Modpack manifest = null;
     private Charset charset;
@@ -75,7 +76,7 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
                         progressBar.setVisibility(View.GONE);
                         layout.setVisibility(View.VISIBLE);
                         name.setText(modpackFile.getName());
-                        installAsVersion.set(false);
+                        installAsVersion.setValue(false);
 
                         if (updateVersion == null) {
                             editText.setText(FileUtils.getNameWithoutExtension(modpackFile));
@@ -136,7 +137,7 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
             name = updateVersion;
         } else {
             String str = editText.getText().toString();
-            if (installAsVersion.get()) {
+            if (installAsVersion.getValue()) {
                 if (StringUtils.isBlank(str)) {
                     Toast.makeText(getContext(), getContext().getString(R.string.input_not_empty), Toast.LENGTH_SHORT).show();
                     return;

@@ -5,213 +5,194 @@ import android.content.res.ColorStateList;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
-import com.tungsten.fclcore.observable.property.DoubleProperty;
-import com.tungsten.fclcore.observable.property.DoublePropertyBase;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+
+import java.lang.ref.WeakReference;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class FCLProgressBar extends ProgressBar {
 
-    private DoubleProperty progress;
-    private IntegerProperty firstProgressProperty;
-    private IntegerProperty secondProgressProperty;
-    private BooleanProperty visibilityProperty;
-    private BooleanProperty disableProperty;
+    private MutableStateFlow<Double> percentProgressFlow;
+    private MutableStateFlow<Integer> firstProgressFlow;
+    private MutableStateFlow<Integer> secondProgressFlow;
+    private MutableStateFlow<Boolean> visibilityFlow;
+    private MutableStateFlow<Boolean> disableFlow;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
+    private void applyTheme() {
+        int[][] state = {
+                {
 
-        @Override
-        protected void invalidated() {
-            get();
-            int[][] state = {
-                    {
+                }
+        };
+        int[] color = {
+                ThemeEngine.getInstance().getTheme().getDkColor()
+        };
+        setProgressTintList(new ColorStateList(state, color));
+        setSecondaryProgressTintList(new ColorStateList(state, color));
+        setIndeterminateTintList(new ColorStateList(state, color));
+    }
 
-                    }
-            };
-            int[] color = {
-                    ThemeEngine.getInstance().getTheme().getDkColor()
-            };
-            setProgressTintList(new ColorStateList(state, color));
-            setSecondaryProgressTintList(new ColorStateList(state, color));
-            setIndeterminateTintList(new ColorStateList(state, color));
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLProgressBar> ref = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLProgressBar self = ref.get();
+            if (self != null) {
+                self.applyTheme();
+            }
+        });
+    }
 
     public FCLProgressBar(Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLProgressBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLProgressBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLProgressBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
-    public final DoubleProperty percentProgressProperty() {
-        if (progress == null) {
-            progress = new DoublePropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Double> percentProgressFlow() {
+        if (percentProgressFlow == null) {
+            percentProgressFlow = StateFlowKt.MutableStateFlow(0.0);
+            WeakReference<FCLProgressBar> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(percentProgressFlow, v -> {
+                FCLProgressBar self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        // progress should >= 0, <= 1
-                        double progress = get();
-                        setIndeterminate(progress < 0.0);
-                        if (progress >= 0.0) {
-                            setProgress((int) (progress * getMax()));
+                        FCLProgressBar s = ref.get();
+                        if (s != null) {
+                            // progress should >= 0, <= 1
+                            double progress = s.percentProgressFlow.getValue();
+                            s.setIndeterminate(progress < 0.0);
+                            if (progress >= 0.0) {
+                                s.setProgress((int) (progress * s.getMax()));
+                            }
                         }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "percentProgress";
-                }
-            };
+            });
         }
 
-        return progress;
+        return percentProgressFlow;
     }
 
-    public final IntegerProperty firstProgressProperty() {
-        if (firstProgressProperty == null) {
-            firstProgressProperty = new IntegerPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Integer> firstProgressFlow() {
+        if (firstProgressFlow == null) {
+            firstProgressFlow = StateFlowKt.MutableStateFlow(0);
+            WeakReference<FCLProgressBar> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(firstProgressFlow, v -> {
+                FCLProgressBar self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        int progress = get();
-                        if (progress >= 0) {
-                            setProgress(Math.min(progress, getMax()));
+                        FCLProgressBar s = ref.get();
+                        if (s != null) {
+                            int progress = s.firstProgressFlow.getValue();
+                            if (progress >= 0) {
+                                s.setProgress(Math.min(progress, s.getMax()));
+                            }
                         }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "firstProgress";
-                }
-            };
+            });
         }
 
-        return firstProgressProperty;
+        return firstProgressFlow;
     }
 
-    public final IntegerProperty secondProgressProperty() {
-        if (secondProgressProperty == null) {
-            secondProgressProperty = new IntegerPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Integer> secondProgressFlow() {
+        if (secondProgressFlow == null) {
+            secondProgressFlow = StateFlowKt.MutableStateFlow(0);
+            WeakReference<FCLProgressBar> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(secondProgressFlow, v -> {
+                FCLProgressBar self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        int progress = get();
-                        if (progress >= 0) {
-                            setSecondaryProgress(Math.min(progress, getMax()));
+                        FCLProgressBar s = ref.get();
+                        if (s != null) {
+                            int progress = s.secondProgressFlow.getValue();
+                            if (progress >= 0) {
+                                s.setSecondaryProgress(Math.min(progress, s.getMax()));
+                            }
                         }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "secondProgress";
-                }
-            };
+            });
         }
 
-        return secondProgressProperty;
+        return secondProgressFlow;
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLProgressBar> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLProgressBar self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLProgressBar s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 
     public final void setDisableValue(boolean disableValue) {
-        disableProperty().set(disableValue);
+        disableFlow().setValue(disableValue);
     }
 
     public final boolean getDisableValue() {
-        return disableProperty == null || disableProperty.get();
+        return disableFlow == null || disableFlow.getValue();
     }
 
-    public final BooleanProperty disableProperty() {
-        if (disableProperty == null) {
-            disableProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> disableFlow() {
+        if (disableFlow == null) {
+            disableFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLProgressBar> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(disableFlow, v -> {
+                FCLProgressBar self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean disable = get();
-                        setEnabled(!disable);
+                        FCLProgressBar s = ref.get();
+                        if (s != null) {
+                            boolean disable = s.disableFlow.getValue();
+                            s.setEnabled(!disable);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "disable";
-                }
-            };
+            });
         }
 
-        return disableProperty;
+        return disableFlow;
     }
 }

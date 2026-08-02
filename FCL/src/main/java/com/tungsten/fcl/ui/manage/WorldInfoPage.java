@@ -23,16 +23,14 @@ import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.FXUtils;
+import com.tungsten.fcl.util.FlowList;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
-import com.tungsten.fclcore.observable.collections.FXCollections;
-import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.game.World;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.flow.FlowBindings;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -49,6 +47,9 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class WorldInfoPage extends FCLTempPage {
 
@@ -154,8 +155,8 @@ public class WorldInfoPage extends FCLTempPage {
         } else {
             generateStructure.setEnabled(false);
         }
-        difficulty.setDataList(new ArrayList<>(Difficulty.items));
-        ArrayAdapter<String> difficultyAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, Difficulty.items.stream().map(Difficulty::toString).collect(Collectors.toList()));
+        difficulty.setDataList(new ArrayList<>(Difficulty.items.get()));
+        ArrayAdapter<String> difficultyAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, Difficulty.items.get().stream().map(Difficulty::toString).collect(Collectors.toList()));
         difficultyAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
         difficulty.setAdapter(difficultyAdapter);
         Tag difficultyTag = dataTag.get("Difficulty");
@@ -164,11 +165,12 @@ public class WorldInfoPage extends FCLTempPage {
             Difficulty difficulty = Difficulty.of(byteTag.getValue());
             if (difficulty != null) {
                 this.difficulty.setSelection(difficulty.getPosition());
-                ObjectProperty<Difficulty> difficultyProperty = new SimpleObjectProperty<>(difficulty);
-                FXUtils.bindSelection(this.difficulty, difficultyProperty);
-                difficultyProperty.addListener(observable -> {
-                    if (difficultyProperty.get() != null) {
-                        byteTag.setValue((byte) difficultyProperty.get().ordinal());
+                this.difficulty.addSelectListener();
+                MutableStateFlow<Difficulty> difficultyFlow = StateFlowKt.MutableStateFlow(difficulty);
+                FlowBindings.bindBidirectional(this.difficulty.selectedItemFlow(), difficultyFlow);
+                FlowSubscriptions.subscribe(difficultyFlow, v -> {
+                    if (v != null) {
+                        byteTag.setValue((byte) v.ordinal());
                         saveLevelDat();
                     }
                 });
@@ -207,8 +209,8 @@ public class WorldInfoPage extends FCLTempPage {
                 if (x instanceof IntTag && y instanceof IntTag && z instanceof IntTag)
                     spawn.setText(spawnDim.formatPosition(((IntTag) x).getValue(), ((IntTag) y).getValue(), ((IntTag) z).getValue()));
             }
-            gameType.setDataList(new ArrayList<>(GameType.items));
-            ArrayAdapter<String> gameTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, GameType.items.stream().map(GameType::toString).collect(Collectors.toList()));
+            gameType.setDataList(new ArrayList<>(GameType.items.get()));
+            ArrayAdapter<String> gameTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, GameType.items.get().stream().map(GameType::toString).collect(Collectors.toList()));
             gameTypeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
             gameType.setAdapter(gameTypeAdapter);
             Tag gameTypeTag = player.get("playerGameType");
@@ -217,11 +219,12 @@ public class WorldInfoPage extends FCLTempPage {
                 GameType gameType = GameType.of(intTag.getValue());
                 if (gameType != null) {
                     this.gameType.setSelection(gameType.getPosition());
-                    ObjectProperty<GameType> gameTypeProperty = new SimpleObjectProperty<>(gameType);
-                    FXUtils.bindSelection(this.gameType, gameTypeProperty);
-                    gameTypeProperty.addListener(observable -> {
-                        if (gameTypeProperty.get() != null) {
-                            intTag.setValue(gameTypeProperty.get().ordinal());
+                    this.gameType.addSelectListener();
+                    MutableStateFlow<GameType> gameTypeFlow = StateFlowKt.MutableStateFlow(gameType);
+                    FlowBindings.bindBidirectional(this.gameType.selectedItemFlow(), gameTypeFlow);
+                    FlowSubscriptions.subscribe(gameTypeFlow, v -> {
+                        if (v != null) {
+                            intTag.setValue(v.ordinal());
                             saveLevelDat();
                         }
                     });
@@ -236,7 +239,7 @@ public class WorldInfoPage extends FCLTempPage {
                 FloatTag floatTag = (FloatTag) healthTag;
                 health.setText(new DecimalFormat("#").format(floatTag.getValue().floatValue()));
                 health.setStringValue(new DecimalFormat("#").format(floatTag.getValue().floatValue()));
-                health.stringProperty().addListener(observable -> {
+                FlowSubscriptions.subscribe(health.stringFlow(), v -> {
                     if (StringUtils.isBlank(health.getStringValue()) && Lang.toDoubleOrNull(health.getStringValue()) == null) {
                         Toast.makeText(getContext(), getContext().getString(R.string.input_number), Toast.LENGTH_SHORT).show();
                     } else {
@@ -255,7 +258,7 @@ public class WorldInfoPage extends FCLTempPage {
                 IntTag intTag = (IntTag) foodLevelTag;
                 foodLevel.setText(String.valueOf(intTag.getValue()));
                 foodLevel.setStringValue(String.valueOf(intTag.getValue()));
-                foodLevel.stringProperty().addListener(observable -> {
+                FlowSubscriptions.subscribe(foodLevel.stringFlow(), v -> {
                     if (StringUtils.isBlank(foodLevel.getStringValue()) && Lang.toDoubleOrNull(foodLevel.getStringValue()) == null) {
                         Toast.makeText(getContext(), getContext().getString(R.string.input_number), Toast.LENGTH_SHORT).show();
                     } else {
@@ -274,7 +277,7 @@ public class WorldInfoPage extends FCLTempPage {
                 IntTag intTag = (IntTag) xpLevelTag;
                 xpLevel.setText(String.valueOf(intTag.getValue()));
                 xpLevel.setStringValue(String.valueOf(intTag.getValue()));
-                xpLevel.stringProperty().addListener(observable -> {
+                FlowSubscriptions.subscribe(xpLevel.stringFlow(), v -> {
                     if (StringUtils.isBlank(xpLevel.getStringValue()) && Lang.toDoubleOrNull(xpLevel.getStringValue()) == null) {
                         Toast.makeText(getContext(), getContext().getString(R.string.input_number), Toast.LENGTH_SHORT).show();
                     } else {
@@ -409,10 +412,10 @@ public class WorldInfoPage extends FCLTempPage {
     private enum Difficulty {
         PEACEFUL, EASY, NORMAL, HARD;
 
-        static final ObservableList<Difficulty> items = FXCollections.observableList(Arrays.asList(values()));
+        static final FlowList<Difficulty> items = new FlowList<>(Arrays.asList(values()));
 
         static Difficulty of(int d) {
-            return d >= 0 && d <= items.size() ? items.get(d) : null;
+            return d >= 0 && d <= items.size() ? items.get().get(d) : null;
         }
 
         public int getPosition() {
@@ -438,10 +441,10 @@ public class WorldInfoPage extends FCLTempPage {
     private enum GameType {
         SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR;
 
-        static final ObservableList<GameType> items = FXCollections.observableList(Arrays.asList(values()));
+        static final FlowList<GameType> items = new FlowList<>(Arrays.asList(values()));
 
         static GameType of(int d) {
-            return d >= 0 && d <= items.size() ? items.get(d) : null;
+            return d >= 0 && d <= items.size() ? items.get().get(d) : null;
         }
 
         public int getPosition() {

@@ -8,14 +8,16 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.tungsten.fclauncher.bridge.FCLBridge;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class Gyroscope implements SensorEventListener {
 
     private static final float NS2S = 1.0f / 40000000.0f;
 
-    private BooleanProperty enableProperty;
+    private final MutableStateFlow<Boolean> enableFlow = StateFlowKt.MutableStateFlow(false);
 
     private final GameMenu gameMenu;
     private final SensorManager sensorManager;
@@ -32,33 +34,17 @@ public class Gyroscope implements SensorEventListener {
         } else {
             disableSensor();
         }
+        FlowSubscriptions.subscribe(enableFlow, v -> {
+            if (v) {
+                enableSensor();
+            } else {
+                disableSensor();
+            }
+        });
     }
 
-    public BooleanProperty enableProperty() {
-        if (enableProperty == null) {
-            enableProperty = new BooleanPropertyBase() {
-                @Override
-                protected void invalidated() {
-                    super.invalidated();
-                    if (get()) {
-                        enableSensor();
-                    } else {
-                        disableSensor();
-                    }
-                }
-
-                @Override
-                public Object getBean() {
-                    return this;
-                }
-
-                @Override
-                public String getName() {
-                    return "enable";
-                }
-            };
-        }
-        return enableProperty;
+    public MutableStateFlow<Boolean> enableFlow() {
+        return enableFlow;
     }
 
     public void enableSensor() {

@@ -25,17 +25,10 @@ import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fcl.util.FlowList;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.binding.Bindings;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.ListProperty;
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleListProperty;
-import com.tungsten.fclcore.observable.collections.FXCollections;
-import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModManager;
@@ -44,6 +37,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -72,12 +66,16 @@ import java.util.stream.Collectors;
 
 import kotlin.Unit;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
 import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
-    private final BooleanProperty modded = new SimpleBooleanProperty(this, "modded", false);
-    private final ListProperty<ModInfoObject> itemsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final MutableStateFlow<Boolean> modded = StateFlowKt.MutableStateFlow(false);
+    private final FlowList<ModInfoObject> itemsProperty = new FlowList<>();
+
+    private FlowSubscriptions.Subscription itemsBinding;
 
     private ModManager modManager;
     private LibraryAnalyzer libraryAnalyzer;
@@ -116,11 +114,17 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         });
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        Bindings.bindContent(adapter.listProperty(), itemsProperty);
+        bindItemsContent();
 
-        adapter.selectedItemsProperty().addListener((InvalidationListener) observable -> switchLayout(adapter.selectedItemsProperty().getSize() > 0));
+        FlowSubscriptions.subscribe(adapter.selectedItemsProperty().flow(), v -> switchLayout(adapter.selectedItemsProperty().size() > 0));
 
-        moddedProperty().addListener(observable -> setEnable(isModded()));
+        FlowSubscriptions.subscribe(modded, v -> setEnable(isModded()));
+    }
+
+    // 对齐原 Bindings.bindContent：先整体同步一次，再跟随 itemsProperty 的后续变化。
+    private void bindItemsContent() {
+        adapter.listProperty().setAll(itemsProperty.get());
+        itemsBinding = FlowSubscriptions.subscribe(itemsProperty.flow(), v -> adapter.listProperty().setAll(v));
     }
 
     @Override
@@ -198,7 +202,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
             builder.setCancelable(false);
             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
             builder.setMessage(getContext().getString(R.string.button_remove_confirm));
-            builder.setPositiveButton(getContext().getString(R.string.button_remove), () -> removeSelected(adapter.selectedItemsProperty()));
+            builder.setPositiveButton(getContext().getString(R.string.button_remove), () -> removeSelected(adapter.selectedItemsProperty().get()));
             builder.setNegativeButton(null);
             builder.create().show();
         }
@@ -383,7 +387,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         });
     }
 
-    public void removeSelected(ObservableList<ModInfoObject> selectedItems) {
+    public void removeSelected(List<ModInfoObject> selectedItems) {
         try {
             modManager.removeMods(selectedItems.stream()
                     .filter(Objects::nonNull)
@@ -405,7 +409,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                         Optional<String> gameVersion = profile.getRepository().getGameVersion(versionId);
                         if (gameVersion.isPresent()) {
                             if (isSelected) {
-                                return new ModCheckUpdatesTask(gameVersion.get(), adapter.selectedItemsProperty().stream()
+                                return new ModCheckUpdatesTask(gameVersion.get(), adapter.selectedItemsProperty().get().stream()
                                         .filter(Objects::nonNull)
                                         .map(ModInfoObject::getModInfo)
                                         .collect(Collectors.toList()));
@@ -478,7 +482,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         if (isSearching) {
             isSearching = false;
             searchBar.setText("");
-            Bindings.bindContent(adapter.listProperty(), itemsProperty);
+            bindItemsContent();
         }
     }
 
@@ -486,7 +490,10 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         isSearching = true;
         adapter.selectedItemsProperty().clear();
 
-        Bindings.unbindContent(adapter.listProperty(), itemsProperty);
+        if (itemsBinding != null) {
+            itemsBinding.cancel();
+            itemsBinding = null;
+        }
 
         String queryString = searchBar.getText().toString();
         if (StringUtils.isBlank(queryString)) {
@@ -588,14 +595,14 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
     }
 
     public boolean isModded() {
-        return modded.get();
+        return modded.getValue();
     }
 
-    public BooleanProperty moddedProperty() {
+    public MutableStateFlow<Boolean> moddedFlow() {
         return modded;
     }
 
     public void setModded(boolean modded) {
-        this.modded.set(modded);
+        this.modded.setValue(modded);
     }
 }

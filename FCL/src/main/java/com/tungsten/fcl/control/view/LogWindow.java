@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ScrollView;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 

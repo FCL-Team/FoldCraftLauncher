@@ -9,15 +9,25 @@ import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ViewManager {
 
     private final GameMenu gameMenu;
 
+    // 阶段 4c：menu 属性订阅句柄，GameMenu.onDestroy 时统一取消（对齐原长寿命监听 + 防泄漏）。
+    private final List<FlowSubscriptions.Subscription> subscriptions = new ArrayList<>();
+
     public ViewManager(GameMenu gameMenu) {
         this.gameMenu = gameMenu;
+    }
+
+    public void onDestroy() {
+        subscriptions.forEach(FlowSubscriptions.Subscription::cancel);
+        subscriptions.clear();
     }
 
     public void setup() {
@@ -30,15 +40,15 @@ public class ViewManager {
         menuView.initPosition();
         gameMenu.fpsText.initPosition();
         gameMenu.memoryText.initPosition();
-        gameMenu.hideAllViewsProperty().addListener(observable -> menuView.setAlpha(gameMenu.isHideAllViews() ? 0 : 1));
+        subscriptions.add(FlowSubscriptions.subscribe(gameMenu.hideAllViewsFlow(), v -> menuView.setAlpha(gameMenu.isHideAllViews() ? 0 : 1)));
         if (gameMenu.getMenuSetting().isHideMenuView()) {
             menuView.setVisibility(View.INVISIBLE);
         }
         // Initialize controller
         initializeController();
-        gameMenu.controllerProperty().addListener(i -> initializeController());
-        gameMenu.viewGroupProperty().addListener(i -> initializeController());
-        gameMenu.editModeProperty().addListener(i -> initializeController());
+        subscriptions.add(FlowSubscriptions.subscribe(gameMenu.controllerFlow(), i -> initializeController()));
+        subscriptions.add(FlowSubscriptions.subscribe(gameMenu.viewGroupFlow(), i -> initializeController()));
+        subscriptions.add(FlowSubscriptions.subscribe(gameMenu.editModeFlow(), i -> initializeController()));
     }
 
     public void addView(CustomControl control) {

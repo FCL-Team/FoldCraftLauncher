@@ -58,7 +58,6 @@ import com.tungsten.fcl.ui.compose.shake
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel
-import com.tungsten.fclcore.observable.value.ChangeListener
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -211,19 +210,17 @@ private fun AccountBlock(onClick: () -> Unit) {
             avatarSize,
         ).toDrawable(context.resources)
     }
-    // 头像：TexturesLoader.avatarBinding（observable 绑定），refreshAvatar 节拍推进后重建
+    // 头像：TexturesLoader.avatarFlow（StateFlow，直接 collect），refreshAvatar 节拍推进后重建
     val avatar by produceState<Drawable>(defaultAvatar, account, avatarTick) {
         val current = account
         if (current == null) {
             value = defaultAvatar
         } else {
-            val binding = TexturesLoader.avatarBinding(current, avatarSize)
-            binding.value?.let { value = it }
-            val listener = ChangeListener<android.graphics.drawable.BitmapDrawable> { _, _, newValue ->
+            val flow = TexturesLoader.avatarFlow(current, avatarSize)
+            flow.value?.let { value = it }
+            flow.collect { newValue ->
                 newValue?.let { value = it }
             }
-            binding.addListener(listener)
-            awaitDispose { binding.removeListener(listener) }
         }
     }
 

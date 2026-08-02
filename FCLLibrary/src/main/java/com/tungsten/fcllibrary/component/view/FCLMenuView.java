@@ -10,52 +10,49 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.IntegerPropertyBase;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
+
+import java.lang.ref.WeakReference;
 
 public class FCLMenuView extends AppCompatImageButton {
 
     private boolean isSelected;
     private OnSelectListener onSelectListener;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
+    private void applyTheme() {
+        int[][] state = {
+                {
 
-        @Override
-        protected void invalidated() {
-            get();
-            int[][] state = {
-                    {
+                }
+        };
+        int[] colorNormal = {
+                ThemeEngine.getInstance().getTheme().getAutoTint()
+        };
+        int[] colorSelected = {
+                ThemeEngine.getInstance().getTheme().getDkColor()
+        };
+        int[] colorRipple = {
+                ThemeEngine.getInstance().getTheme().getLtColor()
+        };
+        setImageTintList(new ColorStateList(state, isSelected ? colorSelected : colorNormal));
+        RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
+        drawable.setRadius(ConvertUtils.dip2px(getContext(), 20));
+        setBackgroundDrawable(drawable);
+    }
 
-                    }
-            };
-            int[] colorNormal = {
-                    ThemeEngine.getInstance().getTheme().getAutoTint()
-            };
-            int[] colorSelected = {
-                    ThemeEngine.getInstance().getTheme().getDkColor()
-            };
-            int[] colorRipple = {
-                    ThemeEngine.getInstance().getTheme().getLtColor()
-            };
-            setImageTintList(new ColorStateList(state, isSelected ? colorSelected : colorNormal));
-            RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
-            drawable.setRadius(ConvertUtils.dip2px(getContext(), 20));
-            setBackgroundDrawable(drawable);
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLMenuView> ref = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLMenuView self = ref.get();
+            if (self != null) {
+                self.applyTheme();
+            }
+        });
+    }
 
     private void init() {
         setPadding(
@@ -104,19 +101,19 @@ public class FCLMenuView extends AppCompatImageButton {
     public FCLMenuView(@NonNull Context context) {
         super(context);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLMenuView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLMenuView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public interface OnSelectListener {
