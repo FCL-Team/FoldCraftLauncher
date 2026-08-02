@@ -16,6 +16,7 @@ import com.mio.ui.dialog.RendererSelectDialog
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
 import com.tungsten.fcl.ui.compose.dialog.MiuixJavaManageDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixRendererSelectDialog
+import com.tungsten.fcl.ui.compose.dialog.MiuixSelectControllerDialog
 import com.mio.util.showErrorDialog
 import com.mio.util.showItemSelectionDialog
 import com.tungsten.fcl.R
@@ -447,14 +448,16 @@ class VersionSettingPage(
         }
         if (view === binding.buttonEditController) {
             if (Controllers.isInitialized()) {
-                val dialog = SelectControllerDialog(
-                    context,
-                    lastVersionSetting.controller
-                ) {
+                val callback = SelectControllerDialog.Callback {
                     lastVersionSetting.controller = it.id
                     binding.controller.text = it.name
                 }
-                dialog.show()
+                // 3.2 批 4 接入点：选择控制器弹窗双分支
+                if (ComposeDialogs.USE_COMPOSE_SELECT_CONTROLLER) {
+                    MiuixSelectControllerDialog(context, lastVersionSetting.controller, callback).show()
+                } else {
+                    SelectControllerDialog(context, lastVersionSetting.controller, callback).show()
+                }
             } else {
                 Toast.makeText(
                     context,

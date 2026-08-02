@@ -991,6 +991,7 @@ Compose 替代：`Animatable`/`animate*AsState`/LazyColumn item 动画。难点�
 10. 语言 Spinner 靠 `isFirst` 标志抑制初始化回调（`ui/setting/LauncherSettingPage.java:526-537`），Compose 重组下时序语义不同需重设计。
 11. `ModpackInstaller` 对 ModpackCompletionException（非 FileNotFound）失败也提示"安装成功"（`ui/download/modpack/ModpackInstaller.java:74-85`），属有意行为需保留。
 12. `GameItemBarSettingDialog` 每次开关回调都基于构造时 `setting` 的单字段 copy，同一次会话先动开关 A 再动开关 B 会丢失 A 的改动（lost-update，`control/GameItemBarSettingDialog.kt:25-30`）。3.2 批 2 迁移决策：Miuix 版（`MiuixGameItemBarSettingDialog`）以两个开关实时状态构造回调值，不还原该缺陷；回滚分支保留原行为。
+13. 3.2 批 4（手柄/控件样式域 10 弹窗）有意偏差登记，均写在各 Miuix 文件头：① `MiuixViewGroupDialog` 选择模式内持选择快照、确定时回调（遗留 CheckBox 实时改写传入列表；两个真实调用点均不依赖实时改写，对外等价）；② `MiuixSelectControllerDialog` 条目读快照值（遗留 fakefx 属性绑定实时刷新）；③ `MiuixControllerInfoDialog` 动态窗口高度改为 Compose 条件渲染自适应；④ 各弹窗按钮按 Miuix 惯例确定居右（遗留部分弹窗左确定右取消）；⑤ `MiuixAddButtonStyleDialog`/`MiuixAddDirectionStyleDialog` 设置区滚动高度 120dp→260dp；⑥ `ControllerUploadDialog` 语言 switch 缺 de/uk（条目 4）在 Miuix 版中原样保留、未修复。回滚分支均保留原行为。
 
 ### 附录 E：条目统计
 

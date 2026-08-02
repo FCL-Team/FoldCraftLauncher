@@ -12,8 +12,12 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.DirectionStyles;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixAddDirectionStyleDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
+
+import kotlin.Unit;
 
 public class DirectionStyleDialog extends FCLDialog implements View.OnClickListener {
 
@@ -71,35 +75,72 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == addStyle) {
-            AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), null, false, style -> {
-                DirectionStyles.addStyle(style);
-                refreshList();
-            });
-            dialog.show();
+            // 3.2 批 4 接入点：新增方向键样式弹窗按开关双分支（回调逻辑两分支一致）
+            if (ComposeDialogs.USE_COMPOSE_ADD_DIRECTION_STYLE) {
+                MiuixAddDirectionStyleDialog dialog = new MiuixAddDirectionStyleDialog(getContext(), null, false, style -> {
+                    DirectionStyles.addStyle(style);
+                    refreshList();
+                    return Unit.INSTANCE;
+                });
+                dialog.show();
+            } else {
+                AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), null, false, style -> {
+                    DirectionStyles.addStyle(style);
+                    refreshList();
+                });
+                dialog.show();
+            }
         }
         if (v == editStyle) {
-            AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
-                ControlDirectionStyle before = adapter.getSelectedStyle();
-                int i = DirectionStyles.getStyles().indexOf(before);
-                String beforeName = before.getName();
-                DirectionStyles.removeStyles(before);
-                DirectionStyles.addStyle(style, i);
-                refreshList();
-                adapter.setSelectedStyle(style);
-                if (menu != null) {
-                    ControlViewGroup viewGroup = menu.getViewGroup();
-                    if (viewGroup != null) {
-                        viewGroup.getViewData().directionList().forEach(it -> {
-                            String name = it.getStyle().getName();
-                            if (name.equals(style.getName()) || name.equals(beforeName)) {
-                                it.setStyle(style);
-                            }
-                        });
+            // 3.2 批 4 接入点：编辑方向键样式弹窗按开关双分支（回调逻辑与 GameMenu 透传两分支一致）
+            if (ComposeDialogs.USE_COMPOSE_ADD_DIRECTION_STYLE) {
+                MiuixAddDirectionStyleDialog dialog = new MiuixAddDirectionStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
+                    ControlDirectionStyle before = adapter.getSelectedStyle();
+                    int i = DirectionStyles.getStyles().indexOf(before);
+                    String beforeName = before.getName();
+                    DirectionStyles.removeStyles(before);
+                    DirectionStyles.addStyle(style, i);
+                    refreshList();
+                    adapter.setSelectedStyle(style);
+                    if (menu != null) {
+                        ControlViewGroup viewGroup = menu.getViewGroup();
+                        if (viewGroup != null) {
+                            viewGroup.getViewData().directionList().forEach(it -> {
+                                String name = it.getStyle().getName();
+                                if (name.equals(style.getName()) || name.equals(beforeName)) {
+                                    it.setStyle(style);
+                                }
+                            });
+                        }
                     }
-                }
-            });
-            dialog.setGameMenu(menu);
-            dialog.show();
+                    return Unit.INSTANCE;
+                });
+                dialog.setGameMenu(menu);
+                dialog.show();
+            } else {
+                AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
+                    ControlDirectionStyle before = adapter.getSelectedStyle();
+                    int i = DirectionStyles.getStyles().indexOf(before);
+                    String beforeName = before.getName();
+                    DirectionStyles.removeStyles(before);
+                    DirectionStyles.addStyle(style, i);
+                    refreshList();
+                    adapter.setSelectedStyle(style);
+                    if (menu != null) {
+                        ControlViewGroup viewGroup = menu.getViewGroup();
+                        if (viewGroup != null) {
+                            viewGroup.getViewData().directionList().forEach(it -> {
+                                String name = it.getStyle().getName();
+                                if (name.equals(style.getName()) || name.equals(beforeName)) {
+                                    it.setStyle(style);
+                                }
+                            });
+                        }
+                    }
+                });
+                dialog.setGameMenu(menu);
+                dialog.show();
+            }
         }
         if (v == positive) {
             dismiss();

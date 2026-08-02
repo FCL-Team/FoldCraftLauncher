@@ -52,4 +52,16 @@ object ComposeDialogs {
     const val USE_COMPOSE_OFFLINE_ACCOUNT_SKIN = true
     const val USE_COMPOSE_QUICK_INPUT = true
     const val USE_COMPOSE_ADD_INPUT_TEXT = true
+
+    // ---- 批 4：手柄/控件样式域（control/ + ui/controller/）----
+    const val USE_COMPOSE_ADD_BUTTON_STYLE = true
+    const val USE_COMPOSE_ADD_DIRECTION_STYLE = true
+    const val USE_COMPOSE_BUTTON_STYLE = true
+    const val USE_COMPOSE_DIRECTION_STYLE = true
+    const val USE_COMPOSE_EDIT_VIEW = true
+    const val USE_COMPOSE_EDIT_VIEW_GROUP = true
+    const val USE_COMPOSE_VIEW_GROUP = true
+    const val USE_COMPOSE_SELECT_CONTROLLER = true
+    const val USE_COMPOSE_CONTROLLER_INFO = true
+    const val USE_COMPOSE_CONTROLLER_UPLOAD = true
 }

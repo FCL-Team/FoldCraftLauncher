@@ -26,6 +26,8 @@ import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixEditViewDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -457,7 +459,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                             && Math.abs(event.getY() - downY) <= 10) {
                         setX(positionX);
                         setY(positionY);
-                        EditViewDialog dialog = new EditViewDialog(getContext(), getData().clone(), menu, new EditViewDialog.Callback() {
+                        // 3.2 批 4 接入点：方向键编辑弹窗双分支（Miuix/遗留）
+                        EditViewDialog.Callback callback = new EditViewDialog.Callback() {
                             @Override
                             public void onPositive(CustomControl view) {
                                 ControlDirectionData newData = ((ControlDirectionData) view).clone();
@@ -476,8 +479,14 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                             public void onDelete() {
                                 menu.getViewManager().removeView(getData());
                             }
-                        }, true);
-                        dialog.show();
+                        };
+                        if (ComposeDialogs.USE_COMPOSE_EDIT_VIEW) {
+                            MiuixEditViewDialog dialog = new MiuixEditViewDialog(getContext(), getData().clone(), menu, callback, true);
+                            dialog.show();
+                        } else {
+                            EditViewDialog dialog = new EditViewDialog(getContext(), getData().clone(), menu, callback, true);
+                            dialog.show();
+                        }
                     } else {
                         getData().getBaseInfo().setXPosition((int) ((1000 * getX()) / (screenWidth - getSize())));
                         getData().getBaseInfo().setYPosition((int) ((1000 * getY()) / (screenHeight - getSize())));

@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import com.mio.util.AnimUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ControlViewGroup;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixEditViewGroupDialog;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
@@ -125,13 +127,24 @@ public class ViewGroupAdapter extends FCLAdapter {
         viewHolder.up.setOnClickListener(upDownListener);
         viewHolder.down.setOnClickListener(upDownListener);
         viewHolder.edit.setOnClickListener(v -> {
-            EditViewGroupDialog dialog = new EditViewGroupDialog(getContext(), menu, group, (n, vi) -> {
-                group.setName(n);
-                group.setVisibility(vi);
-                menu.getController().updateViewGroup(group);
-                notifyDataSetChanged();
-            });
-            dialog.show();
+            // 3.2 批 4 接入点：编辑分组弹窗双分支（Miuix/遗留）
+            if (ComposeDialogs.USE_COMPOSE_EDIT_VIEW_GROUP) {
+                MiuixEditViewGroupDialog dialog = new MiuixEditViewGroupDialog(getContext(), menu, group, (n, vi) -> {
+                    group.setName(n);
+                    group.setVisibility(vi);
+                    menu.getController().updateViewGroup(group);
+                    notifyDataSetChanged();
+                });
+                dialog.show();
+            } else {
+                EditViewGroupDialog dialog = new EditViewGroupDialog(getContext(), menu, group, (n, vi) -> {
+                    group.setName(n);
+                    group.setVisibility(vi);
+                    menu.getController().updateViewGroup(group);
+                    notifyDataSetChanged();
+                });
+                dialog.show();
+            }
         });
         viewHolder.delete.setOnClickListener(v -> {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
