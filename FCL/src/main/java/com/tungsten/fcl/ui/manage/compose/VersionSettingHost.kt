@@ -15,6 +15,7 @@ import com.tungsten.fcl.control.SelectControllerDialog
 import com.tungsten.fcl.setting.Profiles.getSelectedProfile
 import com.tungsten.fcl.ui.compose.FCLDialogs
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
+import com.tungsten.fcl.ui.compose.dialog.MiuixDriverSelectDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixJavaManageDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixRendererSelectDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixSelectControllerDialog
@@ -56,8 +57,12 @@ object VersionSettingHost {
 
             VersionSettingEvent.ShowDriverSelect ->
                 // 弹窗内部直写 VersionSetting.driver，文本由 VM 属性流自动回流，
-                // 遗留回调里的 setText 不再需要（对齐 :540-545）
-                DriverSelectDialog(context, globalSetting) { }.show()
+                // 遗留回调里的 setText 不再需要（对齐 :540-545）；5.1 遗留 L1 双分支
+                if (ComposeDialogs.USE_COMPOSE_DRIVER_SELECT) {
+                    MiuixDriverSelectDialog(context, globalSetting) { }.show()
+                } else {
+                    DriverSelectDialog(context, globalSetting) { }.show()
+                }
 
             VersionSettingEvent.ShowInstallDriver -> showInstallLink(
                 context,

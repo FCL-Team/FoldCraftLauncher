@@ -14,6 +14,7 @@ import com.mio.ui.dialog.DriverSelectDialog
 import com.mio.ui.dialog.JavaManageDialog
 import com.mio.ui.dialog.RendererSelectDialog
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
+import com.tungsten.fcl.ui.compose.dialog.MiuixDriverSelectDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixJavaManageDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixRendererSelectDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixSelectControllerDialog
@@ -538,10 +539,15 @@ class VersionSettingPage(
             }
         }
         if (view === binding.buttonEditDriver) {
-            DriverSelectDialog(
-                context,
-                globalSetting
-            ) { binding.driver.text = it }.show()
+            val driverCallback = java.util.function.Consumer<String> { name: String? ->
+                binding.driver.text = name
+            }
+            if (ComposeDialogs.USE_COMPOSE_DRIVER_SELECT) {
+                // 5.1 遗留 L1 接入点：Miuix 驱动选择弹窗
+                MiuixDriverSelectDialog(context, globalSetting, driverCallback).show()
+            } else {
+                DriverSelectDialog(context, globalSetting, driverCallback).show()
+            }
         }
         if (view === binding.buttonInstallRenderer) {
             showItemSelectionDialog(

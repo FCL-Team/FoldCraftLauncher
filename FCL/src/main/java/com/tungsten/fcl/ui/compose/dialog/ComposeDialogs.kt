@@ -25,6 +25,20 @@ object ComposeDialogs {
     const val USE_COMPOSE_ROLLBACK_MOD = true
     const val USE_COMPOSE_JAVA_MANAGE = true
     const val USE_COMPOSE_RENDERER_SELECT = true
+
+    /**
+     * 驱动选择弹窗（DriverSelectDialog + item_renderer 列表项）。
+     * 5.1 回归遗留 L1 补迁：调用点为 Compose 版本设置页（VersionSettingHost）
+     * 与回滚路径 VersionSettingPage，两处均已接双分支。
+     */
+    const val USE_COMPOSE_DRIVER_SELECT = true
+
+    /**
+     * Versions.java 共用方法内的操作类 Alert 弹窗（5.1 回归遗留 L2/L3）：
+     * deleteVersion 删除确认、checkVersionForLaunching「未选择版本」提示、
+     * downloadModpackImpl 下载失败提示，统一走 FCLDialogs.showAlert/showProgress。
+     */
+    const val USE_COMPOSE_VERSION_OP_ALERTS = true
     const val USE_COMPOSE_GAMEPAD_MAP = true
     const val USE_COMPOSE_ITEMBAR_SETTING = true
     const val USE_COMPOSE_OPEN_FOLDER = true

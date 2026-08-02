@@ -49,6 +49,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixSkipLoginDialog;
@@ -121,7 +122,10 @@ public final class LauncherHelper {
     private final Account account;
     private final String selectedVersion;
     private final VersionSetting setting;
+    // 5.1 遗留 L4：启动进度弹窗双分支，开关 true 用 miuixLaunchingStepsPane（launchingStepsPane 为 null），
+    // false 回滚遗留 TaskDialog（miuixLaunchingStepsPane 为 null）。
     private final TaskDialog launchingStepsPane;
+    private final MiuixTaskDialog miuixLaunchingStepsPane;
     private double scaleFactor;
 
     public LauncherHelper(Context context, Profile profile, Account account, String selectedVersion) {
@@ -130,14 +134,25 @@ public final class LauncherHelper {
         this.account = Objects.requireNonNull(account);
         this.selectedVersion = Objects.requireNonNull(selectedVersion);
         this.setting = profile.getVersionSetting(selectedVersion);
-        this.launchingStepsPane = new TaskDialog(context, TaskCancellationAction.NORMAL);
-        this.launchingStepsPane.setTitle(context.getString(R.string.version_launch));
+        if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
+            this.launchingStepsPane = null;
+            this.miuixLaunchingStepsPane = new MiuixTaskDialog(context);
+            this.miuixLaunchingStepsPane.setTitle(context.getString(R.string.version_launch));
+        } else {
+            this.miuixLaunchingStepsPane = null;
+            this.launchingStepsPane = new TaskDialog(context, TaskCancellationAction.NORMAL);
+            this.launchingStepsPane.setTitle(context.getString(R.string.version_launch));
+        }
     }
 
     public void launch() {
         LOG.info("Launching game version: " + selectedVersion);
 
-        launchingStepsPane.show();
+        if (launchingStepsPane != null) {
+            launchingStepsPane.show();
+        } else {
+            miuixLaunchingStepsPane.show();
+        }
         launch0();
     }
 
@@ -268,12 +283,20 @@ public final class LauncherHelper {
                         "launch.state.logging_in",
                         "launch.state.waiting_launching"))
                 .executor();
-        launchingStepsPane.setExecutor(executor, false);
+        if (launchingStepsPane != null) {
+            launchingStepsPane.setExecutor(executor, false);
+        } else {
+            miuixLaunchingStepsPane.setExecutor(executor, false);
+        }
         executor.addTaskListener(new TaskListener() {
 
             @Override
             public void onStop(boolean success, TaskExecutor executor) {
-                launchingStepsPane.dismiss();
+                if (launchingStepsPane != null) {
+                    launchingStepsPane.dismiss();
+                } else {
+                    miuixLaunchingStepsPane.dismiss();
+                }
                 if (!success) {
                     Exception ex = executor.getException();
                     if (ex != null && !(ex instanceof CancellationException)) {
