@@ -1,7 +1,5 @@
 package com.tungsten.fcl.control.data;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -15,154 +13,147 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.Observable;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleStringProperty;
-import com.tungsten.fclcore.observable.property.StringProperty;
-import com.tungsten.fclcore.observable.collections.FXCollections;
-import com.tungsten.fclcore.observable.collections.ObservableList;
-import com.tungsten.fclcore.util.observable.ObservableHelper;
+import com.tungsten.fcl.util.FlowList;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 按钮事件数据（阶段 4b）：属性已 StateFlow 化；任何字段（含列表成员）变更递增
+ * {@link #revisionFlow()}（对齐原 Observable 失效语义）。
+ *
+ * <p>磁盘 JSON 由手写 {@link Serializer} 产出，与属性类型无关，格式不变。</p>
+ */
 @JsonAdapter(ButtonEventData.Serializer.class)
-public class ButtonEventData implements Cloneable, Observable {
+public class ButtonEventData implements Cloneable {
 
     /**
      * Control mouse pointer
      */
-    private final BooleanProperty pointerFollowProperty = new SimpleBooleanProperty(this, "pointerFollow", false);
+    private final MutableStateFlow<Boolean> pointerFollow = StateFlowKt.MutableStateFlow(false);
 
-    public BooleanProperty pointerFollowProperty() {
-        return pointerFollowProperty;
+    public StateFlow<Boolean> pointerFollowFlow() {
+        return pointerFollow;
     }
 
     public void setPointerFollow(boolean pointerFollow) {
-        pointerFollowProperty.set(pointerFollow);
+        this.pointerFollow.setValue(pointerFollow);
     }
 
     public boolean isPointerFollow() {
-        return pointerFollowProperty.get();
+        return pointerFollow.getValue();
     }
 
     /**
      * Movable
      */
-    private final BooleanProperty movableProperty = new SimpleBooleanProperty(this, "movable", false);
+    private final MutableStateFlow<Boolean> movable = StateFlowKt.MutableStateFlow(false);
 
-    public BooleanProperty movableProperty() {
-        return movableProperty;
+    public StateFlow<Boolean> movableFlow() {
+        return movable;
     }
 
     public void setMovable(boolean movable) {
-        movableProperty.set(movable);
+        this.movable.setValue(movable);
     }
 
     public boolean isMovable() {
-        return movableProperty.get();
+        return movable.getValue();
     }
 
     /**
      * Press event
      */
-    private final ObjectProperty<Event> pressEventProperty = new SimpleObjectProperty<>(this, "pressEvent", new Event());
-    
-    public ObjectProperty<Event> pressEventProperty() {
-        return pressEventProperty;
+    private final MutableStateFlow<Event> pressEvent = StateFlowKt.MutableStateFlow(new Event());
+
+    public StateFlow<Event> pressEventFlow() {
+        return pressEvent;
     }
-    
+
     public void setPressEvent(Event event) {
-        pressEventProperty.set(event);
+        pressEvent.setValue(event);
     }
-    
+
     public Event getPressEvent() {
-        return pressEventProperty.get();
+        return pressEvent.getValue();
     }
 
     /**
      * Long press event
      */
-    private final ObjectProperty<Event> longPressEventProperty = new SimpleObjectProperty<>(this, "longPressEvent", new Event());
+    private final MutableStateFlow<Event> longPressEvent = StateFlowKt.MutableStateFlow(new Event());
 
-    public ObjectProperty<Event> longPressEventProperty() {
-        return longPressEventProperty;
+    public StateFlow<Event> longPressEventFlow() {
+        return longPressEvent;
     }
 
     public void setLongPressEvent(Event event) {
-        longPressEventProperty.set(event);
+        longPressEvent.setValue(event);
     }
 
     public Event getLongPressEvent() {
-        return longPressEventProperty.get();
+        return longPressEvent.getValue();
     }
 
     /**
      * Click event
      */
-    private final ObjectProperty<Event> clickEventProperty = new SimpleObjectProperty<>(this, "clickEvent", new Event());
+    private final MutableStateFlow<Event> clickEvent = StateFlowKt.MutableStateFlow(new Event());
 
-    public ObjectProperty<Event> clickEventProperty() {
-        return clickEventProperty;
+    public StateFlow<Event> clickEventFlow() {
+        return clickEvent;
     }
 
     public void setClickEvent(Event event) {
-        clickEventProperty.set(event);
+        clickEvent.setValue(event);
     }
 
     public Event getClickEvent() {
-        return clickEventProperty.get();
+        return clickEvent.getValue();
     }
 
     /**
      * Click event
      */
-    private final ObjectProperty<Event> doubleClickEventProperty = new SimpleObjectProperty<>(this, "doubleClickEvent", new Event());
+    private final MutableStateFlow<Event> doubleClickEvent = StateFlowKt.MutableStateFlow(new Event());
 
-    public ObjectProperty<Event> doubleClickEventProperty() {
-        return doubleClickEventProperty;
+    public StateFlow<Event> doubleClickEventFlow() {
+        return doubleClickEvent;
     }
 
     public void setDoubleClickEvent(Event event) {
-        doubleClickEventProperty.set(event);
+        doubleClickEvent.setValue(event);
     }
 
     public Event getDoubleClickEvent() {
-        return doubleClickEventProperty.get();
+        return doubleClickEvent.getValue();
     }
 
     public ButtonEventData() {
-        addPropertyChangedListener(onInvalidating(this::invalidate));
+        FlowSubscriptions.subscribe(pointerFollow, v -> invalidate());
+        FlowSubscriptions.subscribe(movable, v -> invalidate());
+        FlowSubscriptions.subscribe(pressEvent, v -> invalidate());
+        FlowSubscriptions.subscribe(longPressEvent, v -> invalidate());
+        FlowSubscriptions.subscribe(clickEvent, v -> invalidate());
+        FlowSubscriptions.subscribe(doubleClickEvent, v -> invalidate());
     }
 
-    public void addPropertyChangedListener(InvalidationListener listener) {
-        pointerFollowProperty.addListener(listener);
-        movableProperty.addListener(listener);
-        pressEventProperty.addListener(listener);
-        longPressEventProperty.addListener(listener);
-        clickEventProperty.addListener(listener);
-        doubleClickEventProperty.addListener(listener);
-    }
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-        observableHelper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        observableHelper.removeListener(listener);
+    /** 任何字段（替换式）变更时递增（对齐原 Observable 失效语义）。 */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        revision.setValue(revision.getValue() + 1);
     }
 
     @Override
@@ -216,201 +207,200 @@ public class ButtonEventData implements Cloneable, Observable {
     }
 
     @JsonAdapter(Event.Serializer.class)
-    public static class Event implements Cloneable, Observable {
+    public static class Event implements Cloneable {
 
         /**
          * Keep pressing
          */
-        private final BooleanProperty autoKeepProperty = new SimpleBooleanProperty(this, "autoKeep", false);
+        private final MutableStateFlow<Boolean> autoKeep = StateFlowKt.MutableStateFlow(false);
 
-        public BooleanProperty autoKeepProperty() {
-            return autoKeepProperty;
+        public StateFlow<Boolean> autoKeepFlow() {
+            return autoKeep;
         }
 
         public void setAutoKeep(boolean autoKeep) {
-            autoKeepProperty.set(autoKeep);
+            this.autoKeep.setValue(autoKeep);
         }
 
         public boolean isAutoKeep() {
-            return autoKeepProperty.get();
+            return autoKeep.getValue();
         }
 
         /**
          * Keep clicking
          */
-        private final BooleanProperty autoClickProperty = new SimpleBooleanProperty(this, "autoClick", false);
+        private final MutableStateFlow<Boolean> autoClick = StateFlowKt.MutableStateFlow(false);
 
-        public BooleanProperty autoClickProperty() {
-            return autoClickProperty;
+        public StateFlow<Boolean> autoClickFlow() {
+            return autoClick;
         }
 
         public void setAutoClick(boolean autoClick) {
-            autoClickProperty.set(autoClick);
+            this.autoClick.setValue(autoClick);
         }
 
         public boolean isAutoClick() {
-            return autoClickProperty.get();
+            return autoClick.getValue();
         }
 
         /**
          * Open menu
          */
-        private final BooleanProperty openMenuProperty = new SimpleBooleanProperty(this, "openMenu", false);
+        private final MutableStateFlow<Boolean> openMenu = StateFlowKt.MutableStateFlow(false);
 
-        public BooleanProperty openMenuProperty() {
-            return openMenuProperty;
+        public StateFlow<Boolean> openMenuFlow() {
+            return openMenu;
         }
 
         public void setOpenMenu(boolean openMenu) {
-            openMenuProperty.set(openMenu);
+            this.openMenu.setValue(openMenu);
         }
 
         public boolean isOpenMenu() {
-            return openMenuProperty.get();
+            return openMenu.getValue();
         }
 
         /**
          * Switch touch mode
          */
-        private final BooleanProperty switchTouchModeProperty = new SimpleBooleanProperty(this, "switchTouchMode", false);
+        private final MutableStateFlow<Boolean> switchTouchMode = StateFlowKt.MutableStateFlow(false);
 
-        public BooleanProperty switchTouchModeProperty() {
-            return switchTouchModeProperty;
+        public StateFlow<Boolean> switchTouchModeFlow() {
+            return switchTouchMode;
         }
 
         public void setSwitchTouchMode(boolean switchTouchMode) {
-            switchTouchModeProperty.set(switchTouchMode);
+            this.switchTouchMode.setValue(switchTouchMode);
         }
 
         public boolean isSwitchTouchMode() {
-            return switchTouchModeProperty.get();
+            return switchTouchMode.getValue();
         }
 
         /**
          * Switch mouse mode
          */
-        private final BooleanProperty switchMouseModeProperty = new SimpleBooleanProperty(this, "switchMouseMode", false);
+        private final MutableStateFlow<Boolean> switchMouseMode = StateFlowKt.MutableStateFlow(false);
 
-        public BooleanProperty switchMouseModeProperty() {
-            return switchMouseModeProperty;
+        public StateFlow<Boolean> switchMouseModeFlow() {
+            return switchMouseMode;
         }
 
         public void setSwitchMouseMode(boolean switchMouseMode) {
-            switchMouseModeProperty.set(switchMouseMode);
+            this.switchMouseMode.setValue(switchMouseMode);
         }
 
         public boolean isSwitchMouseMode() {
-            return switchMouseModeProperty.get();
+            return switchMouseMode.getValue();
         }
 
         /**
          * Input words
          */
-        private final BooleanProperty inputProperty = new SimpleBooleanProperty(this, "input", false);
+        private final MutableStateFlow<Boolean> input = StateFlowKt.MutableStateFlow(false);
 
-        public BooleanProperty inputProperty() {
-            return inputProperty;
+        public StateFlow<Boolean> inputFlow() {
+            return input;
         }
 
         public void setInput(boolean input) {
-            inputProperty.set(input);
+            this.input.setValue(input);
         }
 
         public boolean isInput() {
-            return inputProperty.get();
+            return input.getValue();
         }
 
         /**
          * Open quick input dialog
          */
-        private final BooleanProperty quickInputProperty = new SimpleBooleanProperty(this, "quickInput", false);
+        private final MutableStateFlow<Boolean> quickInput = StateFlowKt.MutableStateFlow(false);
 
-        public BooleanProperty quickInputProperty() {
-            return quickInputProperty;
+        public StateFlow<Boolean> quickInputFlow() {
+            return quickInput;
         }
 
         public void setQuickInput(boolean quickInput) {
-            quickInputProperty.set(quickInput);
+            this.quickInput.setValue(quickInput);
         }
 
         public boolean isQuickInput() {
-            return quickInputProperty.get();
+            return quickInput.getValue();
         }
 
         /**
          * Output text
          */
-        private final StringProperty outputTextProperty = new SimpleStringProperty(this, "outputText", "");
+        private final MutableStateFlow<String> outputText = StateFlowKt.MutableStateFlow("");
 
-        public StringProperty outputTextProperty() {
-            return outputTextProperty;
+        public StateFlow<String> outputTextFlow() {
+            return outputText;
         }
 
         public void setOutputText(String outputText) {
-            outputTextProperty.set(outputText);
+            this.outputText.setValue(outputText);
         }
 
         public String getOutputText() {
-            return outputTextProperty.get();
+            return outputText.getValue();
         }
 
         /**
          * Output keycodes
          */
-        private final ObservableList<Integer> outputKeycodesList = FXCollections.observableList(new ArrayList<>());
+        private final FlowList<Integer> outputKeycodes = new FlowList<>();
 
-        public ObservableList<Integer> outputKeycodesList() {
-            return outputKeycodesList;
+        public StateFlow<List<Integer>> outputKeycodesFlow() {
+            return outputKeycodes.flow();
         }
 
-        public void setOutputKeycodes(ObservableList<Integer> outputKeycodes) {
-            outputKeycodesList.setAll(outputKeycodes);
+        public List<Integer> getOutputKeycodes() {
+            return outputKeycodes.get();
+        }
+
+        public void setOutputKeycodes(List<Integer> keycodes) {
+            outputKeycodes.setAll(keycodes);
         }
 
         /**
          * Switch view group visibility
          */
-        private final ObservableList<String> bindViewGroupList = FXCollections.observableList(new ArrayList<>());
+        private final FlowList<String> bindViewGroups = new FlowList<>();
 
-        public ObservableList<String> bindViewGroupList() {
-            return bindViewGroupList;
+        public StateFlow<List<String>> bindViewGroupsFlow() {
+            return bindViewGroups.flow();
         }
 
-        public void setBindViewGroup(ObservableList<String> bindViewGroup) {
-            bindViewGroupList.setAll(bindViewGroup);
+        public List<String> getBindViewGroups() {
+            return bindViewGroups.get();
+        }
+
+        public void setBindViewGroup(List<String> bindViewGroup) {
+            bindViewGroups.setAll(bindViewGroup);
         }
 
         public Event() {
-            addPropertyChangedListener(onInvalidating(this::invalidate));
+            FlowSubscriptions.subscribe(autoKeep, v -> invalidate());
+            FlowSubscriptions.subscribe(autoClick, v -> invalidate());
+            FlowSubscriptions.subscribe(openMenu, v -> invalidate());
+            FlowSubscriptions.subscribe(switchTouchMode, v -> invalidate());
+            FlowSubscriptions.subscribe(switchMouseMode, v -> invalidate());
+            FlowSubscriptions.subscribe(input, v -> invalidate());
+            FlowSubscriptions.subscribe(quickInput, v -> invalidate());
+            FlowSubscriptions.subscribe(outputText, v -> invalidate());
+            FlowSubscriptions.subscribe(outputKeycodes.flow(), v -> invalidate());
+            FlowSubscriptions.subscribe(bindViewGroups.flow(), v -> invalidate());
         }
 
-        public void addPropertyChangedListener(InvalidationListener listener) {
-            autoKeepProperty.addListener(listener);
-            autoClickProperty.addListener(listener);
-            openMenuProperty.addListener(listener);
-            switchTouchModeProperty.addListener(listener);
-            switchMouseModeProperty.addListener(listener);
-            inputProperty.addListener(listener);
-            quickInputProperty.addListener(listener);
-            outputTextProperty.addListener(listener);
-            outputKeycodesList.addListener(listener);
-            bindViewGroupList.addListener(listener);
-        }
+        private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-        private ObservableHelper observableHelper = new ObservableHelper(this);
-
-        @Override
-        public void addListener(InvalidationListener listener) {
-            observableHelper.addListener(listener);
-        }
-
-        @Override
-        public void removeListener(InvalidationListener listener) {
-            observableHelper.removeListener(listener);
+        /** 任何字段（含列表成员）变更时递增（对齐原 Observable 失效语义）。 */
+        public StateFlow<Long> revisionFlow() {
+            return revision;
         }
 
         private void invalidate() {
-            observableHelper.invalidate();
+            revision.setValue(revision.getValue() + 1);
         }
 
         @Override
@@ -424,8 +414,8 @@ public class ButtonEventData implements Cloneable, Observable {
             event.setInput(isInput());
             event.setQuickInput(isQuickInput());
             event.setOutputText(getOutputText());
-            event.setOutputKeycodes(outputKeycodesList());
-            event.setBindViewGroup(bindViewGroupList());
+            event.setOutputKeycodes(getOutputKeycodes());
+            event.setBindViewGroup(getBindViewGroups());
             return event;
         }
 
@@ -445,8 +435,8 @@ public class ButtonEventData implements Cloneable, Observable {
                 obj.addProperty("input", src.isInput());
                 obj.addProperty("quickInput", src.isQuickInput());
                 obj.addProperty("outputText", src.getOutputText());
-                obj.add("outputKeycodes", gson.toJsonTree(new ArrayList<>(src.outputKeycodesList()), new TypeToken<ArrayList<Integer>>(){}.getType()).getAsJsonArray());
-                obj.add("bindViewGroup", gson.toJsonTree(new ArrayList<>(src.bindViewGroupList()), new TypeToken<ArrayList<String>>(){}.getType()).getAsJsonArray());
+                obj.add("outputKeycodes", gson.toJsonTree(new ArrayList<>(src.getOutputKeycodes()), new TypeToken<ArrayList<Integer>>(){}.getType()).getAsJsonArray());
+                obj.add("bindViewGroup", gson.toJsonTree(new ArrayList<>(src.getBindViewGroups()), new TypeToken<ArrayList<String>>(){}.getType()).getAsJsonArray());
 
                 return obj;
             }
@@ -468,13 +458,13 @@ public class ButtonEventData implements Cloneable, Observable {
                 event.setInput(Optional.ofNullable(obj.get("input")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setQuickInput(Optional.ofNullable(obj.get("quickInput")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setOutputText(Optional.ofNullable(obj.get("outputText")).map(JsonElement::getAsString).orElse(""));
-                event.setOutputKeycodes(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<Integer>>(){}.getType())));
-                event.setBindViewGroup(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<String>>(){}.getType())));
+                event.setOutputKeycodes(gson.fromJson(Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<Integer>>(){}.getType()));
+                event.setBindViewGroup(gson.fromJson(Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<String>>(){}.getType()));
 
                 return event;
             }
         }
-        
+
     }
 
 }

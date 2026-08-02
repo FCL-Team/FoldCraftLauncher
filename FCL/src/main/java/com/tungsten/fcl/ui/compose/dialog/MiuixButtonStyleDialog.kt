@@ -129,7 +129,7 @@ class MiuixButtonStyleDialog(
             refreshList()
             selectedStyleState.value = style
             menu?.viewGroup?.viewData?.let { viewData ->
-                viewData.buttonList().forEach {
+                viewData.getButtonList().forEach {
                     val name = it.style.name
                     if (name == style.name || name == beforeName) {
                         it.style = style

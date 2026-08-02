@@ -1,7 +1,5 @@
 package com.tungsten.fcl.control.data;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -14,18 +12,24 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.Observable;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
-import com.tungsten.fclcore.util.observable.ObservableHelper;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
 import java.util.UUID;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 方向键控件数据（阶段 4b）：属性已 StateFlow 化；任何字段（替换式）变更递增
+ * {@link #revisionFlow()}（对齐原 Observable 失效语义）。
+ *
+ * <p>磁盘 JSON 由手写 {@link Serializer} 产出，与属性类型无关，格式不变。</p>
+ */
 @JsonAdapter(ControlDirectionData.Serializer.class)
-public class ControlDirectionData implements Cloneable, Observable, CustomControl {
+public class ControlDirectionData implements Cloneable, CustomControl {
 
     /**
      * Unique id
@@ -43,84 +47,72 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
     /**
      * Control direction style
      */
-    private final ObjectProperty<ControlDirectionStyle> styleProperty = new SimpleObjectProperty<>(this, "style", ControlDirectionStyle.DEFAULT_DIRECTION_STYLE);
+    private final MutableStateFlow<ControlDirectionStyle> style = StateFlowKt.MutableStateFlow(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE);
 
-    public ObjectProperty<ControlDirectionStyle> styleProperty() {
-        return styleProperty;
+    public StateFlow<ControlDirectionStyle> styleFlow() {
+        return style;
     }
 
     public void setStyle(ControlDirectionStyle style) {
-        styleProperty.set(style);
+        this.style.setValue(style);
     }
 
     public ControlDirectionStyle getStyle() {
-        return styleProperty.get();
+        return style.getValue();
     }
 
     /**
      * Base info data
      * Contains position and size
      */
-    public final ObjectProperty<BaseInfoData> baseInfoProperty = new SimpleObjectProperty<>(this, "baseInfo", new BaseInfoData());
+    private final MutableStateFlow<BaseInfoData> baseInfo = StateFlowKt.MutableStateFlow(new BaseInfoData());
 
-    public ObjectProperty<BaseInfoData> baseInfoProperty() {
-        return baseInfoProperty;
+    public StateFlow<BaseInfoData> baseInfoFlow() {
+        return baseInfo;
     }
 
     public void setBaseInfo(BaseInfoData baseInfo) {
-        baseInfoProperty.set(baseInfo);
+        this.baseInfo.setValue(baseInfo);
     }
 
     public BaseInfoData getBaseInfo() {
-        return baseInfoProperty.get();
+        return baseInfo.getValue();
     }
 
     /**
      * Event data
      */
-    public final ObjectProperty<DirectionEventData> eventProperty = new SimpleObjectProperty<>(this, "event", new DirectionEventData());
+    private final MutableStateFlow<DirectionEventData> event = StateFlowKt.MutableStateFlow(new DirectionEventData());
 
-    public ObjectProperty<DirectionEventData> eventProperty() {
-        return eventProperty;
+    public StateFlow<DirectionEventData> eventFlow() {
+        return event;
     }
 
     public void setEvent(DirectionEventData event) {
-        eventProperty.set(event);
+        this.event.setValue(event);
     }
 
     public DirectionEventData getEvent() {
-        return eventProperty.get();
+        return event.getValue();
     }
 
     public ControlDirectionData(String id) {
         this.id = id;
 
-        addPropertyChangedListener(onInvalidating(this::invalidate));
+        FlowSubscriptions.subscribe(style, v -> invalidate());
+        FlowSubscriptions.subscribe(baseInfo, v -> invalidate());
+        FlowSubscriptions.subscribe(event, v -> invalidate());
     }
 
-    public void addPropertyChangedListener(InvalidationListener listener) {
-        styleProperty.addListener(listener);
-        baseInfoProperty.addListener(listener);
-        eventProperty.addListener(listener);
-    }
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-        observableHelper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        observableHelper.removeListener(listener);
+    /** 任何字段（替换式）变更时递增（对齐原 Observable 失效语义）。 */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     private void invalidate() {
-        try {
-            observableHelper.invalidate();
-        } catch (NullPointerException ignore) {
-        }
+        revision.setValue(revision.getValue() + 1);
     }
 
     @Override
@@ -179,7 +171,7 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
                 DirectionStyles.init();
             }
             if (obj.get("style").toString().contains("\"name\"")) {
-                data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE).getAsJsonObject()), new TypeToken<ControlDirectionStyle>(){}.getType()));
+                data.setStyle(gson.fromJson(Optional.ofNullable(obj.get("style")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE).getAsJsonObject()), new TypeToken<ControlDirectionStyle>() {}.getType()));
                 DirectionStyles.addStyle(data.getStyle());
             } else {
                 data.setStyle(DirectionStyles.findStyleByName(obj.get("style").getAsString()));

@@ -123,7 +123,7 @@ class MiuixDirectionStyleDialog(
             refreshList()
             selectedStyleState.value = style
             menu?.viewGroup?.viewData?.let { viewData ->
-                viewData.directionList().forEach {
+                viewData.getDirectionList().forEach {
                     val name = it.style.name
                     if (name == style.name || name == beforeName) {
                         it.style = style

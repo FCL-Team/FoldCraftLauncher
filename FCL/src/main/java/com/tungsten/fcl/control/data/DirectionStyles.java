@@ -1,33 +1,38 @@
 package com.tungsten.fcl.control.data;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-import static com.tungsten.fclcore.observable.collections.FXCollections.observableArrayList;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fcl.util.FlowList;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.observable.Observable;
-import com.tungsten.fclcore.observable.property.ReadOnlyListProperty;
-import com.tungsten.fclcore.observable.property.ReadOnlyListWrapper;
-import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
 
+import kotlinx.coroutines.flow.StateFlow;
+
+/**
+ * 方向键样式库（阶段 4b）：ObservableList(extractor) 已替换为 FlowList +
+ * 逐元素 revisionFlow 订阅（对齐 extractor 冒泡语义：成员增删与元素内部
+ * 属性变更均触发落盘与 checkStyles）。
+ */
 public class DirectionStyles {
 
     private DirectionStyles() {
     }
 
-    private static final ObservableList<ControlDirectionStyle> styles = observableArrayList(style -> new Observable[]{style});
-    private static final ReadOnlyListWrapper<ControlDirectionStyle> stylesWrapper = new ReadOnlyListWrapper<>(styles);
+    private static final FlowList<ControlDirectionStyle> styles = new FlowList<>();
+    private static final Map<ControlDirectionStyle, FlowSubscriptions.Subscription> styleSubscriptions = new IdentityHashMap<>();
 
     public static void checkStyles() {
         if (!initialized)
@@ -57,8 +62,24 @@ public class DirectionStyles {
     }
 
     static {
-        styles.addListener(onInvalidating(DirectionStyles::updateStylesStorages));
-        styles.addListener(onInvalidating(DirectionStyles::checkStyles));
+        FlowSubscriptions.subscribe(styles.flow(), v -> {
+            updateStylesStorages();
+            checkStyles();
+            rewireStyleSubscriptions();
+        });
+        rewireStyleSubscriptions();
+    }
+
+    /** 元素冒泡（对齐 extractor）：元素内部属性变更 → 落盘 + checkStyles。 */
+    private static void rewireStyleSubscriptions() {
+        styleSubscriptions.values().forEach(FlowSubscriptions.Subscription::cancel);
+        styleSubscriptions.clear();
+        for (ControlDirectionStyle style : styles.get()) {
+            styleSubscriptions.put(style, FlowSubscriptions.subscribe(style.revisionFlow(), v -> {
+                updateStylesStorages();
+                checkStyles();
+            }));
+        }
     }
 
     public static void init() {
@@ -91,17 +112,17 @@ public class DirectionStyles {
         return list;
     }
 
-    public static ObservableList<ControlDirectionStyle> getStyles() {
-        return styles;
+    public static List<ControlDirectionStyle> getStyles() {
+        return styles.get();
     }
 
-    public static ReadOnlyListProperty<ControlDirectionStyle> stylesProperty() {
-        return stylesWrapper.getReadOnlyProperty();
+    public static StateFlow<List<ControlDirectionStyle>> stylesFlow() {
+        return styles.flow();
     }
 
     public static void saveStyles() {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(new ArrayList<>(styles));
+        String json = gson.toJson(new ArrayList<>(styles.get()));
         try {
             FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR + "/styles/direction_styles.json"), json);
         } catch (IOException e) {
@@ -136,11 +157,11 @@ public class DirectionStyles {
 
     public static ControlDirectionStyle findStyleByName(String name) {
         checkStyles();
-        return styles.stream().filter(it -> it.getName().equals(name)).findFirst().orElse(styles.get(0));
+        return styles.get().stream().filter(it -> it.getName().equals(name)).findFirst().orElse(styles.get().get(0));
     }
 
     public static int findStyleIndexByName(String name) {
         checkStyles();
-        return styles.indexOf(findStyleByName(name));
+        return styles.get().indexOf(findStyleByName(name));
     }
 }

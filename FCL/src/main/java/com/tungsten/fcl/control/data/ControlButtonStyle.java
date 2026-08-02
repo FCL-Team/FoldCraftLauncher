@@ -1,7 +1,5 @@
 package com.tungsten.fcl.control.data;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-
 import android.graphics.Color;
 
 import com.google.gson.JsonDeserializationContext;
@@ -13,283 +11,278 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.Observable;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.observable.property.SimpleStringProperty;
-import com.tungsten.fclcore.observable.property.StringProperty;
-import com.tungsten.fclcore.util.observable.ObservableHelper;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 按钮样式（阶段 4b）：属性已 StateFlow 化；任何字段变更递增
+ * {@link #revisionFlow()}（对齐原 Observable 失效语义，ButtonStyles 据此冒泡落盘）。
+ *
+ * <p>磁盘 JSON 由手写 {@link Serializer} 产出，与属性类型无关，格式不变。</p>
+ */
 @JsonAdapter(ControlButtonStyle.Serializer.class)
-public class ControlButtonStyle implements Cloneable, Observable {
+public class ControlButtonStyle implements Cloneable {
 
     public static final ControlButtonStyle DEFAULT_BUTTON_STYLE = new ControlButtonStyle("Default");
 
     /**
      * Style name
      */
-    private final StringProperty nameProperty = new SimpleStringProperty(this, "name", "");
+    private final MutableStateFlow<String> name = StateFlowKt.MutableStateFlow("");
 
-    public StringProperty nameProperty() {
-        return nameProperty;
+    public StateFlow<String> nameFlow() {
+        return name;
     }
 
     public void setName(String name) {
-        nameProperty.set(name);
+        this.name.setValue(name);
     }
 
     public String getName() {
-        return nameProperty.get();
+        return name.getValue();
     }
 
     /**
      * Button display text color
      */
-    private final IntegerProperty textColorProperty = new SimpleIntegerProperty(this, "textColor", Color.WHITE);
+    private final MutableStateFlow<Integer> textColor = StateFlowKt.MutableStateFlow(Color.WHITE);
 
-    public IntegerProperty textColorProperty() {
-        return textColorProperty;
+    public StateFlow<Integer> textColorFlow() {
+        return textColor;
     }
 
     public void setTextColor(int color) {
-        textColorProperty.set(color);
+        textColor.setValue(color);
     }
 
     public int getTextColor() {
-        return textColorProperty.get();
+        return textColor.getValue();
     }
 
     /**
      * Button display text size
      */
-    private final IntegerProperty textSizeProperty = new SimpleIntegerProperty(this, "textSize", 12);
+    private final MutableStateFlow<Integer> textSize = StateFlowKt.MutableStateFlow(12);
 
-    public IntegerProperty textSizeProperty() {
-        return textSizeProperty;
+    public StateFlow<Integer> textSizeFlow() {
+        return textSize;
     }
 
     public void setTextSize(int size) {
-        textSizeProperty.set(size);
+        textSize.setValue(size);
     }
 
     public int getTextSize() {
-        return textSizeProperty.get();
+        return textSize.getValue();
     }
 
     /**
      * Button stroke width
      * 10 times the actual value
      */
-    private final IntegerProperty strokeWidthProperty = new SimpleIntegerProperty(this, "strokeWidth", 10);
+    private final MutableStateFlow<Integer> strokeWidth = StateFlowKt.MutableStateFlow(10);
 
-    public IntegerProperty strokeWidthProperty() {
-        return strokeWidthProperty;
+    public StateFlow<Integer> strokeWidthFlow() {
+        return strokeWidth;
     }
 
     public void setStrokeWidth(int strokeWidth) {
-        strokeWidthProperty.set(strokeWidth);
+        this.strokeWidth.setValue(strokeWidth);
     }
 
     public int getStrokeWidth() {
-        return strokeWidthProperty.get();
+        return strokeWidth.getValue();
     }
 
     /**
      * Button stroke color
      */
-    private final IntegerProperty strokeColorProperty = new SimpleIntegerProperty(this, "strokeColor", Color.DKGRAY);
+    private final MutableStateFlow<Integer> strokeColor = StateFlowKt.MutableStateFlow(Color.DKGRAY);
 
-    public IntegerProperty strokeColorProperty() {
-        return strokeColorProperty;
+    public StateFlow<Integer> strokeColorFlow() {
+        return strokeColor;
     }
 
     public void setStrokeColor(int strokeColor) {
-        strokeColorProperty.set(strokeColor);
+        this.strokeColor.setValue(strokeColor);
     }
 
     public int getStrokeColor() {
-        return strokeColorProperty.get();
+        return strokeColor.getValue();
     }
 
     /**
      * Button corner radius
      * 10 times the actual value
      */
-    private final IntegerProperty cornerRadiusProperty = new SimpleIntegerProperty(this, "cornerRadius", 100);
+    private final MutableStateFlow<Integer> cornerRadius = StateFlowKt.MutableStateFlow(100);
 
-    public IntegerProperty cornerRadiusProperty() {
-        return cornerRadiusProperty;
+    public StateFlow<Integer> cornerRadiusFlow() {
+        return cornerRadius;
     }
 
     public void setCornerRadius(int cornerRadius) {
-        cornerRadiusProperty.set(cornerRadius);
+        this.cornerRadius.setValue(cornerRadius);
     }
 
     public int getCornerRadius() {
-        return cornerRadiusProperty.get();
+        return cornerRadius.getValue();
     }
 
     /**
      * Button fill color
      */
-    private final IntegerProperty fillColorProperty = new SimpleIntegerProperty(this, "fillColor", Color.TRANSPARENT);
+    private final MutableStateFlow<Integer> fillColor = StateFlowKt.MutableStateFlow(Color.TRANSPARENT);
 
-    public IntegerProperty fillColorProperty() {
-        return fillColorProperty;
+    public StateFlow<Integer> fillColorFlow() {
+        return fillColor;
     }
 
     public void setFillColor(int fillColor) {
-        fillColorProperty.set(fillColor);
+        this.fillColor.setValue(fillColor);
     }
 
     public int getFillColor() {
-        return fillColorProperty.get();
+        return fillColor.getValue();
     }
 
     /**
      * Button display text color (pressed)
      */
-    private final IntegerProperty textColorPressedProperty = new SimpleIntegerProperty(this, "textColorPressed", Color.WHITE);
+    private final MutableStateFlow<Integer> textColorPressed = StateFlowKt.MutableStateFlow(Color.WHITE);
 
-    public IntegerProperty textColorPressedProperty() {
-        return textColorPressedProperty;
+    public StateFlow<Integer> textColorPressedFlow() {
+        return textColorPressed;
     }
 
     public void setTextColorPressed(int colorPressed) {
-        textColorPressedProperty.set(colorPressed);
+        textColorPressed.setValue(colorPressed);
     }
 
     public int getTextColorPressed() {
-        return textColorPressedProperty.get();
+        return textColorPressed.getValue();
     }
 
     /**
      * Button display text size (pressed)
      */
-    private final IntegerProperty textSizePressedProperty = new SimpleIntegerProperty(this, "textSizePressed", 12);
+    private final MutableStateFlow<Integer> textSizePressed = StateFlowKt.MutableStateFlow(12);
 
-    public IntegerProperty textSizePressedProperty() {
-        return textSizePressedProperty;
+    public StateFlow<Integer> textSizePressedFlow() {
+        return textSizePressed;
     }
 
     public void setTextSizePressed(int sizePressed) {
-        textSizePressedProperty.set(sizePressed);
+        textSizePressed.setValue(sizePressed);
     }
 
     public int getTextSizePressed() {
-        return textSizePressedProperty.get();
+        return textSizePressed.getValue();
     }
 
     /**
      * Button stroke width (pressed)
      * 10 times the actual value
      */
-    private final IntegerProperty strokeWidthPressedProperty = new SimpleIntegerProperty(this, "strokeWidthPressed", 10);
+    private final MutableStateFlow<Integer> strokeWidthPressed = StateFlowKt.MutableStateFlow(10);
 
-    public IntegerProperty strokeWidthPressedProperty() {
-        return strokeWidthPressedProperty;
+    public StateFlow<Integer> strokeWidthPressedFlow() {
+        return strokeWidthPressed;
     }
 
     public void setStrokeWidthPressed(int strokeWidthPressed) {
-        strokeWidthPressedProperty.set(strokeWidthPressed);
+        this.strokeWidthPressed.setValue(strokeWidthPressed);
     }
 
     public int getStrokeWidthPressed() {
-        return strokeWidthPressedProperty.get();
+        return strokeWidthPressed.getValue();
     }
 
     /**
      * Button stroke color (pressed)
      */
-    private final IntegerProperty strokeColorPressedProperty = new SimpleIntegerProperty(this, "strokeColorPressed", Color.DKGRAY);
+    private final MutableStateFlow<Integer> strokeColorPressed = StateFlowKt.MutableStateFlow(Color.DKGRAY);
 
-    public IntegerProperty strokeColorPressedProperty() {
-        return strokeColorPressedProperty;
+    public StateFlow<Integer> strokeColorPressedFlow() {
+        return strokeColorPressed;
     }
 
     public void setStrokeColorPressed(int strokeColorPressed) {
-        strokeColorPressedProperty.set(strokeColorPressed);
+        this.strokeColorPressed.setValue(strokeColorPressed);
     }
 
     public int getStrokeColorPressed() {
-        return strokeColorPressedProperty.get();
+        return strokeColorPressed.getValue();
     }
 
     /**
      * Button corner radius (pressed)
      * 10 times the actual value
      */
-    private final IntegerProperty cornerRadiusPressedProperty = new SimpleIntegerProperty(this, "cornerRadiusPressed", 100);
+    private final MutableStateFlow<Integer> cornerRadiusPressed = StateFlowKt.MutableStateFlow(100);
 
-    public IntegerProperty cornerRadiusPressedProperty() {
-        return cornerRadiusPressedProperty;
+    public StateFlow<Integer> cornerRadiusPressedFlow() {
+        return cornerRadiusPressed;
     }
 
     public void setCornerRadiusPressed(int cornerRadiusPressed) {
-        cornerRadiusPressedProperty.set(cornerRadiusPressed);
+        this.cornerRadiusPressed.setValue(cornerRadiusPressed);
     }
 
     public int getCornerRadiusPressed() {
-        return cornerRadiusPressedProperty.get();
+        return cornerRadiusPressed.getValue();
     }
 
     /**
      * Button fill color (pressed)
      */
-    private final IntegerProperty fillColorPressedProperty = new SimpleIntegerProperty(this, "fillColorPressed", Color.LTGRAY);
+    private final MutableStateFlow<Integer> fillColorPressed = StateFlowKt.MutableStateFlow(Color.LTGRAY);
 
-    public IntegerProperty fillColorPressedProperty() {
-        return fillColorPressedProperty;
+    public StateFlow<Integer> fillColorPressedFlow() {
+        return fillColorPressed;
     }
 
     public void setFillColorPressed(int fillColorPressed) {
-        fillColorPressedProperty.set(fillColorPressed);
+        this.fillColorPressed.setValue(fillColorPressed);
     }
 
     public int getFillColorPressed() {
-        return fillColorPressedProperty.get();
+        return fillColorPressed.getValue();
     }
 
     public ControlButtonStyle(String name) {
-        this.nameProperty.set(name);
+        setName(name);
 
-        addPropertyChangedListener(onInvalidating(this::invalidate));
+        FlowSubscriptions.subscribe(this.name, v -> invalidate());
+        FlowSubscriptions.subscribe(textColor, v -> invalidate());
+        FlowSubscriptions.subscribe(textSize, v -> invalidate());
+        FlowSubscriptions.subscribe(strokeWidth, v -> invalidate());
+        FlowSubscriptions.subscribe(strokeColor, v -> invalidate());
+        FlowSubscriptions.subscribe(cornerRadius, v -> invalidate());
+        FlowSubscriptions.subscribe(fillColor, v -> invalidate());
+        FlowSubscriptions.subscribe(textColorPressed, v -> invalidate());
+        FlowSubscriptions.subscribe(textSizePressed, v -> invalidate());
+        FlowSubscriptions.subscribe(strokeWidthPressed, v -> invalidate());
+        FlowSubscriptions.subscribe(strokeColorPressed, v -> invalidate());
+        FlowSubscriptions.subscribe(cornerRadiusPressed, v -> invalidate());
+        FlowSubscriptions.subscribe(fillColorPressed, v -> invalidate());
     }
 
-    public void addPropertyChangedListener(InvalidationListener listener) {
-        nameProperty.addListener(listener);
-        textColorProperty.addListener(listener);
-        textSizeProperty.addListener(listener);
-        strokeWidthProperty.addListener(listener);
-        strokeColorProperty.addListener(listener);
-        cornerRadiusProperty.addListener(listener);
-        fillColorProperty.addListener(listener);
-        textColorPressedProperty.addListener(listener);
-        textSizePressedProperty.addListener(listener);
-        strokeWidthPressedProperty.addListener(listener);
-        strokeColorPressedProperty.addListener(listener);
-        cornerRadiusPressedProperty.addListener(listener);
-        fillColorPressedProperty.addListener(listener);
-    }
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-        observableHelper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        observableHelper.removeListener(listener);
+    /** 任何字段变更时递增（对齐原 Observable 失效语义）。 */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        revision.setValue(revision.getValue() + 1);
     }
 
     @Override

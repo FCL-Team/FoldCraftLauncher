@@ -103,13 +103,13 @@ public class ViewManager {
         removeAllCustomViews();
         if (gameMenu.isEditMode()) {
             if (gameMenu.getViewGroup() != null) {
-                gameMenu.getViewGroup().getViewData().buttonList().forEach(it -> loadView(it, true));
-                gameMenu.getViewGroup().getViewData().directionList().forEach(it -> loadView(it, true));
+                gameMenu.getViewGroup().getViewData().getButtonList().forEach(it -> loadView(it, true));
+                gameMenu.getViewGroup().getViewData().getDirectionList().forEach(it -> loadView(it, true));
             }
         } else {
             gameMenu.getController().viewGroups().forEach(it -> {
-                it.getViewData().buttonList().forEach(data -> loadView(data, it.getVisibility() == ControlViewGroup.Visibility.VISIBLE));
-                it.getViewData().directionList().forEach(data -> loadView(data, it.getVisibility() == ControlViewGroup.Visibility.VISIBLE));
+                it.getViewData().getButtonList().forEach(data -> loadView(data, it.getVisibility() == ControlViewGroup.Visibility.VISIBLE));
+                it.getViewData().getDirectionList().forEach(data -> loadView(data, it.getVisibility() == ControlViewGroup.Visibility.VISIBLE));
             });
         }
     }
@@ -133,8 +133,8 @@ public class ViewManager {
         for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
             View view = gameMenu.getBaseLayout().getChildAt(i);
             if (view instanceof CustomView) {
-                if (viewGroup.getViewData().buttonList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))
-                        || viewGroup.getViewData().directionList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))) {
+                if (viewGroup.getViewData().getButtonList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))
+                        || viewGroup.getViewData().getDirectionList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))) {
                     ((CustomView) view).switchParentVisibility();
                 }
             }

@@ -78,8 +78,6 @@ import com.tungsten.fclcore.observable.property.ObjectProperty;
 import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.observable.property.SimpleIntegerProperty;
 import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
-import com.tungsten.fclcore.observable.collections.FXCollections;
-import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
@@ -434,14 +432,14 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 setViewGroup(spinner.getDataList().get(position));
                 if (getViewGroup() != null) {
-                    getViewGroup().getViewData().buttonList().forEach(it -> {
+                    getViewGroup().getViewData().getButtonList().forEach(it -> {
                         String name = it.getStyle().getName();
                         ControlButtonStyle style = ButtonStyles.findStyleByName(name);
                         if (name.equals(style.getName())) {
                             it.setStyle(style);
                         }
                     });
-                    getViewGroup().getViewData().directionList().forEach(it -> {
+                    getViewGroup().getViewData().getDirectionList().forEach(it -> {
                         String name = it.getStyle().getName();
                         ControlDirectionStyle style = DirectionStyles.findStyleByName(name);
                         if (name.equals(style.getName())) {
@@ -969,7 +967,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     public void onClick(View v) {
         if (v == manageViewGroups) {
             // 3.2 批 4 接入点：Miuix 视图组管理弹窗
-            new MiuixViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null).show();
+            new MiuixViewGroupDialog(getActivity(), this, false, java.util.Collections.emptyList(), null).show();
         }
         if (v == addButton) {
             if (getViewGroup() == null) {
@@ -1029,7 +1027,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             openQuickInput();
         }
         if (v == sendKeycode) {
-            ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
+            List<Integer> list = new ArrayList<>();
             // 4.1 接入点：Miuix 键码选择弹窗（发送键码回调）
             new MiuixSelectKeycodeDialog(getActivity(), list, false, true, (dialog) -> {
                 Schedulers.io().execute(() -> {

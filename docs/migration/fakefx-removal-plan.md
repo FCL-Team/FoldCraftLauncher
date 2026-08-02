@@ -1,7 +1,7 @@
 # fakefx（JavaFX 属性体系）彻底移除执行方案
 
-> 状态：**阶段 4a（设置域 + 主题域业务状态 StateFlow 化）已完成**——FCL setting/ 10 个类与 FCLLibrary Theme 的 observable Property/ObservableList 字段全部切换为 StateFlow（extractor 冒泡改 revisionFlow 直订阅承接），23 个直接调用方级联改完；Config 序列化改手写 @JsonAdapter，JSON 产物与旧管线逐字节一致。构建通过、冒烟 68/68、Config JSON 回环 12 断言全过、主题链路静态核验一致。记录见 §九；阶段 3 记录见 §八；2a/2b 记录见 §六/§七。
-> 分支：`feature/fcl-flow-domain`（阶段 4a；基于含阶段 3 的 `feature/miuix-migration` 系）。
+> 状态：**阶段 4b（control/data 控件数据域 StateFlow 化）已完成**——control/data 11 个数据类与 4a 遗留的 Controller.viewGroups 全部切换为 StateFlow/FlowList（新增快照式列表基座），extractor 冒泡改逐元素 revisionFlow 订阅承接，控件视图监听改 Flow 订阅（渲染/触摸/阈值零改动），9 个 Miuix 游戏内弹窗级联改完。构建通过、冒烟 68/68、布局 JSON 回环实测旧/新管线逐字节一致、GameMenu 绑定链静态核验一致。记录见 §十；阶段 4a 记录见 §九；阶段 3 记录见 §八；2a/2b 记录见 §六/§七。
+> 分支：`feature/fcl-flow-control`（阶段 4b；基于含 4a 的 `feature/miuix-migration` 系）。
 > 调研日期：2026-08-02。所有数据均用 Grep/Read 实证，命令可复现。
 > 边界声明：本方案只规划移除 fakefx；控件系统（`control/`）与 WebView 保留；6.1 旧代码清理（见 `final-report.md` §6）按本文 §四 的合并点协同执行。
 
@@ -464,3 +464,56 @@ find FCLCore/src/main/java/com/tungsten/fclcore/fakefx -name "*.java" | xargs wc
 3. 订阅生命周期：FlowSubscriptions 共享作用域订阅不可取消处（Config/GlobalConfig/Accounts/Controllers/Profiles/VersionSetting/MenuSetting 的静态或随对象存活订阅）与原"长寿命监听"等价；GameMenu/MainActivity/弹窗/适配器均已显式 cancel（见 9.3）。
 4. 无真机：设置读写回环、主题切换、菜单开关双向同步仅编译期 + 静态核验 + 孪生回环兜底，真机项发布前补齐。
 5. 真机风险点（低）：StateFlow 合并语义下高频 set（如进度类）可能合并回调，消费方均幂等；VersionSetting 同值 set 不再触发（与原 Property 一致）。
+
+---
+
+## 十、阶段 4b 执行记录：control/data 控件数据域 StateFlow 化（2026-08-02 完成）
+
+分支 `feature/fcl-flow-control`。范围：`FCL/control/data/` 11 个数据类（含内嵌类 PercentageSize/Event/ButtonStyle/RockerStyle）、4a 遗留的 `Controller.viewGroups`、全部直接调用方（control/view 控件、GameMenu、ViewManager、9 个 Miuix 游戏内弹窗）。本步无 gradle 改动。
+
+### 10.1 新基建：FlowList
+
+`FCL/util/FlowList.java`（新增）：快照式可变列表——变更方法先拷贝再整体替换为不可变快照并发射 `StateFlow<List<T>>`；同内容替换不发射（与原 ObservableList 同内容 setAll 也发事件的差异仅为"无变化不通知"，消费方均幂等）。control/data 的全部 ObservableList 字段（Event.outputKeycodes/bindViewGroup、DirectionEventData 四向键码、ViewData.buttonList/directionList、Controller.viewGroups、ButtonStyles/DirectionStyles/QuickInputTexts 静态库）统一改用它。
+
+### 10.2 逐类变更摘要
+
+| 类 | 变更 |
+|---|---|
+| `BaseInfoData`（含 PercentageSize） | 8+2 个 Property → MutableStateFlow（`xxxFlow()` 访问器，get/set 签名不变）；`implements Observable` + ObservableHelper → `revisionFlow(): StateFlow<Long>`（字段变更递增，对齐失效语义）；手写 Serializer 零改动 |
+| `ControlButtonStyle` | 13 个 Property → StateFlow，同上 |
+| `ControlDirectionStyle`（含 ButtonStyle 13 字段 / RockerStyle 9 字段） | 同上；buttonStyle/rockerStyle 元素冒泡改订阅元素 revisionFlow（set 时换绑并取消旧订阅——原实现旧元素监听不摘除属泄漏式语义，旧元素已脱离引用，行为等价且更正确） |
+| `ControlButtonData` / `ControlDirectionData` | 4/3 个 Property → StateFlow（text/style/baseInfo/event，仅替换式变更递增 revision，与原"只监听 property 不监听元素内部"逐条对齐）；公开字段 baseInfoProperty/eventProperty 收为私有 |
+| `ButtonEventData`（含 Event） | 2+8 个标量 → StateFlow；Event 的 outputKeycodes/bindViewGroup ObservableList → FlowList（`getOutputKeycodes()/outputKeycodesFlow()` 等） |
+| `DirectionEventData` | 四向键码 ObservableList → FlowList（`getUpKeycodes()/setUpKeycode(List)` 等）；followOption/sneak/sneakKeycode → StateFlow；旧版单键码 JSON（非数组）兼容分支原样保留 |
+| `ControlViewGroup`（含 ViewData） | name/visibility/viewData（替换式）→ StateFlow；ViewData 两列表 → FlowList，成员变更递增 revision 并**重挂元素订阅**（IdentityHashMap 管理，移出元素即 cancel——对齐原"列表变更重挂监听"，并修正原实现移出元素监听不摘除的泄漏） |
+| `Controller` | viewGroups ObservableList → FlowList：`viewGroups(): List<ControlViewGroup>` + `viewGroupsFlow()` + `setViewGroups(List)` + 新增 `swapViewGroups(i,j)`（承接 MiuixViewGroupDialog 原 `Collections.swap`）；元素冒泡重挂同 ViewData；构造/clone/反序列化同步改为 List；手写 Serializer 零改动 |
+| `ButtonStyles` / `DirectionStyles` / `QuickInputTexts` | 静态 ObservableList（含 extractor）→ FlowList + `stylesFlow()/inputTextsFlow()`；**extractor 冒泡由逐元素 revisionFlow 订阅承接**（成员增删与元素内部属性变更均落盘 + checkStyles，重挂管理同 ViewData）；`stylesProperty()/inputTextsProperty()`（ReadOnlyListWrapper）删除——全仓无调用点 |
+
+### 10.3 控件视图监听承接方式（红线：视图行为/阈值/渲染零改动）
+
+- `ControlButton` / `ControlDirection`：`getData().addListener(notifyListener)` → `FlowSubscriptions.subscribe(getData().revisionFlow(), …)`（订阅体与原 notifyListener 逐行一致：androidUIThread 上 notifyData + cancelAllEvent；displayMode 构造器仅 notifyData）；`dataProperty`（视图层 observable，保留）变更时换绑重订阅；`removeListener()` 改为 cancel 订阅（对齐原摘除）。视图自身的 visibilityProperty/dataProperty/Bindings 体系（视图层）未动。
+- 手势阈值链路零改动：`git diff` 对两个控件视图全文检索 `100/400/10/Math.abs/downTime/postDelayed` 无命中（仅监听接线 hunks）。
+- `ViewManager` / `GameMenu`：仅访问器改名（buttonList()→getButtonList() 等）与快照语义平移；`saveController()` 显式落盘路径不变。
+- `MiuixSelectKeycodeDialog`：列表参数 `ObservableList<Int>` → `MutableList<Int>` + 新增 `onChanged` 变更回调（多选即时回写场景用）。`MiuixEditViewDialog`：outputKeycodes 改"临时拷贝 + onChanged 逐次写回"（对齐遗留直改生效时机）；四向键码保持"临时拷贝 + 确认回写"；潜行键码 `sneakKeycodeProperty().bind(selectionProperty)` 改 observable ChangeListener 直写（初始同值，等价 bind 的同步）；bindViewGroup/selectedGroups 改普通 List。`MiuixViewGroupDialog`：swap 改 `controller.swapViewGroups`。`MiuixGamepadMapDialog`：直传 `item.button.keycodes`（本就 MutableList，就地增删语义不变）。
+- `MiuixAddButtonStyleDialog` / `MiuixAddDirectionStyleDialog`：SeekSpec/ColorSpec 由 IntegerProperty 改 get/set lambda（滑杆/数字输入/取色器 → 直写 style → revisionFlow → revisionState 重组回读，对齐原双向绑定 + style.addListener 重绘链）；方向样式弹窗 12 处 `style.buttonStyle.x.bind(buttonStyle.x)` 改 `subscribeWithCurrent`（bind 的"先同步再跟随"语义，同值 no-op 防回环）；两弹窗的 Flow 订阅 dismiss 统一 cancel（对齐原弱引用自动摘除，防共享作用域泄漏）。
+
+### 10.4 门禁验证
+
+- `:FCL:assembleDebug`：**BUILD SUCCESSFUL（42s，首轮即过，零编译错误）**。
+- observable 冒烟 **68/68** 复跑通过（本步未动 observable 库）。
+- **布局 JSON 回环实测**（/tmp/jsonrt4b，测后已删）：旧世界 = git HEAD 版 control/data（observable 实现），新世界 = 改后 StateFlow 实现；孪生 Harness 逐行复制 `Controller.Serializer` 三段逻辑（styles 收集 + viewGroups），同一 gson 2.11.0。结果：
+  - 内置布局 `00000000.json` 反序列化→序列化：**旧/新产物逐字节一致**（cmp 零差异）；
+  - 双重回环稳定：两世界各自 `json1 == json2`；
+  - 合成富图（unicode/emoji/转义/负数/空串、全事件字段、键码数组、摇杆样式、ABSOLUTE/IN_GAME/MENU、双分组含不可见空组）：**两世界产物逐字节一致**；
+  - 与资产原文件的差异仅为 CRLF 与资产写盘后新增的 `switchMouseMode` 字段（旧管线同样补默认值，属资产陈旧而非本次回归）。
+  - 附注：harness 需 android.graphics.Color/Environment/Context、androidx NonNull、FXUtils.onInvalidating、Logging 共 6 个桩；FCLPath.CONTROLLER_DIR 为 null 时读盘失败按既有 catch 路径返回空表（两世界一致）。
+- **GameMenu 绑定链静态核验**：Controller 字段/分组增删/分组内部变更 → revisionFlow → Controllers 信号（4a）→ 全量落盘；GameMenu.subscribeControllerRevision → 分组 spinner 刷新——与原 ObservableList 重挂监听链逐环对应。控件数据编辑（弹窗确定 → setText/setBaseInfo/setStyle/setEvent 替换式写入）→ data revisionFlow → 视图重绘 + Controller revision → 落盘，与原 invalidate 冒泡链等价。样式库：样式编辑（弹窗改 clone → addStyle 原位替换）→ FlowList 成员变更 + 元素 revision 订阅 → saveStyles，对齐 extractor 冒泡。
+- 红线：FCLauncher/Terracotta/LWJGL-Pojav/ZipFileSystem/NG-GL4ES 零改动；FCLCore 零改动；控件视图渲染/触摸/阈值代码零改动；磁盘布局 JSON 格式逐字节一致（实测）。
+
+### 10.5 遗留问题
+
+1. 视图层（ControlButton/ControlDirection 的 visibilityProperty/dataProperty、GameMenu 的 editMode/controllerProperty 等、FCLLibrary 组件、MultiplayerDialog）仍用 observable 库——属视图层存量，留 4c/4d 或后续批次。
+2. manage/download 残余（ModListPage、Datapack 等 4a 已知项）与 FCLLibrary 24 view 未动（Theme 镜像接缝仍服役）。
+3. 订阅生命周期：数据类/样式库/ViewData/Controller 的 Flow 订阅随对象同生死（对齐原长寿命监听）；弹窗订阅均 dismiss cancel；控件视图订阅均 removeListener cancel。
+4. 无真机：游戏内手柄显示、触摸交互、弹窗编辑→刷新→落盘全链路仅编译期 + 静态核验 + 孪生回环兜底，真机项发布前补齐。
+5. 行为微调（已评估无害）：ControlDirectionStyle/ViewData/Controller 的元素换绑会 cancel 旧元素订阅（原实现旧元素监听残留，元素已脱离引用树）；StateFlow 同内容列表 setAll 不再通知（消费方幂等）。

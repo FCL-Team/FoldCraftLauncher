@@ -36,8 +36,8 @@ import com.tungsten.fcl.control.data.DirectionStyles
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fclcore.observable.property.IntegerProperty
 import com.tungsten.fclcore.util.StringUtils
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog
 import com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
@@ -99,9 +99,17 @@ class MiuixAddDirectionStyleDialog(
     /** 取消还原用的快照（对齐遗留 beforeStyle 字段：buttonStyle 初始化后的 clone）。 */
     private val beforeButtonStyle: ControlButtonStyle
 
+    /** 弹窗存活期 Flow 订阅（dismiss 统一取消，防共享作用域泄漏）。 */
+    private val subscriptions = mutableListOf<FlowSubscriptions.Subscription>()
+
+    /**
+     * 滑杆行描述（阶段 4b：样式属性已 StateFlow 化，SeekSpec 改为 get/set，
+     * 滑杆/数字输入 → set，样式 revision 驱动重组，对齐原双向绑定语义）。
+     */
     private inner class SeekSpec(
         val labelRes: Int,
-        val property: IntegerProperty,
+        val get: () -> Int,
+        val set: (Int) -> Unit,
         min: Int,
         max: Int,
         val isPercentage: Boolean,
@@ -110,30 +118,30 @@ class MiuixAddDirectionStyleDialog(
         val seekBar: FCLPreciseSeekBar = FCLPreciseSeekBar(context).apply {
             setMin(min)
             setMax(max)
-            setProgress(property.get())
-            property.bindBidirectional(progressProperty())
+            setProgress(get())
+            progressProperty().addListener { _, _, n -> set(n.toInt()) }
             progressProperty().addListener { revisionState.intValue++ }
         }
     }
 
-    private inner class ColorSpec(val labelRes: Int, val property: IntegerProperty)
+    private inner class ColorSpec(val labelRes: Int, val get: () -> Int, val set: (Int) -> Unit)
 
     private val intervalSeek =
-        SeekSpec(R.string.style_button_interval, style.buttonStyle.intervalProperty(), 0, 200, isPercentage = true, unit = "%")
+        SeekSpec(R.string.style_button_interval, { style.buttonStyle.interval }, { style.buttonStyle.interval = it }, 0, 200, isPercentage = true, unit = "%")
 
     private val rockerSeeks = listOf(
-        SeekSpec(R.string.style_rocker_size, style.rockerStyle.rockerSizeProperty(), 100, 900, isPercentage = true, unit = "%"),
-        SeekSpec(R.string.style_rocker_bg_stroke_width, style.rockerStyle.bgStrokeWidthProperty(), 0, 50, isPercentage = true, unit = "dp"),
-        SeekSpec(R.string.style_rocker_bg_corner_radius, style.rockerStyle.bgCornerRadiusProperty(), 0, 500, isPercentage = true, unit = "%"),
-        SeekSpec(R.string.style_rocker_stroke_width, style.rockerStyle.rockerStrokeWidthProperty(), 0, 50, isPercentage = true, unit = "dp"),
-        SeekSpec(R.string.style_rocker_corner_radius, style.rockerStyle.rockerCornerRadiusProperty(), 0, 500, isPercentage = true, unit = "%"),
+        SeekSpec(R.string.style_rocker_size, { style.rockerStyle.rockerSize }, { style.rockerStyle.rockerSize = it }, 100, 900, isPercentage = true, unit = "%"),
+        SeekSpec(R.string.style_rocker_bg_stroke_width, { style.rockerStyle.bgStrokeWidth }, { style.rockerStyle.bgStrokeWidth = it }, 0, 50, isPercentage = true, unit = "dp"),
+        SeekSpec(R.string.style_rocker_bg_corner_radius, { style.rockerStyle.bgCornerRadius }, { style.rockerStyle.bgCornerRadius = it }, 0, 500, isPercentage = true, unit = "%"),
+        SeekSpec(R.string.style_rocker_stroke_width, { style.rockerStyle.rockerStrokeWidth }, { style.rockerStyle.rockerStrokeWidth = it }, 0, 50, isPercentage = true, unit = "dp"),
+        SeekSpec(R.string.style_rocker_corner_radius, { style.rockerStyle.rockerCornerRadius }, { style.rockerStyle.rockerCornerRadius = it }, 0, 500, isPercentage = true, unit = "%"),
     )
 
     private val rockerColors = listOf(
-        ColorSpec(R.string.style_rocker_bg_stroke_color, style.rockerStyle.bgStrokeColorProperty()),
-        ColorSpec(R.string.style_rocker_bg_fill_color, style.rockerStyle.bgFillColorProperty()),
-        ColorSpec(R.string.style_rocker_stroke_color, style.rockerStyle.rockerStrokeColorProperty()),
-        ColorSpec(R.string.style_rocker_fill_color, style.rockerStyle.rockerFillColorProperty()),
+        ColorSpec(R.string.style_rocker_bg_stroke_color, { style.rockerStyle.bgStrokeColor }, { style.rockerStyle.bgStrokeColor = it }),
+        ColorSpec(R.string.style_rocker_bg_fill_color, { style.rockerStyle.bgFillColor }, { style.rockerStyle.bgFillColor = it }),
+        ColorSpec(R.string.style_rocker_stroke_color, { style.rockerStyle.rockerStrokeColor }, { style.rockerStyle.rockerStrokeColor = it }),
+        ColorSpec(R.string.style_rocker_fill_color, { style.rockerStyle.rockerFillColor }, { style.rockerStyle.rockerFillColor = it }),
     )
 
     init {
@@ -151,24 +159,30 @@ class MiuixAddDirectionStyleDialog(
         buttonStyle.cornerRadiusPressed = style.buttonStyle.cornerRadiusPressed
         buttonStyle.fillColorPressed = style.buttonStyle.fillColorPressed
         beforeButtonStyle = buttonStyle.clone()
-        // 再建立 style.buttonStyle → 本地 buttonStyle 的单向绑定（遗留 bind 方向一致）
-        style.buttonStyle.textSizeProperty().bind(buttonStyle.textSizeProperty())
-        style.buttonStyle.textColorProperty().bind(buttonStyle.textColorProperty())
-        style.buttonStyle.strokeWidthProperty().bind(buttonStyle.strokeWidthProperty())
-        style.buttonStyle.strokeColorProperty().bind(buttonStyle.strokeColorProperty())
-        style.buttonStyle.cornerRadiusProperty().bind(buttonStyle.cornerRadiusProperty())
-        style.buttonStyle.fillColorProperty().bind(buttonStyle.fillColorProperty())
-        style.buttonStyle.textSizePressedProperty().bind(buttonStyle.textSizePressedProperty())
-        style.buttonStyle.textColorPressedProperty().bind(buttonStyle.textColorPressedProperty())
-        style.buttonStyle.strokeWidthPressedProperty().bind(buttonStyle.strokeWidthPressedProperty())
-        style.buttonStyle.strokeColorPressedProperty().bind(buttonStyle.strokeColorPressedProperty())
-        style.buttonStyle.cornerRadiusPressedProperty().bind(buttonStyle.cornerRadiusPressedProperty())
-        style.buttonStyle.fillColorPressedProperty().bind(buttonStyle.fillColorPressedProperty())
+        // 再建立 style.buttonStyle → 本地 buttonStyle 的单向绑定（遗留 bind 方向一致；
+        // subscribeWithCurrent = bind 的"先同步当前值再跟随"语义，同值写入 no-op 天然防回环）
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.textSizeFlow()) { style.buttonStyle.textSize = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.textColorFlow()) { style.buttonStyle.textColor = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.strokeWidthFlow()) { style.buttonStyle.strokeWidth = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.strokeColorFlow()) { style.buttonStyle.strokeColor = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.cornerRadiusFlow()) { style.buttonStyle.cornerRadius = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.fillColorFlow()) { style.buttonStyle.fillColor = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.textSizePressedFlow()) { style.buttonStyle.textSizePressed = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.textColorPressedFlow()) { style.buttonStyle.textColorPressed = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.strokeWidthPressedFlow()) { style.buttonStyle.strokeWidthPressed = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.strokeColorPressedFlow()) { style.buttonStyle.strokeColorPressed = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.cornerRadiusPressedFlow()) { style.buttonStyle.cornerRadiusPressed = it }
+        subscriptions += FlowSubscriptions.subscribeWithCurrent(buttonStyle.fillColorPressedFlow()) { style.buttonStyle.fillColorPressed = it }
         // 任何样式属性变化 → 预览/数值/色块重绘（对齐遗留 style.addListener(changeDirectionStyle)）
-        style.addListener { revisionState.intValue++ }
+        subscriptions += FlowSubscriptions.subscribe(style.revisionFlow()) { revisionState.intValue++ }
         setDialogContent {
             DialogContent()
         }
+    }
+
+    override fun dismiss() {
+        subscriptions.forEach { it.cancel() }
+        super.dismiss()
     }
 
     fun setGameMenu(menu: GameMenu?) {
@@ -199,7 +213,7 @@ class MiuixAddDirectionStyleDialog(
             .show()
     }
 
-    private fun openTextEditDialog(property: IntegerProperty, isPercentage: Boolean) {
+    private fun openTextEditDialog(property: com.tungsten.fclcore.observable.property.IntegerProperty, isPercentage: Boolean) {
         val dialog = EditDialog(context) { s ->
             if (s.matches(Regex("\\d+(\\.\\d+)?$"))) {
                 var progress = s.toFloat()
@@ -215,13 +229,13 @@ class MiuixAddDirectionStyleDialog(
         dialog.show()
     }
 
-    private fun openColorPicker(property: IntegerProperty) {
-        val dialog = FCLColorPickerDialog(context, property.get(), object : FCLColorPickerDialog.Listener {
+    private fun openColorPicker(get: () -> Int, set: (Int) -> Unit) {
+        val dialog = FCLColorPickerDialog(context, get(), object : FCLColorPickerDialog.Listener {
             override fun onColorChanged(color: Int) {
             }
 
             override fun onPositive(destColor: Int) {
-                property.set(destColor)
+                set(destColor)
             }
 
             override fun onNegative(initColor: Int) {
@@ -425,7 +439,7 @@ class MiuixAddDirectionStyleDialog(
             )
             Spacer(Modifier.width(10.dp))
             Text(
-                text = "${spec.property.get() / 10f} ${spec.unit}",
+                text = "${spec.get() / 10f} ${spec.unit}",
                 style = MiuixTheme.textStyles.body2,
                 textAlign = TextAlign.End,
                 modifier = Modifier
@@ -451,21 +465,21 @@ class MiuixAddDirectionStyleDialog(
             )
             Spacer(Modifier.weight(1f))
             Text(
-                text = getHex(spec.property.get()),
+                text = getHex(spec.get()),
                 style = MiuixTheme.textStyles.body2,
             )
             Spacer(Modifier.width(10.dp))
             Box(
                 modifier = Modifier
                     .size(32.dp)
-                    .background(Color(spec.property.get()))
+                    .background(Color(spec.get()))
                     // 描边对齐遗留 darker_gray 体系（bg_item.xml 等）→ outline token（昼夜适配）
                     .border(1.dp, MiuixTheme.colorScheme.outline),
             )
             Spacer(Modifier.width(10.dp))
             TextButton(
                 text = stringResource(R.string.menu_control_set),
-                onClick = { openColorPicker(spec.property) },
+                onClick = { openColorPicker(spec.get, spec.set) },
             )
         }
     }

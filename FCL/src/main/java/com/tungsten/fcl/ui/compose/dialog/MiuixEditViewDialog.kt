@@ -43,7 +43,6 @@ import com.tungsten.fcl.control.data.DirectionEventData
 import com.tungsten.fcl.control.data.DirectionStyles
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fclcore.observable.collections.FXCollections
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import top.yukonga.miuix.kmp.basic.Card
@@ -73,7 +72,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *   百分比超 100 截断、×10 取整，与遗留 openTextEditDialog 一致）；样式行显示当前样式名，
  *   「Set」弹 Miuix 样式选择弹窗，选择后写回 data.style 并刷新名称；
  * - 按钮事件页：pointerFollow/movable 两 Switch + TabRow 四套事件子页（按下/长按/点击/双击），
- *   各含 7 Switch + 输出文本 + 键码选择（MiuixSelectKeycodeDialog，直改 outputKeycodesList）
+ *   各含 7 Switch + 输出文本 + 键码选择（MiuixSelectKeycodeDialog，临时拷贝即时写回 outputKeycodes）
  *   + 绑定分组（MiuixViewGroupDialog，回调 id 列表
  *   setBindViewGroup，与遗留 :387 一致）；
  * - 方向键信息页同构：单一尺寸滑杆（绝对区间上限为屏高 dp），写宽时同步高
@@ -643,23 +642,25 @@ class MiuixEditViewDialog(
         LabeledButtonRow(
             label = stringResource(R.string.edit_button_event_keycodes),
             onClick = {
-                // 直改 outputKeycodesList（同遗留）；Miuix 键码选择弹窗
-                MiuixSelectKeycodeDialog(context, e.outputKeycodesList(), false, true).show()
+                // 临时拷贝 + 每次变更即时写回（对齐遗留直改 outputKeycodesList 的生效时机）
+                MiuixSelectKeycodeDialog(context, ArrayList(e.getOutputKeycodes()), false, true)
+                    .apply { onChanged = { selected -> e.setOutputKeycodes(selected) } }
+                    .show()
             },
         )
 
         LabeledButtonRow(
             label = stringResource(R.string.edit_button_event_bind_group),
             onClick = {
-                val selectedViewGroups = FXCollections.observableArrayList<ControlViewGroup>()
+                val selectedViewGroups = ArrayList<ControlViewGroup>()
                 for (vg in menu.controller.viewGroups()) {
-                    if (e.bindViewGroupList().contains(vg.id)) {
+                    if (e.getBindViewGroups().contains(vg.id)) {
                         selectedViewGroups.add(vg)
                     }
                 }
                 // 3.2 批 4 接入点：Miuix 绑定分组选择弹窗
                 MiuixViewGroupDialog(context, menu, true, selectedViewGroups) { viewGroups ->
-                    e.setBindViewGroup(FXCollections.observableList(viewGroups.map { it.id }))
+                    e.setBindViewGroup(viewGroups.map { it.id })
                 }.show()
             },
         )
@@ -684,10 +685,10 @@ class MiuixEditViewDialog(
     private fun DirectionEventPage(data: ControlDirectionData) {
         val event = data.event
 
-        DirectionKeycodeRow(stringResource(R.string.edit_direction_event_up), event.upKeycodeList())
-        DirectionKeycodeRow(stringResource(R.string.edit_direction_event_down), event.downKeycodeList())
-        DirectionKeycodeRow(stringResource(R.string.edit_direction_event_left), event.leftKeycodeList())
-        DirectionKeycodeRow(stringResource(R.string.edit_direction_event_right), event.rightKeycodeList())
+        DirectionKeycodeRow(stringResource(R.string.edit_direction_event_up), event.getUpKeycodes()) { event.setUpKeycode(it) }
+        DirectionKeycodeRow(stringResource(R.string.edit_direction_event_down), event.getDownKeycodes()) { event.setDownKeycode(it) }
+        DirectionKeycodeRow(stringResource(R.string.edit_direction_event_left), event.getLeftKeycodes()) { event.setLeftKeycode(it) }
+        DirectionKeycodeRow(stringResource(R.string.edit_direction_event_right), event.getRightKeycodes()) { event.setRightKeycode(it) }
 
         val sneakState = remember { mutableStateOf(event.isSneak) }
         LabeledSwitchRow(
@@ -702,11 +703,10 @@ class MiuixEditViewDialog(
         LabeledButtonRow(
             label = stringResource(R.string.edit_direction_event_sneak_code),
             onClick = {
-                val list = FXCollections.observableList(ArrayList<Int>())
-                list.add(event.sneakKeycode)
-                // Miuix 键码弹窗（selectionProperty 绑定语义一致）
+                val list = arrayListOf(event.sneakKeycode)
+                // Miuix 键码弹窗（对齐遗留 selectionProperty 单向 bind：初始同值、跟随后续变更）
                 val dialog = MiuixSelectKeycodeDialog(context, list, true, false)
-                event.sneakKeycodeProperty().bind(dialog.selectionProperty())
+                dialog.selectionProperty().addListener { _, _, n -> event.sneakKeycode = n.toInt() }
                 dialog.show()
             },
         )
@@ -729,20 +729,20 @@ class MiuixEditViewDialog(
         )
     }
 
-    /** 四方向键码行：临时列表拷贝，确认后 setAll 回写（与遗留 :594-629 一致）。 */
+    /** 四方向键码行：临时列表拷贝，确认后整体回写（与遗留 :594-629 一致）。 */
     @Composable
     private fun DirectionKeycodeRow(
         label: String,
-        target: com.tungsten.fclcore.observable.collections.ObservableList<Int>,
+        target: List<Int>,
+        onWrite: (List<Int>) -> Unit,
     ) {
         LabeledButtonRow(
             label = label,
             onClick = {
-                val list = FXCollections.observableArrayList<Int>()
-                list.addAll(target)
-                // Miuix 键码弹窗（临时列表拷贝、确认后 setAll 回写）
+                val list = ArrayList(target)
+                // Miuix 键码弹窗（临时列表拷贝、确认后回写）
                 MiuixSelectKeycodeDialog(context, list, false, false) {
-                    target.setAll(list)
+                    onWrite(list.toList())
                 }.show()
             },
         )
