@@ -31,6 +31,13 @@ object ComposeDialogs {
     const val USE_COMPOSE_INVITE_CODE = true
 
     /**
+     * 键码选择弹窗（SelectKeycodeDialog + dialog_select_keycode/view_keyboard）。
+     * 3.2 批 2 唯一 deferred 的弹窗，4.1 迁移：Miuix 外壳 + AndroidView 包装原生键盘
+     * （KeycodeView/view_keyboard 红线保留原生，见 component-mapping.md §1.5）。
+     */
+    const val USE_COMPOSE_SELECT_KEYCODE = true
+
+    /**
      * 联机功能菜单（MultiplayerDialog + dialog_multiplyer_menu）保留原生：
      * 游戏内 7 状态 View 体系（6 个 view_multiplayer_* 子布局 + fakefx 属性绑定 +
      * ListView 玩家列表），运行在渲染 surface 之上，无真机验证条件下整体重写风险过高。

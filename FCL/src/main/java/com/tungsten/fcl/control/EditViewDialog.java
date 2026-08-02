@@ -26,6 +26,7 @@ import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixButtonStyleDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixDirectionStyleDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixSelectKeycodeDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixViewGroupDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
@@ -388,8 +389,13 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                     FCLButton keycode = layout.findViewById(R.id.keycode);
                     FCLButton bindGroup = layout.findViewById(R.id.bind_group);
                     keycode.setOnClickListener(v -> {
-                        SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, e.outputKeycodesList(), false, true);
-                        dialog.show();
+                        // 4.1 接入点：键码选择弹窗按开关双分支（直改 outputKeycodesList 两分支一致）
+                        if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                            new MiuixSelectKeycodeDialog(context, e.outputKeycodesList(), false, true).show();
+                        } else {
+                            SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, e.outputKeycodesList(), false, true);
+                            dialog.show();
+                        }
                     });
                     bindGroup.setOnClickListener(v -> {
                         ObservableList<ControlViewGroup> selectedViewGroups = FXCollections.observableArrayList(new ArrayList<>());
@@ -627,45 +633,84 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 up.setOnClickListener(v -> {
                     ObservableList<Integer> list = FXCollections.observableArrayList();
                     list.addAll(data.getEvent().upKeycodeList());
-                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
-                        data.getEvent().upKeycodeList().setAll(list);
-                        return Unit.INSTANCE;
-                    });
-                    dialog.show();
+                    // 4.1 接入点：键码选择弹窗按开关双分支（回调逻辑两分支一致）
+                    if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                        new MiuixSelectKeycodeDialog(context, list, false, false, d -> {
+                            data.getEvent().upKeycodeList().setAll(list);
+                            return Unit.INSTANCE;
+                        }).show();
+                    } else {
+                        SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
+                            data.getEvent().upKeycodeList().setAll(list);
+                            return Unit.INSTANCE;
+                        });
+                        dialog.show();
+                    }
                 });
                 down.setOnClickListener(v -> {
                     ObservableList<Integer> list = FXCollections.observableArrayList();
                     list.addAll(data.getEvent().downKeycodeList());
-                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
-                        data.getEvent().downKeycodeList().setAll(list);
-                        return Unit.INSTANCE;
-                    });
-                    dialog.show();
+                    // 4.1 接入点：键码选择弹窗按开关双分支（回调逻辑两分支一致）
+                    if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                        new MiuixSelectKeycodeDialog(context, list, false, false, d -> {
+                            data.getEvent().downKeycodeList().setAll(list);
+                            return Unit.INSTANCE;
+                        }).show();
+                    } else {
+                        SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
+                            data.getEvent().downKeycodeList().setAll(list);
+                            return Unit.INSTANCE;
+                        });
+                        dialog.show();
+                    }
                 });
                 left.setOnClickListener(v -> {
                     ObservableList<Integer> list = FXCollections.observableArrayList();
                     list.addAll(data.getEvent().leftKeycodeList());
-                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
-                        data.getEvent().leftKeycodeList().setAll(list);
-                        return Unit.INSTANCE;
-                    });
-                    dialog.show();
+                    // 4.1 接入点：键码选择弹窗按开关双分支（回调逻辑两分支一致）
+                    if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                        new MiuixSelectKeycodeDialog(context, list, false, false, d -> {
+                            data.getEvent().leftKeycodeList().setAll(list);
+                            return Unit.INSTANCE;
+                        }).show();
+                    } else {
+                        SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
+                            data.getEvent().leftKeycodeList().setAll(list);
+                            return Unit.INSTANCE;
+                        });
+                        dialog.show();
+                    }
                 });
                 right.setOnClickListener(v -> {
                     ObservableList<Integer> list = FXCollections.observableArrayList();
                     list.addAll(data.getEvent().rightKeycodeList());
-                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
-                        data.getEvent().rightKeycodeList().setAll(list);
-                        return Unit.INSTANCE;
-                    });
-                    dialog.show();
+                    // 4.1 接入点：键码选择弹窗按开关双分支（回调逻辑两分支一致）
+                    if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                        new MiuixSelectKeycodeDialog(context, list, false, false, d -> {
+                            data.getEvent().rightKeycodeList().setAll(list);
+                            return Unit.INSTANCE;
+                        }).show();
+                    } else {
+                        SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, false, false, d -> {
+                            data.getEvent().rightKeycodeList().setAll(list);
+                            return Unit.INSTANCE;
+                        });
+                        dialog.show();
+                    }
                 });
                 sneak.setOnClickListener(v -> {
                     ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
                     list.add(data.getEvent().getSneakKeycode());
-                    SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, true, false);
-                    data.getEvent().sneakKeycodeProperty().bind(dialog.selectionProperty());
-                    dialog.show();
+                    // 4.1 接入点：键码选择弹窗按开关双分支（selectionProperty 绑定语义两分支一致）
+                    if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                        MiuixSelectKeycodeDialog dialog = new MiuixSelectKeycodeDialog(context, list, true, false);
+                        data.getEvent().sneakKeycodeProperty().bind(dialog.selectionProperty());
+                        dialog.show();
+                    } else {
+                        SelectKeycodeDialog dialog = new SelectKeycodeDialog(context, list, true, false);
+                        data.getEvent().sneakKeycodeProperty().bind(dialog.selectionProperty());
+                        dialog.show();
+                    }
                 });
 
                 FCLSwitch sneakSwitch = findEventView(R.id.sneak);

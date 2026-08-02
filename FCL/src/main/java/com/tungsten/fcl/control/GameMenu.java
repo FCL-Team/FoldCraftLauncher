@@ -38,6 +38,7 @@ import com.tungsten.fcl.ui.compose.dialog.MiuixDirectionStyleDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixEditViewDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixGamepadMapDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixQuickInputDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixSelectKeycodeDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixViewGroupDialog;
 import com.mio.ui.view.CursorView;
 import com.mio.ui.view.DraggableTextView;
@@ -1014,17 +1015,32 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         if (v == sendKeycode) {
             ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
-            new SelectKeycodeDialog(getActivity(), list, false, true, (dialog) -> {
-                Schedulers.io().execute(() -> {
-                    list.forEach(key -> getInput().sendKeyEvent(key, true));
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException ignore) {
-                    }
-                    list.forEach(key -> getInput().sendKeyEvent(key, false));
-                });
-                return Unit.INSTANCE;
-            }).show();
+            // 4.1 接入点：键码选择弹窗按开关双分支（发送键码回调两分支一致）
+            if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                new MiuixSelectKeycodeDialog(getActivity(), list, false, true, (dialog) -> {
+                    Schedulers.io().execute(() -> {
+                        list.forEach(key -> getInput().sendKeyEvent(key, true));
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException ignore) {
+                        }
+                        list.forEach(key -> getInput().sendKeyEvent(key, false));
+                    });
+                    return Unit.INSTANCE;
+                }).show();
+            } else {
+                new SelectKeycodeDialog(getActivity(), list, false, true, (dialog) -> {
+                    Schedulers.io().execute(() -> {
+                        list.forEach(key -> getInput().sendKeyEvent(key, true));
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException ignore) {
+                        }
+                        list.forEach(key -> getInput().sendKeyEvent(key, false));
+                    });
+                    return Unit.INSTANCE;
+                }).show();
+            }
         }
         if (v == gamepadResetMapper) {
             Remapper.wipePreferences(getActivity());

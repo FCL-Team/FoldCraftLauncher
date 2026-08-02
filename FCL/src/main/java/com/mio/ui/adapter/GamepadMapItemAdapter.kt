@@ -9,6 +9,8 @@ import com.tungsten.fcl.control.SelectKeycodeDialog
 import com.tungsten.fcl.control.gamepad.GamepadEmulatedButton
 import com.tungsten.fcl.control.gamepad.GamepadMap
 import com.tungsten.fcl.databinding.ItemGamepadMapBinding
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
+import com.tungsten.fcl.ui.compose.dialog.MiuixSelectKeycodeDialog
 import com.tungsten.fclcore.fakefx.collections.FXCollections
 
 class GamepadMapItemAdapter(val context: Context, val gamepadMap: GamepadMap) :
@@ -68,7 +70,12 @@ class GamepadMapItemAdapter(val context: Context, val gamepadMap: GamepadMap) :
         binding.icon.setImageResource(itemList[position].icon)
         binding.remap.setOnClickListener {
             val list = FXCollections.observableList(itemList[position].button.keycodes)
-            SelectKeycodeDialog(context, list, false, true).show()
+            // 4.1 接入点：键码选择弹窗按开关双分支
+            if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                MiuixSelectKeycodeDialog(context, list, false, true).show()
+            } else {
+                SelectKeycodeDialog(context, list, false, true).show()
+            }
         }
     }
 
