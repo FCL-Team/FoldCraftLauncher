@@ -34,6 +34,7 @@ import com.mio.touchcontroller.TouchControllerInputView;
 import com.mio.ui.dialog.GamepadMapDialog;
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixGamepadMapDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixQuickInputDialog;
 import com.mio.ui.view.CursorView;
 import com.mio.ui.view.DraggableTextView;
 import com.mio.util.AndroidUtilKt;
@@ -910,8 +911,13 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     public void openQuickInput() {
-        QuickInputDialog dialog = new QuickInputDialog(activity, this);
-        dialog.show();
+        if (ComposeDialogs.USE_COMPOSE_QUICK_INPUT) {
+            // 3.2 批 3 接入点：Miuix 游戏内快捷输入面板
+            new MiuixQuickInputDialog(activity, this).show();
+        } else {
+            QuickInputDialog dialog = new QuickInputDialog(activity, this);
+            dialog.show();
+        }
     }
 
     @Override

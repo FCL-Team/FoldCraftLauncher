@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.tungsten.fcl.control.data.QuickInputTexts
 import com.tungsten.fcl.databinding.DialogQuickInputBinding
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
+import com.tungsten.fcl.ui.compose.dialog.MiuixAddInputTextDialog
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.keycodes.FCLKeycodes
 import com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper
@@ -73,9 +75,16 @@ class QuickInputDialog(private val activity: AppCompatActivity, private val menu
 
     override fun onClick(v: View?) {
         when (v) {
-            binding.addText -> AddInputTextDialog(
-                context
-            ) { refreshList(menu) }.show()
+            binding.addText -> {
+                // 3.2 批 3 接入点：新增快捷输入文本弹窗双分支（与快捷输入面板独立开关）
+                if (ComposeDialogs.USE_COMPOSE_ADD_INPUT_TEXT) {
+                    MiuixAddInputTextDialog(context) { refreshList(menu) }.show()
+                } else {
+                    AddInputTextDialog(
+                        context
+                    ) { refreshList(menu) }.show()
+                }
+            }
 
             binding.positive -> dismiss()
         }

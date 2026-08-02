@@ -13,6 +13,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import static java.util.Collections.emptySet;
@@ -28,6 +29,9 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixOAuthAccountLoginDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixOfflineAccountSkinDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -147,8 +151,13 @@ public class AccountListItem {
     public CompletableFuture<Task<?>> uploadSkin() {
         CompletableFuture<Task<?>> completableFuture = new CompletableFuture<>();
         if (account instanceof OfflineAccount) {
-            OfflineAccountSkinDialog dialog = new OfflineAccountSkinDialog(context, this);
-            dialog.show();
+            if (ComposeDialogs.USE_COMPOSE_OFFLINE_ACCOUNT_SKIN) {
+                // 3.2 批 3 接入点：Miuix 离线账户皮肤弹窗（GL 预览 AndroidView 保留原生渲染）
+                new MiuixOfflineAccountSkinDialog(context, this).show();
+            } else {
+                OfflineAccountSkinDialog dialog = new OfflineAccountSkinDialog(context, this);
+                dialog.show();
+            }
             completableFuture.complete(null);
             return completableFuture;
         }
@@ -247,11 +256,18 @@ public class AccountListItem {
             CountDownLatch latch = new CountDownLatch(1);
             AtomicReference<AuthInfo> res = new AtomicReference<>(null);
             Schedulers.androidUIThread().execute(() -> {
-                OAuthAccountLoginDialog dialog = new OAuthAccountLoginDialog(FCLPath.CONTEXT, (OAuthAccount) account, it -> {
+                // 3.2 批 3 接入点：重新登录弹窗双分支；success/failed 回调契约不变，
+                // latch 阻塞语义由本方法持有，与弹窗实现解耦
+                Consumer<AuthInfo> success = it -> {
                     res.set(it);
                     latch.countDown();
-                }, latch::countDown);
-                dialog.show();
+                };
+                Runnable failed = latch::countDown;
+                if (ComposeDialogs.USE_COMPOSE_RELOGIN_OAUTH) {
+                    new MiuixOAuthAccountLoginDialog(FCLPath.CONTEXT, (OAuthAccount) account, success, failed).show();
+                } else {
+                    new OAuthAccountLoginDialog(FCLPath.CONTEXT, (OAuthAccount) account, success, failed).show();
+                }
             });
             latch.await();
             return Optional.ofNullable(res.get()).orElseThrow(CancellationException::new);

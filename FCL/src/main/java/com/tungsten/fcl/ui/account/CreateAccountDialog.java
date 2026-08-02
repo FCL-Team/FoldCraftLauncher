@@ -24,6 +24,8 @@ import com.tungsten.fcl.game.OAuthServer;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixCharacterSelectorDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.WeakListenerHolder;
@@ -181,7 +183,10 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
         Runnable doCreate = () -> {
             deviceCode.set(null);
 
-            CharacterSelector selector = new DialogCharacterSelector(getContext());
+            // 3.2 批 3 接入点：角色选择子对话框双分支（阻塞式 CountDownLatch 契约不变）
+            CharacterSelector selector = ComposeDialogs.USE_COMPOSE_CHARACTER_SELECTOR
+                    ? new MiuixCharacterSelectorDialog(getContext())
+                    : new DialogCharacterSelector(getContext());
             loginTask = Task.supplyAsync(() -> factory.create(selector, username, password, null, additionalData))
                     .whenComplete(Schedulers.androidUIThread(), account -> {
                         Accounts.addAccount(account);
@@ -463,7 +468,8 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
     }
 
     // character selector
-    private static class DialogCharacterSelector extends FCLDialog implements CharacterSelector, View.OnClickListener {
+    // 3.2 批 3：可见性 private → public，供 MiuixCreateAccountDialog 反向搭配（回滚分支）复用
+    public static class DialogCharacterSelector extends FCLDialog implements CharacterSelector, View.OnClickListener {
 
         private final Handler handler;
 

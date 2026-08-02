@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Accounts;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixAddAuthlibInjectorServerDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixCreateAccountDialog;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -75,16 +78,31 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (view == addOfflineAccount) {
-            CreateAccountDialog dialog = new CreateAccountDialog(getContext(), Accounts.FACTORY_OFFLINE);
-            dialog.show();
+            if (ComposeDialogs.USE_COMPOSE_CREATE_ACCOUNT) {
+                // 3.2 批 3 接入点：Miuix 创建账户弹窗
+                new MiuixCreateAccountDialog(getContext(), Accounts.FACTORY_OFFLINE).show();
+            } else {
+                CreateAccountDialog dialog = new CreateAccountDialog(getContext(), Accounts.FACTORY_OFFLINE);
+                dialog.show();
+            }
         }
         if (view == addMicrosoftAccount) {
-            CreateAccountDialog dialog = new CreateAccountDialog(getContext(), Accounts.FACTORY_MICROSOFT);
-            dialog.show();
+            if (ComposeDialogs.USE_COMPOSE_CREATE_ACCOUNT) {
+                // 3.2 批 3 接入点：Miuix 创建账户弹窗
+                new MiuixCreateAccountDialog(getContext(), Accounts.FACTORY_MICROSOFT).show();
+            } else {
+                CreateAccountDialog dialog = new CreateAccountDialog(getContext(), Accounts.FACTORY_MICROSOFT);
+                dialog.show();
+            }
         }
         if (view == addLoginServer) {
-            AddAuthlibInjectorServerDialog dialog = new AddAuthlibInjectorServerDialog(getContext());
-            dialog.show();
+            if (ComposeDialogs.USE_COMPOSE_ADD_AUTHLIB_INJECTOR_SERVER) {
+                // 3.2 批 3 接入点：Miuix 添加外置登录服务器弹窗
+                new MiuixAddAuthlibInjectorServerDialog(getContext()).show();
+            } else {
+                AddAuthlibInjectorServerDialog dialog = new AddAuthlibInjectorServerDialog(getContext());
+                dialog.show();
+            }
         }
     }
 

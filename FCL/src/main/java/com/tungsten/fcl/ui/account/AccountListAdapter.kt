@@ -14,6 +14,8 @@ import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemAccountBinding
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.ui.UIManager.Companion.instance
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
+import com.tungsten.fcl.ui.compose.dialog.MiuixOfflineAccountSkinDialog
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
 import com.tungsten.fclcore.auth.offline.OfflineAccount
 import com.tungsten.fclcore.auth.offline.Skin
@@ -115,8 +117,13 @@ class AccountListAdapter(
                         }
                     }.start()
                 } else if (item.account is OfflineAccount) {
-                    val dialog = OfflineAccountSkinDialog(context, item)
-                    dialog.show()
+                    if (ComposeDialogs.USE_COMPOSE_OFFLINE_ACCOUNT_SKIN) {
+                        // 3.2 批 3 接入点：Miuix 离线账户皮肤弹窗（GL 预览 AndroidView 保留原生渲染）
+                        MiuixOfflineAccountSkinDialog(context, item).show()
+                    } else {
+                        val dialog = OfflineAccountSkinDialog(context, item)
+                        dialog.show()
+                    }
                 } else {
                     val uploadTask =
                         Objects.requireNonNull<CompletableFuture<Task<*>?>>(item.uploadSkin()).get()

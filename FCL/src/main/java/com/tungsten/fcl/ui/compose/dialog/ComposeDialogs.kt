@@ -37,4 +37,19 @@ object ComposeDialogs {
      * 其内部的邀请码输入弹窗已单独迁移（见 [USE_COMPOSE_INVITE_CODE]）。
      */
     const val USE_COMPOSE_MULTIPLAYER_MENU = false
+
+    // ---- 批 3：账户域 + 杂项 ----
+    const val USE_COMPOSE_CREATE_ACCOUNT = true
+
+    /**
+     * 角色选择子对话框（CharacterSelector 阻塞式）。
+     * 与 [USE_COMPOSE_CREATE_ACCOUNT] 独立开关，可交叉搭配
+     * （Miuix 创建账户弹窗可回退用遗留 DialogCharacterSelector，反之亦然）。
+     */
+    const val USE_COMPOSE_CHARACTER_SELECTOR = true
+    const val USE_COMPOSE_ADD_AUTHLIB_INJECTOR_SERVER = true
+    const val USE_COMPOSE_RELOGIN_OAUTH = true
+    const val USE_COMPOSE_OFFLINE_ACCOUNT_SKIN = true
+    const val USE_COMPOSE_QUICK_INPUT = true
+    const val USE_COMPOSE_ADD_INPUT_TEXT = true
 }
