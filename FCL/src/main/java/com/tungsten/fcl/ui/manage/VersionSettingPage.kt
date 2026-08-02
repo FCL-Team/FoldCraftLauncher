@@ -13,6 +13,9 @@ import com.mio.manager.RendererManager.getRenderer
 import com.mio.ui.dialog.DriverSelectDialog
 import com.mio.ui.dialog.JavaManageDialog
 import com.mio.ui.dialog.RendererSelectDialog
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
+import com.tungsten.fcl.ui.compose.dialog.MiuixJavaManageDialog
+import com.tungsten.fcl.ui.compose.dialog.MiuixRendererSelectDialog
 import com.mio.util.showErrorDialog
 import com.mio.util.showItemSelectionDialog
 import com.tungsten.fcl.R
@@ -469,14 +472,20 @@ class VersionSettingPage(
             }
         }
         if (view === binding.buttonEditJava) {
-            JavaManageDialog(context) {
+            val onJavaSelected: (String) -> Unit = {
                 lastVersionSetting.java = it
                 if (it == "Auto") {
                     binding.java.setText(R.string.settings_game_java_version_auto)
                 } else {
                     binding.java.text = it
                 }
-            }.show()
+            }
+            if (ComposeDialogs.USE_COMPOSE_JAVA_MANAGE) {
+                // 3.2 批 2 接入点：Miuix Java 运行时管理弹窗
+                MiuixJavaManageDialog(context, onJavaSelected).show()
+            } else {
+                JavaManageDialog(context, onJavaSelected).show()
+            }
         }
         if (view === binding.buttonInstallJava) {
             showItemSelectionDialog(
@@ -505,7 +514,7 @@ class VersionSettingPage(
             }
         }
         if (view === binding.buttonEditRenderer) {
-            RendererSelectDialog(context, globalSetting) { name: String? ->
+            val rendererCallback = java.util.function.Consumer<String> { name: String? ->
                 if (globalSetting && getSelectedProfile().versionSetting != null && !getSelectedProfile().versionSetting.isGlobal) {
                     val builder = FCLAlertDialog.Builder(context)
                     builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
@@ -517,7 +526,13 @@ class VersionSettingPage(
                     builder.create().show()
                 }
                 binding.renderer.text = name
-            }.show()
+            }
+            if (ComposeDialogs.USE_COMPOSE_RENDERER_SELECT) {
+                // 3.2 批 2 接入点：Miuix 渲染器选择弹窗
+                MiuixRendererSelectDialog(context, globalSetting, rendererCallback).show()
+            } else {
+                RendererSelectDialog(context, globalSetting, rendererCallback).show()
+            }
         }
         if (view === binding.buttonEditDriver) {
             DriverSelectDialog(
