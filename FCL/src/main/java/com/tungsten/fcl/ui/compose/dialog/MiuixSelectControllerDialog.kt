@@ -24,7 +24,7 @@ import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
-import com.tungsten.fclcore.observable.InvalidationListener
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.RadioButton
 import top.yukonga.miuix.kmp.basic.Text
@@ -57,10 +57,11 @@ class MiuixSelectControllerDialog(
     // 遗留循环不 break，命中多个时最后一个生效（id 唯一，正常只命中一个）
     private val selectedState = mutableStateOf(Controllers.getControllers().lastOrNull { it.id == id })
 
-    private val controllersListener = InvalidationListener { onControllersInvalidated() }
+    // 阶段 4a：Controllers 列表已 StateFlow 化，订阅变化信号（onStop 取消，对齐原 removeListener）
+    private val controllersSubscription =
+        FlowSubscriptions.subscribe(Controllers.controllersSignalFlow()) { onControllersInvalidated() }
 
     init {
-        Controllers.getControllers().addListener(controllersListener)
         setDialogContent {
             DialogContent()
         }
@@ -68,7 +69,7 @@ class MiuixSelectControllerDialog(
 
     override fun onStop() {
         super.onStop()
-        Controllers.getControllers().removeListener(controllersListener)
+        controllersSubscription.cancel()
     }
 
     /** 对齐遗留 SelectControllerDialog.selectedController 的 invalidated 回退逻辑。 */

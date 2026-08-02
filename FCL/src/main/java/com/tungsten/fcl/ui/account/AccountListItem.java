@@ -272,7 +272,7 @@ public class AccountListItem {
     }
 
     public void remove() {
-        Accounts.getAccounts().remove(account);
+        Accounts.removeAccount(account);
     }
 
     public Account getAccount() {

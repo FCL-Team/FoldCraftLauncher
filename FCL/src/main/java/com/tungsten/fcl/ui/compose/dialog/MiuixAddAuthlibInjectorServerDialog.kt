@@ -174,7 +174,7 @@ class MiuixAddAuthlibInjectorServerDialog(
     private fun onPositive() {
         val server = serverState.value ?: return
         if (!ConfigHolder.config().authlibInjectorServers.contains(server)) {
-            ConfigHolder.config().authlibInjectorServers.add(server)
+            ConfigHolder.config().addAuthlibInjectorServer(server)
         }
         dismiss()
     }

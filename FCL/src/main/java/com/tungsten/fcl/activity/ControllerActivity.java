@@ -45,6 +45,15 @@ public class ControllerActivity extends FCLActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        if (menu != null) {
+            // 阶段 4a：取消 GameMenu 的 MenuSetting Flow 订阅（防 Activity 泄漏）
+            menu.onDestroy();
+        }
+        super.onDestroy();
+    }
+
+    @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if ((event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN || event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP)) {
             DrawerLayout drawerLayout = (DrawerLayout) menu.getLayout();

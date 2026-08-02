@@ -3,8 +3,8 @@ package com.tungsten.fcl.ui.compose
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import com.tungsten.fcl.ui.bridge.collectAsState
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 
 /**
@@ -18,13 +18,13 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
  * `animateItem(fadeInSpec = tween(animationSpeed × 30))`，placement/fadeOut 关闭，
  * 避免旧版没有的额外动效（对齐 3.3 VersionListScreen 首处落地的模式）。
  *
- * 时长经 observable `animationSpeedProperty` 桥观察（[collectAsState]），
+ * 时长直接 collect 主题的 `animationSpeedFlow`（阶段 4a 起 Theme 字段已 StateFlow 化），
  * 启动器设置页拖动动画速度后即时生效；引擎未初始化时回落默认值 8（Theme.java:213）。
  */
 @Composable
 fun LazyItemScope.fclItemEntryModifier(): Modifier {
-    val speed = ThemeEngine.getInstance().theme?.animationSpeedProperty()
-        ?.collectAsState()?.value?.toInt() ?: 8
+    val speed = ThemeEngine.getInstance().theme?.animationSpeedFlow()
+        ?.collectAsState()?.value ?: 8
     return Modifier.animateItem(
         fadeInSpec = tween(speed * 30),
         placementSpec = null,

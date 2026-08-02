@@ -24,9 +24,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,13 +47,11 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
-import com.tungsten.fcl.ui.bridge.collectAsState
 import com.tungsten.fcl.ui.compose.rememberShakeState
 import com.tungsten.fcl.ui.compose.shake
 import com.tungsten.fcl.ui.compose.dialog.MiuixAddProfileDialog
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fcl.ui.version.Versions
-import com.tungsten.fclcore.observable.collections.ListChangeListener
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
@@ -163,7 +161,7 @@ fun VersionListScreen(
 @Composable
 private fun ProfileListColumn(modifier: Modifier = Modifier) {
     val profiles by rememberProfiles()
-    val selectedProfile by Profiles.selectedProfileProperty().collectAsState()
+    val selectedProfile by Profiles.selectedProfileFlow().collectAsState()
     LazyColumn(modifier = modifier) {
         items(profiles, key = { it.name }) { profile ->
             ProfileRow(
@@ -175,16 +173,11 @@ private fun ProfileListColumn(modifier: Modifier = Modifier) {
     }
 }
 
-/** 观察 observable ObservableList<Profile>（对齐 FCLAdapter 的列表监听自动刷新）。 */
+/** 观察 Profiles 信号流（阶段 4a：成员增删与目录内部变更都会递增，对齐原 extractor 列表监听）。 */
 @Composable
 private fun rememberProfiles(): State<List<Profile>> {
-    val state = remember { mutableStateOf(Profiles.profiles.toList()) }
-    DisposableEffect(Unit) {
-        val listener = ListChangeListener<Profile> { state.value = Profiles.profiles.toList() }
-        Profiles.profiles.addListener(listener)
-        onDispose { Profiles.profiles.removeListener(listener) }
-    }
-    return state
+    val signal by Profiles.profilesSignalFlow().collectAsState()
+    return remember(signal) { mutableStateOf(Profiles.profiles) }
 }
 
 @Composable
@@ -238,7 +231,7 @@ private fun ProfileRow(
                 if (Profiles.profiles.size == 1) {
                     shakeState.shake()
                 } else {
-                    Profiles.profiles.remove(profile)
+                    Profiles.removeProfile(profile)
                 }
             },
         ) {

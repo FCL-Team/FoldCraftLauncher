@@ -103,7 +103,7 @@ class ComposeMainUI(
      */
     fun refreshSkin(account: Account) {
         Schedulers.androidUIThread().execute {
-            if (Accounts.selectedAccountProperty().get() === account) {
+            if (Accounts.getSelectedAccount() === account) {
                 skinRefreshTick.value = skinRefreshTick.value + 1
             }
         }

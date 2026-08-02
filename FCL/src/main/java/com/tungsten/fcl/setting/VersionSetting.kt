@@ -30,25 +30,26 @@ import com.google.gson.annotations.JsonAdapter
 import com.mio.JavaManager
 import com.mio.data.Renderer
 import com.tungsten.fclauncher.utils.FCLPath
-import com.tungsten.fclcore.observable.InvalidationListener
-import com.tungsten.fclcore.observable.property.BooleanProperty
-import com.tungsten.fclcore.observable.property.IntegerProperty
-import com.tungsten.fclcore.observable.property.ObjectProperty
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty
-import com.tungsten.fclcore.observable.property.SimpleIntegerProperty
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty
-import com.tungsten.fclcore.observable.property.SimpleStringProperty
-import com.tungsten.fclcore.observable.property.StringProperty
 import com.tungsten.fclcore.util.Lang
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fclcore.util.platform.MemoryUtils
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.lang.reflect.Type
 
+/**
+ * 版本设置（阶段 4a）：全部属性已 StateFlow 化（`xxxFlow`），var 读写接口签名不变。
+ * [addPropertyChangedListener] 对齐原"任一属性失效即回调"语义：订阅所有 Flow
+ * （同值 set 不发射，与原 Property 同值不失效一致），供 FCLGameRepository 落盘、
+ * Profile 冒泡 revision 使用。
+ *
+ * 磁盘 JSON 由手写 [Serializer] 产出，与属性类型无关，格式不变。
+ */
 @JsonAdapter(VersionSetting.Serializer::class)
 class VersionSetting : Cloneable {
     var isGlobal: Boolean = false
 
-    val usesGlobalProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "usesGlobal", true)
+    val usesGlobalFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
     var isUsesGlobal: Boolean
         /**
          * FCL Version Settings have been divided into 2 parts.
@@ -59,102 +60,97 @@ class VersionSetting : Cloneable {
          *
          * Defaults false because if one version uses global first, custom version file will not be generated.
          */
-        get() = usesGlobalProperty.get()
+        get() = usesGlobalFlow.value
         set(usesGlobal) {
-            usesGlobalProperty.set(usesGlobal)
+            usesGlobalFlow.value = usesGlobal
         }
 
     // java
-    val javaProperty: StringProperty =
-        SimpleStringProperty(this, "java", "Auto")
+    val javaFlow: MutableStateFlow<String> = MutableStateFlow("Auto")
     var java: String
-        get() = javaProperty.get()
+        get() = javaFlow.value
         set(java) {
-            javaProperty.set(java)
+            javaFlow.value = java
         }
 
-    val uuidProperty: StringProperty = SimpleStringProperty(this, "uuid", "")
+    val uuidFlow: MutableStateFlow<String> = MutableStateFlow("")
     var uuid: String
-        get() = uuidProperty.get()
+        get() = uuidFlow.value
         set(value) {
-            uuidProperty.set(value)
+            uuidFlow.value = value
         }
 
-    val maxMemoryProperty: IntegerProperty =
-        SimpleIntegerProperty(this, "maxMemory", MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT))
+    val maxMemoryFlow: MutableStateFlow<Int> =
+        MutableStateFlow(MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT))
     var maxMemory: Int
         /**
          * The maximum memory/MB that JVM can allocate for heap.
          */
-        get() = maxMemoryProperty.get()
+        get() = maxMemoryFlow.value
         set(maxMemory) {
-            maxMemoryProperty.set(maxMemory)
+            maxMemoryFlow.value = maxMemory
         }
 
     /**
      * The minimum memory that JVM can allocate for heap.
      */
-    val minMemoryProperty: ObjectProperty<Int?> =
-        SimpleObjectProperty(this, "minMemory", null)
+    val minMemoryFlow: MutableStateFlow<Int?> = MutableStateFlow(null)
     var minMemory: Int?
-        get() = minMemoryProperty.get()
+        get() = minMemoryFlow.value
         set(minMemory) {
-            minMemoryProperty.set(minMemory)
+            minMemoryFlow.value = minMemory
         }
 
-    val autoMemoryProperty: BooleanProperty = SimpleBooleanProperty(this, "autoMemory", true)
+    val autoMemoryFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
     var isAutoMemory: Boolean
-        get() = autoMemoryProperty.get()
+        get() = autoMemoryFlow.value
         set(memory) {
-            autoMemoryProperty.set(memory)
+            autoMemoryFlow.value = memory
         }
 
     // options
-    val javaArgsProperty: StringProperty = SimpleStringProperty(this, "javaArgs", "")
+    val javaArgsFlow: MutableStateFlow<String> = MutableStateFlow("")
     var javaArgs: String
         /**
          * The user customized arguments passed to JVM.
          */
-        get() = javaArgsProperty.get()
+        get() = javaArgsFlow.value
         set(javaArgs) {
-            javaArgsProperty.set(javaArgs)
+            javaArgsFlow.value = javaArgs
         }
 
-    val minecraftArgsProperty: StringProperty =
-        SimpleStringProperty(this, "minecraftArgs", "")
+    val minecraftArgsFlow: MutableStateFlow<String> = MutableStateFlow("")
     var minecraftArgs: String
         /**
          * The user customized arguments passed to Minecraft.
          */
-        get() = minecraftArgsProperty.get()
+        get() = minecraftArgsFlow.value
         set(minecraftArgs) {
-            minecraftArgsProperty.set(minecraftArgs)
+            minecraftArgsFlow.value = minecraftArgs
         }
 
-    val notCheckJVMProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "notCheckJVM", false)
+    val notCheckJVMFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isNotCheckJVM: Boolean
         /**
          * True if FCL does not check JVM validity.
          */
-        get() = notCheckJVMProperty.get()
+        get() = notCheckJVMFlow.value
         set(notCheckJVM) {
-            notCheckJVMProperty.set(notCheckJVM)
+            notCheckJVMFlow.value = notCheckJVM
         }
 
-    val notCheckGameProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "notCheckGame", false)
+    val notCheckGameFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isNotCheckGame: Boolean
         /**
          * True if FCL does not check game's completeness.
          */
-        get() = notCheckGameProperty.get()
+        get() = notCheckGameFlow.value
         set(notCheckGame) {
-            notCheckGameProperty.set(notCheckGame)
+            notCheckGameFlow.value = notCheckGame
         }
 
     // Minecraft settings.
-    val serverIpProperty: StringProperty = SimpleStringProperty(this, "serverIp", "")
+    val serverIpFlow: MutableStateFlow<String> = MutableStateFlow("")
     var serverIp: String
         /**
          * The server ip that will be entered after Minecraft successfully loaded ly.
@@ -162,98 +158,90 @@ class VersionSetting : Cloneable {
          *
          * Format: ip:port or without port.
          */
-        get() = serverIpProperty.get()
+        get() = serverIpFlow.value
         set(serverIp) {
-            serverIpProperty.set(serverIp)
+            serverIpFlow.value = serverIp
         }
 
     /**
      * 0 - .minecraft<br></br>
      * 1 - .minecraft/versions/&lt;version&gt;/<br></br>
      */
-    val isolateGameDirProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "isolateGameDir", true)
+    val isolateGameDirFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
     var isIsolateGameDir: Boolean
-        get() = isolateGameDirProperty.get()
+        get() = isolateGameDirFlow.value
         set(isolate) {
-            isolateGameDirProperty.set(isolate)
+            isolateGameDirFlow.value = isolate
         }
 
-    val beGestureProperty: BooleanProperty = SimpleBooleanProperty(this, "beGesture", true)
+    val beGestureFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
     var isBeGesture: Boolean
-        get() = beGestureProperty.get()
+        get() = beGestureFlow.value
         set(beGesture) {
-            beGestureProperty.set(beGesture)
+            beGestureFlow.value = beGesture
         }
 
-    val graphicsBackendProperty: StringProperty = SimpleStringProperty(this, "graphicsBackend", "default")
+    val graphicsBackendFlow: MutableStateFlow<String> = MutableStateFlow("default")
     var graphicsBackend: String
-        get() = graphicsBackendProperty.get()
+        get() = graphicsBackendFlow.value
         set(v) {
-            graphicsBackendProperty.set(v)
+            graphicsBackendFlow.value = v
         }
 
-    val vkDriverSystemProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "vulkanDriverSystem", false)
+    val vkDriverSystemFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isVKDriverSystem: Boolean
-        get() = vkDriverSystemProperty.get()
+        get() = vkDriverSystemFlow.value
         set(vulkanDriverSystem) {
-            vkDriverSystemProperty.set(vulkanDriverSystem)
+            vkDriverSystemFlow.value = vulkanDriverSystem
         }
 
-    val controllerProperty: StringProperty =
-        SimpleStringProperty(this, "controller", "00000000")
+    val controllerFlow: MutableStateFlow<String> = MutableStateFlow("00000000")
     var controller: String
-        get() = controllerProperty.get()
+        get() = controllerFlow.value
         set(controller) {
-            controllerProperty.set(controller)
+            controllerFlow.value = controller
         }
 
-    val rendererProperty: StringProperty =
-        SimpleStringProperty(this, "render", Renderer.ID_NGGL4ES)
+    val rendererFlow: MutableStateFlow<String> = MutableStateFlow(Renderer.ID_NGGL4ES)
     var renderer: String
-        get() = rendererProperty.get()
+        get() = rendererFlow.value
         set(renderer) {
-            rendererProperty.set(renderer)
+            rendererFlow.value = renderer
         }
 
-    val driverProperty: StringProperty =
-        SimpleStringProperty(this, "driver", "Turnip")
+    val driverFlow: MutableStateFlow<String> = MutableStateFlow("Turnip")
     var driver: String
-        get() = driverProperty.get()
+        get() = driverFlow.value
         set(driver) {
-            driverProperty.set(driver)
+            driverFlow.value = driver
         }
 
-    val pojavBigCoreProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "pojavBigCore", false)
+    val pojavBigCoreFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isPojavBigCore: Boolean
-        get() = pojavBigCoreProperty.get()
+        get() = pojavBigCoreFlow.value
         set(pojavBigCore) {
-            pojavBigCoreProperty.set(pojavBigCore)
+            pojavBigCoreFlow.value = pojavBigCore
         }
 
-    val notCheckModProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "notCheckMod", false)
+    val notCheckModFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isNotCheckMod: Boolean
-        get() = notCheckModProperty.get()
+        get() = notCheckModFlow.value
         set(value) {
-            notCheckModProperty.set(value)
+            notCheckModFlow.value = value
         }
 
-    var debugLogProperty: BooleanProperty = SimpleBooleanProperty(this, "debugLog", false)
+    val debugLogFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isDebugLog: Boolean
-        get() = debugLogProperty.get()
+        get() = debugLogFlow.value
         set(value) {
-            debugLogProperty.set(value)
+            debugLogFlow.value = value
         }
 
-    var forceResolutionProperty: BooleanProperty =
-        SimpleBooleanProperty(this, "forceResolution", false)
+    val forceResolutionFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     var isForceResolution: Boolean
-        get() = forceResolutionProperty.get()
+        get() = forceResolutionFlow.value
         set(value) {
-            forceResolutionProperty.set(value)
+            forceResolutionFlow.value = value
         }
 
     fun checkController() {
@@ -267,29 +255,19 @@ class VersionSetting : Cloneable {
         }
     }
 
-    fun addPropertyChangedListener(listener: InvalidationListener?) {
-        usesGlobalProperty.addListener(listener)
-        javaProperty.addListener(listener)
-        maxMemoryProperty.addListener(listener)
-        minMemoryProperty.addListener(listener)
-        autoMemoryProperty.addListener(listener)
-        javaArgsProperty.addListener(listener)
-        minecraftArgsProperty.addListener(listener)
-        notCheckGameProperty.addListener(listener)
-        notCheckJVMProperty.addListener(listener)
-        serverIpProperty.addListener(listener)
-        isolateGameDirProperty.addListener(listener)
-        beGestureProperty.addListener(listener)
-        graphicsBackendProperty.addListener(listener)
-        vkDriverSystemProperty.addListener(listener)
-        controllerProperty.addListener(listener)
-        rendererProperty.addListener(listener)
-        driverProperty.addListener(listener)
-        pojavBigCoreProperty.addListener(listener)
-        uuidProperty.addListener(listener)
-        notCheckModProperty.addListener(listener)
-        debugLogProperty.addListener(listener)
-        forceResolutionProperty.addListener(listener)
+    private val allFlows: List<StateFlow<*>> by lazy {
+        listOf(
+            usesGlobalFlow, javaFlow, maxMemoryFlow, minMemoryFlow, autoMemoryFlow,
+            javaArgsFlow, minecraftArgsFlow, notCheckGameFlow, notCheckJVMFlow,
+            serverIpFlow, isolateGameDirFlow, beGestureFlow, graphicsBackendFlow,
+            vkDriverSystemFlow, controllerFlow, rendererFlow, driverFlow,
+            pojavBigCoreFlow, uuidFlow, notCheckModFlow, debugLogFlow, forceResolutionFlow,
+        )
+    }
+
+    /** 对齐原"任一属性失效即回调"语义（同值 set 不触发；订阅不可取消，与原监听一致）。 */
+    fun addPropertyChangedListener(listener: Runnable) {
+        allFlows.forEach { FlowSubscriptions.subscribe(it) { listener.run() } }
     }
 
     public override fun clone(): VersionSetting {

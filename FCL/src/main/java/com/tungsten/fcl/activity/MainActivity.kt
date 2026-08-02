@@ -59,8 +59,6 @@ import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.FlowObservables
-import com.tungsten.fcl.util.FXUtils
-import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -88,7 +86,10 @@ import com.tungsten.fcllibrary.component.view.FCLMenuView
 import com.tungsten.fcllibrary.component.view.FCLMenuView.OnSelectListener
 import com.tungsten.fcllibrary.util.ConvertUtils
 import kotlinx.coroutines.Dispatchers
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
@@ -111,7 +112,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private var _uiManager: UIManager? = null
     lateinit var uiManager: UIManager
     private lateinit var currentAccount: ObjectProperty<Account?>
-    private val holder = WeakListenerHolder()
     private lateinit var profile: Profile
     private lateinit var theme: IntegerProperty
     private lateinit var theme2: IntegerProperty
@@ -348,6 +348,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        selectedAccountSubscription?.cancel()
+        selectedAccountSubscription = null
         if (shouldPlayVideo()) {
             mediaPlayer = null
             binding.videoView.stopPlayback()
@@ -566,9 +568,16 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     }
                 }
             }
-            (currentAccount as SimpleObjectProperty<Account?>).bind(Accounts.selectedAccountProperty())
+            // 阶段 4a：Accounts.selectedAccount 已 StateFlow 化；subscribeWithCurrent 等价
+            // 原 bind（先同步当前值再跟随），onDestroy 取消订阅（对齐 bind 弱引用自动摘除）。
+            selectedAccountSubscription?.cancel()
+            selectedAccountSubscription = FlowSubscriptions.subscribeWithCurrent(Accounts.selectedAccountFlow()) {
+                (currentAccount as SimpleObjectProperty<Account?>).set(it)
+            }
         }
     }
+
+    private var selectedAccountSubscription: FlowSubscriptions.Subscription? = null
 
     fun refreshAvatar(account: Account) {
         lifecycleScope.launch {
@@ -665,9 +674,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun setupVersionDisplay() {
-        holder.add(FXUtils.onWeakChangeAndOperate(Profiles.selectedVersionProperty()) { s: String? ->
-            lifecycleScope.launch { loadVersion(s) }
-        })
+        // 阶段 4a：Profiles.selectedVersion 已 StateFlow 化；launchIn(lifecycleScope)
+        // 等价原弱引用监听（Activity 销毁自动退订），collect 含当前值对齐 onChangeAndOperate。
+        Profiles.selectedVersionFlow()
+            .onEach { s -> lifecycleScope.launch { loadVersion(s) } }
+            .launchIn(lifecycleScope)
     }
 
     private fun accountSubtitle(context: Context, account: Account): ObservableValue<String> {

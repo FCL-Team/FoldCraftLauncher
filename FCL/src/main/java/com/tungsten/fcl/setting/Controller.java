@@ -1,6 +1,5 @@
 package com.tungsten.fcl.setting;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import android.content.Context;
 
@@ -28,18 +27,12 @@ import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.util.Constants;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.Observable;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.ReadOnlyIntegerProperty;
-import com.tungsten.fclcore.observable.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.observable.property.SimpleStringProperty;
-import com.tungsten.fclcore.observable.property.StringProperty;
 import com.tungsten.fclcore.observable.collections.FXCollections;
 import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.ToStringBuilder;
-import com.tungsten.fclcore.util.observable.ObservableHelper;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.gson.observable.factories.JavaFxPropertyTypeAdapterFactory;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
@@ -55,101 +48,114 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 控制器布局（阶段 4a）：标量属性已 StateFlow 化；任何字段或分组变更都会递增
+ * {@link #revisionFlow()}（对齐原 Observable 失效语义，Controllers 据此冒泡落盘）。
+ *
+ * <p>viewGroups 仍为 ObservableList（元素类型 ControlViewGroup 属 control/data，
+ * 后续批次），其变更/元素冒泡同样汇入 revision。</p>
+ *
+ * <p>磁盘 JSON 由手写 {@link Serializer} 产出，与属性类型无关，格式不变。</p>
+ */
 @JsonAdapter(Controller.Serializer.class)
-public class Controller implements Cloneable, Observable {
+public class Controller implements Cloneable {
 
-    private final SimpleStringProperty id;
+    private final MutableStateFlow<String> id = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty idProperty() {
+    public StateFlow<String> idFlow() {
         return id;
     }
 
     public String getId() {
-        return id.get();
+        return id.getValue();
     }
 
     public void setId(String id) {
-        this.id.set(id);
+        this.id.setValue(id);
     }
 
-    private final SimpleStringProperty name;
+    private final MutableStateFlow<String> name = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty nameProperty() {
+    public StateFlow<String> nameFlow() {
         return name;
     }
 
     public String getName() {
-        return name.get();
+        return name.getValue();
     }
 
     public void setName(String name) {
-        this.name.set(name);
+        this.name.setValue(name);
     }
 
-    private final SimpleStringProperty version;
+    private final MutableStateFlow<String> version = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty versionProperty() {
+    public StateFlow<String> versionFlow() {
         return version;
     }
 
     public String getVersion() {
-        return version.get();
+        return version.getValue();
     }
 
     public void setVersion(String version) {
-        this.version.set(version);
+        this.version.setValue(version);
     }
 
-    private final SimpleIntegerProperty versionCode;
+    private final MutableStateFlow<Integer> versionCode = StateFlowKt.MutableStateFlow(0);
 
-    public IntegerProperty versionCodeProperty() {
+    public StateFlow<Integer> versionCodeFlow() {
         return versionCode;
     }
 
     public int getVersionCode() {
-        return versionCode.get();
+        return versionCode.getValue();
     }
 
     public void setVersionCode(int versionCode) {
-        this.versionCode.set(versionCode);
+        this.versionCode.setValue(versionCode);
     }
 
-    private final SimpleStringProperty author;
+    private final MutableStateFlow<String> author = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty authorProperty() {
+    public StateFlow<String> authorFlow() {
         return author;
     }
 
     public String getAuthor() {
-        return author.get();
+        return author.getValue();
     }
 
     public void setAuthor(String author) {
-        this.author.set(author);
+        this.author.setValue(author);
     }
 
-    private final SimpleStringProperty description;
+    private final MutableStateFlow<String> description = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty descriptionProperty() {
+    public StateFlow<String> descriptionFlow() {
         return description;
     }
 
     public String getDescription() {
-        return description.get();
+        return description.getValue();
     }
 
     public void setDescription(String description) {
-        this.description.set(description);
+        this.description.setValue(description);
     }
 
-    private final IntegerProperty controllerVersion = new SimpleIntegerProperty(this, "controllerVersion");
+    private final MutableStateFlow<Integer> controllerVersion = StateFlowKt.MutableStateFlow(0);
 
-    public ReadOnlyIntegerProperty controllerVersionProperty() {
+    public StateFlow<Integer> controllerVersionFlow() {
         return controllerVersion;
     }
 
     public int getControllerVersion() {
-        return controllerVersion.get();
+        return controllerVersion.getValue();
     }
 
     private final ObservableList<ControlViewGroup> viewGroups;
@@ -191,17 +197,17 @@ public class Controller implements Cloneable, Observable {
     }
 
     public Controller(String id, String name, String version, int versionCode, String author, String description, int controllerVersion, ObservableList<ControlViewGroup> viewGroups) {
-        this.id = new SimpleStringProperty(this, "id", id);
-        this.name = new SimpleStringProperty(this, "name", name);
-        this.version = new SimpleStringProperty(this, "version", version);
-        this.versionCode = new SimpleIntegerProperty(this, "versionCode", versionCode);
-        this.author = new SimpleStringProperty(this, "author", author);
-        this.description = new SimpleStringProperty(this, "description", description);
+        this.id.setValue(id);
+        this.name.setValue(name);
+        this.version.setValue(version);
+        this.versionCode.setValue(versionCode);
+        this.author.setValue(author);
+        this.description.setValue(description);
         this.viewGroups = viewGroups;
 
-        this.controllerVersion.set(controllerVersion);
+        this.controllerVersion.setValue(controllerVersion);
 
-        addPropertyChangedListener(onInvalidating(this::invalidate));
+        addPropertyChangedListener();
     }
 
     public static String generateRandomId() {
@@ -255,36 +261,32 @@ public class Controller implements Cloneable, Observable {
                 .toString();
     }
 
-    private void addPropertyChangedListener(InvalidationListener listener) {
-        id.addListener(listener);
-        name.addListener(listener);
-        version.addListener(listener);
-        versionCode.addListener(listener);
-        author.addListener(listener);
-        description.addListener(listener);
+    private void addPropertyChangedListener() {
+        FlowSubscriptions.subscribe(id, v -> invalidate());
+        FlowSubscriptions.subscribe(name, v -> invalidate());
+        FlowSubscriptions.subscribe(version, v -> invalidate());
+        FlowSubscriptions.subscribe(versionCode, v -> invalidate());
+        FlowSubscriptions.subscribe(author, v -> invalidate());
+        FlowSubscriptions.subscribe(description, v -> invalidate());
+        FlowSubscriptions.subscribe(controllerVersion, v -> invalidate());
+        InvalidationListener listener = observable -> invalidate();
         viewGroups.addListener(listener);
         viewGroups.forEach(it -> it.addListener(listener));
         viewGroups.addListener((InvalidationListener) observable -> {
             viewGroups.forEach(it -> it.removeListener(listener));
             viewGroups.forEach(it -> it.addListener(listener));
         });
-        controllerVersion.addListener(listener);
     }
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-    @Override
-    public void addListener(InvalidationListener listener) {
-        observableHelper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        observableHelper.removeListener(listener);
+    /** 任何字段/分组变更时递增（对齐原 Observable 失效语义）。 */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        revision.setValue(revision.getValue() + 1);
     }
 
     @Override
@@ -325,7 +327,7 @@ public class Controller implements Cloneable, Observable {
     }
 
     public void upgrade() {
-        this.controllerVersion.set(Constants.CONTROLLER_VERSION);
+        this.controllerVersion.setValue(Constants.CONTROLLER_VERSION);
     }
 
     public static void showUpgradeDialog(Context context, String name, String id) {

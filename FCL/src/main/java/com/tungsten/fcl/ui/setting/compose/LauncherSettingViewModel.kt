@@ -15,6 +15,7 @@ import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.task.FetchTask
 import com.tungsten.fclcore.util.Logging
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fcllibrary.component.theme.Theme
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
@@ -33,8 +34,9 @@ import java.util.logging.Level
  * 启动器设置页 ViewModel（小步骤 3.1）：LauncherSettingPage.java 的 Compose 化承接。
  *
  * 承接原则（bridge-api.md §5）：
- * - 数据层零改动：Config observable 属性经 asMutableStateFlow() 双向桥接（写 flow 即写
- *   Config，ConfigHolder 自动落盘）；Theme/ThemeEngine 沿用遗留单例；
+ * - 数据层：Config/Theme 字段已 StateFlow 化（阶段 4a）——写 setter 即持久化
+ *   （ConfigHolder 自动落盘 / Theme.saveTheme），Flow 单向投影进 UiState；
+ *   Theme/ThemeEngine 沿用遗留单例；
  *   SharedPreferences "launcher" 读写键名/默认值与遗留完全一致；
  * - 业务规则全部收在本类：勾选自动线程重置线程数、动画速度变更自动 saveTheme、
  *   打开页面静默清理超 3 天缓存、Palette 背景取色、导出日志等；
@@ -53,21 +55,7 @@ class LauncherSettingViewModel(
     private val engine = ThemeEngine.getInstance()
     private val theme = engine.theme
 
-    // ---------- observable 双向桥（写 flow 即持久化） ----------
-
-    /** 动画速度：theme.animationSpeedProperty 双向（对齐 LauncherSettingPage.java:154-157）。 */
-    private val animationSpeedFlow = theme.animationSpeedProperty().asMutableStateFlow()
-
-    /** 忽略刘海：theme.fullscreenProperty 双向（窗口 flags 由宿主事件处理）。 */
-    private val fullscreenFlow = theme.fullscreenProperty().asMutableStateFlow()
-
-    private val autoChooseDownloadTypeFlow = ConfigHolder.config().autoChooseDownloadTypeProperty().asMutableStateFlow()
-    private val versionListSourceFlow = ConfigHolder.config().versionListSourceProperty().asMutableStateFlow()
-    private val downloadTypeFlow = ConfigHolder.config().downloadTypeProperty().asMutableStateFlow()
-    private val autoDownloadThreadsFlow = ConfigHolder.config().autoDownloadThreadsProperty().asMutableStateFlow()
-
-    /** 下载线程数：IntegerProperty 类型实参为 Number（JavaFX 惯例，见 bridge-api.md §3.2）。 */
-    private val downloadThreadsFlow = ConfigHolder.config().downloadThreadsProperty().asMutableStateFlow()
+    // ---------- StateFlow 直连（阶段 4a：写 setter 即持久化，Flow 回流刷新 UI） ----------
 
     init {
         // SharedPreferences / Theme 初值投影
@@ -88,20 +76,26 @@ class LauncherSettingViewModel(
             )
         }
 
-        // observable 单向投影（主题色板/开关/滑杆值）
-        theme.colorProperty().asStateFlow().observeIntoState { copy(themeColor = it.toInt()) }
-        theme.color2Property().asStateFlow().observeIntoState { copy(themeColor2 = it.toInt()) }
-        theme.color2DarkProperty().asStateFlow().observeIntoState { copy(themeColor2Dark = it.toInt()) }
-        animationSpeedFlow.observeIntoState { copy(animationSpeed = it.toInt()) }
-        fullscreenFlow.observeIntoState { copy(ignoreNotch = it) }
-        autoChooseDownloadTypeFlow.observeIntoState { copy(autoChooseDownloadType = it) }
-        versionListSourceFlow.observeIntoState { copy(versionListSourceIndex = indexOfSource(AUTO_SOURCE_KEYS, it)) }
-        downloadTypeFlow.observeIntoState { copy(downloadTypeIndex = indexOfSource(RAW_SOURCE_KEYS, it)) }
-        autoDownloadThreadsFlow.observeIntoState { copy(autoDownloadThreads = it) }
-        downloadThreadsFlow.observeIntoState { copy(downloadThreads = it.toInt()) }
+        // StateFlow 单向投影（主题色板/开关/滑杆值/下载设置）
+        theme.colorFlow().observeIntoState { copy(themeColor = it) }
+        theme.color2Flow().observeIntoState { copy(themeColor2 = it) }
+        theme.color2DarkFlow().observeIntoState { copy(themeColor2Dark = it) }
+        theme.animationSpeedFlow().observeIntoState { copy(animationSpeed = it) }
+        theme.fullscreenFlow().observeIntoState { copy(ignoreNotch = it) }
+        ConfigHolder.config().autoChooseDownloadTypeFlow()
+            .observeIntoState { copy(autoChooseDownloadType = it) }
+        ConfigHolder.config().versionListSourceFlow()
+            .observeIntoState { copy(versionListSourceIndex = indexOfSource(AUTO_SOURCE_KEYS, it)) }
+        ConfigHolder.config().downloadTypeFlow()
+            .observeIntoState { copy(downloadTypeIndex = indexOfSource(RAW_SOURCE_KEYS, it)) }
+        ConfigHolder.config().autoDownloadThreadsFlow()
+            .observeIntoState { copy(autoDownloadThreads = it) }
+        ConfigHolder.config().downloadThreadsFlow()
+            .observeIntoState { copy(downloadThreads = it) }
 
-        // 动画速度变更自动保存（对齐 LauncherSettingPage.java:157 的属性监听）
-        theme.animationSpeedProperty().addListener { Theme.saveTheme(application, theme) }
+        // 动画速度变更自动保存（对齐 LauncherSettingPage.java:157 的属性监听；
+        // subscribe 跳过当前值，对齐 addListener 语义）
+        FlowSubscriptions.subscribe(theme.animationSpeedFlow()) { Theme.saveTheme(application, theme) }
 
         // 打开页面静默清理超 3 天缓存（对齐 LauncherSettingPage.java:211-214，无 UI 反馈）
         cleanExpiredCacheIfNeeded()
@@ -297,7 +291,7 @@ class LauncherSettingViewModel(
         sendEvent(LauncherSettingEvent.SyncLiveBackgroundVolume)
     }
 
-    /** 忽略刘海：Window flags 需 Activity Window，走宿主事件；状态经 fullscreenProperty 回流。 */
+    /** 忽略刘海：Window flags 需 Activity Window，走宿主事件；状态经 fullscreenFlow 回流。 */
     fun setIgnoreNotch(enabled: Boolean) = sendEvent(LauncherSettingEvent.ApplyIgnoreNotch(enabled))
 
     /** 关闭皮肤模型预览（对齐 :559-561；注意 Theme.ignoreSkinContainerProperty() 有 bug
@@ -308,9 +302,9 @@ class LauncherSettingViewModel(
         updateState { copy(closeSkinModel = enabled) }
     }
 
-    /** 动画速度：写 observable 属性即持久化（init 里注册的监听自动 saveTheme）。 */
+    /** 动画速度：写 setter 即持久化（init 里注册的订阅自动 saveTheme）。 */
     fun setAnimationSpeed(speed: Int) {
-        animationSpeedFlow.value = speed.coerceIn(1, 20)
+        theme.animationSpeed = speed.coerceIn(1, 20)
     }
 
     /** 震动时长：写 SP（对齐 :159-161）。 */
@@ -338,29 +332,29 @@ class LauncherSettingViewModel(
     // ---------- 下载 ----------
 
     fun setAutoChooseDownloadType(auto: Boolean) {
-        autoChooseDownloadTypeFlow.value = auto
+        ConfigHolder.config().setAutoChooseDownloadType(auto)
     }
 
-    /** 版本列表源 Spinner：position → provider id 回写 config.versionListSourceProperty
-     *  （对齐 FXUtils.bindSelection 双向绑定 :180-189）。 */
+    /** 版本列表源 Spinner：position → provider id 回写 config（对齐 FXUtils.bindSelection
+     *  双向绑定 :180-189；写 setter 即持久化，Flow 回流刷新 UI）。 */
     fun setVersionListSource(index: Int) {
-        AUTO_SOURCE_KEYS.getOrNull(index)?.let { versionListSourceFlow.value = it }
+        AUTO_SOURCE_KEYS.getOrNull(index)?.let { ConfigHolder.config().setVersionListSource(it) }
     }
 
-    /** 下载源 Spinner：position → provider id 回写 config.downloadTypeProperty（对齐 :190-198）。 */
+    /** 下载源 Spinner：position → provider id 回写 config（对齐 :190-198）。 */
     fun setDownloadType(index: Int) {
-        RAW_SOURCE_KEYS.getOrNull(index)?.let { downloadTypeFlow.value = it }
+        RAW_SOURCE_KEYS.getOrNull(index)?.let { ConfigHolder.config().setDownloadType(it) }
     }
 
     /** 自动线程数：勾选时强制重置线程数为 DEFAULT_CONCURRENCY（对齐 :202-206）。 */
     fun setAutoDownloadThreads(auto: Boolean) {
-        if (auto) downloadThreadsFlow.value = FetchTask.DEFAULT_CONCURRENCY
-        autoDownloadThreadsFlow.value = auto
+        if (auto) ConfigHolder.config().setDownloadThreads(FetchTask.DEFAULT_CONCURRENCY)
+        ConfigHolder.config().setAutoDownloadThreads(auto)
     }
 
     /** 线程数（SeekBar 双向绑定等价，范围 1~128，对齐 :207-209）。 */
     fun setDownloadThreads(threads: Int) {
-        downloadThreadsFlow.value = threads.coerceIn(1, 128)
+        ConfigHolder.config().setDownloadThreads(threads.coerceIn(1, 128))
     }
 
     private fun currentColorOf(target: ColorTarget): Int = when (target) {

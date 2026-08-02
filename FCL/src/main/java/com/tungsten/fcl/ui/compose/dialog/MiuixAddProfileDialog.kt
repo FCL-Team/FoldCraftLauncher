@@ -109,7 +109,7 @@ class MiuixAddProfileDialog(
         } else if (Profiles.profiles.stream().anyMatch { it.name == name }) {
             Toast.makeText(context, context.getString(R.string.profile_already_exist), Toast.LENGTH_SHORT).show()
         } else {
-            Profiles.profiles.add(Profile(name, File(path)))
+            Profiles.addProfile(Profile(name, File(path)))
             dismiss()
         }
     }

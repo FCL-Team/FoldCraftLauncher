@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.controller;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +31,7 @@ import com.tungsten.fclcore.observable.property.ObjectProperty;
 import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
@@ -90,7 +90,8 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
     private void init() {
         selectedController = new SimpleObjectProperty<Controller>() {
             {
-                Controllers.getControllers().addListener(onInvalidating(this::invalidated));
+                // 阶段 4a：Controllers 列表已 StateFlow 化；任何变化（含元素冒泡）重新校验选中项
+                FlowSubscriptions.subscribe(Controllers.controllersSignalFlow(), signal -> invalidated());
             }
 
             @Override
@@ -109,8 +110,8 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
                 }
             }
         };
-        if (!Controllers.controllersProperty().isEmpty()) {
-            selectedController.set(Controllers.controllersProperty().get(0));
+        if (!Controllers.getControllers().isEmpty()) {
+            selectedController.set(Controllers.getControllers().get(0));
         } else {
             selectedController.set(Controllers.DEFAULT_CONTROLLER);
         }
@@ -151,7 +152,7 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
     }
 
     private void refreshList() {
-        EditableControllerListAdapter adapter = new EditableControllerListAdapter(getContext(), Controllers.controllersProperty());
+        EditableControllerListAdapter adapter = new EditableControllerListAdapter(getContext(), Controllers.getControllers());
         listView.setAdapter(adapter);
     }
 
