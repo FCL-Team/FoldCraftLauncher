@@ -112,7 +112,9 @@ class MiuixAddProfileDialog(
             Toast.makeText(context, context.getString(R.string.profile_already_exist), Toast.LENGTH_SHORT).show()
         } else {
             Profiles.profiles.add(Profile(name, File(path)))
-            (VersionPageManager.getInstance().allPages[0] as VersionListPage).refreshProfile()
+            // 3.3 起版本列表可能为 Compose 页（自带 Profiles 列表监听，无需手动刷新）；
+            // 旧 View 页仍需要 refreshProfile() 强刷。
+            (VersionPageManager.getInstance().allPages[0] as? VersionListPage)?.refreshProfile()
             dismiss()
         }
     }
