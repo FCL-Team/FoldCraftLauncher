@@ -1,6 +1,7 @@
 package com.tungsten.fcl.activity;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.os.Bundle;
@@ -63,6 +64,12 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         FCLBridge.setOpenFolderCallback(this);
 
         setContentView(R.layout.activity_jvm);
+
+        // 3.7 主题色对齐：系统栏底色透明，短暂呼出时不露出静态默认主题色。
+        // 仅窗口底色，不触碰 TextureView / 输入分发 / surface 时序。
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+
         if (menuType == null || fclBridge == null) {
             Logging.LOG.log(Level.WARNING, "Failed to get ControllerType or FCLBridge, task canceled.");
             return;

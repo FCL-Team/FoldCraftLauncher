@@ -1,5 +1,6 @@
 package com.tungsten.fcl.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -26,6 +27,11 @@ public class ControllerActivity extends FCLActivity {
         FCLImageView contentView = new FCLImageView(this);
         contentView.setBackground(ThemeEngine.getInstance().getTheme().getBackground(this));
         setContentView(contentView);
+
+        // 3.7 主题色对齐：系统栏底色透明。全屏沉浸下边缘滑动短暂呼出系统栏时，
+        // 不再露出 themes.xml 中静态写死的 default_theme_color（与用户主题色可能不一致）。
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
 
         menu = new GameMenu();
         menu.setup(this, null);
