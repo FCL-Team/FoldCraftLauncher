@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
@@ -52,7 +53,11 @@ import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
+import com.tungsten.fcl.ui.bridge.LegacyBridge
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
+import com.tungsten.fcl.ui.main.compose.ComposeMainUI
+import com.tungsten.fcl.ui.main.compose.MainRightMenu
+import com.tungsten.fcl.ui.main.compose.MainRightMenuBridge
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
@@ -287,6 +292,38 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             }
         setupLiveBackground()
+        setupComposeRightMenu()
+    }
+
+    /**
+     * 3.6：Compose 右侧栏接线（[ComposeMainUI.USE_COMPOSE_MAIN_UI] = true 时）。
+     * 旧 account/start/version/jar View 保留在布局中用于开关回滚，Compose 模式下置 GONE；
+     * 全部交互经回调转回本 Activity 的既有方法（启动游戏/切 UI/JAR 执行逻辑零改动）。
+     */
+    private fun setupComposeRightMenu() {
+        if (!ComposeMainUI.USE_COMPOSE_MAIN_UI) return
+        binding.apply {
+            account.visibility = View.GONE
+            start.visibility = View.GONE
+            version.visibility = View.GONE
+            jar.visibility = View.GONE
+            rightMenuCompose.visibility = View.VISIBLE
+            rightMenuCompose.addView(
+                LegacyBridge.createComposeView(this@MainActivity) {
+                    MainRightMenu(
+                        onAccountClick = ::onAccountAreaClicked,
+                        onVersionClick = ::onVersionAreaClicked,
+                        onStartClick = ::onLaunchClicked,
+                        onStartLongClick = ::onStartAreaLongClicked,
+                        onJarClick = ::onJarAreaClicked,
+                        onJarLongClick = ::onJarAreaLongClicked,
+                        onGoSettingClick = ::onGoSettingClicked,
+                    )
+                },
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            )
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -390,62 +427,128 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun onClick(view: View) {
         binding.apply {
-            if (view === account && uiManager.currentUI !== uiManager.accountUI) {
+            when (view) {
+                account -> onAccountAreaClicked()
+                version -> onVersionAreaClicked()
+                back -> uiManager.onBackPressed()
+                jar -> onJarAreaClicked()
+                start -> onLaunchClicked()
+                goSetting -> onGoSettingClicked()
+            }
+        }
+    }
+
+    /** 账户区点击（3.6 抽取：旧 account View 与 Compose 右侧栏共用）。 */
+    internal fun onAccountAreaClicked() {
+        binding.apply {
+            if (uiManager.currentUI !== uiManager.accountUI) {
                 refreshMenuView(null)
                 title.setTextWithAnim(getString(R.string.account))
                 uiManager.switchUI(uiManager.accountUI)
             }
-            if (view === version && uiManager.currentUI !== uiManager.versionUI) {
+        }
+    }
+
+    /** 版本管理按钮点击（3.6 抽取：旧 version View 与 Compose 右侧栏共用）。 */
+    internal fun onVersionAreaClicked() {
+        binding.apply {
+            if (uiManager.currentUI !== uiManager.versionUI) {
                 refreshMenuView(null)
                 title.setTextWithAnim(getString(R.string.version))
                 uiManager.switchUI(uiManager.versionUI)
             }
-            if (view === back) {
-                uiManager.onBackPressed()
-            }
-            if (view === jar) {
-                if (sharedPreferences.getBoolean("showJarExecutorWarnDialog", true)) {
-                    showWarningDialog(this@MainActivity, getString(R.string.jar_executor_warn)){
-                        sharedPreferences.edit {
-                            putBoolean("showJarExecutorWarnDialog", false)
-                        }
-                    }
-                    return
-                }
-                jar.isSelected = false
-                JarExecutorHelper.start(this@MainActivity)
-            }
-            if (view === start) {
-                if (!Controllers.isInitialized()) {
-                    title.setTextWithAnim(getString(R.string.message_loading_controllers))
+        }
+    }
+
+    /** 启动按钮点击（3.6 抽取：旧 start View 与 Compose 右侧栏共用；启动链路零改动）。 */
+    internal fun onLaunchClicked() {
+        binding.apply {
+            if (!Controllers.isInitialized()) {
+                title.setTextWithAnim(getString(R.string.message_loading_controllers))
+                if (ComposeMainUI.USE_COMPOSE_MAIN_UI) {
+                    // Compose 右侧栏：经桥接节拍触发抖动（对齐下方 AnimUtil 抖动）
+                    MainRightMenuBridge.startShakeTick.value =
+                        MainRightMenuBridge.startShakeTick.value + 1
+                } else {
                     AnimUtil.playTranslationX(start, 700, 0f, 50f, -50f, 50f, -50f, 0f)
                         .interpolator(OvershootInterpolator()).start()
-                    return
                 }
-                val selectedProfile = Profiles.getSelectedProfile()
-                DriverPlugin.selected = runCatching {
-                    DriverPlugin.driverList.find {
-                        it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
-                    }
-                }.getOrNull() ?: DriverPlugin.driverList[0]
-                refreshScreenSize()
-                DisplayUtil.refreshDisplayMetrics(this@MainActivity)
-                Versions.launch(this@MainActivity, selectedProfile)
+                return
             }
-            if (view === goSetting) {
-                val profile = Profiles.getSelectedProfile()
-                if (profile.versionSetting.isGlobal) {
-                    setting.isSelected = true
-                    uiManager.settingUI.runAfterInit {
-                        val tab = uiManager.settingUI.tabLayout.getTabAt(0)
-                        uiManager.settingUI.tabLayout.selectTab(tab)
+            val selectedProfile = Profiles.getSelectedProfile()
+            DriverPlugin.selected = runCatching {
+                DriverPlugin.driverList.find {
+                    it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
+                }
+            }.getOrNull() ?: DriverPlugin.driverList[0]
+            refreshScreenSize()
+            DisplayUtil.refreshDisplayMetrics(this@MainActivity)
+            Versions.launch(this@MainActivity, selectedProfile)
+        }
+    }
+
+    /** 启动按钮长按：选择渲染器后启动（3.6 抽取，逻辑对齐原 setOnLongClickListener）。 */
+    internal fun onStartAreaLongClicked() {
+        if (ComposeDialogs.USE_COMPOSE_RENDERER_SELECT) {
+            // 3.2 批 2 接入点：Miuix 渲染器选择弹窗
+            MiuixRendererSelectDialog(this@MainActivity, false) {
+                onLaunchClicked()
+            }.show()
+        } else {
+            RendererSelectDialog(this@MainActivity, false) {
+                onLaunchClicked()
+            }.show()
+        }
+    }
+
+    /** JAR 执行按钮点击（3.6 抽取：旧 jar View 与 Compose 右侧栏共用）。 */
+    internal fun onJarAreaClicked() {
+        binding.apply {
+            if (sharedPreferences.getBoolean("showJarExecutorWarnDialog", true)) {
+                showWarningDialog(this@MainActivity, getString(R.string.jar_executor_warn)) {
+                    sharedPreferences.edit {
+                        putBoolean("showJarExecutorWarnDialog", false)
                     }
-                } else {
-                    manage.isSelected = true
-                    uiManager.manageUI.runAfterInit {
-                        val tab = uiManager.manageUI.tabLayout.getTabAt(0)
-                        uiManager.manageUI.tabLayout.selectTab(tab)
-                    }
+                }
+                return
+            }
+            jar.isSelected = false
+            JarExecutorHelper.start(this@MainActivity)
+        }
+    }
+
+    /** JAR 执行按钮长按：自定义参数执行（3.6 抽取，逻辑对齐原 setOnLongClickListener）。 */
+    internal fun onJarAreaLongClicked() {
+        EditDialog(this@MainActivity) {
+            JarExecutorHelper.exec(
+                this@MainActivity,
+                null,
+                JarExecutorHelper.getJava(null),
+                it
+            )
+        }.apply {
+            setTitle(R.string.jar_execute_custom_args)
+            binding.editText.hint = "-jar xxx"
+            binding.editText.setLines(1)
+            binding.editText.maxLines = 1
+        }.show()
+    }
+
+    /** 启动区设置入口点击（3.6 抽取：旧 goSetting View 与 Compose 右侧栏共用）。 */
+    internal fun onGoSettingClicked() {
+        binding.apply {
+            val profile = Profiles.getSelectedProfile()
+            if (profile.versionSetting.isGlobal) {
+                setting.isSelected = true
+                uiManager.settingUI.runAfterInit {
+                    val tab = uiManager.settingUI.tabLayout.getTabAt(0)
+                    uiManager.settingUI.tabLayout.selectTab(tab)
+                }
+            } else {
+                manage.isSelected = true
+                uiManager.manageUI.runAfterInit {
+                    val tab = uiManager.manageUI.tabLayout.getTabAt(0)
+                    uiManager.manageUI.tabLayout.selectTab(tab)
                 }
             }
         }
@@ -501,6 +604,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         )
                     )
                 )
+                // 3.6：通知 Compose 右侧栏重建头像绑定（旧 View 重绑逻辑保留，开关回滚可用）
+                MainRightMenuBridge.avatarRefreshTick.value =
+                    MainRightMenuBridge.avatarRefreshTick.value + 1
             }
         }
     }
@@ -508,6 +614,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private fun loadVersion(version: String?) {
         isVersionLoading = true
         binding.versionProgress.visibility = View.VISIBLE
+        // 3.6：镜像到 Compose 右侧栏（旧 View 更新逻辑保留，开关回滚可用）
+        MainRightMenuBridge.versionDisplay.value =
+            MainRightMenuBridge.versionDisplay.value.copy(loading = true)
         profile = Profiles.getSelectedProfile()
         if (version != null && profile.repository.hasVersion(version)) {
             lifecycleScope.launch(Dispatchers.IO) {
@@ -554,17 +663,26 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     binding.versionName.isSelected = true
 //                    binding.versionHint.text = libraries.toString()
                     binding.icon.setBackgroundDrawable(drawable)
+                    MainRightMenuBridge.versionDisplay.value = MainRightMenuBridge.VersionDisplay(
+                        loading = false,
+                        name = version,
+                        icon = drawable,
+                    )
                 }
             }
         } else {
             isVersionLoading = false
             binding.versionProgress.visibility = View.GONE
             binding.versionName.text = getString(R.string.version_no_version)
-            binding.icon.setBackgroundDrawable(
-                AppCompatResources.getDrawable(
-                    this,
-                    R.drawable.img_grass
-                )
+            val fallbackIcon = AppCompatResources.getDrawable(
+                this,
+                R.drawable.img_grass
+            )
+            binding.icon.setBackgroundDrawable(fallbackIcon)
+            MainRightMenuBridge.versionDisplay.value = MainRightMenuBridge.VersionDisplay(
+                loading = false,
+                name = getString(R.string.version_no_version),
+                icon = fallbackIcon,
             )
         }
     }
