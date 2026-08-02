@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
@@ -108,68 +110,78 @@ class MiuixControllerInfoDialog(
                 .width(400.dp),
             insideMargin = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         ) {
-            Text(
-                text = stringResource(title),
-                modifier = Modifier.fillMaxWidth(),
-                style = MiuixTheme.textStyles.title4,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(10.dp))
-            InputRow(
-                label = stringResource(R.string.control_info_name),
-                value = nameState.value,
-            ) { nameState.value = it }
-            Row(
-                modifier = Modifier
-                    .clickable { moreInfoState.value = !moreInfoState.value }
-                    .padding(vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Checkbox(
-                    state = if (moreInfoState.value) ToggleableState.On else ToggleableState.Off,
-                    onClick = { moreInfoState.value = !moreInfoState.value },
-                )
+            Column {
                 Text(
-                    text = stringResource(R.string.control_info_more),
-                    style = MiuixTheme.textStyles.body2,
+                    text = stringResource(title),
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MiuixTheme.textStyles.title4,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(Modifier.height(10.dp))
+                // 表单区限高可滚动（展开更多信息 + 多行描述时可能超高），
+                // 标题与按钮区钉在滚动区外，横屏小屏下按钮不被挤出
+                Column(
+                    modifier = Modifier
+                        .weight(1f, fill = false)
+                        .verticalScroll(rememberScrollState()),
+                ) {
+                    InputRow(
+                        label = stringResource(R.string.control_info_name),
+                        value = nameState.value,
+                    ) { nameState.value = it }
+                    Row(
+                        modifier = Modifier
+                            .clickable { moreInfoState.value = !moreInfoState.value }
+                            .padding(vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Checkbox(
+                            state = if (moreInfoState.value) ToggleableState.On else ToggleableState.Off,
+                            onClick = { moreInfoState.value = !moreInfoState.value },
+                        )
+                        Text(
+                            text = stringResource(R.string.control_info_more),
+                            style = MiuixTheme.textStyles.body2,
+                        )
+                    }
+                    AnimatedVisibility(visible = moreInfoState.value) {
+                        Column {
+                            InputRow(
+                                label = stringResource(R.string.control_info_version),
+                                value = versionState.value,
+                            ) { versionState.value = it }
+                            InputRow(
+                                label = stringResource(R.string.control_info_version_code),
+                                value = versionCodeState.value,
+                            ) { input ->
+                                // 对齐遗留 setIntegerFilter(1)：仅允许数字
+                                if (input.all { it.isDigit() }) versionCodeState.value = input
+                            }
+                            InputRow(
+                                label = stringResource(R.string.control_info_author),
+                                value = authorState.value,
+                            ) { authorState.value = it }
+                            InputRow(
+                                label = stringResource(R.string.control_info_description),
+                                value = descriptionState.value,
+                                singleLine = false,
+                            ) { descriptionState.value = it }
+                        }
+                    }
+                }
+                FCLDialogButtonsRow(
+                    buttons = listOf(
+                        FCLDialogButton(
+                            text = stringResource(com.tungsten.fcllibrary.R.string.dialog_positive),
+                            onClick = { onPositive() },
+                        ),
+                        FCLDialogButton(
+                            text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative),
+                            onClick = { dismiss() },
+                        ),
+                    ),
                 )
             }
-            AnimatedVisibility(visible = moreInfoState.value) {
-                Column {
-                    InputRow(
-                        label = stringResource(R.string.control_info_version),
-                        value = versionState.value,
-                    ) { versionState.value = it }
-                    InputRow(
-                        label = stringResource(R.string.control_info_version_code),
-                        value = versionCodeState.value,
-                    ) { input ->
-                        // 对齐遗留 setIntegerFilter(1)：仅允许数字
-                        if (input.all { it.isDigit() }) versionCodeState.value = input
-                    }
-                    InputRow(
-                        label = stringResource(R.string.control_info_author),
-                        value = authorState.value,
-                    ) { authorState.value = it }
-                    InputRow(
-                        label = stringResource(R.string.control_info_description),
-                        value = descriptionState.value,
-                        singleLine = false,
-                    ) { descriptionState.value = it }
-                }
-            }
-            FCLDialogButtonsRow(
-                buttons = listOf(
-                    FCLDialogButton(
-                        text = stringResource(com.tungsten.fcllibrary.R.string.dialog_positive),
-                        onClick = { onPositive() },
-                    ),
-                    FCLDialogButton(
-                        text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative),
-                        onClick = { dismiss() },
-                    ),
-                ),
-            )
         }
     }
 

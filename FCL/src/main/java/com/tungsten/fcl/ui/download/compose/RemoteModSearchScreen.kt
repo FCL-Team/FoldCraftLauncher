@@ -59,6 +59,7 @@ import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -374,6 +375,9 @@ fun RemoteModSearchScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
+                // 对齐 page_download.xml search_layout 的 bg_container_white +
+                // DownloadPage:256 registerEvent（ltColor 染色 = primaryContainer）
+                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
             ) {
                 Column(
                     modifier = Modifier
@@ -613,6 +617,8 @@ private fun RemoteModRow(
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
+        // 对齐 item_remote_mod.xml 的 bg_container_white_clickable + auto_tint（ltColor 染色 = primaryContainer）
+        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
     ) {
         Row(
             modifier = Modifier

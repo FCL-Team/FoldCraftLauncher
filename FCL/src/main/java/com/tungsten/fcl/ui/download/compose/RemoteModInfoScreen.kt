@@ -52,6 +52,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
@@ -310,6 +311,10 @@ fun RemoteModInfoScreen(
                         modifier = fclItemEntryModifier()
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
+                        // 对齐 version_list 容器 bg_container_white +
+                        // RemoteModInfoPage:118 registerEvent（ltColor 染色 = primaryContainer，
+                        // 旧版条目自身透明、底色由列表容器提供）
+                        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
                     ) {
                         Text(
                             // 对齐 ModGameVersionAdapter：推荐项不带 "Minecraft " 前缀
@@ -335,6 +340,9 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
+        // 对齐 page_download_addon_info.xml 头部 FCLLinearLayout 的 bg_container_white +
+        // auto_linear_background_tint（ltColor 染色 = primaryContainer）
+        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
     ) {
         Row(
             modifier = Modifier
@@ -450,7 +458,12 @@ private fun ScreenshotRow(holder: RemoteModInfoStateHolder) {
         ) {
             items(holder.screenshots!!) { screenshot ->
                 var retryTick by remember { mutableStateOf(0) }
-                Card(modifier = Modifier.padding(end = 8.dp)) {
+                Card(
+                    // 对齐 page_download_addon_info.xml:136 截图面板 bg_container_white + auto_tint
+                    // （ltColor 染色 = primaryContainer，旧版截图项自身透明、底色由面板提供）
+                    colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+                    modifier = Modifier.padding(end = 8.dp),
+                ) {
                     Column {
                         // key(retryTick)：点击重载（对齐 Adapter onClick 重新加载语义）
                         androidx.compose.runtime.key(retryTick) {

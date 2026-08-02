@@ -273,7 +273,8 @@ class MiuixAddDirectionStyleDialog(
         FCLDialogCard(
             title = stringResource(R.string.menu_control_style_add),
             modifier = Modifier.width(400.dp),
-            scrollable = false,
+            // 不关基座滚动：横屏小屏下整体（名称行+TabRow+260dp 固定高样式区）可超高，
+            // 交给基座内容区限高滚动、按钮钉底（内层 260dp 固定高滚动区有界，不冲突）
             buttons = listOf(
                 FCLDialogButton(
                     text = stringResource(com.tungsten.fcllibrary.R.string.dialog_positive),

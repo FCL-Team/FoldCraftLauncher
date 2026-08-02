@@ -26,6 +26,7 @@ import com.tungsten.fcl.ui.compose.shake
 import com.tungsten.fclauncher.utils.FCLPath
 import kotlinx.coroutines.flow.StateFlow
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -56,10 +57,12 @@ fun ManageScreen(
             .padding(10.dp),
     ) {
         // ---------- 左列（对齐 ManagePage.kt :71-104 的 9 项） ----------
+        // 容器底色对齐遗留 registerEvent 的 ltColor 染色（= primaryContainer，随主色联动）
         Card(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight(),
+            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(leftEntries) { entry ->
@@ -78,6 +81,7 @@ fun ManageScreen(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight(),
+            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
         ) {
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 items(rightEntries) { entry ->

@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +37,7 @@ import com.tungsten.fclcore.download.quilt.QuiltRemoteVersion
 import com.tungsten.fclcore.util.versioning.GameVersionNumber
 import com.tungsten.fcllibrary.util.LocaleUtils
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
@@ -156,7 +155,11 @@ fun RemoteVersionRow(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    Card(modifier = modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+    Card(
+        // 对齐 item_remote_version.xml 的 bg_container_white_clickable + auto_tint（ltColor 染色 = primaryContainer）
+        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+        modifier = modifier.fillMaxWidth().padding(bottom = 8.dp),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -236,7 +239,8 @@ fun RemoteVersionSaveDialog(
             ),
         ),
         content = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            // 滚动由基座 FCLDialog 内容区统一处理，此处不再嵌套 verticalScroll
+            Column {
                 version.urls.forEach { url ->
                     Text(
                         text = url,

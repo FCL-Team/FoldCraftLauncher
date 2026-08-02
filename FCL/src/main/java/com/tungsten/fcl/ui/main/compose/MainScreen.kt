@@ -199,7 +199,7 @@ private fun AnnouncementPanel(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .background(MiuixTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+                .background(MiuixTheme.colorScheme.primary, RoundedCornerShape(5.dp)),
         ) {
             Text(
                 text = stringResource(

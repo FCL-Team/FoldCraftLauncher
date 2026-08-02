@@ -71,6 +71,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
@@ -130,7 +131,8 @@ fun AccountScreen(
             Text(
                 text = stringResource(R.string.account_create),
                 fontSize = 11.sp,
-                color = MiuixTheme.colorScheme.primary,
+                // 对齐 ui_account.xml :17-25 的 use_theme_color（ThemeEngine color2 = onSurface）
+                color = MiuixTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 10.dp),
             )
             Spacer(
@@ -206,13 +208,14 @@ private fun AddAccountEntry(
             painter = painterResource(icon),
             contentDescription = null,
             modifier = Modifier.size(20.dp),
-            tint = MiuixTheme.colorScheme.primary,
+            // 对齐 ui_account.xml 入口行的 use_theme_color（color2 = onSurface）
+            tint = MiuixTheme.colorScheme.onSurface,
         )
         Spacer(Modifier.width(10.dp))
         Text(
             text = label,
             style = MiuixTheme.textStyles.body2,
-            color = MiuixTheme.colorScheme.primary,
+            color = MiuixTheme.colorScheme.onSurface,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -283,7 +286,12 @@ private fun SelectedAccountSkinPreview(state: AccountUiState) {
     val texture = selectedItem?.textureProperty()?.collectAsState()?.value
     val rendererHolder = remember { mutableStateOf<SkinRenderer?>(null) }
 
-    Card(modifier = Modifier.fillMaxWidth().height(240.dp)) {
+    // 容器底色对齐遗留 bg_container_white + auto_tint 的 ltColor 染色（= primaryContainer，
+    // 随 ThemeEngine 主色实时联动；不用 Miuix 默认 surfaceContainer）
+    Card(
+        modifier = Modifier.fillMaxWidth().height(240.dp),
+        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+    ) {
         AndroidView(
             factory = { ctx ->
                 SkinViewer(ctx).also { viewer ->
@@ -334,6 +342,8 @@ private fun AccountRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
+        // 对齐 item_account.xml 的 bg_container_white + auto_tint（ltColor 染色 = primaryContainer）
+        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
     ) {
         Row(
             modifier = Modifier
