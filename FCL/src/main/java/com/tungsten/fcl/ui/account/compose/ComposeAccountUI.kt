@@ -1,0 +1,97 @@
+package com.tungsten.fcl.ui.account.compose
+
+import android.content.Context
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import com.tungsten.fcl.R
+import com.tungsten.fcl.ui.bridge.LegacyBridge
+import com.tungsten.fclcore.task.Task
+import com.tungsten.fcllibrary.component.ui.FCLCommonUI
+import com.tungsten.fcllibrary.component.view.FCLUILayout
+import com.tungsten.fcllibrary.skin.SkinViewer
+
+/**
+ * 账户域 Compose 一级界面壳（小步骤 3.5）：替换 [com.tungsten.fcl.ui.account.AccountUI]
+ * （ui_account.xml + AccountListAdapter + ServerListAdapter 的 Miuix 重构）。
+ *
+ * 设计要点：
+ * - 账户 UI 是一级界面（FCLCommonUI，直接挂在 FCLUILayout 容器，不走 PageManager），
+ *   由 UIManager.accountUI 按 [USE_COMPOSE_ACCOUNT_UI] 开关二选一实例化（对齐 3.3
+ *   ManagePageManager / 3.4 DownloadPageManager 的整体回滚开关模式）；
+ * - contentView 复用迁移期通用容器 page_compose_container.xml，ComposeView 经
+ *   [LegacyBridge.createComposeView] 创建（自动套 FCLTheme + ViewTree 生命周期销毁），
+ *   并安装 [LegacyBridge.LegacyDialogHost] 承接遗留弹窗请求；
+ * - FCLCommonUI 经 AsyncLayoutInflater 异步 inflate 完成后才回调 onCreate（区别于
+ *   FCLCommonPage 构造期同步回调），此处安装 ComposeView 无 construction-order 问题；
+ * - 刷新契约承接：遗留反向调用点（CreateAccountDialog.java:198、
+ *   MiuixCreateAccountDialog.kt:421、旧 AccountListAdapter）均调
+ *   `UIManager.accountUI.refresh().start()`，本类经 [refreshHook] 转发给 Compose 侧
+ *   ViewModel 的列表重建，契约语义与旧 AccountUI.refresh 一致；
+ * - GL 皮肤预览生命周期：页面内嵌的 SkinViewer（GLSurfaceView）随 onStart/onStop/
+ *   onPause/onResume 暂停恢复，避免后台持续渲染耗电。
+ */
+class ComposeAccountUI(
+    context: Context,
+    parent: FCLUILayout,
+) : FCLCommonUI(context, parent, R.layout.page_compose_container) {
+
+    companion object {
+        /**
+         * 阶段三 3.5 账户页迁移开关（对齐 ComposeVersionPages.USE_COMPOSE_VERSION_PAGES /
+         * ComposeDownloadPages.USE_COMPOSE_DOWNLOAD_PAGES 模式）：
+         * true = UIManager.accountUI 实例化 Compose 版；改 false 整体回滚到旧 AccountUI。
+         */
+        const val USE_COMPOSE_ACCOUNT_UI = true
+
+        /** Compose 侧注册的刷新回调（AccountScreen DisposableEffect 维护），承接 refresh() 契约。 */
+        @Volatile
+        internal var refreshHook: (() -> Unit)? = null
+
+        /** 页面内嵌 GL 皮肤预览实例（AccountScreen AndroidView 维护），供生命周期转发。 */
+        @Volatile
+        internal var activeSkinViewer: SkinViewer? = null
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        val container = findViewById<FrameLayout>(R.id.compose_container)
+        val composeView = LegacyBridge.createComposeView(context) {
+            AccountScreen(
+                onEvent = { event -> AccountScreenHost.handle(context, event) },
+            )
+            LegacyBridge.LegacyDialogHost()
+        }
+        container.addView(
+            composeView,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+        )
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // 对齐旧 AccountUI.onStart：每次切入账户页都触发一次列表刷新
+        refreshHook?.invoke()
+        activeSkinViewer?.onResume()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        activeSkinViewer?.onPause()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        activeSkinViewer?.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isShowing) activeSkinViewer?.onResume()
+    }
+
+    override fun refresh(vararg param: Any?): Task<*> {
+        refreshHook?.invoke()
+        return Task.runAsync { }
+    }
+}
