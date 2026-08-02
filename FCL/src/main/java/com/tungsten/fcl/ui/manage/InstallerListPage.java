@@ -18,6 +18,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -178,10 +179,18 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                 });
             }
         });
-        TaskDialog dialog = new TaskDialog(getContext(), TaskCancellationAction.NORMAL);
-        dialog.setTitle(getContext().getString(R.string.install_installer_install_offline));
-        dialog.setExecutor(executor);
-        dialog.show();
+        if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
+            // 3.4 接入点：Miuix 任务弹窗（对应原 TaskCancellationAction.NORMAL，取消动作 = no-op + 内置 dismiss）
+            MiuixTaskDialog dialog = new MiuixTaskDialog(getContext());
+            dialog.setTitle(getContext().getString(R.string.install_installer_install_offline));
+            dialog.setExecutor(executor);
+            dialog.show();
+        } else {
+            TaskDialog dialog = new TaskDialog(getContext(), TaskCancellationAction.NORMAL);
+            dialog.setTitle(getContext().getString(R.string.install_installer_install_offline));
+            dialog.setExecutor(executor);
+            dialog.show();
+        }
         executor.start();
     }
 
@@ -225,10 +234,6 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
 
         Task<?> task = ret.thenComposeAsync(profile.getRepository()::saveAsync).thenComposeAsync(profile.getRepository().refreshVersionsAsync()).withStagesHint(stages);
 
-        TaskDialog pane = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
-
-        pane.setTitle(getContext().getString(R.string.install_change_version));
-
         Schedulers.androidUIThread().execute(() -> {
             TaskExecutor executor = task.executor(new TaskListener() {
                 @Override
@@ -254,8 +259,18 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                     });
                 }
             });
-            pane.setExecutor(executor);
-            pane.show();
+            if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
+                // 3.4 接入点：Miuix 任务弹窗（取消动作 = 内置 dismiss，对应原 AppCompatDialog::dismiss）
+                MiuixTaskDialog pane = new MiuixTaskDialog(getContext());
+                pane.setTitle(getContext().getString(R.string.install_change_version));
+                pane.setExecutor(executor);
+                pane.show();
+            } else {
+                TaskDialog pane = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
+                pane.setTitle(getContext().getString(R.string.install_change_version));
+                pane.setExecutor(executor);
+                pane.show();
+            }
             executor.start();
         });
     }

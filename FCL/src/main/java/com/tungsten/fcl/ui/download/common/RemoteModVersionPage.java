@@ -10,6 +10,7 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.mod.RemoteMod;
@@ -71,16 +72,24 @@ public class RemoteModVersionPage extends FCLTempPage {
             String folder = files.get(0);
             if (folder == null)
                 return;
-            TaskDialog dialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
-            dialog.setTitle(getContext().getString(R.string.message_downloading));
             Schedulers.androidUIThread().execute(() -> {
                 TaskExecutor executor = Task.composeAsync(() -> {
                     FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(file.getFile().getUrl()), new File(folder, file.getFile().getFilename()), file.getFile().getIntegrityCheck());
                     task.setName(file.getName());
                     return task;
                 }).executor();
-                dialog.setExecutor(executor);
-                dialog.show();
+                if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
+                    // 3.4 接入点：Miuix 任务弹窗（取消动作 = 内置 dismiss，对应原 AppCompatDialog::dismiss）
+                    MiuixTaskDialog dialog = new MiuixTaskDialog(getContext());
+                    dialog.setTitle(getContext().getString(R.string.message_downloading));
+                    dialog.setExecutor(executor);
+                    dialog.show();
+                } else {
+                    TaskDialog dialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
+                    dialog.setTitle(getContext().getString(R.string.message_downloading));
+                    dialog.setExecutor(executor);
+                    dialog.show();
+                }
                 executor.start();
             });
         });
