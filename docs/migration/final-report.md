@@ -201,3 +201,16 @@ Compose 页面统一为 `FCLCommonPage(context, id, parent, R.layout.page_compos
 3. **SplashActivity + 2 个 Fragment 迁移**：单独立项（activity-migration §5.1）。
 4. **6.1 清理**：按 §6 顺序执行，每批过门禁。
 5. **构建栈升级**：AGP 9.x + compileSdk 37 后恢复 checkAarMetadata、评估 miuix-blur 引入（minSdk 33 冲突待产品决策）。
+
+---
+
+## 9. fakefx（JavaFX 属性体系）移除总结（2026-08-03，终态）
+
+fakefx 移除已全部完成（执行方案与逐阶段记录：`docs/migration/fakefx-removal-plan.md`）。
+
+- **路径**：阶段 2（fakefx → `fclcore.observable` 自研库平移 + 包名/依赖梳理）→ 阶段 3（Config/Account 等核心域 StateFlow 化）→ 阶段 4a（setting/theme 域 + Config 手写 Serializer）→ 4b（control/data 控件数据域 + FlowList 基座）→ 4c（FCLLibrary 24 组件 + 全部残余域 + FlowBindings 双向绑定基座）→ 4d（删桥接层与库）。
+- **终态删除**（4d）：observable 库整包 94 文件/7,582 行、`util/observable` 9 文件/1,036 行、`util/gson/observable` 21 文件/801 行、FCL 桥接层 3 文件、observable-smoke 2 文件（最后运行 68/68 留证）；`PNGFakeFXUtils` 改名 `PNGUtils`。全步 147 文件 +49/−10,083。
+- **终态基建**（替代物，全部自研、零新增依赖）：`MutableStateFlow` 直用 + `FCLCore/util/flow/`（FlowSubscriptions 订阅适配、FlowBindings 双向绑定、FlowList 快照列表在 FCL 侧、FlowOptionalCache 异步缓存、FlowMappings 映射）。
+- **格式红线实测**：Config 与 Controller 布局 JSON 经孪生 Harness 多轮验证与旧管线**逐字节一致**；4d 另证 5 处 gson 工厂注册冗余（8/8 断言）后摘除。
+- **终态断言**：全仓源码与配置 `fakefx`、`com.tungsten.fclcore.observable` 均为 0 命中；`:FCL:assembleDebug` BUILD SUCCESSFUL。
+- **遗留**：纹理链 Flow 化与全部行为等价性仅编译期 + 静态核验 + 孪生回环兜底，真机验收（§5 清单）发布前补齐，重点补账户纹理加载/换肤刷新一项。

@@ -31,7 +31,6 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
-import com.tungsten.fclcore.util.gson.observable.factories.JavaFxPropertyTypeAdapterFactory;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 
@@ -321,7 +320,6 @@ public class Controller implements Cloneable {
     public synchronized void saveToDisk() {
         Schedulers.io().execute(() -> {
             String str = new GsonBuilder()
-                    .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                     .setPrettyPrinting()
                     .create().toJson(this);
             try {

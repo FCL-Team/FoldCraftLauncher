@@ -26,7 +26,6 @@ import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fclcore.util.gson.observable.factories.JavaFxPropertyTypeAdapterFactory;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
@@ -227,7 +226,6 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
             } else {
                 FileUtils.deleteDirectoryQuietly(new File(FCLPath.CACHE_DIR + "/control"));
                 Controller controller = new GsonBuilder()
-                        .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                         .setPrettyPrinting()
                         .create().fromJson(FileUtils.readText(new File(destPath)), Controller.class);
                 ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).addController(controller);

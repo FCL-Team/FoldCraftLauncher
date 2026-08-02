@@ -13,8 +13,8 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public final class PNGFakeFXUtils {
-    private PNGFakeFXUtils() {
+public final class PNGUtils {
+    private PNGUtils() {
     }
 
     public static ArgbImageWrapper<Bitmap> asArgbImage(Bitmap image) {

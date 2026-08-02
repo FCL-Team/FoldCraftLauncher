@@ -1,7 +1,7 @@
 # fakefx（JavaFX 属性体系）彻底移除执行方案
 
-> 状态：**阶段 4c（FCLLibrary 组件 + 其余残余域 StateFlow 化）已完成**——FCLLibrary 24 文件与 FCL 全部残余使用点（manage/download/controller/account/control、GameMenu、MultiplayerDialog、Terracotta、MainActivity）切换到 StateFlow/FlowList/FlowBindings（新增双向绑定基座），Theme 镜像层与 FXUtils 删除，业务代码 observable 引用清零（剩余仅桥接层/工具类/FCLCore 认证纹理链，见 §十一 4d 评估）。构建通过、冒烟 68/68。记录见 §十一；阶段 4b 记录见 §十；阶段 4a 记录见 §九；阶段 3 记录见 §八；2a/2b 记录见 §六/§七。
-> 分支：`feature/fcl-flow-lib`（阶段 4c；基于含 4a/4b 的 `feature/miuix-migration` 系）。
+> 状态：**全部完成（终态）**——阶段 4d 已删除桥接层与 observable 库整包（94 文件）及全部周边基建，全仓源码与配置 `fakefx`/`com.tungsten.fclcore.observable` 断言清零，构建通过。终态统计与断言证据见 §十二；阶段 4c 记录见 §十一；4b 见 §十；4a 见 §九；3 见 §八；2a/2b 见 §六/§七。
+> 分支：`feature/fcl-flow-final`（阶段 4d；基于含 4a/4b/4c 的 `feature/miuix-migration` 系）。
 > 调研日期：2026-08-02。所有数据均用 Grep/Read 实证，命令可复现。
 > 边界声明：本方案只规划移除 fakefx；控件系统（`control/`）与 WebView 保留；6.1 旧代码清理（见 `final-report.md` §6）按本文 §四 的合并点协同执行。
 
@@ -582,3 +582,66 @@ find FCLCore/src/main/java/com/tungsten/fclcore/fakefx -name "*.java" | xargs wc
 2. StateFlow 合并语义：Terracotta 状态高频跳变理论可合并（消费方 switchUI/通知均幂等；状态按 index 单调推进）；视图属性同值 set 不触发与原 Property 一致。
 3. 订阅生命周期：页面/弹窗/适配器/控件视图均显式 cancel（dismiss/onDestroy/回收/removeListener）；菜单级长寿命订阅挂 GameMenu.onDestroy（含 ViewManager 联动）；FCLLibrary 视图 theme/属性订阅用 WeakReference 自持对齐原弱监听 GC 语义。
 4. 无真机：游戏内控件渲染/触摸、菜单双向同步、主题切换、三态文件树、联机弹窗状态机仅编译期 + 静态核验兜底，真机项发布前补齐。
+
+---
+
+## 十二、阶段 4d 执行记录：删桥接层 + 删 observable 库 + 全仓断言清零（2026-08-03 完成，终态）
+
+分支 `feature/fcl-flow-final`（基于含 4a/4b/4c 的 `feature/miuix-migration` 系）。按 §十一.6 路径执行，observable 库及其全部周边基建本步整体删除，fakefx/observable 在源码与配置中清零。本步无 gradle 改动（coroutines 依赖无需收窄：`kotlinx-coroutines` 已是 Flow 体系主基建，全仓使用面反而扩大）。
+
+### 12.1 删除清单（129 文件 / 9,958 行；另 1 改名）
+
+| 项 | 文件数 | 行数 | 说明 |
+|---|---|---|---|
+| `FCLCore/observable/`（库本体） | 94 | 7,582 | 阶段 2a 移植的 fakefx 全量属性体系，整包删除 |
+| `FCLCore/util/observable/` | 9 | 1,036 | BindingMapping/FlowBridge/ObservableOptionalCache/ObservableCache/ObservableHelper/MappedObservableList/PropertyUtils/SafeStringConverter/ReferenceHolder |
+| `FCLCore/util/gson/observable/` | 21 | 801 | JavaFxPropertyTypeAdapterFactory/TypeHelper、creators×3、properties×13、FxGson/FxGsonBuilder（零消费方，直接删，未改名） |
+| FCL 桥接层 | 3 | 165 | `ui/bridge/FakeFxStateFlow.kt`、`FakeFxCompose.kt`、`util/FlowObservables.java`（均零消费方）；另 `FCLViewModel.kt` 删 2 个 observable 便捷方法（类保留） |
+| `docs/migration/observable-smoke/` | 2 | 374 | 冒烟测试随库退役，最后运行结果留存于 12.4 |
+| 改名 | 1 | — | `util/png/PNGFakeFXUtils` → `PNGUtils`（无 observable 依赖，唯一调用点 `YggdrasilServer` 同步改） |
+
+全量 diff：147 文件，+49 / −10,083（未跟踪新增 `FlowOptionalCache.java`/`FlowMappings.java` 约 210 行未计入）。
+
+### 12.2 认证纹理链 Flow 化（删除 ObservableOptionalCache/FlowBridge/BindingMapping 的前提）
+
+- 新基建 `FCLCore/util/flow/FlowOptionalCache.java`：纯 StateFlow 键值缓存，逐条对齐原 `ObservableCache` 语义——`bindingFlow(key[, quiet])`（非静默缺值/失效即经 executor 异步加载；quiet 仅观察不触发，对齐原 `binding(key, true)`）、`pendings` 并发去重、失败仅回调 exceptionHandler 不改缓存、`put/invalidate/getImmediately` 语义不变、`invalidate` 后 flow 在重取完成前保持旧值可见。结构差异：原共享失效信号全绑定各自重算 → 现按键直推当前缓存值，消费方值序列一致。
+- 新基建 `FCLCore/util/flow/FlowMappings.java`：`map`/`asyncMap`（TexturesLoader 4c 私有 mapFlow/asyncMapFlow 上移为公共基建，弱引用目标 GC 后自动取消订阅、asyncMap 代际守卫语义不变；TexturesLoader 私有实现改为委托）。
+- 调用点 6 处：`YggdrasilService`/`MicrosoftService`（profileRepository 字段与 getter 换型）、`AuthlibInjectorAccountFactory`（put/invalidate 不变）、`YggdrasilAccount`（`profilePropertiesBinding` ObjectBinding → `bindingFlow(characterUUID, true)` + `FlowSubscriptions.subscribe` 失效回调，账户构造不触发网络加载语义保持；`texturesFlow()` 改 `FlowMappings.map`）、`MicrosoftAccount.texturesFlow()` 同上、FCL 侧 `TexturesLoader.skinFlow(service, uuid)` 与 `AccountListItem.canUploadSkin()` 摘除 FlowBridge 直连 `bindingFlow`。
+
+### 12.3 gson 工厂注册摘除（实测冗余后删除）
+
+5 处 `JavaFxPropertyTypeAdapterFactory(true, true)` 注册（Controller.java:324、Controllers.java:98/159、ControllerDownloadPage.java:230、ControllerRepoPage.java:300）全部摘除，序列化目标均为 `Controller`（全图 11 个节点类均有 `@JsonAdapter` 手写 Serializer，4b 后无任何 Property 类型字段，工厂理论上不可达——本步实测确认）。
+
+**孪生 Harness 实测**（/tmp/jsonrt4d，沿用 4b 方法：真实源码 FCL control/data 11 文件 + setting/Controller.java + util/FlowList.java + 真实 observable 库与工厂类 + gson 2.11.0 + kotlinx-coroutines 1.9.0，9 个桩：Color/Context/NonNull/Nullable/R/Constants/FCLPath/FCLKeycodes/Schedulers/Logging/FlowSubscriptions/FCLAlertDialog/Controllers；Constants 用真实值 CONTROLLER_VERSION=21）：
+
+- 内置布局 `00000000.json`：带工厂 vs 不带工厂「反序列化→序列化」产物**逐字节一致**（32,230 字符）；交叉（带工厂反序列化→无工厂序列化及反向）一致；双重回环两世界各自稳定。
+- 合成富图（真实图上 setter 写入 unicode/emoji/引号/反斜杠/换行/空串）：两世界产物逐字节一致，双重回环稳定。
+- **8/8 断言全过**（styles 读盘缺失走既有 catch 空表路径，两世界一致，与 4b 现象相同）。
+
+### 12.4 observable 冒烟最后运行（留证）
+
+删库前按 `observable-smoke/README.md` 复跑：**`== 68 passed, 0 failed ==`**（2026-08-03，与 2a/4a/4b/4c 历次一致）。冒烟随库删除，本行为最终记录。
+
+### 12.5 终态断言（全仓 grep，源码与配置）
+
+- `com.tungsten.fclcore.observable`：**0 命中**（java/kt/kts/xml/toml/properties，全模块 + 根构建脚本）。
+- `util.observable` / `gson.observable`：**0 命中**。
+- `fakefx`（小写，源码与配置）：**0 命中**（4 处注释残留已清理：FlowSubscriptions.kt、FlowList.java、WeakListenerHolder.java、Config.java）。
+- 类名残留：`FakeFx*`/`FxGson` 0 命中；`JavaFxPropertyTypeAdapterFactory` 仅 Config.java 两处历史注释，已改写为"原属性类型适配工厂"后 0 命中；`PNGFakeFXUtils` 改名 `PNGUtils` 后 0 命中。
+- 例外声明：`docs/migration/*.md`（含本文件文件名）为历史记录，不在断言范围。
+
+### 12.6 门禁验证
+
+- `:FCL:assembleDebug`：**BUILD SUCCESSFUL**（见 12.7 构建记录）。
+- 红线：FCLauncher/Terracotta/LWJGL-Pojav/ZipFileSystem/NG-GL4ES 零改动；gradle 配置零改动；临时文件全部在 /tmp（jsonrt4d、obs-classes/obs-test、numstat.txt），仓库无测试残留。
+
+### 12.7 构建记录
+
+- `GRADLE_USER_HOME=E:/gradle-home ./gradlew :FCL:assembleDebug --console=plain`：**BUILD SUCCESSFUL in 1m 34s**（155 actionable tasks：22 executed / 133 up-to-date；仅存量 warning，无新增）。
+
+### 12.8 遗留问题
+
+1. 无真机：纹理链 Flow 化（账户头像/皮肤加载、canUploadSkin、上传后 invalidate 刷新）仅编译期 + 语义逐条对齐核验，真机项发布前补齐（重点：外置登录账户纹理加载与换肤后刷新时机）。
+2. `FlowOptionalCache` 的 flows 表按账户 UUID 驻留（量级 = 账户数，与原 cache 表同阶）；订阅经共享作用域持有，账户级长寿命语义与原"持有 binding 防 GC"等价。
+3. StateFlow 合并语义：纹理链消费方（头像/皮肤/对话框）均幂等，高频失效重取合并无行为差异。
+4. `git mv` 改了 PNGFakeFXUtils→PNGUtils 的暂存区状态（rename 已入 index），其余改动均未暂存；全仓未做任何 commit。

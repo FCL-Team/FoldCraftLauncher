@@ -50,7 +50,6 @@ import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccount;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
-import com.tungsten.fclcore.util.observable.FlowBridge;
 import com.tungsten.fclcore.util.skin.InvalidSkinException;
 import com.tungsten.fclcore.util.skin.NormalizedSkin;
 import com.tungsten.fcllibrary.browser.FileBrowser;
@@ -132,8 +131,8 @@ public class AccountListItem {
         if (account instanceof YggdrasilAccount) {
             if (account instanceof AuthlibInjectorAccount) {
                 AuthlibInjectorAccount aiAccount = (AuthlibInjectorAccount) account;
-                StateFlow<Optional<CompleteGameProfile>> profile = FlowBridge.asStateFlow(
-                        aiAccount.getYggdrasilService().getProfileRepository().binding(aiAccount.getUUID()));
+                StateFlow<Optional<CompleteGameProfile>> profile =
+                        aiAccount.getYggdrasilService().getProfileRepository().bindingFlow(aiAccount.getUUID());
                 MutableStateFlow<Boolean> result = StateFlowKt.MutableStateFlow(canUploadSkin(profile.getValue()));
                 FlowSubscriptions.subscribe(profile, p -> result.setValue(canUploadSkin(p)));
                 return result;

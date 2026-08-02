@@ -33,9 +33,8 @@ import com.tungsten.fclcore.auth.ClassicAccount;
 import com.tungsten.fclcore.auth.CredentialExpiredException;
 import com.tungsten.fclcore.auth.NoCharacterException;
 import com.tungsten.fclcore.auth.ServerResponseMalformedException;
-import com.tungsten.fclcore.observable.binding.ObjectBinding;
-import com.tungsten.fclcore.util.observable.BindingMapping;
-import com.tungsten.fclcore.util.observable.FlowBridge;
+import com.tungsten.fclcore.util.flow.FlowMappings;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 
 import kotlinx.coroutines.flow.StateFlow;
@@ -85,13 +84,13 @@ public abstract class YggdrasilAccount extends ClassicAccount {
         addProfilePropertiesListener();
     }
 
-    private ObjectBinding<Optional<CompleteGameProfile>> profilePropertiesBinding;
+    private FlowSubscriptions.Subscription profilePropertiesSubscription;
     private void addProfilePropertiesListener() {
-        // binding() is thread-safe
-        // hold the binding so that it won't be garbage-collected
-        profilePropertiesBinding = service.getProfileRepository().binding(characterUUID, true);
-        // and it's safe to add a listener to an ObjectBinding which does not have any listener attached before (maybe tricky)
-        profilePropertiesBinding.addListener((a, b, c) -> this.invalidate());
+        // bindingFlow() is thread-safe；quiet=true：仅观察缓存变化，不触发加载
+        // 持有订阅句柄（等价于原"持有 binding 防 GC"），值变化时使账户失效
+        profilePropertiesSubscription = FlowSubscriptions.subscribe(
+                service.getProfileRepository().bindingFlow(characterUUID, true),
+                profile -> this.invalidate());
     }
 
     @Override
@@ -206,15 +205,15 @@ public abstract class YggdrasilAccount extends ClassicAccount {
     @Override
     public synchronized StateFlow<Optional<Map<TextureType, Texture>>> texturesFlow() {
         if (textures == null) {
-            textures = FlowBridge.asStateFlow(BindingMapping.of(service.getProfileRepository().binding(getUUID()))
-                    .map(profile -> profile.flatMap(it -> {
+            textures = FlowMappings.map(service.getProfileRepository().bindingFlow(getUUID()),
+                    profile -> profile.flatMap(it -> {
                         try {
                             return YggdrasilService.getTextures(it);
                         } catch (ServerResponseMalformedException e) {
                             LOG.log(Level.WARNING, "Failed to parse texture payload", e);
                             return Optional.empty();
                         }
-                    })));
+                    }));
         }
         return textures;
     }

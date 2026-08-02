@@ -34,7 +34,7 @@ import com.tungsten.fclcore.auth.yggdrasil.CompleteGameProfile;
 import com.tungsten.fclcore.auth.yggdrasil.RemoteAuthenticationException;
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
-import com.tungsten.fclcore.util.observable.ObservableOptionalCache;
+import com.tungsten.fclcore.util.flow.FlowOptionalCache;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.TolerableValidationException;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
@@ -62,17 +62,17 @@ public class MicrosoftService {
 
     private final OAuth.Callback callback;
 
-    private final ObservableOptionalCache<UUID, CompleteGameProfile, AuthenticationException> profileRepository;
+    private final FlowOptionalCache<UUID, CompleteGameProfile, AuthenticationException> profileRepository;
 
     public MicrosoftService(OAuth.Callback callback) {
         this.callback = requireNonNull(callback);
-        this.profileRepository = new ObservableOptionalCache<>(uuid -> {
+        this.profileRepository = new FlowOptionalCache<>(uuid -> {
             LOG.info("Fetching properties of " + uuid);
             return getCompleteGameProfile(uuid);
         }, (uuid, e) -> LOG.log(Level.WARNING, "Failed to fetch properties of " + uuid, e), POOL);
     }
 
-    public ObservableOptionalCache<UUID, CompleteGameProfile, AuthenticationException> getProfileRepository() {
+    public FlowOptionalCache<UUID, CompleteGameProfile, AuthenticationException> getProfileRepository() {
         return profileRepository;
     }
 

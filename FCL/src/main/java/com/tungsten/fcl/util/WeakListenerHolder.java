@@ -24,7 +24,7 @@ import java.util.List;
  * 弱注册（EventBus registerWeak 等）的强引用兜底容器：只要本持有者存活，
  * 被弱引用包装的目标就不会被 GC 提前回收。
  *
- * <p>阶段 4c：observable 体系的 WeakXxxListener 工厂方法已随 fakefx 移除删除，
+ * <p>阶段 4c：原属性体系的 WeakXxxListener 工厂方法已删除，
  * 本类仅保留通用的 add/remove 引用管理。</p>
  */
 public class WeakListenerHolder {

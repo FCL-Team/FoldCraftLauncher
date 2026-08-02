@@ -45,13 +45,11 @@ import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccount;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fclcore.util.flow.FlowSubscriptions;
-import com.tungsten.fclcore.util.observable.FlowBridge;
+import com.tungsten.fclcore.util.flow.FlowMappings;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,12 +60,9 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.logging.Level;
 
-import kotlinx.coroutines.flow.MutableStateFlow;
 import kotlinx.coroutines.flow.StateFlow;
 import kotlinx.coroutines.flow.StateFlowKt;
 
@@ -227,68 +222,22 @@ public final class TexturesLoader {
         return DEFAULT_SKINS.get(model);
     }
 
-    // StateFlow 版 BindingMapping：同步 map 与异步 asyncMap（对齐
-    // com.tungsten.fclcore.util.observable.BindingMapping 语义——
-    // 源值未变化不重复计算（StateFlow 去重），asyncMap 仅最新一次计算结果生效，
-    // 计算回调仍在发射/完成线程同步执行。
-    // 内部订阅对目标仅持弱引用：目标被 GC 后下一次发射时自动取消订阅，
-    // 对齐原 ObjectBinding 弱监听被 GC 摘除的生命周期语义。
+    // mapFlow/asyncMapFlow 已上移为 FCLCore 公共基建
+    // com.tungsten.fclcore.util.flow.FlowMappings（语义对齐原 BindingMapping：
+    // 源值去重、asyncMap 仅最新代际生效、弱引用目标 GC 后自动取消订阅）。
 
     private static <S, T> StateFlow<T> mapFlow(StateFlow<S> source, Function<? super S, ? extends T> mapper) {
-        MutableStateFlow<T> target = StateFlowKt.MutableStateFlow(mapper.apply(source.getValue()));
-        WeakReference<MutableStateFlow<T>> ref = new WeakReference<>(target);
-        AtomicReference<FlowSubscriptions.Subscription> holder = new AtomicReference<>();
-        holder.set(FlowSubscriptions.subscribe(source, value -> {
-            MutableStateFlow<T> t = ref.get();
-            if (t == null) {
-                FlowSubscriptions.Subscription subscription = holder.get();
-                if (subscription != null) {
-                    subscription.cancel();
-                }
-                return;
-            }
-            t.setValue(mapper.apply(value));
-        }));
-        return target;
+        return FlowMappings.map(source, mapper);
     }
 
     private static <S, T> StateFlow<T> asyncMapFlow(StateFlow<S> source, Function<? super S, ? extends CompletableFuture<? extends T>> mapper, T initial) {
-        MutableStateFlow<T> target = StateFlowKt.MutableStateFlow(initial);
-        WeakReference<MutableStateFlow<T>> ref = new WeakReference<>(target);
-        AtomicLong generation = new AtomicLong();
-        AtomicReference<FlowSubscriptions.Subscription> holder = new AtomicReference<>();
-        holder.set(FlowSubscriptions.subscribeWithCurrent(source, value -> {
-            MutableStateFlow<T> t = ref.get();
-            if (t == null) {
-                FlowSubscriptions.Subscription subscription = holder.get();
-                if (subscription != null) {
-                    subscription.cancel();
-                }
-                return;
-            }
-            long gen = generation.incrementAndGet();
-            mapper.apply(value).handle((result, e) -> {
-                if (e == null) {
-                    if (generation.get() == gen) {
-                        MutableStateFlow<T> current = ref.get();
-                        if (current != null) {
-                            current.setValue(result);
-                        }
-                    }
-                } else {
-                    LOG.log(Level.WARNING, "Failed to compute texture value", e);
-                }
-                return null;
-            });
-        }));
-        return target;
+        return FlowMappings.asyncMap(source, mapper, initial);
     }
 
     public static StateFlow<LoadedTexture> skinFlow(YggdrasilService service, UUID uuid) {
         LoadedTexture uuidFallback = getDefaultSkin(TextureModel.detectUUID(uuid));
-        // FCLCore 的 ObservableOptionalCache 尚未 Flow 化，经 FlowBridge 镜像为 StateFlow
         StateFlow<Optional<Texture>> skinTexture = mapFlow(
-                FlowBridge.asStateFlow(service.getProfileRepository().binding(uuid)),
+                service.getProfileRepository().bindingFlow(uuid),
                 profile -> profile
                         .flatMap(it -> {
                             try {
