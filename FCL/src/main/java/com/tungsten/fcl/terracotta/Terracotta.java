@@ -14,10 +14,8 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.terracotta.profile.ProfileKind;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.property.ReadOnlyObjectProperty;
-import com.tungsten.fclcore.observable.property.ReadOnlyObjectWrapper;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.InvocationDispatcher;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.Logging;
@@ -34,7 +32,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.Consumer;
 import java.util.logging.Level;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class Terracotta {
 
@@ -46,11 +49,12 @@ public class Terracotta {
     private static boolean initialized = false;
     private static TerracottaAndroidAPI.Metadata metadata = null;
     private static TerracottaMode mode = null;
-    private static InvalidationListener notificationListener = null;
+    private static Consumer<TerracottaState.Ready> notificationListener = null;
+    private static FlowSubscriptions.Subscription notificationSubscription = null;
 
     private static final AtomicReference<TerracottaState.Ready> STATE_V = new AtomicReference<>(null);
-    private static final ReadOnlyObjectWrapper<TerracottaState.Ready> STATE = new ReadOnlyObjectWrapper<>(STATE_V.get());
-    private static final InvocationDispatcher<TerracottaState.Ready> STATE_D = InvocationDispatcher.runOn(Schedulers.androidUIThread(), STATE::set);
+    private static final MutableStateFlow<TerracottaState.Ready> STATE = StateFlowKt.MutableStateFlow(STATE_V.get());
+    private static final InvocationDispatcher<TerracottaState.Ready> STATE_D = InvocationDispatcher.runOn(Schedulers.androidUIThread(), STATE::setValue);
 
     private static final int TERRACOTTA_USER_NOTICE_VERSION = 1;
 
@@ -59,8 +63,8 @@ public class Terracotta {
         return mode;
     }
 
-    public static ReadOnlyObjectProperty<TerracottaState.Ready> stateProperty() {
-        return STATE.getReadOnlyProperty();
+    public static StateFlow<TerracottaState.Ready> stateFlow() {
+        return STATE;
     }
 
     public static int getUserNoticeVersion() {
@@ -71,8 +75,8 @@ public class Terracotta {
         if (initialized)
             return;
 
-        notificationListener = observable -> {
-            TerracottaState.Ready state = stateProperty().get();
+        notificationListener = newState -> {
+            TerracottaState.Ready state = stateFlow().getValue();
             if (state != null && !(state instanceof TerracottaState.Waiting)) {
                 String stateText = AndroidUtils.getLocalizedText(context, "terracotta_status_" + state);
                 updateVpnNotificationState(context, stateText);
@@ -86,7 +90,7 @@ public class Terracotta {
 
         Lang.thread(() -> {
             while (true) {
-                TerracottaState.Ready state = STATE.get();
+                TerracottaState.Ready state = STATE.getValue();
                 int index = state == null ? -1 : state.index;
                 String stateJson = TerracottaAndroidAPI.getState();
                 TerracottaState.Ready object = JsonUtils.fromNonNullJson(stateJson, new TypeToken<TerracottaState.Ready>() {
@@ -115,7 +119,7 @@ public class Terracotta {
     public static void setScanning(@Nullable String room, @Nullable String player, @Nullable List<String> extraNodes) throws Exception {
         if (!initialized)
             throw new Exception("initialize Terracotta first!");
-        if (!(stateProperty().get() instanceof TerracottaState.Waiting))
+        if (!(stateFlow().getValue() instanceof TerracottaState.Waiting))
             throw new Exception("reset state to waiting first!");
 
         mode = TerracottaMode.HOST;
@@ -125,7 +129,7 @@ public class Terracotta {
     public static boolean setGuesting(String room, @Nullable String player, @Nullable List<String> extraNodes) throws Exception {
         if (!initialized)
             throw new Exception("initialize Terracotta first!");
-        if (!(stateProperty().get() instanceof TerracottaState.Waiting))
+        if (!(stateFlow().getValue() instanceof TerracottaState.Waiting))
             throw new Exception("reset state to waiting first!");
 
         mode = TerracottaMode.GUEST;
@@ -186,11 +190,14 @@ public class Terracotta {
     }
 
     private static void startNotificationListener() {
-        stateProperty().addListener(notificationListener);
+        notificationSubscription = FlowSubscriptions.subscribe(STATE, notificationListener);
     }
 
     private static void stopNotificationListener() {
-        stateProperty().removeListener(notificationListener);
+        if (notificationSubscription != null) {
+            notificationSubscription.cancel();
+            notificationSubscription = null;
+        }
     }
 
     private static void startTerracottaVpn(FCLActivity context) {

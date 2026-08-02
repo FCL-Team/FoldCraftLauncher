@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.account;
 
-import static com.tungsten.fclcore.observable.binding.Bindings.createBooleanBinding;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +32,6 @@ import com.tungsten.fcl.ui.compose.dialog.MiuixOAuthAccountLoginDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixOfflineAccountSkinDialog;
 import com.tungsten.fcl.ui.main.compose.ComposeMainUI;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.FlowObservables;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.Account;
@@ -49,16 +47,10 @@ import com.tungsten.fclcore.auth.offline.OfflineAccount;
 import com.tungsten.fclcore.auth.yggdrasil.CompleteGameProfile;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccount;
-import com.tungsten.fclcore.observable.binding.Bindings;
-import com.tungsten.fclcore.observable.binding.ObjectBinding;
-import com.tungsten.fclcore.observable.binding.StringBinding;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleStringProperty;
-import com.tungsten.fclcore.observable.property.StringProperty;
-import com.tungsten.fclcore.observable.value.ObservableBooleanValue;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
+import com.tungsten.fclcore.util.observable.FlowBridge;
 import com.tungsten.fclcore.util.skin.InvalidSkinException;
 import com.tungsten.fclcore.util.skin.NormalizedSkin;
 import com.tungsten.fcllibrary.browser.FileBrowser;
@@ -68,14 +60,20 @@ import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class AccountListItem {
 
     private final Context context;
     private final Account account;
-    private final StringProperty title = new SimpleStringProperty();
-    private final StringProperty subtitle = new SimpleStringProperty();
-    private final ObjectProperty<Drawable> image = new SimpleObjectProperty<>();
-    private final ObjectProperty<Bitmap[]> texture = new SimpleObjectProperty<>();
+    private final MutableStateFlow<String> title = StateFlowKt.MutableStateFlow(null);
+    private final MutableStateFlow<String> subtitle = StateFlowKt.MutableStateFlow(null);
+    private final MutableStateFlow<Drawable> image = StateFlowKt.MutableStateFlow(null);
+    private final MutableStateFlow<Bitmap[]> texture = StateFlowKt.MutableStateFlow(null);
+    private FlowSubscriptions.Subscription imageSubscription;
+    private FlowSubscriptions.Subscription textureSubscription;
 
     public AccountListItem(Context context, Account account) {
         this.context = context;
@@ -84,24 +82,29 @@ public class AccountListItem {
         String loginTypeName = Accounts.getLocalizedLoginTypeName(context, Accounts.getAccountFactory(account));
         if (account instanceof AuthlibInjectorAccount) {
             AuthlibInjectorServer server = ((AuthlibInjectorAccount) account).getServer();
-            subtitle.bind(Bindings.concat(
-                    loginTypeName, ", ", context.getString(R.string.account_injector_server), ": ",
-                    Bindings.createStringBinding(server::getName, FlowObservables.toObservable(server.revisionFlow()))));
+            FlowSubscriptions.subscribeWithCurrent(server.revisionFlow(), v -> subtitle.setValue(
+                    loginTypeName + ", " + context.getString(R.string.account_injector_server) + ": " + server.getName()));
         } else {
-            subtitle.set(loginTypeName);
+            subtitle.setValue(loginTypeName);
         }
 
-        StringBinding characterName = Bindings.createStringBinding(account::getCharacter, FlowObservables.toObservable(account.revisionFlow()));
-        if (account instanceof OfflineAccount) {
-            title.bind(characterName);
+        if (account instanceof OfflineAccount || account.getUsername().isEmpty()) {
+            FlowSubscriptions.subscribeWithCurrent(account.revisionFlow(), v -> title.setValue(account.getCharacter()));
         } else {
-            title.bind(
-                    account.getUsername().isEmpty() ? characterName :
-                            Bindings.concat(account.getUsername(), " - ", characterName));
+            String prefix = account.getUsername() + " - ";
+            FlowSubscriptions.subscribeWithCurrent(account.revisionFlow(), v -> title.setValue(prefix + account.getCharacter()));
         }
 
-        image.bind(TexturesLoader.avatarBinding(account, ConvertUtils.dip2px(context, 30f)));
-        texture.bind(TexturesLoader.textureBinding(account));
+        bindSkinFlows();
+    }
+
+    private void bindSkinFlows() {
+        imageSubscription = FlowSubscriptions.subscribeWithCurrent(
+                TexturesLoader.avatarFlow(account, ConvertUtils.dip2px(context, 30f)),
+                image::setValue);
+        textureSubscription = FlowSubscriptions.subscribeWithCurrent(
+                TexturesLoader.textureFlow(account),
+                texture::setValue);
     }
 
     public Task<?> refreshAsync() {
@@ -125,25 +128,30 @@ public class AccountListItem {
         });
     }
 
-    public ObservableBooleanValue canUploadSkin() {
+    public StateFlow<Boolean> canUploadSkin() {
         if (account instanceof YggdrasilAccount) {
             if (account instanceof AuthlibInjectorAccount) {
                 AuthlibInjectorAccount aiAccount = (AuthlibInjectorAccount) account;
-                ObjectBinding<Optional<CompleteGameProfile>> profile = aiAccount.getYggdrasilService().getProfileRepository().binding(aiAccount.getUUID());
-                return createBooleanBinding(() -> {
-                    Set<TextureType> uploadableTextures = profile.get()
-                            .map(AuthlibInjectorAccount::getUploadableTextures)
-                            .orElse(emptySet());
-                    return uploadableTextures.contains(TextureType.SKIN);
-                }, profile);
+                StateFlow<Optional<CompleteGameProfile>> profile = FlowBridge.asStateFlow(
+                        aiAccount.getYggdrasilService().getProfileRepository().binding(aiAccount.getUUID()));
+                MutableStateFlow<Boolean> result = StateFlowKt.MutableStateFlow(canUploadSkin(profile.getValue()));
+                FlowSubscriptions.subscribe(profile, p -> result.setValue(canUploadSkin(p)));
+                return result;
             } else {
-                return createBooleanBinding(() -> true);
+                return StateFlowKt.MutableStateFlow(true);
             }
         } else if (account instanceof OfflineAccount || account instanceof MicrosoftAccount) {
-            return createBooleanBinding(() -> true);
+            return StateFlowKt.MutableStateFlow(true);
         } else {
-            return createBooleanBinding(() -> false);
+            return StateFlowKt.MutableStateFlow(false);
         }
+    }
+
+    private static boolean canUploadSkin(Optional<CompleteGameProfile> profile) {
+        Set<TextureType> uploadableTextures = profile
+                .map(AuthlibInjectorAccount::getUploadableTextures)
+                .orElse(emptySet());
+        return uploadableTextures.contains(TextureType.SKIN);
     }
 
     /**
@@ -228,10 +236,10 @@ public class AccountListItem {
     }
 
     public void refreshSkinBinding() {
-        image.unbind();
-        texture.unbind();
-        image.bind(TexturesLoader.avatarBinding(account, ConvertUtils.dip2px(context, 30f)));
-        texture.bind(TexturesLoader.textureBinding(account));
+        // 重绑语义保留：cancel 旧订阅 + 新订阅（对齐原 unbind/bind）
+        if (imageSubscription != null) imageSubscription.cancel();
+        if (textureSubscription != null) textureSubscription.cancel();
+        bindSkinFlows();
         MainActivity.getInstance().refreshAvatar(account);
         // 6.1 批 3：mainUI 固定为 ComposeMainUI（旧 MainUI 已删除），refreshSkin 契约不变
         FCLCommonUI mainUI = UIManager.getInstance().getMainUI();
@@ -280,50 +288,50 @@ public class AccountListItem {
     }
 
     public String getTitle() {
-        return title.get();
+        return title.getValue();
     }
 
     public void setTitle(String title) {
-        this.title.set(title);
+        this.title.setValue(title);
     }
 
-    public StringProperty titleProperty() {
+    public MutableStateFlow<String> titleFlow() {
         return title;
     }
 
     public String getSubtitle() {
-        return subtitle.get();
+        return subtitle.getValue();
     }
 
     public void setSubtitle(String subtitle) {
-        this.subtitle.set(subtitle);
+        this.subtitle.setValue(subtitle);
     }
 
-    public StringProperty subtitleProperty() {
+    public MutableStateFlow<String> subtitleFlow() {
         return subtitle;
     }
 
     public Drawable getImage() {
-        return image.get();
+        return image.getValue();
     }
 
     public void setImage(Drawable image) {
-        this.image.set(image);
+        this.image.setValue(image);
     }
 
-    public ObjectProperty<Drawable> imageProperty() {
+    public MutableStateFlow<Drawable> imageFlow() {
         return image;
     }
 
     public Bitmap[] getTexture() {
-        return texture.get();
+        return texture.getValue();
     }
 
     public void setTexture(Bitmap[] texture) {
-        this.texture.set(texture);
+        this.texture.setValue(texture);
     }
 
-    public ObjectProperty<Bitmap[]> textureProperty() {
+    public MutableStateFlow<Bitmap[]> textureFlow() {
         return texture;
     }
 }

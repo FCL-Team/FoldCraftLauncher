@@ -19,15 +19,15 @@ import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogCard
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclcore.auth.AuthInfo
 import com.tungsten.fclcore.auth.OAuthAccount
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging.LOG
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
+import kotlinx.coroutines.flow.MutableStateFlow
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -54,7 +54,8 @@ class MiuixOAuthAccountLoginDialog(
     private val failed: Runnable,
 ) : FCLComposeDialog(context, cancelable = false) {
 
-    private val deviceCode = SimpleObjectProperty<OAuthServer.GrantDeviceCodeEvent?>()
+    private val deviceCode = MutableStateFlow<OAuthServer.GrantDeviceCodeEvent?>(null)
+    private val deviceCodeSubscription: FlowSubscriptions.Subscription
     private val holder = WeakListenerHolder()
     private var useExternalBrowser = false
 
@@ -62,14 +63,15 @@ class MiuixOAuthAccountLoginDialog(
     private val cancelEnabledState = mutableStateOf(true)
 
     init {
-        FXUtils.onChangeAndOperate(deviceCode) { dc ->
+        deviceCodeSubscription = FlowSubscriptions.subscribeWithCurrent(deviceCode) { dc ->
             Schedulers.androidUIThread().execute {
                 if (dc != null) {
                     AndroidUtils.copyText(context, dc.userCode)
                 }
             }
         }
-        holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak { deviceCode.set(it) })
+        setOnDismissListener { deviceCodeSubscription.cancel() }
+        holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak { deviceCode.value = it })
         holder.add(Accounts.OAUTH_CALLBACK.onOpenBrowser.registerWeak { event ->
             if (useExternalBrowser) {
                 AndroidUtils.openLink(context, event.url)

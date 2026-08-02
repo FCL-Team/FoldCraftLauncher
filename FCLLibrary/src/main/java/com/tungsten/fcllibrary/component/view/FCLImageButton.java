@@ -11,82 +11,54 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.IntegerPropertyBase;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
+import java.lang.ref.WeakReference;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class FCLImageButton extends AppCompatImageButton {
 
-    private ObjectProperty<Drawable> image;
+    private MutableStateFlow<Drawable> imageFlow;
     private boolean autoTint;
     private boolean noPadding;
     private boolean useThemeColor;
-    private BooleanProperty visibilityProperty;
-    private BooleanProperty disableProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
+    private MutableStateFlow<Boolean> disableFlow;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
+    private void applyTheme() {
+        refreshStyle();
+    }
 
-        @Override
-        protected void invalidated() {
-            get();
-            refreshStyle();
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
-
-    private final IntegerProperty theme2 = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            refreshStyle();
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2";
-        }
-    };
-
-    private final IntegerProperty theme2Dark = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            refreshStyle();
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2Dark";
-        }
-    };
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLImageButton> ref1 = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLImageButton self1 = ref1.get();
+            if (self1 != null) {
+                self1.applyTheme();
+            }
+        });
+        WeakReference<FCLImageButton> ref2 = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().color2Flow(), c -> {
+            FCLImageButton self2 = ref2.get();
+            if (self2 != null) {
+                self2.applyTheme();
+            }
+        });
+        WeakReference<FCLImageButton> ref3 = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().color2DarkFlow(), c -> {
+            FCLImageButton self3 = ref3.get();
+            if (self3 != null) {
+                self3.applyTheme();
+            }
+        });
+    }
 
     public void refreshStyle() {
         int[][] state = {
@@ -128,9 +100,7 @@ public class FCLImageButton extends AppCompatImageButton {
     public FCLImageButton(@NonNull Context context) {
         super(context);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        bindTheme();
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -141,9 +111,7 @@ public class FCLImageButton extends AppCompatImageButton {
         useThemeColor = typedArray.getBoolean(R.styleable.FCLImageButton_use_theme_color, false);
         typedArray.recycle();
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        bindTheme();
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -154,9 +122,7 @@ public class FCLImageButton extends AppCompatImageButton {
         useThemeColor = typedArray.getBoolean(R.styleable.FCLImageButton_use_theme_color, false);
         typedArray.recycle();
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        bindTheme();
     }
 
     public void setAutoTint(boolean autoTint) {
@@ -187,98 +153,89 @@ public class FCLImageButton extends AppCompatImageButton {
     }
 
     public final void setImage(Drawable drawable) {
-        imageProperty().set(drawable);
+        imageFlow().setValue(drawable);
     }
 
     public final Drawable getImage() {
-        return image == null ? null : image.get();
+        return imageFlow == null ? null : imageFlow.getValue();
     }
 
-    public final ObjectProperty<Drawable> imageProperty() {
-        if (image == null) {
-            image = new ObjectPropertyBase<Drawable>() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Drawable> imageFlow() {
+        if (imageFlow == null) {
+            imageFlow = StateFlowKt.MutableStateFlow(null);
+            WeakReference<FCLImageButton> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(imageFlow, v -> {
+                FCLImageButton self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        Drawable drawable = get();
-                        setImageDrawable(drawable);
+                        FCLImageButton s = ref.get();
+                        if (s != null) {
+                            Drawable drawable = s.imageFlow.getValue();
+                            s.setImageDrawable(drawable);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "image";
-                }
-            };
+            });
         }
 
-        return this.image;
+        return this.imageFlow;
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLImageButton> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLImageButton self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLImageButton s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 
     public final void setDisableValue(boolean disableValue) {
-        disableProperty().set(disableValue);
+        disableFlow().setValue(disableValue);
     }
 
     public final boolean getDisableValue() {
-        return disableProperty == null || disableProperty.get();
+        return disableFlow == null || disableFlow.getValue();
     }
 
-    public final BooleanProperty disableProperty() {
-        if (disableProperty == null) {
-            disableProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> disableFlow() {
+        if (disableFlow == null) {
+            disableFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLImageButton> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(disableFlow, v -> {
+                FCLImageButton self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean disable = get();
-                        setEnabled(!disable);
+                        FCLImageButton s = ref.get();
+                        if (s != null) {
+                            boolean disable = s.disableFlow.getValue();
+                            s.setEnabled(!disable);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "disable";
-                }
-            };
+            });
         }
 
-        return disableProperty;
+        return disableFlow;
     }
 }

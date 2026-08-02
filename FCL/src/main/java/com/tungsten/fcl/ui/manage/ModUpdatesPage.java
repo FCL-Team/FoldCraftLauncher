@@ -10,13 +10,8 @@ import android.widget.ListView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.util.FlowList;
 import com.tungsten.fcl.util.TaskCancellationAction;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleStringProperty;
-import com.tungsten.fclcore.observable.property.StringProperty;
-import com.tungsten.fclcore.observable.collections.FXCollections;
-import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.RemoteMod;
@@ -43,11 +38,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener {
 
     private final ModListPage modListPage;
     private final ModManager modManager;
-    private final ObservableList<ModUpdateObject> objects;
+    private final FlowList<ModUpdateObject> objects;
 
     private ListView listView;
     private FCLButton export;
@@ -59,7 +57,7 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
         super(context, id, parent, resId);
         this.modListPage = modListPage;
         this.modManager = modManager;
-        this.objects = FXCollections.observableList(list.stream().map(it -> new ModUpdateObject(getContext(), it)).collect(Collectors.toList()));
+        this.objects = new FlowList<>(list.stream().map(it -> new ModUpdateObject(getContext(), it)).collect(Collectors.toList()));
     }
 
     @Override
@@ -113,8 +111,8 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
     private void updateMods(boolean keepOldVersion) {
         ModUpdateTask task = new ModUpdateTask(
                 modManager,
-                objects.stream()
-                        .filter(o -> o.enabled.get())
+                objects.get().stream()
+                        .filter(o -> o.enabled.getValue())
                         .map(object -> pair(object.data.getLocalMod(), object.data.getCandidates().get(0)))
                         .collect(Collectors.toList()), keepOldVersion);
         TaskDialog taskDialog = new TaskDialog(getContext(), TaskCancellationAction.NORMAL);
@@ -160,10 +158,10 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
             csvTable.set(3, 0, "Update Source");
 
             for (int i = 0; i < objects.size(); i++) {
-                csvTable.set(0, i + 1, objects.get(i).fileName.get());
-                csvTable.set(1, i + 1, objects.get(i).currentVersion.get());
-                csvTable.set(2, i + 1, objects.get(i).targetVersion.get());
-                csvTable.set(3, i + 1, objects.get(i).source.get());
+                csvTable.set(0, i + 1, objects.get().get(i).fileName.getValue());
+                csvTable.set(1, i + 1, objects.get().get(i).currentVersion.getValue());
+                csvTable.set(2, i + 1, objects.get().get(i).targetVersion.getValue());
+                csvTable.set(3, i + 1, objects.get().get(i).source.getValue());
             }
 
             csvTable.write(Files.newOutputStream(path));
@@ -190,86 +188,86 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
 
     public static final class ModUpdateObject {
         final LocalModFile.ModUpdate data;
-        final BooleanProperty enabled = new SimpleBooleanProperty();
-        final StringProperty fileName = new SimpleStringProperty();
-        final StringProperty currentVersion = new SimpleStringProperty();
-        final StringProperty targetVersion = new SimpleStringProperty();
-        final StringProperty source = new SimpleStringProperty();
+        final MutableStateFlow<Boolean> enabled = StateFlowKt.MutableStateFlow(false);
+        final MutableStateFlow<String> fileName = StateFlowKt.MutableStateFlow(null);
+        final MutableStateFlow<String> currentVersion = StateFlowKt.MutableStateFlow(null);
+        final MutableStateFlow<String> targetVersion = StateFlowKt.MutableStateFlow(null);
+        final MutableStateFlow<String> source = StateFlowKt.MutableStateFlow(null);
 
         public ModUpdateObject(Context context, LocalModFile.ModUpdate data) {
             this.data = data;
 
-            enabled.set(!data.getLocalMod().getModManager().isDisabled(data.getLocalMod().getFile()));
-            fileName.set(data.getLocalMod().getFileName());
-            currentVersion.set(data.getCurrentVersion().getVersion());
-            targetVersion.set(data.getCandidates().get(0).getVersion());
+            enabled.setValue(!data.getLocalMod().getModManager().isDisabled(data.getLocalMod().getFile()));
+            fileName.setValue(data.getLocalMod().getFileName());
+            currentVersion.setValue(data.getCurrentVersion().getVersion());
+            targetVersion.setValue(data.getCandidates().get(0).getVersion());
             switch (data.getCurrentVersion().getSelf().getType()) {
                 case CURSEFORGE:
-                    source.set(context.getString(com.tungsten.fcl.R.string.mods_curseforge));
+                    source.setValue(context.getString(com.tungsten.fcl.R.string.mods_curseforge));
                     break;
                 case MODRINTH:
-                    source.set(context.getString(com.tungsten.fcl.R.string.mods_modrinth));
+                    source.setValue(context.getString(com.tungsten.fcl.R.string.mods_modrinth));
             }
         }
 
         public boolean isEnabled() {
-            return enabled.get();
+            return enabled.getValue();
         }
 
-        public BooleanProperty enabledProperty() {
+        public MutableStateFlow<Boolean> enabledFlow() {
             return enabled;
         }
 
         public void setEnabled(boolean enabled) {
-            this.enabled.set(enabled);
+            this.enabled.setValue(enabled);
         }
 
         public String getFileName() {
-            return fileName.get();
+            return fileName.getValue();
         }
 
-        public StringProperty fileNameProperty() {
+        public MutableStateFlow<String> fileNameFlow() {
             return fileName;
         }
 
         public void setFileName(String fileName) {
-            this.fileName.set(fileName);
+            this.fileName.setValue(fileName);
         }
 
         public String getCurrentVersion() {
-            return currentVersion.get();
+            return currentVersion.getValue();
         }
 
-        public StringProperty currentVersionProperty() {
+        public MutableStateFlow<String> currentVersionFlow() {
             return currentVersion;
         }
 
         public void setCurrentVersion(String currentVersion) {
-            this.currentVersion.set(currentVersion);
+            this.currentVersion.setValue(currentVersion);
         }
 
         public String getTargetVersion() {
-            return targetVersion.get();
+            return targetVersion.getValue();
         }
 
-        public StringProperty targetVersionProperty() {
+        public MutableStateFlow<String> targetVersionFlow() {
             return targetVersion;
         }
 
         public void setTargetVersion(String targetVersion) {
-            this.targetVersion.set(targetVersion);
+            this.targetVersion.setValue(targetVersion);
         }
 
         public String getSource() {
-            return source.get();
+            return source.getValue();
         }
 
-        public StringProperty sourceProperty() {
+        public MutableStateFlow<String> sourceFlow() {
             return source;
         }
 
         public void setSource(String source) {
-            this.source.set(source);
+            this.source.setValue(source);
         }
     }
 

@@ -68,10 +68,10 @@ public class EditableControllerListAdapter extends FCLAdapter {
         viewHolder.parent.setBackground(controller == ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).getSelectedController() ? getContext().getDrawable(R.drawable.bg_container_transparent_selected) : getContext().getDrawable(R.drawable.bg_container_transparent_clickable));
         if (viewHolder.nameSubscription != null)
             viewHolder.nameSubscription.cancel();
-        viewHolder.nameSubscription = FlowSubscriptions.subscribeWithCurrent(controller.nameFlow(), v -> viewHolder.name.stringProperty().setValue(v));
+        viewHolder.nameSubscription = FlowSubscriptions.subscribeWithCurrent(controller.nameFlow(), v -> viewHolder.name.stringFlow().setValue(v));
         if (viewHolder.versionSubscription != null)
             viewHolder.versionSubscription.cancel();
-        viewHolder.versionSubscription = FlowSubscriptions.subscribeWithCurrent(controller.versionFlow(), v -> viewHolder.version.stringProperty().setValue(v));
+        viewHolder.versionSubscription = FlowSubscriptions.subscribeWithCurrent(controller.versionFlow(), v -> viewHolder.version.stringFlow().setValue(v));
         viewHolder.parent.setOnClickListener(view1 -> {
             ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).setSelectedController(controller);
             notifyDataSetChanged();

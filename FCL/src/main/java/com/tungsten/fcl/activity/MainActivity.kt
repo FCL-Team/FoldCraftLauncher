@@ -58,7 +58,6 @@ import com.tungsten.fcl.ui.main.compose.MainRightMenuBridge
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.FlowObservables
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -67,17 +66,10 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType
-import com.tungsten.fclcore.observable.binding.Bindings
-import com.tungsten.fclcore.observable.property.IntegerProperty
-import com.tungsten.fclcore.observable.property.IntegerPropertyBase
-import com.tungsten.fclcore.observable.property.ObjectProperty
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty
-import com.tungsten.fclcore.observable.value.ObservableValue
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteMod.IMod
 import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.util.Logging.LOG
-import com.tungsten.fclcore.util.observable.BindingMapping
 import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
@@ -87,6 +79,7 @@ import com.tungsten.fcllibrary.component.view.FCLMenuView.OnSelectListener
 import com.tungsten.fcllibrary.util.ConvertUtils
 import kotlinx.coroutines.Dispatchers
 import com.tungsten.fclcore.util.flow.FlowSubscriptions
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -111,11 +104,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     lateinit var binding: ActivityMainBinding
     private var _uiManager: UIManager? = null
     lateinit var uiManager: UIManager
-    private lateinit var currentAccount: ObjectProperty<Account?>
+    private lateinit var currentAccount: MutableStateFlow<Account?>
     private lateinit var profile: Profile
-    private lateinit var theme: IntegerProperty
-    private lateinit var theme2: IntegerProperty
-    private lateinit var theme2Dark: IntegerProperty
+    private val themeSubscriptions = ArrayList<FlowSubscriptions.Subscription>()
     var isVersionLoading = false
     private var modpackHandled = false
     lateinit var permissionResultLauncher: ActivityResultLauncher<String>
@@ -350,6 +341,16 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         super.onDestroy()
         selectedAccountSubscription?.cancel()
         selectedAccountSubscription = null
+        accountDisplaySubscription?.cancel()
+        accountDisplaySubscription = null
+        accountNameSubscription?.cancel()
+        accountNameSubscription = null
+        accountHintSubscription?.cancel()
+        accountHintSubscription = null
+        avatarSubscription?.cancel()
+        avatarSubscription = null
+        themeSubscriptions.forEach { it.cancel() }
+        themeSubscriptions.clear()
         if (shouldPlayVideo()) {
             mediaPlayer = null
             binding.videoView.stopPlayback()
@@ -533,38 +534,59 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
+    private var accountDisplaySubscription: FlowSubscriptions.Subscription? = null
+    private var accountNameSubscription: FlowSubscriptions.Subscription? = null
+    private var accountHintSubscription: FlowSubscriptions.Subscription? = null
+    private var avatarSubscription: FlowSubscriptions.Subscription? = null
+
     private fun setupAccountDisplay() {
         binding.apply {
-            currentAccount = object : SimpleObjectProperty<Account?>() {
-                override fun invalidated() {
-                    val account = get()
-                    if (account == null) {
-                        accountName.stringProperty().unbind()
-                        accountHint.stringProperty().unbind()
-                        avatar.imageProperty().unbind()
-                        accountName.text = getString(R.string.account_state_no_account)
-                        accountHint.text = getString(R.string.account_state_add)
-                        avatar.setBackgroundDrawable(
-                            TexturesLoader.toAvatar(
-                                TexturesLoader.getDefaultSkin(TextureModel.ALEX).image,
-                                ConvertUtils.dip2px(
-                                    this@MainActivity, 52f
-                                )
-                            ).toDrawable(resources)
-                        )
+            currentAccount = MutableStateFlow(null)
+            // 阶段 4c：原匿名 SimpleObjectProperty 的 invalidated() 改为订阅 currentAccount。
+            accountDisplaySubscription?.cancel()
+            accountDisplaySubscription = FlowSubscriptions.subscribe(currentAccount) { account ->
+                if (account == null) {
+                    accountNameSubscription?.cancel()
+                    accountNameSubscription = null
+                    accountHintSubscription?.cancel()
+                    accountHintSubscription = null
+                    avatarSubscription?.cancel()
+                    avatarSubscription = null
+                    accountName.text = getString(R.string.account_state_no_account)
+                    accountHint.text = getString(R.string.account_state_add)
+                    avatar.setBackgroundDrawable(
+                        TexturesLoader.toAvatar(
+                            TexturesLoader.getDefaultSkin(TextureModel.ALEX).image,
+                            ConvertUtils.dip2px(
+                                this@MainActivity, 52f
+                            )
+                        ).toDrawable(resources)
+                    )
+                } else {
+                    // 对齐原 bind(createObjectBinding)：先同步当前值，再跟随 revisionFlow 重算
+                    accountNameSubscription?.cancel()
+                    accountName.stringFlow().value = account.character
+                    accountNameSubscription = FlowSubscriptions.subscribe(account.revisionFlow()) {
+                        accountName.stringFlow().value = account.character
+                    }
+                    accountHintSubscription?.cancel()
+                    accountHint.stringFlow().value = accountSubtitle(this@MainActivity, account)
+                    accountHintSubscription = if (account is AuthlibInjectorAccount) {
+                        FlowSubscriptions.subscribe(account.server.revisionFlow()) {
+                            accountHint.stringFlow().value = account.server.name
+                        }
                     } else {
-                        accountName.stringProperty()
-                            .bind(Bindings.createObjectBinding({ account.character }, FlowObservables.toObservable(account.revisionFlow())))
-                        accountHint.stringProperty()
-                            .bind(accountSubtitle(this@MainActivity, account))
-                        avatar.imageProperty().unbind()
-                        avatar.imageProperty().bind(
-                            TexturesLoader.avatarBinding(
-                                account, ConvertUtils.dip2px(
-                                    this@MainActivity, 52f
-                                )
+                        null
+                    }
+                    avatarSubscription?.cancel()
+                    avatarSubscription = FlowSubscriptions.subscribeWithCurrent(
+                        TexturesLoader.avatarFlow(
+                            account, ConvertUtils.dip2px(
+                                this@MainActivity, 52f
                             )
                         )
+                    ) {
+                        avatar.imageFlow().value = it
                     }
                 }
             }
@@ -572,7 +594,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             // 原 bind（先同步当前值再跟随），onDestroy 取消订阅（对齐 bind 弱引用自动摘除）。
             selectedAccountSubscription?.cancel()
             selectedAccountSubscription = FlowSubscriptions.subscribeWithCurrent(Accounts.selectedAccountFlow()) {
-                (currentAccount as SimpleObjectProperty<Account?>).set(it)
+                currentAccount.value = it
             }
         }
     }
@@ -581,15 +603,17 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     fun refreshAvatar(account: Account) {
         lifecycleScope.launch {
-            if (currentAccount.get() === account) {
-                binding.avatar.imageProperty().unbind()
-                binding.avatar.imageProperty().bind(
-                    TexturesLoader.avatarBinding(
-                        currentAccount.get(), ConvertUtils.dip2px(
+            if (currentAccount.value === account) {
+                avatarSubscription?.cancel()
+                avatarSubscription = FlowSubscriptions.subscribeWithCurrent(
+                    TexturesLoader.avatarFlow(
+                        currentAccount.value, ConvertUtils.dip2px(
                             this@MainActivity, 52f
                         )
                     )
-                )
+                ) {
+                    binding.avatar.imageFlow().value = it
+                }
                 // 3.6：通知 Compose 右侧栏重建头像绑定（旧 View 重绑逻辑保留，开关回滚可用）
                 MainRightMenuBridge.avatarRefreshTick.value =
                     MainRightMenuBridge.avatarRefreshTick.value + 1
@@ -681,16 +705,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             .launchIn(lifecycleScope)
     }
 
-    private fun accountSubtitle(context: Context, account: Account): ObservableValue<String> {
+    private fun accountSubtitle(context: Context, account: Account): String {
         return if (account is AuthlibInjectorAccount) {
-            Bindings.createObjectBinding({ account.server.name }, FlowObservables.toObservable(account.server.revisionFlow()))
+            account.server.name
         } else {
-            Bindings.createStringBinding({
-                Accounts.getLocalizedLoginTypeName(
-                    context,
-                    Accounts.getAccountFactory(account)
-                )
-            })
+            Accounts.getLocalizedLoginTypeName(
+                context,
+                Accounts.getAccountFactory(account)
+            )
         }
     }
 
@@ -713,51 +735,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun initBackground() {
-        theme = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme"
-            }
-        }
-        theme2 = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme2"
-            }
-        }
-        theme2Dark = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme2Dark"
-            }
-        }
-        theme.bind(ThemeEngine.getInstance().theme.colorProperty())
-        theme2.bind(ThemeEngine.getInstance().theme.color2Property())
-        theme2Dark.bind(ThemeEngine.getInstance().theme.color2DarkProperty())
+        // 阶段 4c：原三个匿名 IntegerPropertyBase（invalidated → updateColor）+
+        // bind(colorProperty/color2Property/color2DarkProperty) 改为直接订阅主题 Flow；
+        // subscribeWithCurrent 对齐 bind 的"先同步当前值再跟随"（初始化即各触发一次）。
+        themeSubscriptions.add(FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().theme.colorFlow()) { updateColor() })
+        themeSubscriptions.add(FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().theme.color2Flow()) { updateColor() })
+        themeSubscriptions.add(FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().theme.color2DarkFlow()) { updateColor() })
     }
 
     private fun createBackground(): GradientDrawable {

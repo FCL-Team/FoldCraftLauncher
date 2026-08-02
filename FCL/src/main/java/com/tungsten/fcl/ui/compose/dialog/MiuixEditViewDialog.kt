@@ -43,6 +43,7 @@ import com.tungsten.fcl.control.data.DirectionEventData
 import com.tungsten.fcl.control.data.DirectionStyles
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.util.AndroidUtils
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import top.yukonga.miuix.kmp.basic.Card
@@ -706,7 +707,7 @@ class MiuixEditViewDialog(
                 val list = arrayListOf(event.sneakKeycode)
                 // Miuix 键码弹窗（对齐遗留 selectionProperty 单向 bind：初始同值、跟随后续变更）
                 val dialog = MiuixSelectKeycodeDialog(context, list, true, false)
-                dialog.selectionProperty().addListener { _, _, n -> event.sneakKeycode = n.toInt() }
+                FlowSubscriptions.subscribe(dialog.selectionFlow()) { n -> event.sneakKeycode = n.toInt() }
                 dialog.show()
             },
         )

@@ -61,7 +61,7 @@ public final class ConfigHolder {
         }
 
         configInstance = loadConfig();
-        configInstance.addListener(source -> markConfigDirty());
+        configInstance.addListener(ConfigHolder::markConfigDirty);
 
         Settings.init();
 

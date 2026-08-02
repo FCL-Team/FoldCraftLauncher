@@ -25,6 +25,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +50,6 @@ import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.ui.account.AccountListItem
 import com.tungsten.fcl.ui.bridge.LegacyBridge
-import com.tungsten.fcl.ui.bridge.collectAsState
 import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.dialog.MiuixAddAuthlibInjectorServerDialog
@@ -90,7 +90,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *
  * 皮肤预览：FCLLibrary 红线组件 SkinViewer（GLSurfaceView + SkinRenderer）用 AndroidView
  * 原样包装（同 3.2 MiuixOfflineAccountSkinDialog 的 GL 处置），纹理跟随选中账户的
- * AccountListItem.textureProperty（refreshSkinBinding 重绑后此处自动更新）；
+ * AccountListItem.textureFlow（refreshSkinBinding 重绑后此处自动更新）；
  * GL 生命周期由 [ComposeAccountUI] 的 onStart/onStop/onPause/onResume 转发。
  */
 @Composable
@@ -268,7 +268,7 @@ private fun ServerListColumn(
 
 /**
  * 选中账户的 3D 皮肤预览（GL 渲染，AndroidView 原样包装 SkinViewer）。
- * 纹理取选中账户 AccountListItem 的 textureProperty（observable），换肤重绑后自动更新；
+ * 纹理取选中账户 AccountListItem 的 textureFlow（StateFlow），换肤重绑后自动更新；
  * 无选中账户时显示默认 alex 皮肤（对齐 MainUI.setupSkinDisplay :154-156）。
  */
 @Composable
@@ -279,7 +279,7 @@ private fun SelectedAccountSkinPreview(state: AccountUiState) {
         )
     }
     val selectedItem = state.accounts.firstOrNull { it.account == state.selectedAccount }
-    val texture = selectedItem?.textureProperty()?.collectAsState()?.value
+    val texture = selectedItem?.textureFlow()?.collectAsState()?.value
     val rendererHolder = remember { mutableStateOf<SkinRenderer?>(null) }
 
     // 容器底色对齐遗留 bg_container_white + auto_tint 的 ltColor 染色（= primaryContainer，
@@ -326,10 +326,10 @@ private fun AccountRow(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val title by item.titleProperty().collectAsState()
-    val subtitle by item.subtitleProperty().collectAsState()
-    val avatar by item.imageProperty().collectAsState()
-    // canUploadSkin() 每次调用都新建绑定，remember 缓存避免重组时反复订阅
+    val title by item.titleFlow().collectAsState()
+    val subtitle by item.subtitleFlow().collectAsState()
+    val avatar by item.imageFlow().collectAsState()
+    // canUploadSkin() 每次调用都新建 StateFlow，remember 缓存避免重组时反复订阅
     val canUploadSkin by remember(item) { item.canUploadSkin() }.collectAsState()
     var refreshing by remember { mutableStateOf(false) }
     var skinBusy by remember { mutableStateOf(false) }
@@ -352,7 +352,7 @@ private fun AccountRow(
                 selected = selected,
                 onClick = { viewModel.onSelectAccount(item) },
             )
-            // 头像：TexturesLoader observable 绑定产物（本地生成的 BitmapDrawable），
+            // 头像：TexturesLoader 纹理绑定产物（本地生成的 BitmapDrawable），
             // 图片加载按 bridge-api.md §4 决策走 glide-compose
             GlideImage(
                 model = avatar,

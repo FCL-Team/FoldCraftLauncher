@@ -36,20 +36,20 @@ import com.tungsten.fcl.ui.compose.dialog.MiuixEditViewDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.binding.Bindings;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Consumer;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 /**
  * Custom game control button.
@@ -57,11 +57,23 @@ import java.util.UUID;
 @SuppressLint("ViewConstructor")
 public class ControlButton extends AppCompatButton implements CustomView {
 
-    private InvalidationListener notifyListener;
-    private InvalidationListener dataChangeListener;
-    private InvalidationListener boundaryListener;
-    private InvalidationListener visibilityListener;
-    private InvalidationListener alphaListener;
+    private Runnable notifyAction;
+    private Consumer<ControlButtonData> dataChangeListener;
+    private Runnable boundaryAction;
+    private Consumer<Boolean> visibilityListener;
+    private Runnable alphaAction;
+
+    // 阶段 4c：menu 属性 / dataFlow / visibilityFlow 的订阅句柄，removeListener 时取消（对齐原 removeListener 摘除）。
+    private FlowSubscriptions.Subscription notifySubscription;
+    private FlowSubscriptions.Subscription boundarySubscription;
+    private FlowSubscriptions.Subscription alphaSubscription;
+    private FlowSubscriptions.Subscription dataChangeSubscription;
+    private FlowSubscriptions.Subscription visibilitySubscription;
+
+    // 阶段 4c：visibility 派生（原 Bindings.createBooleanBinding）的依赖订阅登记，
+    // unbindVisibility 时统一取消（对齐原 unbind()）。
+    private final List<FlowSubscriptions.Subscription> visibilityRecomputeSubscriptions = new ArrayList<>();
+    private FlowSubscriptions.Subscription parentVisibilitySubscription;
 
     // 阶段 4b：数据层监听由 getData().addListener(notifyListener) 改为订阅
     // ControlButtonData.revisionFlow（失效即递增，语义等价）；data 切换时换绑，
@@ -85,34 +97,34 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private final int screenHeight;
     private int cursorMode;
 
-    private BooleanProperty visibilityProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
 
-    private final BooleanProperty parentVisibilityProperty = new SimpleBooleanProperty(this, "parentVisibility", true);
+    private final MutableStateFlow<Boolean> parentVisibilityFlow = StateFlowKt.MutableStateFlow(true);
 
-    public BooleanProperty parentVisibilityProperty() {
-        return parentVisibilityProperty;
+    public MutableStateFlow<Boolean> parentVisibilityFlow() {
+        return parentVisibilityFlow;
     }
 
     public void setParentVisibility(boolean parentVisibility) {
-        parentVisibilityProperty.set(parentVisibility);
+        parentVisibilityFlow.setValue(parentVisibility);
     }
 
     public boolean isParentVisibility() {
-        return parentVisibilityProperty.get();
+        return parentVisibilityFlow.getValue();
     }
 
-    private final ObjectProperty<ControlButtonData> dataProperty = new SimpleObjectProperty<>(this, "data", new ControlButtonData(UUID.randomUUID().toString()));
+    private final MutableStateFlow<ControlButtonData> dataFlow = StateFlowKt.MutableStateFlow(new ControlButtonData(UUID.randomUUID().toString()));
 
-    public ObjectProperty<ControlButtonData> dataProperty() {
-        return dataProperty;
+    public MutableStateFlow<ControlButtonData> dataFlow() {
+        return dataFlow;
     }
 
     public void setData(ControlButtonData data) {
-        dataProperty.set(data);
+        dataFlow.setValue(data);
     }
 
     public ControlButtonData getData() {
-        return dataProperty.get();
+        return dataFlow.getValue();
     }
 
     public ControlButton(@NonNull Context context, GameMenu gameMenu, ViewListener listener) {
@@ -131,39 +143,39 @@ public class ControlButton extends AppCompatButton implements CustomView {
         screenWidth = AndroidUtils.getScreenWidth();
         screenHeight = AndroidUtils.getScreenHeight();
 
-        notifyListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+        notifyAction = () -> Schedulers.androidUIThread().execute(() -> {
             notifyData();
             cancelAllEvent();
         });
-        dataChangeListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+        dataChangeListener = v -> Schedulers.androidUIThread().execute(() -> {
             notifyData();
             cancelAllEvent();
             subscribeDataRevision();
         });
-        boundaryListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+        boundaryAction = () -> Schedulers.androidUIThread().execute(() -> {
             boundaryPath = new Path();
             invalidate();
         });
-        visibilityListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
-            if (!visibilityProperty.get()) {
+        visibilityListener = v -> Schedulers.androidUIThread().execute(() -> {
+            if (!visibilityFlow().getValue()) {
                 cancelAllEvent();
             }
         });
-        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
+        alphaAction = () -> Schedulers.androidUIThread().execute(() -> {
             setAlpha(menu.isHideAllViews() ? 0 : 1);
         });
 
         post(() -> {
             notifyData();
-            if (notifyListener == null || dataChangeListener == null || boundaryListener == null || visibilityListener == null) {
+            if (notifyAction == null || dataChangeListener == null || boundaryAction == null || visibilityListener == null) {
                 return;
             }
-            menu.editModeProperty().addListener(notifyListener);
-            dataProperty.addListener(dataChangeListener);
+            notifySubscription = FlowSubscriptions.subscribe(menu.editModeFlow(), v -> notifyAction.run());
+            dataChangeSubscription = FlowSubscriptions.subscribe(dataFlow(), dataChangeListener);
             subscribeDataRevision();
-            menu.showViewBoundariesProperty().addListener(boundaryListener);
+            boundarySubscription = FlowSubscriptions.subscribe(menu.showViewBoundariesFlow(), v -> boundaryAction.run());
             setAlpha(menu.isHideAllViews() ? 0 : 1);
-            menu.hideAllViewsProperty().addListener(alphaListener);
+            alphaSubscription = FlowSubscriptions.subscribe(menu.hideAllViewsFlow(), v -> alphaAction.run());
             if (listener != null) {
                 listener.onReady(this);
             }
@@ -216,17 +228,37 @@ public class ControlButton extends AppCompatButton implements CustomView {
         });
 
         // Visibility
-        visibilityProperty().unbind();
+        // 阶段 4c：原 visibilityProperty().unbind() + bind(Bindings.createBooleanBinding(...))
+        // 改为“初值 + 依赖变化重算”（对齐原 bind 立即求值、依赖失效重算）。
+        unbindVisibility();
         if (menu.isEditMode()) {
-            visibilityProperty().bind(Bindings.createBooleanBinding(() -> menu.getViewGroup() != null && (menu.getViewGroup().getViewData().getButtonList().stream().anyMatch(it -> it.getId().equals(getData().getId()))),
-                    menu.editModeProperty(), menu.viewGroupProperty()));
+            Runnable recompute = () -> visibilityFlow().setValue(menu.getViewGroup() != null && (menu.getViewGroup().getViewData().getButtonList().stream().anyMatch(it -> it.getId().equals(getData().getId()))));
+            recompute.run();
+            visibilityRecomputeSubscriptions.add(FlowSubscriptions.subscribe(menu.editModeFlow(), v -> recompute.run()));
+            visibilityRecomputeSubscriptions.add(FlowSubscriptions.subscribe(menu.viewGroupFlow(), v -> recompute.run()));
         } else {
-            visibilityProperty().bind(Bindings.createBooleanBinding(() -> isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
+            Runnable recompute = () -> visibilityFlow().setValue(isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
                             (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME && menu.getCursorMode() == FCLBridge.CursorDisabled) ||
-                            (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)),
-                    menu.cursorModeProperty(), parentVisibilityProperty()));
+                            (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.MENU && menu.getCursorMode() == FCLBridge.CursorEnabled)));
+            recompute.run();
+            visibilityRecomputeSubscriptions.add(FlowSubscriptions.subscribe(menu.cursorModeFlow(), v -> recompute.run()));
+            parentVisibilitySubscription = FlowSubscriptions.subscribe(parentVisibilityFlow(), v -> recompute.run());
         }
-        visibilityProperty().addListener(visibilityListener);
+        // 原代码每次 refreshBaseInfo 都 addListener(visibilityListener)（重复注册、回调幂等）；
+        // Flow 订阅只建一次，语义等价且避免泄漏。
+        if (visibilitySubscription == null) {
+            visibilitySubscription = FlowSubscriptions.subscribe(visibilityFlow(), visibilityListener);
+        }
+    }
+
+    /** 对齐原 visibilityProperty().unbind()：摘除当前派生的全部依赖订阅，保留当前值。 */
+    private void unbindVisibility() {
+        visibilityRecomputeSubscriptions.forEach(FlowSubscriptions.Subscription::cancel);
+        visibilityRecomputeSubscriptions.clear();
+        if (parentVisibilitySubscription != null) {
+            parentVisibilitySubscription.cancel();
+            parentVisibilitySubscription = null;
+        }
     }
 
     private GradientDrawable drawableNormal;
@@ -738,28 +770,28 @@ public class ControlButton extends AppCompatButton implements CustomView {
         }
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            // 对齐原 BooleanPropertyBase 匿名类的 invalidated()：值变化时在 UI 线程应用可见性。
+            // subscribeWithCurrent 对齐原 bind() 的立即失效求值（初次派生即使值为 false 也会应用一次）；
+            // 弱引用自身：订阅挂在自身持有的 flow 上，避免循环引用阻碍 GC。
+            WeakReference<ControlButton> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribeWithCurrent(visibilityFlow, v -> {
+                ControlButton self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        ControlButton s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 
     @Override
@@ -779,19 +811,35 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     @Override
     public void removeListener() {
-        menu.editModeProperty().removeListener(notifyListener);
-        dataProperty.removeListener(dataChangeListener);
+        if (notifySubscription != null) {
+            notifySubscription.cancel();
+            notifySubscription = null;
+        }
+        if (dataChangeSubscription != null) {
+            dataChangeSubscription.cancel();
+            dataChangeSubscription = null;
+        }
         if (dataSubscription != null) {
             dataSubscription.cancel();
             dataSubscription = null;
         }
-        menu.showViewBoundariesProperty().removeListener(boundaryListener);
-        visibilityProperty().removeListener(visibilityListener);
-        menu.hideAllViewsProperty().removeListener(alphaListener);
-        notifyListener = null;
+        if (boundarySubscription != null) {
+            boundarySubscription.cancel();
+            boundarySubscription = null;
+        }
+        if (visibilitySubscription != null) {
+            visibilitySubscription.cancel();
+            visibilitySubscription = null;
+        }
+        unbindVisibility();
+        if (alphaSubscription != null) {
+            alphaSubscription.cancel();
+            alphaSubscription = null;
+        }
+        notifyAction = null;
         dataChangeListener = null;
-        boundaryListener = null;
+        boundaryAction = null;
         visibilityListener = null;
-        alphaListener = null;
+        alphaAction = null;
     }
 }

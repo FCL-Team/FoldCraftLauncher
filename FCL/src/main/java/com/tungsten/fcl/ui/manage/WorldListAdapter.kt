@@ -6,25 +6,29 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.ui.adapter.ViewHolder
 import com.tungsten.fcl.databinding.ItemWorldBinding
-import com.tungsten.fclcore.observable.Observable
-import com.tungsten.fclcore.observable.property.ListProperty
-import com.tungsten.fclcore.observable.property.SimpleListProperty
-import com.tungsten.fclcore.observable.collections.FXCollections
+import com.tungsten.fcl.util.FlowList
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 
 class WorldListAdapter(private val context: Context) :
     RecyclerView.Adapter<ViewHolder>() {
 
-    private val listProperty: ListProperty<WorldListItem> =
-        SimpleListProperty(FXCollections.observableArrayList())
+    private val listProperty: FlowList<WorldListItem> = FlowList()
 
-    fun listProperty(): ListProperty<WorldListItem> {
+    fun listProperty(): FlowList<WorldListItem> {
         return listProperty
     }
 
     init {
-        listProperty.addListener { _: Observable? ->
+        FlowSubscriptions.subscribe(listProperty.flow()) { _: List<WorldListItem> ->
             notifyDataSetChanged()
         }
+    }
+
+    // 视图回收重绑时持有的订阅（存于 itemView.tag），重绑前 cancel 旧订阅
+    //（对齐原 bind 重复调用先解绑的语义）。
+    private class BindingSubscriptions {
+        var title: FlowSubscriptions.Subscription? = null
+        var subtitle: FlowSubscriptions.Subscription? = null
     }
 
     override fun onCreateViewHolder(
@@ -45,16 +49,28 @@ class WorldListAdapter(private val context: Context) :
         position: Int
     ) {
         val binding = ItemWorldBinding.bind(holder.itemView)
-        val worldListItem = listProperty[position]
+        val worldListItem = listProperty.get()[position]
+        val subscriptions =
+            holder.itemView.tag as? BindingSubscriptions ?: BindingSubscriptions().also {
+                holder.itemView.tag = it
+            }
         binding.parent.setOnClickListener { worldListItem.showInfo() }
-        binding.name.stringProperty().bind(worldListItem.titleProperty())
-        binding.description.stringProperty().bind(worldListItem.subtitleProperty())
+        subscriptions.title?.cancel()
+        binding.name.stringFlow().value = worldListItem.titleFlow().value
+        subscriptions.title = FlowSubscriptions.subscribe(worldListItem.titleFlow()) { v ->
+            binding.name.stringFlow().value = v
+        }
+        subscriptions.subtitle?.cancel()
+        binding.description.stringFlow().value = worldListItem.subtitleFlow().value
+        subscriptions.subtitle = FlowSubscriptions.subscribe(worldListItem.subtitleFlow()) { v ->
+            binding.description.stringFlow().value = v
+        }
         binding.datapack.setOnClickListener { worldListItem.manageDatapacks() }
         binding.export.setOnClickListener { worldListItem.export() }
         binding.delete.setOnClickListener { worldListItem.delete() }
     }
 
     override fun getItemCount(): Int {
-        return listProperty.size
+        return listProperty.size()
     }
 }

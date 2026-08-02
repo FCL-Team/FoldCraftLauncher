@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.util.AttributeSet
 import com.google.android.material.appbar.AppBarLayout
-import com.tungsten.fclcore.observable.property.IntegerProperty
-import com.tungsten.fclcore.observable.property.IntegerPropertyBase
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import androidx.core.content.withStyledAttributes
 import com.tungsten.fcllibrary.R
+import java.lang.ref.WeakReference
 
 class FCLAppBarLayout @JvmOverloads constructor(
     context: Context,
@@ -18,25 +18,14 @@ class FCLAppBarLayout @JvmOverloads constructor(
 
     private var autoTint = false
 
-    private val theme: IntegerProperty = object : IntegerPropertyBase() {
-        override fun invalidated() {
-            get()
-            if (autoTint) {
-                setBackgroundTintList(
-                    ColorStateList(
-                        arrayOf<IntArray?>(intArrayOf()),
-                        intArrayOf(ThemeEngine.getInstance().getTheme().ltColor)
-                    )
+    private fun applyTheme() {
+        if (autoTint) {
+            setBackgroundTintList(
+                ColorStateList(
+                    arrayOf<IntArray?>(intArrayOf()),
+                    intArrayOf(ThemeEngine.getInstance().getTheme().ltColor)
                 )
-            }
-        }
-
-        override fun getBean(): Any {
-            return this
-        }
-
-        override fun getName(): String {
-            return "theme"
+            )
         }
     }
 
@@ -49,7 +38,11 @@ class FCLAppBarLayout @JvmOverloads constructor(
                 false
             )
         }
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty())
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        val ref = WeakReference(this)
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow()) { c ->
+            ref.get()?.applyTheme()
+        }
     }
 
 

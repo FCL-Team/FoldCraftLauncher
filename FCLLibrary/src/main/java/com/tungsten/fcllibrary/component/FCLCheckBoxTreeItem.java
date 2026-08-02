@@ -1,32 +1,36 @@
 package com.tungsten.fcllibrary.component;
 
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.observable.collections.ObservableList;
-import com.tungsten.fclcore.observable.util.StringConverter;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.function.Function;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class FCLCheckBoxTreeItem<T> {
 
     private final T data;
-    private final StringConverter<T> stringConverter;
+    private final Function<T, String> stringConverter;
 
     @Nullable
     private String comment;
     @NotNull
-    private final ObservableList<FCLCheckBoxTreeItem<T>> subItem;
+    private final List<FCLCheckBoxTreeItem<T>> subItem;
 
-    private final SimpleBooleanProperty expandedProperty = new SimpleBooleanProperty(false);
-    private final SimpleBooleanProperty selectedProperty = new SimpleBooleanProperty(false);
-    private final SimpleBooleanProperty indeterminateProperty = new SimpleBooleanProperty(false);
+    private final MutableStateFlow<Boolean> expandedFlow = StateFlowKt.MutableStateFlow(false);
+    private final MutableStateFlow<Boolean> selectedFlow = StateFlowKt.MutableStateFlow(false);
+    private final MutableStateFlow<Boolean> indeterminateFlow = StateFlowKt.MutableStateFlow(false);
 
-    public FCLCheckBoxTreeItem(T data, StringConverter<T> stringConverter, @NotNull ObservableList<FCLCheckBoxTreeItem<T>> subItem) {
+    public FCLCheckBoxTreeItem(T data, Function<T, String> stringConverter, @NotNull List<FCLCheckBoxTreeItem<T>> subItem) {
         this.data = data;
         this.stringConverter = stringConverter;
         this.subItem = subItem;
 
-        selectedProperty().addListener(observable -> {
+        FlowSubscriptions.subscribe(selectedFlow, selected -> {
             if (!fromCheck) {
                 subItem.forEach(it -> it.setSelected(isSelected()));
             }
@@ -74,7 +78,7 @@ public class FCLCheckBoxTreeItem<T> {
             return (String) data;
         else if (stringConverter == null)
             return data.toString();
-        return stringConverter.toString(data);
+        return stringConverter.apply(data);
     }
 
     public void setComment(@Nullable String comment) {
@@ -87,43 +91,43 @@ public class FCLCheckBoxTreeItem<T> {
     }
 
     @NotNull
-    public ObservableList<FCLCheckBoxTreeItem<T>> getSubItem() {
+    public List<FCLCheckBoxTreeItem<T>> getSubItem() {
         return subItem;
     }
 
-    public SimpleBooleanProperty expandedProperty() {
-        return expandedProperty;
+    public MutableStateFlow<Boolean> expandedFlow() {
+        return expandedFlow;
     }
 
     public void setExpanded(boolean expanded) {
-        this.expandedProperty.set(expanded);
+        this.expandedFlow.setValue(expanded);
     }
 
     public boolean isExpanded() {
-        return expandedProperty.get();
+        return expandedFlow.getValue();
     }
 
-    public SimpleBooleanProperty selectedProperty() {
-        return selectedProperty;
+    public MutableStateFlow<Boolean> selectedFlow() {
+        return selectedFlow;
     }
 
     public void setSelected(boolean selected) {
-        this.selectedProperty.set(selected);
+        this.selectedFlow.setValue(selected);
     }
 
     public boolean isSelected() {
-        return selectedProperty.get();
+        return selectedFlow.getValue();
     }
 
-    public SimpleBooleanProperty indeterminateProperty() {
-        return indeterminateProperty;
+    public MutableStateFlow<Boolean> indeterminateFlow() {
+        return indeterminateFlow;
     }
 
     public void setIndeterminate(boolean indeterminate) {
-        this.indeterminateProperty.set(indeterminate);
+        this.indeterminateFlow.setValue(indeterminate);
     }
 
     public boolean isIndeterminate() {
-        return indeterminateProperty.get();
+        return indeterminateFlow.getValue();
     }
 }

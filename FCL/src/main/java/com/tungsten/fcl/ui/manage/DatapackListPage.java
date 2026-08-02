@@ -7,19 +7,14 @@ import android.widget.ListView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
+import com.tungsten.fcl.util.FlowList;
 import com.tungsten.fcl.util.RequestCodes;
-import com.tungsten.fclcore.observable.binding.Bindings;
-import com.tungsten.fclcore.observable.property.ListProperty;
-import com.tungsten.fclcore.observable.property.SimpleListProperty;
-import com.tungsten.fclcore.observable.collections.FXCollections;
-import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.mod.Datapack;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
-import com.tungsten.fclcore.util.observable.MappedObservableList;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
@@ -39,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class DatapackListPage extends FCLTempPage implements View.OnClickListener {
 
-    private final ListProperty<DatapackInfoObject> itemsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final FlowList<DatapackInfoObject> items = new FlowList<>();
 
     private final Path worldDir;
     private final Datapack datapack;
@@ -84,7 +79,8 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
 
         adapter = new DatapackListAdapter(getContext());
         listView.setAdapter(adapter);
-        Bindings.bindContent(adapter.listProperty(), itemsProperty);
+        // 对齐 Bindings.bindContent：先同步当前快照，再跟随后续变化推入 adapter。
+        FlowSubscriptions.subscribeWithCurrent(items.flow(), list -> adapter.listProperty().setAll(list));
 
         refresh();
     }
@@ -106,15 +102,15 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
             builder.setCancelable(false);
             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
             builder.setMessage(getContext().getString(R.string.button_remove_confirm));
-            builder.setPositiveButton(getContext().getString(R.string.button_remove), () -> removeSelected(adapter.selectedItemsProperty()));
+            builder.setPositiveButton(getContext().getString(R.string.button_remove), () -> removeSelected(adapter.selectedItemsProperty().get()));
             builder.setNegativeButton(null);
             builder.create().show();
         }
         if (v == enableButton) {
-            enableSelected(adapter.selectedItemsProperty());
+            enableSelected(adapter.selectedItemsProperty().get());
         }
         if (v == disableButton) {
-            disableSelected(adapter.selectedItemsProperty());
+            disableSelected(adapter.selectedItemsProperty().get());
         }
         if (v == addButton) {
             add();
@@ -148,13 +144,12 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
         Task.runAsync(datapack::loadFromDir)
                 .withRunAsync(Schedulers.androidUIThread(), () -> {
                     if (first) {
-                        // Datapack.info 已 StateFlow 化：镜像到本地 ObservableList，
-                        // 供 MappedObservableList/adapter 既有链路消费；发射在后台加载线程，
+                        // Datapack.info 已 StateFlow 化：映射为 DatapackInfoObject 快照写入 FlowList，
+                        // 供 adapter 链路消费；发射在后台加载线程，
                         // 统一切回 UI 线程再更新列表。
-                        ObservableList<Datapack.Pack> packMirror = FXCollections.observableArrayList();
                         FlowSubscriptions.subscribeWithCurrent(datapack.infoFlow(), packs ->
-                                Schedulers.androidUIThread().execute(() -> packMirror.setAll(packs)));
-                        itemsProperty.set(MappedObservableList.create(packMirror, DatapackInfoObject::new));
+                                Schedulers.androidUIThread().execute(() ->
+                                        items.setAll(packs.stream().map(DatapackInfoObject::new).collect(Collectors.toList()))));
                         first = false;
                     }
                     setLoading(false);
@@ -189,9 +184,8 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
         });
     }
 
-    void removeSelected(ObservableList<DatapackInfoObject> selectedItems) {
-        ObservableList<DatapackInfoObject> items = FXCollections.observableArrayList();
-        items.setAll(selectedItems);
+    void removeSelected(List<DatapackInfoObject> selectedItems) {
+        List<DatapackInfoObject> items = new ArrayList<>(selectedItems);
         items.stream()
                 .map(DatapackInfoObject::getPackInfo)
                 .forEach(pack -> {
@@ -204,13 +198,13 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
                 });
     }
 
-    void enableSelected(ObservableList<DatapackInfoObject> selectedItems) {
+    void enableSelected(List<DatapackInfoObject> selectedItems) {
         selectedItems.stream()
                 .map(DatapackInfoObject::getPackInfo)
                 .forEach(info -> info.setActive(true));
     }
 
-    void disableSelected(ObservableList<DatapackInfoObject> selectedItems) {
+    void disableSelected(List<DatapackInfoObject> selectedItems) {
         selectedItems.stream()
                 .map(DatapackInfoObject::getPackInfo)
                 .forEach(info -> info.setActive(false));

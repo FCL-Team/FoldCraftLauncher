@@ -26,16 +26,15 @@ import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.flow.FlowBindings;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.observable.factories.JavaFxPropertyTypeAdapterFactory;
@@ -61,12 +60,16 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class ControllerRepoPage extends FCLCommonPage implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     public static final String CONTROLLER_GITHUB = "https://raw.githubusercontent.com/FCL-Team/FCL-Controllers/main/";
     public static final String CONTROLLER_GIT_CN = "https://repo.miawa.cn/fcl_controllers/";
 
-    private final ObjectProperty<ControllerCategory> categoryProperty = new SimpleObjectProperty<>(new ControllerCategory(0, null));
+    private final MutableStateFlow<ControllerCategory> categoryFlow = StateFlowKt.MutableStateFlow(new ControllerCategory(0, null));
+    private FlowSubscriptions.Subscription categoryBinding;
     private boolean refreshCategory = true;
 
     private ScrollView searchLayout;
@@ -114,7 +117,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
     }
 
     private void search() {
-        search(nameEditText.getText().toString(), langSpinner.getSelectedItemPosition(), sourceSpinner.getSelectedItemPosition(), categoryProperty == null ? 0 : categoryProperty.get().getId(), deviceSpinner.getSelectedItemPosition());
+        search(nameEditText.getText().toString(), langSpinner.getSelectedItemPosition(), sourceSpinner.getSelectedItemPosition(), categoryFlow == null ? 0 : categoryFlow.getValue().getId(), deviceSpinner.getSelectedItemPosition());
     }
 
     private void search(String name, int lang, int source, int category, int device) {
@@ -186,15 +189,19 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
 
     private void refreshCategories(ArrayList<ControllerCategory> categoryDataList) {
         if (refreshCategory) {
-            FXUtils.unbindSelection(categorySpinner, categoryProperty);
-            categoryProperty.set(new ControllerCategory(0, null));
+            if (categoryBinding != null) {
+                categoryBinding.cancel();
+                categoryBinding = null;
+            }
+            categoryFlow.setValue(new ControllerCategory(0, null));
             categorySpinner.setDataList(categoryDataList);
             ArrayList<String> categoryStringList = categoryDataList.stream().map(c -> c.getText(getContext())).collect(Collectors.toCollection(ArrayList::new));
             ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, categoryStringList);
             categoryAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
             categorySpinner.setAdapter(categoryAdapter);
             categorySpinner.setSelection(0);
-            FXUtils.bindSelection(categorySpinner, categoryProperty);
+            categorySpinner.addSelectListener();
+            categoryBinding = FlowBindings.bindBidirectional(categorySpinner.selectedItemFlow(), categoryFlow);
             refreshCategory = false;
         }
     }

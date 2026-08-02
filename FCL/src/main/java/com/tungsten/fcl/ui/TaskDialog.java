@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.TaskCancellationAction;
-import com.tungsten.fclcore.observable.property.StringProperty;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.TaskExecutor;
@@ -19,6 +18,8 @@ import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 import org.jetbrains.annotations.NotNull;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -93,8 +94,8 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
         }
     }
 
-    public StringProperty titleProperty() {
-        return titleView.stringProperty();
+    public MutableStateFlow<String> titleProperty() {
+        return titleView.stringFlow();
     }
 
     public String getTitle() {

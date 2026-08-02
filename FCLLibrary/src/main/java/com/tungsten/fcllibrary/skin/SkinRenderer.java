@@ -11,17 +11,21 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.skin.InvalidSkinException;
 import com.tungsten.fclcore.util.skin.NormalizedSkin;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.WeakReference;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class SkinRenderer implements GLSurfaceView.Renderer {
 
@@ -32,7 +36,7 @@ public class SkinRenderer implements GLSurfaceView.Renderer {
     private Bitmap skin;
     private Bitmap cape;
     private int[] modelTextureData;
-    private ObjectProperty<Bitmap[]> textureProperty;
+    private MutableStateFlow<Bitmap[]> textureFlow;
 
     public SkinRenderer(Context context) {
         this.context = context;
@@ -114,36 +118,33 @@ public class SkinRenderer implements GLSurfaceView.Renderer {
     }
 
     public final void setTexture(Bitmap skin, Bitmap cape) {
-        this.textureProperty().set(new Bitmap[]{skin, cape});
+        this.textureFlow().setValue(new Bitmap[]{skin, cape});
     }
 
     public final Bitmap[] getTexture() {
-        return textureProperty().get();
+        return textureFlow().getValue();
     }
 
-    public final ObjectProperty<Bitmap[]> textureProperty() {
-        if (textureProperty == null) {
-            textureProperty = new ObjectPropertyBase<>() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Bitmap[]> textureFlow() {
+        if (textureFlow == null) {
+            textureFlow = StateFlowKt.MutableStateFlow(null);
+            WeakReference<SkinRenderer> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(textureFlow, v -> {
+                SkinRenderer self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        Bitmap[] texture = get();
-                        updateTexture(texture[0], texture[1]);
+                        SkinRenderer s = ref.get();
+                        if (s != null) {
+                            Bitmap[] texture = s.textureFlow.getValue();
+                            s.updateTexture(texture[0], texture[1]);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "texture";
-                }
-            };
-            textureProperty.set(new Bitmap[]{BitmapFactory.decodeStream(SkinRenderer.class.getResourceAsStream("/assets/img/alex.png")), null});
+            });
+            textureFlow.setValue(new Bitmap[]{BitmapFactory.decodeStream(SkinRenderer.class.getResourceAsStream("/assets/img/alex.png")), null});
         }
 
-        return textureProperty;
+        return textureFlow;
     }
 
     public static int[] loadTexture(@NotNull final Bitmap skin, @Nullable final Bitmap cape) {

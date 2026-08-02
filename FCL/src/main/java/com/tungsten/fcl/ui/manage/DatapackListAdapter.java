@@ -8,12 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.util.FlowList;
 import com.tungsten.fclcore.mod.Datapack;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.property.ListProperty;
-import com.tungsten.fclcore.observable.property.SimpleListProperty;
-import com.tungsten.fclcore.observable.collections.FXCollections;
-import com.tungsten.fclcore.observable.value.ChangeListener;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -23,14 +19,14 @@ import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 public class DatapackListAdapter extends FCLAdapter {
 
-    private final ListProperty<DatapackListPage.DatapackInfoObject> listProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-    private final ListProperty<DatapackListPage.DatapackInfoObject> selectedItemsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
+    private final FlowList<DatapackListPage.DatapackInfoObject> listProperty = new FlowList<>();
+    private final FlowList<DatapackListPage.DatapackInfoObject> selectedItemsProperty = new FlowList<>();
 
-    public ListProperty<DatapackListPage.DatapackInfoObject> listProperty() {
+    public FlowList<DatapackListPage.DatapackInfoObject> listProperty() {
         return listProperty;
     }
 
-    public ListProperty<DatapackListPage.DatapackInfoObject> selectedItemsProperty() {
+    public FlowList<DatapackListPage.DatapackInfoObject> selectedItemsProperty() {
         return selectedItemsProperty;
     }
 
@@ -41,13 +37,13 @@ public class DatapackListAdapter extends FCLAdapter {
 
         Handler handler = new Handler();
 
-        this.listProperty.addListener((InvalidationListener) observable -> {
+        FlowSubscriptions.subscribe(this.listProperty.flow(), v -> {
             fromSelf = true;
             selectedItemsProperty.clear();
             fromSelf = false;
             handler.post(this::notifyDataSetChanged);
         });
-        selectedItemsProperty.addListener((InvalidationListener) observable -> {
+        FlowSubscriptions.subscribe(selectedItemsProperty.flow(), v -> {
             if (!fromSelf) {
                 handler.post(this::notifyDataSetChanged);
             }
@@ -60,17 +56,17 @@ public class DatapackListAdapter extends FCLAdapter {
         FCLTextView name;
         FCLTextView description;
         FlowSubscriptions.Subscription activeSubscription;
-        ChangeListener<Boolean> activeListener;
+        FlowSubscriptions.Subscription checkSubscription;
     }
 
     @Override
     public int getCount() {
-        return listProperty.getSize();
+        return listProperty.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return listProperty.get(i);
+        return listProperty.get().get(i);
     }
 
     @Override
@@ -87,7 +83,7 @@ public class DatapackListAdapter extends FCLAdapter {
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        DatapackListPage.DatapackInfoObject datapackInfoObject = listProperty.get(i);
+        DatapackListPage.DatapackInfoObject datapackInfoObject = listProperty.get().get(i);
         viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { selectedItemsProperty.contains(datapackInfoObject) ? ThemeEngine.getInstance().getTheme().getColor() : ThemeEngine.getInstance().getTheme().getLtColor() }));
         ThemeEngine.getInstance().registerEvent(viewHolder.parent, () -> viewHolder.parent.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { selectedItemsProperty.contains(datapackInfoObject) ? ThemeEngine.getInstance().getTheme().getColor() : ThemeEngine.getInstance().getTheme().getLtColor() })));
         viewHolder.parent.setOnClickListener(v -> {
@@ -108,17 +104,16 @@ public class DatapackListAdapter extends FCLAdapter {
             viewHolder.activeSubscription.cancel();
             viewHolder.activeSubscription = null;
         }
-        if (viewHolder.activeListener != null) {
-            viewHolder.checkBox.checkProperty().removeListener(viewHolder.activeListener);
-            viewHolder.activeListener = null;
+        if (viewHolder.checkSubscription != null) {
+            viewHolder.checkSubscription.cancel();
+            viewHolder.checkSubscription = null;
         }
         // 手动双向（对齐原 bindBidirectional，两侧同值写入均为 no-op，天然防回环）：
-        // pack → checkBox 走 activeFlow 订阅；checkBox → pack 走 checkProperty 监听。
+        // pack → checkBox 走 activeFlow 订阅；checkBox → pack 走 checkFlow 订阅。
         Datapack.Pack pack = datapackInfoObject.getPackInfo();
-        viewHolder.checkBox.checkProperty().set(pack.isActive());
-        viewHolder.activeSubscription = FlowSubscriptions.subscribe(pack.activeFlow(), viewHolder.checkBox.checkProperty()::set);
-        viewHolder.activeListener = (observable, oldValue, newValue) -> pack.setActive(newValue);
-        viewHolder.checkBox.checkProperty().addListener(viewHolder.activeListener);
+        viewHolder.checkBox.checkFlow().setValue(pack.isActive());
+        viewHolder.activeSubscription = FlowSubscriptions.subscribe(pack.activeFlow(), viewHolder.checkBox.checkFlow()::setValue);
+        viewHolder.checkSubscription = FlowSubscriptions.subscribe(viewHolder.checkBox.checkFlow(), pack::setActive);
         viewHolder.name.setText(datapackInfoObject.getTitle());
         viewHolder.description.setText(datapackInfoObject.getSubtitle());
         return view;

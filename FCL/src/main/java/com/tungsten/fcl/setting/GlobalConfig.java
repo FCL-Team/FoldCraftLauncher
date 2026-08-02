@@ -19,22 +19,20 @@ package com.tungsten.fcl.setting;
 
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.Observable;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
-import com.tungsten.fclcore.util.observable.ObservableHelper;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import kotlinx.coroutines.flow.MutableStateFlow;
 import kotlinx.coroutines.flow.StateFlow;
 import kotlinx.coroutines.flow.StateFlowKt;
 
 @JsonAdapter(GlobalConfig.Serializer.class)
-public class GlobalConfig implements Cloneable, Observable {
+public class GlobalConfig implements Cloneable {
 
     @Nullable
     public static GlobalConfig fromJson(String json) throws JsonParseException {
@@ -55,21 +53,26 @@ public class GlobalConfig implements Cloneable, Observable {
 
     private final Map<String, Object> unknownFields = new HashMap<>();
 
-    private transient ObservableHelper helper = new ObservableHelper(this);
+    // 阶段 4c：ObservableHelper 失效中心改为 Runnable 监听列表（语义不变）。
+    private transient final List<Runnable> listeners = new CopyOnWriteArrayList<>();
 
     public GlobalConfig() {
-        FlowSubscriptions.subscribe(agreementVersion, v -> helper.invalidate());
-        FlowSubscriptions.subscribe(multiplayerToken, v -> helper.invalidate());
+        FlowSubscriptions.subscribe(agreementVersion, v -> invalidate());
+        FlowSubscriptions.subscribe(multiplayerToken, v -> invalidate());
     }
 
-    @Override
-    public void addListener(InvalidationListener listener) {
-        helper.addListener(listener);
+    public void addListener(Runnable listener) {
+        listeners.add(listener);
     }
 
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        helper.removeListener(listener);
+    public void removeListener(Runnable listener) {
+        listeners.remove(listener);
+    }
+
+    private void invalidate() {
+        for (Runnable listener : listeners) {
+            listener.run();
+        }
     }
 
     public String toJson() {

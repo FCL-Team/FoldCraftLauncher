@@ -12,8 +12,6 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
-import com.tungsten.fclcore.observable.collections.FXCollections;
-import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.mod.ModAdviser;
 import com.tungsten.fclcore.mod.ModpackExportInfo;
 import com.tungsten.fclcore.mod.mcbbs.McbbsModpackExportTask;
@@ -27,6 +25,7 @@ import com.tungsten.fclcore.task.TaskListener;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.FCLCheckBoxTreeAdapter;
 import com.tungsten.fcllibrary.component.FCLCheckBoxTreeItem;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
@@ -94,7 +93,7 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
                 listView.setVisibility(View.VISIBLE);
                 next.setVisibility(View.VISIBLE);
 
-                ObservableList<FCLCheckBoxTreeItem<String>> list = FXCollections.observableArrayList();
+                List<FCLCheckBoxTreeItem<String>> list = new ArrayList<>();
                 list.add(rootItem);
                 FCLCheckBoxTreeAdapter<String> adapter = new FCLCheckBoxTreeAdapter<>(getContext(), list);
                 listView.setAdapter(adapter);
@@ -158,7 +157,7 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
                 return null;
         }
 
-        ObservableList<FCLCheckBoxTreeItem<String>> list = FXCollections.observableArrayList();
+        List<FCLCheckBoxTreeItem<String>> list = new ArrayList<>();
         FCLCheckBoxTreeItem<String> item = new FCLCheckBoxTreeItem<>(StringUtils.substringAfterLast(basePath, "/"), null, list);
         if (state == ModAdviser.ModSuggestion.SUGGESTED)
             item.setSelected(true);
@@ -173,8 +172,8 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
                         if (!subItem.isSelected()) {
                             item.setIndeterminate(true);
                         }
-                        subItem.selectedProperty().addListener(observable -> item.checkProperty());
-                        subItem.indeterminateProperty().addListener(observable -> item.checkProperty());
+                        FlowSubscriptions.subscribe(subItem.selectedFlow(), v -> item.checkProperty());
+                        FlowSubscriptions.subscribe(subItem.indeterminateFlow(), v -> item.checkProperty());
                         item.getSubItem().add(subItem);
                     }
                 }

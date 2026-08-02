@@ -156,7 +156,7 @@ public class TerracottaVPNService extends VpnService {
         String title = getString(R.string.terracotta_notification_title);
         String modeText = mode == Terracotta.TerracottaMode.HOST ? getString(R.string.terracotta_player_kind_host) : getString(R.string.terracotta_player_kind_guest);
         if (currentStateText == null) {
-            TerracottaState.Ready state = Terracotta.stateProperty().get();
+            TerracottaState.Ready state = Terracotta.stateFlow().getValue();
             if (state != null && !(state instanceof TerracottaState.Waiting)) {
                 currentStateText = AndroidUtils.getLocalizedText(getApplicationContext(), "terracotta_status_" + state);
             }

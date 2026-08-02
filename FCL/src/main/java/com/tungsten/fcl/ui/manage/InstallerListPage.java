@@ -103,10 +103,10 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                     continue;
                 }
 
-                installerItem.libraryVersion.set(libraryVersion);
-                installerItem.upgradable.set(libraryConfigurable);
-                installerItem.installable.set(true);
-                installerItem.action.set(() -> {
+                installerItem.libraryVersion.setValue(libraryVersion);
+                installerItem.upgradable.setValue(libraryConfigurable);
+                installerItem.installable.setValue(true);
+                installerItem.action.setValue(() -> {
                     com.tungsten.fcl.ui.download.version.InstallerListPage page = new com.tungsten.fcl.ui.download.version.InstallerListPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
                         if (libraryVersion == null) {
                             finish(profile, remoteVersion);
@@ -124,10 +124,10 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                     ManagePageManager.getInstance().showTempPage(page);
                 });
                 boolean removable = !LibraryAnalyzer.LibraryType.MINECRAFT.getPatchId().equals(libraryId) && libraryConfigurable;
-                installerItem.removable.set(removable);
+                installerItem.removable.setValue(removable);
                 if (removable) {
                     Runnable action = removeAction.apply(libraryId);
-                    installerItem.removeAction.set(action);
+                    installerItem.removeAction.setValue(action);
                 }
                 addView(installerItem);
             }

@@ -1,7 +1,7 @@
 # fakefx（JavaFX 属性体系）彻底移除执行方案
 
-> 状态：**阶段 4b（control/data 控件数据域 StateFlow 化）已完成**——control/data 11 个数据类与 4a 遗留的 Controller.viewGroups 全部切换为 StateFlow/FlowList（新增快照式列表基座），extractor 冒泡改逐元素 revisionFlow 订阅承接，控件视图监听改 Flow 订阅（渲染/触摸/阈值零改动），9 个 Miuix 游戏内弹窗级联改完。构建通过、冒烟 68/68、布局 JSON 回环实测旧/新管线逐字节一致、GameMenu 绑定链静态核验一致。记录见 §十；阶段 4a 记录见 §九；阶段 3 记录见 §八；2a/2b 记录见 §六/§七。
-> 分支：`feature/fcl-flow-control`（阶段 4b；基于含 4a 的 `feature/miuix-migration` 系）。
+> 状态：**阶段 4c（FCLLibrary 组件 + 其余残余域 StateFlow 化）已完成**——FCLLibrary 24 文件与 FCL 全部残余使用点（manage/download/controller/account/control、GameMenu、MultiplayerDialog、Terracotta、MainActivity）切换到 StateFlow/FlowList/FlowBindings（新增双向绑定基座），Theme 镜像层与 FXUtils 删除，业务代码 observable 引用清零（剩余仅桥接层/工具类/FCLCore 认证纹理链，见 §十一 4d 评估）。构建通过、冒烟 68/68。记录见 §十一；阶段 4b 记录见 §十；阶段 4a 记录见 §九；阶段 3 记录见 §八；2a/2b 记录见 §六/§七。
+> 分支：`feature/fcl-flow-lib`（阶段 4c；基于含 4a/4b 的 `feature/miuix-migration` 系）。
 > 调研日期：2026-08-02。所有数据均用 Grep/Read 实证，命令可复现。
 > 边界声明：本方案只规划移除 fakefx；控件系统（`control/`）与 WebView 保留；6.1 旧代码清理（见 `final-report.md` §6）按本文 §四 的合并点协同执行。
 
@@ -517,3 +517,68 @@ find FCLCore/src/main/java/com/tungsten/fclcore/fakefx -name "*.java" | xargs wc
 3. 订阅生命周期：数据类/样式库/ViewData/Controller 的 Flow 订阅随对象同生死（对齐原长寿命监听）；弹窗订阅均 dismiss cancel；控件视图订阅均 removeListener cancel。
 4. 无真机：游戏内手柄显示、触摸交互、弹窗编辑→刷新→落盘全链路仅编译期 + 静态核验 + 孪生回环兜底，真机项发布前补齐。
 5. 行为微调（已评估无害）：ControlDirectionStyle/ViewData/Controller 的元素换绑会 cancel 旧元素订阅（原实现旧元素监听残留，元素已脱离引用树）；StateFlow 同内容列表 setAll 不再通知（消费方幂等）。
+
+---
+
+## 十一、阶段 4c 执行记录：FCLLibrary 组件 + 其余残余域 StateFlow 化（2026-08-02 完成）
+
+分支 `feature/fcl-flow-lib`（基于含 4a/4b 的 `feature/miuix-migration` 系）。范围：FCLLibrary 全部 24 个组件/皮肤/树组件文件、Theme 镜像接缝、FCL 侧 manage/download/controller/account/control 全部残余引用、GameMenu 菜单自身属性、MultiplayerDialog、Terracotta、MainActivity、FXUtils/WeakListenerHolder。本步无 gradle 改动。
+
+### 11.1 新基建
+
+- `FCLCore/util/flow/FlowBindings.java`（新增）：`bindBidirectional(MutableStateFlow a, MutableStateFlow b)`——a ← b 初值同步（对齐 BidirectionalBinding），双侧 WeakReference 持有 + updating 守卫 + StateFlow 同值不发射三重防回环；返回 `Subscription`（双向一起取消，对齐 unbindBidirectional；适配器回收场景用）。
+
+### 11.2 FCLLibrary 组件（24 文件，全模块 observable 清零）
+
+统一范式（范例 FCLButton/FCLSwitch，其余 18 文件并行转换）：
+
+- **theme 匿名 IntegerPropertyBase + `theme.bind(theme.xxxProperty())`** → `applyTheme()`（原 invalidated 体逐字保留）+ `bindTheme()`（`FlowSubscriptions.subscribeWithCurrent(theme.xxxFlow(), ...)`，WeakReference 自持对齐原 bind 弱监听 GC 语义）；构造器调用点/次数不变。
+- **懒加载 `xxxProperty()` 访问器** → `xxxFlow()`（`MutableStateFlow<T>`，初值与原 PropertyBase 无参构造一致：Boolean false / Integer 0 / Double 0.0 / String/Object null；focusedFlow 暴露 StateFlow）；原 invalidated 体改为创建时 `subscribe`（外层 WeakReference 守卫 + 原 `Schedulers.androidUIThread()` 包裹逐字保留 + runnable 内二次守卫 + `get()` 改读 flow 当前值）；`setXxxValue/getXxxValue` 便捷方法签名不变。
+- **重命名表**：visibility/disable/check/indeterminate/string/selectedItem/image/progress/percentProgress/firstProgress/secondProgress/focused/texture `Property()` → 对应 `Flow()`。
+- 特殊文件：`FCLCheckBoxTreeItem`（ObservableList 子节点 → 普通 List，StringConverter → `Function<T,String>`，三态属性 → Flow）；`FCLCheckBoxTreeAdapter`（Bindings 派生 → 初值 + expandedFlow 订阅；双向勾选 → FlowBindings）；`SkinRenderer.textureProperty` → textureFlow（保留 alex.png 初值 set 触发链）。
+- **Theme.java 镜像层同步删除**：11 个镜像 Property + attachMirrors + 全部遗留 `xxxProperty()` 访问器（含保留至今的 `ignoreSkinContainerProperty()` 错误返回 fullscreen 的遗留 bug 一并消失——唯一文档引用在 LauncherSettingViewModel 注释，本就绕开）。原生 View 全部改订阅 `xxxFlow()` 后镜像无消费方。
+
+### 11.3 FCL 残余域（约 40 文件）
+
+| 域 | 变更 |
+|---|---|
+| GameMenu | 6 个菜单自身属性（editMode/cursorMode/showViewBoundaries/hideAllViews/controller/viewGroup）→ `xxxFlow()`；FXUtils.bindBoolean/bindSelection → `FlowBindings.bindBidirectional`（+ 显式 addCheckedChangeListener/addSelectListener）；initSeekbar 监听 → subscribe（句柄入 menuSettingSubscriptions，onDestroy 取消）；editLayout 可见性 bind → 初值 + 订阅 |
+| ControlButton/ControlDirection | 视图层 visibility/data 属性 → Flow（4b 数据监听不动）；menu 侧 addListener/removeListener → Subscription 句柄（removeListener 统一 cancel）；Bindings 可见性派生 → 初值 + 依赖订阅重算（unbindVisibility 统一摘除）；渲染/触摸/阈值零改动 |
+| ViewManager | 4 处 menu 属性监听 → subscribe，新增 onDestroy 统一取消（GameMenu.onDestroy 联动调用） |
+| MultiplayerDialog | Terracotta.stateProperty() → stateFlow()；ChangeListener oldValue 语义用 previousState 逐次记录还原（isForkOf 判断依赖）；全部 Bindings.createXxxBinding → Supplier + 初值 setValue + stateFlow 订阅重算；dismiss 统一 cancel |
+| Terracotta | ReadOnlyObjectWrapper + InvocationDispatcher → `MutableStateFlow<TerracottaState.Ready>`（STATE_V CAS + STATE_D 切 UI 线程语义不变）；notificationListener → Consumer + 可取消 Subscription（start/stopNotificationListener 对齐 add/removeListener） |
+| manage/*（Mod/Datapack/World/Modpack/ModUpdates/Installer 13 文件） | 页面字段 → MutableStateFlow；ListProperty/FXCollections → FlowList；bindBidirectional → FlowBindings（适配器回收前 cancel 重绑）；extractor 冒泡 → 元素 flow 订阅；FXUtils.bindSelection/bindInt 等调用点全部内联化；InstallerItem 公开字段 → MutableStateFlow（VersionInstallInfoScreen 改 `.value` 读写 + 写后整体刷新镜像） |
+| controller/*（ManagePage/RepoPage/EditableAdapter） | selectedController/refreshProperty → Flow；Bindings 信息栏派生 → 初值 + 订阅重算；categorySpinner → FlowBindings（unbindSelection = 句柄 cancel） |
+| AccountListItem + AccountScreen | 纹理链 Bindings/StringBinding → Flow 订阅重算（重绑 = cancel + 新订阅）；textureProperty/imageProperty → textureFlow/imageFlow；AccountScreen 改直接 collect StateFlow（不再过 observable 桥） |
+| TexturesLoader | skinBinding/textureBinding/avatarBinding（ObjectBinding + BindingMapping）→ `skinFlow/textureFlow/avatarFlow`（新增私有 `mapFlow/asyncMapFlow`：StateFlow 版 BindingMapping，弱引用目标对齐 GC 语义）；MainScreen/MainRightMenu/MiuixCharacterSelectorDialog 消费点改直接 collect/subscribe |
+| MainActivity | currentAccount 匿名 SimpleObjectProperty → MutableStateFlow + 订阅；账户名/副标题/头像 bind/unbind → 可取消 Subscription（onDestroy 全取消）；三个 theme IntegerPropertyBase → subscribeWithCurrent(color/color2/color2DarkFlow)；accountSubtitle 改纯函数 |
+| Config/GlobalConfig | `implements Observable` + ObservableHelper → 私有 `List<Runnable>` 失效中心（add/removeListener(Runnable) + invalidate()；ConfigHolder 存盘链路 `addListener(ConfigHolder::markConfigDirty)` 不变；字段订阅 → invalidate 语义不变） |
+| 其余 | Gyroscope/LogWindow/FCLCacheRepository/LocalModpackPage/TaskDialog/TaskListPane/ManageUI/ControllerManagePage/Miuix 弹窗×6/FCLAppBarLayout/ConfigHolder：同范式逐点转换 |
+
+### 11.4 FXUtils 删除与 WeakListenerHolder 瘦身
+
+- `FCL/util/FXUtils.java` **删除**：全部 live 调用点（bindBoolean/bindSelection/bindInt/bindString/onChangeAndOperate 等）已随各域转换内联为 FlowSubscriptions/FlowBindings，无消费方。
+- `FCL/util/WeakListenerHolder.java`：observable 系 weak() 工厂方法删除（无消费方），仅保留通用 `add/remove` 引用容器（EventBus registerWeak 强引用兜底，4 处使用：Profile/Profiles/MiuixCreate/MiuixOAuth）。
+
+### 11.5 门禁验证
+
+- `:FCL:assembleDebug`：**BUILD SUCCESSFUL**（三轮迭代修平：MiuixEditViewDialog selectionProperty 4b 遗留点、MainScreen/MainRightMenu/AccountListItem 纹理链接缝、适配器与页面访问器命名竞态、InstallerListPage 旧 set 调用点）。
+- observable 冒烟 **68/68** 复跑通过（本步未动 observable 库实现）。
+- 仓库卫生：临时文件全部在 /tmp，仓库无新增测试残留（git status 仅预期 76 文件改动：75 修改 + 1 删除 + 1 新增 FlowBindings）。
+
+### 11.6 全仓 grep 断言（4d 依据）
+
+`import com.tungsten.fclcore.observable` 剩余文件（除 observable 库自身），**全部为桥接层/工具类/已知遗留，业务代码清零**：
+
+- FCL（4）：`ui/bridge/FCLViewModel.kt`（两个 observable 便捷方法已无消费方）、`ui/bridge/FakeFxStateFlow.kt`（零消费方）、`ui/bridge/FakeFxCompose.kt`（零消费方）、`util/FlowObservables.java`（零消费方）。
+- FCLCore 工具（23）：`util/observable/`（BindingMapping、FlowBridge、ObservableOptionalCache 仍服役于 FCLCore 认证纹理链；ObservableHelper/MappedObservableList/ObservableCache/PropertyUtils/SafeStringConverter/ReferenceHolder 已零消费方）、`util/gson/observable/`（JavaFxPropertyTypeAdapterFactory 仍有 5 处注册：Controller.java:324、Controllers.java:98/159、ControllerDownloadPage.java:230、ControllerRepoPage.java:300——Controller 系已配手写 Serializer，注册大概率冗余待核实；FxGson/FxGsonBuilder 零消费方）。
+- FCLCore 业务（1）：`auth/yggdrasil/YggdrasilAccount.java`（私有纹理链 ObjectBinding + BindingMapping + FlowBridge；MicrosoftAccount/TexturesLoader/AccountListItem 经 FlowBridge 依赖同一 ObservableOptionalCache 未 Flow 化基建）。
+
+**4d（删桥接层 + observable 库）可行性评估：高。** 路径：① 删零消费方文件（FakeFxStateFlow/FakeFxCompose/FlowObservables + FCLViewModel 两个方法 + util/observable 6 个孤儿类 + FxGson 系）；② FCLCore 认证纹理链（YggdrasilService profileRepository 的 ObservableOptionalCache/BindingMapping）Flow 化，消除 YggdrasilAccount/MicrosoftAccount/TexturesLoader/AccountListItem 残余；③ 核实并摘除 5 处 JavaFxPropertyTypeAdapterFactory 注册后删 util/gson/observable；④ 删 observable 库 + 冒烟 68 断言随之退役（或改写为 Flow 语义用例）。
+
+### 11.7 遗留问题
+
+1. 适配器访问器名 `listProperty()/selectedItemsProperty()` 保留旧名（返回 FlowList，无 observable 依赖）——命名遗留，非机制遗留。
+2. StateFlow 合并语义：Terracotta 状态高频跳变理论可合并（消费方 switchUI/通知均幂等；状态按 index 单调推进）；视图属性同值 set 不触发与原 Property 一致。
+3. 订阅生命周期：页面/弹窗/适配器/控件视图均显式 cancel（dismiss/onDestroy/回收/removeListener）；菜单级长寿命订阅挂 GameMenu.onDestroy（含 ViewManager 联动）；FCLLibrary 视图 theme/属性订阅用 WeakReference 自持对齐原弱监听 GC 语义。
+4. 无真机：游戏内控件渲染/触摸、菜单双向同步、主题切换、三态文件树、联机弹窗状态机仅编译期 + 静态核验兜底，真机项发布前补齐。

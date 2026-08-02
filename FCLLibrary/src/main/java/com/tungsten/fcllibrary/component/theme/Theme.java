@@ -13,13 +13,6 @@ import androidx.core.graphics.ColorUtils;
 
 import com.mio.util.ImageUtil;
 import com.tungsten.fcl.FCLApplication;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
-import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
@@ -28,12 +21,9 @@ import kotlinx.coroutines.flow.StateFlow;
 import kotlinx.coroutines.flow.StateFlowKt;
 
 /**
- * 主题数据（阶段 4a）：字段已切换为 StateFlow，Compose 侧直接 collect
- * （FCLTheme.kt / LauncherSettingViewModel / ListItemAnimation）。
- *
- * <p>保留原生 View 侧（FCLLibrary component/view 24 文件，后续批次改造）仍通过
- * {@code xxxProperty()} 单向 bind 主题属性：这里为每个 Flow 维护一个同步镜像
- * Property（subscribeWithCurrent 初值同步 + 跟随后续发射），视图绑定链路不变。</p>
+ * 主题数据：字段为 StateFlow，Compose 侧直接 collect
+ * （FCLTheme.kt / LauncherSettingViewModel / ListItemAnimation），
+ * 原生 View 侧（FCLLibrary component/view）经 FlowSubscriptions.subscribeWithCurrent 跟随。
  */
 public class Theme {
 
@@ -49,21 +39,7 @@ public class Theme {
     private final MutableStateFlow<BitmapDrawable> backgroundLt = StateFlowKt.MutableStateFlow(null);
     private final MutableStateFlow<BitmapDrawable> backgroundDk = StateFlowKt.MutableStateFlow(null);
 
-    // ---- 原生 View 绑定用的镜像属性（Flow → Property 单向同步；生命周期与 Theme 一致） ----
-    private final IntegerProperty colorMirror = new SimpleIntegerProperty();
-    private final IntegerProperty color2Mirror = new SimpleIntegerProperty();
-    private final IntegerProperty color2DarkMirror = new SimpleIntegerProperty();
-    private final IntegerProperty ltColorMirror = new SimpleIntegerProperty();
-    private final IntegerProperty dkColorMirror = new SimpleIntegerProperty();
-    private final IntegerProperty autoTintMirror = new SimpleIntegerProperty();
-    private final BooleanProperty fullscreenMirror = new SimpleBooleanProperty();
-    private final BooleanProperty closeSkinModelMirror = new SimpleBooleanProperty();
-    private final IntegerProperty animationSpeedMirror = new SimpleIntegerProperty();
-    private final ObjectProperty<BitmapDrawable> backgroundLtMirror = new SimpleObjectProperty<>();
-    private final ObjectProperty<BitmapDrawable> backgroundDkMirror = new SimpleObjectProperty<>();
-
     public Theme(int color, int color2, int color2Dark, boolean fullscreen, boolean closeSkinModel, int animationSpeed, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk) {
-        attachMirrors();
         float[] ltHsv = new float[3];
         Color.colorToHSV(color, ltHsv);
         ltHsv[1] -= (1 - ltHsv[1]) * 0.3f;
@@ -83,20 +59,6 @@ public class Theme {
         this.autoTint.setValue(ColorUtils.calculateLuminance(color) >= 0.5 ? Color.parseColor("#FF000000") : Color.parseColor("#FFFFFFFF"));
         this.backgroundLt.setValue(backgroundLt);
         this.backgroundDk.setValue(backgroundDk);
-    }
-
-    private void attachMirrors() {
-        FlowSubscriptions.subscribeWithCurrent(color, colorMirror::set);
-        FlowSubscriptions.subscribeWithCurrent(color2, color2Mirror::set);
-        FlowSubscriptions.subscribeWithCurrent(color2Dark, color2DarkMirror::set);
-        FlowSubscriptions.subscribeWithCurrent(ltColor, ltColorMirror::set);
-        FlowSubscriptions.subscribeWithCurrent(dkColor, dkColorMirror::set);
-        FlowSubscriptions.subscribeWithCurrent(autoTint, autoTintMirror::set);
-        FlowSubscriptions.subscribeWithCurrent(fullscreen, fullscreenMirror::set);
-        FlowSubscriptions.subscribeWithCurrent(closeSkinModel, closeSkinModelMirror::set);
-        FlowSubscriptions.subscribeWithCurrent(animationSpeed, animationSpeedMirror::set);
-        FlowSubscriptions.subscribeWithCurrent(backgroundLt, backgroundLtMirror::set);
-        FlowSubscriptions.subscribeWithCurrent(backgroundDk, backgroundDkMirror::set);
     }
 
     public int getColor() {
@@ -195,53 +157,6 @@ public class Theme {
 
     public StateFlow<BitmapDrawable> dkBackgroundFlow() {
         return backgroundDk;
-    }
-
-    // ---- 遗留 observable 访问器（原生 View 绑定接缝，随 view 批次删除） ----
-
-    public IntegerProperty colorProperty() {
-        return colorMirror;
-    }
-
-    public IntegerProperty color2Property() {
-        return color2Mirror;
-    }
-
-    public IntegerProperty color2DarkProperty() {
-        return color2DarkMirror;
-    }
-
-    public IntegerProperty ltColorProperty() {
-        return ltColorMirror;
-    }
-
-    public IntegerProperty dkColorProperty() {
-        return dkColorMirror;
-    }
-
-    public IntegerProperty autoTintProperty() {
-        return autoTintMirror;
-    }
-
-    public BooleanProperty fullscreenProperty() {
-        return fullscreenMirror;
-    }
-
-    /** 注意：遗留 bug——本访问器错误返回 fullscreen 镜像而非 closeSkinModel（保留不改）。 */
-    public BooleanProperty ignoreSkinContainerProperty() {
-        return fullscreenMirror;
-    }
-
-    public IntegerProperty animationSpeedProperty() {
-        return animationSpeedMirror;
-    }
-
-    public ObjectProperty<BitmapDrawable> ltBackgroundProperty() {
-        return backgroundLtMirror;
-    }
-
-    public ObjectProperty<BitmapDrawable> dkBackgroundProperty() {
-        return backgroundDkMirror;
     }
 
     public BitmapDrawable getBackground(Context context) {

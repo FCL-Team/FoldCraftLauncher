@@ -20,7 +20,7 @@ import com.tungsten.fcl.control.view.KeycodeView
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
-import com.tungsten.fclcore.observable.property.SimpleIntegerProperty
+import kotlinx.coroutines.flow.MutableStateFlow
 import top.yukonga.miuix.kmp.basic.Card
 
 /**
@@ -53,7 +53,7 @@ class MiuixSelectKeycodeDialog(
     mouse: Boolean,
 ) : FCLComposeDialog(context, cancelable = false) {
 
-    private val selectionProperty = SimpleIntegerProperty(this, "selection", -1)
+    private val selectionFlow = MutableStateFlow(-1)
 
     /** 与遗留 SelectKeycodeDialog.container 对齐：parent_layout 引用，供单选时整体刷新选中态。 */
     private var container: ViewGroup? = null
@@ -66,13 +66,13 @@ class MiuixSelectKeycodeDialog(
      */
     var onChanged: (List<Int>) -> Unit = {}
 
-    fun selectionProperty(): SimpleIntegerProperty {
-        return selectionProperty
+    fun selectionFlow(): MutableStateFlow<Int> {
+        return selectionFlow
     }
 
     init {
         if (singleSelection) {
-            selectionProperty.set(list[0])
+            selectionFlow.value = list[0]
         }
 
         setDialogContent {
@@ -143,7 +143,7 @@ class MiuixSelectKeycodeDialog(
             if (child is KeycodeView) {
                 val l = ArrayList<Int>()
                 if (singleSelection) {
-                    l.add(selectionProperty.get())
+                    l.add(selectionFlow.value)
                 } else {
                     l.addAll(list)
                 }
@@ -163,7 +163,7 @@ class MiuixSelectKeycodeDialog(
                     KeycodeView.OnKeycodeChangeListener {
                     override fun onKeycodeAdd(view: KeycodeView, keycode: Int) {
                         if (singleSelection) {
-                            selectionProperty.set(keycode)
+                            selectionFlow.value = keycode
                             this@MiuixSelectKeycodeDialog.container?.let { checkSelection(it) }
                         } else {
                             list.add(keycode)

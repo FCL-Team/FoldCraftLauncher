@@ -33,7 +33,6 @@ import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclcore.auth.AccountFactory
 import com.tungsten.fclcore.auth.CharacterSelector
@@ -44,11 +43,11 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer
 import com.tungsten.fclcore.auth.authlibinjector.BoundAuthlibInjectorAccountFactory
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccountFactory
 import com.tungsten.fclcore.auth.offline.OfflineAccountFactory
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.task.TaskExecutor
 import com.tungsten.fclcore.util.StringUtils
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -59,6 +58,7 @@ import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.util.concurrent.CancellationException
 import java.util.regex.Pattern
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Miuix 版创建账户弹窗（3.2 批 3，对应 ui/account/CreateAccountDialog + dialog_create_account
@@ -102,7 +102,8 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
 
     private var loginTask: TaskExecutor? = null
     private var useExternalBrowser = false
-    private val deviceCode = SimpleObjectProperty<OAuthServer.GrantDeviceCodeEvent?>()
+    private val deviceCode = MutableStateFlow<OAuthServer.GrantDeviceCodeEvent?>(null)
+    private val deviceCodeSubscription: FlowSubscriptions.Subscription
     private val holder = WeakListenerHolder()
 
     private enum class DetailsType { OFFLINE, MICROSOFT, EXTERNAL }
@@ -116,8 +117,8 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
         }
         this.factory = resolved
 
-        holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak { value -> deviceCode.set(value) })
-        FXUtils.onChangeAndOperate(deviceCode) { dc ->
+        holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak { value -> deviceCode.value = value })
+        deviceCodeSubscription = FlowSubscriptions.subscribeWithCurrent(deviceCode) { dc ->
             Handler(Looper.getMainLooper()).post {
                 if (dc != null) {
                     AndroidUtils.copyText(context, dc.userCode)
@@ -400,7 +401,7 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
         }
 
         val doCreate = Runnable {
-            deviceCode.set(null)
+            deviceCode.value = null
 
             val selector: CharacterSelector = MiuixCharacterSelectorDialog(context)
             loginTask = Task.supplyAsync { factory.create(selector, username, password, null, additionalData) }
@@ -450,6 +451,11 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
         } else {
             doCreate.run()
         }
+    }
+
+    override fun dismiss() {
+        deviceCodeSubscription.cancel()
+        super.dismiss()
     }
 
     private fun onCancel() {
