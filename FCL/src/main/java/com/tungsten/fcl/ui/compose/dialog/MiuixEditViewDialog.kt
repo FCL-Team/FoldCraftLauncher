@@ -78,7 +78,8 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *   「Set」按 [ComposeDialogs.USE_COMPOSE_BUTTON_STYLE]/[ComposeDialogs.USE_COMPOSE_DIRECTION_STYLE]
  *   双分支弹样式选择，选择后写回 data.style 并刷新名称；
  * - 按钮事件页：pointerFollow/movable 两 Switch + TabRow 四套事件子页（按下/长按/点击/双击），
- *   各含 7 Switch + 输出文本 + 键码选择（原生 SelectKeycodeDialog，直改 outputKeycodesList）
+ *   各含 7 Switch + 输出文本 + 键码选择（按 [ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE]
+ *   双分支，直改 outputKeycodesList）
  *   + 绑定分组（按 [ComposeDialogs.USE_COMPOSE_VIEW_GROUP] 双分支，回调 id 列表
  *   setBindViewGroup，与遗留 :387 一致）；
  * - 方向键信息页同构：单一尺寸滑杆（绝对区间上限为屏高 dp），写宽时同步高
@@ -666,8 +667,12 @@ class MiuixEditViewDialog(
         LabeledButtonRow(
             label = stringResource(R.string.edit_button_event_keycodes),
             onClick = {
-                // SelectKeycodeDialog 保持原生，直改 outputKeycodesList（同遗留）
-                SelectKeycodeDialog(context, e.outputKeycodesList(), false, true).show()
+                // 直改 outputKeycodesList（同遗留）；4.1 起键码弹窗按开关双分支
+                if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                    MiuixSelectKeycodeDialog(context, e.outputKeycodesList(), false, true).show()
+                } else {
+                    SelectKeycodeDialog(context, e.outputKeycodesList(), false, true).show()
+                }
             },
         )
 
@@ -733,9 +738,16 @@ class MiuixEditViewDialog(
             onClick = {
                 val list = FXCollections.observableList(ArrayList<Int>())
                 list.add(event.sneakKeycode)
-                val dialog = SelectKeycodeDialog(context, list, true, false)
-                event.sneakKeycodeProperty().bind(dialog.selectionProperty())
-                dialog.show()
+                // 4.1 起键码弹窗按开关双分支（selectionProperty 绑定语义两分支一致）
+                if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                    val dialog = MiuixSelectKeycodeDialog(context, list, true, false)
+                    event.sneakKeycodeProperty().bind(dialog.selectionProperty())
+                    dialog.show()
+                } else {
+                    val dialog = SelectKeycodeDialog(context, list, true, false)
+                    event.sneakKeycodeProperty().bind(dialog.selectionProperty())
+                    dialog.show()
+                }
             },
         )
 
@@ -768,9 +780,16 @@ class MiuixEditViewDialog(
             onClick = {
                 val list = FXCollections.observableArrayList<Int>()
                 list.addAll(target)
-                SelectKeycodeDialog(context, list, false, false) {
-                    target.setAll(list)
-                }.show()
+                // 4.1 起键码弹窗按开关双分支（临时列表拷贝、确认后 setAll 回写两分支一致）
+                if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
+                    MiuixSelectKeycodeDialog(context, list, false, false) {
+                        target.setAll(list)
+                    }.show()
+                } else {
+                    SelectKeycodeDialog(context, list, false, false) {
+                        target.setAll(list)
+                    }.show()
+                }
             },
         )
     }

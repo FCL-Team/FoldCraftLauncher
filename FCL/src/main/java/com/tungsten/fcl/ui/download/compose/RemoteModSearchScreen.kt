@@ -42,6 +42,7 @@ import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
 import com.tungsten.fcl.ui.compose.dialog.MiuixTranslationDialog
+import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fcl.ui.download.TranslationDialog
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.ModLoaderType
@@ -565,6 +566,8 @@ fun RemoteModSearchScreen(
                             RemoteModRow(
                                 item = item,
                                 onClick = { onOpenModInfo(item.mod, holder.repository, holder.isModrinth) },
+                                // 入场动画对齐 RemoteModListAdapter:113（animationSpeed×30）
+                                modifier = fclItemEntryModifier(),
                             )
                         }
                     }
@@ -604,9 +607,10 @@ private fun PageButton(
 private fun RemoteModRow(
     item: RemoteModItemUi,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
     ) {

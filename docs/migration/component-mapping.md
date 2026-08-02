@@ -166,7 +166,7 @@
 | `GameItemBar`（物品栏悬浮条） | `control/view/GameItemBar.kt` | — | — | **保留原生（红线）** | 自绘+触摸选取 |
 | `MenuView`（游戏内悬浮球） | `control/view/MenuView.java` | — | — | **保留原生（红线）** | — |
 | `LogWindow`（游戏内日志浮窗） | `control/view/LogWindow.java`（2 次/2 文件） | — | — | **保留原生（红线）** | ShellActivity 的日志窗是另一个普通 EditText 场景，可 Compose 化为 `Text` + `verticalScroll` |
-| `KeycodeView`（键码按钮） | 109 次/2 文件（`view_keyboard.xml`、`dialog_select_keycode.xml`） | — | — | **保留原生（红线）** | 全键盘布局（1502 行 XML）整体保留；仅在游戏外被复用时才考虑 Compose 重写 |
+| `KeycodeView`（键码按钮） | 109 次/2 文件（`view_keyboard.xml`、`dialog_select_keycode.xml`） | — | — | **保留原生（红线）** | 全键盘布局（1502 行 XML）整体保留；仅在游戏外被复用时才考虑 Compose 重写。4.1 已处置：`dialog_select_keycode` 弹窗外壳 Miuix 化（`MiuixSelectKeycodeDialog`），键盘本体 AndroidView 包装（KeycodeView 触摸链零改动），开关 `ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE` |
 | `TouchCharInput`（软键盘输入桥） | `control/keyboard/TouchCharInput.java` | — | — | **保留原生（红线）** | IME 逐字符桥接，AndroidView 承载 |
 | `TouchControllerInputView`（触控模组代理） | `mio/touchcontroller/TouchControllerInputView.kt` | — | — | **保留原生（红线）** | 多点触控→协议转换 |
 | `DraggableTextView`（FPS/内存悬浮字） | 2 次/1 文件（`view_game_menu.xml`） | — | — | **保留原生（红线）** | 远期可 `pointerInput`+`detectDragGestures` 重写，非本期目标 |

@@ -36,6 +36,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profiles
+import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.download.LibraryAnalyzer
@@ -58,6 +59,7 @@ import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -298,8 +300,14 @@ fun RemoteModInfoScreen(
                     holder.displayedGameVersions(),
                     key = { it },
                 ) { gameVersion ->
+                    // 入场动画对齐 ModGameVersionAdapter:69（animationSpeed×30）；
+                    // 按压反馈对齐 anim_scale（ModGameVersionAdapter:62）→ Miuix Sink
                     Card(
-                        modifier = Modifier
+                        onClick = {
+                            holder.versionMap[gameVersion]?.let(onOpenVersionPage)
+                        },
+                        pressFeedbackType = PressFeedbackType.Sink,
+                        modifier = fclItemEntryModifier()
                             .fillMaxWidth()
                             .padding(bottom = 8.dp),
                     ) {
@@ -309,9 +317,6 @@ fun RemoteModInfoScreen(
                             style = MiuixTheme.textStyles.body2,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    holder.versionMap[gameVersion]?.let(onOpenVersionPage)
-                                }
                                 .padding(12.dp),
                         )
                     }

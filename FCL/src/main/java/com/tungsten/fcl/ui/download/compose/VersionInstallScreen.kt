@@ -26,6 +26,7 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.DownloadProviders
+import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
@@ -246,6 +247,8 @@ fun VersionInstallScreen(
                         RemoteVersionRow(
                             version = version,
                             onClick = { onOpenInstallInfo(version.gameVersion) },
+                            // 入场动画对齐 RemoteVersionListAdapter:108（animationSpeed×30）
+                            modifier = fclItemEntryModifier(),
                         )
                     }
                 }

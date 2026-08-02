@@ -27,6 +27,7 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.DownloadProviders
+import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
@@ -206,7 +207,11 @@ fun InstallerListScreen(
 
                 else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(holder.items, key = { it.selfVersion }) { version ->
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        // 入场动画对齐 RemoteVersionListAdapter:108（animationSpeed×30）
+                        Row(
+                            modifier = fclItemEntryModifier(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
                             RemoteVersionRow(
                                 version = version,
                                 onClick = { onSelect(version) },
