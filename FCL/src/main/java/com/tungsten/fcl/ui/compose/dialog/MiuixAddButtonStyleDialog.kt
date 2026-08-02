@@ -304,7 +304,8 @@ class MiuixAddButtonStyleDialog(
                 modifier = Modifier
                     .size(32.dp)
                     .background(Color(spec.property.get()))
-                    .border(1.dp, Color.Gray),
+                    // 描边对齐遗留 darker_gray 体系（bg_item.xml 等）→ outline token（昼夜适配）
+                    .border(1.dp, MiuixTheme.colorScheme.outline),
             )
             Spacer(Modifier.width(10.dp))
             TextButton(

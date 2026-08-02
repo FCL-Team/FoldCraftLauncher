@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
-import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -53,10 +52,10 @@ import com.tungsten.fcl.ui.compose.rememberShakeState
 import com.tungsten.fcl.ui.compose.shake
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
 import com.tungsten.fcl.ui.compose.dialog.MiuixAddProfileDialog
+import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fcl.ui.version.AddProfileDialog
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fclcore.fakefx.collections.ListChangeListener
-import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
@@ -318,14 +317,7 @@ private fun VersionListArea(
                     onSelect = { viewModel.onSelectVersion(item) },
                     onDelete = { viewModel.onDeleteVersion(item) },
                     onSettings = { viewModel.onOpenVersionSettings(item) },
-                    modifier = Modifier.animateItem(
-                        // 对齐 Adapter :94-99 入场动画（时长 = animationSpeed × 30ms）
-                        fadeInSpec = tween(
-                            ThemeEngine.getInstance().theme?.animationSpeed?.times(30) ?: 150,
-                        ),
-                        placementSpec = null,
-                        fadeOutSpec = null,
-                    ),
+                    modifier = fclItemEntryModifier(),
                 )
             }
         }

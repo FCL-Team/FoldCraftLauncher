@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,12 +18,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tungsten.fcl.R
+import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fcl.ui.download.common.ModVersionAdapter
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
 /**
  * 远程资源版本文件列表页（对齐 RemoteModVersionPage + ModVersionAdapter + item_mod_version）：
@@ -75,15 +76,19 @@ fun RemoteModVersionScreen(
             .padding(10.dp),
     ) {
         items(versions, key = { it.modid + "@" + it.name + "@" + it.version }) { version ->
+            // 入场动画对齐 ModVersionAdapter:73（animationSpeed×30，见 fclItemEntryModifier）；
+            // 按压反馈对齐 anim_scale StateListAnimator（按压缩放，ModVersionAdapter:63）→
+            // Miuix Card 可点击重载的 Sink 反馈（component-mapping §3 既定替代）
             Card(
-                modifier = Modifier
+                onClick = { onSelect(version) },
+                pressFeedbackType = PressFeedbackType.Sink,
+                modifier = fclItemEntryModifier()
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { onSelect(version) }
                         .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

@@ -53,6 +53,9 @@ object FCLThemeTokens {
 
     /** 运行时主题色 2（dark）默认值 `theme_color2_dark`，Theme.java:210 */
     val Color2DarkDefault = Color(0xFFFFFFFF)
+
+    /** 主界面公告链接色 `textColorLink`，ui_main.xml:55（无 night 变体，昼夜同色；design-tokens §1.4 归并） */
+    val AnnouncementLink = Color(0xFF77FF00)
 }
 
 /**
