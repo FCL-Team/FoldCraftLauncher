@@ -32,6 +32,8 @@ import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixOAuthAccountLoginDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixOfflineAccountSkinDialog;
+import com.tungsten.fcl.ui.main.MainUI;
+import com.tungsten.fcl.ui.main.compose.ComposeMainUI;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -63,6 +65,7 @@ import com.tungsten.fclcore.util.skin.NormalizedSkin;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
+import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
@@ -236,7 +239,13 @@ public class AccountListItem {
         image.bind(TexturesLoader.avatarBinding(account, ConvertUtils.dip2px(context, 30f)));
         texture.bind(TexturesLoader.textureBinding(account));
         MainActivity.getInstance().refreshAvatar(account);
-        UIManager.getInstance().getMainUI().refreshSkin(account);
+        // 3.6：mainUI 放宽为 FCLCommonUI（ComposeMainUI/MainUI 二选一），按实例类型分发 refreshSkin 契约
+        FCLCommonUI mainUI = UIManager.getInstance().getMainUI();
+        if (mainUI instanceof ComposeMainUI) {
+            ((ComposeMainUI) mainUI).refreshSkin(account);
+        } else if (mainUI instanceof MainUI) {
+            ((MainUI) mainUI).refreshSkin(account);
+        }
     }
 
     public static AuthInfo logIn(Account account) throws CancellationException, AuthenticationException, InterruptedException {

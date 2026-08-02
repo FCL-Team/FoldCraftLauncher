@@ -7,6 +7,7 @@ import com.tungsten.fcl.ui.account.compose.ComposeAccountUI
 import com.tungsten.fcl.ui.controller.ControllerUI
 import com.tungsten.fcl.ui.download.DownloadUI
 import com.tungsten.fcl.ui.main.MainUI
+import com.tungsten.fcl.ui.main.compose.ComposeMainUI
 import com.tungsten.fcl.ui.manage.ManageUI
 import com.tungsten.fcl.ui.multiplayer.MultiplayerUI
 import com.tungsten.fcl.ui.setting.SettingUI
@@ -24,7 +25,17 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
     }
 
     private var initialized = false
-    lateinit var mainUI: MainUI
+    // 阶段三 3.6：ComposeMainUI.USE_COMPOSE_MAIN_UI 为整体回滚开关（对齐 3.5 模式），
+    // true = Compose 主页，false = 旧 MainUI（ui_main.xml）；类型放宽为 FCLCommonUI，
+    // 既有反向调用点（switchUI / currentUI === 比较）签名不变；refreshSkin 契约由
+    // AccountListItem 按实例类型分发（ComposeMainUI.refreshSkin / MainUI.refreshSkin）。
+    val mainUI: FCLCommonUI by lazy {
+        if (ComposeMainUI.USE_COMPOSE_MAIN_UI) {
+            ComposeMainUI(context, parent)
+        } else {
+            MainUI(context, parent, R.layout.ui_main)
+        }
+    }
     // 阶段三 3.5：ComposeAccountUI.USE_COMPOSE_ACCOUNT_UI 为整体回滚开关（对齐 3.3/3.4 模式），
     // true = Compose 账户页，false = 旧 AccountUI（ui_account.xml）；类型放宽为 FCLCommonUI，
     // 既有反向调用点（refresh().start() / switchUI）签名不变。
@@ -51,7 +62,6 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
             return
         }
         instance = this
-        mainUI = MainUI(context, parent, R.layout.ui_main)
         allUIList.add(mainUI)
         mainUI.addLoadingCallback {
             listener.onLoad()

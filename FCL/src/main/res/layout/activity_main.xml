@@ -276,6 +276,18 @@
             app:layout_constraintHeight_percent="0.1"
             app:layout_constraintStart_toEndOf="@id/version" />
 
+        <!-- 3.6：Compose 右侧栏容器（ComposeMainUI.USE_COMPOSE_MAIN_UI = true 时覆盖旧 View 层；
+             旧 account/start/version/jar View 保留用于开关回滚，Compose 模式下置 GONE） -->
+        <FrameLayout
+            android:id="@+id/right_menu_compose"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.tungsten.fcllibrary.component.view.FCLUILayout
