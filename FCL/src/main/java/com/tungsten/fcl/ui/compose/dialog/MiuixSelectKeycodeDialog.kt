@@ -21,7 +21,6 @@ import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
 import com.tungsten.fclcore.observable.property.SimpleIntegerProperty
-import com.tungsten.fclcore.observable.collections.ObservableList
 import top.yukonga.miuix.kmp.basic.Card
 
 /**
@@ -49,7 +48,7 @@ import top.yukonga.miuix.kmp.basic.Card
  */
 class MiuixSelectKeycodeDialog(
     context: Context,
-    private val list: ObservableList<Int>,
+    private val list: MutableList<Int>,
     private val singleSelection: Boolean,
     mouse: Boolean,
 ) : FCLComposeDialog(context, cancelable = false) {
@@ -60,6 +59,12 @@ class MiuixSelectKeycodeDialog(
     private var container: ViewGroup? = null
 
     private var onConfirm: (MiuixSelectKeycodeDialog) -> Unit = {}
+
+    /**
+     * 多选模式下每次增删键码后的回调（阶段 4b 新增：数据层列表已快照化，
+     * 需要即时回写时由调用方设置；默认空实现对齐遗留"临时列表确认后回读"用法）。
+     */
+    var onChanged: (List<Int>) -> Unit = {}
 
     fun selectionProperty(): SimpleIntegerProperty {
         return selectionProperty
@@ -123,7 +128,7 @@ class MiuixSelectKeycodeDialog(
 
     constructor(
         context: Context,
-        list: ObservableList<Int>,
+        list: MutableList<Int>,
         singleSelection: Boolean,
         mouse: Boolean,
         onConfirm: (MiuixSelectKeycodeDialog) -> Unit,
@@ -162,6 +167,7 @@ class MiuixSelectKeycodeDialog(
                             this@MiuixSelectKeycodeDialog.container?.let { checkSelection(it) }
                         } else {
                             list.add(keycode)
+                            onChanged(list.toList())
                         }
                     }
 
@@ -172,6 +178,7 @@ class MiuixSelectKeycodeDialog(
                             for (j in list.indices) {
                                 if (list[j] == keycode) {
                                     list.removeAt(j)
+                                    onChanged(list.toList())
                                     break
                                 }
                             }

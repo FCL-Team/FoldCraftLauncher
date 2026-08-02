@@ -21,7 +21,6 @@ import com.tungsten.fcl.control.gamepad.GamepadEmulatedButton
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fclcore.observable.collections.FXCollections
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -106,9 +105,8 @@ class MiuixGamepadMapDialog(
                             )
                             Spacer(Modifier.weight(1f))
                             IconButton(onClick = {
-                                val list = FXCollections.observableList(item.button.keycodes)
-                                // 4.1 接入点：Miuix 键码选择弹窗
-                                MiuixSelectKeycodeDialog(context, list, false, true).show()
+                                // 直改手柄按键的 keycodes（MutableList，键码弹窗就地增删）
+                                MiuixSelectKeycodeDialog(context, item.button.keycodes, false, true).show()
                             }) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_baseline_settings_24),

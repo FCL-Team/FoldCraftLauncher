@@ -1,7 +1,5 @@
 package com.tungsten.fcl.control.data;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -14,20 +12,24 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.Observable;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleStringProperty;
-import com.tungsten.fclcore.observable.property.StringProperty;
-import com.tungsten.fclcore.util.observable.ObservableHelper;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
 import java.util.UUID;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 按钮控件数据（阶段 4b）：属性已 StateFlow 化；任何字段（替换式）变更递增
+ * {@link #revisionFlow()}（对齐原 Observable 失效语义）。
+ *
+ * <p>磁盘 JSON 由手写 {@link Serializer} 产出，与属性类型无关，格式不变。</p>
+ */
 @JsonAdapter(ControlButtonData.Serializer.class)
-public class ControlButtonData implements Cloneable, Observable, CustomControl {
+public class ControlButtonData implements Cloneable, CustomControl {
 
     /**
      * Unique id
@@ -45,102 +47,90 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
     /**
      * Button display text
      */
-    private final StringProperty textProperty = new SimpleStringProperty(this, "text", "");
+    private final MutableStateFlow<String> text = StateFlowKt.MutableStateFlow("");
 
-    public StringProperty textProperty() {
-        return textProperty;
+    public StateFlow<String> textFlow() {
+        return text;
     }
 
     public void setText(String text) {
-        textProperty.set(text);
+        this.text.setValue(text);
     }
 
     public String getText() {
-        return textProperty.get();
+        return text.getValue();
     }
 
     /**
      * Button style
      */
-    private final ObjectProperty<ControlButtonStyle> styleProperty = new SimpleObjectProperty<>(this, "style", ControlButtonStyle.DEFAULT_BUTTON_STYLE);
+    private final MutableStateFlow<ControlButtonStyle> style = StateFlowKt.MutableStateFlow(ControlButtonStyle.DEFAULT_BUTTON_STYLE);
 
-    public ObjectProperty<ControlButtonStyle> styleProperty() {
-        return styleProperty;
+    public StateFlow<ControlButtonStyle> styleFlow() {
+        return style;
     }
 
     public void setStyle(ControlButtonStyle style) {
-        styleProperty.set(style);
+        this.style.setValue(style);
     }
 
     public ControlButtonStyle getStyle() {
-        return styleProperty.get();
+        return style.getValue();
     }
 
     /**
      * Base info data
      * Contains position and size
      */
-    public final ObjectProperty<BaseInfoData> baseInfoProperty = new SimpleObjectProperty<>(this, "baseInfo", new BaseInfoData());
+    private final MutableStateFlow<BaseInfoData> baseInfo = StateFlowKt.MutableStateFlow(new BaseInfoData());
 
-    public ObjectProperty<BaseInfoData> baseInfoProperty() {
-        return baseInfoProperty;
+    public StateFlow<BaseInfoData> baseInfoFlow() {
+        return baseInfo;
     }
 
     public void setBaseInfo(BaseInfoData baseInfo) {
-        baseInfoProperty.set(baseInfo);
+        this.baseInfo.setValue(baseInfo);
     }
 
     public BaseInfoData getBaseInfo() {
-        return baseInfoProperty.get();
+        return baseInfo.getValue();
     }
 
     /**
      * Button event data
      */
-    public final ObjectProperty<ButtonEventData> eventProperty = new SimpleObjectProperty<>(this, "event", new ButtonEventData());
+    private final MutableStateFlow<ButtonEventData> event = StateFlowKt.MutableStateFlow(new ButtonEventData());
 
-    public ObjectProperty<ButtonEventData> eventProperty() {
-        return eventProperty;
+    public StateFlow<ButtonEventData> eventFlow() {
+        return event;
     }
 
     public void setEvent(ButtonEventData event) {
-        eventProperty.set(event);
+        this.event.setValue(event);
     }
 
     public ButtonEventData getEvent() {
-        return eventProperty.get();
+        return event.getValue();
     }
 
     public ControlButtonData(String id) {
         this.id = id;
 
-        addPropertyChangedListener(onInvalidating(this::invalidate));
+        FlowSubscriptions.subscribe(text, v -> invalidate());
+        FlowSubscriptions.subscribe(style, v -> invalidate());
+        FlowSubscriptions.subscribe(baseInfo, v -> invalidate());
+        FlowSubscriptions.subscribe(event, v -> invalidate());
     }
 
-    public void addPropertyChangedListener(InvalidationListener listener) {
-        textProperty.addListener(listener);
-        styleProperty.addListener(listener);
-        baseInfoProperty.addListener(listener);
-        eventProperty.addListener(listener);
-    }
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-        observableHelper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        observableHelper.removeListener(listener);
+    /** 任何字段（替换式）变更时递增（对齐原 Observable 失效语义）。 */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     private void invalidate() {
-        try {
-            observableHelper.invalidate();
-        } catch (NullPointerException ignore) {
-        }
+        revision.setValue(revision.getValue() + 1);
     }
 
     @Override

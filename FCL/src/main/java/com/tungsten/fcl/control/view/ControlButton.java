@@ -45,6 +45,7 @@ import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.Objects;
@@ -61,6 +62,21 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private InvalidationListener boundaryListener;
     private InvalidationListener visibilityListener;
     private InvalidationListener alphaListener;
+
+    // 阶段 4b：数据层监听由 getData().addListener(notifyListener) 改为订阅
+    // ControlButtonData.revisionFlow（失效即递增，语义等价）；data 切换时换绑，
+    // removeListener 时取消（对齐原 removeListener 摘除）。
+    private FlowSubscriptions.Subscription dataSubscription;
+
+    private void subscribeDataRevision() {
+        if (dataSubscription != null) {
+            dataSubscription.cancel();
+        }
+        dataSubscription = FlowSubscriptions.subscribe(getData().revisionFlow(), v -> Schedulers.androidUIThread().execute(() -> {
+            notifyData();
+            cancelAllEvent();
+        }));
+    }
 
     private final GameMenu menu;
     private Path boundaryPath;
@@ -122,7 +138,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
         dataChangeListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
             notifyData();
             cancelAllEvent();
-            getData().addListener(notifyListener);
+            subscribeDataRevision();
         });
         boundaryListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
             boundaryPath = new Path();
@@ -144,7 +160,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
             }
             menu.editModeProperty().addListener(notifyListener);
             dataProperty.addListener(dataChangeListener);
-            getData().addListener(notifyListener);
+            subscribeDataRevision();
             menu.showViewBoundariesProperty().addListener(boundaryListener);
             setAlpha(menu.isHideAllViews() ? 0 : 1);
             menu.hideAllViewsProperty().addListener(alphaListener);
@@ -202,7 +218,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
         // Visibility
         visibilityProperty().unbind();
         if (menu.isEditMode()) {
-            visibilityProperty().bind(Bindings.createBooleanBinding(() -> menu.getViewGroup() != null && (menu.getViewGroup().getViewData().buttonList().stream().anyMatch(it -> it.getId().equals(getData().getId()))),
+            visibilityProperty().bind(Bindings.createBooleanBinding(() -> menu.getViewGroup() != null && (menu.getViewGroup().getViewData().getButtonList().stream().anyMatch(it -> it.getId().equals(getData().getId()))),
                     menu.editModeProperty(), menu.viewGroupProperty()));
         } else {
             visibilityProperty().bind(Bindings.createBooleanBinding(() -> isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
@@ -592,10 +608,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
         if (!press && !keycodeOutputting) {
             return;
         }
-        if (event.outputKeycodesList().isEmpty()) {
+        if (event.getOutputKeycodes().isEmpty()) {
             return;
         }
-        for (int keycode : event.outputKeycodesList()) {
+        for (int keycode : event.getOutputKeycodes()) {
             keycodeOutputting = press;
             menu.getInput().sendKeyEvent(keycode, press);
         }
@@ -714,7 +730,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 }, 150);
             }
         }
-        for (String id : event.bindViewGroupList()) {
+        for (String id : event.getBindViewGroups()) {
             if (menu.getController().viewGroups().stream().anyMatch(it -> it.getId().equals(id))) {
                 ControlViewGroup viewGroup = menu.getController().viewGroups().stream().filter(it -> it.getId().equals(id)).findFirst().orElse(null);
                 menu.getViewManager().switchViewGroupVisibility(viewGroup);
@@ -765,7 +781,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
     public void removeListener() {
         menu.editModeProperty().removeListener(notifyListener);
         dataProperty.removeListener(dataChangeListener);
-        getData().removeListener(notifyListener);
+        if (dataSubscription != null) {
+            dataSubscription.cancel();
+            dataSubscription = null;
+        }
         menu.showViewBoundariesProperty().removeListener(boundaryListener);
         visibilityProperty().removeListener(visibilityListener);
         menu.hideAllViewsProperty().removeListener(alphaListener);

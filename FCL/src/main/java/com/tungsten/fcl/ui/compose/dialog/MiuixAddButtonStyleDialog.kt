@@ -33,8 +33,8 @@ import com.tungsten.fcl.control.data.ControlButtonStyle
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fclcore.observable.property.IntegerProperty
 import com.tungsten.fclcore.util.StringUtils
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog
 import com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
@@ -53,7 +53,8 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *   全程直接改该 observable 属性模型，确定时把整个 style 交给回调；
  * - TabRow 切换普通/按压两套样式页（各 3 滑杆 + 3 颜色），初始选中普通页；
  * - 滑杆沿用 FCLPreciseSeekBar（AndroidView 承载），区间对齐遗留 XML：
- *   字号 2~30（"sp"）、描边宽 0~100（"dp"）、圆角 0~500（"dp"），均与样式属性双向绑定；
+ *   字号 2~30（"sp"）、描边宽 0~100（"dp"）、圆角 0~500（"dp"），滑杆/数字输入即时
+ *   写入样式属性（对齐遗留双向绑定；样式 revision 驱动重组回读）；
  * - 点数值文本弹 EditDialog 数字输入（沿用原生）：正则 \d+(\.\d+)?$ 校验、
  *   isPercentage 时 ×10 且封顶 100，各字段 isPercentage 取值与遗留一致（字号 false）；
  * - 3 组颜色按钮弹 FCLColorPickerDialog（沿用原生），onPositive 写回属性；
@@ -81,10 +82,17 @@ class MiuixAddButtonStyleDialog(
     private val tabState = mutableIntStateOf(0)
     private val revisionState = mutableIntStateOf(0)
 
-    /** 滑杆行描述：标签/绑定属性/区间/EditDialog 语义/显示格式。 */
+    /** 弹窗存活期 Flow 订阅（dismiss 统一取消，防共享作用域泄漏）。 */
+    private val subscriptions = mutableListOf<FlowSubscriptions.Subscription>()
+
+    /**
+     * 滑杆行描述（阶段 4b：样式属性已 StateFlow 化，SeekSpec 改为 get/set + 镜像流，
+     * 滑杆/数字输入 → 镜像流 → set，样式 revision 驱动重组，对齐原双向绑定语义）。
+     */
     private inner class SeekSpec(
         val labelRes: Int,
-        val property: IntegerProperty,
+        val get: () -> Int,
+        val set: (Int) -> Unit,
         min: Int,
         max: Int,
         val isPercentage: Boolean,
@@ -94,44 +102,49 @@ class MiuixAddButtonStyleDialog(
         val seekBar: FCLPreciseSeekBar = FCLPreciseSeekBar(context).apply {
             setMin(min)
             setMax(max)
-            setProgress(property.get())
-            property.bindBidirectional(progressProperty())
+            setProgress(get())
+            progressProperty().addListener { _, _, n -> set(n.toInt()) }
             progressProperty().addListener { revisionState.intValue++ }
         }
     }
 
-    private inner class ColorSpec(val labelRes: Int, val property: IntegerProperty)
+    private inner class ColorSpec(val labelRes: Int, val get: () -> Int, val set: (Int) -> Unit)
 
     private val normalSeeks = listOf(
-        SeekSpec(R.string.style_button_text_size, style.textSizeProperty(), 2, 30, isPercentage = false, div10 = false, unit = "sp"),
-        SeekSpec(R.string.style_button_stroke_width, style.strokeWidthProperty(), 0, 100, isPercentage = true, div10 = true, unit = "dp"),
-        SeekSpec(R.string.style_button_corner_radius, style.cornerRadiusProperty(), 0, 500, isPercentage = true, div10 = true, unit = "dp"),
+        SeekSpec(R.string.style_button_text_size, { style.textSize }, { style.textSize = it }, 2, 30, isPercentage = false, div10 = false, unit = "sp"),
+        SeekSpec(R.string.style_button_stroke_width, { style.strokeWidth }, { style.strokeWidth = it }, 0, 100, isPercentage = true, div10 = true, unit = "dp"),
+        SeekSpec(R.string.style_button_corner_radius, { style.cornerRadius }, { style.cornerRadius = it }, 0, 500, isPercentage = true, div10 = true, unit = "dp"),
     )
     private val pressedSeeks = listOf(
-        SeekSpec(R.string.style_button_text_size, style.textSizePressedProperty(), 2, 30, isPercentage = false, div10 = false, unit = "sp"),
-        SeekSpec(R.string.style_button_stroke_width, style.strokeWidthPressedProperty(), 0, 100, isPercentage = true, div10 = true, unit = "dp"),
-        SeekSpec(R.string.style_button_corner_radius, style.cornerRadiusPressedProperty(), 0, 500, isPercentage = true, div10 = true, unit = "dp"),
+        SeekSpec(R.string.style_button_text_size, { style.textSizePressed }, { style.textSizePressed = it }, 2, 30, isPercentage = false, div10 = false, unit = "sp"),
+        SeekSpec(R.string.style_button_stroke_width, { style.strokeWidthPressed }, { style.strokeWidthPressed = it }, 0, 100, isPercentage = true, div10 = true, unit = "dp"),
+        SeekSpec(R.string.style_button_corner_radius, { style.cornerRadiusPressed }, { style.cornerRadiusPressed = it }, 0, 500, isPercentage = true, div10 = true, unit = "dp"),
     )
     private val normalColors = listOf(
-        ColorSpec(R.string.style_button_text_color, style.textColorProperty()),
-        ColorSpec(R.string.style_button_stroke_color, style.strokeColorProperty()),
-        ColorSpec(R.string.style_button_fill_color, style.fillColorProperty()),
+        ColorSpec(R.string.style_button_text_color, { style.textColor }, { style.textColor = it }),
+        ColorSpec(R.string.style_button_stroke_color, { style.strokeColor }, { style.strokeColor = it }),
+        ColorSpec(R.string.style_button_fill_color, { style.fillColor }, { style.fillColor = it }),
     )
     private val pressedColors = listOf(
-        ColorSpec(R.string.style_button_text_color, style.textColorPressedProperty()),
-        ColorSpec(R.string.style_button_stroke_color, style.strokeColorPressedProperty()),
-        ColorSpec(R.string.style_button_fill_color, style.fillColorPressedProperty()),
+        ColorSpec(R.string.style_button_text_color, { style.textColorPressed }, { style.textColorPressed = it }),
+        ColorSpec(R.string.style_button_stroke_color, { style.strokeColorPressed }, { style.strokeColorPressed = it }),
+        ColorSpec(R.string.style_button_fill_color, { style.fillColorPressed }, { style.fillColorPressed = it }),
     )
 
     init {
         // 任何样式属性变化 → 预览/数值/色块重绘（对齐遗留 style.addListener(changeButtonStyle)）
-        style.addListener { revisionState.intValue++ }
+        subscriptions += FlowSubscriptions.subscribe(style.revisionFlow()) { revisionState.intValue++ }
         setDialogContent {
             DialogContent()
         }
     }
 
-    private fun openTextEditDialog(property: IntegerProperty, isPercentage: Boolean) {
+    override fun dismiss() {
+        subscriptions.forEach { it.cancel() }
+        super.dismiss()
+    }
+
+    private fun openTextEditDialog(property: com.tungsten.fclcore.observable.property.IntegerProperty, isPercentage: Boolean) {
         val dialog = EditDialog(context) { s ->
             if (s.matches(Regex("\\d+(\\.\\d+)?$"))) {
                 var progress = s.toFloat()
@@ -147,13 +160,13 @@ class MiuixAddButtonStyleDialog(
         dialog.show()
     }
 
-    private fun openColorPicker(property: IntegerProperty) {
-        val dialog = FCLColorPickerDialog(context, property.get(), object : FCLColorPickerDialog.Listener {
+    private fun openColorPicker(get: () -> Int, set: (Int) -> Unit) {
+        val dialog = FCLColorPickerDialog(context, get(), object : FCLColorPickerDialog.Listener {
             override fun onColorChanged(color: Int) {
             }
 
             override fun onPositive(destColor: Int) {
-                property.set(destColor)
+                set(destColor)
             }
 
             override fun onNegative(initColor: Int) {
@@ -270,8 +283,8 @@ class MiuixAddButtonStyleDialog(
             )
             Spacer(Modifier.width(10.dp))
             Text(
-                text = if (spec.div10) "${spec.property.get() / 10f} ${spec.unit}"
-                else "${spec.property.get()} ${spec.unit}",
+                text = if (spec.div10) "${spec.get() / 10f} ${spec.unit}"
+                else "${spec.get()} ${spec.unit}",
                 style = MiuixTheme.textStyles.body2,
                 textAlign = TextAlign.End,
                 modifier = Modifier
@@ -297,21 +310,21 @@ class MiuixAddButtonStyleDialog(
             )
             Spacer(Modifier.weight(1f))
             Text(
-                text = getHex(spec.property.get()),
+                text = getHex(spec.get()),
                 style = MiuixTheme.textStyles.body2,
             )
             Spacer(Modifier.width(10.dp))
             Box(
                 modifier = Modifier
                     .size(32.dp)
-                    .background(Color(spec.property.get()))
+                    .background(Color(spec.get()))
                     // 描边对齐遗留 darker_gray 体系（bg_item.xml 等）→ outline token（昼夜适配）
                     .border(1.dp, MiuixTheme.colorScheme.outline),
             )
             Spacer(Modifier.width(10.dp))
             TextButton(
                 text = stringResource(R.string.menu_control_set),
-                onClick = { openColorPicker(spec.property) },
+                onClick = { openColorPicker(spec.get, spec.set) },
             )
         }
     }

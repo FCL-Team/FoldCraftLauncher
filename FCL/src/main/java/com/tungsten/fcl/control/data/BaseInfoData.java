@@ -1,7 +1,5 @@
 package com.tungsten.fcl.control.data;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -14,19 +12,23 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.Observable;
-import com.tungsten.fclcore.observable.property.IntegerProperty;
-import com.tungsten.fclcore.observable.property.ObjectProperty;
-import com.tungsten.fclcore.observable.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
-import com.tungsten.fclcore.util.observable.ObservableHelper;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.lang.reflect.Type;
 import java.util.Optional;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 控件基础信息（阶段 4b）：属性已 StateFlow 化；任何字段变更递增
+ * {@link #revisionFlow()}（对齐原 Observable 失效语义）。
+ *
+ * <p>磁盘 JSON 由手写 {@link Serializer} 产出，与属性类型无关，格式不变。</p>
+ */
 @JsonAdapter(BaseInfoData.Serializer.class)
-public class BaseInfoData implements Cloneable, Observable {
+public class BaseInfoData implements Cloneable {
 
     public enum SizeType {
         PERCENTAGE,
@@ -42,172 +44,163 @@ public class BaseInfoData implements Cloneable, Observable {
     /**
      * Visibility type
      */
-    private final ObjectProperty<VisibilityType> visibilityTypeProperty = new SimpleObjectProperty<>(this, "visibilityType", VisibilityType.ALWAYS);
+    private final MutableStateFlow<VisibilityType> visibilityType = StateFlowKt.MutableStateFlow(VisibilityType.ALWAYS);
 
-    public ObjectProperty<VisibilityType> visibilityTypeProperty() {
-        return visibilityTypeProperty;
+    public StateFlow<VisibilityType> visibilityTypeFlow() {
+        return visibilityType;
     }
 
     public void setVisibilityType(VisibilityType visibilityType) {
-        visibilityTypeProperty.set(visibilityType);
+        this.visibilityType.setValue(visibilityType);
     }
 
     public VisibilityType getVisibilityType() {
-        return visibilityTypeProperty.get();
+        return visibilityType.getValue();
     }
 
     /**
      * Controller x percentage position
      * 10 times the actual value
      */
-    private final IntegerProperty xPositionProperty = new SimpleIntegerProperty(this, "xPosition", 0);
+    private final MutableStateFlow<Integer> xPosition = StateFlowKt.MutableStateFlow(0);
 
-    public IntegerProperty xPositionProperty() {
-        return xPositionProperty;
+    public StateFlow<Integer> xPositionFlow() {
+        return xPosition;
     }
 
     public void setXPosition(int xPosition) {
-        xPositionProperty.set(xPosition);
+        this.xPosition.setValue(xPosition);
     }
 
     public int getXPosition() {
-        return xPositionProperty.get();
+        return xPosition.getValue();
     }
 
     /**
      * Controller y percentage position
      * 10 times the actual value
      */
-    private final IntegerProperty yPositionProperty = new SimpleIntegerProperty(this, "yPosition", 0);
+    private final MutableStateFlow<Integer> yPosition = StateFlowKt.MutableStateFlow(0);
 
-    public IntegerProperty yPositionProperty() {
-        return yPositionProperty;
+    public StateFlow<Integer> yPositionFlow() {
+        return yPosition;
     }
 
     public void setYPosition(int yPosition) {
-        yPositionProperty.set(yPosition);
+        this.yPosition.setValue(yPosition);
     }
 
     public int getYPosition() {
-        return yPositionProperty.get();
+        return yPosition.getValue();
     }
 
     /**
      * Size type
      */
-    private final ObjectProperty<SizeType> sizeTypeProperty = new SimpleObjectProperty<>(this, "sizeType", SizeType.PERCENTAGE);
+    private final MutableStateFlow<SizeType> sizeType = StateFlowKt.MutableStateFlow(SizeType.PERCENTAGE);
 
-    public ObjectProperty<SizeType> sizeTypeProperty() {
-        return sizeTypeProperty;
+    public StateFlow<SizeType> sizeTypeFlow() {
+        return sizeType;
     }
 
     public void setSizeType(SizeType sizeType) {
-        sizeTypeProperty.set(sizeType);
+        this.sizeType.setValue(sizeType);
     }
 
     public SizeType getSizeType() {
-        return sizeTypeProperty.get();
+        return sizeType.getValue();
     }
 
     /**
      * Absolute width
      * dp
      */
-    private final IntegerProperty absoluteWidthProperty = new SimpleIntegerProperty(this, "absoluteWidth", 50);
+    private final MutableStateFlow<Integer> absoluteWidth = StateFlowKt.MutableStateFlow(50);
 
-    public IntegerProperty absoluteWidthProperty() {
-        return absoluteWidthProperty;
+    public StateFlow<Integer> absoluteWidthFlow() {
+        return absoluteWidth;
     }
 
     public void setAbsoluteWidth(int absoluteWidth) {
-        absoluteWidthProperty.set(absoluteWidth);
+        this.absoluteWidth.setValue(absoluteWidth);
     }
 
     public int getAbsoluteWidth() {
-        return absoluteWidthProperty.get();
+        return absoluteWidth.getValue();
     }
 
     /**
      * Absolute height
      * dp
      */
-    private final IntegerProperty absoluteHeightProperty = new SimpleIntegerProperty(this, "absoluteHeight", 50);
+    private final MutableStateFlow<Integer> absoluteHeight = StateFlowKt.MutableStateFlow(50);
 
-    public IntegerProperty absoluteHeightProperty() {
-        return absoluteHeightProperty;
+    public StateFlow<Integer> absoluteHeightFlow() {
+        return absoluteHeight;
     }
 
     public void setAbsoluteHeight(int absoluteHeight) {
-        absoluteHeightProperty.set(absoluteHeight);
+        this.absoluteHeight.setValue(absoluteHeight);
     }
 
     public int getAbsoluteHeight() {
-        return absoluteHeightProperty.get();
+        return absoluteHeight.getValue();
     }
 
     /**
      * Percentage width
      */
-    private final ObjectProperty<PercentageSize> percentageWidthProperty = new SimpleObjectProperty<>(this, "percentageWidth", new PercentageSize());
+    private final MutableStateFlow<PercentageSize> percentageWidth = StateFlowKt.MutableStateFlow(new PercentageSize());
 
-    public ObjectProperty<PercentageSize> percentageWidthProperty() {
-        return percentageWidthProperty;
+    public StateFlow<PercentageSize> percentageWidthFlow() {
+        return percentageWidth;
     }
 
     public void setPercentageWidth(PercentageSize percentageWidth) {
-        percentageWidthProperty.set(percentageWidth);
+        this.percentageWidth.setValue(percentageWidth);
     }
 
     public PercentageSize getPercentageWidth() {
-        return percentageWidthProperty.get();
+        return percentageWidth.getValue();
     }
 
     /**
      * Percentage height
      */
-    private final ObjectProperty<PercentageSize> percentageHeightProperty = new SimpleObjectProperty<>(this, "percentageHeight", new PercentageSize());
+    private final MutableStateFlow<PercentageSize> percentageHeight = StateFlowKt.MutableStateFlow(new PercentageSize());
 
-    public ObjectProperty<PercentageSize> percentageHeightProperty() {
-        return percentageHeightProperty;
+    public StateFlow<PercentageSize> percentageHeightFlow() {
+        return percentageHeight;
     }
 
     public void setPercentageHeight(PercentageSize percentageHeight) {
-        percentageHeightProperty.set(percentageHeight);
+        this.percentageHeight.setValue(percentageHeight);
     }
 
     public PercentageSize getPercentageHeight() {
-        return percentageHeightProperty.get();
+        return percentageHeight.getValue();
     }
 
     public BaseInfoData() {
-        addPropertyChangedListener(onInvalidating(this::invalidate));
+        FlowSubscriptions.subscribe(visibilityType, v -> invalidate());
+        FlowSubscriptions.subscribe(xPosition, v -> invalidate());
+        FlowSubscriptions.subscribe(yPosition, v -> invalidate());
+        FlowSubscriptions.subscribe(sizeType, v -> invalidate());
+        FlowSubscriptions.subscribe(absoluteWidth, v -> invalidate());
+        FlowSubscriptions.subscribe(absoluteHeight, v -> invalidate());
+        FlowSubscriptions.subscribe(percentageWidth, v -> invalidate());
+        FlowSubscriptions.subscribe(percentageHeight, v -> invalidate());
     }
 
-    public void addPropertyChangedListener(InvalidationListener listener) {
-        visibilityTypeProperty.addListener(listener);
-        xPositionProperty.addListener(listener);
-        yPositionProperty.addListener(listener);
-        sizeTypeProperty.addListener(listener);
-        absoluteWidthProperty.addListener(listener);
-        absoluteHeightProperty.addListener(listener);
-        percentageWidthProperty.addListener(listener);
-        percentageHeightProperty.addListener(listener);
-    }
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-        observableHelper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        observableHelper.removeListener(listener);
+    /** 任何字段变更时递增（对齐原 Observable 失效语义）。 */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        revision.setValue(revision.getValue() + 1);
     }
 
     @Override
@@ -277,8 +270,8 @@ public class BaseInfoData implements Cloneable, Observable {
     }
 
     @JsonAdapter(PercentageSize.Serializer.class)
-    public static class PercentageSize implements Cloneable, Observable {
-        
+    public static class PercentageSize implements Cloneable {
+
         public enum Reference {
             SCREEN_WIDTH,
             SCREEN_HEIGHT
@@ -289,61 +282,52 @@ public class BaseInfoData implements Cloneable, Observable {
          * SCREEN_WIDTH: actual width = screen width * value
          * SCREEN_HEIGHT: actual height = screen height * value
          */
-        private final ObjectProperty<Reference> referenceProperty = new SimpleObjectProperty<>(this, "reference", Reference.SCREEN_WIDTH);
+        private final MutableStateFlow<Reference> reference = StateFlowKt.MutableStateFlow(Reference.SCREEN_WIDTH);
 
-        public ObjectProperty<Reference> referenceProperty() {
-            return referenceProperty;
+        public StateFlow<Reference> referenceFlow() {
+            return reference;
         }
 
         public void setReference(Reference reference) {
-            referenceProperty.set(reference);
+            this.reference.setValue(reference);
         }
 
         public Reference getReference() {
-            return referenceProperty.get();
+            return reference.getValue();
         }
 
         /**
          * Percentage size
          * 10 times the actual size
          */
-        private final IntegerProperty sizeProperty = new SimpleIntegerProperty(this, "size", 50);
+        private final MutableStateFlow<Integer> size = StateFlowKt.MutableStateFlow(50);
 
-        public IntegerProperty sizeProperty() {
-            return sizeProperty;
+        public StateFlow<Integer> sizeFlow() {
+            return size;
         }
 
         public void setSize(int size) {
-            sizeProperty.set(size);
+            this.size.setValue(size);
         }
 
         public int getSize() {
-            return sizeProperty.get();
+            return size.getValue();
         }
-        
+
         public PercentageSize() {
-            addPropertyChangedListener(onInvalidating(this::invalidate));
+            FlowSubscriptions.subscribe(reference, v -> invalidate());
+            FlowSubscriptions.subscribe(size, v -> invalidate());
         }
 
-        public void addPropertyChangedListener(InvalidationListener listener) {
-            referenceProperty.addListener(listener);
-            sizeProperty.addListener(listener);
-        }
+        private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-        private ObservableHelper observableHelper = new ObservableHelper(this);
-
-        @Override
-        public void addListener(InvalidationListener listener) {
-            observableHelper.addListener(listener);
-        }
-
-        @Override
-        public void removeListener(InvalidationListener listener) {
-            observableHelper.removeListener(listener);
+        /** 任何字段变更时递增（对齐原 Observable 失效语义）。 */
+        public StateFlow<Long> revisionFlow() {
+            return revision;
         }
 
         private void invalidate() {
-            observableHelper.invalidate();
+            revision.setValue(revision.getValue() + 1);
         }
 
         @Override
@@ -380,7 +364,7 @@ public class BaseInfoData implements Cloneable, Observable {
                 return size;
             }
         }
-        
+
     }
 
 }

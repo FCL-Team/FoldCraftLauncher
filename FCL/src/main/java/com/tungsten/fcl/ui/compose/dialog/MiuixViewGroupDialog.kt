@@ -26,7 +26,6 @@ import com.tungsten.fcl.control.EditViewGroupDialog
 import com.tungsten.fcl.control.GameMenu
 import com.tungsten.fcl.control.data.ControlViewGroup
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
-import com.tungsten.fclcore.observable.collections.ObservableList
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import top.yukonga.miuix.kmp.basic.Card
@@ -36,7 +35,6 @@ import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.theme.MiuixTheme
-import java.util.Collections
 import java.util.UUID
 
 /**
@@ -48,8 +46,8 @@ import java.util.UUID
  * 行为对齐：
  * - select 模式：条目 CheckBox 多选，确定回调当前选择列表后 dismiss；
  *   「添加分组」按钮隐藏（遗留 GONE 一致）；
- * - 管理模式：条目上/下移（Collections.swap + controller.updateViewGroup，语义与
- *   ViewGroupAdapter 一致）、编辑（弹 MiuixEditViewGroupDialog）、删除（FCLAlertDialog 确认后
+ * - 管理模式：条目上/下移（controller.swapViewGroups + controller.updateViewGroup，语义与
+ *   ViewGroupAdapter 的 Collections.swap 一致）、编辑（弹 MiuixEditViewGroupDialog）、删除（FCLAlertDialog 确认后
  *   controller.removeViewGroup）；
  * - 「添加分组」弹 Miuix 新增分组弹窗，确认后 new ControlViewGroup(UUID)
  *   设置名称/可见性并 addViewGroup，与遗留逐行一致（遗留传入弹窗的临时 ControlViewGroup
@@ -69,7 +67,7 @@ class MiuixViewGroupDialog(
     context: Context,
     private val gameMenu: GameMenu,
     private val select: Boolean,
-    selectedGroups: ObservableList<ControlViewGroup>,
+    selectedGroups: List<ControlViewGroup>,
     private val callback: ((List<ControlViewGroup>) -> Unit)?,
 ) : FCLComposeDialog(context, cancelable = false) {
 
@@ -136,7 +134,7 @@ class MiuixViewGroupDialog(
         if (pos < 0 || pos > list.size - 1) {
             return
         }
-        Collections.swap(list, index, pos)
+        gameMenu.controller.swapViewGroups(index, pos)
         gameMenu.controller.updateViewGroup(group)
         refreshList()
     }

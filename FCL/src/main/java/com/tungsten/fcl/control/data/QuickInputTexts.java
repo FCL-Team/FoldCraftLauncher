@@ -1,31 +1,33 @@
 package com.tungsten.fcl.control.data;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-import static com.tungsten.fclcore.observable.collections.FXCollections.observableArrayList;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fcl.util.FlowList;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.observable.property.ReadOnlyListProperty;
-import com.tungsten.fclcore.observable.property.ReadOnlyListWrapper;
-import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.util.Logging;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
+import kotlinx.coroutines.flow.StateFlow;
+
+/**
+ * 快捷输入文本库（阶段 4b）：ObservableList 已替换为 FlowList，
+ * 列表成员变更即落盘（对齐原 onInvalidating 监听语义）。
+ */
 public class QuickInputTexts {
 
     private QuickInputTexts() {
     }
 
-    private static final ObservableList<String> inputTexts = observableArrayList(new ArrayList<>());
-    private static final ReadOnlyListWrapper<String> inputTextsWrapper = new ReadOnlyListWrapper<>(inputTexts);
+    private static final FlowList<String> inputTexts = new FlowList<>();
 
     /**
      * True if {@link #init()} hasn't been called.
@@ -46,7 +48,7 @@ public class QuickInputTexts {
     }
 
     static {
-        inputTexts.addListener(onInvalidating(QuickInputTexts::updateInputTextsStorages));
+        FlowSubscriptions.subscribe(inputTexts.flow(), v -> updateInputTextsStorages());
     }
 
     public static void init() {
@@ -75,17 +77,17 @@ public class QuickInputTexts {
         return new ArrayList<>();
     }
 
-    public static ObservableList<String> getInputTexts() {
-        return inputTexts;
+    public static List<String> getInputTexts() {
+        return inputTexts.get();
     }
 
-    public static ReadOnlyListProperty<String> inputTextsProperty() {
-        return inputTextsWrapper.getReadOnlyProperty();
+    public static StateFlow<List<String>> inputTextsFlow() {
+        return inputTexts.flow();
     }
 
     public static void saveInputTexts() {
         Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-        String json = gson.toJson(new ArrayList<>(inputTexts));
+        String json = gson.toJson(new ArrayList<>(inputTexts.get()));
         try {
             FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR + "/input/input_text.json"), json);
         } catch (IOException e) {

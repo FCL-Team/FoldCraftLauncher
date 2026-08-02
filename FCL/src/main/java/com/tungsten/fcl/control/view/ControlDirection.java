@@ -37,6 +37,7 @@ import com.tungsten.fclcore.observable.property.ObjectProperty;
 import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.UUID;
@@ -52,6 +53,23 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private InvalidationListener boundaryListener;
     private InvalidationListener visibilityListener;
     private InvalidationListener alphaListener;
+
+    // 阶段 4b：数据层监听由 getData().addListener(notifyListener) 改为订阅
+    // ControlDirectionData.revisionFlow（失效即递增，语义等价）；data 切换时换绑，
+    // removeListener 时取消（对齐原 removeListener 摘除）。
+    private FlowSubscriptions.Subscription dataSubscription;
+
+    private void subscribeDataRevision(boolean cancelEvents) {
+        if (dataSubscription != null) {
+            dataSubscription.cancel();
+        }
+        dataSubscription = FlowSubscriptions.subscribe(getData().revisionFlow(), v -> Schedulers.androidUIThread().execute(() -> {
+            notifyData();
+            if (cancelEvents) {
+                cancelAllEvent();
+            }
+        }));
+    }
 
     @Nullable
     private final GameMenu menu;
@@ -130,7 +148,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         dataChangeListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
             notifyData();
             cancelAllEvent();
-            getData().addListener(notifyListener);
+            subscribeDataRevision(true);
         });
         boundaryListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
             boundaryPath = new Path();
@@ -156,7 +174,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 menu.editModeProperty().addListener(notifyListener);
             }
             dataProperty.addListener(dataChangeListener);
-            getData().addListener(notifyListener);
+            subscribeDataRevision(true);
             if (menu != null) {
                 menu.showViewBoundariesProperty().addListener(boundaryListener);
                 setAlpha(menu.isHideAllViews() ? 0 : 1);
@@ -187,7 +205,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         notifyListener = invalidate -> Schedulers.androidUIThread().execute(this::notifyData);
         dataChangeListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
             notifyData();
-            getData().addListener(notifyListener);
+            subscribeDataRevision(false);
         });
         boundaryListener = null;
         visibilityListener = observable -> {
@@ -197,7 +215,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         post(() -> {
             notifyData();
             dataProperty.addListener(dataChangeListener);
-            getData().addListener(notifyListener);
+            subscribeDataRevision(false);
         });
     }
 
@@ -254,7 +272,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         if (!displayMode && menu != null) {
             visibilityProperty().unbind();
             if (menu.isEditMode()) {
-                visibilityProperty().bind(Bindings.createBooleanBinding(() -> menu.getViewGroup() != null && menu.getViewGroup().getViewData().directionList().stream().anyMatch(it -> it.getId().equals(getData().getId())),
+                visibilityProperty().bind(Bindings.createBooleanBinding(() -> menu.getViewGroup() != null && menu.getViewGroup().getViewData().getDirectionList().stream().anyMatch(it -> it.getId().equals(getData().getId())),
                         menu.editModeProperty(), menu.viewGroupProperty()));
             } else {
                 visibilityProperty().bind(Bindings.createBooleanBinding(() -> isParentVisibility() && (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ||
@@ -793,16 +811,16 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
     private void handleMoveEvent(boolean up, boolean down, boolean left, boolean right) {
         if (menu != null) {
-            for (Integer code : getData().getEvent().upKeycodeList()) {
+            for (Integer code : getData().getEvent().getUpKeycodes()) {
                 menu.getInput().sendKeyEvent(code, up);
             }
-            for (Integer code : getData().getEvent().downKeycodeList()) {
+            for (Integer code : getData().getEvent().getDownKeycodes()) {
                 menu.getInput().sendKeyEvent(code, down);
             }
-            for (Integer code : getData().getEvent().leftKeycodeList()) {
+            for (Integer code : getData().getEvent().getLeftKeycodes()) {
                 menu.getInput().sendKeyEvent(code, left);
             }
-            for (Integer code : getData().getEvent().rightKeycodeList()) {
+            for (Integer code : getData().getEvent().getRightKeycodes()) {
                 menu.getInput().sendKeyEvent(code, right);
             }
         }
@@ -876,16 +894,16 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 tempDirection = Direction.DIRECTION_CENTER;
             }
             if (menu != null) {
-                for (Integer code : getData().getEvent().upKeycodeList()) {
+                for (Integer code : getData().getEvent().getUpKeycodes()) {
                     menu.getInput().sendKeyEvent(code, false);
                 }
-                for (Integer code : getData().getEvent().downKeycodeList()) {
+                for (Integer code : getData().getEvent().getDownKeycodes()) {
                     menu.getInput().sendKeyEvent(code, false);
                 }
-                for (Integer code : getData().getEvent().leftKeycodeList()) {
+                for (Integer code : getData().getEvent().getLeftKeycodes()) {
                     menu.getInput().sendKeyEvent(code, false);
                 }
-                for (Integer code : getData().getEvent().rightKeycodeList()) {
+                for (Integer code : getData().getEvent().getRightKeycodes()) {
                     menu.getInput().sendKeyEvent(code, false);
                 }
             }
@@ -940,7 +958,10 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             menu.hideAllViewsProperty().removeListener(alphaListener);
         }
         dataProperty.removeListener(dataChangeListener);
-        getData().removeListener(notifyListener);
+        if (dataSubscription != null) {
+            dataSubscription.cancel();
+            dataSubscription = null;
+        }
         notifyListener = null;
         dataChangeListener = null;
         boundaryListener = null;
