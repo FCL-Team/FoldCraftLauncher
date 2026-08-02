@@ -39,6 +39,7 @@ import com.tungsten.fclcore.download.quilt.QuiltRemoteVersion
 import com.tungsten.fclcore.util.versioning.GameVersionNumber
 import com.tungsten.fcllibrary.util.LocaleUtils
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
@@ -156,7 +157,11 @@ fun RemoteVersionRow(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    Card(modifier = modifier.fillMaxWidth().padding(bottom = 8.dp)) {
+    Card(
+        // 对齐 item_remote_version.xml 的 bg_container_white_clickable + auto_tint（ltColor 染色 = primaryContainer）
+        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+        modifier = modifier.fillMaxWidth().padding(bottom = 8.dp),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

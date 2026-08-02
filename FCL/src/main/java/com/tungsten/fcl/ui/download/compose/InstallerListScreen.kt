@@ -32,6 +32,7 @@ import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Checkbox
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -150,7 +151,12 @@ fun InstallerListScreen(
             .padding(10.dp),
     ) {
         if (holder.hasType) {
-            Card(modifier = Modifier.fillMaxWidth()) {
+            Card(
+                // 对齐 page_install_version.xml bar 的 bg_container_white +
+                // auto_linear_background_tint（ltColor 染色 = primaryContainer）
+                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

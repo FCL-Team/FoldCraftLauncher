@@ -59,6 +59,7 @@ import com.tungsten.fclcore.fakefx.collections.ListChangeListener
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
@@ -362,6 +363,8 @@ private fun VersionRow(
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
+        // 对齐 item_version.xml 的 bg_container_white + auto_tint（ltColor 染色 = primaryContainer）
+        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
     ) {
         Row(
             modifier = Modifier

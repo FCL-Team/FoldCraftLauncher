@@ -44,6 +44,7 @@ import com.tungsten.fclcore.task.TaskListener
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.function.ExceptionalRunnable
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
@@ -301,7 +302,12 @@ fun VersionInstallInfoScreen(
             .padding(10.dp),
     ) {
         // 名称栏（对齐 name_bar：标签 + 输入框 + 安装按钮）
-        Card(modifier = Modifier.fillMaxWidth()) {
+        Card(
+            // 对齐 page_installer.xml name_bar 的 bg_container_white +
+            // VersionInstallInfoPage:80-81 registerEvent（ltColor 染色 = primaryContainer）
+            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -341,6 +347,9 @@ fun VersionInstallInfoScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp),
+                    // 对齐 InstallerItemSkin 的 item 容器（InstallerItem:258-259
+                    // registerEvent ltColor 染色 = primaryContainer）
+                    colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
                 ) {
                     Row(
                         modifier = Modifier

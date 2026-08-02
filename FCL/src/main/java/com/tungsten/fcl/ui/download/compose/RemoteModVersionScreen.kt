@@ -23,6 +23,7 @@ import com.tungsten.fcl.ui.download.common.ModVersionAdapter
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
@@ -82,6 +83,9 @@ fun RemoteModVersionScreen(
             Card(
                 onClick = { onSelect(version) },
                 pressFeedbackType = PressFeedbackType.Sink,
+                // 对齐 item_mod_version.xml 的 bg_container_white_clickable +
+                // auto_linear_background_tint（ltColor 染色 = primaryContainer）
+                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
                 modifier = fclItemEntryModifier()
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
