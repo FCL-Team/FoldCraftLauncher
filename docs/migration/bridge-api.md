@@ -110,7 +110,30 @@ Compose 宿主：
 @Composable fun LegacyBridge.LegacyDialogHost()
 ```
 
-订阅 `alertDialogRequest` 并以 **Miuix `window/WindowDialog`** 渲染（title/summary + 正/负 TextButton）。点遮罩/返回键关闭 = 取消（回调 false）。
+订阅 `alertDialogRequest` 与 `taskDialogRequest`（3.2 新增）并以 **Miuix `window/WindowDialog`** 渲染（title/summary + 正/负 TextButton）。点遮罩/返回键关闭 = 取消（回调 false）。
+
+### 2.3.1 任务进度弹窗通道（小步骤 3.2 新增）
+
+```kotlin
+class TaskDialogRequest(
+    val title: String?,
+    val executor: TaskExecutor,
+    val cancelAction: Runnable?,   // null = 取消按钮置灰；executor.cancel()+关闭由宿主自动完成
+    val autoClose: Boolean,        // 任务结束（onStop）自动关闭
+)
+
+@JvmStatic @JvmOverloads
+fun requestTaskDialog(
+    title: String?, executor: TaskExecutor,
+    cancelAction: Runnable?, autoClose: Boolean = true,
+): Boolean
+```
+
+- 单槽位语义与 `requestAlertDialog` 一致（占用返回 false 时调用方回退遗留 TaskDialog 或 `ui/compose/MiuixTaskDialog`）。
+- 由 `LegacyDialogHost` 消费后以 `FCLDialog` + `FCLTaskDialogContent` 渲染：阶段行（pending/active/done/failed 图标 + n/total 计数）、任务进度行（LinearProgressIndicator，进度 <0 显示不确定态）、下载速度（FetchTask.speedEvent 弱订阅，dispose 时反注册）、取消按钮。
+- 取消语义对齐遗留 TaskDialog：点击 = `executor.cancel()` + `cancelAction.run()` + 关闭。
+- **View 页面的任务弹窗不走本通道**：`ui/compose/MiuixTaskDialog`（AppCompatDialog + ComposeView，自带平台 window）提供与遗留 TaskDialog 相同的命令式 API（setTitle/setExecutor/show），无需 Compose 宿主；3.2 已接入 3 个调用点（Versions.downloadModpack、Versions.updateGameAssets、WorldExportDialog 导出），开关 `MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG`。
+- 通用命令式弹窗：`ui/compose/FCLComposeDialog`（基座）+ `FCLDialogs.showAlert/showProgress`（覆盖 FCLAlertDialog 与 FCLLibrary ProgressDialog 用法）；Compose 页面内则用 `ui/compose/FCLDialog.kt` 的 `FCLDialog`/`FCLDialogCard` 组件。
 
 选 WindowDialog 而非 overlay/OverlayDialog 的原因（0.9.3 源码核实）：OverlayDialog 经 `LocalRootDialogStates`/`LocalDialogStates` 渲染，**必须有 Miuix Scaffold 祖先**；WindowDialog 走平台 Dialog window，无 Scaffold 依赖，独立 window 形态与遗留 FCLDialog 语义一致。
 
@@ -249,7 +272,7 @@ fun ModIcon(url: String?) {
 
 ## 6. 遗留问题（后续步骤处理）
 
-1. **Miuix 版通用 TaskDialog 未做**（interaction-map G5 建议最先做，19 处复用）：属阶段三组件工作；做好后可在 `LegacyBridge` 旁加 `requestTaskDialog` 通道。
+1. ~~**Miuix 版通用 TaskDialog 未做**~~（3.2 已完成）：`ui/compose/FCLTaskDialog.kt`（状态+渲染）+ `MiuixTaskDialog`（命令式封装）+ `requestTaskDialog` 通道（§2.3.1）。已接入 3 处调用点（开关 `MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG`）；其余 16 处触发点（interaction-map G5：LauncherHelper、ModpackInstaller、ModpackSelectionPage×2、DownloadPage、RemoteModVersionPage、VersionInstallInfoPage、InstallerListPage×2、ModListPage、ModUpdatesPage×2、ModpackFileSelectionPage、ControllerRepoPage、ControllerDownloadPage、UpdateDialog）待批量替换——注意 LauncherHelper 使用了 `titleProperty()` fakefx 绑定与 setCancel 动态切换，UpdateDialog 嵌套在更新对话框内，需逐点评估。
 2. **弹窗单槽位**：`requestAlertDialog` 不排队；若阶段三出现并发弹窗诉求（如自动更新检查 + 任务失败同时触发），扩展为 Channel/列表。
 3. **glide-compose alpha 成熟度未真机验证**：本步骤只验证了依赖解析与编译（示例含 GlideImage 调用）；首次真机运行含图片的迁移页面时留意 §4.4 回退条件。
 4. **ViewModel 与 PageManager 生命周期未打通**：`createComposeView` 的组合跟随 ViewTree 生命周期，但 `viewModel()` 的 ViewModelStore 归宿主 Activity——页面（FCLCommonPage）级销毁不会清 ViewModel。迁移期页面少、状态轻，可接受；阶段三如出现"版本切换后状态残留"，在页面 onStop/onDestroy 里手动清或换自定义 ViewModelStoreOwner。

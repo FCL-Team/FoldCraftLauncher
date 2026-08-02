@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatDialog;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -67,9 +68,6 @@ public class WorldExportDialog extends FCLDialog implements View.OnClickListener
     @Override
     public void onClick(View v) {
         if (v == positive) {
-            TaskDialog taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
-            taskDialog.setTitle(getContext().getString(R.string.message_doing));
-
             Task<?> task = Task.runAsync(AndroidUtils.getLocalizedText(getContext(), "world.export.wizard", editName.getStringValue()), () -> world.export(Paths.get(new File(parent, editFileName.getText().toString()).getAbsolutePath()), editName.getStringValue()));
             TaskExecutor executor = task.executor(new TaskListener() {
                 @Override
@@ -97,8 +95,18 @@ public class WorldExportDialog extends FCLDialog implements View.OnClickListener
                     });
                 }
             });
-            taskDialog.setExecutor(executor);
-            taskDialog.show();
+            if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
+                // 3.2 接入点：Miuix 任务弹窗（取消动作 = 内置 dismiss，对应原 AppCompatDialog::dismiss）
+                MiuixTaskDialog taskDialog = new MiuixTaskDialog(getContext());
+                taskDialog.setTitle(getContext().getString(R.string.message_doing));
+                taskDialog.setExecutor(executor);
+                taskDialog.show();
+            } else {
+                TaskDialog taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
+                taskDialog.setTitle(getContext().getString(R.string.message_doing));
+                taskDialog.setExecutor(executor);
+                taskDialog.show();
+            }
             executor.start();
             dismiss();
         }

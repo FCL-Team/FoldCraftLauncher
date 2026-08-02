@@ -1,8 +1,15 @@
 package com.tungsten.fcl.ui.theme
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import com.tungsten.fcl.ui.bridge.collectAsState
+import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -51,4 +58,45 @@ fun FCLTheme(
         fclLightColorScheme(primary = primary, color2 = color2)
     }
     MiuixTheme(colors = colors, content = content)
+}
+
+/**
+ * 环境自解析版 [FCLTheme]（小步骤 3.2 抽取，原逻辑位于 LegacyBridge.createComposeView）：
+ * - Light/Dark/FollowSystem 读 SharedPreferences "launcher" 的 themeMode
+ *   （与 FCLActivity.applySavedNightMode 同一数据源），并监听变更即时重组；
+ * - 主色/内容色经 fakefx 属性桥（[collectAsState]）观察 ThemeEngine 当前主题，
+ *   取色器修改主题色后 Compose 侧实时联动；引擎未初始化时回落默认 token。
+ *
+ * 供独立 Compose 根（LegacyBridge.createComposeView、ui/compose/FCLComposeDialog）
+ * 直接使用。
+ */
+@Composable
+fun FCLTheme(context: Context, content: @Composable () -> Unit) {
+    val launcherPrefs = remember {
+        context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
+    }
+    val themeMode = remember { mutableIntStateOf(launcherPrefs.getInt("themeMode", 0)) }
+    DisposableEffect(launcherPrefs) {
+        val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, key ->
+            if (key == "themeMode") themeMode.intValue = sp.getInt("themeMode", 0)
+        }
+        launcherPrefs.registerOnSharedPreferenceChangeListener(listener)
+        onDispose { launcherPrefs.unregisterOnSharedPreferenceChangeListener(listener) }
+    }
+    val mode = when (themeMode.intValue) {
+        1 -> FCLThemeMode.Light
+        2 -> FCLThemeMode.Dark
+        else -> FCLThemeMode.FollowSystem
+    }
+
+    // ThemeEngine 主题色：fakefx 属性 → Compose State（引擎未初始化时回落默认 token）
+    val engineTheme = remember { ThemeEngine.getInstance().theme }
+    val primary = engineTheme?.colorProperty()?.collectAsState()?.value?.toInt()
+        ?.let { Color(it) } ?: FCLThemeTokens.BrandPrimary
+    val color2 = engineTheme?.color2Property()?.collectAsState()?.value?.toInt()
+        ?.let { Color(it) } ?: FCLThemeTokens.Color2LightDefault
+    val color2Dark = engineTheme?.color2DarkProperty()?.collectAsState()?.value?.toInt()
+        ?.let { Color(it) } ?: FCLThemeTokens.Color2DarkDefault
+
+    FCLTheme(mode = mode, primary = primary, color2 = color2, color2Dark = color2Dark, content = content)
 }
