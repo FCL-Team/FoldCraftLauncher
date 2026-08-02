@@ -2,19 +2,13 @@ package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.setting.DownloadProviders
 import com.tungsten.fcl.setting.Profile
-import com.tungsten.fcl.ui.TaskDialog
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
 import com.tungsten.fcl.ui.compose.dialog.MiuixDownloadAddonDialog
-import com.tungsten.fcl.ui.download.common.DownloadAddonDialog
-import com.tungsten.fcl.ui.download.common.RemoteModVersionPage
 import com.tungsten.fcl.ui.version.Versions
-import com.tungsten.fcl.util.TaskCancellationAction
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.task.FileDownloadTask
 import com.tungsten.fclcore.task.Schedulers
@@ -27,14 +21,19 @@ import java.util.concurrent.CancellationException
 
 /**
  * 下载动作桥接（业务零重写）：
- * - [callbackFor] 对齐 DownloadPage 构造器按 pageId 分发的 DownloadCallback（:229-245）；
- * - [downloadAddon] 对齐 DownloadPage.download 静态方法（:342-386）；
- * - [saveAs] 对齐 RemoteModVersionPage.saveAs（:69-87）。
+ * - [callbackFor] 对齐遗留 DownloadPage 构造器按 pageId 分发的 DownloadCallback；
+ * - [downloadAddon] 对齐遗留 DownloadPage.download 静态方法；
+ * - [saveAs] 对齐遗留 RemoteModVersionPage.saveAs。
  *
- * 与遗留实现的差异仅两处且均沿用既有迁移开关：
- * TaskDialog → MiuixTaskDialog（USE_COMPOSE_TASK_DIALOG）、
- * DownloadAddonDialog → MiuixDownloadAddonDialog（USE_COMPOSE_DOWNLOAD_ADDON）。
+ * 与遗留实现的差异仅两处：TaskDialog → MiuixTaskDialog、
+ * DownloadAddonDialog → MiuixDownloadAddonDialog。
  */
+
+/** 版本文件下载回调（迁移自遗留 RemoteModVersionPage.DownloadCallback）。 */
+fun interface DownloadCallback {
+    fun download(profile: Profile, version: String?, file: RemoteMod.Version)
+}
+
 object RemoteModActions {
 
     /** 各 Tab 的下载回调（WORLD 为 null → 点击版本项走"另存为"，对齐基类构造 default 分支）。 */
@@ -42,20 +41,20 @@ object RemoteModActions {
         context: Context,
         parent: FCLUILayout,
         tab: DownloadTab,
-    ): RemoteModVersionPage.DownloadCallback? = when (tab) {
-        DownloadTab.MODPACK -> RemoteModVersionPage.DownloadCallback { profile, _, file ->
+    ): DownloadCallback? = when (tab) {
+        DownloadTab.MODPACK -> DownloadCallback { profile, _, file ->
             Versions.downloadModpackImpl(context, parent, profile, file)
         }
 
-        DownloadTab.MOD -> RemoteModVersionPage.DownloadCallback { profile, version, file ->
+        DownloadTab.MOD -> DownloadCallback { profile, version, file ->
             downloadAddon(context, profile, version, file, "mods")
         }
 
-        DownloadTab.RESOURCE_PACK -> RemoteModVersionPage.DownloadCallback { profile, version, file ->
+        DownloadTab.RESOURCE_PACK -> DownloadCallback { profile, version, file ->
             downloadAddon(context, profile, version, file, "resourcepacks")
         }
 
-        DownloadTab.SHADER_PACK -> RemoteModVersionPage.DownloadCallback { profile, version, file ->
+        DownloadTab.SHADER_PACK -> DownloadCallback { profile, version, file ->
             downloadAddon(context, profile, version, file, "shaderpacks")
         }
 
@@ -94,7 +93,7 @@ object RemoteModActions {
                 profile.repository.baseDirectory.toPath()
             }
 
-        val addonCallback = DownloadAddonDialog.Callback { name ->
+        val addonCallback = MiuixDownloadAddonDialog.Callback { name ->
             val dest = runDirectory.resolve(subdirectoryName).resolve(name)
             Schedulers.androidUIThread().execute {
                 val executor = Task.composeAsync {
@@ -128,28 +127,14 @@ object RemoteModActions {
                         ).show()
                     }
                 }.executor()
-                if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
-                    val taskDialog = MiuixTaskDialog(context)
-                    taskDialog.setTitle(context.getString(R.string.message_downloading))
-                    taskDialog.setExecutor(executor)
-                    taskDialog.show()
-                } else {
-                    val taskDialog = TaskDialog(
-                        context,
-                        TaskCancellationAction(AppCompatDialog::dismiss),
-                    )
-                    taskDialog.setTitle(context.getString(R.string.message_downloading))
-                    taskDialog.setExecutor(executor)
-                    taskDialog.show()
-                }
+                val taskDialog = MiuixTaskDialog(context)
+                taskDialog.setTitle(context.getString(R.string.message_downloading))
+                taskDialog.setExecutor(executor)
+                taskDialog.show()
                 executor.start()
             }
         }
-        if (ComposeDialogs.USE_COMPOSE_DOWNLOAD_ADDON) {
-            MiuixDownloadAddonDialog(context, file.file.filename, addonCallback).show()
-        } else {
-            DownloadAddonDialog(context, file.file.filename, addonCallback).show()
-        }
+        MiuixDownloadAddonDialog(context, file.file.filename, addonCallback).show()
     }
 
     /** 另存为（目录选择 → 任务进度下载），对齐 RemoteModVersionPage.saveAs。 */
@@ -164,20 +149,10 @@ object RemoteModActions {
                         file.file.integrityCheck,
                     ).apply { setName(file.name) }
                 }.executor()
-                if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
-                    val dialog = MiuixTaskDialog(context)
-                    dialog.setTitle(context.getString(R.string.message_downloading))
-                    dialog.setExecutor(executor)
-                    dialog.show()
-                } else {
-                    val dialog = TaskDialog(
-                        context,
-                        TaskCancellationAction(AppCompatDialog::dismiss),
-                    )
-                    dialog.setTitle(context.getString(R.string.message_downloading))
-                    dialog.setExecutor(executor)
-                    dialog.show()
-                }
+                val dialog = MiuixTaskDialog(context)
+                dialog.setTitle(context.getString(R.string.message_downloading))
+                dialog.setExecutor(executor)
+                dialog.show()
                 executor.start()
             }
         }

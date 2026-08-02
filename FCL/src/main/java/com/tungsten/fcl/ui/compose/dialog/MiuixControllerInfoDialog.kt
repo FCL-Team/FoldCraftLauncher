@@ -27,7 +27,6 @@ import com.tungsten.fcl.setting.Controller
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
-import com.tungsten.fcl.ui.controller.ControllerInfoDialog
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.platform.OperatingSystem
 import top.yukonga.miuix.kmp.basic.Card
@@ -60,7 +59,7 @@ class MiuixControllerInfoDialog(
     context: Context,
     create: Boolean,
     private val controller: Controller,
-    private val callback: ControllerInfoDialog.Callback,
+    private val callback: Callback,
 ) : FCLComposeDialog(context, cancelable = false) {
 
     private val title = if (create) R.string.control_create else R.string.control_info_edit
@@ -212,5 +211,9 @@ class MiuixControllerInfoDialog(
                 singleLine = singleLine,
             )
         }
+    }
+
+    fun interface Callback {
+        fun onInfoGenerate(controller: Controller)
     }
 }

@@ -8,14 +8,10 @@ import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.ListView;
 
-import androidx.appcompat.app.AppCompatDialog;
-
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
-import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
-import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.mod.ModAdviser;
@@ -111,16 +107,8 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
         getFilesNeeded(rootItem, "minecraft", list);
         exportInfo.setWhitelist(list);
 
-        TaskDialog taskDialog = null;
-        MiuixTaskDialog miuixTaskDialog = null;
-        if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
-            // 3.4 接入点：Miuix 任务弹窗（取消动作 = 内置 dismiss，对应原 AppCompatDialog::dismiss）
-            miuixTaskDialog = new MiuixTaskDialog(getContext());
-            miuixTaskDialog.setTitle(getContext().getString(R.string.message_doing));
-        } else {
-            taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
-            taskDialog.setTitle(getContext().getString(R.string.message_doing));
-        }
+        MiuixTaskDialog miuixTaskDialog = new MiuixTaskDialog(getContext());
+        miuixTaskDialog.setTitle(getContext().getString(R.string.message_doing));
 
         Task<?> task = getExportTask(modpackType, exportInfo, modpackFile);
         TaskExecutor executor = task.executor(new TaskListener() {
@@ -150,13 +138,8 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
                 });
             }
         });
-        if (miuixTaskDialog != null) {
-            miuixTaskDialog.setExecutor(executor);
-            miuixTaskDialog.show();
-        } else {
-            taskDialog.setExecutor(executor);
-            taskDialog.show();
-        }
+        miuixTaskDialog.setExecutor(executor);
+        miuixTaskDialog.show();
         executor.start();
     }
 

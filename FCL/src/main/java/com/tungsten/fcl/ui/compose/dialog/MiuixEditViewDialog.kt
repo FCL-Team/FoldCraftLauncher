@@ -30,12 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.tungsten.fcl.R
-import com.tungsten.fcl.control.ButtonStyleDialog
-import com.tungsten.fcl.control.DirectionStyleDialog
 import com.tungsten.fcl.control.EditViewDialog
 import com.tungsten.fcl.control.GameMenu
-import com.tungsten.fcl.control.SelectKeycodeDialog
-import com.tungsten.fcl.control.ViewGroupDialog
 import com.tungsten.fcl.control.data.BaseInfoData
 import com.tungsten.fcl.control.data.ButtonEventData
 import com.tungsten.fcl.control.data.ButtonStyles
@@ -75,12 +71,10 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *   切换区间（百分比 1..1000 / 绝对 1..屏宽|屏高 dp），两套值独立保存、切换时换回，
  *   等价于遗留的解绑/重绑；点击数值文本弹 EditDialog 数字输入（正则 \d+(\.\d+)?$，
  *   百分比超 100 截断、×10 取整，与遗留 openTextEditDialog 一致）；样式行显示当前样式名，
- *   「Set」按 [ComposeDialogs.USE_COMPOSE_BUTTON_STYLE]/[ComposeDialogs.USE_COMPOSE_DIRECTION_STYLE]
- *   双分支弹样式选择，选择后写回 data.style 并刷新名称；
+ *   「Set」弹 Miuix 样式选择弹窗，选择后写回 data.style 并刷新名称；
  * - 按钮事件页：pointerFollow/movable 两 Switch + TabRow 四套事件子页（按下/长按/点击/双击），
- *   各含 7 Switch + 输出文本 + 键码选择（按 [ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE]
- *   双分支，直改 outputKeycodesList）
- *   + 绑定分组（按 [ComposeDialogs.USE_COMPOSE_VIEW_GROUP] 双分支，回调 id 列表
+ *   各含 7 Switch + 输出文本 + 键码选择（MiuixSelectKeycodeDialog，直改 outputKeycodesList）
+ *   + 绑定分组（MiuixViewGroupDialog，回调 id 列表
  *   setBindViewGroup，与遗留 :387 一致）；
  * - 方向键信息页同构：单一尺寸滑杆（绝对区间上限为屏高 dp），写宽时同步高
  *   （setAbsoluteHeight(absoluteWidth)/setPercentageHeight(percentageWidth.clone())，
@@ -339,21 +333,12 @@ class MiuixEditViewDialog(
             styleName = styleNameState.value,
             onClick = {
                 val targetStyle = ButtonStyles.findStyleByName(data.style.name)
-                if (ComposeDialogs.USE_COMPOSE_BUTTON_STYLE) {
-                    val dialog = MiuixButtonStyleDialog(context, true, targetStyle) { style ->
-                        data.style = style
-                        styleNameState.value = style.name
-                    }
-                    dialog.setGameMenu(menu)
-                    dialog.show()
-                } else {
-                    val dialog = ButtonStyleDialog(context, true, targetStyle) { style ->
-                        data.style = style
-                        styleNameState.value = style.name
-                    }
-                    dialog.setGameMenu(menu)
-                    dialog.show()
+                val dialog = MiuixButtonStyleDialog(context, true, targetStyle) { style ->
+                    data.style = style
+                    styleNameState.value = style.name
                 }
+                dialog.setGameMenu(menu)
+                dialog.show()
             },
         )
     }
@@ -425,21 +410,12 @@ class MiuixEditViewDialog(
             styleName = styleNameState.value,
             onClick = {
                 val target = DirectionStyles.findStyleByName(data.style.name)
-                if (ComposeDialogs.USE_COMPOSE_DIRECTION_STYLE) {
-                    val dialog = MiuixDirectionStyleDialog(context, true, target) { style ->
-                        data.style = style
-                        styleNameState.value = style.name
-                    }
-                    dialog.setGameMenu(menu)
-                    dialog.show()
-                } else {
-                    val dialog = DirectionStyleDialog(context, true, target) { style ->
-                        data.style = style
-                        styleNameState.value = style.name
-                    }
-                    dialog.setGameMenu(menu)
-                    dialog.show()
+                val dialog = MiuixDirectionStyleDialog(context, true, target) { style ->
+                    data.style = style
+                    styleNameState.value = style.name
                 }
+                dialog.setGameMenu(menu)
+                dialog.show()
             },
         )
     }
@@ -667,12 +643,8 @@ class MiuixEditViewDialog(
         LabeledButtonRow(
             label = stringResource(R.string.edit_button_event_keycodes),
             onClick = {
-                // 直改 outputKeycodesList（同遗留）；4.1 起键码弹窗按开关双分支
-                if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
-                    MiuixSelectKeycodeDialog(context, e.outputKeycodesList(), false, true).show()
-                } else {
-                    SelectKeycodeDialog(context, e.outputKeycodesList(), false, true).show()
-                }
+                // 直改 outputKeycodesList（同遗留）；Miuix 键码选择弹窗
+                MiuixSelectKeycodeDialog(context, e.outputKeycodesList(), false, true).show()
             },
         )
 
@@ -685,16 +657,10 @@ class MiuixEditViewDialog(
                         selectedViewGroups.add(vg)
                     }
                 }
-                // 3.2 批 4 接入点：绑定分组选择弹窗双分支
-                if (ComposeDialogs.USE_COMPOSE_VIEW_GROUP) {
-                    MiuixViewGroupDialog(context, menu, true, selectedViewGroups) { viewGroups ->
-                        e.setBindViewGroup(FXCollections.observableList(viewGroups.map { it.id }))
-                    }.show()
-                } else {
-                    ViewGroupDialog(context, menu, true, selectedViewGroups) { viewGroups ->
-                        e.setBindViewGroup(FXCollections.observableList(viewGroups.map { it.id }))
-                    }.show()
-                }
+                // 3.2 批 4 接入点：Miuix 绑定分组选择弹窗
+                MiuixViewGroupDialog(context, menu, true, selectedViewGroups) { viewGroups ->
+                    e.setBindViewGroup(FXCollections.observableList(viewGroups.map { it.id }))
+                }.show()
             },
         )
     }
@@ -738,16 +704,10 @@ class MiuixEditViewDialog(
             onClick = {
                 val list = FXCollections.observableList(ArrayList<Int>())
                 list.add(event.sneakKeycode)
-                // 4.1 起键码弹窗按开关双分支（selectionProperty 绑定语义两分支一致）
-                if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
-                    val dialog = MiuixSelectKeycodeDialog(context, list, true, false)
-                    event.sneakKeycodeProperty().bind(dialog.selectionProperty())
-                    dialog.show()
-                } else {
-                    val dialog = SelectKeycodeDialog(context, list, true, false)
-                    event.sneakKeycodeProperty().bind(dialog.selectionProperty())
-                    dialog.show()
-                }
+                // Miuix 键码弹窗（selectionProperty 绑定语义一致）
+                val dialog = MiuixSelectKeycodeDialog(context, list, true, false)
+                event.sneakKeycodeProperty().bind(dialog.selectionProperty())
+                dialog.show()
             },
         )
 
@@ -780,16 +740,10 @@ class MiuixEditViewDialog(
             onClick = {
                 val list = FXCollections.observableArrayList<Int>()
                 list.addAll(target)
-                // 4.1 起键码弹窗按开关双分支（临时列表拷贝、确认后 setAll 回写两分支一致）
-                if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
-                    MiuixSelectKeycodeDialog(context, list, false, false) {
-                        target.setAll(list)
-                    }.show()
-                } else {
-                    SelectKeycodeDialog(context, list, false, false) {
-                        target.setAll(list)
-                    }.show()
-                }
+                // Miuix 键码弹窗（临时列表拷贝、确认后 setAll 回写）
+                MiuixSelectKeycodeDialog(context, list, false, false) {
+                    target.setAll(list)
+                }.show()
             },
         )
     }

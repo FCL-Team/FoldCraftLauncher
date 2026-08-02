@@ -14,23 +14,26 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fcl.ui.manage.ModRollbackDialog
 import com.tungsten.fclcore.mod.LocalModFile
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
- * Miuix 版 Mod 版本回滚弹窗（3.2 批 2，对应 ui/manage/ModRollbackDialog + dialog_rollback_mod）。
+ * Miuix 版 Mod 版本回滚弹窗（3.2 批 2，对应已删除的 ui/manage/ModRollbackDialog + dialog_rollback_mod）。
  *
  * 行为对齐：列表展示可回滚旧版本号，点击某项 dismiss 并回调 onOldVersionSelect；
  * 取消按钮 dismiss；setCancelable(false) 一致。
- * 复用遗留 [ModRollbackDialog.Callback]，调用点 lambda 无需改动。
+ * 6.1：Callback 收归本类（原复用遗留 ModRollbackDialog.Callback，旧类已删除）。
  */
 class MiuixModRollbackDialog(
     context: Context,
     private val list: List<LocalModFile>,
-    private val callback: ModRollbackDialog.Callback,
+    private val callback: Callback,
 ) : FCLComposeDialog(context, cancelable = false) {
+
+    fun interface Callback {
+        fun onOldVersionSelect(localModFile: LocalModFile)
+    }
 
     init {
         setDialogContent {

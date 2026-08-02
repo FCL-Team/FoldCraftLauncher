@@ -48,14 +48,10 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.ui.account.AccountListItem
-import com.tungsten.fcl.ui.account.AddAuthlibInjectorServerDialog
-import com.tungsten.fcl.ui.account.CreateAccountDialog
-import com.tungsten.fcl.ui.account.OfflineAccountSkinDialog
 import com.tungsten.fcl.ui.bridge.LegacyBridge
 import com.tungsten.fcl.ui.bridge.collectAsState
 import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
 import com.tungsten.fcl.ui.compose.dialog.MiuixAddAuthlibInjectorServerDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixCreateAccountDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixOfflineAccountSkinDialog
@@ -567,44 +563,27 @@ private fun AccountDialogs(
     }
 }
 
-/** 账户页宿主事件处理：弹窗双分支（3.2 开关）与文件选择/错误提示。 */
+/** 账户页宿主事件处理：Miuix 弹窗与文件选择/错误提示。 */
 object AccountScreenHost {
     fun handle(context: Context, event: AccountEvent) {
         when (event) {
             is AccountEvent.CreateAccount -> {
-                // 对齐 AccountUI.onClick :77-90（含 3.2 弹窗开关）
-                if (ComposeDialogs.USE_COMPOSE_CREATE_ACCOUNT) {
-                    MiuixCreateAccountDialog(context, event.factory).show()
-                } else {
-                    CreateAccountDialog(context, event.factory).show()
-                }
+                // 对齐 AccountUI.onClick
+                MiuixCreateAccountDialog(context, event.factory).show()
             }
 
             AccountEvent.AddAuthlibServer -> {
-                // 对齐 AccountUI.onClick :91-99
-                if (ComposeDialogs.USE_COMPOSE_ADD_AUTHLIB_INJECTOR_SERVER) {
-                    MiuixAddAuthlibInjectorServerDialog(context).show()
-                } else {
-                    AddAuthlibInjectorServerDialog(context).show()
-                }
+                MiuixAddAuthlibInjectorServerDialog(context).show()
             }
 
             is AccountEvent.CreateAccountForServer -> {
-                // 对齐 ServerListAdapter :74-82
-                if (ComposeDialogs.USE_COMPOSE_CREATE_ACCOUNT) {
-                    MiuixCreateAccountDialog(context, event.server).show()
-                } else {
-                    CreateAccountDialog(context, event.server).show()
-                }
+                // 对齐 ServerListAdapter
+                MiuixCreateAccountDialog(context, event.server).show()
             }
 
             is AccountEvent.OpenOfflineSkin -> {
-                // 对齐 AccountListAdapter.kt:119-126
-                if (ComposeDialogs.USE_COMPOSE_OFFLINE_ACCOUNT_SKIN) {
-                    MiuixOfflineAccountSkinDialog(context, event.item).show()
-                } else {
-                    OfflineAccountSkinDialog(context, event.item).show()
-                }
+                // 对齐 AccountListAdapter
+                MiuixOfflineAccountSkinDialog(context, event.item).show()
             }
 
             is AccountEvent.PickLocalSkin -> {

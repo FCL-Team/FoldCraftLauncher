@@ -9,7 +9,6 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fcl.ui.download.modpack.ModpackUrlDialog
 import com.tungsten.fclcore.util.StringUtils
 import top.yukonga.miuix.kmp.basic.TextField
 
@@ -17,11 +16,11 @@ import top.yukonga.miuix.kmp.basic.TextField
  * Miuix 版整合包链接输入弹窗（3.2 批 1，对应 ModpackUrlDialog + dialog_modpack_url）。
  *
  * 行为对齐：确定时仅当输入非空白才回调 onPositive(url) 并 dismiss（空白静默忽略）；
- * 取消直接 dismiss；setCancelable(false) 一致。复用遗留 [ModpackUrlDialog.Callback]。
+ * 取消直接 dismiss；setCancelable(false) 一致。[Callback] 签名与遗留 ModpackUrlDialog.Callback 一致。
  */
 class MiuixModpackUrlDialog(
     context: Context,
-    private val callback: ModpackUrlDialog.Callback,
+    private val callback: Callback,
 ) : FCLComposeDialog(context, cancelable = false) {
 
     private val urlState = mutableStateOf("")
@@ -54,5 +53,9 @@ class MiuixModpackUrlDialog(
                 )
             }
         }
+    }
+
+    fun interface Callback {
+        fun onPositive(urlString: String)
     }
 }

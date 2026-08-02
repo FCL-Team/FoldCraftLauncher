@@ -32,7 +32,6 @@ import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.setting.GameOption;
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixEditViewDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -315,7 +314,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                             && Math.abs(event.getY() - downY) <= 10) {
                         setX(positionX);
                         setY(positionY);
-                        // 3.2 批 4 接入点：按钮编辑弹窗双分支（Miuix/遗留）
+                        // 3.2 批 4 接入点：Miuix 按钮编辑弹窗
                         EditViewDialog.Callback callback = new EditViewDialog.Callback() {
                             @Override
                             public void onPositive(CustomControl view) {
@@ -337,13 +336,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
                                 menu.getViewManager().removeView(getData());
                             }
                         };
-                        if (ComposeDialogs.USE_COMPOSE_EDIT_VIEW) {
-                            MiuixEditViewDialog dialog = new MiuixEditViewDialog(getContext(), getData().clone(), menu, callback, true);
-                            dialog.show();
-                        } else {
-                            EditViewDialog dialog = new EditViewDialog(getContext(), getData().clone(), menu, callback, true);
-                            dialog.show();
-                        }
+                        MiuixEditViewDialog dialog = new MiuixEditViewDialog(getContext(), getData().clone(), menu, callback, true);
+                        dialog.show();
                     } else {
                         getData().getBaseInfo().setXPosition((int) ((1000 * getX()) / (screenWidth - getMeasuredWidth())));
                         getData().getBaseInfo().setYPosition((int) ((1000 * getY()) / (screenHeight - getMeasuredHeight())));

@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.graphics.Color;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +20,6 @@ import com.tungsten.fcl.terracotta.Terracotta;
 import com.tungsten.fcl.terracotta.TerracottaNodeList;
 import com.tungsten.fcl.terracotta.TerracottaState;
 import com.tungsten.fcl.terracotta.profile.TerracottaProfile;
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixInviteCodeInputDialog;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -35,7 +31,6 @@ import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
-import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -196,12 +191,7 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
             host = findViewById(R.id.waiting_host);
             guest = findViewById(R.id.waiting_guest);
 
-            if (ComposeDialogs.USE_COMPOSE_INVITE_CODE) {
-                // 3.2 批 2 接入点：Miuix 邀请码输入弹窗
-                inviteCodeInputDialog = new MiuixInviteCodeInputDialog(getContext(), this::onInviteCode);
-            } else {
-                inviteCodeInputDialog = new InviteCodeInputDialog(getContext(), this::onInviteCode);
-            }
+            inviteCodeInputDialog = new MiuixInviteCodeInputDialog(getContext(), this::onInviteCode);
 
             host.setOnClickListener(v -> Task.supplyAsync(Schedulers.io(), () -> {
                         Schedulers.androidUIThread().execute(() -> {
@@ -282,81 +272,6 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
             return Collections.singletonList("waiting");
         }
 
-        private static class InviteCodeInputDialog extends FCLDialog {
-
-            public interface Listener {
-                void onPositive(String code);
-            }
-
-            private final FCLEditText editCode;
-            private final FCLTextView validation;
-
-            public InviteCodeInputDialog(Context context, Listener listener) {
-                super(context);
-                setCancelable(false);
-                setContentView(R.layout.dialog_input_invite_code);
-
-                editCode = findViewById(R.id.code);
-                validation = findViewById(R.id.validation);
-                Objects.requireNonNull(editCode).addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                        // Ignore
-                    }
-
-                    @Override
-                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                        refreshTextBox();
-                    }
-
-                    @Override
-                    public void afterTextChanged(Editable s) {
-                        refreshTextBox();
-                    }
-                });
-                Objects.requireNonNull(validation).setVisibility(View.GONE);
-
-                FCLButton positive = findViewById(R.id.positive);
-                Objects.requireNonNull(positive).setOnClickListener(v -> {
-                    if (Terracotta.parseRoomCode(editCode.getText().toString()) != null) {
-                        listener.onPositive(editCode.getText().toString());
-                        InviteCodeInputDialog.this.dismiss();
-                    } else
-                        Toast.makeText(getContext(), getContext().getString(R.string.terracotta_status_waiting_guest_prompt_invalid), Toast.LENGTH_SHORT).show();
-                });
-                FCLButton negative = findViewById(R.id.negative);
-                Objects.requireNonNull(negative).setOnClickListener(v -> dismiss());
-            }
-
-            @Override
-            public void show() {
-                super.show();
-                editCode.setText("");
-            }
-
-            private void refreshTextBox() {
-                TerracottaAndroidAPI.RoomType type = Terracotta.parseRoomCode(editCode.getText().toString());
-                if (editCode.getText().toString().isEmpty()) {
-                    Objects.requireNonNull(validation).setVisibility(View.GONE);
-                } else if (type == TerracottaAndroidAPI.RoomType.TERRACOTTA_LEGACY) {
-                    Objects.requireNonNull(validation).setVisibility(View.VISIBLE);
-                    Objects.requireNonNull(validation).setText(getContext().getString(R.string.terracotta_status_waiting_guest_prompt_terracotta_legacy));
-                    Objects.requireNonNull(validation).setTextColor(Color.YELLOW);
-                } else if (type == TerracottaAndroidAPI.RoomType.PCL2CE) {
-                    Objects.requireNonNull(validation).setVisibility(View.VISIBLE);
-                    Objects.requireNonNull(validation).setText(getContext().getString(R.string.terracotta_status_waiting_guest_prompt_pcl2ce));
-                    Objects.requireNonNull(validation).setTextColor(Color.YELLOW);
-                } else if (type == TerracottaAndroidAPI.RoomType.SCAFFOLDING) {
-                    Objects.requireNonNull(validation).setVisibility(View.VISIBLE);
-                    Objects.requireNonNull(validation).setText(getContext().getString(R.string.terracotta_status_waiting_guest_prompt_scaffolding));
-                    Objects.requireNonNull(validation).setTextColor(Color.GREEN);
-                } else {
-                    Objects.requireNonNull(validation).setVisibility(View.VISIBLE);
-                    Objects.requireNonNull(validation).setText(getContext().getString(R.string.terracotta_status_waiting_guest_prompt_invalid));
-                    Objects.requireNonNull(validation).setTextColor(Color.RED);
-                }
-            }
-        }
     }
 
     private static final class HostScanningUI extends StateBindingUI {

@@ -50,10 +50,8 @@ import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.bridge.collectAsState
 import com.tungsten.fcl.ui.compose.rememberShakeState
 import com.tungsten.fcl.ui.compose.shake
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
 import com.tungsten.fcl.ui.compose.dialog.MiuixAddProfileDialog
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
-import com.tungsten.fcl.ui.version.AddProfileDialog
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fclcore.fakefx.collections.ListChangeListener
 import top.yukonga.miuix.kmp.basic.Button
@@ -436,12 +434,7 @@ object VersionListScreenHost {
     fun handle(context: Context, event: VersionListEvent) {
         when (event) {
             VersionListEvent.NewProfile -> {
-                // 对齐 VersionListPage :240-248（含 3.2 弹窗开关）
-                if (ComposeDialogs.USE_COMPOSE_ADD_PROFILE) {
-                    MiuixAddProfileDialog(context).show()
-                } else {
-                    AddProfileDialog(context).show()
-                }
+                MiuixAddProfileDialog(context).show()
             }
 
             is VersionListEvent.DeleteVersion -> {

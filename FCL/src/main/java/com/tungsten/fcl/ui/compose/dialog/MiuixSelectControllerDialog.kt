@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.R
-import com.tungsten.fcl.control.SelectControllerDialog
 import com.tungsten.fcl.setting.Controller
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
@@ -51,7 +50,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 class MiuixSelectControllerDialog(
     context: Context,
     id: String,
-    private val callback: SelectControllerDialog.Callback,
+    private val callback: Callback,
 ) : FCLComposeDialog(context, cancelable = false) {
 
     private val controllersState = mutableStateOf(Controllers.getControllers().toList())
@@ -162,5 +161,9 @@ class MiuixSelectControllerDialog(
                 )
             }
         }
+    }
+
+    fun interface Callback {
+        fun onControllerSelected(controller: Controller?)
     }
 }

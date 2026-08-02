@@ -27,7 +27,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 
@@ -48,13 +47,10 @@ import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.setting.VersionSetting;
-import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixSkipLoginDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixTipReLoginDialog;
-import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.NativeLibPlugin;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -90,8 +86,6 @@ import com.tungsten.fclcore.util.io.ResponseCodeException;
 import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.dialog.FCLDialog;
-import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -122,9 +116,6 @@ public final class LauncherHelper {
     private final Account account;
     private final String selectedVersion;
     private final VersionSetting setting;
-    // 5.1 遗留 L4：启动进度弹窗双分支，开关 true 用 miuixLaunchingStepsPane（launchingStepsPane 为 null），
-    // false 回滚遗留 TaskDialog（miuixLaunchingStepsPane 为 null）。
-    private final TaskDialog launchingStepsPane;
     private final MiuixTaskDialog miuixLaunchingStepsPane;
     private double scaleFactor;
 
@@ -134,25 +125,14 @@ public final class LauncherHelper {
         this.account = Objects.requireNonNull(account);
         this.selectedVersion = Objects.requireNonNull(selectedVersion);
         this.setting = profile.getVersionSetting(selectedVersion);
-        if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
-            this.launchingStepsPane = null;
-            this.miuixLaunchingStepsPane = new MiuixTaskDialog(context);
-            this.miuixLaunchingStepsPane.setTitle(context.getString(R.string.version_launch));
-        } else {
-            this.miuixLaunchingStepsPane = null;
-            this.launchingStepsPane = new TaskDialog(context, TaskCancellationAction.NORMAL);
-            this.launchingStepsPane.setTitle(context.getString(R.string.version_launch));
-        }
+        this.miuixLaunchingStepsPane = new MiuixTaskDialog(context);
+        this.miuixLaunchingStepsPane.setTitle(context.getString(R.string.version_launch));
     }
 
     public void launch() {
         LOG.info("Launching game version: " + selectedVersion);
 
-        if (launchingStepsPane != null) {
-            launchingStepsPane.show();
-        } else {
-            miuixLaunchingStepsPane.show();
-        }
+        miuixLaunchingStepsPane.show();
         launch0();
     }
 
@@ -283,20 +263,12 @@ public final class LauncherHelper {
                         "launch.state.logging_in",
                         "launch.state.waiting_launching"))
                 .executor();
-        if (launchingStepsPane != null) {
-            launchingStepsPane.setExecutor(executor, false);
-        } else {
-            miuixLaunchingStepsPane.setExecutor(executor, false);
-        }
+        miuixLaunchingStepsPane.setExecutor(executor, false);
         executor.addTaskListener(new TaskListener() {
 
             @Override
             public void onStop(boolean success, TaskExecutor executor) {
-                if (launchingStepsPane != null) {
-                    launchingStepsPane.dismiss();
-                } else {
-                    miuixLaunchingStepsPane.dismiss();
-                }
+                miuixLaunchingStepsPane.dismiss();
                 if (!success) {
                     Exception ex = executor.getException();
                     if (ex != null && !(ex instanceof CancellationException)) {
@@ -615,22 +587,16 @@ public final class LauncherHelper {
 
                 CompletableFuture<Task<AuthInfo>> future = new CompletableFuture<>();
                 Schedulers.androidUIThread().execute(() -> {
-                    if (ComposeDialogs.USE_COMPOSE_TIP_RELOGIN) {
-                        // 3.2 批 1 接入点：Miuix 凭证过期提示弹窗
-                        new MiuixTipReLoginDialog(context,
-                                () -> {
-                                    try {
-                                        future.complete(Task.completed(account.playOffline()));
-                                    } catch (AuthenticationException e2) {
-                                        future.completeExceptionally(e2);
-                                    }
-                                },
-                                () -> future.completeExceptionally(new CancellationException())
-                        ).show();
-                    } else {
-                        TipReLoginLoginDialog dialog = new TipReLoginLoginDialog(context, account, future);
-                        dialog.show();
-                    }
+                    new MiuixTipReLoginDialog(context,
+                            () -> {
+                                try {
+                                    future.complete(Task.completed(account.playOffline()));
+                                } catch (AuthenticationException e2) {
+                                    future.completeExceptionally(e2);
+                                }
+                            },
+                            () -> future.completeExceptionally(new CancellationException())
+                    ).show();
                 });
                 return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
             } catch (AuthenticationException e) {
@@ -638,107 +604,20 @@ public final class LauncherHelper {
 
                 CompletableFuture<Task<AuthInfo>> future = new CompletableFuture<>();
                 Schedulers.androidUIThread().execute(() -> {
-                    if (ComposeDialogs.USE_COMPOSE_SKIP_LOGIN) {
-                        // 3.2 批 1 接入点：Miuix 登录失败（跳过登录）弹窗
-                        new MiuixSkipLoginDialog(context,
-                                () -> future.complete(logIn(context, account)),
-                                () -> {
-                                    try {
-                                        future.complete(Task.completed(account.playOffline()));
-                                    } catch (AuthenticationException e2) {
-                                        future.completeExceptionally(e2);
-                                    }
-                                },
-                                () -> future.completeExceptionally(new CancellationException())
-                        ).show();
-                    } else {
-                        SkipLoginDialog dialog = new SkipLoginDialog(context, account, future);
-                        dialog.show();
-                    }
+                    new MiuixSkipLoginDialog(context,
+                            () -> future.complete(logIn(context, account)),
+                            () -> {
+                                try {
+                                    future.complete(Task.completed(account.playOffline()));
+                                } catch (AuthenticationException e2) {
+                                    future.completeExceptionally(e2);
+                                }
+                            },
+                            () -> future.completeExceptionally(new CancellationException())
+                    ).show();
                 });
                 return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
             }
         });
     }
-
-    static class SkipLoginDialog extends FCLDialog implements View.OnClickListener {
-
-        private final Account account;
-        private final CompletableFuture<Task<AuthInfo>> future;
-
-        private final FCLButton retry;
-        private final FCLButton skip;
-        private final FCLButton cancel;
-
-        public SkipLoginDialog(@NonNull Context context, Account account, CompletableFuture<Task<AuthInfo>> future) {
-            super(context);
-            this.account = account;
-            this.future = future;
-            setContentView(R.layout.dialog_skip_login);
-            setCancelable(false);
-
-            retry = findViewById(R.id.retry);
-            skip = findViewById(R.id.skip);
-            cancel = findViewById(R.id.cancel);
-            retry.setOnClickListener(this);
-            skip.setOnClickListener(this);
-            cancel.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (view == retry) {
-                future.complete(logIn(getContext(), account));
-            }
-            if (view == skip) {
-                try {
-                    future.complete(Task.completed(account.playOffline()));
-                } catch (AuthenticationException e2) {
-                    future.completeExceptionally(e2);
-                }
-            }
-            if (view == cancel) {
-                future.completeExceptionally(new CancellationException());
-            }
-            dismiss();
-        }
-    }
-
-    static class TipReLoginLoginDialog extends FCLDialog implements View.OnClickListener {
-
-        private final Account account;
-        private final CompletableFuture<Task<AuthInfo>> future;
-
-        private final FCLButton skip;
-        private final FCLButton ok;
-
-        public TipReLoginLoginDialog(@NonNull Context context, Account account, CompletableFuture<Task<AuthInfo>> future) {
-            super(context);
-            this.account = account;
-            this.future = future;
-            setContentView(R.layout.dialog_tip_relogin);
-            setCancelable(false);
-
-            skip = findViewById(R.id.skip);
-            ok = findViewById(R.id.ok);
-            skip.setOnClickListener(this);
-            ok.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (view == skip) {
-                try {
-                    future.complete(Task.completed(account.playOffline()));
-                } catch (AuthenticationException e2) {
-                    future.completeExceptionally(e2);
-                }
-            }
-            if (view == ok) {
-                future.completeExceptionally(new CancellationException());
-            }
-            dismiss();
-        }
-    }
-
 }

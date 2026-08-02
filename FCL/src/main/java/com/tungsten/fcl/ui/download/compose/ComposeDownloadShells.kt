@@ -18,6 +18,9 @@ import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteModRepository
+import com.tungsten.fclcore.mod.curse.CurseAddon
+import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository
+import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.ui.FCLTempPage
@@ -105,6 +108,28 @@ class ComposeDownloadPage(
      * 遗留下载回调同样回退 profile.getSelectedVersion()），语义等价，无需落地存储。
      */
     override fun loadVersion(profile: Profile?, version: String?) {
+    }
+
+    /**
+     * 从管理域 Mod 列表跳转到指定 Mod 的详情页（对齐遗留 DownloadPage.jumpToModPage）：
+     * 按数据来源（CurseForge/Modrinth）选择对应仓库，直接开详情临时页。
+     */
+    fun jumpToModPage(mod: RemoteMod) {
+        if (tab != DownloadTab.MOD) return
+        val isModrinth = mod.data !is CurseAddon
+        val repository =
+            if (isModrinth) ModrinthRemoteModRepository.MODS else CurseForgeRemoteModRepository.MODS
+        DownloadPageManager.instance?.showTempPage(
+            ComposeRemoteModInfoPage(
+                context,
+                PageManager.PAGE_ID_TEMP,
+                parent,
+                DownloadTab.MOD,
+                repository,
+                mod,
+                isModrinth,
+            ),
+        )
     }
 
     override fun refresh(vararg param: Any?): Task<*>? = null

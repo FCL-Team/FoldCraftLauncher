@@ -35,15 +35,6 @@ class MiuixTaskDialog @JvmOverloads constructor(
     private var cancelAction: Runnable? = Runnable {},
 ) : FCLComposeDialog(context, cancelable = false) {
 
-    companion object {
-        /**
-         * 阶段三 3.2 对话框迁移开关（对齐 3.1 的 USE_COMPOSE_SETTING_PAGES 模式）：
-         * true 时接入点使用本类（Miuix），false 回滚遗留 TaskDialog（文件保留未删）。
-         * 逐点回退：各接入点保留旧实现分支，单点改回 if 分支即可。
-         */
-        const val USE_COMPOSE_TASK_DIALOG = true
-    }
-
     private val titleState = mutableStateOf<String?>(null)
     private val dialogState = mutableStateOf<FCLTaskDialogState?>(null)
     private val cancelActionState = mutableStateOf<Runnable?>(cancelAction)

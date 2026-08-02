@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.tungsten.fcl.R
-import com.tungsten.fcl.control.AddButtonStyleDialog
 import com.tungsten.fcl.control.GameMenu
 import com.tungsten.fcl.control.data.ButtonStyles
 import com.tungsten.fcl.control.data.ControlButtonStyle
@@ -55,8 +54,8 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * - 样式列表数据来自 ButtonStyles.getStyles()；初始选中逻辑与 ButtonStyleAdapter 一致
  *   （initStyle 非空且列表中存在同名样式则选中 initStyle，否则选中第一个）；
  * - 单选 RadioButton 仅 select 模式显示（删除按钮两种模式都显示，与遗留 Adapter 一致）；
- * - "编辑"按钮仅 select 模式显示；添加/编辑按 [ComposeDialogs.USE_COMPOSE_ADD_BUTTON_STYLE]
- *   双分支拉起新增/编辑弹窗，回调逻辑（addStyle / 原位替换 / 选中新样式 / menu 内
+ * - "编辑"按钮仅 select 模式显示；添加/编辑拉起 Miuix 新增/编辑弹窗，
+ *   回调逻辑（addStyle / 原位替换 / 选中新样式 / menu 内
  *   同名控件样式同步）与遗留 onClick 逐条一致；
  * - 删除先弹 FCLAlertDialog 确认（沿用原生），确认后 removeStyles + checkStyles + 刷新，
  *   且不重置当前选中（对齐遗留 notifyDataSetChanged 语义，区别于 refreshList 的重建选中）；
@@ -116,12 +115,8 @@ class MiuixButtonStyleDialog(
             ButtonStyles.addStyle(style)
             refreshList()
         }
-        // 3.2 批 4 接入点：新增按钮样式弹窗按开关双分支
-        if (ComposeDialogs.USE_COMPOSE_ADD_BUTTON_STYLE) {
-            MiuixAddButtonStyleDialog(context, null, false, onResult).show()
-        } else {
-            AddButtonStyleDialog(context, null, false) { style -> onResult(style) }.show()
-        }
+        // 3.2 批 4 接入点：Miuix 新增按钮样式弹窗
+        MiuixAddButtonStyleDialog(context, null, false, onResult).show()
     }
 
     private fun onEditStyle() {
@@ -142,12 +137,8 @@ class MiuixButtonStyleDialog(
                 }
             }
         }
-        // 3.2 批 4 接入点：编辑按钮样式弹窗按开关双分支
-        if (ComposeDialogs.USE_COMPOSE_ADD_BUTTON_STYLE) {
-            MiuixAddButtonStyleDialog(context, before, true, onResult).show()
-        } else {
-            AddButtonStyleDialog(context, before, true) { style -> onResult(style) }.show()
-        }
+        // 3.2 批 4 接入点：Miuix 编辑按钮样式弹窗
+        MiuixAddButtonStyleDialog(context, before, true, onResult).show()
     }
 
     private fun onDeleteStyle(style: ControlButtonStyle) {

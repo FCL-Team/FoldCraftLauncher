@@ -119,7 +119,6 @@
     <string name="button_remove_confirm">Sind Sie sicher, dass Sie dies dauerhaft löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden!</string>
     <string name="button_save_as">Speichern unter</string>
     <string name="button_select_all">Alles auswählen</string>
-    <string name="button_set">Auswählen</string>
     <string name="button_reset">Zurücksetzen</string>
 
     <string name="community">Community</string>
@@ -382,7 +381,6 @@
     <string name="help_website">Website</string>
 
     <string name="input_hint_not_empty">Pflichtfeld</string>
-    <string name="input_hint_optional">Optional</string>
     <string name="input_not_empty">Füllen Sie die Pflichtfelder aus.</string>
     <string name="input_number">Geben Sie eine Zahl ein</string>
     <string name="input_url">Geben Sie eine gültige URL ein.</string>
@@ -668,9 +666,7 @@
     <string name="settings_advanced_game_dir_independent">Isoliert in (.minecraft/versions/&lt;instance name&gt;/, außer Ressourcen und Bibliotheken)</string>
     <string name="settings_advanced_jvm_args">JVM-Argumente</string>
     <string name="settings_advanced_minecraft_arguments">Launcher-Argumente</string>
-    <string name="settings_advanced_minecraft_arguments_prompt">Standard</string>
     <string name="settings_advanced_server_ip">Serveradresse</string>
-    <string name="settings_advanced_server_ip_prompt">Automatisch nach dem Start beitreten</string>
 
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_controller_injector">Serverseitige Gesten</string>
@@ -721,13 +717,11 @@
     <string name="settings_launcher_animation_speed">Geschwindigkeit der Übergangsanimationen</string>
 
     <string name="settings_memory">Speicher</string>
-    <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB zugewiesen</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB Minimum / %2$.1f GB zugewiesen (%3$.1f GB frei)</string>
     <string name="settings_memory_allocate_manual">%1$.1f GB verwendet</string>
     <string name="settings_memory_allocate_manual_exceeded">%1$.1f GB verwendet (%3$.1f GB frei)</string>
     <string name="settings_memory_auto_allocate">Automatische RAM-Zuweisung</string>
     <string name="settings_memory_lower_bound">RAM-Minimum</string>
-    <string name="settings_memory_used_per_total">%1$.1f GB verwendet / %2$.1f GB gesamt</string>
     <string name="settings_physical_memory">Größe des physischen Speichers</string>
     <string name="settings_tabs_installers">Mod-Loader</string>
     <string name="settings_type_global_manage">Hauptspiel-Einstellungen</string>
@@ -868,7 +862,6 @@
     <string name="world_info_time_format">%s Tage</string>
     <string name="world_manage">Welten / Datenpakete</string>
     <string name="world_name">Weltname</string>
-    <string name="world_name_enter">Weltname eingeben</string>
     <string name="world_reveal">Im Explorer anzeigen</string>
     <string name="world_show_all">Alle anzeigen</string>
 

@@ -99,10 +99,6 @@
             android:name=".activity.WebActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"
             android:screenOrientation="sensorLandscape" />
-        <!-- 临时：Miuix 主题迁移测试入口（小步骤 2.2 验证用，迁移完成后移除） -->
-        <activity
-            android:name=".activity.ThemeTestActivity"
-            android:exported="false" />
         <activity
             android:name=".activity.ControllerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation"

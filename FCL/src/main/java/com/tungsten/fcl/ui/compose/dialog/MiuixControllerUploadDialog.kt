@@ -34,7 +34,6 @@ import com.tungsten.fcl.setting.Controller
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
-import com.tungsten.fcl.ui.controller.ControllerUploadDialog
 import com.tungsten.fclcore.util.StringUtils
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Checkbox
@@ -70,7 +69,7 @@ class MiuixControllerUploadDialog(
     context: Context,
     @Suppress("unused") private val activity: Activity,
     controller: Controller,
-    private val callback: ControllerUploadDialog.Callback,
+    private val callback: Callback,
 ) : FCLComposeDialog(context, cancelable = false) {
 
     private val nameState = mutableStateOf(controller.name)
@@ -425,5 +424,18 @@ class MiuixControllerUploadDialog(
                 )
             }
         }
+    }
+
+    fun interface Callback {
+        fun onPositive(
+            name: String,
+            author: String,
+            intro: String,
+            description: String,
+            lang: String,
+            devices: ArrayList<Int>,
+            screenshots: ArrayList<String>,
+            iconPath: String,
+        )
     }
 }

@@ -14,21 +14,17 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcllibrary.ui.ProgressDialog;
-import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.compose.FCLDialogs;
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixCreateAccountDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixDuplicateVersionDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixRenameVersionDialog;
-import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage;
 import com.tungsten.fcl.ui.download.modpack.ModpackSelectionPage;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fcl.ui.manage.ModpackTypeSelectionPage;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
@@ -41,7 +37,6 @@ import com.tungsten.fclcore.util.FutureCallback;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.IOException;
@@ -68,18 +63,7 @@ public class Versions {
     private static void showModpackDownloadFailed(Context context, String url, Exception e) {
         String title = context.getString(R.string.download_failed);
         String message = AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + StringUtils.getStackTrace(e);
-        if (ComposeDialogs.USE_COMPOSE_VERSION_OP_ALERTS) {
-            // 5.1 遗留 L3 接入点：Miuix 失败提示弹窗（单按钮，对应遗留唯一的"确定"负按钮）
-            FCLDialogs.showAlert(context, title, message, null, null, null, false);
-        } else {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-            builder.setCancelable(false);
-            builder.setTitle(title);
-            builder.setMessage(message);
-            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-            builder.create().show();
-        }
+        FCLDialogs.showAlert(context, title, message, null, null, null, false);
     }
 
     public static void downloadModpackImpl(Context context, FCLUILayout parent, Profile profile, RemoteMod.Version file) {
@@ -104,18 +88,10 @@ public class Versions {
                         showModpackDownloadFailed(context, file.getFile().getUrl(), e);
                     }
                 }).executor();
-        if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
-            // 3.2 接入点：Miuix 任务弹窗（取消动作 = 内置 dismiss，对应原 AppCompatDialog::dismiss）
-            MiuixTaskDialog taskDialog = new MiuixTaskDialog(context);
-            taskDialog.setTitle(context.getString(R.string.message_downloading));
-            taskDialog.setExecutor(executor);
-            taskDialog.show();
-        } else {
-            TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
-            taskDialog.setTitle(context.getString(R.string.message_downloading));
-            taskDialog.setExecutor(executor);
-            taskDialog.show();
-        }
+        MiuixTaskDialog taskDialog = new MiuixTaskDialog(context);
+        taskDialog.setTitle(context.getString(R.string.message_downloading));
+        taskDialog.setExecutor(executor);
+        taskDialog.show();
         executor.start();
     }
 
@@ -124,32 +100,16 @@ public class Versions {
         String message = isIndependent ? String.format(context.getString(R.string.version_manage_remove_confirm_independent), version) : String.format(context.getString(R.string.version_manage_remove_confirm), version);
 
         Runnable deleteAction = () -> {
-            AppCompatDialog progress;
-            if (ComposeDialogs.USE_COMPOSE_VERSION_OP_ALERTS) {
-                // 5.1 遗留 L2 接入点：Miuix 进度弹窗（对应 FCLLibrary ProgressDialog）
-                progress = FCLDialogs.showProgress(context);
-            } else {
-                progress = new ProgressDialog(context);
-            }
+            AppCompatDialog progress = FCLDialogs.showProgress(context);
             Task.runAsync(() -> {
                 profile.getRepository().removeVersionFromDisk(version);
             }).whenComplete(Schedulers.androidUIThread(), (e) -> {
                 progress.dismiss();
             }).start();
         };
-        if (ComposeDialogs.USE_COMPOSE_VERSION_OP_ALERTS) {
-            // 5.1 遗留 L2 接入点：Miuix 删除确认弹窗（onResult=true 执行删除，否则仅 dismiss）
-            FCLDialogs.showAlert(context, null, message, null,
-                    context.getString(com.tungsten.fcllibrary.R.string.dialog_negative),
-                    result -> { if (result) deleteAction.run(); });
-        } else {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-            builder.setMessage(message);
-            builder.setPositiveButton(deleteAction::run);
-            builder.setNegativeButton(null);
-            builder.create().show();
-        }
+        FCLDialogs.showAlert(context, null, message, null,
+                context.getString(com.tungsten.fcllibrary.R.string.dialog_negative),
+                result -> { if (result) deleteAction.run(); });
     }
 
     public static CompletableFuture<String> renameVersion(Context context, Profile profile, String version) {
@@ -176,16 +136,9 @@ public class Versions {
                         return null;
                     }).start();
         };
-        if (ComposeDialogs.USE_COMPOSE_RENAME_VERSION) {
-            // 3.2 批 1 接入点：Miuix 重命名版本弹窗
-            MiuixRenameVersionDialog dialog = new MiuixRenameVersionDialog(context, version, callback);
-            dialog.show();
-            return dialog.getFuture();
-        } else {
-            RenameVersionDialog dialog = new RenameVersionDialog(context, version, callback);
-            dialog.show();
-            return dialog.getFuture();
-        }
+        MiuixRenameVersionDialog dialog = new MiuixRenameVersionDialog(context, version, callback);
+        dialog.show();
+        return dialog.getFuture();
     }
 
     public static void exportVersion(Context context, FCLUILayout parent, Profile profile, String version) {
@@ -214,13 +167,7 @@ public class Versions {
                         }
                     }).start();
         };
-        if (ComposeDialogs.USE_COMPOSE_DUPLICATE_VERSION) {
-            // 3.2 批 1 接入点：Miuix 复制版本弹窗
-            new MiuixDuplicateVersionDialog(context, profile, version, callback).show();
-        } else {
-            DuplicateVersionDialog dialog = new DuplicateVersionDialog(context, profile, version, callback);
-            dialog.show();
-        }
+        new MiuixDuplicateVersionDialog(context, profile, version, callback).show();
     }
 
     public static void updateVersion(Context context, FCLUILayout parent, Profile profile, String version) {
@@ -231,18 +178,10 @@ public class Versions {
     public static void updateGameAssets(Context context, Profile profile, String version) {
         TaskExecutor executor = new GameAssetDownloadTask(profile.getDependency(), profile.getRepository().getVersion(version), GameAssetDownloadTask.DOWNLOAD_INDEX_FORCIBLY, true)
                 .executor();
-        if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
-            // 3.2 接入点：Miuix 任务弹窗（取消动作 = no-op，对应原 TaskCancellationAction.NORMAL）
-            MiuixTaskDialog dialog = new MiuixTaskDialog(context);
-            dialog.setExecutor(executor);
-            dialog.setTitle(context.getString(R.string.version_manage_redownload_assets_index));
-            dialog.show();
-        } else {
-            TaskDialog dialog = new TaskDialog(context, TaskCancellationAction.NORMAL);
-            dialog.setExecutor(executor);
-            dialog.setTitle(context.getString(R.string.version_manage_redownload_assets_index));
-            dialog.show();
-        }
+        MiuixTaskDialog dialog = new MiuixTaskDialog(context);
+        dialog.setExecutor(executor);
+        dialog.setTitle(context.getString(R.string.version_manage_redownload_assets_index));
+        dialog.show();
         executor.start();
     }
 
@@ -279,21 +218,10 @@ public class Versions {
                 MainActivity.getInstance().refreshMenuView(null);
                 MainActivity.getInstance().binding.download.setSelected(true);
             };
-            if (ComposeDialogs.USE_COMPOSE_VERSION_OP_ALERTS) {
-                // 5.1 遗留 L3 接入点：Miuix「未选择版本」提示（唯一按钮 = 确定并跳转下载页）
-                FCLDialogs.showAlert(context, context.getString(R.string.launch_failed),
-                        context.getString(R.string.version_empty_launch),
-                        null, null,
-                        result -> { if (result) jumpToDownload.run(); }, false);
-            } else {
-                FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-                builder.setCancelable(false);
-                builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-                builder.setTitle(context.getString(R.string.launch_failed));
-                builder.setMessage(context.getString(R.string.version_empty_launch));
-                builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), jumpToDownload::run);
-                builder.create().show();
-            }
+            FCLDialogs.showAlert(context, context.getString(R.string.launch_failed),
+                    context.getString(R.string.version_empty_launch),
+                    null, null,
+                    result -> { if (result) jumpToDownload.run(); }, false);
             return false;
         } else {
             return true;
@@ -311,16 +239,9 @@ public class Versions {
                     action.accept(newAccount);
                 }
             };
-            if (ComposeDialogs.USE_COMPOSE_CREATE_ACCOUNT) {
-                // 3.2 批 3 接入点：Miuix 创建账户弹窗
-                MiuixCreateAccountDialog dialog = new MiuixCreateAccountDialog(context, (AccountFactory<?>) null);
-                dialog.setOnDismissListener(dismissListener);
-                dialog.show();
-            } else {
-                CreateAccountDialog dialog = new CreateAccountDialog(context, (AccountFactory<?>) null);
-                dialog.setOnDismissListener(dismissListener);
-                dialog.show();
-            }
+            MiuixCreateAccountDialog dialog = new MiuixCreateAccountDialog(context, (AccountFactory<?>) null);
+            dialog.setOnDismissListener(dismissListener);
+            dialog.show();
         } else {
             action.accept(account);
         }

@@ -22,7 +22,6 @@ import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixControllerInfoDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.LayoutConverter;
@@ -224,14 +223,8 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             });
         }
         if (view == createController) {
-            // 3.2 批 4 接入点：控制器信息弹窗（新建模式）双分支
-            if (ComposeDialogs.USE_COMPOSE_CONTROLLER_INFO) {
-                MiuixControllerInfoDialog dialog = new MiuixControllerInfoDialog(getContext(), true, new Controller(""), this::addController);
-                dialog.show();
-            } else {
-                ControllerInfoDialog dialog = new ControllerInfoDialog(getContext(), true, new Controller(""), this::addController);
-                dialog.show();
-            }
+            MiuixControllerInfoDialog dialog = new MiuixControllerInfoDialog(getContext(), true, new Controller(""), this::addController);
+            dialog.show();
         }
         if (view == downloadController) {
             UIManager.getInstance().getControllerUI().getPageManager().switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO);
@@ -258,14 +251,8 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             );
         }
         if (view == editInfo) {
-            // 3.2 批 4 接入点：控制器信息弹窗（编辑模式）双分支
-            if (ComposeDialogs.USE_COMPOSE_CONTROLLER_INFO) {
-                MiuixControllerInfoDialog dialog = new MiuixControllerInfoDialog(getContext(), false, selectedController.get(), (controller) -> changeControllerInfo(selectedController.get(), controller));
-                dialog.show();
-            } else {
-                ControllerInfoDialog dialog = new ControllerInfoDialog(getContext(), false, selectedController.get(), (controller) -> changeControllerInfo(selectedController.get(), controller));
-                dialog.show();
-            }
+            MiuixControllerInfoDialog dialog = new MiuixControllerInfoDialog(getContext(), false, selectedController.get(), (controller) -> changeControllerInfo(selectedController.get(), controller));
+            dialog.show();
         }
         if (view == editController) {
             Intent intent = new Intent(getContext(), ControllerActivity.class);

@@ -29,7 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.tungsten.fcl.R
-import com.tungsten.fcl.control.ButtonStyleDialog
 import com.tungsten.fcl.control.GameMenu
 import com.tungsten.fcl.control.data.ControlButtonStyle
 import com.tungsten.fcl.control.data.ControlDirectionStyle
@@ -58,8 +57,8 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *   再被 style.buttonStyle 各属性单向 bind，快照 beforeButtonStyle = buttonStyle.clone()；
  * - 类型切换：遗留为 FCLSpinner，这里用两个单选项（按钮 BUTTON / 摇杆 ROCKER），
  *   切换即写入 style.styleType 并切换子页，初始取 style.styleType；
- * - 按钮页：interval 滑杆（0~200，"%"）+ 按钮样式选择行（弹按钮样式选择弹窗，
- *   按 [ComposeDialogs.USE_COMPOSE_BUTTON_STYLE] 双分支，GameMenu 透传一致；
+ * - 按钮页：interval 滑杆（0~200，"%"）+ 按钮样式选择行（弹 Miuix 按钮样式选择弹窗，
+ *   GameMenu 透传一致；
  *   回调把名称 + 12 个字段写回本地 buttonStyle，预览经失效监听即时刷新）；
  * - 摇杆页：5 滑杆（尺寸 100~900 "%"、背景描边宽 0~50 "dp"、背景圆角 0~500 "%"、
  *   描边宽 0~50 "dp"、圆角 0~500 "%"）+ 4 颜色（背景描边/背景填充/描边/填充），
@@ -194,18 +193,10 @@ class MiuixAddDirectionStyleDialog(
             buttonStyle.fillColorPressed = selected.fillColorPressed
             // 预览刷新由 style 失效监听驱动（对齐遗留回调末尾的 changeDirectionStyle）
         }
-        // 3.2 批 4 接入点：按钮样式选择弹窗按开关双分支
-        if (ComposeDialogs.USE_COMPOSE_BUTTON_STYLE) {
-            MiuixButtonStyleDialog(context, true, buttonStyle, onSelected)
-                .apply { setGameMenu(menu) }
-                .show()
-        } else {
-            ButtonStyleDialog(context, true, buttonStyle, object : ButtonStyleDialog.Callback {
-                override fun onStyleSelect(style: ControlButtonStyle) = onSelected(style)
-            })
-                .apply { setGameMenu(menu) }
-                .show()
-        }
+        // 3.2 批 4 接入点：Miuix 按钮样式选择弹窗
+        MiuixButtonStyleDialog(context, true, buttonStyle, onSelected)
+            .apply { setGameMenu(menu) }
+            .show()
     }
 
     private fun openTextEditDialog(property: IntegerProperty, isPercentage: Boolean) {

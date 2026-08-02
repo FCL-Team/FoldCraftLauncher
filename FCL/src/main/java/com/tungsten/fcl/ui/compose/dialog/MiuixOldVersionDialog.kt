@@ -15,7 +15,6 @@ import com.tungsten.fcl.control.download.ControllerVersion
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fcl.ui.controller.OldVersionDialog
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -24,12 +23,12 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *
  * 行为对齐：列表展示历史版本名（遗留固定高 180dp），点击回调 download(versionCode)
  * 并 dismiss；取消按钮 dismiss；setCancelable(false) 一致。
- * 复用遗留 [OldVersionDialog.Callback]，调用点方法引用无需改动。
+ * [Callback] 签名与遗留 OldVersionDialog.Callback 一致，调用点方法引用无需改动。
  */
 class MiuixOldVersionDialog(
     context: Context,
     versionInfos: ArrayList<ControllerVersion.VersionInfo>,
-    private val callback: OldVersionDialog.Callback,
+    private val callback: Callback,
 ) : FCLComposeDialog(context, cancelable = false) {
 
     private val versions: List<ControllerVersion.VersionInfo> = versionInfos
@@ -67,5 +66,9 @@ class MiuixOldVersionDialog(
                 }
             }
         }
+    }
+
+    fun interface Callback {
+        fun download(versionCode: Int)
     }
 }

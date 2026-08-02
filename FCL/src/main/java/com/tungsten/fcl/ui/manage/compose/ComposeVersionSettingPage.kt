@@ -26,8 +26,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
  *   后即 loadVersion），因此经 [loadRequests] StateFlow 中转：StateFlow 保留最新值，
  *   Compose 侧组合建立后补放（对齐 VersionSettingPage 的整页重绑语义）；
  * - [onResume] 经 [memoryTicks] 通知 VM 刷新已用内存（对齐 VersionSettingPage.onResume）；
- * - 开关 [com.tungsten.fcl.ui.version.compose.ComposeVersionPages.USE_COMPOSE_VERSION_SETTING]
- *   为 false 时整体回滚旧 View 页面（VersionSettingPage + page_version_setting.xml 保留未删）。
+ * - 批 2 起 Compose 开关已固化，旧 View 页面（VersionSettingPage + page_version_setting.xml）
+ *   已删除，本页为唯一实现。
  */
 class ComposeVersionSettingPage(
     context: Context,

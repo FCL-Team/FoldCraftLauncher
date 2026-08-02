@@ -19,8 +19,6 @@ import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fcl.ui.version.VersionListPage
-import com.tungsten.fcl.ui.version.VersionPageManager
 import com.tungsten.fclcore.util.StringUtils
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -34,8 +32,8 @@ import java.io.File
  *
  * 行为对齐：编辑按钮拉起目录单选并把结果写入路径；确定时校验名称/路径非空（Toast
  * input_not_empty）与名称不重名（Toast profile_already_exist），通过后
- * Profiles.add(Profile(name, File(path))) + 刷新 VersionListPage 并 dismiss；
- * 取消直接 dismiss；setCancelable(false) 一致。
+ * Profiles.add(Profile(name, File(path))) 并 dismiss（Compose 版本列表页自带
+ * Profiles 列表监听，无需手动刷新）；取消直接 dismiss；setCancelable(false) 一致。
  */
 class MiuixAddProfileDialog(
     context: Context,
@@ -112,9 +110,6 @@ class MiuixAddProfileDialog(
             Toast.makeText(context, context.getString(R.string.profile_already_exist), Toast.LENGTH_SHORT).show()
         } else {
             Profiles.profiles.add(Profile(name, File(path)))
-            // 3.3 起版本列表可能为 Compose 页（自带 Profiles 列表监听，无需手动刷新）；
-            // 旧 View 页仍需要 refreshProfile() 强刷。
-            (VersionPageManager.getInstance().allPages[0] as? VersionListPage)?.refreshProfile()
             dismiss()
         }
     }

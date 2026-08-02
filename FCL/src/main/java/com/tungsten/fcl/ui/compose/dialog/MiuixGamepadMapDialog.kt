@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.control.FCLInput
-import com.tungsten.fcl.control.SelectKeycodeDialog
 import com.tungsten.fcl.control.gamepad.GamepadEmulatedButton
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
@@ -31,8 +30,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * Miuix 版手柄按键映射弹窗（3.2 批 2，对应 com/mio/ui/dialog/GamepadMapDialog + dialog_gamepad_map）。
  *
  * 行为对齐：16 行映射项，图标与顺序同遗留 GamepadMapItemAdapter；点每行设置钮打开
- * 键码选择弹窗（4.1 起按 [ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE] 双分支，
- * 默认 MiuixSelectKeycodeDialog）编辑该键 keycodes；
+ * MiuixSelectKeycodeDialog 编辑该键 keycodes；
  * 确定 → gamepad.saveMapper() + dismiss；取消直接 dismiss；
  * 遗留未显式 setCancelable，默认 true 一致。
  *
@@ -109,12 +107,8 @@ class MiuixGamepadMapDialog(
                             Spacer(Modifier.weight(1f))
                             IconButton(onClick = {
                                 val list = FXCollections.observableList(item.button.keycodes)
-                                // 4.1 接入点：键码选择弹窗双分支
-                                if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
-                                    MiuixSelectKeycodeDialog(context, list, false, true).show()
-                                } else {
-                                    SelectKeycodeDialog(context, list, false, true).show()
-                                }
+                                // 4.1 接入点：Miuix 键码选择弹窗
+                                MiuixSelectKeycodeDialog(context, list, false, true).show()
                             }) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_baseline_settings_24),
