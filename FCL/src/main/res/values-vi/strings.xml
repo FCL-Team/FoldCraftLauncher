@@ -143,7 +143,6 @@
     <string name="button_save_as">Lưu thành</string>
     <string name="button_select_all">Chọn tất cả</string>
     <string name="button_select_invert">Đảo ngược lựa chọn</string>
-    <string name="button_set">Đặt</string>
     <string name="button_reset">Đặt lại</string>
     <string name="button_overwrite">Ghi đè</string>
     <string name="button_up" translatable="false">▲</string>
@@ -473,7 +472,6 @@
     <string name="help_website">Trang web</string>
 
     <string name="input_hint_not_empty">Bắt buộc</string>
-    <string name="input_hint_optional">Tùy chọn</string>
     <string name="input_not_empty">Điền vào ô nhập bắt buộc trước.</string>
     <string name="input_number">Đầu vào phải là một số.</string>
     <string name="input_url">Đầu vào phải là một URL hợp lệ.</string>
@@ -867,9 +865,7 @@
     <string name="settings_advanced_jvm_args">Đối số máy ảo Java</string>
     <string name="settings_advanced_env">Biến Môi trường</string>
     <string name="settings_advanced_minecraft_arguments">Đối số Khởi chạy</string>
-    <string name="settings_advanced_minecraft_arguments_prompt">Mặc định</string>
     <string name="settings_advanced_server_ip">Địa chỉ Máy chủ</string>
-    <string name="settings_advanced_server_ip_prompt">Tự động tham gia sau khi khởi chạy trò chơi.</string>
     <string name="settings_advanced_custom_uuid">UUID Tùy chỉnh</string>
     <string name="settings_advanced_force_resolution">Buộc đặt độ phân giải (tùy chọn thử nghiệm, sử dụng thận trọng)</string>
 
@@ -951,13 +947,11 @@
     <string name="settings_launcher_allow_screenshot">Cho phép chụp màn hình/ghi hình trong hoạt động sự cố</string>
 
     <string name="settings_memory">Bộ nhớ</string>
-    <string name="settings_memory_allocate_auto">%1$.1f GB Tối thiểu / %2$.1f GB Đã phân bổ</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB Tối thiểu / %2$.1f GB Đã phân bổ (%3$.1f GB Khả dụng)</string>
     <string name="settings_memory_allocate_manual">%1$.1f GB Đã phân bổ</string>
     <string name="settings_memory_allocate_manual_exceeded">%1$.1f GB Đã phân bổ (%3$.1f GB Khả dụng)</string>
     <string name="settings_memory_auto_allocate">Tự động phân bổ</string>
     <string name="settings_memory_lower_bound">Bộ nhớ Tối thiểu</string>
-    <string name="settings_memory_used_per_total">%1$.1f GB Đã sử dụng / %2$.1f GB Tổng</string>
     <string name="settings_physical_memory">Kích thước Bộ nhớ Vật lý</string>
     <string name="settings_tabs_installers">Trình tải Mod</string>
     <string name="settings_type_global_manage">Cài đặt Trò chơi Toàn cục</string>
@@ -1176,7 +1170,6 @@
     <string name="world_info_time_format">%s ngày</string>
     <string name="world_manage">Thế giới / Gói Dữ liệu</string>
     <string name="world_name">Tên Thế giới</string>
-    <string name="world_name_enter">Nhập tên thế giới</string>
     <string name="world_reveal">Hiển thị trong Trình duyệt</string>
     <string name="world_show_all">Hiển thị Tất cả</string>
     <string name="world_time">EEE, d MMM yyyy HH:mm:ss</string>

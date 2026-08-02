@@ -11,21 +11,7 @@ import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository
 
 /**
- * 阶段三 3.4 下载域页面 Miuix 迁移开关（对齐 ComposeVersionPages / SettingPageManager 模式）。
- *
- * true = DownloadPageManager 挂载 Compose 页面（ComposeDownloadPage 主列表 +
- * Compose*TempPage 安装/详情流程页）；false = 整体回滚旧 View 页面
- * （VersionInstallPage / DownloadPage 全家 + 各 TempPage，旧类与旧 XML 保留未删）。
- *
- * 下载域 6 个 Tab 页与其临时页栈共用一个开关：搜索结果点击 → 详情 → 版本 → 下载
- * 是连续的临时页链，需同体系跳转，避免新旧混跳。
- */
-object ComposeDownloadPages {
-    const val USE_COMPOSE_DOWNLOAD_PAGES = true
-}
-
-/**
- * 下载域 5 个远程资源 Tab 的仓库配置（对齐 DownloadPage 各子类的构造差异）：
+ * 下载域 5 个远程资源 Tab 的仓库配置（迁移自 DownloadPage 各子类的构造差异，旧 View 页面已删除）：
  * - [MODPACK] ↔ ModpackDownloadPage（支持中文翻译搜索 + 安装本地整合包入口）；
  * - [MOD] ↔ ModDownloadPage（中文翻译 + ModLoader 二次过滤 + 已安装检测）；
  * - [RESOURCE_PACK] / [SHADER_PACK] ↔ 同名子类（无翻译按钮）；

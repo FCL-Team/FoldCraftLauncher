@@ -46,7 +46,6 @@ import com.tungsten.fcl.ui.bridge.collectAsState
 import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.main.Announcement
-import com.tungsten.fcl.ui.main.MainUI
 import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fclcore.fakefx.beans.value.ChangeListener
 import com.tungsten.fclcore.util.Logging
@@ -63,6 +62,10 @@ import top.yukonga.miuix.kmp.basic.HorizontalDivider
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.util.logging.Level
+
+/** 公告地址（对齐已删除旧 MainUI 的同名常量，6.1 批 3 收编）。 */
+private const val ANNOUNCEMENT_URL = "https://raw.githubusercontent.com/FCL-Team/FCL-Repo/refs/heads/main/res/announcement_v2.txt"
+private const val ANNOUNCEMENT_URL_CN = "https://gitee.com/fcl-team/FCL-Repo/raw/main/res/announcement_v2.txt"
 
 /**
  * 主页 Compose 界面（小步骤 3.6）：ui_main.xml 的 Miuix 重构。
@@ -96,7 +99,7 @@ fun MainScreen() {
         val result = withContext(Dispatchers.IO) {
             runCatching {
                 val url =
-                    if (LocaleUtils.isChinese(context)) MainUI.ANNOUNCEMENT_URL_CN else MainUI.ANNOUNCEMENT_URL
+                    if (LocaleUtils.isChinese(context)) ANNOUNCEMENT_URL_CN else ANNOUNCEMENT_URL
                 HttpRequest.HttpGetRequest.GET(url).getJson(Announcement::class.java)
             }.onFailure {
                 Logging.LOG.log(Level.WARNING, "Failed to get announcement!", it)
@@ -279,7 +282,7 @@ private fun SkinModelPreview(modifier: Modifier = Modifier) {
     val account by Accounts.selectedAccountProperty().collectAsState()
     val refreshTick by ComposeMainUI.skinRefreshTick.collectAsState()
     val defaultSkin = remember {
-        BitmapFactory.decodeStream(MainUI::class.java.getResourceAsStream("/assets/img/alex.png"))
+        BitmapFactory.decodeStream(ComposeMainUI::class.java.getResourceAsStream("/assets/img/alex.png"))
     }
     val textures by produceState<Array<Bitmap?>?>(initialValue = null, account, refreshTick) {
         val current = account

@@ -29,7 +29,6 @@ import com.tungsten.fcl.game.OAuthServer
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.ui.UIManager
-import com.tungsten.fcl.ui.account.CreateAccountDialog
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
@@ -77,8 +76,7 @@ import java.util.regex.Pattern
  *   打开外部浏览器/内置 WebView（WeakListenerHolder 同款）；
  * - 异步创建成功 → addAccount + setSelectedAccount + AccountUI.refresh + dismiss；
  *   NoSelectedCharacterException/CancellationException → dismiss；其余失败 → FCLAlertDialog；
- * - 角色选择按 [ComposeDialogs.USE_COMPOSE_CHARACTER_SELECTOR] 双分支
- *   （遗留 DialogCharacterSelector 提升为包可见以支持反向搭配）。
+ * - 角色选择走 MiuixCharacterSelectorDialog（阻塞式 CountDownLatch 契约不变）。
  *
  * 有意偏差（附录 D 风格登记）：遗留 TabLayout 首个 Tab 在监听器注册前已被静默选中，
  * 当 preferred 方式非离线时遗留呈现"高亮 Tab=离线、内容=preferred"的不一致；
@@ -404,11 +402,7 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
         val doCreate = Runnable {
             deviceCode.set(null)
 
-            val selector: CharacterSelector = if (ComposeDialogs.USE_COMPOSE_CHARACTER_SELECTOR) {
-                MiuixCharacterSelectorDialog(context)
-            } else {
-                CreateAccountDialog.DialogCharacterSelector(context)
-            }
+            val selector: CharacterSelector = MiuixCharacterSelectorDialog(context)
             loginTask = Task.supplyAsync { factory.create(selector, username, password, null, additionalData) }
                 .whenComplete(Schedulers.androidUIThread()) { account, exception ->
                     if (exception == null) {

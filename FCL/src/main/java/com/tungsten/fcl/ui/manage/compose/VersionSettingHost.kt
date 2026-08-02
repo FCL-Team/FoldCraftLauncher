@@ -4,17 +4,12 @@ import android.content.Context
 import android.widget.Toast
 import androidx.core.content.edit
 import androidx.core.net.toUri
-import com.mio.ui.dialog.DriverSelectDialog
-import com.mio.ui.dialog.JavaManageDialog
-import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.showErrorDialog
 import com.mio.util.showItemSelectionDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
-import com.tungsten.fcl.control.SelectControllerDialog
 import com.tungsten.fcl.setting.Profiles.getSelectedProfile
 import com.tungsten.fcl.ui.compose.FCLDialogs
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
 import com.tungsten.fcl.ui.compose.dialog.MiuixDriverSelectDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixJavaManageDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixRendererSelectDialog
@@ -32,8 +27,7 @@ import java.util.Locale
  * Activity/MainActivity/遗留对话框能力的一次性副作用。
  *
  * 本类代码基本是 VersionSettingPage.kt onClick(:442-587) 各分支的原样搬运，
- * 保证行为等价；3.2 批 2/批 4 接入的 Miuix 弹窗双分支（JavaManage/RendererSelect/
- * SelectController，开关在 [ComposeDialogs]）原样保留。
+ * 保证行为等价；弹窗统一走 Miuix 路径（6.1 已固化开关）。
  */
 object VersionSettingHost {
 
@@ -57,12 +51,8 @@ object VersionSettingHost {
 
             VersionSettingEvent.ShowDriverSelect ->
                 // 弹窗内部直写 VersionSetting.driver，文本由 VM 属性流自动回流，
-                // 遗留回调里的 setText 不再需要（对齐 :540-545）；5.1 遗留 L1 双分支
-                if (ComposeDialogs.USE_COMPOSE_DRIVER_SELECT) {
-                    MiuixDriverSelectDialog(context, globalSetting) { }.show()
-                } else {
-                    DriverSelectDialog(context, globalSetting) { }.show()
-                }
+                // 遗留回调里的 setText 不再需要（对齐 :540-545）
+                MiuixDriverSelectDialog(context, globalSetting) { }.show()
 
             VersionSettingEvent.ShowInstallDriver -> showInstallLink(
                 context,
@@ -89,23 +79,15 @@ object VersionSettingHost {
         }
     }
 
-    /** 对齐 :477-492（3.2 批 2 双分支保留）。 */
+    /** 对齐 :477-492。 */
     fun showJavaManage(context: Context, onSelected: (String) -> Unit) {
-        if (ComposeDialogs.USE_COMPOSE_JAVA_MANAGE) {
-            MiuixJavaManageDialog(context, onSelected).show()
-        } else {
-            JavaManageDialog(context, onSelected).show()
-        }
+        MiuixJavaManageDialog(context, onSelected).show()
     }
 
-    /** 对齐 :449-461（3.2 批 4 双分支保留）。 */
+    /** 对齐 :449-461。 */
     fun showControllerSelect(context: Context, currentId: String, onSelected: (String) -> Unit) {
-        val callback = SelectControllerDialog.Callback { onSelected(it.id) }
-        if (ComposeDialogs.USE_COMPOSE_SELECT_CONTROLLER) {
-            MiuixSelectControllerDialog(context, currentId, callback).show()
-        } else {
-            SelectControllerDialog(context, currentId, callback).show()
-        }
+        val callback = MiuixSelectControllerDialog.Callback { it?.let { c -> onSelected(c.id) } }
+        MiuixSelectControllerDialog(context, currentId, callback).show()
     }
 
     /** 对齐 :469-476：跨 UI 跳转控制器仓库页（interaction-map G11 原样保留）。 */
@@ -130,7 +112,7 @@ object VersionSettingHost {
         }
     }
 
-    /** 对齐 :519-539（3.2 批 2 双分支保留 + 全局设置警告）。 */
+    /** 对齐 :519-539（含全局设置警告）。 */
     private fun showRendererSelect(context: Context, globalSetting: Boolean) {
         val rendererCallback = java.util.function.Consumer<String> { _: String? ->
             if (globalSetting && getSelectedProfile().versionSetting != null &&
@@ -144,11 +126,7 @@ object VersionSettingHost {
             }
             // 弹窗内部直写 VersionSetting.renderer，文本由 VM 属性流自动回流
         }
-        if (ComposeDialogs.USE_COMPOSE_RENDERER_SELECT) {
-            MiuixRendererSelectDialog(context, globalSetting, rendererCallback).show()
-        } else {
-            RendererSelectDialog(context, globalSetting, rendererCallback).show()
-        }
+        MiuixRendererSelectDialog(context, globalSetting, rendererCallback).show()
     }
 
     /** 对齐 :493-506/546-574：安装来源二选一（Github/网盘）→ openLink。 */

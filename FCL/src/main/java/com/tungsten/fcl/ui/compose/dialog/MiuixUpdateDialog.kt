@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.tungsten.fcl.R
-import com.tungsten.fcl.ui.TaskDialog
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogCard
 import com.tungsten.fcl.ui.compose.FCLDialogs
@@ -23,7 +22,6 @@ import com.tungsten.fcl.ui.compose.MiuixTaskDialog
 import com.tungsten.fcl.upgrade.RemoteVersion
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.TaskCancellationAction
 import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.task.FileDownloadTask
@@ -36,7 +34,6 @@ import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.io.File
 import java.util.concurrent.CancellationException
-import java.util.function.Consumer
 
 /**
  * Miuix 版启动器更新提示弹窗（3.2 批 1，对应 upgrade/UpdateDialog + dialog_update）。
@@ -46,8 +43,7 @@ import java.util.function.Consumer
  *   FCLDialogCard 限高滚动（weight + verticalScroll），按钮区钉在底部不参与滚动
  *   （替代此前的 heightIn 卡片限高近似遗留 checkHeight 的方案）；
  * - 忽略 → UpdateChecker.setIgnore + dismiss；取消/网盘 → dismiss（网盘先开链接）；
- * - 更新 → 按设备架构替换下载地址，任务弹窗下载 APK（内嵌 TaskDialog 保留
- *   MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG 双分支），完成后拉起系统安装器；
+ * - 更新 → 按设备架构替换下载地址，Miuix 任务弹窗下载 APK，完成后拉起系统安装器；
  *   失败（非取消）弹 update_failed + 网盘按钮；更新按钮长按打开 GitHub releases（与遗留一致）；
  * - setCancelable(false) 一致。
  */
@@ -132,19 +128,12 @@ class MiuixUpdateDialog(
 
     private fun onUpdate() {
         val ctx = context
-        // 内嵌任务弹窗：保留 MiuixTaskDialog 自身开关的双分支（对齐 WorldExportDialog 接入方式）
+        // 内嵌任务弹窗：Miuix 任务弹窗
         val taskDialog: (TaskExecutor) -> Unit = { executor ->
-            if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
-                val dialog = MiuixTaskDialog(ctx)
-                dialog.setTitle(ctx.getString(R.string.update_launcher))
-                dialog.setExecutor(executor)
-                dialog.show()
-            } else {
-                val dialog = TaskDialog(ctx, TaskCancellationAction(Consumer { d: TaskDialog -> d.dismiss() }))
-                dialog.setTitle(ctx.getString(R.string.update_launcher))
-                dialog.setExecutor(executor)
-                dialog.show()
-            }
+            val dialog = MiuixTaskDialog(ctx)
+            dialog.setTitle(ctx.getString(R.string.update_launcher))
+            dialog.setExecutor(executor)
+            dialog.show()
         }
         Schedulers.androidUIThread().execute {
             val executor = Task.composeAsync<Void> {

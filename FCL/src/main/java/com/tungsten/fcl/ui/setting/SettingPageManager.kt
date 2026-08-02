@@ -1,15 +1,12 @@
 package com.tungsten.fcl.ui.setting
 
 import android.content.Context
-import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIListener
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
-import com.tungsten.fcl.ui.manage.VersionSettingPage
 import com.tungsten.fcl.ui.manage.compose.ComposeVersionSettingPage
 import com.tungsten.fcl.ui.setting.compose.ComposeSettingPage
-import com.tungsten.fcl.ui.version.compose.ComposeVersionPages
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 
@@ -26,14 +23,6 @@ class SettingPageManager(
         const val PAGE_ID_SETTING_LAUNCHER: Int = 15031
         const val PAGE_ID_SETTING_HELP: Int = 15032
         const val PAGE_ID_SETTING_ABOUT: Int = 15034
-
-        /**
-         * 阶段三 3.1 设置页 Miuix 迁移开关：true 挂载 Compose 页面（ComposeSettingPage），
-         * false 回滚旧 View 页面（LauncherSettingPage/HelpPage/AboutPage，文件保留未删）。
-         * 游戏设置页（VersionSettingPage）由 3.3b 迁移，开关为
-         * [ComposeVersionPages.USE_COMPOSE_VERSION_SETTING]。
-         */
-        private const val USE_COMPOSE_SETTING_PAGES = true
     }
 
     init {
@@ -41,48 +30,21 @@ class SettingPageManager(
     }
 
     private lateinit var versionSettingPage: FCLCommonPage
+    // 批 2：Compose 开关已固化，旧 View 页面（LauncherSettingPage/HelpPage/AboutPage）已删除。
     private val launcherSettingPage: FCLCommonPage by lazy {
-        if (USE_COMPOSE_SETTING_PAGES) {
-            ComposeSettingPage(context, PAGE_ID_SETTING_LAUNCHER, parent, ComposeSettingPage.ScreenType.LAUNCHER)
-        } else {
-            LauncherSettingPage(
-                context,
-                PAGE_ID_SETTING_LAUNCHER,
-                parent,
-                R.layout.page_setting_launcher
-            )
-        }
+        ComposeSettingPage(context, PAGE_ID_SETTING_LAUNCHER, parent, ComposeSettingPage.ScreenType.LAUNCHER)
     }
     private val helpPage: FCLCommonPage by lazy {
-        if (USE_COMPOSE_SETTING_PAGES) {
-            ComposeSettingPage(context, PAGE_ID_SETTING_HELP, parent, ComposeSettingPage.ScreenType.HELP)
-        } else {
-            HelpPage(context, PAGE_ID_SETTING_HELP, parent, R.layout.page_setting_help)
-        }
+        ComposeSettingPage(context, PAGE_ID_SETTING_HELP, parent, ComposeSettingPage.ScreenType.HELP)
     }
     private val aboutPage: FCLCommonPage by lazy {
-        if (USE_COMPOSE_SETTING_PAGES) {
-            ComposeSettingPage(context, PAGE_ID_SETTING_ABOUT, parent, ComposeSettingPage.ScreenType.ABOUT)
-        } else {
-            AboutPage(context, PAGE_ID_SETTING_ABOUT, parent, R.layout.page_setting_about)
-        }
+        ComposeSettingPage(context, PAGE_ID_SETTING_ABOUT, parent, ComposeSettingPage.ScreenType.ABOUT)
     }
 
 
     override fun init(listener: UIListener?) {
-        // 阶段三 3.3b：与 ManagePageManager 共用 ComposeVersionPages.USE_COMPOSE_VERSION_SETTING
-        // 开关，false 时回到旧 View 页面（VersionSettingPage + page_version_setting.xml 保留未删）。
-        versionSettingPage = if (ComposeVersionPages.USE_COMPOSE_VERSION_SETTING) {
-            ComposeVersionSettingPage(context, PAGE_ID_SETTING_GAME, parent, true)
-        } else {
-            VersionSettingPage(
-                context,
-                PAGE_ID_SETTING_GAME,
-                parent,
-                R.layout.page_version_setting,
-                true
-            )
-        }
+        // 批 2：Compose 开关已固化，旧 View 页面（VersionSettingPage + page_version_setting.xml）已删除。
+        versionSettingPage = ComposeVersionSettingPage(context, PAGE_ID_SETTING_GAME, parent, true)
         (versionSettingPage as VersionLoadable).loadVersion(Profiles.getSelectedProfile(), null)
         listener?.onLoad()
     }

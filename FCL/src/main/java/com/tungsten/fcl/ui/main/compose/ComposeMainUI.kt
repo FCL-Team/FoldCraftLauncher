@@ -21,8 +21,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
  *
  * 设计要点（对齐 3.5 ComposeAccountUI 模式）：
  * - 主页是一级界面（FCLCommonUI，直接挂在 FCLUILayout 容器，不走 PageManager），
- *   由 UIManager.mainUI 按 [USE_COMPOSE_MAIN_UI] 开关二选一实例化，改 false 整体回滚
- *   到旧 MainUI（ui_main.xml）；类型放宽为 FCLCommonUI，既有反向调用点
+ *   由 UIManager.mainUI 固定实例化（批 3 起迁移开关已固化删除，旧 MainUI 回滚分支
+ *   已移除）；类型放宽为 FCLCommonUI，既有反向调用点
  *   （switchUI / currentUI 比较）签名不变；
  * - contentView 复用迁移期通用容器 page_compose_container.xml，ComposeView 经
  *   [LegacyBridge.createComposeView] 创建（自动套 FCLTheme + ViewTree 生命周期销毁）；
@@ -40,13 +40,6 @@ class ComposeMainUI(
 ) : FCLCommonUI(context, parent, R.layout.page_compose_container) {
 
     companion object {
-        /**
-         * 阶段三 3.6 主页迁移开关（对齐 ComposeAccountUI.USE_COMPOSE_ACCOUNT_UI 模式）：
-         * true = UIManager.mainUI 实例化 Compose 版，且 MainActivity 右侧栏挂 Compose 层；
-         * 改 false 整体回滚到旧 MainUI（ui_main.xml）+ 旧右侧栏 View。
-         */
-        const val USE_COMPOSE_MAIN_UI = true
-
         /** 页面内嵌 GL 皮肤预览实例（MainScreen AndroidView 维护），供生命周期转发。 */
         @Volatile
         internal var activeSkinViewer: SkinViewer? = null

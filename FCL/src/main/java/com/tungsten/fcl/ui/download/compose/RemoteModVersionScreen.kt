@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui.download.compose
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
-import com.tungsten.fcl.ui.download.common.ModVersionAdapter
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod
 import top.yukonga.miuix.kmp.basic.Card
@@ -27,11 +27,22 @@ import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
 
 /**
- * 远程资源版本文件列表页（对齐 RemoteModVersionPage + ModVersionAdapter + item_mod_version）：
+ * 远程资源版本文件列表页（对齐遗留 RemoteModVersionPage + ModVersionAdapter + item_mod_version）：
  * 名称 + 类型/加载器 tag + 发布时间；点击分发（Mod → 依赖下载页；其余 → 直接下载/另存为）。
  */
+
+/** 发布时间格式（迁移自遗留 ModVersionAdapter.FORMATTER，RemoteModDownloadScreen 复用）。 */
+@SuppressLint("ConstantLocale")
+val REMOTE_MOD_DATE_FORMATTER: DateTimeFormatter =
+    DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL)
+        .withLocale(Locale.getDefault())
+        .withZone(ZoneId.systemDefault())
 
 /** 版本 tag（逐条对齐 ModVersionAdapter.getTag :77-108）。 */
 fun modVersionTag(context: Context, version: RemoteMod.Version): String {
@@ -113,7 +124,7 @@ fun RemoteModVersionScreen(
                     }
                     Spacer(Modifier.width(10.dp))
                     Text(
-                        text = ModVersionAdapter.FORMATTER.format(version.datePublished),
+                        text = REMOTE_MOD_DATE_FORMATTER.format(version.datePublished),
                         fontSize = 11.sp,
                         color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )

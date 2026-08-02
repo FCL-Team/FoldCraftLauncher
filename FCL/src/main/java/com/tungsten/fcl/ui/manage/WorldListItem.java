@@ -9,7 +9,6 @@ import android.content.Context;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.ui.PageManager;
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixWorldExportDialog;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
@@ -58,13 +57,7 @@ public class WorldListItem {
 
     public void export() {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
-            if (ComposeDialogs.USE_COMPOSE_WORLD_EXPORT) {
-                // 3.2 批 1 接入点：Miuix 世界导出弹窗
-                new MiuixWorldExportDialog(context, world, files.get(0)).show();
-            } else {
-                WorldExportDialog dialog = new WorldExportDialog(context, world, files.get(0));
-                dialog.show();
-            }
+            new MiuixWorldExportDialog(context, world, files.get(0)).show();
         });
     }
 

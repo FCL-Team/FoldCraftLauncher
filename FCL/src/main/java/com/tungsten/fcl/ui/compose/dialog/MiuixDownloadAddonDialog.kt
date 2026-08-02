@@ -10,22 +10,25 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fcl.ui.download.common.DownloadAddonDialog
 import com.tungsten.fclcore.util.platform.OperatingSystem
 import top.yukonga.miuix.kmp.basic.TextField
 
 /**
- * Miuix 版下载附加内容文件名确认弹窗（3.2 批 1，对应 DownloadAddonDialog + dialog_download_addon）。
+ * Miuix 版下载附加内容文件名确认弹窗（3.2 批 1，对应遗留 DownloadAddonDialog + dialog_download_addon）。
  *
  * 行为对齐：确定时校验 OperatingSystem.isNameValid，非法弹 Toast 不关闭；
  * 合法回调 onPositive(文件名) 并 dismiss；取消直接 dismiss；setCancelable(false) 一致。
- * 复用遗留 [DownloadAddonDialog.Callback]，调用点 lambda 无需改动。
  */
 class MiuixDownloadAddonDialog(
     context: Context,
     name: String,
-    private val callback: DownloadAddonDialog.Callback,
+    private val callback: Callback,
 ) : FCLComposeDialog(context, cancelable = false) {
+
+    /** 文件名确认回调（迁移自遗留 DownloadAddonDialog.Callback）。 */
+    fun interface Callback {
+        fun onPositive(name: String)
+    }
 
     private val nameState = mutableStateOf(name)
 

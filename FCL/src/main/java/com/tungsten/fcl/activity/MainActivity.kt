@@ -31,8 +31,6 @@ import androidx.core.view.forEach
 import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
 import com.mio.manager.RendererManager
-import com.mio.ui.dialog.RendererSelectDialog
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
 import com.tungsten.fcl.ui.compose.dialog.MiuixRendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
@@ -55,7 +53,6 @@ import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.bridge.LegacyBridge
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
-import com.tungsten.fcl.ui.main.compose.ComposeMainUI
 import com.tungsten.fcl.ui.main.compose.MainRightMenu
 import com.tungsten.fcl.ui.main.compose.MainRightMenuBridge
 import com.tungsten.fcl.ui.version.Versions
@@ -194,16 +191,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 goSetting.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
-                    if (ComposeDialogs.USE_COMPOSE_RENDERER_SELECT) {
-                        // 3.2 批 2 接入点：Miuix 渲染器选择弹窗
-                        MiuixRendererSelectDialog(this@MainActivity, false) {
-                            onClick(view)
-                        }.show()
-                    } else {
-                        RendererSelectDialog(this@MainActivity, false) {
-                            onClick(view)
-                        }.show()
-                    }
+                    MiuixRendererSelectDialog(this@MainActivity, false) {
+                        onClick(view)
+                    }.show()
                     true
                 }
                 jar.setOnClickListener(this@MainActivity)
@@ -296,12 +286,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     /**
-     * 3.6：Compose 右侧栏接线（[ComposeMainUI.USE_COMPOSE_MAIN_UI] = true 时）。
-     * 旧 account/start/version/jar View 保留在布局中用于开关回滚，Compose 模式下置 GONE；
+     * Compose 右侧栏接线（迁移开关已固化，批 3：旧 account/start/version/jar View 常置 GONE）。
      * 全部交互经回调转回本 Activity 的既有方法（启动游戏/切 UI/JAR 执行逻辑零改动）。
      */
     private fun setupComposeRightMenu() {
-        if (!ComposeMainUI.USE_COMPOSE_MAIN_UI) return
         binding.apply {
             account.visibility = View.GONE
             start.visibility = View.GONE
@@ -465,14 +453,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         binding.apply {
             if (!Controllers.isInitialized()) {
                 title.setTextWithAnim(getString(R.string.message_loading_controllers))
-                if (ComposeMainUI.USE_COMPOSE_MAIN_UI) {
-                    // Compose 右侧栏：经桥接节拍触发抖动（对齐下方 AnimUtil 抖动）
-                    MainRightMenuBridge.startShakeTick.value =
-                        MainRightMenuBridge.startShakeTick.value + 1
-                } else {
-                    AnimUtil.playTranslationX(start, 700, 0f, 50f, -50f, 50f, -50f, 0f)
-                        .interpolator(OvershootInterpolator()).start()
-                }
+                // Compose 右侧栏：经桥接节拍触发抖动（对齐旧 AnimUtil 抖动）
+                MainRightMenuBridge.startShakeTick.value =
+                    MainRightMenuBridge.startShakeTick.value + 1
                 return
             }
             val selectedProfile = Profiles.getSelectedProfile()
@@ -489,16 +472,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     /** 启动按钮长按：选择渲染器后启动（3.6 抽取，逻辑对齐原 setOnLongClickListener）。 */
     internal fun onStartAreaLongClicked() {
-        if (ComposeDialogs.USE_COMPOSE_RENDERER_SELECT) {
-            // 3.2 批 2 接入点：Miuix 渲染器选择弹窗
-            MiuixRendererSelectDialog(this@MainActivity, false) {
-                onLaunchClicked()
-            }.show()
-        } else {
-            RendererSelectDialog(this@MainActivity, false) {
-                onLaunchClicked()
-            }.show()
-        }
+        MiuixRendererSelectDialog(this@MainActivity, false) {
+            onLaunchClicked()
+        }.show()
     }
 
     /** JAR 执行按钮点击（3.6 抽取：旧 jar View 与 Compose 右侧栏共用）。 */

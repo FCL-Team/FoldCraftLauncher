@@ -31,8 +31,6 @@ import com.bumptech.glide.request.transition.Transition;
 import com.google.gson.GsonBuilder;
 import com.mio.touchcontroller.TouchController;
 import com.mio.touchcontroller.TouchControllerInputView;
-import com.mio.ui.dialog.GamepadMapDialog;
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixButtonStyleDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixDirectionStyleDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixEditViewDialog;
@@ -916,25 +914,15 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     public void openQuickInput() {
-        if (ComposeDialogs.USE_COMPOSE_QUICK_INPUT) {
-            // 3.2 批 3 接入点：Miuix 游戏内快捷输入面板
-            new MiuixQuickInputDialog(activity, this).show();
-        } else {
-            QuickInputDialog dialog = new QuickInputDialog(activity, this);
-            dialog.show();
-        }
+        // 3.2 批 3 接入点：Miuix 游戏内快捷输入面板
+        new MiuixQuickInputDialog(activity, this).show();
     }
 
     @Override
     public void onClick(View v) {
         if (v == manageViewGroups) {
             // 3.2 批 4 接入点：Miuix 视图组管理弹窗
-            if (ComposeDialogs.USE_COMPOSE_VIEW_GROUP) {
-                new MiuixViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null).show();
-            } else {
-                ViewGroupDialog dialog = new ViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null);
-                dialog.show();
-            }
+            new MiuixViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null).show();
         }
         if (v == addButton) {
             if (getViewGroup() == null) {
@@ -952,12 +940,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                     }
                 };
                 // 3.2 批 4 接入点：Miuix 控件属性编辑弹窗（按钮）
-                if (ComposeDialogs.USE_COMPOSE_EDIT_VIEW) {
-                    new MiuixEditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, callback, false).show();
-                } else {
-                    EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, callback, false);
-                    dialog.show();
-                }
+                new MiuixEditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, callback, false).show();
             }
         }
         if (v == addDirection) {
@@ -976,31 +959,16 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                     }
                 };
                 // 3.2 批 4 接入点：Miuix 控件属性编辑弹窗（方向键）
-                if (ComposeDialogs.USE_COMPOSE_EDIT_VIEW) {
-                    new MiuixEditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, callback, false).show();
-                } else {
-                    EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, callback, false);
-                    dialog.show();
-                }
+                new MiuixEditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, callback, false).show();
             }
         }
         if (v == manageButtonStyle) {
             // 3.2 批 4 接入点：Miuix 按钮样式管理弹窗
-            if (ComposeDialogs.USE_COMPOSE_BUTTON_STYLE) {
-                new MiuixButtonStyleDialog(getActivity(), false, null, null).show();
-            } else {
-                ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity(), false, null, null);
-                dialog.show();
-            }
+            new MiuixButtonStyleDialog(getActivity(), false, null, null).show();
         }
         if (v == manageDirectionStyle) {
             // 3.2 批 4 接入点：Miuix 方向键样式管理弹窗
-            if (ComposeDialogs.USE_COMPOSE_DIRECTION_STYLE) {
-                new MiuixDirectionStyleDialog(getActivity(), false, null, null).show();
-            } else {
-                DirectionStyleDialog dialog = new DirectionStyleDialog(getActivity(), false, null, null);
-                dialog.show();
-            }
+            new MiuixDirectionStyleDialog(getActivity(), false, null, null).show();
         }
         if (v == openMultiplayerButton) {
             if (multiplayerDialog == null) {
@@ -1015,32 +983,18 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         if (v == sendKeycode) {
             ObservableList<Integer> list = FXCollections.observableList(new ArrayList<>());
-            // 4.1 接入点：键码选择弹窗按开关双分支（发送键码回调两分支一致）
-            if (ComposeDialogs.USE_COMPOSE_SELECT_KEYCODE) {
-                new MiuixSelectKeycodeDialog(getActivity(), list, false, true, (dialog) -> {
-                    Schedulers.io().execute(() -> {
-                        list.forEach(key -> getInput().sendKeyEvent(key, true));
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException ignore) {
-                        }
-                        list.forEach(key -> getInput().sendKeyEvent(key, false));
-                    });
-                    return Unit.INSTANCE;
-                }).show();
-            } else {
-                new SelectKeycodeDialog(getActivity(), list, false, true, (dialog) -> {
-                    Schedulers.io().execute(() -> {
-                        list.forEach(key -> getInput().sendKeyEvent(key, true));
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException ignore) {
-                        }
-                        list.forEach(key -> getInput().sendKeyEvent(key, false));
-                    });
-                    return Unit.INSTANCE;
-                }).show();
-            }
+            // 4.1 接入点：Miuix 键码选择弹窗（发送键码回调）
+            new MiuixSelectKeycodeDialog(getActivity(), list, false, true, (dialog) -> {
+                Schedulers.io().execute(() -> {
+                    list.forEach(key -> getInput().sendKeyEvent(key, true));
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException ignore) {
+                    }
+                    list.forEach(key -> getInput().sendKeyEvent(key, false));
+                });
+                return Unit.INSTANCE;
+            }).show();
         }
         if (v == gamepadResetMapper) {
             Remapper.wipePreferences(getActivity());
@@ -1049,12 +1003,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (v == gamepadButtonBinding) {
             fclInput.checkGamepad();
             if (fclInput.getGamepad() != null) {
-                if (ComposeDialogs.USE_COMPOSE_GAMEPAD_MAP) {
-                    // 3.2 批 2 接入点：Miuix 手柄按键映射弹窗
-                    new MiuixGamepadMapDialog(getActivity(), fclInput).show();
-                } else {
-                    new GamepadMapDialog(getActivity(), fclInput).show();
-                }
+                // 3.2 批 2 接入点：Miuix 手柄按键映射弹窗
+                new MiuixGamepadMapDialog(getActivity(), fclInput).show();
             }
         }
         if (v == forceExit) {

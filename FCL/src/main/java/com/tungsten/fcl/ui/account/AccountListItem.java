@@ -29,10 +29,8 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixOAuthAccountLoginDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixOfflineAccountSkinDialog;
-import com.tungsten.fcl.ui.main.MainUI;
 import com.tungsten.fcl.ui.main.compose.ComposeMainUI;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.RequestCodes;
@@ -154,13 +152,8 @@ public class AccountListItem {
     public CompletableFuture<Task<?>> uploadSkin() {
         CompletableFuture<Task<?>> completableFuture = new CompletableFuture<>();
         if (account instanceof OfflineAccount) {
-            if (ComposeDialogs.USE_COMPOSE_OFFLINE_ACCOUNT_SKIN) {
-                // 3.2 批 3 接入点：Miuix 离线账户皮肤弹窗（GL 预览 AndroidView 保留原生渲染）
-                new MiuixOfflineAccountSkinDialog(context, this).show();
-            } else {
-                OfflineAccountSkinDialog dialog = new OfflineAccountSkinDialog(context, this);
-                dialog.show();
-            }
+            // GL 预览 AndroidView 保留原生渲染
+            new MiuixOfflineAccountSkinDialog(context, this).show();
             completableFuture.complete(null);
             return completableFuture;
         }
@@ -239,12 +232,10 @@ public class AccountListItem {
         image.bind(TexturesLoader.avatarBinding(account, ConvertUtils.dip2px(context, 30f)));
         texture.bind(TexturesLoader.textureBinding(account));
         MainActivity.getInstance().refreshAvatar(account);
-        // 3.6：mainUI 放宽为 FCLCommonUI（ComposeMainUI/MainUI 二选一），按实例类型分发 refreshSkin 契约
+        // 6.1 批 3：mainUI 固定为 ComposeMainUI（旧 MainUI 已删除），refreshSkin 契约不变
         FCLCommonUI mainUI = UIManager.getInstance().getMainUI();
         if (mainUI instanceof ComposeMainUI) {
             ((ComposeMainUI) mainUI).refreshSkin(account);
-        } else if (mainUI instanceof MainUI) {
-            ((MainUI) mainUI).refreshSkin(account);
         }
     }
 
@@ -265,18 +256,13 @@ public class AccountListItem {
             CountDownLatch latch = new CountDownLatch(1);
             AtomicReference<AuthInfo> res = new AtomicReference<>(null);
             Schedulers.androidUIThread().execute(() -> {
-                // 3.2 批 3 接入点：重新登录弹窗双分支；success/failed 回调契约不变，
-                // latch 阻塞语义由本方法持有，与弹窗实现解耦
+                // success/failed 回调契约不变，latch 阻塞语义由本方法持有，与弹窗实现解耦
                 Consumer<AuthInfo> success = it -> {
                     res.set(it);
                     latch.countDown();
                 };
                 Runnable failed = latch::countDown;
-                if (ComposeDialogs.USE_COMPOSE_RELOGIN_OAUTH) {
-                    new MiuixOAuthAccountLoginDialog(FCLPath.CONTEXT, (OAuthAccount) account, success, failed).show();
-                } else {
-                    new OAuthAccountLoginDialog(FCLPath.CONTEXT, (OAuthAccount) account, success, failed).show();
-                }
+                new MiuixOAuthAccountLoginDialog(FCLPath.CONTEXT, (OAuthAccount) account, success, failed).show();
             });
             latch.await();
             return Optional.ofNullable(res.get()).orElseThrow(CancellationException::new);

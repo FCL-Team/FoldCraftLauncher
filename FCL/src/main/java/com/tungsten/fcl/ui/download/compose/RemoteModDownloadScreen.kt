@@ -28,8 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.bridge.LegacyBridge
-import com.tungsten.fcl.ui.download.common.ModVersionAdapter
-import com.tungsten.fcl.ui.download.common.RemoteModDownloadPage
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.RemoteMod
@@ -50,6 +48,18 @@ import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.util.EnumMap
+
+/** 依赖类型 → 本地化字符串 key（迁移自遗留 RemoteModDownloadPage.STRING_ID_KEY）。 */
+private val DEPENDENCY_STRING_ID_KEY =
+    EnumMap<RemoteMod.DependencyType, String>(RemoteMod.DependencyType::class.java).apply {
+        put(RemoteMod.DependencyType.EMBEDDED, "mods_dependency_embedded")
+        put(RemoteMod.DependencyType.OPTIONAL, "mods_dependency_optional")
+        put(RemoteMod.DependencyType.REQUIRED, "mods_dependency_required")
+        put(RemoteMod.DependencyType.TOOL, "mods_dependency_tool")
+        put(RemoteMod.DependencyType.INCLUDE, "mods_dependency_include")
+        put(RemoteMod.DependencyType.INCOMPATIBLE, "mods_dependency_incompatible")
+        put(RemoteMod.DependencyType.BROKEN, "mods_dependency_broken")
+    }
 
 /**
  * 远程资源下载确认页（对齐 RemoteModDownloadPage + page_download_addon.xml）：
@@ -149,7 +159,7 @@ fun RemoteModDownloadScreen(
                     color = MiuixTheme.colorScheme.primary,
                 )
                 Text(
-                    text = ModVersionAdapter.FORMATTER.format(holder.modVersion.datePublished),
+                    text = REMOTE_MOD_DATE_FORMATTER.format(holder.modVersion.datePublished),
                     fontSize = 11.sp,
                     color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                 )
@@ -188,7 +198,7 @@ fun RemoteModDownloadScreen(
                         Text(
                             text = AndroidUtils.getLocalizedText(
                                 context,
-                                RemoteModDownloadPage.STRING_ID_KEY[type],
+                                DEPENDENCY_STRING_ID_KEY[type],
                             ),
                             style = MiuixTheme.textStyles.body2,
                             color = MiuixTheme.colorScheme.primary,

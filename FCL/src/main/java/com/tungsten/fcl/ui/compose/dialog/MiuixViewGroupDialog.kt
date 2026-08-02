@@ -43,16 +43,15 @@ import java.util.UUID
  * Miuix 版分组管理/选择弹窗（3.2 批 4，对应 control/ViewGroupDialog + dialog_manage_view_groups
  * + item_view_group + control/ViewGroupAdapter 的条目交互）。
  *
- * 构造签名与另一代理约定固定，遗留调用点（GameMenu:926 / EditViewDialog:387）按开关切换。
+ * 构造签名与另一代理约定固定，遗留调用点（GameMenu / MiuixEditViewDialog）直接使用。
  *
  * 行为对齐：
  * - select 模式：条目 CheckBox 多选，确定回调当前选择列表后 dismiss；
  *   「添加分组」按钮隐藏（遗留 GONE 一致）；
  * - 管理模式：条目上/下移（Collections.swap + controller.updateViewGroup，语义与
- *   ViewGroupAdapter 一致）、编辑（按 [ComposeDialogs.USE_COMPOSE_EDIT_VIEW_GROUP] 双分支
- *   弹 EditViewGroupDialog/MiuixEditViewGroupDialog）、删除（FCLAlertDialog 确认后
+ *   ViewGroupAdapter 一致）、编辑（弹 MiuixEditViewGroupDialog）、删除（FCLAlertDialog 确认后
  *   controller.removeViewGroup）；
- * - 「添加分组」按同一开关双分支弹新增分组弹窗，确认后 new ControlViewGroup(UUID)
+ * - 「添加分组」弹 Miuix 新增分组弹窗，确认后 new ControlViewGroup(UUID)
  *   设置名称/可见性并 addViewGroup，与遗留逐行一致（遗留传入弹窗的临时 ControlViewGroup
  *   同样未被复用，此处保留该语义）；
  * - 分组数据来自 gameMenu.controller.viewGroups()，操作后刷新快照；
@@ -102,12 +101,8 @@ class MiuixViewGroupDialog(
             gameMenu.controller.addViewGroup(viewGroup)
             refreshList()
         }
-        // 3.2 批 4 接入点：新增分组弹窗双分支
-        if (ComposeDialogs.USE_COMPOSE_EDIT_VIEW_GROUP) {
-            MiuixEditViewGroupDialog(context, gameMenu, ControlViewGroup(UUID.randomUUID().toString()), callback).show()
-        } else {
-            EditViewGroupDialog(context, gameMenu, ControlViewGroup(UUID.randomUUID().toString()), callback).show()
-        }
+        // 3.2 批 4 接入点：Miuix 新增分组弹窗
+        MiuixEditViewGroupDialog(context, gameMenu, ControlViewGroup(UUID.randomUUID().toString()), callback).show()
     }
 
     private fun onEditViewGroup(group: ControlViewGroup) {
@@ -117,12 +112,8 @@ class MiuixViewGroupDialog(
             gameMenu.controller.updateViewGroup(group)
             refreshList()
         }
-        // 3.2 批 4 接入点：编辑分组弹窗双分支
-        if (ComposeDialogs.USE_COMPOSE_EDIT_VIEW_GROUP) {
-            MiuixEditViewGroupDialog(context, gameMenu, group, callback).show()
-        } else {
-            EditViewGroupDialog(context, gameMenu, group, callback).show()
-        }
+        // 3.2 批 4 接入点：Miuix 编辑分组弹窗
+        MiuixEditViewGroupDialog(context, gameMenu, group, callback).show()
     }
 
     private fun onDeleteViewGroup(group: ControlViewGroup) {

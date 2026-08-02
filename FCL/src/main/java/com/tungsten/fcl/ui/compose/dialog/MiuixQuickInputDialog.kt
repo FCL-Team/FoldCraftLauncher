@@ -49,7 +49,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *   光标模式逐字符 sendChar；否则先发聊天绑定键（KEY_T 按下/抬起），50ms 后逐字符输入
  *   并补 KEY_ENTER 按下/抬起，随后 dismiss——按键序列与遗留逐行一致；
  * - 删除按钮 QuickInputTexts.removeInputText + 刷新列表；
- * - "添加"按 [ComposeDialogs.USE_COMPOSE_ADD_INPUT_TEXT] 双分支拉起新增文本弹窗；
+ * - "添加"拉起 MiuixAddInputTextDialog 新增文本弹窗；
  * - 确定（右侧）dismiss；
  * - 窗体对齐遗留：宽 WRAP_CONTENT、高 MATCH_PARENT 的侧边面板；
  * - setCancelable(false) 一致。
@@ -117,11 +117,7 @@ class MiuixQuickInputDialog(
 
     private fun onAddText() {
         val callback = AddInputTextDialog.Callback { refreshList() }
-        if (ComposeDialogs.USE_COMPOSE_ADD_INPUT_TEXT) {
-            MiuixAddInputTextDialog(context, callback).show()
-        } else {
-            AddInputTextDialog(context, callback).show()
-        }
+        MiuixAddInputTextDialog(context, callback).show()
     }
 
     @Composable

@@ -40,10 +40,8 @@ import com.tungsten.fcl.setting.DownloadProviders
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
 import com.tungsten.fcl.ui.compose.dialog.MiuixTranslationDialog
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
-import com.tungsten.fcl.ui.download.TranslationDialog
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod
@@ -488,20 +486,11 @@ fun RemoteModSearchScreen(
                 ) {
                     if (tab.supportChinese && LocaleUtils.isChinese(context)) {
                         IconButton(onClick = {
-                            // 对齐 showTranslationDialog（:475-487，含 3.2 弹窗开关）
-                            if (ComposeDialogs.USE_COMPOSE_TRANSLATION) {
-                                MiuixTranslationDialog(
-                                    context,
-                                    holder.repository,
-                                    holder::onTranslationResult,
-                                ).show()
-                            } else {
-                                TranslationDialog(
-                                    context,
-                                    holder.repository,
-                                    holder::onTranslationResult,
-                                ).show()
-                            }
+                            MiuixTranslationDialog(
+                                context,
+                                holder.repository,
+                                holder::onTranslationResult,
+                            ).show()
                         }) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_translation),

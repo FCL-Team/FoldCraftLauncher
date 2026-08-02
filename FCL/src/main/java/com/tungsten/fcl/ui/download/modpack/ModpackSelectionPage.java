@@ -12,7 +12,6 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixModpackUrlDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
@@ -90,7 +89,7 @@ public class ModpackSelectionPage extends FCLTempPage implements View.OnClickLis
     }
 
     private void onChooseRemoteFile() {
-        ModpackUrlDialog.Callback urlCallback = urlString -> {
+        MiuixModpackUrlDialog.Callback urlCallback = urlString -> {
             try {
                 URL url = new URL(urlString);
                 if (urlString.endsWith("server-manifest.json")) {
@@ -147,13 +146,7 @@ public class ModpackSelectionPage extends FCLTempPage implements View.OnClickLis
                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
-        if (ComposeDialogs.USE_COMPOSE_MODPACK_URL) {
-            // 3.2 批 1 接入点：Miuix 整合包链接弹窗
-            new MiuixModpackUrlDialog(getContext(), urlCallback).show();
-        } else {
-            ModpackUrlDialog dialog = new ModpackUrlDialog(getContext(), urlCallback);
-            dialog.show();
-        }
+        new MiuixModpackUrlDialog(getContext(), urlCallback).show();
     }
 
     @Override

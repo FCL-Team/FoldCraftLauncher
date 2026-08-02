@@ -2,7 +2,6 @@ package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,12 +28,10 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.game.FCLGameRepository
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.InstallerItem
-import com.tungsten.fcl.ui.TaskDialog
 import com.tungsten.fcl.ui.compose.FCLDialogs
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog
-import com.tungsten.fcl.ui.download.version.VersionInstallInfoPage
+import com.tungsten.fcl.ui.download.version.InstallFailureAlert
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.TaskCancellationAction
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
@@ -62,7 +59,7 @@ import java.io.File
  * - 已选加载器可移除（:134-138）；不兼容互斥由 InstallerItem.InstallerItemGroup 内置
  *   fakefx 联动（业务零重写，直接复用）；
  * - 安装：名称三重校验 Toast → GameBuilder 异步 + 任务进度 → 成功/失败对话框（:193-255），
- *   失败走遗留 [VersionInstallInfoPage.alertFailureMessage]（跨类复用，零重写）。
+ *   失败走共享 [InstallFailureAlert.alertFailureMessage]（跨类复用，零重写）。
  */
 class VersionInstallInfoStateHolder(
     private val context: Context,
@@ -226,26 +223,16 @@ class VersionInstallInfoStateHolder(
                                 )
                             } else {
                                 val exception = executor.exception ?: return@execute
-                                // 失败弹窗走遗留静态实现（ModpackInstaller 跨类复用同一份）
-                                VersionInstallInfoPage.alertFailureMessage(context, exception) {}
+                                // 失败弹窗走共享静态实现（ModpackInstaller 跨类复用同一份）
+                                InstallFailureAlert.alertFailureMessage(context, exception) {}
                             }
                         }
                     }
                 })
-                if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
-                    val pane = MiuixTaskDialog(context)
-                    pane.setTitle(context.getString(R.string.install_new_game))
-                    pane.setExecutor(executor)
-                    pane.show()
-                } else {
-                    val pane = TaskDialog(
-                        context,
-                        TaskCancellationAction(AppCompatDialog::dismiss),
-                    )
-                    pane.setTitle(context.getString(R.string.install_new_game))
-                    pane.setExecutor(executor)
-                    pane.show()
-                }
+                val pane = MiuixTaskDialog(context)
+                pane.setTitle(context.getString(R.string.install_new_game))
+                pane.setExecutor(executor)
+                pane.show()
                 executor.start()
             }
         }

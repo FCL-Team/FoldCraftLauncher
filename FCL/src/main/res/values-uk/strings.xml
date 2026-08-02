@@ -119,7 +119,6 @@
     <string name="button_remove_confirm">Ви впевнені, що хочете видалити назавжди? Цю дію не можна скасувати!</string>
     <string name="button_save_as">Завантажити в</string>
     <string name="button_select_all">Вибрати все</string>
-    <string name="button_set">Вибрати</string>
     <string name="button_reset">Скинути</string>
 
     <string name="community">Спільнота</string>
@@ -382,7 +381,6 @@
     <string name="help_website">Вебсайт</string>
 
     <string name="input_hint_not_empty">Обов’язково</string>
-    <string name="input_hint_optional">Необов’язково</string>
     <string name="input_not_empty">Заповніть обов’язкові поля.</string>
     <string name="input_number">Введіть число</string>
     <string name="input_url">Введіть коректну URL-адресу.</string>
@@ -685,9 +683,7 @@
     <string name="settings_advanced_game_dir_independent">Ізольовано в (.minecraft/versions/&lt;instance name&gt;/, крім ресурсів і бібліотек)</string>
     <string name="settings_advanced_jvm_args">Аргументи JVM</string>
     <string name="settings_advanced_minecraft_arguments">Аргументи лаунчера</string>
-    <string name="settings_advanced_minecraft_arguments_prompt">За замовчуванням</string>
     <string name="settings_advanced_server_ip">Адреса сервера</string>
-    <string name="settings_advanced_server_ip_prompt">Автоприєднання після запуску</string>
 
     <string name="settings_fcl_controller">Контролер</string>
     <string name="settings_fcl_controller_injector">Жести на стороні сервера</string>
@@ -738,13 +734,11 @@
     <string name="settings_launcher_animation_speed">Швидкість анімації переходів</string>
 
     <string name="settings_memory">Пам\'ять</string>
-    <string name="settings_memory_allocate_auto">%1$.1f ГБ мінімум / %2$.1f ГБ виділено</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f ГБ мінімум / %2$.1f ГБ виділено (%3$.1f ГБ вільно)</string>
     <string name="settings_memory_allocate_manual">%1$.1f ГБ використовується</string>
     <string name="settings_memory_allocate_manual_exceeded">%1$.1f ГБ використовується (%3$.1f ГБ вільно)</string>
     <string name="settings_memory_auto_allocate">Автовиділення ОЗП</string>
     <string name="settings_memory_lower_bound">Мінімум ОЗП</string>
-    <string name="settings_memory_used_per_total">%1$.1f ГБ використано / %2$.1f ГБ всього</string>
     <string name="settings_physical_memory">Розмір фізичної пам\'яті</string>
     <string name="settings_tabs_installers">Завантажувачі модів</string>
     <string name="settings_type_global_manage">Основні налаштування гри</string>
@@ -885,7 +879,6 @@
     <string name="world_info_time_format">%s днів</string>
     <string name="world_manage">Світи / Датапаки</string>
     <string name="world_name">Назва світу</string>
-    <string name="world_name_enter">Введіть назву світу</string>
     <string name="world_reveal">Показати в провіднику</string>
     <string name="world_show_all">Показати всі</string>
 

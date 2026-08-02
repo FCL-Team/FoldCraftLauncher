@@ -16,8 +16,8 @@ import com.tungsten.fcllibrary.skin.SkinViewer
  *
  * 设计要点：
  * - 账户 UI 是一级界面（FCLCommonUI，直接挂在 FCLUILayout 容器，不走 PageManager），
- *   由 UIManager.accountUI 按 [USE_COMPOSE_ACCOUNT_UI] 开关二选一实例化（对齐 3.3
- *   ManagePageManager / 3.4 DownloadPageManager 的整体回滚开关模式）；
+ *   由 UIManager.accountUI 固定实例化（批 3 起迁移开关已全部固化删除，旧 AccountUI
+ *   回滚分支已移除）；
  * - contentView 复用迁移期通用容器 page_compose_container.xml，ComposeView 经
  *   [LegacyBridge.createComposeView] 创建（自动套 FCLTheme + ViewTree 生命周期销毁），
  *   并安装 [LegacyBridge.LegacyDialogHost] 承接遗留弹窗请求；
@@ -36,12 +36,8 @@ class ComposeAccountUI(
 ) : FCLCommonUI(context, parent, R.layout.page_compose_container) {
 
     companion object {
-        /**
-         * 阶段三 3.5 账户页迁移开关（对齐 ComposeVersionPages.USE_COMPOSE_VERSION_PAGES /
-         * ComposeDownloadPages.USE_COMPOSE_DOWNLOAD_PAGES 模式）：
-         * true = UIManager.accountUI 实例化 Compose 版；改 false 整体回滚到旧 AccountUI。
-         */
-        const val USE_COMPOSE_ACCOUNT_UI = true
+        // 批 3：迁移开关（含已被批 2 删除的 USE_COMPOSE_VERSION_PAGES /
+        // USE_COMPOSE_DOWNLOAD_PAGES）已全部固化删除，Compose 版为唯一实现。
 
         /** Compose 侧注册的刷新回调（AccountScreen DisposableEffect 维护），承接 refresh() 契约。 */
         @Volatile

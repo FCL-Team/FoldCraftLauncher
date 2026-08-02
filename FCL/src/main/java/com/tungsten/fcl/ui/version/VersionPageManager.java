@@ -2,11 +2,9 @@ package com.tungsten.fcl.ui.version;
 
 import android.content.Context;
 
-import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIListener;
 import com.tungsten.fcl.ui.version.compose.ComposeVersionListPage;
-import com.tungsten.fcl.ui.version.compose.ComposeVersionPages;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
@@ -34,13 +32,8 @@ public class VersionPageManager extends PageManager {
 
     @Override
     public void init(UIListener listener) {
-        // 阶段三 3.3：ComposeVersionPages.USE_COMPOSE_VERSION_PAGES 为整体回滚开关，
-        // false 时回到旧 View 页面（VersionListPage + page_version_list.xml 保留未删）。
-        if (ComposeVersionPages.USE_COMPOSE_VERSION_PAGES) {
-            versionListPage = new ComposeVersionListPage(getContext(), PAGE_ID_VERSION_LIST, getParent());
-        } else {
-            versionListPage = new VersionListPage(getContext(), PAGE_ID_VERSION_LIST, getParent(), R.layout.page_version_list);
-        }
+        // 批 2：Compose 开关已固化，旧 View 页面（VersionListPage + page_version_list.xml）已删除。
+        versionListPage = new ComposeVersionListPage(getContext(), PAGE_ID_VERSION_LIST, getParent());
 
         if (listener != null) {
             listener.onLoad();
