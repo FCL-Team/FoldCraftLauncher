@@ -16,6 +16,9 @@ import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixDuplicateVersionDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixRenameVersionDialog;
 import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage;
@@ -32,6 +35,7 @@ import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
+import com.tungsten.fclcore.util.FutureCallback;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
@@ -42,6 +46,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -126,7 +131,7 @@ public class Versions {
     }
 
     public static CompletableFuture<String> renameVersion(Context context, Profile profile, String version) {
-        RenameVersionDialog dialog = new RenameVersionDialog(context, version, (newName, resolve, reject) -> {
+        FutureCallback<String> callback = (newName, resolve, reject) -> {
             if (!OperatingSystem.isNameValid(newName) || !ParseUtil.isValidCharacters(newName)) {
                 reject.accept(context.getString(R.string.install_new_game_malformed));
                 return;
@@ -148,9 +153,17 @@ public class Versions {
                         }
                         return null;
                     }).start();
-        });
-        dialog.show();
-        return dialog.getFuture();
+        };
+        if (ComposeDialogs.USE_COMPOSE_RENAME_VERSION) {
+            // 3.2 批 1 接入点：Miuix 重命名版本弹窗
+            MiuixRenameVersionDialog dialog = new MiuixRenameVersionDialog(context, version, callback);
+            dialog.show();
+            return dialog.getFuture();
+        } else {
+            RenameVersionDialog dialog = new RenameVersionDialog(context, version, callback);
+            dialog.show();
+            return dialog.getFuture();
+        }
     }
 
     public static void exportVersion(Context context, FCLUILayout parent, Profile profile, String version) {
@@ -159,7 +172,7 @@ public class Versions {
     }
 
     public static void duplicateVersion(Context context, Profile profile, String version) {
-        DuplicateVersionDialog dialog = new DuplicateVersionDialog(context, profile, version, (res, resolve, reject) -> {
+        FutureCallback<ArrayList<Object>> callback = (res, resolve, reject) -> {
             String newVersionName = (String) res.get(0);
             if (!OperatingSystem.isNameValid(newVersionName) || !ParseUtil.isValidCharacters(newVersionName)) {
                 reject.accept(context.getString(R.string.install_new_game_malformed));
@@ -178,8 +191,14 @@ public class Versions {
                             profile.getRepository().removeVersionFromDisk(newVersionName);
                         }
                     }).start();
-        });
-        dialog.show();
+        };
+        if (ComposeDialogs.USE_COMPOSE_DUPLICATE_VERSION) {
+            // 3.2 批 1 接入点：Miuix 复制版本弹窗
+            new MiuixDuplicateVersionDialog(context, profile, version, callback).show();
+        } else {
+            DuplicateVersionDialog dialog = new DuplicateVersionDialog(context, profile, version, callback);
+            dialog.show();
+        }
     }
 
     public static void updateVersion(Context context, FCLUILayout parent, Profile profile, String version) {

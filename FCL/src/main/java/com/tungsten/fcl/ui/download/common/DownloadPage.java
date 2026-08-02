@@ -24,6 +24,9 @@ import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixDownloadAddonDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixTranslationDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.download.ModDownloadPage;
 import com.tungsten.fcl.ui.download.TranslationDialog;
@@ -341,7 +344,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
 
         Path runDirectory = profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
 
-        DownloadAddonDialog dialog = new DownloadAddonDialog(context, file.getFile().getFilename(), name -> {
+        DownloadAddonDialog.Callback addonCallback = name -> {
             Path dest = runDirectory.resolve(subdirectoryName).resolve(name);
 
             TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
@@ -372,8 +375,14 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                 taskDialog.show();
                 executor.start();
             });
-        });
-        dialog.show();
+        };
+        if (ComposeDialogs.USE_COMPOSE_DOWNLOAD_ADDON) {
+            // 3.2 批 1 接入点：Miuix 下载附加内容弹窗
+            new MiuixDownloadAddonDialog(context, file.getFile().getFilename(), addonCallback).show();
+        } else {
+            DownloadAddonDialog dialog = new DownloadAddonDialog(context, file.getFile().getFilename(), addonCallback);
+            dialog.show();
+        }
     }
 
     @Override
@@ -464,11 +473,17 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     }
 
     protected void showTranslationDialog() {
-        new TranslationDialog(getContext(), repository, s -> {
+        kotlin.jvm.functions.Function1<String, Unit> callback = s -> {
             nameEditText.setText(s);
             search();
             return Unit.INSTANCE;
-        }).show();
+        };
+        if (ComposeDialogs.USE_COMPOSE_TRANSLATION) {
+            // 3.2 批 1 接入点：Miuix 翻译查询弹窗
+            new MiuixTranslationDialog(getContext(), repository, callback).show();
+        } else {
+            new TranslationDialog(getContext(), repository, callback).show();
+        }
     }
 
     protected String getLocalizedCategory(String category) {

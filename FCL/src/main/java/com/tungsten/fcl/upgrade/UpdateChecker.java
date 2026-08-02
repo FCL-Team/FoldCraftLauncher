@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixUpdateDialog;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
@@ -88,8 +90,13 @@ public class UpdateChecker {
 
     private void showUpdateDialog(Context context, RemoteVersion version) {
         Schedulers.androidUIThread().execute(() -> {
-            UpdateDialog dialog = new UpdateDialog(context, version);
-            dialog.show();
+            if (ComposeDialogs.USE_COMPOSE_UPDATE) {
+                // 3.2 批 1 接入点：Miuix 更新弹窗
+                new MiuixUpdateDialog(context, version).show();
+            } else {
+                UpdateDialog dialog = new UpdateDialog(context, version);
+                dialog.show();
+            }
         });
     }
 

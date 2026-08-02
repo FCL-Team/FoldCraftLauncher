@@ -91,8 +91,9 @@ object FCLDialogs {
         positiveText: String? = null,
         negativeText: String? = null,
         onResult: Consumer<Boolean>? = null,
+        cancelable: Boolean = true,
     ): FCLComposeDialog {
-        val dialog = FCLComposeDialog(context, cancelable = true)
+        val dialog = FCLComposeDialog(context, cancelable = cancelable)
         dialog.setOnCancelListener { onResult?.accept(false) }
         dialog.setDialogContent {
             FCLDialogCard(
