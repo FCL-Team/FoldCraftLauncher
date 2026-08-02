@@ -12,6 +12,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
+import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
@@ -55,7 +56,12 @@ public class AddProfileDialog extends FCLDialog implements View.OnClickListener 
                 Toast.makeText(getContext(), getContext().getString(R.string.profile_already_exist), Toast.LENGTH_SHORT).show();
             } else {
                 Profiles.getProfiles().add(new Profile(editText.getText().toString(), new File(pathText.getText().toString())));
-                ((VersionListPage) VersionPageManager.getInstance().getAllPages().get(0)).refreshProfile();
+                // 3.3 起版本列表可能为 Compose 页（自带 Profiles 列表监听，无需手动刷新）；
+                // 旧 View 页仍需要 refreshProfile() 强刷。
+                FCLCommonPage page = VersionPageManager.getInstance().getAllPages().get(0);
+                if (page instanceof VersionListPage) {
+                    ((VersionListPage) page).refreshProfile();
+                }
                 dismiss();
             }
         }

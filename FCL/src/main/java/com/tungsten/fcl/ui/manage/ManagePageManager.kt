@@ -6,6 +6,9 @@ import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIListener
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
+import com.tungsten.fcl.ui.manage.compose.ComposeManagePage
+import com.tungsten.fcl.ui.manage.compose.ComposeVersionSettingPage
+import com.tungsten.fcl.ui.version.compose.ComposeVersionPages
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 
@@ -28,9 +31,15 @@ class ManagePageManager(
     var profile: Profile? = null
     var version: String? = null
 
-    private lateinit var versionSettingPage: VersionSettingPage
-    private val managePage: ManagePage by lazy {
-        ManagePage(context, PAGE_ID_MANAGE_MANAGE, parent, R.layout.page_manage_version)
+    private lateinit var versionSettingPage: FCLCommonPage
+    private val managePage: FCLCommonPage by lazy {
+        // 阶段三 3.3：ComposeVersionPages.USE_COMPOSE_VERSION_PAGES 为整体回滚开关，
+        // false 时回到旧 View 页面（ManagePage + page_manage_version.xml 保留未删）。
+        if (ComposeVersionPages.USE_COMPOSE_VERSION_PAGES) {
+            ComposeManagePage(context, PAGE_ID_MANAGE_MANAGE, parent)
+        } else {
+            ManagePage(context, PAGE_ID_MANAGE_MANAGE, parent, R.layout.page_manage_version)
+        }
     }
     private val installerListPage: InstallerListPage by lazy {
         InstallerListPage(
@@ -65,13 +74,19 @@ class ManagePageManager(
     }
 
     override fun init(listener: UIListener?) {
-        versionSettingPage = VersionSettingPage(
-            context,
-            PAGE_ID_MANAGE_SETTING,
-            parent,
-            R.layout.page_version_setting,
-            false
-        )
+        // 阶段三 3.3b：ComposeVersionPages.USE_COMPOSE_VERSION_SETTING 为整体回滚开关，
+        // false 时回到旧 View 页面（VersionSettingPage + page_version_setting.xml 保留未删）。
+        versionSettingPage = if (ComposeVersionPages.USE_COMPOSE_VERSION_SETTING) {
+            ComposeVersionSettingPage(context, PAGE_ID_MANAGE_SETTING, parent, false)
+        } else {
+            VersionSettingPage(
+                context,
+                PAGE_ID_MANAGE_SETTING,
+                parent,
+                R.layout.page_version_setting,
+                false
+            )
+        }
         listener?.onLoad()
     }
 
