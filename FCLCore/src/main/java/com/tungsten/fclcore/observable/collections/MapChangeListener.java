@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.collections;
 
 /**
- * Minimal reimplementation of {@code fakefx.collections.MapChangeListener}.
+ * Minimal reimplementation of {@code MapChangeListener}.
  */
 @FunctionalInterface
 public interface MapChangeListener<K, V> {

@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.property;
 import com.tungsten.fclcore.observable.binding.Bindings;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.BooleanProperty}.
+ * Minimal reimplementation of {@code BooleanProperty}.
  */
 public abstract class BooleanProperty extends ReadOnlyBooleanProperty implements Property<Boolean> {
 
@@ -13,7 +13,7 @@ public abstract class BooleanProperty extends ReadOnlyBooleanProperty implements
     @Override
     public void setValue(Boolean v) {
         if (v == null) {
-            // 与 fakefx 一致：setValue(null) 记日志后置 false
+            // 与 JavaFX 一致：setValue(null) 记日志后置 false
             set(false);
         } else {
             set(v);

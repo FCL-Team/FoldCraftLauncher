@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.property;
 import com.tungsten.fclcore.observable.binding.Bindings;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.FloatProperty}.
+ * Minimal reimplementation of {@code FloatProperty}.
  */
 public abstract class FloatProperty extends ReadOnlyFloatProperty implements Property<Number> {
 

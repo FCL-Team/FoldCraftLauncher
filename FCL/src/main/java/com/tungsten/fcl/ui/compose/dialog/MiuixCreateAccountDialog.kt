@@ -44,7 +44,7 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer
 import com.tungsten.fclcore.auth.authlibinjector.BoundAuthlibInjectorAccountFactory
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccountFactory
 import com.tungsten.fclcore.auth.offline.OfflineAccountFactory
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
+import com.tungsten.fclcore.observable.property.SimpleObjectProperty
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.task.TaskExecutor

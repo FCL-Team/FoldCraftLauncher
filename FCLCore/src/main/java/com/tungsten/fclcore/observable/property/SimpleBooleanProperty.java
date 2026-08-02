@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.property;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.SimpleBooleanProperty}.
+ * Minimal reimplementation of {@code SimpleBooleanProperty}.
  */
 public class SimpleBooleanProperty extends BooleanPropertyBase {
 

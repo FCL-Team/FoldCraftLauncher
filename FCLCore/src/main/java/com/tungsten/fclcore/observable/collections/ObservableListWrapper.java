@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Port of {@code fakefx.collections.ObservableListWrapper}：
+ * Port of {@code ObservableListWrapper}：
  * 包装既有 List 并转发变更事件；extractor 变体在元素自身失效时冒泡 update 事件
  * （存盘链路依赖此语义）。sort 相关方法外部未使用，未实现。
  */

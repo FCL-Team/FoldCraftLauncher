@@ -6,7 +6,7 @@ import com.tungsten.fclcore.observable.WeakListener;
 import java.lang.ref.WeakReference;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.value.WeakChangeListener}.
+ * Minimal reimplementation of {@code WeakChangeListener}.
  */
 public final class WeakChangeListener<T> implements ChangeListener<T>, WeakListener {
 

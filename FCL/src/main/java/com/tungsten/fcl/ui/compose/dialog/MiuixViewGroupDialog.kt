@@ -26,7 +26,7 @@ import com.tungsten.fcl.control.EditViewGroupDialog
 import com.tungsten.fcl.control.GameMenu
 import com.tungsten.fcl.control.data.ControlViewGroup
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
-import com.tungsten.fclcore.fakefx.collections.ObservableList
+import com.tungsten.fclcore.observable.collections.ObservableList
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import top.yukonga.miuix.kmp.basic.Card
@@ -57,7 +57,7 @@ import java.util.UUID
  * - 分组数据来自 gameMenu.controller.viewGroups()，操作后刷新快照；
  * - setCancelable(false) 一致；窗体对齐遗留 400dp × MATCH_PARENT 侧边面板。
  *
- * 有意偏差：遗留 CheckBox 实时改写传入的 selectedGroups（fakefx ObservableList），
+ * 有意偏差：遗留 CheckBox 实时改写传入的 selectedGroups（observable ObservableList），
  * 确定时回调的是同一实例；本实现内部持有选择快照，确定时回调快照内容。
  * 两个真实调用点（GameMenu:926 传空列表+null 回调；EditViewDialog:387 仅以回调结果
  * setBindViewGroup）均不依赖实时外部改写，行为等价。

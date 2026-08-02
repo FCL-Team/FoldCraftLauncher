@@ -10,11 +10,11 @@ import java.lang.ref.WeakReference;
 import java.util.Objects;
 
 /**
- * Simplified reimplementation of {@code fakefx.binding.BidirectionalBinding}（仅保留泛型变体）：
+ * Simplified reimplementation of {@code BidirectionalBinding}（仅保留泛型变体）：
  * <ul>
  * <li>{@code updating} 标志防回环；</li>
  * <li>对两个属性持弱引用，任一侧被 GC 后自动互相摘除；</li>
- * <li>传播失败时回滚到 oldValue（与 fakefx 一致）；</li>
+ * <li>传播失败时回滚到 oldValue（与 JavaFX 一致）；</li>
  * <li>equals/hashCode 与顺序无关地匹配同一对属性——unbindBidirectional 依赖这一点
  * 通过 equals 找到并移除既有绑定。</li>
  * </ul>

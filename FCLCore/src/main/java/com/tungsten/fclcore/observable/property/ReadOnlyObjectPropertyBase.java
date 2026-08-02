@@ -5,7 +5,7 @@ import com.tungsten.fclcore.observable.binding.ExpressionHelper;
 import com.tungsten.fclcore.observable.value.ChangeListener;
 
 /**
- * Port of {@code fakefx.beans.property.ReadOnlyObjectPropertyBase}：
+ * Port of {@code ReadOnlyObjectPropertyBase}：
  * 只读属性的监听基础设施，配合 {@link ReadOnlyObjectWrapper} 使用。
  */
 public abstract class ReadOnlyObjectPropertyBase<T> extends ReadOnlyObjectProperty<T> {

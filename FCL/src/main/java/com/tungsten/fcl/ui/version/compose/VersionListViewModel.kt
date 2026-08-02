@@ -33,7 +33,7 @@ import kotlin.io.path.isRegularFile
  * - 搜索过滤：大小写不敏感 contains，空文本显示全部（:58-65）；
  * - 分类过滤：全部/Fabric/Forge/NeoForge/其他（:67-113）；
  *   搜索与分类**不叠加**，以最后操作为准（旧代码两个监听各自全量替换列表）；
- * - 选中态：`profile.selectedVersionProperty` 经 fakefx → Flow 单向承接（:223-229），
+ * - 选中态：`profile.selectedVersionProperty` 经 observable → Flow 单向承接（:223-229），
  *   点击整行/单选按钮 = 写 `profile.selectedVersion`（:54,64-66）；
  * - 加载完成后滚动到选中版本（:218-221），经 [VersionListUiState.loadTick] 触发。
  */

@@ -7,7 +7,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.NamedArg}.
+ * Minimal reimplementation of {@code NamedArg}.
  */
 @Retention(RUNTIME)
 @Target(PARAMETER)

@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.observable.property.BooleanProperty;
+import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLTextView;

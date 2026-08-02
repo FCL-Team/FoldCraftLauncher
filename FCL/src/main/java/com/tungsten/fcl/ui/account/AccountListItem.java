@@ -1,6 +1,6 @@
 package com.tungsten.fcl.ui.account;
 
-import static com.tungsten.fclcore.fakefx.beans.binding.Bindings.createBooleanBinding;
+import static com.tungsten.fclcore.observable.binding.Bindings.createBooleanBinding;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import org.jetbrains.annotations.Nullable;
@@ -48,14 +48,14 @@ import com.tungsten.fclcore.auth.offline.OfflineAccount;
 import com.tungsten.fclcore.auth.yggdrasil.CompleteGameProfile;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccount;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
-import com.tungsten.fclcore.fakefx.beans.binding.StringBinding;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
-import com.tungsten.fclcore.fakefx.beans.value.ObservableBooleanValue;
+import com.tungsten.fclcore.observable.binding.Bindings;
+import com.tungsten.fclcore.observable.binding.ObjectBinding;
+import com.tungsten.fclcore.observable.binding.StringBinding;
+import com.tungsten.fclcore.observable.property.ObjectProperty;
+import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
+import com.tungsten.fclcore.observable.property.SimpleStringProperty;
+import com.tungsten.fclcore.observable.property.StringProperty;
+import com.tungsten.fclcore.observable.value.ObservableBooleanValue;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.skin.InvalidSkinException;

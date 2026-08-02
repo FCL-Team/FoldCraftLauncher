@@ -6,7 +6,7 @@ import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.observable.value.ChangeListener;
 
 /**
- * Port of {@code fakefx.beans.property.ReadOnlyListPropertyBase}：
+ * Port of {@code ReadOnlyListPropertyBase}：
  * 只读列表属性的监听基础设施，配合 {@link ReadOnlyListWrapper} 使用。
  */
 public abstract class ReadOnlyListPropertyBase<E> extends ReadOnlyListProperty<E> {

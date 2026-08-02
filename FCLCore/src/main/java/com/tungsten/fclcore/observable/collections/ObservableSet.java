@@ -5,7 +5,7 @@ import com.tungsten.fclcore.observable.Observable;
 import java.util.Set;
 
 /**
- * Minimal reimplementation of {@code fakefx.collections.ObservableSet}.
+ * Minimal reimplementation of {@code ObservableSet}.
  */
 public interface ObservableSet<E> extends Set<E>, Observable {
 

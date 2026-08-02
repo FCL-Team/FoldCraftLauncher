@@ -11,7 +11,7 @@ import com.tungsten.fclcore.observable.value.ObservableValue;
 import java.lang.ref.WeakReference;
 
 /**
- * Port of {@code fakefx.beans.property.BooleanPropertyBase}：
+ * Port of {@code BooleanPropertyBase}：
  * set 用 != 比较（boolean 即值比较），其余语义同 ObjectPropertyBase。
  */
 public abstract class BooleanPropertyBase extends BooleanProperty {
@@ -108,7 +108,7 @@ public abstract class BooleanPropertyBase extends BooleanProperty {
         if (rawObservable instanceof ObservableBooleanValue) {
             newObservable = (ObservableBooleanValue) rawObservable;
         } else {
-            // 与 fakefx 一致：包装非 ObservableBooleanValue 的 source
+            // 与 JavaFX 一致：包装非 ObservableBooleanValue 的 source
             final ObservableValue<? extends Boolean> source = rawObservable;
             newObservable = new ObservableBooleanValue() {
                 @Override

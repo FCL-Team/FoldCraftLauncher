@@ -12,10 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.observable.property.BooleanProperty;
+import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
+import com.tungsten.fclcore.observable.property.DoubleProperty;
+import com.tungsten.fclcore.observable.property.IntegerProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.R;
 

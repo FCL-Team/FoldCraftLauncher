@@ -21,7 +21,7 @@ import com.tungsten.fcl.control.gamepad.GamepadEmulatedButton
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fclcore.fakefx.collections.FXCollections
+import com.tungsten.fclcore.observable.collections.FXCollections
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.theme.MiuixTheme

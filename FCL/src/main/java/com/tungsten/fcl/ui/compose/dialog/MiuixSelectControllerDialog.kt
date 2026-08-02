@@ -24,7 +24,7 @@ import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener
+import com.tungsten.fclcore.observable.InvalidationListener
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.RadioButton
 import top.yukonga.miuix.kmp.basic.Text
@@ -44,7 +44,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * - 窗体对齐遗留 XML：宽 400dp、列表固定高 160dp；
  * - setCancelable(false) 一致。
  *
- * 有意偏差：遗留列表项用 fakefx 属性绑定（控制器属性改名可实时刷新条目文字），
+ * 有意偏差：遗留列表项用 observable 属性绑定（控制器属性改名可实时刷新条目文字），
  * 本实现读取快照值；弹窗存活期间控制器属性几乎不会被编辑，影响可忽略。
  */
 class MiuixSelectControllerDialog(

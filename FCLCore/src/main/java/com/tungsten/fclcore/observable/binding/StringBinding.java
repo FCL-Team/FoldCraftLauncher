@@ -8,7 +8,7 @@ import com.tungsten.fclcore.observable.value.ChangeListener;
 import com.tungsten.fclcore.observable.value.ObservableValue;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.binding.StringBinding}：
+ * Minimal reimplementation of {@code StringBinding}：
  * 惰性求值的 String 绑定，语义同 {@link ObjectBinding}。
  */
 public abstract class StringBinding implements ObservableValue<String>, BindingHelperObserver.Binding {

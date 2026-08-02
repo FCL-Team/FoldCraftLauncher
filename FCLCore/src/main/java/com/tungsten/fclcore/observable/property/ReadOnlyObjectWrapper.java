@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.property;
 
 /**
- * Port of {@code fakefx.beans.property.ReadOnlyObjectWrapper}：
+ * Port of {@code ReadOnlyObjectWrapper}：
  * 可写包装 + 与之同步触发事件的只读视图。
  */
 public class ReadOnlyObjectWrapper<T> extends SimpleObjectProperty<T> {

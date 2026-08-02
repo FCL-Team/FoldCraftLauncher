@@ -11,7 +11,7 @@ import com.tungsten.fclcore.observable.value.ObservableValue;
 import java.lang.ref.WeakReference;
 
 /**
- * Port of {@code fakefx.beans.property.ListPropertyBase}：
+ * Port of {@code ListPropertyBase}：
  * 监听包装列表的内容变更并向上冒泡（invalidated + fireValueChangedEvent(change)）；
  * 整体替换 / bind 语义与标量 PropertyBase 一致；size/empty 只读属性随内容变更失效。
  */

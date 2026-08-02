@@ -11,7 +11,7 @@ import com.tungsten.fclcore.observable.value.ObservableValue;
 import java.lang.ref.WeakReference;
 
 /**
- * Port of {@code fakefx.beans.property.LongPropertyBase}，语义同 IntegerPropertyBase。
+ * Port of {@code LongPropertyBase}，语义同 IntegerPropertyBase。
  */
 public abstract class LongPropertyBase extends LongProperty {
 

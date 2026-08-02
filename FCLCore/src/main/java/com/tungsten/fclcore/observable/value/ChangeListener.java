@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.value;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.value.ChangeListener}.
+ * Minimal reimplementation of {@code ChangeListener}.
  */
 @FunctionalInterface
 public interface ChangeListener<T> {

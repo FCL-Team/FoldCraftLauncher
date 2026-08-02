@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Simplified reimplementation of {@code fakefx.binding.ListExpressionHelper}，
+ * Simplified reimplementation of {@code ListExpressionHelper}，
  * 供 {@link ListPropertyBase} 与 {@link ReadOnlyListPropertyBase} 复用。语义对齐：
  * <ul>
  * <li>整体替换（fireValueChangedEvent()）：invalidation 监听总是触发；change 监听与
@@ -20,7 +20,7 @@ import java.util.List;
  * from=0、to=新 size、removed=旧内容的 wasReplaced 变更；</li>
  * <li>内容变更（fireValueChangedEvent(Change)）：invalidation 监听触发，change 监听
  * 收到 (current, current)，list-change 监听收到 SourceAdapterChange 包装的原始变更
- * （getList() 指向属性本身，与 fakefx 一致）；</li>
+ * （getList() 指向属性本身，与 JavaFX 一致）；</li>
  * <li>异常转交 uncaughtExceptionHandler；每个 list-change 监听前 reset。</li>
  * </ul>
  */
@@ -175,7 +175,7 @@ final class ListPropertyHelper<E> {
         }
     }
 
-    /** 对应 fakefx 的 NonIterableChange.GenericAddRemoveChange（仅整体替换场景）。 */
+    /** 对应 JavaFX 的 NonIterableChange.GenericAddRemoveChange（仅整体替换场景）。 */
     private final class ReplaceAllChange extends ListChangeListener.Change<E> {
 
         private final int to;

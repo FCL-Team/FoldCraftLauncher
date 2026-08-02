@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.util;
 
 /**
- * Minimal reimplementation of {@code fakefx.util.StringConverter}.
+ * Minimal reimplementation of {@code StringConverter}.
  */
 public abstract class StringConverter<T> {
 

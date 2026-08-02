@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Simplified reimplementation of {@code fakefx.beans.property.ReadOnlyMapProperty}
+ * Simplified reimplementation of {@code ReadOnlyMapProperty}
  * （合并 MapExpression 的委托方法）：本身即 ObservableMap 视图。
  */
 public abstract class ReadOnlyMapProperty<K, V> implements ReadOnlyProperty<ObservableMap<K, V>>, ObservableMap<K, V> {

@@ -47,7 +47,7 @@ import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.main.Announcement
 import com.tungsten.fcl.ui.theme.FCLThemeTokens
-import com.tungsten.fclcore.fakefx.beans.value.ChangeListener
+import com.tungsten.fclcore.observable.value.ChangeListener
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.HttpRequest
 import com.tungsten.fcllibrary.component.theme.ThemeEngine

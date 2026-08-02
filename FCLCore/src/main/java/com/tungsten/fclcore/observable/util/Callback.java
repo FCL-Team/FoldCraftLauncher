@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.util;
 
 /**
- * Minimal reimplementation of {@code fakefx.util.Callback}.
+ * Minimal reimplementation of {@code Callback}.
  */
 @FunctionalInterface
 public interface Callback<P, R> {

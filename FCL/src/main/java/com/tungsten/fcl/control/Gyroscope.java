@@ -8,8 +8,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 import com.tungsten.fclauncher.bridge.FCLBridge;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
+import com.tungsten.fclcore.observable.property.BooleanProperty;
+import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
 
 public class Gyroscope implements SensorEventListener {
 

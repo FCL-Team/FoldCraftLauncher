@@ -10,10 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSpinner;
 
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
+import com.tungsten.fclcore.observable.property.BooleanProperty;
+import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
+import com.tungsten.fclcore.observable.property.ObjectProperty;
+import com.tungsten.fclcore.observable.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 
 import java.util.ArrayList;

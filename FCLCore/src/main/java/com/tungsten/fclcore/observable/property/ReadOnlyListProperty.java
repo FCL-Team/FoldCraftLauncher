@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * Simplified reimplementation of {@code fakefx.beans.property.ReadOnlyListProperty}
+ * Simplified reimplementation of {@code ReadOnlyListProperty}
  * （合并 ListExpression 的委托方法）：本身即 ObservableList 视图，所有列表操作
  * 委托给 get() 返回的底层列表。
  */

@@ -4,7 +4,7 @@ import com.tungsten.fclcore.observable.binding.Bindings;
 import com.tungsten.fclcore.observable.collections.ObservableMap;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.MapProperty}.
+ * Minimal reimplementation of {@code MapProperty}.
  */
 public abstract class MapProperty<K, V> extends ReadOnlyMapProperty<K, V> implements Property<ObservableMap<K, V>> {
 

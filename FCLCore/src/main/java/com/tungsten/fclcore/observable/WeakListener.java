@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.WeakListener}.
+ * Minimal reimplementation of {@code WeakListener}.
  */
 public interface WeakListener {
 

@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.property;
 import com.tungsten.fclcore.observable.binding.Bindings;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.IntegerProperty}.
+ * Minimal reimplementation of {@code IntegerProperty}.
  */
 public abstract class IntegerProperty extends ReadOnlyIntegerProperty implements Property<Number> {
 
@@ -13,7 +13,7 @@ public abstract class IntegerProperty extends ReadOnlyIntegerProperty implements
     @Override
     public void setValue(Number v) {
         if (v == null) {
-            // 与 fakefx 一致：setValue(null) 记日志后置 0
+            // 与 JavaFX 一致：setValue(null) 记日志后置 0
             set(0);
         } else {
             set(v.intValue());

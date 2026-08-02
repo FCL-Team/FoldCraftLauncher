@@ -4,7 +4,7 @@ import com.tungsten.fclcore.observable.binding.Bindings;
 import com.tungsten.fclcore.observable.collections.ObservableList;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.ListProperty}.
+ * Minimal reimplementation of {@code ListProperty}.
  */
 public abstract class ListProperty<E> extends ReadOnlyListProperty<E> implements Property<ObservableList<E>> {
 

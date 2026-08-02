@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.property;
 
 /**
- * Port of {@code fakefx.beans.property.ReadOnlyStringWrapper}.
+ * Port of {@code ReadOnlyStringWrapper}.
  */
 public class ReadOnlyStringWrapper extends SimpleStringProperty {
 

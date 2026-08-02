@@ -6,10 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.ui.adapter.ViewHolder
 import com.tungsten.fcl.databinding.ItemWorldBinding
-import com.tungsten.fclcore.fakefx.beans.Observable
-import com.tungsten.fclcore.fakefx.beans.property.ListProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleListProperty
-import com.tungsten.fclcore.fakefx.collections.FXCollections
+import com.tungsten.fclcore.observable.Observable
+import com.tungsten.fclcore.observable.property.ListProperty
+import com.tungsten.fclcore.observable.property.SimpleListProperty
+import com.tungsten.fclcore.observable.collections.FXCollections
 
 class WorldListAdapter(private val context: Context) :
     RecyclerView.Adapter<ViewHolder>() {

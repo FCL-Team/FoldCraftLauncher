@@ -10,7 +10,7 @@ import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.AccountFactory
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer
 import com.tungsten.fclcore.auth.offline.OfflineAccount
-import com.tungsten.fclcore.fakefx.collections.ListChangeListener
+import com.tungsten.fclcore.observable.collections.ListChangeListener
 import java.util.UUID
 
 /**
@@ -19,11 +19,11 @@ import java.util.UUID
  *
  * 行为对齐（interaction-map §8.1/§8.2 逐条）：
  * - 账户列表数据构建：Accounts.getAccounts() → AccountListItem（标题/副标题/头像/纹理的
- *   fakefx 绑定全部留在 AccountListItem，业务零重写，对齐 AccountUI.refresh :61-76）；
+ *   observable 绑定全部留在 AccountListItem，业务零重写，对齐 AccountUI.refresh :61-76）；
  * - 列表自动刷新：Accounts.getAccounts() 是带 extractor 的 ObservableList（账户属性失效
  *   也会触发列表变更），ListChangeListener 重建条目列表，替代旧 Adapter 的
  *   clear+addAll+notifyDataSetChanged 与静态单例反向 refresh（G10 承接）；
- * - 选中态：Accounts.selectedAccountProperty 经 fakefx → Flow 单向承接，点击单选 =
+ * - 选中态：Accounts.selectedAccountProperty 经 observable → Flow 单向承接，点击单选 =
  *   写 Accounts.setSelectedAccount（对齐 AccountListAdapter.kt:63-66）；
  * - 外置登录服务器列表：config().getAuthlibInjectorServers() ObservableList 监听自动刷新
  *   （对齐 ServerListAdapter :33-36）；
@@ -162,7 +162,7 @@ class AccountViewModel(
 
 /** 账户页 UI 状态。 */
 data class AccountUiState(
-    /** 账户条目（标题/副标题/头像/纹理由各条目 fakefx 属性就地观察）。 */
+    /** 账户条目（标题/副标题/头像/纹理由各条目 observable 属性就地观察）。 */
     val accounts: List<AccountListItem> = emptyList(),
     /** 外置登录服务器列表。 */
     val servers: List<AuthlibInjectorServer> = emptyList(),

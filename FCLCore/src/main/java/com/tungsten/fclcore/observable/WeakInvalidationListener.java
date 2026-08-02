@@ -3,8 +3,8 @@ package com.tungsten.fclcore.observable;
 import java.lang.ref.WeakReference;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.WeakInvalidationListener}.
- * 被 GC 后在下一次触发时自动从 source 摘除（与 fakefx 一致）。
+ * Minimal reimplementation of {@code WeakInvalidationListener}.
+ * 被 GC 后在下一次触发时自动从 source 摘除（与 JavaFX 一致）。
  */
 public final class WeakInvalidationListener implements InvalidationListener, WeakListener {
 

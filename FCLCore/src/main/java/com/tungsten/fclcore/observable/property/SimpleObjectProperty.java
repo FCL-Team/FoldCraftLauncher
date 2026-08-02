@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.property;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.SimpleObjectProperty}.
+ * Minimal reimplementation of {@code SimpleObjectProperty}.
  */
 public class SimpleObjectProperty<T> extends ObjectPropertyBase<T> {
 

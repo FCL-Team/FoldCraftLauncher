@@ -11,7 +11,7 @@ import com.tungsten.fclcore.observable.value.ObservableValue;
 import java.lang.ref.WeakReference;
 
 /**
- * Port of {@code fakefx.beans.property.DoublePropertyBase}：
+ * Port of {@code DoublePropertyBase}：
  * set 用 != 比较，其余语义同 ObjectPropertyBase。
  */
 public abstract class DoublePropertyBase extends DoubleProperty {

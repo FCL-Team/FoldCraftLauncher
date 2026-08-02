@@ -17,8 +17,8 @@
  */
 package com.tungsten.fclcore.util;
 
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
+import com.tungsten.fclcore.observable.InvalidationListener;
+import com.tungsten.fclcore.observable.Observable;
 
 import java.util.Objects;
 

@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.property;
 import com.tungsten.fclcore.observable.collections.ObservableMap;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.SimpleMapProperty}.
+ * Minimal reimplementation of {@code SimpleMapProperty}.
  */
 public class SimpleMapProperty<K, V> extends MapPropertyBase<K, V> {
 

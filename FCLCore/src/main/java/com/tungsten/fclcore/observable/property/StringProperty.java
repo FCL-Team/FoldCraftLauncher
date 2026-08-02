@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.property;
 import com.tungsten.fclcore.observable.binding.Bindings;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.StringProperty}.
+ * Minimal reimplementation of {@code StringProperty}.
  */
 public abstract class StringProperty extends ReadOnlyStringProperty implements Property<String> {
 

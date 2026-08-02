@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Minimal reimplementation of {@code fakefx.collections.FXCollections}，
+ * Minimal reimplementation of {@code FXCollections}，
  * 只保留外部实际用到的工厂方法。
  */
 public class FXCollections {
@@ -81,5 +81,79 @@ public class FXCollections {
 
     public static <E> ObservableList<E> emptyObservableList() {
         return observableList(Collections.emptyList());
+    }
+
+    public static <E> ObservableList<E> unmodifiableObservableList(ObservableList<E> list) {
+        if (list == null) {
+            throw new NullPointerException();
+        }
+        return new UnmodifiableObservableListImpl<>(list);
+    }
+
+    private static class UnmodifiableObservableListImpl<T> extends ObservableListBase<T> implements ObservableList<T> {
+
+        private final ObservableList<T> backingList;
+        private final ListChangeListener<T> listener;
+
+        public UnmodifiableObservableListImpl(ObservableList<T> backingList) {
+            this.backingList = backingList;
+            listener = c -> fireChange(new SourceAdapterChange<>(UnmodifiableObservableListImpl.this, c));
+            this.backingList.addListener(new WeakListChangeListener<>(listener));
+        }
+
+        @Override
+        public T get(int index) {
+            return backingList.get(index);
+        }
+
+        @Override
+        public int size() {
+            return backingList.size();
+        }
+
+        @Override
+        protected void doAdd(int index, T element) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        protected T doSet(int index, T element) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        protected T doRemove(int index) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean addAll(T... elements) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean setAll(T... elements) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean setAll(Collection<? extends T> col) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean removeAll(T... elements) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean retainAll(T... elements) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void remove(int from, int to) {
+            throw new UnsupportedOperationException();
+        }
     }
 }

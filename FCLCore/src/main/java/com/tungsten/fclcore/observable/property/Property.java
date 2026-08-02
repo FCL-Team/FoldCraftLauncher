@@ -4,7 +4,7 @@ import com.tungsten.fclcore.observable.value.ObservableValue;
 import com.tungsten.fclcore.observable.value.WritableValue;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.Property}.
+ * Minimal reimplementation of {@code Property}.
  */
 public interface Property<T> extends ReadOnlyProperty<T>, WritableValue<T> {
 

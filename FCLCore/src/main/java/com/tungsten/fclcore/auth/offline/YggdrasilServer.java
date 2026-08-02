@@ -26,7 +26,7 @@ import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 import com.tungsten.fclcore.util.io.HttpServer;
-import com.tungsten.fclcore.util.png.fakefx.PNGFakeFXUtils;
+import com.tungsten.fclcore.util.png.PNGFakeFXUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

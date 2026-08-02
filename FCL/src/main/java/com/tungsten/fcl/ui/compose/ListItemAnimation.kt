@@ -18,7 +18,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
  * `animateItem(fadeInSpec = tween(animationSpeed × 30))`，placement/fadeOut 关闭，
  * 避免旧版没有的额外动效（对齐 3.3 VersionListScreen 首处落地的模式）。
  *
- * 时长经 fakefx `animationSpeedProperty` 桥观察（[collectAsState]），
+ * 时长经 observable `animationSpeedProperty` 桥观察（[collectAsState]），
  * 启动器设置页拖动动画速度后即时生效；引擎未初始化时回落默认值 8（Theme.java:213）。
  */
 @Composable

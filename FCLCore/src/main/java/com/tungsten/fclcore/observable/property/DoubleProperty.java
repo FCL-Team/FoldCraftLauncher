@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.property;
 import com.tungsten.fclcore.observable.binding.Bindings;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.DoubleProperty}.
+ * Minimal reimplementation of {@code DoubleProperty}.
  */
 public abstract class DoubleProperty extends ReadOnlyDoubleProperty implements Property<Number> {
 

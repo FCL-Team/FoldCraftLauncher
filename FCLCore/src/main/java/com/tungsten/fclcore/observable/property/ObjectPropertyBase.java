@@ -10,7 +10,7 @@ import com.tungsten.fclcore.observable.value.ObservableValue;
 import java.lang.ref.WeakReference;
 
 /**
- * Port of {@code fakefx.beans.property.ObjectPropertyBase}，语义逐条对齐：
+ * Port of {@code ObjectPropertyBase}，语义逐条对齐：
  * <ul>
  * <li>set 用引用比较（!=），同引用不触发事件；</li>
  * <li>bound 状态下 set 抛 RuntimeException("A bound value cannot be set.")；</li>

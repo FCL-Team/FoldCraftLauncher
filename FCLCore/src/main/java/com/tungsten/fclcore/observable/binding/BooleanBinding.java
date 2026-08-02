@@ -8,7 +8,7 @@ import com.tungsten.fclcore.observable.value.ChangeListener;
 import com.tungsten.fclcore.observable.value.ObservableBooleanValue;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.binding.BooleanBinding}：
+ * Minimal reimplementation of {@code BooleanBinding}：
  * 惰性求值的 boolean 绑定，语义同 {@link ObjectBinding}。
  */
 public abstract class BooleanBinding implements ObservableBooleanValue, BindingHelperObserver.Binding {

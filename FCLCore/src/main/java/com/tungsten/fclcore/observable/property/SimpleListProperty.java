@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.property;
 import com.tungsten.fclcore.observable.collections.ObservableList;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.SimpleListProperty}.
+ * Minimal reimplementation of {@code SimpleListProperty}.
  */
 public class SimpleListProperty<E> extends ListPropertyBase<E> {
 

@@ -22,7 +22,7 @@ import com.tungsten.fcl.terracotta.TerracottaState;
 import com.tungsten.fcl.terracotta.profile.TerracottaProfile;
 import com.tungsten.fcl.ui.compose.dialog.MiuixInviteCodeInputDialog;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
+import com.tungsten.fclcore.observable.binding.Bindings;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;

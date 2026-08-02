@@ -7,7 +7,7 @@ import com.tungsten.fclcore.observable.WeakListener;
 import java.lang.ref.WeakReference;
 
 /**
- * Simplified reimplementation of {@code fakefx.binding.BindingHelperObserver}：
+ * Simplified reimplementation of {@code BindingHelperObserver}：
  * 依赖失效时调用 binding.invalidate()；binding 被 GC 后自动摘除。
  */
 final class BindingHelperObserver implements InvalidationListener, WeakListener {

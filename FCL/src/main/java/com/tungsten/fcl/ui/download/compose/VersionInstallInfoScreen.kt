@@ -34,7 +34,7 @@ import com.tungsten.fcl.ui.download.version.InstallFailureAlert
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.download.RemoteVersion
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener
+import com.tungsten.fclcore.observable.InvalidationListener
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.TaskExecutor
 import com.tungsten.fclcore.task.TaskListener
@@ -57,7 +57,7 @@ import java.io.File
  * - 名称 TextWatcher：与自动生成名不一致即标记"手动修改"停止自动命名（:89-95,152-157）；
  * - 加载器项点击 → InstallerListPage 临时页选版本（Fabric API 先弹警告，:116-123）；
  * - 已选加载器可移除（:134-138）；不兼容互斥由 InstallerItem.InstallerItemGroup 内置
- *   fakefx 联动（业务零重写，直接复用）；
+ *   observable 联动（业务零重写，直接复用）；
  * - 安装：名称三重校验 Toast → GameBuilder 异步 + 任务进度 → 成功/失败对话框（:193-255），
  *   失败走共享 [InstallFailureAlert.alertFailureMessage]（跨类复用，零重写）。
  */
@@ -66,7 +66,7 @@ class VersionInstallInfoStateHolder(
     private val gameVersion: String,
 ) {
 
-    /** 单个加载器条目的 Compose 状态（fakefx 属性单向桥接，对齐 InstallerItemSkin 绑定）。 */
+    /** 单个加载器条目的 Compose 状态（observable 属性单向桥接，对齐 InstallerItemSkin 绑定）。 */
     inner class LoaderUi(val item: InstallerItem) {
         var libraryVersion by mutableStateOf(item.libraryVersion.get())
         var incompatibleLibraryName by mutableStateOf(item.incompatibleLibraryName.get())

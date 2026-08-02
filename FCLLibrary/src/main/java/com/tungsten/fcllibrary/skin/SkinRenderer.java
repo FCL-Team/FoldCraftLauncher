@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
+import com.tungsten.fclcore.observable.property.ObjectProperty;
+import com.tungsten.fclcore.observable.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.skin.InvalidSkinException;
 import com.tungsten.fclcore.util.skin.NormalizedSkin;

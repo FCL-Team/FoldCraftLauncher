@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.property;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.SimpleStringProperty}.
+ * Minimal reimplementation of {@code SimpleStringProperty}.
  */
 public class SimpleStringProperty extends StringPropertyBase {
 

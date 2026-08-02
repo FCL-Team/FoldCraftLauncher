@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.property;
 import com.tungsten.fclcore.observable.value.ObservableBooleanValue;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.ReadOnlyBooleanProperty}.
+ * Minimal reimplementation of {@code ReadOnlyBooleanProperty}.
  */
 public abstract class ReadOnlyBooleanProperty implements ReadOnlyProperty<Boolean>, ObservableBooleanValue {
 

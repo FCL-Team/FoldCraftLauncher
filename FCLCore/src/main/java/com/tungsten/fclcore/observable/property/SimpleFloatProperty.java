@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.property;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.SimpleFloatProperty}.
+ * Minimal reimplementation of {@code SimpleFloatProperty}.
  */
 public class SimpleFloatProperty extends FloatPropertyBase {
 

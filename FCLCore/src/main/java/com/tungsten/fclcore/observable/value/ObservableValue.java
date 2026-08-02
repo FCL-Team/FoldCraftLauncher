@@ -4,7 +4,7 @@ import com.tungsten.fclcore.observable.InvalidationListener;
 import com.tungsten.fclcore.observable.Observable;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.value.ObservableValue}.
+ * Minimal reimplementation of {@code ObservableValue}.
  */
 public interface ObservableValue<T> extends Observable {
 

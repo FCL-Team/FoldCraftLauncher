@@ -8,11 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ListProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleListProperty;
-import com.tungsten.fclcore.fakefx.collections.FXCollections;
+import com.tungsten.fclcore.observable.InvalidationListener;
+import com.tungsten.fclcore.observable.property.BooleanProperty;
+import com.tungsten.fclcore.observable.property.ListProperty;
+import com.tungsten.fclcore.observable.property.SimpleListProperty;
+import com.tungsten.fclcore.observable.collections.FXCollections;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;

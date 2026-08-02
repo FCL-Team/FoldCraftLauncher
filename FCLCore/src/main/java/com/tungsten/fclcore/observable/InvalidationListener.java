@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.InvalidationListener}.
+ * Minimal reimplementation of {@code InvalidationListener}.
  */
 @FunctionalInterface
 public interface InvalidationListener {

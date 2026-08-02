@@ -7,7 +7,7 @@ import com.tungsten.fclcore.observable.util.Callback;
 import java.util.IdentityHashMap;
 
 /**
- * Port of {@code fakefx.collections.ElementObserver}：
+ * Port of {@code ElementObserver}：
  * extractor 模式的核心——为列表元素挂失效监听，元素失效时冒泡列表 update 事件。
  * 用 IdentityHashMap + 计数器处理同一元素在列表中出现多次的情况。
  */

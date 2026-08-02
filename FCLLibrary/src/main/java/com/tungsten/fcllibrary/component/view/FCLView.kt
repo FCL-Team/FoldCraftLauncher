@@ -3,8 +3,8 @@ package com.tungsten.fcllibrary.component.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase
+import com.tungsten.fclcore.observable.property.IntegerProperty
+import com.tungsten.fclcore.observable.property.IntegerPropertyBase
 import com.tungsten.fcllibrary.R
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 

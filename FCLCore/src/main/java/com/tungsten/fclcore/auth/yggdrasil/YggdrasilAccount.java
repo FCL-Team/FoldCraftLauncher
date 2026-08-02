@@ -33,8 +33,8 @@ import com.tungsten.fclcore.auth.ClassicAccount;
 import com.tungsten.fclcore.auth.CredentialExpiredException;
 import com.tungsten.fclcore.auth.NoCharacterException;
 import com.tungsten.fclcore.auth.ServerResponseMalformedException;
-import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
-import com.tungsten.fclcore.util.fakefx.BindingMapping;
+import com.tungsten.fclcore.observable.binding.ObjectBinding;
+import com.tungsten.fclcore.util.observable.BindingMapping;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 
 public abstract class YggdrasilAccount extends ClassicAccount {

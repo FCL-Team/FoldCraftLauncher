@@ -5,7 +5,7 @@ import com.tungsten.fclcore.observable.Observable;
 import java.util.Map;
 
 /**
- * Minimal reimplementation of {@code fakefx.collections.ObservableMap}.
+ * Minimal reimplementation of {@code ObservableMap}.
  */
 public interface ObservableMap<K, V> extends Map<K, V>, Observable {
 

@@ -11,7 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;

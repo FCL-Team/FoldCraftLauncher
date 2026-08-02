@@ -11,7 +11,7 @@ import com.tungsten.fclcore.observable.value.ObservableValue;
 import java.lang.ref.WeakReference;
 
 /**
- * Port of {@code fakefx.beans.property.MapPropertyBase}，语义同 ListPropertyBase。
+ * Port of {@code MapPropertyBase}，语义同 ListPropertyBase。
  */
 public abstract class MapPropertyBase<K, V> extends MapProperty<K, V> {
 

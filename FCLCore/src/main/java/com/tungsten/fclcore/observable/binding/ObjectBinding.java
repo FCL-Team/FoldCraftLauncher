@@ -8,7 +8,7 @@ import com.tungsten.fclcore.observable.value.ChangeListener;
 import com.tungsten.fclcore.observable.value.ObservableValue;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.binding.ObjectBinding}：
+ * Minimal reimplementation of {@code ObjectBinding}：
  * 惰性求值（依赖失效前缓存计算结果），依赖失效时向监听者冒泡失效事件。
  */
 public abstract class ObjectBinding<T> implements ObservableValue<T>, BindingHelperObserver.Binding {

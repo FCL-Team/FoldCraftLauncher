@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.binding.Bindings}，
+ * Minimal reimplementation of {@code Bindings}，
  * 只保留外部实际用到的方法子集：createXxxBinding / concat / bindContent / unbindContent /
  * bindBidirectional / unbindBidirectional。
- * computeValue 抛异常时的兜底返回值与 fakefx 一致（boolean→false、Object→null、String→""）。
+ * computeValue 抛异常时的兜底返回值与 JavaFX 一致（boolean→false、Object→null、String→""）。
  */
 public final class Bindings {
 
@@ -87,7 +87,7 @@ public final class Bindings {
     }
 
     // ================================================================================================================
-    // concat（对应 fakefx.binding.StringFormatter.concat：null 值按 StringBuilder.append 语义拼为 "null"）
+    // concat（对应 binding.StringFormatter.concat：null 值按 StringBuilder.append 语义拼为 "null"）
 
     private static Object extractValue(Object obj) {
         return obj instanceof ObservableValue ? ((ObservableValue<?>) obj).getValue() : obj;

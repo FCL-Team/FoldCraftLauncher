@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Simplified reimplementation of {@code fakefx.binding.ContentBinding}：
+ * Simplified reimplementation of {@code ContentBinding}：
  * 单向内容绑定，把 source 列表的每次变更重放到 target 列表。
  * target 只持弱引用，被 GC 后自动从 source 摘除。
  */

@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Minimal reimplementation of {@code fakefx.collections.ObservableList}.
+ * Minimal reimplementation of {@code ObservableList}.
  */
 public interface ObservableList<E> extends List<E>, Observable {
 

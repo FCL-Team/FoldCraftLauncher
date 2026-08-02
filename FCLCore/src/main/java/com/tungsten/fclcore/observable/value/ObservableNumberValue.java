@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.value;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.value.ObservableNumberValue}.
+ * Minimal reimplementation of {@code ObservableNumberValue}.
  */
 public interface ObservableNumberValue extends ObservableValue<Number> {
 

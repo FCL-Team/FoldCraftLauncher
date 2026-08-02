@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Simplified reimplementation of {@code fakefx.collections.ObservableSetWrapper}：
+ * Simplified reimplementation of {@code ObservableSetWrapper}：
  * add/remove/clear 在实际变更时触发 SetChange 事件；分发前先发 invalidation 监听。
  */
 public class ObservableSetWrapper<E> extends AbstractSet<E> implements ObservableSet<E> {

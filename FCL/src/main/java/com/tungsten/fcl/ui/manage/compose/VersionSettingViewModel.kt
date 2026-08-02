@@ -14,7 +14,7 @@ import com.tungsten.fcl.ui.manage.ManagePageManager
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclcore.event.Event
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener
+import com.tungsten.fclcore.observable.InvalidationListener
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fclcore.util.platform.MemoryUtils
@@ -43,7 +43,7 @@ data class VersionSettingLoadRequest(
  * 版本设置页 ViewModel（小步骤 3.3b）：VersionSettingPage.kt 的 Compose 化承接，
  * 覆盖全局（SettingUI Tab0，globalSetting=true）与单版本（ManageUI Tab0）两种形态。
  *
- * 17 组 fakefx 绑定承接（interaction-map §4.4，VersionSettingPage.kt:286-350）：
+ * 17 组 observable 绑定承接（interaction-map §4.4，VersionSettingPage.kt:286-350）：
  * - 15 组 VersionSetting 属性（4 String + 10 Boolean + maxMemory）经
  *   `toMutableStateFlow(scope)` 双向桥接：Compose 写 flow.value 即写回属性
  *   （写即持久化语义不变，ConfigHolder/Profile 自动落盘），属性被遗留代码改动流入 Flow；
@@ -237,7 +237,7 @@ class VersionSettingViewModel(
         updateState { copy(usedMemoryMB = MemoryUtils.getUsedDeviceMemory(application)) }
     }
 
-    // ---------- 17 组绑定的写入口（写 flow 即写 fakefx 属性，即持久化） ----------
+    // ---------- 17 组绑定的写入口（写 flow 即写 observable 属性，即持久化） ----------
 
     fun setJavaArgs(value: String) {
         javaArgsFlow?.value = value

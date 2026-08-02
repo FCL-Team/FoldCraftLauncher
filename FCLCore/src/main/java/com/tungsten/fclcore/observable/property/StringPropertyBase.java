@@ -10,7 +10,7 @@ import com.tungsten.fclcore.observable.value.ObservableValue;
 import java.lang.ref.WeakReference;
 
 /**
- * Port of {@code fakefx.beans.property.StringPropertyBase}：
+ * Port of {@code StringPropertyBase}：
  * 与 ObjectPropertyBase 同构，但 set 用 equals 比较（同值不触发）。
  */
 public abstract class StringPropertyBase extends StringProperty {

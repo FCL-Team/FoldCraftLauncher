@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.property;
 import com.tungsten.fclcore.observable.value.ObservableLongValue;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.ReadOnlyLongProperty}.
+ * Minimal reimplementation of {@code ReadOnlyLongProperty}.
  */
 public abstract class ReadOnlyLongProperty implements ReadOnlyProperty<Number>, ObservableLongValue {
 

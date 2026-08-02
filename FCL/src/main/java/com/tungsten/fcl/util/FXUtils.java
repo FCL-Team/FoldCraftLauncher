@@ -17,15 +17,15 @@
  */
 package com.tungsten.fcl.util;
 
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.WeakInvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.property.Property;
-import com.tungsten.fclcore.fakefx.beans.value.ChangeListener;
-import com.tungsten.fclcore.fakefx.beans.value.ObservableValue;
-import com.tungsten.fclcore.fakefx.beans.value.WeakChangeListener;
-import com.tungsten.fclcore.fakefx.util.StringConverter;
-import com.tungsten.fclcore.util.fakefx.SafeStringConverter;
+import com.tungsten.fclcore.observable.InvalidationListener;
+import com.tungsten.fclcore.observable.Observable;
+import com.tungsten.fclcore.observable.WeakInvalidationListener;
+import com.tungsten.fclcore.observable.property.Property;
+import com.tungsten.fclcore.observable.value.ChangeListener;
+import com.tungsten.fclcore.observable.value.ObservableValue;
+import com.tungsten.fclcore.observable.value.WeakChangeListener;
+import com.tungsten.fclcore.observable.util.StringConverter;
+import com.tungsten.fclcore.util.observable.SafeStringConverter;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;

@@ -19,14 +19,14 @@ package com.tungsten.fclcore.auth;
 
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
+import com.tungsten.fclcore.observable.InvalidationListener;
+import com.tungsten.fclcore.observable.Observable;
+import com.tungsten.fclcore.observable.binding.Bindings;
+import com.tungsten.fclcore.observable.binding.ObjectBinding;
+import com.tungsten.fclcore.observable.property.BooleanProperty;
+import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.util.ToStringBuilder;
-import com.tungsten.fclcore.util.fakefx.ObservableHelper;
+import com.tungsten.fclcore.util.observable.ObservableHelper;
 
 import java.util.Map;
 import java.util.Objects;

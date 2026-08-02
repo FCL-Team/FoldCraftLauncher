@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.property;
 import com.tungsten.fclcore.observable.value.ObservableValue;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.property.ReadOnlyObjectProperty}.
+ * Minimal reimplementation of {@code ReadOnlyObjectProperty}.
  */
 public abstract class ReadOnlyObjectProperty<T> implements ReadOnlyProperty<T>, ObservableValue<T> {
 

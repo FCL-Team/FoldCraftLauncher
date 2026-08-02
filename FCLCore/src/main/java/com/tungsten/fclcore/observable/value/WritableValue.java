@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.value;
 
 /**
- * Minimal reimplementation of {@code fakefx.beans.value.WritableValue}.
+ * Minimal reimplementation of {@code WritableValue}.
  */
 public interface WritableValue<T> {
 

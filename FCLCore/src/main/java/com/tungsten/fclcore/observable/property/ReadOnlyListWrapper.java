@@ -4,7 +4,7 @@ import com.tungsten.fclcore.observable.collections.ListChangeListener;
 import com.tungsten.fclcore.observable.collections.ObservableList;
 
 /**
- * Port of {@code fakefx.beans.property.ReadOnlyListWrapper}：
+ * Port of {@code ReadOnlyListWrapper}：
  * 可写包装 + 同步事件的只读视图；内容变更重发前先 reset。
  */
 public class ReadOnlyListWrapper<E> extends SimpleListProperty<E> {

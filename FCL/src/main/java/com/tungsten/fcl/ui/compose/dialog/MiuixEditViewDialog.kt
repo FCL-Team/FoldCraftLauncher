@@ -43,7 +43,7 @@ import com.tungsten.fcl.control.data.DirectionEventData
 import com.tungsten.fcl.control.data.DirectionStyles
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fclcore.fakefx.collections.FXCollections
+import com.tungsten.fclcore.observable.collections.FXCollections
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import top.yukonga.miuix.kmp.basic.Card
@@ -84,7 +84,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * - setCancelable(false) 一致；窗体对齐遗留 500dp × MATCH_PARENT 侧边面板。
  *
  * 回调直接复用遗留 [EditViewDialog.Callback] 接口（Java 调用点匿名类零改动兼容）。
- * 遗留基于 fakefx 双向绑定，本实现以 Compose 状态为 UI 真源、每次变更即时写入 data
+ * 遗留基于 observable 双向绑定，本实现以 Compose 状态为 UI 真源、每次变更即时写入 data
  * （该 clone 仅本弹窗编辑，无并发写入方），对外行为等价。
  * 下拉以标准 Compose Popup 实现（工程未引入 compose-material）。
  */
@@ -733,7 +733,7 @@ class MiuixEditViewDialog(
     @Composable
     private fun DirectionKeycodeRow(
         label: String,
-        target: com.tungsten.fclcore.fakefx.collections.ObservableList<Int>,
+        target: com.tungsten.fclcore.observable.collections.ObservableList<Int>,
     ) {
         LabeledButtonRow(
             label = label,

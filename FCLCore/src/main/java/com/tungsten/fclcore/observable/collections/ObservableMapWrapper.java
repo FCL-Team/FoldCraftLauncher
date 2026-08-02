@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Simplified reimplementation of {@code fakefx.collections.ObservableMapWrapper}：
+ * Simplified reimplementation of {@code ObservableMapWrapper}：
  * put/remove/clear/putAll 逐键触发 MapChange 事件（wasAdded/wasRemoved 依值判空，
- * 与 fakefx 一致）；分发前先发 invalidation 监听。
+ * 与 JavaFX 一致）；分发前先发 invalidation 监听。
  */
 public class ObservableMapWrapper<K, V> extends AbstractMap<K, V> implements ObservableMap<K, V> {
 

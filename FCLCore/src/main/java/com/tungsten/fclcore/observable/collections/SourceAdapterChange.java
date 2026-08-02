@@ -3,7 +3,7 @@ package com.tungsten.fclcore.observable.collections;
 import java.util.List;
 
 /**
- * Port of {@code fakefx.collections.SourceAdapterChange}：
+ * Port of {@code SourceAdapterChange}：
  * 把底层列表的 Change 适配到另一个 ObservableList（通常是 ListProperty 本身）。
  */
 public class SourceAdapterChange<E> extends ListChangeListener.Change<E> {

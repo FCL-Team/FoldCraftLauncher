@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Simplified reimplementation of {@code fakefx.binding.MapExpressionHelper}，语义对齐：
+ * Simplified reimplementation of {@code MapExpressionHelper}，语义对齐：
  * <ul>
  * <li>整体替换：invalidation 总是触发；change/map-change 仅在新旧引用不同（!=）时触发，
  * map-change 逐键先收旧条目 removed、再收新条目 added；</li>

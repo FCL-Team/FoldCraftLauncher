@@ -1,7 +1,7 @@
 package com.tungsten.fclcore.observable.collections;
 
 /**
- * Minimal reimplementation of {@code fakefx.collections.SetChangeListener}.
+ * Minimal reimplementation of {@code SetChangeListener}.
  */
 @FunctionalInterface
 public interface SetChangeListener<E> {

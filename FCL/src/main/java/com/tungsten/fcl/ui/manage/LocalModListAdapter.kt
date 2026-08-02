@@ -19,10 +19,10 @@ import com.tungsten.fcl.ui.compose.dialog.MiuixModRollbackDialog
 import com.tungsten.fcl.ui.download.DownloadPageManager
 import com.tungsten.fcl.ui.download.compose.ComposeDownloadPage
 import com.tungsten.fcl.ui.manage.ModListPage.ModInfoObject
-import com.tungsten.fclcore.fakefx.beans.Observable
-import com.tungsten.fclcore.fakefx.beans.property.ListProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleListProperty
-import com.tungsten.fclcore.fakefx.collections.FXCollections
+import com.tungsten.fclcore.observable.Observable
+import com.tungsten.fclcore.observable.property.ListProperty
+import com.tungsten.fclcore.observable.property.SimpleListProperty
+import com.tungsten.fclcore.observable.collections.FXCollections
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod

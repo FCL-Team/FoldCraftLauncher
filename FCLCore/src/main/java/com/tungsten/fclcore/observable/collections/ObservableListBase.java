@@ -11,22 +11,22 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Simplified reimplementation of {@code fakefx.collections.ObservableListBase} +
+ * Simplified reimplementation of {@code ObservableListBase} +
  * {@code ModifiableObservableListBase}（合并为一层），语义对齐：
  * <ul>
  * <li>add/set/remove/addAll/removeAll/retainAll/setAll/removeRange 等 mutation
  * 都会在 beginChange/endChange 块内记录子变更，最外层 endChange 时合并为一次
  * Change 事件分发；</li>
- * <li>无监听器时不分发事件（与 fakefx 一致）；</li>
+ * <li>无监听器时不分发事件（与 JavaFX 一致）；</li>
  * <li>分发前先触发 invalidation 监听，再逐个 ListChangeListener（每个之前 reset）；</li>
  * <li>监听抛出的异常转交当前线程的 uncaughtExceptionHandler。</li>
  * </ul>
- * 与 fakefx 的差异：子变更不做相邻合并优化（监听者按序遍历的结果等价）。
+ * 与 JavaFX 的差异：子变更不做相邻合并优化（监听者按序遍历的结果等价）。
  */
 public abstract class ObservableListBase<E> extends AbstractList<E> implements ObservableList<E> {
 
     // ================================================================================================================
-    // 监听者管理（对应 fakefx 的 ListListenerHelper）
+    // 监听者管理（对应 JavaFX 的 ListListenerHelper）
 
     private List<InvalidationListener> invalidationListeners;
     private List<ListChangeListener<? super E>> listChangeListeners;
@@ -107,7 +107,7 @@ public abstract class ObservableListBase<E> extends AbstractList<E> implements O
     }
 
     // ================================================================================================================
-    // 变更构建（对应 fakefx 的 ListChangeBuilder，简化为逐条记录子变更）
+    // 变更构建（对应 JavaFX 的 ListChangeBuilder，简化为逐条记录子变更）
 
     private static final int ADD = 0;
     private static final int REMOVE = 1;
@@ -246,7 +246,7 @@ public abstract class ObservableListBase<E> extends AbstractList<E> implements O
     }
 
     // ================================================================================================================
-    // mutation 入口（对应 fakefx 的 ModifiableObservableListBase）
+    // mutation 入口（对应 JavaFX 的 ModifiableObservableListBase）
 
     @Override
     public void add(int index, E element) {

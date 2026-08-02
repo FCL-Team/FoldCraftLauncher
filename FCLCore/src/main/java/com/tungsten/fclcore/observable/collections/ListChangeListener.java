@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Minimal reimplementation of {@code fakefx.collections.ListChangeListener}，
+ * Minimal reimplementation of {@code ListChangeListener}，
  * Change 的 wasAdded/wasRemoved/wasReplaced/wasPermutated/wasUpdated 语义逐条对齐。
  */
 @FunctionalInterface
