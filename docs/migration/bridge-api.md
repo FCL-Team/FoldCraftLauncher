@@ -272,7 +272,7 @@ fun ModIcon(url: String?) {
 
 ## 6. 遗留问题（后续步骤处理）
 
-1. ~~**Miuix 版通用 TaskDialog 未做**~~（3.2 已完成）：`ui/compose/FCLTaskDialog.kt`（状态+渲染）+ `MiuixTaskDialog`（命令式封装）+ `requestTaskDialog` 通道（§2.3.1）。已接入 3 处调用点（开关 `MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG`）；其余 16 处触发点（interaction-map G5：LauncherHelper、ModpackInstaller、ModpackSelectionPage×2、DownloadPage、RemoteModVersionPage、VersionInstallInfoPage、InstallerListPage×2、ModListPage、ModUpdatesPage×2、ModpackFileSelectionPage、ControllerRepoPage、ControllerDownloadPage、UpdateDialog）待批量替换——注意 LauncherHelper 使用了 `titleProperty()` fakefx 绑定与 setCancel 动态切换，UpdateDialog 嵌套在更新对话框内，需逐点评估。
+1. ~~**Miuix 版通用 TaskDialog 未做**~~（3.2 已完成）：`ui/compose/FCLTaskDialog.kt`（状态+渲染）+ `MiuixTaskDialog`（命令式封装）+ `requestTaskDialog` 通道（§2.3.1）。已接入 3 处调用点（开关 `MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG`）；3.4 又替换 4 处（DownloadPage、RemoteModVersionPage、ui/manage InstallerListPage×2、ModpackFileSelectionPage）。其余 12 处触发点（interaction-map G5：LauncherHelper、ModpackInstaller、ModpackSelectionPage×2、VersionInstallInfoPage、ModListPage、ModUpdatesPage×2、ControllerRepoPage、ControllerDownloadPage、UpdateDialog）待批量替换——注意 LauncherHelper 使用了 `titleProperty()` fakefx 绑定与 setCancel 动态切换，UpdateDialog 嵌套在更新对话框内，需逐点评估。
 2. **弹窗单槽位**：`requestAlertDialog` 不排队；若阶段三出现并发弹窗诉求（如自动更新检查 + 任务失败同时触发），扩展为 Channel/列表。
 3. **glide-compose alpha 成熟度未真机验证**：本步骤只验证了依赖解析与编译（示例含 GlideImage 调用）；首次真机运行含图片的迁移页面时留意 §4.4 回退条件。
 4. **ViewModel 与 PageManager 生命周期未打通**：`createComposeView` 的组合跟随 ViewTree 生命周期，但 `viewModel()` 的 ViewModelStore 归宿主 Activity——页面（FCLCommonPage）级销毁不会清 ViewModel。迁移期页面少、状态轻，可接受；阶段三如出现"版本切换后状态残留"，在页面 onStop/onDestroy 里手动清或换自定义 ViewModelStoreOwner。

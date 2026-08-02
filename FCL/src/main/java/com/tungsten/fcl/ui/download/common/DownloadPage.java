@@ -24,6 +24,7 @@ import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
 import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
 import com.tungsten.fcl.ui.compose.dialog.MiuixDownloadAddonDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixTranslationDialog;
@@ -347,8 +348,18 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         DownloadAddonDialog.Callback addonCallback = name -> {
             Path dest = runDirectory.resolve(subdirectoryName).resolve(name);
 
-            TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
-            taskDialog.setTitle(context.getString(R.string.message_downloading));
+            TaskDialog taskDialog = null;
+            MiuixTaskDialog miuixTaskDialog = null;
+            if (MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG) {
+                // 3.4 接入点：Miuix 任务弹窗（取消动作 = 内置 dismiss，对应原 AppCompatDialog::dismiss）
+                miuixTaskDialog = new MiuixTaskDialog(context);
+                miuixTaskDialog.setTitle(context.getString(R.string.message_downloading));
+            } else {
+                taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
+                taskDialog.setTitle(context.getString(R.string.message_downloading));
+            }
+            TaskDialog finalTaskDialog = taskDialog;
+            MiuixTaskDialog finalMiuixTaskDialog = miuixTaskDialog;
             Schedulers.androidUIThread().execute(() -> {
                 TaskExecutor executor = Task.composeAsync(() -> {
                     FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(file.getFile().getUrl()), dest.toFile());
@@ -371,8 +382,13 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                         Toast.makeText(context, context.getString(R.string.install_success), Toast.LENGTH_SHORT).show();
                     }
                 }).executor();
-                taskDialog.setExecutor(executor);
-                taskDialog.show();
+                if (finalMiuixTaskDialog != null) {
+                    finalMiuixTaskDialog.setExecutor(executor);
+                    finalMiuixTaskDialog.show();
+                } else {
+                    finalTaskDialog.setExecutor(executor);
+                    finalTaskDialog.show();
+                }
                 executor.start();
             });
         };
