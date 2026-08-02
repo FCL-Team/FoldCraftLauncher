@@ -14,6 +14,9 @@ import com.mio.ui.adapter.ViewHolder
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemLocalModBinding
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
+import com.tungsten.fcl.ui.compose.dialog.MiuixModInfoDialog
+import com.tungsten.fcl.ui.compose.dialog.MiuixModRollbackDialog
 import com.tungsten.fcl.ui.download.DownloadPageManager
 import com.tungsten.fcl.ui.download.ModDownloadPage
 import com.tungsten.fcl.ui.manage.ModListPage.ModInfoObject
@@ -196,18 +199,35 @@ class LocalModListAdapter(
                 .isEmpty()
         ) View.GONE else View.VISIBLE
         binding.restore.setOnClickListener {
-            val dialog = ModRollbackDialog(
-                context,
-                ArrayList<LocalModFile?>(modInfoObject.modInfo.mod.oldFiles)
-            ) { localModFile: LocalModFile? ->
+            val oldFiles = ArrayList<LocalModFile?>(modInfoObject.modInfo.mod.oldFiles)
+            val onSelect = { localModFile: LocalModFile? ->
                 modListPage.rollback(modInfoObject.modInfo, localModFile)
                 notifyDataSetChanged()
             }
-            dialog.show()
+            if (ComposeDialogs.USE_COMPOSE_ROLLBACK_MOD) {
+                // 3.2 批 2 接入点：Miuix Mod 版本回滚弹窗
+                MiuixModRollbackDialog(
+                    context,
+                    oldFiles.filterNotNull()
+                ) { localModFile -> onSelect(localModFile) }.show()
+            } else {
+                val dialog = ModRollbackDialog(
+                    context,
+                    oldFiles
+                ) { localModFile: LocalModFile? ->
+                    onSelect(localModFile)
+                }
+                dialog.show()
+            }
         }
         binding.info.setOnClickListener {
-            val dialog = ModInfoDialog(context, modInfoObject)
-            dialog.show()
+            if (ComposeDialogs.USE_COMPOSE_MOD_INFO) {
+                // 3.2 批 2 接入点：Miuix Mod 详情弹窗
+                MiuixModInfoDialog(context, modInfoObject.modInfo).show()
+            } else {
+                val dialog = ModInfoDialog(context, modInfoObject)
+                dialog.show()
+            }
         }
         binding.jump.visibility = View.GONE
         binding.jump.setOnClickListener {

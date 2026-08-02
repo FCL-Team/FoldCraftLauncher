@@ -32,6 +32,8 @@ import com.google.gson.GsonBuilder;
 import com.mio.touchcontroller.TouchController;
 import com.mio.touchcontroller.TouchControllerInputView;
 import com.mio.ui.dialog.GamepadMapDialog;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixGamepadMapDialog;
 import com.mio.ui.view.CursorView;
 import com.mio.ui.view.DraggableTextView;
 import com.mio.util.AndroidUtilKt;
@@ -994,7 +996,12 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         if (v == gamepadButtonBinding) {
             fclInput.checkGamepad();
             if (fclInput.getGamepad() != null) {
-                new GamepadMapDialog(getActivity(), fclInput).show();
+                if (ComposeDialogs.USE_COMPOSE_GAMEPAD_MAP) {
+                    // 3.2 批 2 接入点：Miuix 手柄按键映射弹窗
+                    new MiuixGamepadMapDialog(getActivity(), fclInput).show();
+                } else {
+                    new GamepadMapDialog(getActivity(), fclInput).show();
+                }
             }
         }
         if (v == forceExit) {

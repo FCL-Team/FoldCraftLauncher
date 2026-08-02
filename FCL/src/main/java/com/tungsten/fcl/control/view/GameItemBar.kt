@@ -10,6 +10,8 @@ import com.mio.datastore.GameItemBarSetting
 import com.mio.datastore.gameItemBarDataStore
 import com.tungsten.fcl.control.GameItemBarSettingDialog
 import com.tungsten.fcl.control.GameMenu
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
+import com.tungsten.fcl.ui.compose.dialog.MiuixGameItemBarSettingDialog
 import com.tungsten.fcl.setting.GameOption
 import com.tungsten.fcl.setting.GameOption.GameOptionListener
 import com.tungsten.fclauncher.keycodes.FCLKeycodes
@@ -153,7 +155,7 @@ class GameItemBar @JvmOverloads constructor(
     private fun showSettingDialog() {
         if (!::gameMenu.isInitialized) return
         setting?.let {
-            GameItemBarSettingDialog(context, setting!!) { result ->
+            val callback: (GameItemBarSetting) -> Unit = { result ->
                 gameMenu.activity.lifecycleScope.launch {
                     context.gameItemBarDataStore.updateData {
                         it.copy(
@@ -162,7 +164,13 @@ class GameItemBar @JvmOverloads constructor(
                         )
                     }
                 }
-            }.show()
+            }
+            if (ComposeDialogs.USE_COMPOSE_ITEMBAR_SETTING) {
+                // 3.2 批 2 接入点：Miuix 物品栏设置弹窗
+                MiuixGameItemBarSettingDialog(context, setting!!, callback).show()
+            } else {
+                GameItemBarSettingDialog(context, setting!!, callback).show()
+            }
         }
     }
 

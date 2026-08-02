@@ -31,6 +31,8 @@ import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
 import com.mio.manager.RendererManager
 import com.mio.ui.dialog.RendererSelectDialog
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
+import com.tungsten.fcl.ui.compose.dialog.MiuixRendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
@@ -187,9 +189,16 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 goSetting.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
-                    RendererSelectDialog(this@MainActivity, false) {
-                        onClick(view)
-                    }.show()
+                    if (ComposeDialogs.USE_COMPOSE_RENDERER_SELECT) {
+                        // 3.2 批 2 接入点：Miuix 渲染器选择弹窗
+                        MiuixRendererSelectDialog(this@MainActivity, false) {
+                            onClick(view)
+                        }.show()
+                    } else {
+                        RendererSelectDialog(this@MainActivity, false) {
+                            onClick(view)
+                        }.show()
+                    }
                     true
                 }
                 jar.setOnClickListener(this@MainActivity)

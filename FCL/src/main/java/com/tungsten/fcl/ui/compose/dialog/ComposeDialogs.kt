@@ -18,4 +18,23 @@ object ComposeDialogs {
     const val USE_COMPOSE_WORLD_EXPORT = true
     const val USE_COMPOSE_SKIP_LOGIN = true
     const val USE_COMPOSE_TIP_RELOGIN = true
+
+    // ---- 批 2：版本/管理域 + mio/游戏内杂项 ----
+    const val USE_COMPOSE_ADD_PROFILE = true
+    const val USE_COMPOSE_MOD_INFO = true
+    const val USE_COMPOSE_ROLLBACK_MOD = true
+    const val USE_COMPOSE_JAVA_MANAGE = true
+    const val USE_COMPOSE_RENDERER_SELECT = true
+    const val USE_COMPOSE_GAMEPAD_MAP = true
+    const val USE_COMPOSE_ITEMBAR_SETTING = true
+    const val USE_COMPOSE_OPEN_FOLDER = true
+    const val USE_COMPOSE_INVITE_CODE = true
+
+    /**
+     * 联机功能菜单（MultiplayerDialog + dialog_multiplyer_menu）保留原生：
+     * 游戏内 7 状态 View 体系（6 个 view_multiplayer_* 子布局 + fakefx 属性绑定 +
+     * ListView 玩家列表），运行在渲染 surface 之上，无真机验证条件下整体重写风险过高。
+     * 其内部的邀请码输入弹窗已单独迁移（见 [USE_COMPOSE_INVITE_CODE]）。
+     */
+    const val USE_COMPOSE_MULTIPLAYER_MENU = false
 }

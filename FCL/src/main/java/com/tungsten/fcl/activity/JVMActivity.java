@@ -23,6 +23,8 @@ import com.tungsten.fcl.control.JarExecutorMenu;
 import com.tungsten.fcl.control.MenuCallback;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.OpenFolderDialog;
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs;
+import com.tungsten.fcl.ui.compose.dialog.MiuixOpenFolderDialog;
 import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.terracotta.Terracotta;
@@ -102,8 +104,13 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onBrowse(String path) {
-        OpenFolderDialog dialog = new OpenFolderDialog(this, path);
-        dialog.show();
+        if (ComposeDialogs.USE_COMPOSE_OPEN_FOLDER) {
+            // 3.2 批 2 接入点：Miuix 打开文件夹弹窗
+            new MiuixOpenFolderDialog(this, path).show();
+        } else {
+            OpenFolderDialog dialog = new OpenFolderDialog(this, path);
+            dialog.show();
+        }
     }
 
     @Override

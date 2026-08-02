@@ -10,6 +10,8 @@ import com.google.gson.JsonParseException
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.PageVersionListBinding
+import com.tungsten.fcl.ui.compose.dialog.ComposeDialogs
+import com.tungsten.fcl.ui.compose.dialog.MiuixAddProfileDialog
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles.getSelectedProfile
 import com.tungsten.fcl.setting.Profiles.profiles
@@ -236,8 +238,13 @@ class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: I
             getSelectedProfile().repository.refreshVersionsAsync().start()
         }
         if (view === binding.newProfile) {
-            val dialog = AddProfileDialog(context)
-            dialog.show()
+            if (ComposeDialogs.USE_COMPOSE_ADD_PROFILE) {
+                // 3.2 批 2 接入点：Miuix 新建版本弹窗
+                MiuixAddProfileDialog(context).show()
+            } else {
+                val dialog = AddProfileDialog(context)
+                dialog.show()
+            }
         }
     }
 }

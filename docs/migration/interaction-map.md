@@ -990,6 +990,7 @@ Compose 替代：`Animatable`/`animate*AsState`/LazyColumn item 动画。难点�
 9. `VersionListAdapter` onBind 中做磁盘 IO 统计 Mod 数且每次复用重播入场动画（`ui/version/VersionListAdapter.kt:81-99`）。
 10. 语言 Spinner 靠 `isFirst` 标志抑制初始化回调（`ui/setting/LauncherSettingPage.java:526-537`），Compose 重组下时序语义不同需重设计。
 11. `ModpackInstaller` 对 ModpackCompletionException（非 FileNotFound）失败也提示"安装成功"（`ui/download/modpack/ModpackInstaller.java:74-85`），属有意行为需保留。
+12. `GameItemBarSettingDialog` 每次开关回调都基于构造时 `setting` 的单字段 copy，同一次会话先动开关 A 再动开关 B 会丢失 A 的改动（lost-update，`control/GameItemBarSettingDialog.kt:25-30`）。3.2 批 2 迁移决策：Miuix 版（`MiuixGameItemBarSettingDialog`）以两个开关实时状态构造回调值，不还原该缺陷；回滚分支保留原行为。
 
 ### 附录 E：条目统计
 
