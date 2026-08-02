@@ -180,9 +180,9 @@ class LocalModListAdapter(
         }
         //必须先清除Listener
         binding.check.setOnCheckedChangeListener(null)
-        binding.check.isChecked = modInfoObject.active.get()
+        binding.check.isChecked = modInfoObject.active.value
         binding.check.setOnCheckedChangeListener { _, checked ->
-            modInfoObject.active.set(checked)
+            modInfoObject.modInfo.setActive(checked)
             onChecked.invoke()
         }
         binding.icon.tag = position

@@ -2,6 +2,7 @@
 compileSdk = "35"
 datastore = "1.2.1"
 kotlinxSerializationJson = "1.10.0"
+kotlinxCoroutines = "1.9.0"
 minSdk = "26"
 targetSdk = "34"
 agp = "8.13.2"
@@ -39,6 +40,7 @@ lifecycleCompose = "2.10.0"
 [libraries]
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 taptargetview = { group = "com.getkeepsafe.taptargetview", name = "taptargetview", version.ref = "taptargetview" }
 nanohttpd = { group = "org.nanohttpd", name = "nanohttpd", version.ref = "nanohttpd" }
 commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "commonsCompress" }

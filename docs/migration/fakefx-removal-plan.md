@@ -1,7 +1,7 @@
 # fakefx（JavaFX 属性体系）彻底移除执行方案
 
-> 状态：**阶段 2b（全仓 import 替换 + 删除 fakefx 包）已完成**——fakefx 整包（292 文件）已删除，全部调用点切换到自研 `com.tungsten.fclcore.observable`（94 文件 / 7,582 行），`:FCL:assembleDebug` 构建通过、冒烟 68/68、Config JSON 回环逐字节一致。2a 记录见 §六，2b 记录见 §七。
-> 分支：`feature/fakefx-removal`（基于含 6.1 清理的 `feature/miuix-migration`）。
+> 状态：**阶段 3（FCLCore 公开 API 全面 StateFlow 化）已完成**——9 个 FCLCore 类的公开 API 全部切换到 kotlinx-coroutines StateFlow（D2），FCL 12 个调用方级联改完，`:FCL:assembleDebug` 构建通过、冒烟 68/68、Config JSON 回环实测一致。记录见 §八；2a/2b 记录见 §六/§七。
+> 分支：`feature/fclcore-stateflow`（阶段 3；基于含阶段 2b 的 `feature/miuix-migration` 系）。
 > 调研日期：2026-08-02。所有数据均用 Grep/Read 实证，命令可复现。
 > 边界声明：本方案只规划移除 fakefx；控件系统（`control/`）与 WebView 保留；6.1 旧代码清理（见 `final-report.md` §6）按本文 §四 的合并点协同执行。
 
@@ -336,6 +336,65 @@ util 移植暴露 2a 的两个缺口（6.5 遗留 3 预判范围内）：
 1. 类名 `FakeFxCompose` / `FakeFxStateFlow`（FCL/ui/bridge）与 `PNGFakeFXUtils`（FCLCore/util/png）保留历史命名——仅名称含 "FakeFx" 字样，不引用已删包；改名属 API 变更，未纳入本步范围。
 2. `docs/` 下迁移文档（含本文 §一~§六）保留 fakefx 历史记述，不清理。
 3. ObservableListBase 仍未实现 subList 视图事件与 sort 事件（外部无调用，2b 全量编译证实无新增需求）。
+
+---
+
+## 八、阶段 3 执行记录：FCLCore 公开 API 全面 StateFlow 化（2026-08-02 完成）
+
+对应本文「阶段 2（旧编号）」的 9 文件改造，按用户拍板的 **D2 = 全面 StateFlow** 执行。分支 `feature/fclcore-stateflow`。
+
+### 8.1 依赖与互操作基座（本步唯一的 gradle 改动）
+
+- `gradle/libs.versions.toml` 新增 `kotlinxCoroutines = "1.9.0"`（与全仓 Compose/miuix 传递解析到的版本一致，gradle 缓存内已存在）与 `kotlinx-coroutines-core` catalog 条目；`FCLCore/build.gradle.kts` 以 **`api`** 引入（StateFlow 出现在公开 API 签名中，必须向 FCL 编译类路径传递）。
+- **Java 互操作方案**（新文件）：
+  - `FCLCore/util/flow/FlowSubscriptions.kt`：`subscribe(flow, Consumer)`（跳过当前值，对齐 `addListener` 语义）与 `subscribeWithCurrent(flow, Consumer)`（先同步当前值，对齐 `bind` 语义），返回可取消的 `Subscription`。共享作用域用 **`Dispatchers.Unconfined`——回调在发射线程同步执行**，与 fakefx「不做隐式线程切换」语义逐条对齐（红线要求）；StateFlow 合并语义下消费方均幂等。
+  - `FCLCore/util/observable/FlowBridge.java`：observable→StateFlow 镜像（`asStateFlow(ObservableValue)`），仅供 FCLCore 内部把惰性 ObjectBinding（账户纹理链）包装成 Flow 暴露。
+  - `FCL/util/FlowObservables.java`：反向桥（StateFlow→`Observable`/`ObjectProperty`），仅供 FCL 内部仍走 observable 的存量链路（extractor 冒泡、`Bindings.create*Binding` 依赖、`BindingMapping` 消费）对接新 API。
+
+### 8.2 逐类 API 变更对照（旧 → 新）
+
+| 类 | 旧签名 | 新签名 |
+|---|---|---|
+| `task/Task.java` | `ReadOnlyDoubleProperty progressProperty()`；`ReadOnlyStringProperty messageProperty()`；内部 ReadOnlyWrapper + `doSubTask` 的 `bind/unbind` | `StateFlow<Double> progressFlow()` + `double getProgress()`；`StateFlow<String> messageFlow()` + `String getMessage()`；`doSubTask` 改为 `subscribeWithCurrent` 转发 + finally `cancel()`（等价 bind/unbind：先同步、转发、摘除后保留末值） |
+| `auth/Account.java` | `implements Observable`（add/removeListener + ObservableHelper）；`BooleanProperty portableProperty()`；`ObjectBinding<Optional<Map<TextureType,Texture>>> getTextures()` | 去接口；`StateFlow<Long> revisionFlow()`（每次 `invalidate()` 递增，对齐失效语义）；`StateFlow<Boolean> portableFlow()`（`isPortable()/setPortable()` 保留）；`StateFlow<Optional<Map<TextureType,Texture>>> texturesFlow()`（基类恒空常量）；`hashCode` 改取 `isPortable()` |
+| `auth/microsoft/MicrosoftAccount.java` | 覆写 `getTextures()`（BindingMapping.of(profileRepository.binding(uuid)).map(...)） | 覆写 `texturesFlow()`：同一绑定链经 `FlowBridge.asStateFlow` 镜像，**懒加载 + 缓存**（原每次调用新建绑定，现每账户一条） |
+| `auth/yggdrasil/YggdrasilAccount.java` | 同上 | 同上（私有 `profilePropertiesBinding` 仍是内部 ObjectBinding，机制保留、不进公开 API） |
+| `auth/offline/OfflineAccount.java` | 覆写 `getTextures()`（createObjectBinding 常量） | 覆写 `texturesFlow()`：构造期常量 StateFlow |
+| `auth/authlibinjector/AuthlibInjectorServer.java` | `implements Observable` + ObservableHelper，元数据刷新时 `helper.invalidate()` | 去接口；`StateFlow<Long> revisionFlow()`，元数据刷新时递增（try/catch 保留）；序列化字段（url/metadataResponse/metadataTimestamp，helper 本就 transient）**零变化** |
+| `mod/LocalModFile.java` | `BooleanProperty activeProperty()`（匿名类 invalidated() 内做启/停用改名） | `StateFlow<Boolean> activeFlow()`；`isActive()/setActive(boolean)` 保留，改名逻辑内联进 `setActive`（同值 set 为 no-op，与原 BooleanPropertyBase 一致） |
+| `mod/Datapack.java` | `ObservableList<Pack> getInfo()`；`Pack.activeProperty(): BooleanProperty` | `StateFlow<List<Pack>> infoFlow()`（不可变快照整体替换）+ `List<Pack> getInfo()` 只读快照；`Pack.activeFlow(): StateFlow<Boolean>`，改名逻辑内联 `setActive` |
+| `util/Holder.java` | `implements InvalidationListener`（no-op） | 去接口（仅 InvocationDispatcher 作值容器使用，无监听语义消费方） |
+
+### 8.3 调用方级联修改（FCL 12 文件；FCLLibrary 零调用点）
+
+| 文件 | 改动 |
+|---|---|
+| `setting/Accounts.java` | accounts extractor 由观察 `account`（Observable）改为观察**镜像信号** `accountChangeMirror(account)`（IdentityHashMap 缓存的 SimpleBooleanProperty，随 revisionFlow 翻转）；列表移除账户时取消镜像订阅。**「账户失效冒泡 → wasUpdated → updateAccountStorages 存盘 + UI 刷新」链路语义不变** |
+| `setting/Config.java` | authlibInjectorServers extractor 同理镜像 `serverChangeMirror(server)`（静态 Map + transient 清理标记）；「元数据刷新冒泡 → Config 存盘」语义不变；Gson 序列化字段零变化（新增均为 static/transient） |
+| `ui/compose/FCLTaskDialog.kt` | `bindTask/unbindTask` 由 ChangeListener 挂摘改为 `FlowSubscriptions.subscribeWithCurrent` + `cancel()`（初值同步与负进度=不确定进度语义不变） |
+| `ui/TaskListPane.java` | `ProgressListNode` 的 `percentProgressProperty().bind/stringProperty().bind` 改为 `subscribeWithCurrent` 写入属性，`unbind()` 改 `cancel()`（遗留类，保持可编译） |
+| `game/TexturesLoader.java` | `skinBinding/textureBinding` 的 `BindingMapping.of(account.getTextures())` 改为 `of(FlowObservables.toProperty(account.texturesFlow()))`；返回类型 ObjectBinding 不变（FCL 内部机制） |
+| `ui/account/AccountListItem.java` | `Bindings.createStringBinding(account::getCharacter, account)` 与 `(server::getName, server)` 的 Observable 依赖改为 `FlowObservables.toObservable(revisionFlow())` |
+| `activity/MainActivity.kt` | `BindingMapping.of(account){...}` / `of(account.server){...}` 改为 `Bindings.createObjectBinding({...}, FlowObservables.toObservable(revisionFlow()))` |
+| `ui/main/compose/MainRightMenu.kt` | `AccountSubtitle` 的 `BindingMapping.of(account.server){it.name}` 直接改为 Flow 原生：`revisionFlow().map{name}.stateIn(scope, Eagerly, name)` + `collectAsState()`（不再经过 observable 桥） |
+| `ui/manage/ModListPage.java` | `ModInfoObject.active` 字段类型 BooleanProperty → `StateFlow<Boolean>`（取 `localModFile.activeFlow()`） |
+| `ui/manage/LocalModListAdapter.kt` | `active.get()/.set(checked)` → `active.value` / `modInfo.setActive(checked)` |
+| `ui/manage/DatapackListPage.java` | `DatapackInfoObject` 去掉 active 代理字段；`refresh()` 首次改为本地 ObservableList 镜像（`subscribeWithCurrent(infoFlow)` → 切 UI 线程 `setAll`）供 MappedObservableList 消费 |
+| `ui/manage/DatapackListAdapter.java` | `checkProperty().bindBidirectional(pack.activeProperty())` 改为手动双向：初值 `set(pack.isActive())` + `subscribe(activeFlow)`（pack→checkbox）+ checkProperty ChangeListener（checkbox→pack）；两侧同值写入均 no-op，天然防回环；视图回收时 cancel + removeListener |
+
+### 8.4 门禁验证
+
+- `:FCL:assembleDebug` 全量构建 **BUILD SUCCESSFUL**（四次迭代修平：Datapack.installTo 迭代遗漏、MainRightMenu 遗漏调用点——勘察 grep 未覆盖该 `BindingMapping.of` 形态、两处镜像 lambda 非 final 变量）。
+- observable 冒烟 **68/68 复跑通过**（本步未动 observable 库实现，确认无连带破坏）。
+- Config JSON 回环实测：临时 `ServerJsonRoundTrip`（测后已删）对 AuthlibInjectorServer 做 反序列化→序列化→反序列化→序列化 双重回环，**两次输出逐字节一致**，且产物仅含 url/metadataResponse/metadataTimestamp（与改动前字段集一致）；同时断言 `subscribe` 不立即回调（addListener 语义）。Config/Account 的 Gson 字段 diff 审查确认零序列化面变化。
+- 红线：FCLauncher/Terracotta/LWJGL-Pojav/ZipFileSystem/NG-GL4ES 零改动；启动链路不经本次改动面（Task 的 TaskListener/executor 契约未动）。
+
+### 8.5 遗留问题
+
+1. **桥接订阅生命周期**：`FlowObservables`/`FlowBridge` 的镜像订阅不可取消（等价于原被 bind 长期持有的绑定对象），账户/服务器移除场景已显式清理（Accounts/Config 的 discard 方法）；MainActivity/AccountListItem 的 `toObservable` 镜像随账户对象同生死，切换选中账户会各留一个极轻量镜像，阶段 4/5 数据层全面 Flow 化后桥即删除。
+2. `TaskListPane.java` 为已被 Compose 版（FCLTaskDialog）替代的遗留类，本次仅保持可编译，不验证其运行时行为。
+3. StateFlow 合并语义：高频 `invalidate()`/进度更新可能合并为一次回调（fakefx 下同值/同引用亦不重复触发，存盘与 UI 刷新均幂等）；任务进度本身有 `getProgressInterval()` 节流，无实际差异。
+4. `YggdrasilAccount`/`MicrosoftAccount` 的纹理链内部仍使用 ObjectBinding + FlowBridge（私有实现，不进公开 API）；阶段 4 之后如需去 observable，可将 ObservableOptionalCache 一并 Flow 化。
 
 ---
 

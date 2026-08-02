@@ -8,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fclcore.mod.Datapack;
 import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
 import com.tungsten.fclcore.observable.property.ListProperty;
 import com.tungsten.fclcore.observable.property.SimpleListProperty;
 import com.tungsten.fclcore.observable.collections.FXCollections;
+import com.tungsten.fclcore.observable.value.ChangeListener;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
@@ -57,7 +59,8 @@ public class DatapackListAdapter extends FCLAdapter {
         FCLCheckBox checkBox;
         FCLTextView name;
         FCLTextView description;
-        BooleanProperty booleanProperty;
+        FlowSubscriptions.Subscription activeSubscription;
+        ChangeListener<Boolean> activeListener;
     }
 
     @Override
@@ -101,10 +104,21 @@ public class DatapackListAdapter extends FCLAdapter {
             }
         });
         viewHolder.checkBox.addCheckedChangeListener();
-        if (viewHolder.booleanProperty != null) {
-            viewHolder.checkBox.checkProperty().unbindBidirectional(viewHolder.booleanProperty);
+        if (viewHolder.activeSubscription != null) {
+            viewHolder.activeSubscription.cancel();
+            viewHolder.activeSubscription = null;
         }
-        viewHolder.checkBox.checkProperty().bindBidirectional(viewHolder.booleanProperty = datapackInfoObject.getActive());
+        if (viewHolder.activeListener != null) {
+            viewHolder.checkBox.checkProperty().removeListener(viewHolder.activeListener);
+            viewHolder.activeListener = null;
+        }
+        // 手动双向（对齐原 bindBidirectional，两侧同值写入均为 no-op，天然防回环）：
+        // pack → checkBox 走 activeFlow 订阅；checkBox → pack 走 checkProperty 监听。
+        Datapack.Pack pack = datapackInfoObject.getPackInfo();
+        viewHolder.checkBox.checkProperty().set(pack.isActive());
+        viewHolder.activeSubscription = FlowSubscriptions.subscribe(pack.activeFlow(), viewHolder.checkBox.checkProperty()::set);
+        viewHolder.activeListener = (observable, oldValue, newValue) -> pack.setActive(newValue);
+        viewHolder.checkBox.checkProperty().addListener(viewHolder.activeListener);
         viewHolder.name.setText(datapackInfoObject.getTitle());
         viewHolder.description.setText(datapackInfoObject.getSubtitle());
         return view;

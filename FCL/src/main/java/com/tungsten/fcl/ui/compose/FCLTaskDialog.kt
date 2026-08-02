@@ -26,14 +26,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.TaskLabels
-import com.tungsten.fclcore.observable.value.ChangeListener
-import com.tungsten.fclcore.observable.value.ObservableValue
 import com.tungsten.fclcore.task.FetchTask
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.task.TaskExecutor
 import com.tungsten.fclcore.task.TaskListener
 import com.tungsten.fclcore.util.Lang
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Icon
@@ -87,7 +86,7 @@ class FCLTaskDialogState(
         var message by mutableStateOf<String?>(null)
         var failure by mutableStateOf<String?>(null)
 
-        internal val bindings = mutableListOf<Pair<ObservableValue<*>, ChangeListener<*>>>()
+        internal val bindings = mutableListOf<FlowSubscriptions.Subscription>()
     }
 
     /** 渲染行：阶段行与任务行按遗留 listBox 的交错顺序存放（任务插在其阶段之后）。 */
@@ -202,25 +201,17 @@ class FCLTaskDialogState(
         rows.filterIsInstance<StageRow>().firstOrNull { it.entry.stage == stage }?.entry
 
     private fun bindTask(entry: TaskEntry) {
-        val progressListener = ChangeListener<Number> { _, _, newValue ->
-            val v = newValue.toDouble()
+        // subscribeWithCurrent：先同步当前值，再跟踪后续变化（对齐原 ChangeListener + 初值读取）
+        entry.bindings += FlowSubscriptions.subscribeWithCurrent(entry.task.progressFlow()) { v ->
             entry.progress = if (v < 0) null else v.toFloat().coerceIn(0f, 1f)
         }
-        entry.task.progressProperty().addListener(progressListener)
-        entry.bindings += entry.task.progressProperty() to progressListener
-
-        val messageListener = ChangeListener<String> { _, _, newValue ->
+        entry.bindings += FlowSubscriptions.subscribeWithCurrent(entry.task.messageFlow()) { newValue ->
             entry.message = newValue
         }
-        entry.task.messageProperty().addListener(messageListener)
-        entry.bindings += entry.task.messageProperty() to messageListener
     }
 
     private fun unbindTask(entry: TaskEntry) {
-        entry.bindings.forEach { (observable, listener) ->
-            @Suppress("UNCHECKED_CAST")
-            (observable as ObservableValue<Any>).removeListener(listener as ChangeListener<Any>)
-        }
+        entry.bindings.forEach { it.cancel() }
         entry.bindings.clear()
     }
 

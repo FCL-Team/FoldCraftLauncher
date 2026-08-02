@@ -17,12 +17,9 @@
  */
 package com.tungsten.fclcore.util;
 
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.Observable;
-
 import java.util.Objects;
 
-public final class Holder<T> implements InvalidationListener {
+public final class Holder<T> {
     public T value;
 
     public Holder() {
@@ -30,11 +27,6 @@ public final class Holder<T> implements InvalidationListener {
 
     public Holder(T value) {
         this.value = value;
-    }
-
-    @Override
-    public void invalidated(Observable observable) {
-        // no-op
     }
 
     @Override

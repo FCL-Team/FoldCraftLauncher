@@ -39,13 +39,14 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorArtifactProvider
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloadException;
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
-import com.tungsten.fclcore.observable.binding.Bindings;
-import com.tungsten.fclcore.observable.binding.ObjectBinding;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.LaunchOptions;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
+
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class OfflineAccount extends Account {
 
@@ -194,11 +195,12 @@ public class OfflineAccount extends Account {
         );
     }
 
+    private final StateFlow<Optional<Map<TextureType, Texture>>> textures =
+            StateFlowKt.MutableStateFlow(Optional.of(mapOf(pair(TextureType.SKIN, new Texture("offline", null)))));
+
     @Override
-    public ObjectBinding<Optional<Map<TextureType, Texture>>> getTextures() {
-        Map<TextureType, Texture> map = new HashMap<>();
-        map.put(TextureType.SKIN, new Texture("offline", null));
-        return Bindings.createObjectBinding(() -> Optional.of(map));
+    public StateFlow<Optional<Map<TextureType, Texture>>> texturesFlow() {
+        return textures;
     }
 
     @Override

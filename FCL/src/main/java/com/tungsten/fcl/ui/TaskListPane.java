@@ -15,6 +15,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.task.TaskListener;
 import com.tungsten.fclcore.util.Lang;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
@@ -223,6 +224,9 @@ public final class TaskListPane extends FCLAdapter {
         private final FCLProgressBar bar;
         private final FCLTextView state;
 
+        private final FlowSubscriptions.Subscription progressSubscription;
+        private final FlowSubscriptions.Subscription messageSubscription;
+
         public ProgressListNode(Context context, boolean padding, Task<?> task) {
             parent = LayoutInflater.from(context).inflate(R.layout.item_task_progress, null);
             if (padding) {
@@ -233,14 +237,15 @@ public final class TaskListPane extends FCLAdapter {
             FCLTextView title = parent.findViewById(R.id.name);
             state = parent.findViewById(R.id.state);
 
-            bar.percentProgressProperty().bind(task.progressProperty());
+            // 对齐原 bind 语义：先同步当前值，再跟踪后续变化；unbind 时取消订阅
+            progressSubscription = FlowSubscriptions.subscribeWithCurrent(task.progressFlow(), bar.percentProgressProperty()::set);
             title.setText(task.getName());
-            state.stringProperty().bind(task.messageProperty());
+            messageSubscription = FlowSubscriptions.subscribeWithCurrent(task.messageFlow(), state.stringProperty()::set);
         }
 
         public void unbind() {
-            bar.percentProgressProperty().unbind();
-            state.stringProperty().unbind();
+            progressSubscription.cancel();
+            messageSubscription.cancel();
         }
 
         public void setThrowable(Throwable throwable) {

@@ -72,6 +72,8 @@ import java.util.stream.Collectors;
 
 import kotlin.Unit;
 
+import kotlinx.coroutines.flow.StateFlow;
+
 public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     private final BooleanProperty modded = new SimpleBooleanProperty(this, "modded", false);
@@ -530,7 +532,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
     public static class ModInfoObject {
 
-        private final BooleanProperty active;
+        private final StateFlow<Boolean> active;
         private final LocalModFile localModFile;
         private final String title;
         private final String message;
@@ -539,7 +541,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
         ModInfoObject(Context context, LocalModFile localModFile) {
             this.localModFile = localModFile;
-            this.active = localModFile.activeProperty();
+            this.active = localModFile.activeFlow();
 
             StringBuilder title = new StringBuilder(localModFile.getName());
             if (isNotBlank(localModFile.getVersion()))
@@ -556,7 +558,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
             this.mod = ModTranslations.MOD.getMod(localModFile.getId(), localModFile.getName());
         }
 
-        public BooleanProperty getActive() {
+        public StateFlow<Boolean> getActive() {
             return active;
         }
 

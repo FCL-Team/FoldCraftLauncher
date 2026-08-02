@@ -35,7 +35,10 @@ import com.tungsten.fclcore.auth.NoCharacterException;
 import com.tungsten.fclcore.auth.ServerResponseMalformedException;
 import com.tungsten.fclcore.observable.binding.ObjectBinding;
 import com.tungsten.fclcore.util.observable.BindingMapping;
+import com.tungsten.fclcore.util.observable.FlowBridge;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
+
+import kotlinx.coroutines.flow.StateFlow;
 
 public abstract class YggdrasilAccount extends ClassicAccount {
 
@@ -198,18 +201,22 @@ public abstract class YggdrasilAccount extends ClassicAccount {
         service.getProfileRepository().invalidate(characterUUID);
     }
 
-    @Override
-    public ObjectBinding<Optional<Map<TextureType, Texture>>> getTextures() {
-        return BindingMapping.of(service.getProfileRepository().binding(getUUID()))
-                .map(profile -> profile.flatMap(it -> {
-                    try {
-                        return YggdrasilService.getTextures(it);
-                    } catch (ServerResponseMalformedException e) {
-                        LOG.log(Level.WARNING, "Failed to parse texture payload", e);
-                        return Optional.empty();
-                    }
-                }));
+    private StateFlow<Optional<Map<TextureType, Texture>>> textures;
 
+    @Override
+    public synchronized StateFlow<Optional<Map<TextureType, Texture>>> texturesFlow() {
+        if (textures == null) {
+            textures = FlowBridge.asStateFlow(BindingMapping.of(service.getProfileRepository().binding(getUUID()))
+                    .map(profile -> profile.flatMap(it -> {
+                        try {
+                            return YggdrasilService.getTextures(it);
+                        } catch (ServerResponseMalformedException e) {
+                            LOG.log(Level.WARNING, "Failed to parse texture payload", e);
+                            return Optional.empty();
+                        }
+                    })));
+        }
+        return textures;
     }
 
     public void uploadSkin(String model, Path file) throws AuthenticationException, UnsupportedOperationException {

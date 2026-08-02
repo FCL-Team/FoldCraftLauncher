@@ -18,10 +18,6 @@
 package com.tungsten.fclcore.mod;
 
 import com.google.gson.JsonParseException;
-import com.tungsten.fclcore.observable.property.BooleanProperty;
-import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.observable.collections.FXCollections;
-import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.mod.modinfo.PackMcMeta;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
@@ -39,15 +35,20 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class Datapack {
     private boolean isMultiple;
     private final Path path;
-    private final ObservableList<Pack> info = FXCollections.observableArrayList();
+    private final MutableStateFlow<List<Pack>> info = StateFlowKt.MutableStateFlow(Collections.emptyList());
 
     public Datapack(Path path) {
         this.path = path;
@@ -57,15 +58,28 @@ public class Datapack {
         return path;
     }
 
-    public ObservableList<Pack> getInfo() {
+    /**
+     * 数据包列表（不可变快照，整体替换式更新）。
+     *
+     * <p>Java 调用方用 {@link com.tungsten.fclcore.util.flow.FlowSubscriptions#subscribeWithCurrent}
+     * 订阅变化；回调在发射线程执行，不做隐式线程切换。</p>
+     */
+    public StateFlow<List<Pack>> infoFlow() {
         return info;
+    }
+
+    /**
+     * @return 当前数据包列表快照（只读）。
+     */
+    public List<Pack> getInfo() {
+        return info.getValue();
     }
 
     public void installTo(Path worldPath) throws IOException {
         Path datapacks = worldPath.resolve("datapacks");
 
         Set<String> packs = new HashSet<>();
-        for (Pack pack : info) packs.add(pack.getId());
+        for (Pack pack : info.getValue()) packs.add(pack.getId());
 
         if (Files.isDirectory(datapacks)) {
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(datapacks)) {
@@ -125,7 +139,9 @@ public class Datapack {
         else if (Files.isRegularFile(subPath))
             Files.delete(subPath);
 
-        info.removeIf(p -> p.getId().equals(pack.getId()));
+        List<Pack> packs = new ArrayList<>(info.getValue());
+        packs.removeIf(p -> p.getId().equals(pack.getId()));
+        info.setValue(Collections.unmodifiableList(packs));
     }
 
     public void loadFromZip() throws IOException {
@@ -139,7 +155,7 @@ public class Datapack {
                 isMultiple = false;
                 try {
                     PackMcMeta pack = JsonUtils.fromNonNullJson(FileUtils.readText(mcmeta), PackMcMeta.class);
-                    info.add(new Pack(path, FileUtils.getNameWithoutExtension(path), pack.pack().description(), this));
+                    info.setValue(Collections.singletonList(new Pack(path, FileUtils.getNameWithoutExtension(path), pack.pack().description(), this)));
                 } catch (Exception e) {
                     Logging.LOG.log(Level.WARNING, "Failed to read datapack " + path, e);
                 }
@@ -204,12 +220,12 @@ public class Datapack {
             }
         }
 
-        this.info.setAll(info);
+        this.info.setValue(Collections.unmodifiableList(info));
     }
 
     public static class Pack {
         private Path file;
-        private final BooleanProperty active;
+        private final MutableStateFlow<Boolean> active;
         private final String id;
         private final LocalModFile.Description description;
         private final Datapack datapack;
@@ -220,24 +236,7 @@ public class Datapack {
             this.description = description;
             this.datapack = datapack;
 
-            active = new SimpleBooleanProperty(this, "active", !DISABLED_EXT.equals(FileUtils.getExtension(file))) {
-                @Override
-                protected void invalidated() {
-                    Path f = Pack.this.file.toAbsolutePath(), newF;
-                    if (DISABLED_EXT.equals(FileUtils.getExtension(f)))
-                        newF = f.getParent().resolve(FileUtils.getNameWithoutExtension(f));
-                    else
-                        newF = f.getParent().resolve(FileUtils.getName(f) + "." + DISABLED_EXT);
-
-                    try {
-                        Files.move(f, newF);
-                        Pack.this.file = newF;
-                    } catch (IOException e) {
-                        // Mod file is occupied.
-                        Logging.LOG.warning("Unable to rename file " + f + " to " + newF);
-                    }
-                }
-            };
+            this.active = StateFlowKt.MutableStateFlow(!DISABLED_EXT.equals(FileUtils.getExtension(file)));
         }
 
         public String getId() {
@@ -252,16 +251,33 @@ public class Datapack {
             return datapack;
         }
 
-        public BooleanProperty activeProperty() {
+        public StateFlow<Boolean> activeFlow() {
             return active;
         }
 
         public boolean isActive() {
-            return active.get();
+            return active.getValue();
         }
 
         public void setActive(boolean active) {
-            this.active.set(active);
+            if (this.active.getValue() == active)
+                return;
+
+            this.active.setValue(active);
+
+            Path f = Pack.this.file.toAbsolutePath(), newF;
+            if (DISABLED_EXT.equals(FileUtils.getExtension(f)))
+                newF = f.getParent().resolve(FileUtils.getNameWithoutExtension(f));
+            else
+                newF = f.getParent().resolve(FileUtils.getName(f) + "." + DISABLED_EXT);
+
+            try {
+                Files.move(f, newF);
+                Pack.this.file = newF;
+            } catch (IOException e) {
+                // Mod file is occupied.
+                Logging.LOG.warning("Unable to rename file " + f + " to " + newF);
+            }
         }
     }
 

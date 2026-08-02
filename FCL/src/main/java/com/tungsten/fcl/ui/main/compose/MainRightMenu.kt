@@ -32,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -59,10 +60,12 @@ import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel
 import com.tungsten.fclcore.observable.value.ChangeListener
-import com.tungsten.fclcore.util.observable.BindingMapping
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
@@ -255,16 +258,19 @@ private fun AccountBlock(onClick: () -> Unit) {
 
 /**
  * 账户副标题（对齐 MainActivity.accountSubtitle）：
- * AuthlibInjector 账户显示服务器名（observable 绑定），否则显示本地化登录类型名。
+ * AuthlibInjector 账户显示服务器名（跟随 revisionFlow 刷新），否则显示本地化登录类型名。
  */
 @Composable
 private fun AccountSubtitle(account: Account?, modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val text = when (account) {
         null -> stringResource(R.string.account_state_add)
         is AuthlibInjectorAccount -> {
             val serverName by remember(account) {
-                BindingMapping.of(account.server) { it.name }
+                account.server.revisionFlow()
+                    .map { account.server.name }
+                    .stateIn(scope, SharingStarted.Eagerly, account.server.name)
             }.collectAsState()
             serverName
         }

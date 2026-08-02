@@ -31,6 +31,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 
+import com.tungsten.fcl.util.FlowObservables;
 import com.tungsten.fcl.util.ResourceNotFoundError;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.Account;
@@ -253,7 +254,7 @@ public final class TexturesLoader {
 
     public static ObjectBinding<LoadedTexture> skinBinding(Account account) {
         LoadedTexture uuidFallback = getDefaultSkin(TextureModel.detectUUID(account.getUUID()));
-        return BindingMapping.of(account.getTextures())
+        return BindingMapping.of(FlowObservables.toProperty(account.texturesFlow()))
                 .map(textures -> textures
                         .flatMap(it -> Optional.ofNullable(it.get(TextureType.SKIN)))
                         .filter(it -> StringUtils.isNotBlank(it.getUrl())))
@@ -279,7 +280,7 @@ public final class TexturesLoader {
 
     public static ObjectBinding<Bitmap[]> textureBinding(Account account) {
         Bitmap[] fallback = new Bitmap[] { getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage(), null };
-        return BindingMapping.of(account.getTextures())
+        return BindingMapping.of(FlowObservables.toProperty(account.texturesFlow()))
                 .asyncMap(it -> {
                     if (it.isPresent()) {
                         Texture skin = it.get().get(TextureType.SKIN);

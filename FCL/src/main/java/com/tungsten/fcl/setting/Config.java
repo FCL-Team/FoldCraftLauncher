@@ -34,9 +34,11 @@ import com.tungsten.fclcore.observable.property.SimpleMapProperty;
 import com.tungsten.fclcore.observable.property.SimpleStringProperty;
 import com.tungsten.fclcore.observable.property.StringProperty;
 import com.tungsten.fclcore.observable.collections.FXCollections;
+import com.tungsten.fclcore.observable.collections.ListChangeListener;
 import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.observable.collections.ObservableMap;
 import com.tungsten.fclcore.observable.collections.ObservableSet;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.observable.ObservableHelper;
 import com.tungsten.fclcore.util.observable.PropertyUtils;
 import com.tungsten.fclcore.util.gson.FileTypeAdapter;
@@ -48,6 +50,7 @@ import com.tungsten.fclcore.util.gson.observable.factories.JavaFxPropertyTypeAda
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -106,7 +109,33 @@ public final class Config implements Cloneable, Observable {
     private ObservableList<Map<Object, Object>> accountStorages = FXCollections.observableArrayList();
 
     @SerializedName("authlibInjectorServers")
-    private ObservableList<AuthlibInjectorServer> authlibInjectorServers = FXCollections.observableArrayList(server -> new Observable[] { server });
+    private ObservableList<AuthlibInjectorServer> authlibInjectorServers = FXCollections.observableArrayList(server -> new Observable[] { serverChangeMirror(server) });
+
+    // 阶段 3：AuthlibInjectorServer 不再实现 Observable（API 已 StateFlow 化）。
+    // 为保持 extractor「元数据刷新冒泡 → 列表 wasUpdated → Config 存盘」语义，
+    // 给每个服务器镜像一个随 revisionFlow 翻转的 Observable 信号；
+    // 服务器移出列表时取消镜像订阅。
+    private static final Map<AuthlibInjectorServer, SimpleBooleanProperty> serverChangeMirrors = new IdentityHashMap<>();
+    private static final Map<AuthlibInjectorServer, FlowSubscriptions.Subscription> serverChangeSubscriptions = new IdentityHashMap<>();
+
+    private static SimpleBooleanProperty serverChangeMirror(AuthlibInjectorServer server) {
+        SimpleBooleanProperty existing = serverChangeMirrors.get(server);
+        if (existing != null)
+            return existing;
+        SimpleBooleanProperty mirror = new SimpleBooleanProperty(Config.class, "serverChanged", false);
+        FlowSubscriptions.Subscription subscription =
+                FlowSubscriptions.subscribe(server.revisionFlow(), revision -> mirror.set(!mirror.get()));
+        serverChangeMirrors.put(server, mirror);
+        serverChangeSubscriptions.put(server, subscription);
+        return mirror;
+    }
+
+    private static void discardServerChangeMirror(AuthlibInjectorServer server) {
+        FlowSubscriptions.Subscription subscription = serverChangeSubscriptions.remove(server);
+        if (subscription != null)
+            subscription.cancel();
+        serverChangeMirrors.remove(server);
+    }
 
     @SerializedName("promptedVersion")
     private StringProperty promptedVersion = new SimpleStringProperty();
@@ -260,7 +289,18 @@ public final class Config implements Cloneable, Observable {
         return accountStorages;
     }
 
+    private transient boolean serverMirrorCleanupAttached = false;
+
     public ObservableList<AuthlibInjectorServer> getAuthlibInjectorServers() {
+        if (!serverMirrorCleanupAttached) {
+            serverMirrorCleanupAttached = true;
+            authlibInjectorServers.addListener((ListChangeListener<AuthlibInjectorServer>) change -> {
+                while (change.next()) {
+                    if (change.wasRemoved())
+                        change.getRemoved().forEach(Config::discardServerChangeMirror);
+                }
+            });
+        }
         return authlibInjectorServers;
     }
 

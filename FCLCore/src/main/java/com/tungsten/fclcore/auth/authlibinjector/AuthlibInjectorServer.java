@@ -43,15 +43,16 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService;
-import com.tungsten.fclcore.observable.InvalidationListener;
-import com.tungsten.fclcore.observable.Observable;
-import com.tungsten.fclcore.util.observable.ObservableHelper;
 import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 @JsonAdapter(AuthlibInjectorServer.Deserializer.class)
-public class AuthlibInjectorServer implements Observable {
+public class AuthlibInjectorServer {
 
     private static final Gson GSON = new GsonBuilder().create();
 
@@ -106,7 +107,7 @@ public class AuthlibInjectorServer implements Observable {
     private transient boolean nonEmailLogin;
 
     private transient boolean metadataRefreshed;
-    private final transient ObservableHelper helper = new ObservableHelper(this);
+    private final transient MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
     private final transient YggdrasilService yggdrasilService;
 
     public AuthlibInjectorServer(String url) {
@@ -165,7 +166,7 @@ public class AuthlibInjectorServer implements Observable {
         metadataRefreshed = true;
         LOG.info("authlib-injector server metadata refreshed: " + url);
         try {
-            helper.invalidate();
+            revision.setValue(revision.getValue() + 1);
         } catch (Throwable e) {
             LOG.info("refreshMetadata error: " + e);
         }
@@ -225,14 +226,15 @@ public class AuthlibInjectorServer implements Observable {
         return name == null ? url : url + " (" + name + ")";
     }
 
-    @Override
-    public void addListener(InvalidationListener listener) {
-        helper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        helper.removeListener(listener);
+    /**
+     * 服务器元数据变更信号：每次元数据刷新（{@link #refreshMetadata()}）递增。
+     *
+     * <p>对齐原 {@code Observable} 失效语义，消费方（Config 存盘、UI 刷新）应幂等。
+     * Java 调用方用 {@link com.tungsten.fclcore.util.flow.FlowSubscriptions#subscribe} 订阅；
+     * 回调在发射线程执行，不做隐式线程切换。</p>
+     */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     public static class Deserializer implements JsonDeserializer<AuthlibInjectorServer> {

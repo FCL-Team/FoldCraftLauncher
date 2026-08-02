@@ -58,6 +58,7 @@ import com.tungsten.fcl.ui.main.compose.MainRightMenuBridge
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
+import com.tungsten.fcl.util.FlowObservables
 import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.plugins.DriverPlugin
@@ -551,7 +552,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         )
                     } else {
                         accountName.stringProperty()
-                            .bind(BindingMapping.of(account) { obj: Account -> obj.character })
+                            .bind(Bindings.createObjectBinding({ account.character }, FlowObservables.toObservable(account.revisionFlow())))
                         accountHint.stringProperty()
                             .bind(accountSubtitle(this@MainActivity, account))
                         avatar.imageProperty().unbind()
@@ -671,7 +672,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     private fun accountSubtitle(context: Context, account: Account): ObservableValue<String> {
         return if (account is AuthlibInjectorAccount) {
-            BindingMapping.of(account.server) { obj: AuthlibInjectorServer -> obj.name }
+            Bindings.createObjectBinding({ account.server.name }, FlowObservables.toObservable(account.server.revisionFlow()))
         } else {
             Bindings.createStringBinding({
                 Accounts.getLocalizedLoginTypeName(

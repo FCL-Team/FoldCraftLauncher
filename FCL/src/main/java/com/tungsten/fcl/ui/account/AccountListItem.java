@@ -33,6 +33,7 @@ import com.tungsten.fcl.ui.compose.dialog.MiuixOAuthAccountLoginDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixOfflineAccountSkinDialog;
 import com.tungsten.fcl.ui.main.compose.ComposeMainUI;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fcl.util.FlowObservables;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.Account;
@@ -85,12 +86,12 @@ public class AccountListItem {
             AuthlibInjectorServer server = ((AuthlibInjectorAccount) account).getServer();
             subtitle.bind(Bindings.concat(
                     loginTypeName, ", ", context.getString(R.string.account_injector_server), ": ",
-                    Bindings.createStringBinding(server::getName, server)));
+                    Bindings.createStringBinding(server::getName, FlowObservables.toObservable(server.revisionFlow()))));
         } else {
             subtitle.set(loginTypeName);
         }
 
-        StringBinding characterName = Bindings.createStringBinding(account::getCharacter, account);
+        StringBinding characterName = Bindings.createStringBinding(account::getCharacter, FlowObservables.toObservable(account.revisionFlow()));
         if (account instanceof OfflineAccount) {
             title.bind(characterName);
         } else {
