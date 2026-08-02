@@ -7,13 +7,10 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
@@ -45,8 +42,9 @@ import java.util.function.Consumer
  * Miuix 版启动器更新提示弹窗（3.2 批 1，对应 upgrade/UpdateDialog + dialog_update）。
  *
  * 行为对齐：
- * - 展示版本号/日期/类型/更新日志（同一套 string 格式化），内容超高可滚动
- *   （遗留 checkHeight 限高屏幕高 - 30dp，此处用 heightIn 近似）；
+ * - 展示版本号/日期/类型/更新日志（同一套 string 格式化），内容超高由基座
+ *   FCLDialogCard 限高滚动（weight + verticalScroll），按钮区钉在底部不参与滚动
+ *   （替代此前的 heightIn 卡片限高近似遗留 checkHeight 的方案）；
  * - 忽略 → UpdateChecker.setIgnore + dismiss；取消/网盘 → dismiss（网盘先开链接）；
  * - 更新 → 按设备架构替换下载地址，任务弹窗下载 APK（内嵌 TaskDialog 保留
  *   MiuixTaskDialog.USE_COMPOSE_TASK_DIALOG 双分支），完成后拉起系统安装器；
@@ -63,7 +61,49 @@ class MiuixUpdateDialog(
         setDialogContent {
             FCLDialogCard(
                 title = stringResource(R.string.update_exist),
-                modifier = Modifier.heightIn(max = (LocalConfiguration.current.screenHeightDp - 60).dp),
+                // 自定义按钮区（更新钮支持长按）钉在底部：基座 bottomContent 不参与滚动
+                bottomContent = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        TextButton(
+                            text = stringResource(R.string.update_ignore),
+                            onClick = {
+                                UpdateChecker.setIgnore(context, version.versionCode)
+                                dismiss()
+                            },
+                        )
+                        Spacer(Modifier.weight(1f))
+                        TextButton(
+                            text = stringResource(R.string.update_netdisk),
+                            onClick = {
+                                AndroidUtils.openLink(context, version.netdiskUrl)
+                                dismiss()
+                            },
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        // miuix TextButton 不支持长按，更新按钮自绘（点击更新 / 长按打开 GitHub releases）
+                        Text(
+                            text = stringResource(R.string.update),
+                            color = MiuixTheme.colorScheme.primary,
+                            style = MiuixTheme.textStyles.body1,
+                            modifier = Modifier
+                                .combinedClickable(
+                                    onClick = { onUpdate() },
+                                    onLongClick = {
+                                        AndroidUtils.openLink(context, "https://github.com/FCL-Team/FoldCraftLauncher/releases/latest")
+                                    },
+                                )
+                                .padding(horizontal = 12.dp, vertical = 8.dp),
+                        )
+                        Spacer(Modifier.width(8.dp))
+                        TextButton(
+                            text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative),
+                            onClick = { dismiss() },
+                        )
+                    }
+                },
             ) {
                 Text(
                     text = String.format(context.getString(R.string.update_version), version.versionName),
@@ -86,47 +126,6 @@ class MiuixUpdateDialog(
                     style = MiuixTheme.textStyles.body2,
                     modifier = Modifier.padding(top = 10.dp),
                 )
-                Spacer(Modifier.height(12.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    TextButton(
-                        text = stringResource(R.string.update_ignore),
-                        onClick = {
-                            UpdateChecker.setIgnore(context, version.versionCode)
-                            dismiss()
-                        },
-                    )
-                    Spacer(Modifier.weight(1f))
-                    TextButton(
-                        text = stringResource(R.string.update_netdisk),
-                        onClick = {
-                            AndroidUtils.openLink(context, version.netdiskUrl)
-                            dismiss()
-                        },
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    // miuix TextButton 不支持长按，更新按钮自绘（点击更新 / 长按打开 GitHub releases）
-                    Text(
-                        text = stringResource(R.string.update),
-                        color = MiuixTheme.colorScheme.primary,
-                        style = MiuixTheme.textStyles.body1,
-                        modifier = Modifier
-                            .combinedClickable(
-                                onClick = { onUpdate() },
-                                onLongClick = {
-                                    AndroidUtils.openLink(context, "https://github.com/FCL-Team/FoldCraftLauncher/releases/latest")
-                                },
-                            )
-                            .padding(horizontal = 12.dp, vertical = 8.dp),
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    TextButton(
-                        text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative),
-                        onClick = { dismiss() },
-                    )
-                }
             }
         }
     }

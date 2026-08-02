@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -78,8 +79,15 @@ class MiuixSelectKeycodeDialog(
                 insideMargin = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
             ) {
                 Column {
+                    // 键盘区限高随屏幕收缩：游戏内横屏（屏高常仅 360~410dp）下固定 400dp
+                    // 会把确定按钮挤出屏幕；预留 ~150dp 给卡片边距与按钮区
                     AndroidView(
-                        modifier = Modifier.heightIn(max = 400.dp),
+                        modifier = Modifier.heightIn(
+                            max = minOf(
+                                400.dp,
+                                (LocalConfiguration.current.screenHeightDp - 150).dp,
+                            ),
+                        ),
                         factory = { ctx ->
                             LayoutInflater.from(ctx)
                                 .inflate(R.layout.dialog_select_keycode, null)

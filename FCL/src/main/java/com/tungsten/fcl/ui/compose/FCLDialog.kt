@@ -35,6 +35,12 @@ import top.yukonga.miuix.kmp.window.WindowDialog
  *   按声明顺序从右往左排列——首个为主按钮）；
  * - 取消策略（onDismissRequest = null 即 setCancelable(false)，对齐 Miuix WindowDialog 语义）。
  *
+ * 长内容处理（真机 bug 修复）：标题/按钮区钉在内容槽上下、不参与滚动；
+ * 内容槽（含 summary）以 weight(1f, fill = false) 限高 + verticalScroll 滚动，
+ * 短内容时收缩为 wrap_content（视觉与修复前一致），长内容时按钮始终可见不被挤出。
+ * 内容里自带滚动/限高（如 heightIn 限高的 LazyColumn）的弹窗传 scrollable = false，
+ * 此时内容槽仅限高（weight 区域给有界最大高度），不再叠加 verticalScroll，避免双重滚动。
+ *
  * 两个渲染形态：
  * - [FCLDialog]：Compose 页面内使用，基于 Miuix window/WindowDialog（平台 Dialog window，
  *   无 Scaffold 依赖，见 theme-mapping.md §1.2 与 bridge-api.md §2.3）；
@@ -72,13 +78,23 @@ fun FCLDialog(
         summary = summary,
         onDismissRequest = onDismissRequest,
     ) {
-        FCLDialogBody(summary = null, buttons = buttons, content = content?.let { c -> { c() } })
+        // WindowDialog 的内容槽是普通 Column（手机端不限高、不滚动），
+        // 这里自包一层 Column 让 FCLDialogBody 的 weight 限高生效。
+        Column {
+            FCLDialogBody(summary = null, buttons = buttons, content = content?.let { c -> { c() } })
+        }
     }
 }
 
 /**
  * 对话框卡片 UI（自带 window 的命令式对话框 [FCLComposeDialog] 使用）。
  * 视觉对齐遗留 dialog_alert：minWidth 350dp、padding 15dp、标题居中。
+ *
+ * @param scrollable 内容槽是否叠加 verticalScroll（默认 true）。内容自带滚动/限高
+ * （如 heightIn 限高的 LazyColumn）时传 false，避免双重滚动/无限高度测量；
+ * 两种模式下内容槽都会被 weight(1f, fill = false) 限制在标题与按钮区之间。
+ * @param bottomContent 钉在内容槽之下、按钮区之上的自定义区域（不参与滚动），
+ * 供需要自定义按钮形态（如长按）的弹窗使用。
  */
 @Composable
 fun FCLDialogCard(
@@ -87,6 +103,7 @@ fun FCLDialogCard(
     buttons: List<FCLDialogButton> = emptyList(),
     modifier: Modifier = Modifier,
     scrollable: Boolean = true,
+    bottomContent: (@Composable () -> Unit)? = null,
     content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     Card(
@@ -96,10 +113,7 @@ fun FCLDialogCard(
             .fillMaxWidth(),
         insideMargin = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
     ) {
-        Column(
-            modifier = Modifier
-                .then(if (scrollable) Modifier.verticalScroll(rememberScrollState()) else Modifier),
-        ) {
+        Column {
             title?.let {
                 Text(
                     text = it,
@@ -110,34 +124,56 @@ fun FCLDialogCard(
                 )
                 Spacer(Modifier.height(12.dp))
             }
-            FCLDialogBody(summary = summary, buttons = buttons) {
-                content?.invoke(this)
-            }
+            FCLDialogBody(
+                summary = summary,
+                buttons = buttons,
+                scrollable = scrollable,
+                bottomContent = bottomContent,
+                content = content,
+            )
         }
     }
 }
 
-/** summary + 内容槽 + 按钮区的公共部分（[FCLDialog] 的 summary 由 WindowDialog 自绘，传 null）。 */
+/**
+ * summary + 内容槽 + 按钮区的公共部分（[FCLDialog] 的 summary 由 WindowDialog 自绘，传 null）。
+ *
+ * 内容槽（含 summary）放在 weight(1f, fill = false) 区域内：短内容收缩、视觉不变；
+ * 长内容被压在标题与按钮区之间滚动，按钮区始终钉在底部可见。
+ * 调用方必须处于 ColumnScope（[FCLDialog] / [FCLDialogCard] 均自包 Column）。
+ */
 @Composable
-private fun FCLDialogBody(
+private fun ColumnScope.FCLDialogBody(
     summary: String?,
     buttons: List<FCLDialogButton>,
+    scrollable: Boolean = true,
+    bottomContent: (@Composable () -> Unit)? = null,
     content: (@Composable ColumnScope.() -> Unit)?,
 ) {
-    Column {
-        summary?.let {
-            Text(
-                text = it,
-                modifier = Modifier.fillMaxWidth(),
-                style = MiuixTheme.textStyles.body2,
-            )
-            Spacer(Modifier.height(12.dp))
+    if (summary != null || content != null) {
+        Column(
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .then(if (scrollable) Modifier.verticalScroll(rememberScrollState()) else Modifier),
+        ) {
+            summary?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.fillMaxWidth(),
+                    style = MiuixTheme.textStyles.body2,
+                )
+                Spacer(Modifier.height(12.dp))
+            }
+            content?.invoke(this)
         }
-        content?.invoke(this)
-        if (buttons.isNotEmpty()) {
-            Spacer(Modifier.height(12.dp))
-            FCLDialogButtonsRow(buttons)
-        }
+    }
+    bottomContent?.let {
+        Spacer(Modifier.height(12.dp))
+        it()
+    }
+    if (buttons.isNotEmpty()) {
+        Spacer(Modifier.height(12.dp))
+        FCLDialogButtonsRow(buttons)
     }
 }
 
