@@ -14,11 +14,11 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
-import com.tungsten.fclcore.util.fakefx.ObservableHelper;
+import com.tungsten.fclcore.observable.InvalidationListener;
+import com.tungsten.fclcore.observable.Observable;
+import com.tungsten.fclcore.observable.property.ObjectProperty;
+import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
+import com.tungsten.fclcore.util.observable.ObservableHelper;
 
 import java.lang.reflect.Type;
 import java.util.Optional;

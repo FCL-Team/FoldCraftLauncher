@@ -58,8 +58,8 @@ import com.tungsten.fcl.ui.compose.shake
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel
-import com.tungsten.fclcore.fakefx.beans.value.ChangeListener
-import com.tungsten.fclcore.util.fakefx.BindingMapping
+import com.tungsten.fclcore.observable.value.ChangeListener
+import com.tungsten.fclcore.util.observable.BindingMapping
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -209,7 +209,7 @@ private fun AccountBlock(onClick: () -> Unit) {
             avatarSize,
         ).toDrawable(context.resources)
     }
-    // 头像：TexturesLoader.avatarBinding（fakefx 绑定），refreshAvatar 节拍推进后重建
+    // 头像：TexturesLoader.avatarBinding（observable 绑定），refreshAvatar 节拍推进后重建
     val avatar by produceState<Drawable>(defaultAvatar, account, avatarTick) {
         val current = account
         if (current == null) {
@@ -255,7 +255,7 @@ private fun AccountBlock(onClick: () -> Unit) {
 
 /**
  * 账户副标题（对齐 MainActivity.accountSubtitle）：
- * AuthlibInjector 账户显示服务器名（fakefx 绑定），否则显示本地化登录类型名。
+ * AuthlibInjector 账户显示服务器名（observable 绑定），否则显示本地化登录类型名。
  */
 @Composable
 private fun AccountSubtitle(account: Account?, modifier: Modifier = Modifier) {

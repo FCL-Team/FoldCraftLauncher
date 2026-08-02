@@ -33,7 +33,7 @@ import com.tungsten.fcl.control.data.ControlButtonStyle
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
+import com.tungsten.fclcore.observable.property.IntegerProperty
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog
@@ -50,7 +50,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  *
  * 行为对齐：
  * - 编辑模型与遗留一致：beforeStyle 非空取 clone，否则新建 ControlButtonStyle("")，
- *   全程直接改该 fakefx 属性模型，确定时把整个 style 交给回调；
+ *   全程直接改该 observable 属性模型，确定时把整个 style 交给回调；
  * - TabRow 切换普通/按压两套样式页（各 3 滑杆 + 3 颜色），初始选中普通页；
  * - 滑杆沿用 FCLPreciseSeekBar（AndroidView 承载），区间对齐遗留 XML：
  *   字号 2~30（"sp"）、描边宽 0~100（"dp"）、圆角 0~500（"dp"），均与样式属性双向绑定；

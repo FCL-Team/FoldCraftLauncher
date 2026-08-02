@@ -14,8 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
+import com.tungsten.fclcore.observable.property.IntegerProperty;
+import com.tungsten.fclcore.observable.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.anim.DynamicIslandAnim;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;

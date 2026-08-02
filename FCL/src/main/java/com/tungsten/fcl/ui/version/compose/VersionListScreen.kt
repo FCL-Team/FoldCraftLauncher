@@ -53,7 +53,7 @@ import com.tungsten.fcl.ui.compose.shake
 import com.tungsten.fcl.ui.compose.dialog.MiuixAddProfileDialog
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fcl.ui.version.Versions
-import com.tungsten.fclcore.fakefx.collections.ListChangeListener
+import com.tungsten.fclcore.observable.collections.ListChangeListener
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
@@ -175,7 +175,7 @@ private fun ProfileListColumn(modifier: Modifier = Modifier) {
     }
 }
 
-/** 观察 fakefx ObservableList<Profile>（对齐 FCLAdapter 的列表监听自动刷新）。 */
+/** 观察 observable ObservableList<Profile>（对齐 FCLAdapter 的列表监听自动刷新）。 */
 @Composable
 private fun rememberProfiles(): State<List<Profile>> {
     val state = remember { mutableStateOf(Profiles.profiles.toList()) }

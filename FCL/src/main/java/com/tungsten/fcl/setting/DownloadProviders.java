@@ -34,7 +34,7 @@ import com.tungsten.fclcore.download.BMCLAPIDownloadProvider;
 import com.tungsten.fclcore.download.BalancedDownloadProvider;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.download.MojangDownloadProvider;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.observable.InvalidationListener;
 import com.tungsten.fclcore.task.DownloadException;
 import com.tungsten.fclcore.task.FetchTask;
 import com.tungsten.fclcore.util.StringUtils;

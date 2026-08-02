@@ -26,8 +26,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.TaskLabels
-import com.tungsten.fclcore.fakefx.beans.value.ChangeListener
-import com.tungsten.fclcore.fakefx.beans.value.ObservableValue
+import com.tungsten.fclcore.observable.value.ChangeListener
+import com.tungsten.fclcore.observable.value.ObservableValue
 import com.tungsten.fclcore.task.FetchTask
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task

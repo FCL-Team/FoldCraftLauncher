@@ -1,18 +1,18 @@
 package com.tungsten.fcl.setting;
 
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableArrayList;
+import static com.tungsten.fclcore.observable.collections.FXCollections.observableArrayList;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListWrapper;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.observable.Observable;
+import com.tungsten.fclcore.observable.property.ReadOnlyListProperty;
+import com.tungsten.fclcore.observable.property.ReadOnlyListWrapper;
+import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
-import com.tungsten.fclcore.util.gson.fakefx.factories.JavaFxPropertyTypeAdapterFactory;
+import com.tungsten.fclcore.util.gson.observable.factories.JavaFxPropertyTypeAdapterFactory;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 

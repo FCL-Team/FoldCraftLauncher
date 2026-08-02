@@ -64,7 +64,7 @@ fun FCLTheme(
  * 环境自解析版 [FCLTheme]（小步骤 3.2 抽取，原逻辑位于 LegacyBridge.createComposeView）：
  * - Light/Dark/FollowSystem 读 SharedPreferences "launcher" 的 themeMode
  *   （与 FCLActivity.applySavedNightMode 同一数据源），并监听变更即时重组；
- * - 主色/内容色经 fakefx 属性桥（[collectAsState]）观察 ThemeEngine 当前主题，
+ * - 主色/内容色经 observable 属性桥（[collectAsState]）观察 ThemeEngine 当前主题，
  *   取色器修改主题色后 Compose 侧实时联动；引擎未初始化时回落默认 token。
  *
  * 供独立 Compose 根（LegacyBridge.createComposeView、ui/compose/FCLComposeDialog）
@@ -89,7 +89,7 @@ fun FCLTheme(context: Context, content: @Composable () -> Unit) {
         else -> FCLThemeMode.FollowSystem
     }
 
-    // ThemeEngine 主题色：fakefx 属性 → Compose State（引擎未初始化时回落默认 token）
+    // ThemeEngine 主题色：observable 属性 → Compose State（引擎未初始化时回落默认 token）
     val engineTheme = remember { ThemeEngine.getInstance().theme }
     val primary = engineTheme?.colorProperty()?.collectAsState()?.value?.toInt()
         ?.let { Color(it) } ?: FCLThemeTokens.BrandPrimary

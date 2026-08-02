@@ -1,16 +1,16 @@
 package com.tungsten.fcl.control.data;
 
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableArrayList;
+import static com.tungsten.fclcore.observable.collections.FXCollections.observableArrayList;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListWrapper;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.observable.property.ReadOnlyListProperty;
+import com.tungsten.fclcore.observable.property.ReadOnlyListWrapper;
+import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 

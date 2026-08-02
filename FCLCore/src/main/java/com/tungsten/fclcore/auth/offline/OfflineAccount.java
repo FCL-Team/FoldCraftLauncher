@@ -39,8 +39,8 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorArtifactProvider
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloadException;
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
+import com.tungsten.fclcore.observable.binding.Bindings;
+import com.tungsten.fclcore.observable.binding.ObjectBinding;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.LaunchOptions;
 import com.tungsten.fclcore.util.StringUtils;

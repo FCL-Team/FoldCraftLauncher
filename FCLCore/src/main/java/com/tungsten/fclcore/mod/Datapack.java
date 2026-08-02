@@ -18,10 +18,10 @@
 package com.tungsten.fclcore.mod;
 
 import com.google.gson.JsonParseException;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.fakefx.collections.FXCollections;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import com.tungsten.fclcore.observable.property.BooleanProperty;
+import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
+import com.tungsten.fclcore.observable.collections.FXCollections;
+import com.tungsten.fclcore.observable.collections.ObservableList;
 import com.tungsten.fclcore.mod.modinfo.PackMcMeta;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;

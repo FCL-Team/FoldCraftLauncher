@@ -1,8 +1,8 @@
 package com.tungsten.fcllibrary.component;
 
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
-import com.tungsten.fclcore.fakefx.util.StringConverter;
+import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
+import com.tungsten.fclcore.observable.collections.ObservableList;
+import com.tungsten.fclcore.observable.util.StringConverter;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

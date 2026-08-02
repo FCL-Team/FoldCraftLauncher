@@ -18,8 +18,8 @@
 package com.tungsten.fcl.game;
 
 import com.tungsten.fclcore.download.DefaultCacheRepository;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.observable.property.SimpleStringProperty;
+import com.tungsten.fclcore.observable.property.StringProperty;
 
 import java.nio.file.Paths;
 

@@ -18,10 +18,10 @@
 package com.tungsten.fclcore.task;
 
 import com.tungsten.fclcore.event.EventManager;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyDoubleProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyDoubleWrapper;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringWrapper;
+import com.tungsten.fclcore.observable.property.ReadOnlyDoubleProperty;
+import com.tungsten.fclcore.observable.property.ReadOnlyDoubleWrapper;
+import com.tungsten.fclcore.observable.property.ReadOnlyStringProperty;
+import com.tungsten.fclcore.observable.property.ReadOnlyStringWrapper;
 import com.tungsten.fclcore.util.InvocationDispatcher;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.ReflectionHelper;

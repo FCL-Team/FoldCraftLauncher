@@ -43,11 +43,11 @@ import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccount;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
+import com.tungsten.fclcore.observable.binding.Bindings;
+import com.tungsten.fclcore.observable.binding.ObjectBinding;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fclcore.util.fakefx.BindingMapping;
+import com.tungsten.fclcore.util.observable.BindingMapping;
 
 import java.io.File;
 import java.io.IOException;

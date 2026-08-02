@@ -17,12 +17,12 @@
  */
 package com.tungsten.fcl.util;
 
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.WeakInvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.value.ChangeListener;
-import com.tungsten.fclcore.fakefx.beans.value.WeakChangeListener;
-import com.tungsten.fclcore.fakefx.collections.ListChangeListener;
-import com.tungsten.fclcore.fakefx.collections.WeakListChangeListener;
+import com.tungsten.fclcore.observable.InvalidationListener;
+import com.tungsten.fclcore.observable.WeakInvalidationListener;
+import com.tungsten.fclcore.observable.value.ChangeListener;
+import com.tungsten.fclcore.observable.value.WeakChangeListener;
+import com.tungsten.fclcore.observable.collections.ListChangeListener;
+import com.tungsten.fclcore.observable.collections.WeakListChangeListener;
 
 import java.util.ArrayList;
 import java.util.List;

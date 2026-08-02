@@ -36,7 +36,7 @@ import com.tungsten.fcl.control.data.DirectionStyles
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
+import com.tungsten.fclcore.observable.property.IntegerProperty
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog

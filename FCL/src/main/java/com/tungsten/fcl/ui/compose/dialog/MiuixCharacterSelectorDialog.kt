@@ -52,7 +52,7 @@ import java.util.concurrent.CountDownLatch
  * - finally dismiss()。
  * 与遗留实现逐行等价，调用方（AccountListItem/factory.create 链路的 CountDownLatch 语义）不受影响。
  *
- * setCancelable(false) 一致。头像改用 fakefx avatarBinding 观察进 Compose 状态
+ * setCancelable(false) 一致。头像改用 observable avatarBinding 观察进 Compose 状态
  * （绑定实例由本类强引用，防弱绑定被 GC），初始值即 uuid 默认皮肤，等价遗留异步加载。
  */
 class MiuixCharacterSelectorDialog(
@@ -66,7 +66,7 @@ class MiuixCharacterSelectorDialog(
     private val profilesState = mutableStateOf<List<GameProfile>>(emptyList())
     private var service: YggdrasilService? = null
 
-    /** 强引用 fakefx 头像绑定（fakefx 内部为弱监听，无强引用会被 GC 导致头像停更）。 */
+    /** 强引用 observable 头像绑定（observable 内部为弱监听，无强引用会被 GC 导致头像停更）。 */
     private val avatarBindings = ArrayList<Any>()
 
     init {

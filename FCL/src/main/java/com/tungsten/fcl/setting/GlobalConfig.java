@@ -19,14 +19,14 @@ package com.tungsten.fcl.setting;
 
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
-import com.tungsten.fclcore.util.fakefx.ObservableHelper;
-import com.tungsten.fclcore.util.fakefx.PropertyUtils;
+import com.tungsten.fclcore.observable.InvalidationListener;
+import com.tungsten.fclcore.observable.Observable;
+import com.tungsten.fclcore.observable.property.IntegerProperty;
+import com.tungsten.fclcore.observable.property.SimpleIntegerProperty;
+import com.tungsten.fclcore.observable.property.SimpleStringProperty;
+import com.tungsten.fclcore.observable.property.StringProperty;
+import com.tungsten.fclcore.util.observable.ObservableHelper;
+import com.tungsten.fclcore.util.observable.PropertyUtils;
 
 import org.jetbrains.annotations.Nullable;
 

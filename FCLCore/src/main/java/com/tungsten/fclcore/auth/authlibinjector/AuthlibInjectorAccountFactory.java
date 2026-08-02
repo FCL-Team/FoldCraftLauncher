@@ -25,7 +25,7 @@ import com.tungsten.fclcore.auth.CharacterSelector;
 import com.tungsten.fclcore.auth.yggdrasil.CompleteGameProfile;
 import com.tungsten.fclcore.auth.yggdrasil.GameProfile;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilSession;
-import com.tungsten.fclcore.util.fakefx.ObservableOptionalCache;
+import com.tungsten.fclcore.util.observable.ObservableOptionalCache;
 
 import java.util.Map;
 import java.util.Objects;

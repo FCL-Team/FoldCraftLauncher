@@ -10,12 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
+import com.tungsten.fclcore.observable.property.BooleanProperty;
+import com.tungsten.fclcore.observable.property.BooleanPropertyBase;
+import com.tungsten.fclcore.observable.property.IntegerProperty;
+import com.tungsten.fclcore.observable.property.IntegerPropertyBase;
+import com.tungsten.fclcore.observable.property.ObjectProperty;
+import com.tungsten.fclcore.observable.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;

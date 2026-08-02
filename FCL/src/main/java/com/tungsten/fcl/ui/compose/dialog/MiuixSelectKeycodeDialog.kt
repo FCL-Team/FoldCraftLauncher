@@ -20,8 +20,8 @@ import com.tungsten.fcl.control.view.KeycodeView
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
-import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty
-import com.tungsten.fclcore.fakefx.collections.ObservableList
+import com.tungsten.fclcore.observable.property.SimpleIntegerProperty
+import com.tungsten.fclcore.observable.collections.ObservableList
 import top.yukonga.miuix.kmp.basic.Card
 
 /**

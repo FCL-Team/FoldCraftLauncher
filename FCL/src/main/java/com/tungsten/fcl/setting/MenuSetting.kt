@@ -11,15 +11,15 @@ import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
 import com.tungsten.fcl.control.GestureMode
 import com.tungsten.fcl.control.MouseMoveMode
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
-import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleDoubleProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
+import com.tungsten.fclcore.observable.InvalidationListener
+import com.tungsten.fclcore.observable.property.BooleanProperty
+import com.tungsten.fclcore.observable.property.DoubleProperty
+import com.tungsten.fclcore.observable.property.IntegerProperty
+import com.tungsten.fclcore.observable.property.ObjectProperty
+import com.tungsten.fclcore.observable.property.SimpleBooleanProperty
+import com.tungsten.fclcore.observable.property.SimpleDoubleProperty
+import com.tungsten.fclcore.observable.property.SimpleIntegerProperty
+import com.tungsten.fclcore.observable.property.SimpleObjectProperty
 import java.lang.reflect.Type
 
 @JsonAdapter(MenuSetting.Serializer::class)

@@ -13,12 +13,12 @@ import androidx.core.graphics.ColorUtils;
 
 import com.mio.util.ImageUtil;
 import com.tungsten.fcl.FCLApplication;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
+import com.tungsten.fclcore.observable.property.BooleanProperty;
+import com.tungsten.fclcore.observable.property.IntegerProperty;
+import com.tungsten.fclcore.observable.property.ObjectProperty;
+import com.tungsten.fclcore.observable.property.SimpleBooleanProperty;
+import com.tungsten.fclcore.observable.property.SimpleIntegerProperty;
+import com.tungsten.fclcore.observable.property.SimpleObjectProperty;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 

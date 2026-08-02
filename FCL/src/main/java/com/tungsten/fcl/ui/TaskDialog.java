@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.TaskCancellationAction;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.observable.property.StringProperty;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.TaskExecutor;

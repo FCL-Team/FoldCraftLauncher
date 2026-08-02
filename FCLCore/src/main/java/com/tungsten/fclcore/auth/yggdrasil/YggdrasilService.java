@@ -29,7 +29,7 @@ import com.tungsten.fclcore.auth.AuthenticationException;
 import com.tungsten.fclcore.auth.ServerDisconnectException;
 import com.tungsten.fclcore.auth.ServerResponseMalformedException;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fclcore.util.fakefx.ObservableOptionalCache;
+import com.tungsten.fclcore.util.observable.ObservableOptionalCache;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 import com.tungsten.fclcore.util.gson.ValidationTypeAdapterFactory;
 import com.tungsten.fclcore.util.io.FileUtils;

@@ -23,7 +23,7 @@ import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclcore.auth.AuthInfo
 import com.tungsten.fclcore.auth.OAuthAccount
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
+import com.tungsten.fclcore.observable.property.SimpleObjectProperty
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging.LOG

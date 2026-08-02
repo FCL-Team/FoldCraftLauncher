@@ -34,7 +34,7 @@ import com.tungsten.fclcore.auth.yggdrasil.CompleteGameProfile;
 import com.tungsten.fclcore.auth.yggdrasil.RemoteAuthenticationException;
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
-import com.tungsten.fclcore.util.fakefx.ObservableOptionalCache;
+import com.tungsten.fclcore.util.observable.ObservableOptionalCache;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.TolerableValidationException;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;

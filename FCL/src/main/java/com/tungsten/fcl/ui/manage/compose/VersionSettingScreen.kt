@@ -46,7 +46,7 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * special_setting_layout，仅单版本页显示（对齐 :175 的 GONE/VISIBLE）。
  *
  * 组件选型（bridge-api.md §3.3 对照表）：
- * - FXUtils.bindBoolean × 10 → SwitchPreference（写即回写 fakefx 属性）；
+ * - FXUtils.bindBoolean × 10 → SwitchPreference（写即回写 observable 属性）；
  * - FXUtils.bindString × 4 → BasicComponent + TextField（逐键回写，等价 EditText 绑定）；
  * - barMemory/maxMemory 双向 → SliderPreference（范围 0..设备总内存，对齐
  *   FCLNumberSeekBar.setMax(MemoryUtils.getTotalDeviceMemory)）；

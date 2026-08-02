@@ -268,7 +268,7 @@ private fun ServerListColumn(
 
 /**
  * 选中账户的 3D 皮肤预览（GL 渲染，AndroidView 原样包装 SkinViewer）。
- * 纹理取选中账户 AccountListItem 的 textureProperty（fakefx），换肤重绑后自动更新；
+ * 纹理取选中账户 AccountListItem 的 textureProperty（observable），换肤重绑后自动更新；
  * 无选中账户时显示默认 alex 皮肤（对齐 MainUI.setupSkinDisplay :154-156）。
  */
 @Composable
@@ -352,7 +352,7 @@ private fun AccountRow(
                 selected = selected,
                 onClick = { viewModel.onSelectAccount(item) },
             )
-            // 头像：TexturesLoader fakefx 绑定产物（本地生成的 BitmapDrawable），
+            // 头像：TexturesLoader observable 绑定产物（本地生成的 BitmapDrawable），
             // 图片加载按 bridge-api.md §4 决策走 glide-compose
             GlideImage(
                 model = avatar,

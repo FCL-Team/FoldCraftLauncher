@@ -33,7 +33,7 @@ import java.util.logging.Level
  * 启动器设置页 ViewModel（小步骤 3.1）：LauncherSettingPage.java 的 Compose 化承接。
  *
  * 承接原则（bridge-api.md §5）：
- * - 数据层零改动：Config fakefx 属性经 asMutableStateFlow() 双向桥接（写 flow 即写
+ * - 数据层零改动：Config observable 属性经 asMutableStateFlow() 双向桥接（写 flow 即写
  *   Config，ConfigHolder 自动落盘）；Theme/ThemeEngine 沿用遗留单例；
  *   SharedPreferences "launcher" 读写键名/默认值与遗留完全一致；
  * - 业务规则全部收在本类：勾选自动线程重置线程数、动画速度变更自动 saveTheme、
@@ -53,7 +53,7 @@ class LauncherSettingViewModel(
     private val engine = ThemeEngine.getInstance()
     private val theme = engine.theme
 
-    // ---------- fakefx 双向桥（写 flow 即持久化） ----------
+    // ---------- observable 双向桥（写 flow 即持久化） ----------
 
     /** 动画速度：theme.animationSpeedProperty 双向（对齐 LauncherSettingPage.java:154-157）。 */
     private val animationSpeedFlow = theme.animationSpeedProperty().asMutableStateFlow()
@@ -88,7 +88,7 @@ class LauncherSettingViewModel(
             )
         }
 
-        // fakefx 单向投影（主题色板/开关/滑杆值）
+        // observable 单向投影（主题色板/开关/滑杆值）
         theme.colorProperty().asStateFlow().observeIntoState { copy(themeColor = it.toInt()) }
         theme.color2Property().asStateFlow().observeIntoState { copy(themeColor2 = it.toInt()) }
         theme.color2DarkProperty().asStateFlow().observeIntoState { copy(themeColor2Dark = it.toInt()) }
@@ -308,7 +308,7 @@ class LauncherSettingViewModel(
         updateState { copy(closeSkinModel = enabled) }
     }
 
-    /** 动画速度：写 fakefx 属性即持久化（init 里注册的监听自动 saveTheme）。 */
+    /** 动画速度：写 observable 属性即持久化（init 里注册的监听自动 saveTheme）。 */
     fun setAnimationSpeed(speed: Int) {
         animationSpeedFlow.value = speed.coerceIn(1, 20)
     }
