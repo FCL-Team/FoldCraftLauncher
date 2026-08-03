@@ -36,12 +36,15 @@ import com.tungsten.fcl.control.GameMenu
 import com.tungsten.fcl.control.data.ButtonStyles
 import com.tungsten.fcl.control.data.ControlButtonStyle
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
+import com.tungsten.fcl.ui.compose.fclDialogTextButtonColors
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.RadioButton
+import top.yukonga.miuix.kmp.basic.RadioButtonDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -178,6 +181,8 @@ class MiuixButtonStyleDialog(
                 .width(400.dp)
                 .fillMaxHeight(),
             insideMargin = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            // 对齐遗留 dialog_background（#F4F4F4 / #232323）→ surface token
+            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.surface),
         ) {
             androidx.compose.foundation.layout.Column(Modifier.fillMaxSize()) {
                 Text(
@@ -204,17 +209,20 @@ class MiuixButtonStyleDialog(
                     TextButton(
                         text = stringResource(R.string.menu_control_style_add),
                         onClick = { onAddStyle() },
+                        colors = fclDialogTextButtonColors(),
                     )
                     if (select) {
                         TextButton(
                             text = stringResource(R.string.menu_control_style_edit),
                             onClick = { onEditStyle() },
+                            colors = fclDialogTextButtonColors(),
                         )
                     }
                     Spacer(Modifier.weight(1f))
                     TextButton(
                         text = stringResource(com.tungsten.fcllibrary.R.string.dialog_positive),
                         onClick = { onPositive() },
+                        colors = fclDialogTextButtonColors(),
                     )
                 }
             }
@@ -242,13 +250,18 @@ class MiuixButtonStyleDialog(
                 RadioButton(
                     selected = selectedStyleState.value === style,
                     onClick = { selectedStyleState.value = style },
+                    // 对齐遗留 FCLRadioButton：按钮圆点 tint = dkColor（primaryVariant），不用 primary
+                    colors = RadioButtonDefaults.radioButtonColors(
+                        selectedColor = MiuixTheme.colorScheme.primaryVariant,
+                    ),
                 )
             }
             IconButton(onClick = { onDeleteStyle(style) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_baseline_delete_24),
                     contentDescription = null,
-                    tint = MiuixTheme.colorScheme.onSurface,
+                    // 对齐遗留 item_button_style：darker_gray 静态描边色，不用 color2
+                    tint = MiuixTheme.colorScheme.outline,
                 )
             }
         }

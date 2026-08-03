@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.DownloadProviders
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
+import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
@@ -214,13 +215,14 @@ fun VersionInstallScreen(
                         singleLine = true,
                     )
                     Spacer(Modifier.width(6.dp))
+                    // 对齐 page_install_version.xml refresh FCLImageButton auto_tint（图标 autoTint = onPrimary）
                     IconButton(onClick = holder::refreshList, enabled = !holder.loading) {
                         Icon(
                             painter = androidx.compose.ui.res.painterResource(
                                 R.drawable.ic_baseline_refresh_24,
                             ),
                             contentDescription = null,
-                            tint = MiuixTheme.colorScheme.onSurface,
+                            tint = MiuixTheme.colorScheme.onPrimary,
                         )
                     }
                 }
@@ -239,12 +241,13 @@ fun VersionInstallScreen(
                     onClick = holder::refreshList,
                     modifier = Modifier.align(Alignment.Center),
                 ) {
+                    // 对齐 failed_refresh（无 auto_tint）：drawable 自带静态灰
                     Icon(
                         painter = androidx.compose.ui.res.painterResource(
                             R.drawable.ic_baseline_refresh_24,
                         ),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        tint = FCLThemeTokens.StrokeGray,
                     )
                 }
 
@@ -277,6 +280,11 @@ private fun VersionTypeCheckbox(
             state = if (checked) ToggleableState.On else ToggleableState.Off,
             onClick = { onCheckedChange(!checked) },
         )
-        Text(text = label, style = MiuixTheme.textStyles.body2)
+        // 对齐 FCLCheckBox auto_hint_tint（文本 autoTint = onPrimary，位于 ltColor bar 上）
+        Text(
+            text = label,
+            style = MiuixTheme.textStyles.body2,
+            color = MiuixTheme.colorScheme.onPrimary,
+        )
     }
 }

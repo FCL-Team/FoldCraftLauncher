@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -30,11 +31,17 @@ import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import kotlinx.coroutines.flow.StateFlow
 import top.yukonga.miuix.kmp.basic.BasicComponent
+import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.LinearProgressIndicator
+import top.yukonga.miuix.kmp.basic.ProgressIndicatorDefaults
+import top.yukonga.miuix.kmp.basic.SliderDefaults
+import top.yukonga.miuix.kmp.basic.SwitchDefaults
 import top.yukonga.miuix.kmp.basic.TextField
+import top.yukonga.miuix.kmp.basic.TextFieldDefaults
 import top.yukonga.miuix.kmp.preference.SliderPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -51,6 +58,13 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * - barMemory/maxMemory 双向 → SliderPreference（范围 0..设备总内存，对齐
  *   FCLNumberSeekBar.setMax(MemoryUtils.getTotalDeviceMemory)）；
  * - 可见性绑定（settingLayout / driverContainer / disableProperty）→ if (state.x)。
+ *
+ * 染色对齐旧版 page_version_setting.xml / FCLLibrary 组件主题（见文件底部
+ * "旧版染色通道对齐" 一组 helper）：
+ * - 容器 auto_linear_background_tint → ltColor（primaryContainer）；
+ * - 文本 auto_text_tint / FCLImageButton auto_tint → autoTint（onPrimary）；
+ * - FCLSwitch thumb/track、FCLEditText 背景、FCLNumberSeekBar/FCLProgressBar
+ *   进度 → color/dkColor（primary / primaryVariant）。
  *
  * 与遗留的有意偏差：
  * - JVM/游戏参数的长按全屏编辑 → 行尾编辑按钮（Compose TextField 长按被文本选择占用）；
@@ -131,8 +145,8 @@ fun VersionSettingScreen(
         // ---------- 专用设置卡片（special_setting_layout，仅单版本页，对齐 :17-90） ----------
         if (!state.globalSetting) {
             item(key = "special") {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    SwitchPreference(
+                ThemedCard(modifier = Modifier.fillMaxWidth()) {
+                    ThemedSwitchPreference(
                         checked = state.enableSpecificSettings,
                         onCheckedChange = viewModel::setEnableSpecificSettings,
                         title = stringResource(R.string.settings_type_special_enable),
@@ -141,6 +155,7 @@ fun VersionSettingScreen(
                     if (state.versionId != null) {
                         BasicComponent(
                             title = stringResource(R.string.settings_icon),
+                            titleColor = autoTintComponentColors(),
                             endActions = {
                                 val iconBitmap = remember(state.iconDrawable) {
                                     runCatching { state.iconDrawable?.toBitmap()?.asImageBitmap() }.getOrNull()
@@ -156,14 +171,14 @@ fun VersionSettingScreen(
                                     Icon(
                                         painter = painterResource(R.drawable.ic_baseline_edit_24),
                                         contentDescription = null,
-                                        tint = MiuixTheme.colorScheme.onSurface,
+                                        tint = MiuixTheme.colorScheme.onPrimary,
                                     )
                                 }
                                 IconButton(onClick = viewModel::onDeleteIcon) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_baseline_close_24),
                                         contentDescription = null,
-                                        tint = MiuixTheme.colorScheme.onSurface,
+                                        tint = MiuixTheme.colorScheme.onPrimary,
                                     )
                                 }
                             },
@@ -178,7 +193,7 @@ fun VersionSettingScreen(
         if (state.globalSetting || state.enableSpecificSettings) {
             // ---------- 分组一：游戏（对齐 :98-287） ----------
             item(key = "game") {
-                Card(modifier = Modifier.fillMaxWidth()) {
+                ThemedCard(modifier = Modifier.fillMaxWidth()) {
                     ValueSettingRow(
                         title = stringResource(R.string.settings_game_java_version),
                         value = if (state.javaName == "Auto") {
@@ -189,7 +204,7 @@ fun VersionSettingScreen(
                         onEdit = viewModel::onEditJava,
                         onInstall = viewModel::onInstallJava,
                     )
-                    SwitchPreference(
+                    ThemedSwitchPreference(
                         checked = state.isolateGameDir,
                         onCheckedChange = viewModel::setIsolateGameDir,
                         title = stringResource(R.string.settings_game_working_directory),
@@ -212,14 +227,14 @@ fun VersionSettingScreen(
 
             // ---------- 分组二：控制器/渲染（对齐 :289-547） ----------
             item(key = "render") {
-                Card(modifier = Modifier.fillMaxWidth()) {
+                ThemedCard(modifier = Modifier.fillMaxWidth()) {
                     ValueSettingRow(
                         title = stringResource(R.string.settings_fcl_controller),
                         value = state.controllerName,
                         onEdit = viewModel::onEditController,
                         onInstall = viewModel::onInstallController,
                     )
-                    SwitchPreference(
+                    ThemedSwitchPreference(
                         checked = state.beGesture,
                         onCheckedChange = viewModel::setBeGesture,
                         title = stringResource(R.string.settings_fcl_controller_injector),
@@ -235,12 +250,12 @@ fun VersionSettingScreen(
                         onEdit = viewModel::onEditRenderer,
                         onInstall = viewModel::onInstallRenderer,
                     )
-                    SwitchPreference(
+                    ThemedSwitchPreference(
                         checked = state.pojavBigCore,
                         onCheckedChange = viewModel::setPojavBigCore,
                         title = stringResource(R.string.settings_fcl_pojav_bigcore),
                     )
-                    SwitchPreference(
+                    ThemedSwitchPreference(
                         checked = state.vkDriverSystem,
                         onCheckedChange = viewModel::setVkDriverSystem,
                         title = stringResource(R.string.settings_fcl_vulkan_driver_system),
@@ -261,23 +276,23 @@ fun VersionSettingScreen(
 
             // ---------- 分组三：高级（对齐 :549-756） ----------
             item(key = "advanced") {
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    SwitchPreference(
+                ThemedCard(modifier = Modifier.fillMaxWidth()) {
+                    ThemedSwitchPreference(
                         checked = state.notCheckGame,
                         onCheckedChange = viewModel::setNotCheckGame,
                         title = stringResource(R.string.settings_advanced_dont_check_game_completeness),
                     )
-                    SwitchPreference(
+                    ThemedSwitchPreference(
                         checked = state.notCheckJVM,
                         onCheckedChange = viewModel::setNotCheckJVM,
                         title = stringResource(R.string.settings_advanced_dont_check_jvm_validity),
                     )
-                    SwitchPreference(
+                    ThemedSwitchPreference(
                         checked = state.notCheckMod,
                         onCheckedChange = viewModel::setNotCheckMod,
                         title = stringResource(R.string.settings_advanced_dont_check_mod),
                     )
-                    SwitchPreference(
+                    ThemedSwitchPreference(
                         checked = state.debugLog,
                         onCheckedChange = viewModel::setDebugLog,
                         title = stringResource(R.string.settings_advanced_debug_log),
@@ -296,12 +311,13 @@ fun VersionSettingScreen(
                     )
                     BasicComponent(
                         title = stringResource(R.string.settings_advanced_env),
+                        titleColor = autoTintComponentColors(),
                         endActions = {
                             IconButton(onClick = viewModel::onEditEnv) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_baseline_settings_24),
                                     contentDescription = null,
-                                    tint = MiuixTheme.colorScheme.onSurface,
+                                    tint = MiuixTheme.colorScheme.onPrimary,
                                 )
                             }
                         },
@@ -312,7 +328,7 @@ fun VersionSettingScreen(
                         value = state.uuid,
                         onValueChange = viewModel::setUuid,
                     )
-                    SwitchPreference(
+                    ThemedSwitchPreference(
                         checked = state.forceResolution,
                         onCheckedChange = viewModel::setForceResolution,
                         title = stringResource(R.string.settings_advanced_force_resolution),
@@ -334,7 +350,7 @@ private fun MemoryBlock(
     onMaxMemoryChange: (Int) -> Unit,
 ) {
     val context = LocalContext.current
-    SwitchPreference(
+    ThemedSwitchPreference(
         checked = state.autoMemory,
         onCheckedChange = onAutoMemoryChange,
         title = stringResource(R.string.settings_memory),
@@ -346,8 +362,14 @@ private fun MemoryBlock(
         title = stringResource(
             if (state.autoMemory) R.string.settings_memory_lower_bound else R.string.settings_memory,
         ),
+        titleColor = autoTintComponentColors(),
         valueText = "${state.maxMemory}MB",
         valueRange = 0f..state.totalMemoryMB.toFloat(),
+        // 对齐 FCLNumberSeekBar：thumb/progress tint = dkColor（= primaryVariant）
+        sliderColors = SliderDefaults.sliderColors(
+            foregroundColor = MiuixTheme.colorScheme.primaryVariant,
+            thumbColor = MiuixTheme.colorScheme.primaryVariant,
+        ),
     )
 
     // 空闲内存在拖动/刷新时重取（对齐遗留 StringBinding 每次失效重算）
@@ -386,8 +408,14 @@ private fun MemoryBlock(
 
     BasicComponent(
         title = infoText,
+        titleColor = autoTintComponentColors(),
         summary = allocateText,
+        summaryColor = autoTintComponentColors(),
         bottomAction = {
+            // 对齐 FCLProgressBar：progress/secondaryProgress tint = dkColor（= primaryVariant）
+            val progressColors = ProgressIndicatorDefaults.progressIndicatorColors(
+                foregroundColor = MiuixTheme.colorScheme.primaryVariant,
+            )
             Box(modifier = Modifier.fillMaxWidth()) {
                 // 底层：已用 + 将分配（对齐 memoryBar.secondProgress）
                 LinearProgressIndicator(
@@ -395,11 +423,13 @@ private fun MemoryBlock(
                     modifier = Modifier
                         .fillMaxWidth()
                         .alpha(0.35f),
+                    colors = progressColors,
                 )
                 // 上层：已用（对齐 memoryBar.firstProgress）
                 LinearProgressIndicator(
                     progress = usedFraction,
                     modifier = Modifier.fillMaxWidth(),
+                    colors = progressColors,
                 )
             }
         },
@@ -416,7 +446,9 @@ private fun ValueSettingRow(
 ) {
     BasicComponent(
         title = title,
+        titleColor = autoTintComponentColors(),
         summary = value,
+        summaryColor = autoTintComponentColors(),
         endActions = {
             RowActionIcon(icon = R.drawable.ic_baseline_settings_24, onClick = onEdit)
             if (onInstall != null) {
@@ -438,6 +470,7 @@ private fun TextSettingRow(
 ) {
     BasicComponent(
         title = title,
+        titleColor = autoTintComponentColors(),
         endActions = {
             if (onFullEdit != null) {
                 RowActionIcon(icon = R.drawable.ic_baseline_edit_24, onClick = onFullEdit)
@@ -449,6 +482,14 @@ private fun TextSettingRow(
                 onValueChange = onValueChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
+                // 对齐 FCLEditText：背景 tint = dkColor（未聚焦态，= primaryVariant），
+                // 光标/聚焦边框 = primary（Miuix 默认），文字 = autoTint（onPrimary）
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = MiuixTheme.colorScheme.primaryVariant,
+                ),
+                textStyle = MiuixTheme.textStyles.main.copy(
+                    color = MiuixTheme.colorScheme.onPrimary,
+                ),
             )
         },
     )
@@ -460,7 +501,65 @@ private fun RowActionIcon(icon: Int, onClick: () -> Unit) {
         Icon(
             painter = painterResource(icon),
             contentDescription = null,
-            tint = MiuixTheme.colorScheme.onSurface,
+            // 对齐 FCLImageButton auto_tint="true"：图标染 autoTint（= onPrimary）
+            tint = MiuixTheme.colorScheme.onPrimary,
         )
     }
 }
+
+// ---------- 旧版染色通道对齐（page_version_setting.xml / FCLLibrary 组件主题） ----------
+
+/** 分组卡片：对齐旧版容器 auto_linear_background_tint="true" → ltColor（= primaryContainer）。 */
+@Composable
+private fun ThemedCard(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+    ) {
+        content()
+    }
+}
+
+/**
+ * SwitchPreference 包装：对齐旧版 FCLSwitch 染色——
+ * 文本 autoTint（= onPrimary）；thumb checked=dkColor / unchecked=primary，
+ * track checked=primary / unchecked=Gray（FCLSwitch.refreshStyle，禁用态旧版不变色）。
+ */
+@Composable
+private fun ThemedSwitchPreference(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    title: String,
+    summary: String? = null,
+    enabled: Boolean = true,
+) {
+    SwitchPreference(
+        checked = checked,
+        onCheckedChange = onCheckedChange,
+        title = title,
+        titleColor = autoTintComponentColors(),
+        summary = summary,
+        summaryColor = autoTintComponentColors(),
+        switchColors = SwitchDefaults.switchColors(
+            checkedThumbColor = MiuixTheme.colorScheme.primaryVariant,
+            uncheckedThumbColor = MiuixTheme.colorScheme.primary,
+            disabledCheckedThumbColor = MiuixTheme.colorScheme.primaryVariant,
+            disabledUncheckedThumbColor = MiuixTheme.colorScheme.primary,
+            checkedTrackColor = MiuixTheme.colorScheme.primary,
+            uncheckedTrackColor = Color.Gray,
+            disabledCheckedTrackColor = MiuixTheme.colorScheme.primary,
+            disabledUncheckedTrackColor = Color.Gray,
+        ),
+        enabled = enabled,
+    )
+}
+
+/** 旧版 auto_text_tint / FCLSwitch 文本 → ThemeEngine autoTint（= onPrimary，禁用态旧版不变色）。 */
+@Composable
+private fun autoTintComponentColors() = BasicComponentColors(
+    color = MiuixTheme.colorScheme.onPrimary,
+    disabledColor = MiuixTheme.colorScheme.onPrimary,
+)

@@ -56,6 +56,8 @@ class MiuixDriverSelectDialog(
                         Text(
                             text = driver.driver,
                             style = MiuixTheme.textStyles.body2,
+                            // 对齐遗留 item_renderer：use_theme_color="true" → color2（onSurface），跟随内容色
+                            color = MiuixTheme.colorScheme.onSurface,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable { onSelect(index) }

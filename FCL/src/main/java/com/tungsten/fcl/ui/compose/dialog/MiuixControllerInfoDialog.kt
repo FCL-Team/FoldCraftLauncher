@@ -30,6 +30,7 @@ import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.platform.OperatingSystem
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Checkbox
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextField
@@ -108,6 +109,8 @@ class MiuixControllerInfoDialog(
                 .padding(16.dp)
                 .width(400.dp),
             insideMargin = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            // 对齐遗留 dialog_background（#F4F4F4 / #232323）→ surface token
+            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.surface),
         ) {
             Column {
                 Text(

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -252,9 +254,11 @@ class MiuixOfflineAccountSkinDialog(
                 },
             )
             Spacer(Modifier.width(4.dp))
+            // 对齐遗留 text_use_theme_color="true"：单选文字用主色（FCLRadioButton color|0xFF000000）
             Text(
                 text = label,
                 style = MiuixTheme.textStyles.body2,
+                color = MiuixTheme.colorScheme.primary,
             )
         }
     }
@@ -316,10 +320,17 @@ class MiuixOfflineAccountSkinDialog(
 
     @Composable
     private fun CslSection() {
+        // 对齐遗留 bg_container_white + auto_text_background_tint + auto_text_tint：
+        // 5dp 圆角底染主色（color），文字按主色亮度取黑/白（autoTint）
         Text(
             text = stringResource(R.string.account_skin_type_csl_api_hint),
             style = MiuixTheme.textStyles.footnote1,
-            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+            color = MiuixTheme.colorScheme.onPrimary,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .background(MiuixTheme.colorScheme.primary, RoundedCornerShape(5.dp))
+                .padding(10.dp),
         )
         TextField(
             value = cslUrlState.value,

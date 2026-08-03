@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.bridge.LegacyBridge
+import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.RemoteMod
@@ -145,23 +146,25 @@ fun RemoteModDownloadScreen(
             colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
         ) {
             Column(modifier = Modifier.padding(10.dp)) {
+                // 对齐 page_download_addon.xml 头部：name/tag/date 均 auto_text_tint（autoTint = onPrimary）
                 Text(
                     text = holder.modVersion.name,
                     style = MiuixTheme.textStyles.body1,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    color = MiuixTheme.colorScheme.onPrimary,
                 )
                 Text(
                     text = modVersionTag(context, holder.modVersion),
                     fontSize = 11.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MiuixTheme.colorScheme.primary,
+                    color = MiuixTheme.colorScheme.onPrimary,
                 )
                 Text(
                     text = REMOTE_MOD_DATE_FORMATTER.format(holder.modVersion.datePublished),
                     fontSize = 11.sp,
-                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                    color = MiuixTheme.colorScheme.onPrimary,
                 )
             }
         }
@@ -179,12 +182,13 @@ fun RemoteModDownloadScreen(
                     onClick = holder::loadDependencies,
                     modifier = Modifier.align(Alignment.Center),
                 ) {
+                    // 对齐 page_download_addon.xml retry（无 auto_tint）：drawable 自带静态灰
                     Icon(
                         painter = androidx.compose.ui.res.painterResource(
                             R.drawable.ic_baseline_refresh_24,
                         ),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        tint = FCLThemeTokens.StrokeGray,
                     )
                 }
 
@@ -195,15 +199,6 @@ fun RemoteModDownloadScreen(
                 ) {
                     // EnumMap 迭代顺序 = 枚举声明顺序（对齐遗留 EnumMap keySet 顺序）
                     holder.dependencies.forEach { (type, mods) ->
-                        Text(
-                            text = AndroidUtils.getLocalizedText(
-                                context,
-                                DEPENDENCY_STRING_ID_KEY[type],
-                            ),
-                            style = MiuixTheme.textStyles.body2,
-                            color = MiuixTheme.colorScheme.primary,
-                            modifier = Modifier.padding(vertical = 6.dp),
-                        )
                         Card(
                             // 对齐 dependency_layout 的 bg_container_white +
                             // RemoteModDownloadPage:166 registerEvent（ltColor 染色 = primaryContainer）
@@ -211,6 +206,20 @@ fun RemoteModDownloadScreen(
                             modifier = Modifier.fillMaxWidth(),
                         ) {
                             Column {
+                                // 分组标题位于 ltColor 容器内（对齐 :120-127 autoTint 文本 = onPrimary）
+                                Text(
+                                    text = AndroidUtils.getLocalizedText(
+                                        context,
+                                        DEPENDENCY_STRING_ID_KEY[type],
+                                    ),
+                                    style = MiuixTheme.textStyles.body2,
+                                    color = MiuixTheme.colorScheme.onPrimary,
+                                    modifier = Modifier.padding(
+                                        start = 10.dp,
+                                        top = 8.dp,
+                                        end = 10.dp,
+                                    ),
+                                )
                                 mods.forEach { mod ->
                                     DependencyRow(
                                         mod = mod,
@@ -253,9 +262,10 @@ fun RemoteModDownloadScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Button(
-                // 对齐 :219-221：取消 = 一次返回
+                // 对齐 :219-221：取消 = 一次返回；旧版四按钮均为 FCLButton（主色实心 = primary）
                 onClick = { LegacyBridge.onBackPressed() },
                 modifier = Modifier.weight(1f),
+                colors = ButtonDefaults.buttonColorsPrimary(),
             ) {
                 Text(text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative))
             }
@@ -267,6 +277,7 @@ fun RemoteModDownloadScreen(
                 },
                 modifier = Modifier.weight(1f),
                 enabled = !backClicked,
+                colors = ButtonDefaults.buttonColorsPrimary(),
             ) {
                 Text(text = stringResource(R.string.button_back))
             }
@@ -292,6 +303,8 @@ private fun DependencyRow(
         style = MiuixTheme.textStyles.body2,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
+        // 对齐 DependencyAdapter:63-64（autoTint = onPrimary）
+        color = MiuixTheme.colorScheme.onPrimary,
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)

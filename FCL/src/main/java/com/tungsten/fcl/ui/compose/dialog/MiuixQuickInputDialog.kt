@@ -28,6 +28,7 @@ import com.tungsten.fcl.control.AddInputTextDialog
 import com.tungsten.fcl.control.GameMenu
 import com.tungsten.fcl.control.data.QuickInputTexts
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
+import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.keycodes.FCLKeycodes
 import com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper
@@ -186,7 +187,8 @@ class MiuixQuickInputDialog(
                 Icon(
                     painter = painterResource(R.drawable.ic_baseline_delete_24),
                     contentDescription = null,
-                    tint = MiuixTheme.colorScheme.onSurface,
+                    // 对齐遗留 item_input_text：android:tint="@android:color/darker_gray"（静态，不随主题）
+                    tint = FCLThemeTokens.StrokeGray,
                 )
             }
         }

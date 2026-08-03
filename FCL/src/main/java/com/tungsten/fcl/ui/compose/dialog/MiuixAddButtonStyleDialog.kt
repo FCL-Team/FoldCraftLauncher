@@ -33,6 +33,7 @@ import com.tungsten.fcl.control.data.ControlButtonStyle
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
+import com.tungsten.fcl.ui.compose.fclDialogTextButtonColors
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.dialog.EditDialog
@@ -327,6 +328,7 @@ class MiuixAddButtonStyleDialog(
             TextButton(
                 text = stringResource(R.string.menu_control_set),
                 onClick = { openColorPicker(spec.get, spec.set) },
+                colors = fclDialogTextButtonColors(),
             )
         }
     }

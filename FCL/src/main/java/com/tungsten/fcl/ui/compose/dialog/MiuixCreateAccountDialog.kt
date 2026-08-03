@@ -32,6 +32,7 @@ import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
+import com.tungsten.fcl.ui.compose.fclDialogTextButtonColors
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclcore.auth.AccountFactory
@@ -254,7 +255,8 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_home_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐遗留 view_create_account_external：darker_gray 静态描边色，不用 color2
+                        tint = MiuixTheme.colorScheme.outline,
                     )
                 }
             }
@@ -264,7 +266,8 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_person_add_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐遗留 view_create_account_external：darker_gray 静态描边色，不用 color2
+                        tint = MiuixTheme.colorScheme.outline,
                     )
                 }
             }
@@ -316,8 +319,9 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
         ) {
             Text(
                 text = stringResource(R.string.account_login),
-                color = if (loginEnabledState.value) MiuixTheme.colorScheme.primary
-                else MiuixTheme.colorScheme.disabledOnSecondary,
+                // 对齐遗留登录 FCLButton 默认形态：文字 ltColor（primaryContainer），
+                // 禁用时不换色（旧版 setTextColor 为纯色无状态列表）；不用 primary
+                color = MiuixTheme.colorScheme.primaryContainer,
                 style = MiuixTheme.textStyles.button,
                 modifier = Modifier
                     .combinedClickable(
@@ -335,6 +339,7 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
                 text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative),
                 onClick = { onCancel() },
                 enabled = cancelEnabledState.value,
+                colors = fclDialogTextButtonColors(),
             )
         }
     }

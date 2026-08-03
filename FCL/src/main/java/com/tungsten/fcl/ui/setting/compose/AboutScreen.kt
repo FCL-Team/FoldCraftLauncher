@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.util.AndroidUtils
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -36,7 +37,11 @@ fun AboutScreen(
         contentPadding = PaddingValues(12.dp),
     ) {
         item(key = "links") {
-            Card(modifier = Modifier.fillMaxWidth()) {
+            // 对齐遗留 6 个 auto_linear_background_tint 容器的 ltColor 染色（= primaryContainer）
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+            ) {
                 ArrowPreference(
                     title = stringResource(R.string.about_launcher),
                     onClick = { onEvent(AboutEvent.OpenLink(AboutScreenHost.URL_LAUNCHER)) },
@@ -64,15 +69,19 @@ fun AboutScreen(
             }
         }
         item(key = "desc") {
+            // 对齐遗留 about_desc 的 auto_text_background_tint（底色 = 主色 color）
+            // 与 auto_text_tint（文字 = autoTint = onPrimary）
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp),
                 insideMargin = PaddingValues(12.dp),
+                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primary),
             ) {
                 Text(
                     text = stringResource(R.string.about_desc),
                     style = MiuixTheme.textStyles.body2,
+                    color = MiuixTheme.colorScheme.onPrimary,
                 )
             }
         }

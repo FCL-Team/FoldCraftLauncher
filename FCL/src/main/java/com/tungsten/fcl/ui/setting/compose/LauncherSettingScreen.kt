@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tungsten.fcl.R
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
@@ -72,8 +73,12 @@ fun LauncherSettingScreen(
         contentPadding = PaddingValues(12.dp),
     ) {
         // ---------- 分组一：通用（对齐布局第一个容器 :21-228） ----------
+        // 容器底色对齐遗留 auto_linear_background_tint 的 ltColor 染色（= primaryContainer，随主色联动）
         item(key = "general") {
-            Card(modifier = Modifier.fillMaxWidth()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+            ) {
                 WindowSpinnerPreference(
                     items = languageItems(),
                     selectedIndex = state.languageIndex,
@@ -112,7 +117,10 @@ fun LauncherSettingScreen(
 
         // ---------- 分组二：外观（对齐布局第二个容器 :229-945） ----------
         item(key = "appearance") {
-            Card(modifier = Modifier.fillMaxWidth()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+            ) {
                 WindowSpinnerPreference(
                     items = themeModeItems(),
                     selectedIndex = state.themeModeIndex,
@@ -224,7 +232,10 @@ fun LauncherSettingScreen(
 
         // ---------- 分组三：下载（对齐布局第三个容器 :946-1073） ----------
         item(key = "download") {
-            Card(modifier = Modifier.fillMaxWidth()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+            ) {
                 SwitchPreference(
                     checked = state.autoChooseDownloadType,
                     onCheckedChange = viewModel::setAutoChooseDownloadType,
