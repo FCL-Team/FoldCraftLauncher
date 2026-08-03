@@ -84,14 +84,12 @@
     <string name="account_select_character">选择角色</string>
     <string name="account_skin">皮肤</string>
     <string name="account_skin_type_default">默认</string>
-    <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI 地址</string>
-    <string name="account_skin_type_csl_api_hint">你需要在皮肤站中创建并使用和该离线账户角色同名角色，此时离线账户皮肤将为皮肤站上角色所设定的皮肤。</string>
-    <string name="account_skin_type_local_file">本地文件</string>
     <string name="account_skin_upload">选择皮肤文件</string>
     <string name="account_skin_model">皮肤模型</string>
     <string name="account_skin_upload_file">上传</string>
     <string name="account_skin_no_file_selected">未选择文件</string>
     <string name="account_skin_reset">重置</string>
+    <string name="account_skin_reset_confirm">重置皮肤和披风？这将移除自定义皮肤和披风。</string>
     <string name="account_skin_uploaded">皮肤上传成功</string>
     <string name="account_skin_reset_done">披风已重置为默认</string>
     <string name="account_cape_management">披风管理</string>

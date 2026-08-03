@@ -109,6 +109,27 @@ public class SkinRenderer implements GLSurfaceView.Renderer {
         });
     }
 
+    /**
+     * Update the skin texture with an explicitly specified model.
+     * The {@code slim} parameter overrides the auto-detection from the skin image.
+     *
+     * @param slim true for the slim (Alex) model, false for the classic (Steve) model
+     */
+    public void updateTexture(Bitmap skin, Bitmap cape, boolean slim) {
+        Schedulers.androidUIThread().execute(() -> {
+            try {
+                NormalizedSkin normalizedSkin = new NormalizedSkin(skin);
+                this.slim = slim;
+                this.skin = normalizedSkin.isOldFormat() ? normalizedSkin.getNormalizedTexture() : normalizedSkin.getOriginalTexture();
+                this.cape = cape;
+                this.updateBitmapSkin = true;
+            } catch (InvalidSkinException e) {
+                e.printStackTrace();
+                Toast.makeText(context, "Skin Renderer: " + e, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     public SkinModel getSkinModel() {
         return skinModel;
     }

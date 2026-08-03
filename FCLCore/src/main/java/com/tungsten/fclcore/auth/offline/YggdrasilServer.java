@@ -17,6 +17,10 @@
  */
 package com.tungsten.fclcore.auth.offline;
 
+import static com.tungsten.fclcore.util.Lang.mapOf;
+import static com.tungsten.fclcore.util.Pair.pair;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.auth.yggdrasil.GameProfile;
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
@@ -30,16 +34,22 @@ import com.tungsten.fclcore.util.png.fakefx.PNGFakeFXUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.*;
-import java.util.*;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.Signature;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static com.tungsten.fclcore.util.Lang.mapOf;
-import static com.tungsten.fclcore.util.Pair.pair;
-import static com.tungsten.fclcore.util.gson.JsonUtils.listTypeOf;
 
 public class YggdrasilServer extends HttpServer {
 
@@ -179,19 +189,19 @@ public class YggdrasilServer extends HttpServer {
 
         public Object toCompleteResponse(String rootUrl) {
             Map<String, Object> realTextures = new HashMap<>();
-            if (skin != null && skin.getSkin() != null) {
-                if (skin.getModel() == TextureModel.ALEX) {
+            if (skin != null && skin.skin() != null) {
+                if (skin.model() == TextureModel.ALEX) {
                     realTextures.put("SKIN", mapOf(
-                            pair("url", rootUrl + "/textures/" + skin.getSkin().getHash()),
+                            pair("url", rootUrl + "/textures/" + skin.skin().getHash()),
                             pair("metadata", mapOf(
                                     pair("model", "slim")
                             ))));
                 } else {
-                    realTextures.put("SKIN", mapOf(pair("url", rootUrl + "/textures/" + skin.getSkin().getHash())));
+                    realTextures.put("SKIN", mapOf(pair("url", rootUrl + "/textures/" + skin.skin().getHash())));
                 }
             }
-            if (skin != null && skin.getCape() != null) {
-                realTextures.put("CAPE", mapOf(pair("url", rootUrl + "/textures/" + skin.getCape().getHash())));
+            if (skin != null && skin.cape() != null) {
+                realTextures.put("CAPE", mapOf(pair("url", rootUrl + "/textures/" + skin.cape().getHash())));
             }
 
             Map<String, Object> textureResponse = mapOf(

@@ -157,7 +157,7 @@ class AccountListAdapter(
             ) {
                 val path = it?.get(0) ?: return@launchSingleSelection
                 item.account.skin =
-                    Skin(Skin.Type.LOCAL_FILE, "", null, path, null)
+                    Skin(Skin.Type.LOCAL_FILE, null, path, null)
                 item.refreshSkinBinding()
             }
             return@setOnLongClickListener true
