@@ -6,12 +6,6 @@ import android.util.Log;
 
 import com.mio.data.Renderer;
 import com.tungsten.fclauncher.FCLConfig;
-import com.vpl.verifiedpluginload.api.VerifiedPluginLoad;
-import com.vpl.verifiedpluginload.api.VerifiedPluginLoadRegistry;
-import com.vpl.verifiedpluginload.model.PluginLoadAuthorization;
-import com.vpl.verifiedpluginload.model.PluginTrustStatus;
-import com.vpl.verifiedpluginload.model.PluginVerificationResult;
-import com.vpl.verifiedpluginload.model.TrustSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,46 +19,12 @@ import java.util.regex.Pattern;
 
 /** Final TOCTOU and path boundary immediately before plugin native directories are used. */
 public final class PluginNativeLoadGuard {
-    private static final String TAG = "VerifiedPluginLoad";
     private static final Set<String> ALLOWED_ABIS = new HashSet<>(Arrays.asList(
             "arm64-v8a",
             "armeabi-v7a",
             "x86_64"
     ));
-    /*
-     * These values are consumed by native code as library paths, loader configuration, or
-     * already-loaded handles.  Letting the user-controlled environment editor replace one
-     * would bypass the APK/source-dir authorization immediately above the actual dlopen.
-     */
-    private static final Set<String> PROTECTED_NATIVE_ENVIRONMENT_VARIABLES = new HashSet<>(Arrays.asList(
-            "DLOPEN",
-            "DRIVER_PATH",
-            "FCL_ENVIRON",
-            "FFMPEG_PATH",
-            "FCL_NATIVEDIR",
-            "GALLIUM_DRIVER",
-            "LIBGL_DRIVERS_PATH",
-            "LIB_MESA_NAME",
-            "MESA_LIBRARY",
-            "MESA_LOADER_DRIVER_OVERRIDE",
-            "MOD_ANDROID_RUNTIME",
-            "POJAVEXEC_EGL",
-            "POJAV_ENVIRON",
-            "POJAV_NATIVEDIR",
-            "RENDERER_HANDLE",
-            "TMPDIR",
-            "VK_ADD_DRIVER_FILES",
-            "VK_ADD_LAYER_PATH",
-            "VK_DRIVER_FILES",
-            "VK_ICD_FILENAMES",
-            "VK_LAYER_PATH",
-            "VULKAN_PTR"
-    ));
-    /*
-     * Protected variables a plugin may legitimately point at its own verified library directory.
-     * The Vulkan loader and the Mesa loader both dlopen whatever these name, so a value outside the
-     * declaring APK would let any process that can write that path supply the loaded code.
-     */
+
     private static final Set<String> NATIVE_PATH_ENVIRONMENT_VARIABLES = new HashSet<>(Arrays.asList(
             "DLOPEN",
             "DRIVER_PATH",
@@ -79,11 +39,6 @@ public final class PluginNativeLoadGuard {
             "VK_ICD_FILENAMES",
             "VK_LAYER_PATH"
     ));
-    /*
-     * Protected variables the launcher owns outright.  A plugin has no legitimate reason to move the
-     * temporary directory, retarget the launcher's own native directory, or forge a handle that
-     * native code produces at runtime.
-     */
     private static final Set<String> LAUNCHER_OWNED_ENVIRONMENT_VARIABLES = new HashSet<>(Arrays.asList(
             "FCL_ENVIRON",
             "FCL_NATIVEDIR",
@@ -94,21 +49,11 @@ public final class PluginNativeLoadGuard {
             "TMPDIR",
             "VULKAN_PTR"
     ));
-    /*
-     * Protected variables that name a driver rather than a path.  Mesa's loader builds the module it
-     * dlopens by concatenating the search directory with this name and does not reject separators, so
-     * a name carrying "../" walks straight back out of the directory constrained just above.
-     */
     private static final Set<String> DRIVER_NAME_ENVIRONMENT_VARIABLES = new HashSet<>(Arrays.asList(
             "GALLIUM_DRIVER",
             "MESA_LOADER_DRIVER_OVERRIDE"
     ));
     private static final Pattern DRIVER_NAME = Pattern.compile("[A-Za-z0-9_+-]{1,64}");
-    /*
-     * Read-only partitions a passthrough renderer legitimately loads system drivers from.  They are
-     * already on the library path built by FCLauncher, and nothing short of root can write them, so
-     * accepting them costs nothing while keeping shared and app-writable storage out of reach.
-     */
     private static final Set<String> READ_ONLY_SYSTEM_LIBRARY_ROOTS = new HashSet<>(Arrays.asList(
             "/apex",
             "/odm",
@@ -116,7 +61,6 @@ public final class PluginNativeLoadGuard {
             "/system_ext",
             "/vendor"
     ));
-
     private PluginNativeLoadGuard() {
     }
 
@@ -126,12 +70,7 @@ public final class PluginNativeLoadGuard {
      * point custom environment variables are merged.
      */
     public static boolean isProtectedNativeEnvironmentVariable(String key) {
-        return key != null && (key.startsWith("LD_") || PROTECTED_NATIVE_ENVIRONMENT_VARIABLES.contains(key));
-    }
-
-    /** A stored per-certificate trust is only active while the launcher setting permits it. */
-    public static boolean isExplicitKeyTrustAllowed(TrustSource trustSource, boolean allowUntrustedPlugins) {
-        return trustSource != TrustSource.KEY || allowUntrustedPlugins;
+        return NativePluginEnvironment.isProtectedNativeEnvironmentVariable(key);
     }
 
     /**
@@ -140,26 +79,18 @@ public final class PluginNativeLoadGuard {
      * null for an entry no consumer may act on.
      */
     public static String[] parsePluginEnvironmentEntry(String entry) {
-        if (entry == null) return null;
-        String[] split = entry.split("=", 2);
-        if (split.length != 2 || split[0].isEmpty() || split[1].isEmpty()) return null;
-        return split;
+        return NativePluginEnvironment.parsePluginEnvironmentEntry(entry);
     }
 
-    public static void verify(FCLConfig config) throws IOException {
+    public static void verifyNativePluginLoads(FCLConfig config, List<NativePluginAuthorization> authorizations) throws IOException {
         Context context = config.getContext();
-        VerifiedPluginLoad vpl = VerifiedPluginLoadRegistry.get(context);
-        List<PluginLoadAuthorization> authorizations = config.getPluginLoadAuthorizations();
-        boolean allowUntrustedPlugins = context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
-                .getBoolean("allow_untrusted_plugins", false);
-
         Renderer renderer = config.getRenderer();
         String rendererPackage = RendererPlugin.getPluginPackageName(renderer);
         if (rendererPackage != null) {
             if (!config.isUseExternalNativePlugins()) {
                 throw new IOException("External renderer plugin loading is disabled for this launch mode");
             }
-            verifyPlugin(vpl, authorizations, "Renderer", rendererPackage, renderer.getPath(), allowUntrustedPlugins);
+            requireAuthorization(authorizations, "Renderer", rendererPackage, renderer.getPath());
             verifyRendererLibraries(renderer);
         } else if (!renderer.getPath().isEmpty()) {
             throw new IOException("Renderer native path is not owned by an installed plugin APK");
@@ -169,58 +100,37 @@ public final class PluginNativeLoadGuard {
 
         DriverPlugin.Driver driver = DriverPlugin.getSelected();
         if (driver.getPackageName() != null) {
-            verifyPlugin(vpl, authorizations, "Vulkan driver", driver.getPackageName(), driver.getPath(), allowUntrustedPlugins);
+            requireAuthorization(authorizations, "Vulkan driver", driver.getPackageName(), driver.getPath());
         } else if (!samePath(driver.getPath(), context.getApplicationInfo().nativeLibraryDir)) {
             throw new IOException("Vulkan driver path is not owned by the launcher or an installed plugin APK");
         }
 
         for (NativeLibPlugin.NativePlugin plugin : NativeLibPlugin.getPluginList()) {
-            verifyPlugin(vpl, authorizations, "Native plugin", plugin.getPackageName(), plugin.getPath(), allowUntrustedPlugins);
+            requireAuthorization(authorizations, "Native plugin", plugin.getPackageName(), plugin.getPath());
             verifyNativePluginEnvironment(plugin);
         }
 
         FFmpegPlugin.discover(context);
         if (FFmpegPlugin.isAvailable) {
-            verifyPlugin(vpl, authorizations, "FFmpeg plugin", FFmpegPlugin.PACKAGE_NAME, FFmpegPlugin.libraryPath, allowUntrustedPlugins);
+            requireAuthorization(authorizations, "FFmpeg plugin", FFmpegPlugin.PACKAGE_NAME, FFmpegPlugin.libraryPath);
             requireLibraryInside(FFmpegPlugin.libraryPath, "libffmpeg.so", "FFmpeg library");
         }
     }
 
-    private static void verifyPlugin(
-            VerifiedPluginLoad vpl,
-            List<PluginLoadAuthorization> authorizations,
+    private static void requireAuthorization(
+            List<NativePluginAuthorization> authorizations,
             String type,
             String packageName,
-            String expectedNativeDirectory,
-            boolean allowUntrustedPlugins
+            String expectedNativeDirectory
     ) throws IOException {
-        PluginVerificationResult result = vpl.inspectInstalledPackage(packageName);
-        if (result.getStatus() != PluginTrustStatus.TRUSTED) {
-            throw new IOException(type + " " + packageName + " is not trusted: " + result.getStatus());
-        }
-        if (!isExplicitKeyTrustAllowed(result.getTrustSource(), allowUntrustedPlugins)) {
-            throw new IOException(type + " " + packageName + " is trusted only by an individual signature hash while untrusted plugin loading is disabled");
-        }
-        String apkPath = result.getPackageInfo().getApkPath();
-        String nativeDirectory = result.getPackageInfo().getNativeLibraryDirectory();
-        if (!samePath(nativeDirectory, expectedNativeDirectory)) {
+        NativePluginAuthorization authorization = authorizations.stream()
+                .filter(candidate -> candidate.getPackageName().equals(packageName))
+                .findFirst()
+                .orElseThrow(() -> new IOException(type + " " + packageName + " has no matching pre-launch verification authorization"));
+        if (!samePath(authorization.getNativeLibraryDirectory(), expectedNativeDirectory)) {
             throw new IOException(type + " native library directory no longer matches its APK package");
         }
-        verifySupportedAbi(nativeDirectory);
-        boolean authorized = authorizations.stream().anyMatch(authorization ->
-                authorization.getPackageName().equals(packageName)
-                        && samePath(authorization.getApkPath(), apkPath)
-                        && Objects.equals(authorization.getVersionCode(), result.getPackageInfo().getVersionCode())
-                        && authorization.getCurrentSignatures().equals(new java.util.LinkedHashSet<>(result.getCurrentSignatures()))
-        );
-        if (!authorized) {
-            throw new IOException(type + " has no matching pre-launch verification authorization");
-        }
-        String hash = result.getMatchedSignature() == null ? "unknown" : result.getMatchedSignature().getSha256();
-        Log.i(TAG, type + " trusted: package=" + packageName
-                + ", version=" + result.getPackageInfo().getVersionName()
-                + ", sha256=" + hash
-                + ", trustListVersion=" + result.getTrustListVersion());
+        verifySupportedAbi(authorization.getNativeLibraryDirectory());
     }
 
     private static void verifyRendererLibraries(Renderer renderer) throws IOException {
@@ -303,7 +213,7 @@ public final class PluginNativeLoadGuard {
     }
 
     static Set<String> protectedNativeEnvironmentVariablesForTest() {
-        return PROTECTED_NATIVE_ENVIRONMENT_VARIABLES;
+        return NativePluginEnvironment.protectedNativeEnvironmentVariables();
     }
 
     private static boolean isReadOnlySystemPath(String path) throws IOException {

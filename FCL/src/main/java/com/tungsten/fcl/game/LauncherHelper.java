@@ -227,7 +227,8 @@ public final class LauncherHelper {
                                     launcher.setJnaVersion(library.getVersion());
                                 }
                             });
-                            launcher.setPluginLoadAuthorizations(pluginAuthorizationsRef.get());
+                            launcher.setNativePluginLoadPolicy(
+                                    new VplNativePluginLoadPolicy(pluginVerificationRequired, pluginAuthorizationsRef.get()));
                             return launcher;
                         }).thenComposeAsync(launcher -> Task.supplyAsync(launcher::launch))
                         .thenComposeAsync(fclBridge -> checkPathValid(fclBridge, repository))

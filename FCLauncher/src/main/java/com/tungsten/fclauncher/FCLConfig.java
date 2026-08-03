@@ -3,12 +3,9 @@ package com.tungsten.fclauncher;
 import android.content.Context;
 
 import com.mio.data.Renderer;
-import com.vpl.verifiedpluginload.model.PluginLoadAuthorization;
+import com.tungsten.fclauncher.plugins.NativePluginLoadPolicy;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class FCLConfig implements Serializable {
 
@@ -71,7 +68,7 @@ public class FCLConfig implements Serializable {
     private boolean pojavBigCore = false;
     private boolean useExternalNativePlugins = false;
     private InstalledModLoaders installedModLoaders = null;
-    private List<PluginLoadAuthorization> pluginLoadAuthorizations = Collections.emptyList();
+    private transient NativePluginLoadPolicy nativePluginLoadPolicy = NativePluginLoadPolicy.NO_OP;
 
     public FCLConfig(Context context, String logDir, String javaPath, String workingDir, Renderer renderer, String[] args) {
         this.context = context;
@@ -138,11 +135,13 @@ public class FCLConfig implements Serializable {
         return installedModLoaders;
     }
 
-    public void setPluginLoadAuthorizations(List<PluginLoadAuthorization> pluginLoadAuthorizations) {
-        this.pluginLoadAuthorizations = Collections.unmodifiableList(new ArrayList<>(pluginLoadAuthorizations));
+    public void setNativePluginLoadPolicy(NativePluginLoadPolicy nativePluginLoadPolicy) {
+        this.nativePluginLoadPolicy = nativePluginLoadPolicy == null
+                ? NativePluginLoadPolicy.NO_OP
+                : nativePluginLoadPolicy;
     }
 
-    public List<PluginLoadAuthorization> getPluginLoadAuthorizations() {
-        return pluginLoadAuthorizations;
+    public NativePluginLoadPolicy getNativePluginLoadPolicy() {
+        return nativePluginLoadPolicy;
     }
 }

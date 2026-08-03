@@ -9,13 +9,13 @@ import android.util.Log;
 
 import com.mio.data.Renderer;
 import com.tungsten.fcl.R;
-import com.tungsten.fclauncher.plugins.PluginNativeLoadGuard;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.vpl.verifiedpluginload.api.VerifiedPluginLoad;
 import com.vpl.verifiedpluginload.api.VerifiedPluginLoadBlocking;
 import com.vpl.verifiedpluginload.api.VerifiedPluginLoadRegistry;
 import com.vpl.verifiedpluginload.model.AuthorType;
+import com.vpl.verifiedpluginload.model.TrustSource;
 import com.vpl.verifiedpluginload.model.PluginLoadAuthorization;
 import com.vpl.verifiedpluginload.model.PluginTrustStatus;
 import com.vpl.verifiedpluginload.model.PluginVerificationResult;
@@ -77,7 +77,7 @@ public final class PluginTrustGate {
             logDecision(context, candidate, result);
             boolean allowUntrustedPlugins = allowsUntrustedPlugins(context);
             if (result.getStatus() == PluginTrustStatus.TRUSTED) {
-                if (!PluginNativeLoadGuard.isExplicitKeyTrustAllowed(result.getTrustSource(), allowUntrustedPlugins)) {
+                if (!isExplicitKeyTrustAllowed(result.getTrustSource(), allowUntrustedPlugins)) {
                     return closeWithFailure(
                             context,
                             R.string.plugin_trust_title_key_trust_disabled,
@@ -357,6 +357,10 @@ public final class PluginTrustGate {
     private static boolean allowsUntrustedPlugins(Context context) {
         return context.getSharedPreferences("launcher", MODE_PRIVATE)
                 .getBoolean("allow_untrusted_plugins", false);
+    }
+
+    private static boolean isExplicitKeyTrustAllowed(TrustSource trustSource, boolean allowUntrustedPlugins) {
+        return trustSource != TrustSource.KEY || allowUntrustedPlugins;
     }
 
     private static PluginLoadAuthorization requireAuthorization(PluginVerificationResult result) {

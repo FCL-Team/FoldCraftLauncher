@@ -41,7 +41,6 @@ kotlin {
 
 dependencies {
     implementation(project(":FCLauncher"))
-    implementation(project(":VerifiedPluginLoad"))
     implementation(project(":ZipFileSystem"))
     implementation(libs.nanohttpd)
     implementation(libs.opennbt)

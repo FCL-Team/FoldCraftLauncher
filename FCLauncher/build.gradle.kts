@@ -57,7 +57,6 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":VerifiedPluginLoad"))
     implementation(libs.bytehook)
     implementation(libs.appcompat)
     implementation(libs.material)

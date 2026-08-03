@@ -31,9 +31,9 @@ import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.NativeLibPlugin;
+import com.tungsten.fclauncher.plugins.NativePluginLoadPolicy;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.vpl.verifiedpluginload.model.PluginLoadAuthorization;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.game.Argument;
@@ -80,9 +80,9 @@ public class DefaultLauncher extends Launcher {
         super(context, repository, version, authInfo, options);
     }
 
-    /** VPL authorizations are supplied by the host UI before this launcher starts native code. */
-    protected List<PluginLoadAuthorization> getPluginLoadAuthorizations() {
-        return Collections.emptyList();
+    /** Native plugin policy is supplied by the host UI before this launcher starts native code. */
+    protected NativePluginLoadPolicy getNativePluginLoadPolicy() {
+        return NativePluginLoadPolicy.NO_OP;
     }
 
     private CommandBuilder generateCommandLine() throws IOException {
@@ -509,7 +509,7 @@ public class DefaultLauncher extends Launcher {
                 analyzer.has(LibraryAnalyzer.LibraryType.FABRIC),
                 analyzer.has(LibraryAnalyzer.LibraryType.QUILT)
         ));
-        config.setPluginLoadAuthorizations(getPluginLoadAuthorizations());
+        config.setNativePluginLoadPolicy(getNativePluginLoadPolicy());
         return FCLauncher.launchMinecraft(config);
     }
 

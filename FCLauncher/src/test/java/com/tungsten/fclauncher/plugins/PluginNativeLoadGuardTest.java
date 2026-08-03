@@ -1,7 +1,5 @@
 package com.tungsten.fclauncher.plugins;
 
-import com.vpl.verifiedpluginload.model.TrustSource;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -38,14 +36,6 @@ public class PluginNativeLoadGuardTest {
         assertFalse(PluginNativeLoadGuard.isProtectedNativeEnvironmentVariable("JAVA_TOOL_OPTIONS"));
         assertFalse(PluginNativeLoadGuard.isProtectedNativeEnvironmentVariable("POJAV_RENDERER"));
         assertFalse(PluginNativeLoadGuard.isProtectedNativeEnvironmentVariable("CUSTOM_GAME_FLAG"));
-    }
-
-    @Test
-    public void explicitKeyTrustRequiresTheUntrustedPluginSetting() {
-        assertFalse(PluginNativeLoadGuard.isExplicitKeyTrustAllowed(TrustSource.KEY, false));
-        assertTrue(PluginNativeLoadGuard.isExplicitKeyTrustAllowed(TrustSource.KEY, true));
-        assertTrue(PluginNativeLoadGuard.isExplicitKeyTrustAllowed(TrustSource.AUTHOR, false));
-        assertTrue(PluginNativeLoadGuard.isExplicitKeyTrustAllowed(null, false));
     }
 
     @Test

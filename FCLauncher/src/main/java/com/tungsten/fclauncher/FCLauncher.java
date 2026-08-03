@@ -20,7 +20,7 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.plugins.DriverPlugin;
 import com.tungsten.fclauncher.plugins.FFmpegPlugin;
 import com.tungsten.fclauncher.plugins.NativeLibPlugin;
-import com.tungsten.fclauncher.plugins.PluginNativeLoadGuard;
+import com.tungsten.fclauncher.plugins.NativePluginEnvironment;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
 
@@ -278,7 +278,7 @@ public class FCLauncher {
                     // Parse exactly as PluginNativeLoadGuard does, so the value it authorized is the
                     // value that reaches the environment. DLOPEN is consumed by
                     // setupGraphicAndSoundEngine instead.
-                    String[] split = PluginNativeLoadGuard.parsePluginEnvironmentEntry(env);
+                    String[] split = NativePluginEnvironment.parsePluginEnvironmentEntry(env);
                     if (split == null || split[0].equals("DLOPEN")) {
                         return;
                     }
@@ -358,8 +358,13 @@ public class FCLauncher {
         for (String e : env) {
             try {
                 String[] split = e.split("=", 2);
-                if (split.length == 2 && !PluginNativeLoadGuard.isProtectedNativeEnvironmentVariable(split[0])) {
-                    envMap.put(split[0], split[1]);
+                if (split.length == 2) {
+                    if (config.getNativePluginLoadPolicy().isEnabled()
+                            && NativePluginEnvironment.isProtectedNativeEnvironmentVariable(split[0])) {
+                        Log.w("FCLauncher", "Ignored protected native environment variable: " + split[0]);
+                    } else {
+                        envMap.put(split[0], split[1]);
+                    }
                 }
             } catch (Throwable ignore) {
             }
@@ -415,7 +420,7 @@ public class FCLauncher {
                 envList.forEach(env -> {
                     // Must parse exactly as PluginNativeLoadGuard did, or we dlopen a path it never
                     // authorized.
-                    String[] split = PluginNativeLoadGuard.parsePluginEnvironmentEntry(env);
+                    String[] split = NativePluginEnvironment.parsePluginEnvironmentEntry(env);
                     if (split != null && split[0].equals("DLOPEN")) {
                         String[] libs = split[1].split(",");
                         for (String lib : libs) {
@@ -478,7 +483,7 @@ public class FCLauncher {
                 logStartInfo(config, bridge, "Minecraft");
                 logModList(bridge);
 
-                PluginNativeLoadGuard.verify(config);
+                config.getNativePluginLoadPolicy().verify(config);
 
                 // env
                 setEnv(config, bridge, true);
@@ -516,7 +521,7 @@ public class FCLauncher {
 
                 logStartInfo(config, bridge, "Jar Executor");
 
-                PluginNativeLoadGuard.verify(config);
+                config.getNativePluginLoadPolicy().verify(config);
 
                 // env
                 setEnv(config, bridge, true);
@@ -553,7 +558,7 @@ public class FCLauncher {
 
                 logStartInfo(config, bridge, "API Installer");
 
-                PluginNativeLoadGuard.verify(config);
+                config.getNativePluginLoadPolicy().verify(config);
 
                 // env
                 setEnv(config, bridge, false);
