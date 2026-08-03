@@ -78,9 +78,6 @@
     <string name="account_select_character">Виберіть персонажа</string>
     <string name="account_skin">Скін</string>
     <string name="account_skin_type_default">За замовчуванням</string>
-    <string name="account_skin_type_csl_api_location_hint">URL-адреса</string>
-    <string name="account_skin_type_csl_api_hint">"Ім’я персонажа на сайті має збігатися з ім’ям облікового запису. Скін завантажиться автоматично."</string>
-    <string name="account_skin_type_local_file">Локальний скін</string>
     <string name="account_skin_upload">Вибрати скін на пристрої</string>
     <string name="account_state_no_account">Немає облікового запису</string>
     <string name="account_state_add">Натисніть, щоб додати</string>
