@@ -121,7 +121,7 @@ class AccountListAdapter(
                         }
                     Accounts.FACTORY_OFFLINE.create(item.account.username, uuid)
                         .apply {
-                            skin = (item.account as OfflineAccount).skin
+                            skin = item.account.skin
                             Accounts.replaceAccount(item.account.uuid, this)
                             Accounts.setSelectedAccount(this)
                         }
@@ -156,7 +156,7 @@ class AccountListAdapter(
                 listOf(".png")
             ) {
                 val path = it?.get(0) ?: return@launchSingleSelection
-                (item.account as OfflineAccount).skin =
+                item.account.skin =
                     Skin(Skin.Type.LOCAL_FILE, "", null, path, null)
                 item.refreshSkinBinding()
             }
