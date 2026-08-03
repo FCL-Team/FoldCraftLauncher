@@ -15,9 +15,12 @@ import com.tungsten.fclcore.auth.AuthenticationException
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount
 import com.tungsten.fclcore.auth.microsoft.MicrosoftService.MinecraftProfileResponseCape
 import com.tungsten.fclcore.util.Logging.LOG
+import com.tungsten.fclcore.util.skin.InvalidSkinException
+import com.tungsten.fclcore.util.skin.NormalizedSkin
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.component.view.FCLButton
+import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.tungsten.fcllibrary.skin.SkinRenderer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +29,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.net.URL
 import java.util.logging.Level
 
 class MicrosoftAccountSkinDialog(
@@ -98,13 +102,13 @@ class MicrosoftAccountSkinDialog(
         val texture = accountListItem.texture.get()
         val skinBitmap = texture?.getOrNull(0) ?: return
         try {
-            val normalized = com.tungsten.fclcore.util.skin.NormalizedSkin(skinBitmap)
+            val normalized = NormalizedSkin(skinBitmap)
             if (normalized.isSlim) {
                 binding.modelSlim.isChecked = true
             } else {
                 binding.modelClassic.isChecked = true
             }
-        } catch (_: com.tungsten.fclcore.util.skin.InvalidSkinException) {
+        } catch (_: InvalidSkinException) {
             // Fallback: default to classic if skin can't be analyzed
             binding.modelClassic.isChecked = true
         }
@@ -117,7 +121,7 @@ class MicrosoftAccountSkinDialog(
         try {
             val skinImg: Bitmap = BitmapFactory.decodeFile(filePath)
                 ?: return
-            val normalized = com.tungsten.fclcore.util.skin.NormalizedSkin(skinImg)
+            val normalized = NormalizedSkin(skinImg)
             // Update model radio to match detected model
             if (normalized.isSlim) {
                 binding.modelSlim.isChecked = true
@@ -150,7 +154,7 @@ class MicrosoftAccountSkinDialog(
     private fun buildCapeList() {
         binding.capeListLayout.removeAllViews()
         if (capes.isEmpty()) {
-            val noCapes = com.tungsten.fcllibrary.component.view.FCLTextView(context)
+            val noCapes = FCLTextView(context)
             noCapes.text = context.getString(R.string.account_cape_none)
             noCapes.setPadding(8, 4, 8, 4)
             binding.capeListLayout.addView(noCapes)
@@ -188,7 +192,7 @@ class MicrosoftAccountSkinDialog(
                 val capeBitmap = if (capeUrl != null) {
                     withContext(Dispatchers.IO) {
                         try {
-                            val conn = java.net.URL(capeUrl).openConnection()
+                            val conn = URL(capeUrl).openConnection()
                             conn.connectTimeout = 8000
                             conn.readTimeout = 8000
                             BitmapFactory.decodeStream(conn.getInputStream())
@@ -250,10 +254,6 @@ class MicrosoftAccountSkinDialog(
         }
     }
 
-    private fun getSelectedModel(): String {
-        return if (binding.modelSlim.isChecked) "slim" else "classic"
-    }
-
     private fun uploadFromFile() {
         val filePath = selectedSkinFile
         if (filePath == null) {
@@ -262,13 +262,12 @@ class MicrosoftAccountSkinDialog(
             return
         }
 
-        val model = getSelectedModel()
         setLoading(true)
         scope.launch {
             try {
                 val skinImg: Bitmap = BitmapFactory.decodeFile(filePath)
-                    ?: throw com.tungsten.fclcore.util.skin.InvalidSkinException("Failed to read skin image")
-                val skin = com.tungsten.fclcore.util.skin.NormalizedSkin(skinImg)
+                    ?: throw InvalidSkinException("Failed to read skin image")
+                val skin = NormalizedSkin(skinImg)
                 val detectedModel = if (skin.isSlim) "slim" else "classic"
                 LOG.info("Uploading skin [$filePath], model [$detectedModel]")
 
