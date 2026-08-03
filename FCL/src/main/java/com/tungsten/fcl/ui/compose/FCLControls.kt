@@ -2,6 +2,8 @@ package com.tungsten.fcl.ui.compose
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -14,18 +16,28 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
+import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardColors
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.CheckboxColors
 import top.yukonga.miuix.kmp.basic.CheckboxDefaults
+import top.yukonga.miuix.kmp.basic.Slider
+import top.yukonga.miuix.kmp.basic.SliderColors
+import top.yukonga.miuix.kmp.basic.SliderDefaults
 import top.yukonga.miuix.kmp.basic.SwitchColors
 import top.yukonga.miuix.kmp.basic.SwitchDefaults
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.basic.TextFieldColors
 import top.yukonga.miuix.kmp.basic.TextFieldDefaults
+import top.yukonga.miuix.kmp.preference.SliderPreference
 import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+import top.yukonga.miuix.kmp.utils.PressFeedbackType
+import kotlin.math.roundToInt
 
 /**
  * FCL 旧版控件染色语义在 Miuix 控件上的共享实现。
@@ -48,6 +60,12 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * - Switch / Checkbox 的全部色槽均可经 colors 配置。
  * - Miuix Checkbox 未勾选态只能画实心圆（无描边态），无法复刻旧版 primary 描边方框，
  *   取 ltColor（primaryContainer）实心圆为折中。
+ *
+ * 圆角与滑杆（PR #1714 review 对齐旧版观感）：
+ * - 圆角走 [FCLCornerRadius] 两档：页面卡片 5dp（bg_container_white）、弹窗卡片 8dp
+ *   （dialog_background），替代 Miuix 默认 16dp squircle；统一经 [FCLCard] 接入。
+ * - 滑杆走 [FCLSliderPreference] / [FCLSlider]：高度收敛为 20dp（Miuix 默认 28dp），
+ *   并自带数值文本（对齐 FCLNumberSeekBar 的滑杆 + 数值形态，suffix 语义保留）。
  */
 
 /** FCLSwitch 配色：thumb checked=dkColor / unchecked=primary，track checked=primary / unchecked=GRAY。 */
@@ -188,5 +206,158 @@ fun FCLSwitchPreference(
         summaryColor = summaryColor,
         switchColors = fclSwitchColors(),
         enabled = enabled,
+    )
+}
+
+// ---------- 圆角体系（design-tokens.md §4.1：旧版仅 5dp/8dp 两档） ----------
+
+/**
+ * FCL 圆角 token。Miuix 组件默认 16dp squircle（CardDefaults.CornerRadius），
+ * 旧版 FCL 全项目只有两档（design-tokens §4.1 实测）：
+ * - [Card]：5dp——列表项 / 白色容器（bg_item.xml、bg_container_white.xml、fcl_button.xml）；
+ * - [Dialog]：8dp——对话框 / 面板（dialog_background.xml、bg_game_menu.xml）。
+ */
+object FCLCornerRadius {
+    /** 页面分组卡片、列表项卡片：对齐 bg_container_white / bg_item 的 5dp。 */
+    val Card = 5.dp
+
+    /** 对话框 / 弹层卡片：对齐 dialog_background.xml 的 8dp。 */
+    val Dialog = 8.dp
+}
+
+/**
+ * Miuix [Card] 的 FCL 包装：圆角默认 [FCLCornerRadius.Card]（5dp，对齐旧版容器），
+ * 替代 Miuix 默认 16dp squircle。弹窗容器卡片显式传 `cornerRadius = FCLCornerRadius.Dialog`。
+ * 其余参数直通 Miuix [Card]，业务行为零改动。
+ */
+@Composable
+fun FCLCard(
+    modifier: Modifier = Modifier,
+    cornerRadius: Dp = FCLCornerRadius.Card,
+    insideMargin: PaddingValues = CardDefaults.InsideMargin,
+    colors: CardColors = CardDefaults.defaultColors(),
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Card(
+        modifier = modifier,
+        cornerRadius = cornerRadius,
+        insideMargin = insideMargin,
+        colors = colors,
+        content = content,
+    )
+}
+
+/** [FCLCard] 的可点击重载，参数直通 Miuix [Card] 可点击重载。 */
+@Composable
+fun FCLCard(
+    modifier: Modifier = Modifier,
+    cornerRadius: Dp = FCLCornerRadius.Card,
+    insideMargin: PaddingValues = CardDefaults.InsideMargin,
+    colors: CardColors = CardDefaults.defaultColors(),
+    pressFeedbackType: PressFeedbackType = PressFeedbackType.None,
+    showIndication: Boolean = false,
+    holdDownState: Boolean = false,
+    onClick: (() -> Unit)? = null,
+    onLongPress: (() -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Card(
+        modifier = modifier,
+        cornerRadius = cornerRadius,
+        insideMargin = insideMargin,
+        colors = colors,
+        pressFeedbackType = pressFeedbackType,
+        showIndication = showIndication,
+        holdDownState = holdDownState,
+        onClick = onClick,
+        onLongPress = onLongPress,
+        content = content,
+    )
+}
+
+// ---------- 滑杆体系（对齐旧版 FCLNumberSeekBar：滑杆 + 数值文本，行高收敛） ----------
+
+/**
+ * FCL 滑杆高度。Miuix 默认 28dp（SliderDefaults.MinHeight）观感过大；
+ * 旧版 AppCompat SeekBar 行高更薄，取 20dp 逼近（thumb 半径 = height/2，随高度同步缩小）。
+ */
+val FCLSliderHeight = 20.dp
+
+/** 滑杆数值文本默认格式：整数值去小数，附带 [suffix]（对齐 FCLNumberSeekBar 的 suffix 语义，如 "MB"/"%"）。 */
+private fun formatSliderValue(value: Float, suffix: String): String =
+    if (value == value.roundToInt().toFloat()) {
+        "${value.roundToInt()}$suffix"
+    } else {
+        "${"%.1f".format(value)}$suffix"
+    }
+
+/**
+ * Miuix [SliderPreference] 的 FCL 包装，对齐旧版 FCLNumberSeekBar 形态：
+ * - 数值显示：[valueText] 显式传入优先；缺省时由 [value] + [suffix] 自动生成
+ *   （旧版数值直接画在滑杆 thumb 处，Miuix 无此能力，取 SliderPreference 自带尾部数值区）；
+ * - 尺寸收敛：滑杆高 [FCLSliderHeight]（Miuix 默认 28dp），行内边距收窄为 16/10dp
+ *   （Miuix 默认四向 16dp）。
+ * 其余参数直通 Miuix [SliderPreference]，业务行为零改动。
+ */
+@Composable
+fun FCLSliderPreference(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    title: String,
+    valueRange: ClosedFloatingPointRange<Float>,
+    modifier: Modifier = Modifier,
+    valueText: String? = null,
+    suffix: String = "",
+    summary: String? = null,
+    titleColor: BasicComponentColors = BasicComponentDefaults.titleColor(),
+    summaryColor: BasicComponentColors = BasicComponentDefaults.summaryColor(),
+    enabled: Boolean = true,
+    steps: Int = 0,
+    onValueChangeFinished: (() -> Unit)? = null,
+    sliderColors: SliderColors = SliderDefaults.sliderColors(),
+) {
+    SliderPreference(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier,
+        title = title,
+        titleColor = titleColor,
+        summary = summary,
+        summaryColor = summaryColor,
+        valueText = valueText ?: formatSliderValue(value, suffix),
+        enabled = enabled,
+        valueRange = valueRange,
+        steps = steps,
+        onValueChangeFinished = onValueChangeFinished,
+        sliderHeight = FCLSliderHeight,
+        sliderColors = sliderColors,
+        insideMargin = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+    )
+}
+
+/**
+ * Miuix [Slider] 的 FCL 包装（弹窗内裸滑杆用）：高度收敛为 [FCLSliderHeight]，
+ * 其余参数直通 Miuix [Slider]。数值文本由调用方在行内自排（对齐旧版
+ * FCLNumberSeekBar + 旁侧 Text 的形态，见 MiuixEditViewDialog.SliderRow）。
+ */
+@Composable
+fun FCLSlider(
+    value: Float,
+    onValueChange: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
+    steps: Int = 0,
+    onValueChangeFinished: (() -> Unit)? = null,
+) {
+    Slider(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = modifier,
+        enabled = enabled,
+        valueRange = valueRange,
+        steps = steps,
+        onValueChangeFinished = onValueChangeFinished,
+        height = FCLSliderHeight,
     )
 }

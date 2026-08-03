@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.util.AndroidUtils
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.preference.ArrowPreference
@@ -38,7 +38,7 @@ fun AboutScreen(
     ) {
         item(key = "links") {
             // 对齐遗留 6 个 auto_linear_background_tint 容器的 ltColor 染色（= primaryContainer）
-            Card(
+            FCLCard(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
             ) {
@@ -71,7 +71,7 @@ fun AboutScreen(
         item(key = "desc") {
             // 对齐遗留 about_desc 的 auto_text_background_tint（底色 = 主色 color）
             // 与 auto_text_tint（文字 = autoTint = onPrimary）
-            Card(
+            FCLCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp),

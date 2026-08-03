@@ -34,7 +34,8 @@ import com.tungsten.fclauncher.keycodes.FCLKeycodes
 import com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
+import com.tungsten.fcl.ui.compose.FCLCornerRadius
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
@@ -123,7 +124,8 @@ class MiuixQuickInputDialog(
 
     @Composable
     private fun DialogContent() {
-        Card(
+        FCLCard(
+            cornerRadius = FCLCornerRadius.Dialog,
             modifier = Modifier
                 .padding(16.dp)
                 .width(400.dp)

@@ -1,7 +1,5 @@
 package com.tungsten.fcl.ui.main.compose
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.background
@@ -109,18 +107,11 @@ fun MainScreen() {
         }
     }
 
-    // ---------- 皮肤模型开关（close_skin_model，Theme.java:212 同一数据源） ----------
-    val themePrefs = remember { context.getSharedPreferences("theme", Context.MODE_PRIVATE) }
-    var skinModelClosed by remember {
-        mutableStateOf(ThemeEngine.getInstance().theme.isCloseSkinModel)
-    }
-    DisposableEffect(themePrefs) {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, key ->
-            if (key == "close_skin_model") skinModelClosed = sp.getBoolean(key, false)
-        }
-        themePrefs.registerOnSharedPreferenceChangeListener(listener)
-        onDispose { themePrefs.unregisterOnSharedPreferenceChangeListener(listener) }
-    }
+    // ---------- 皮肤模型开关（closeSkinModelFlow 单一数据源，Theme.java:146） ----------
+    // 开关路径：LauncherSettingViewModel.setCloseSkinModel → Theme.setiIgnoreSkinContainer
+    // 写 flow 并 saveTheme 落盘，flow 与 prefs 同步更新，直接 collect flow 等价于
+    // 原来的 "ThemeEngine 初值 + prefs 监听" 双轨读。
+    val skinModelClosed by ThemeEngine.getInstance().theme.closeSkinModelFlow().collectAsState()
 
     Box(
         modifier = Modifier
@@ -279,8 +270,11 @@ private fun linkifyAnnouncement(text: String) = buildAnnotatedString {
 private fun SkinModelPreview(modifier: Modifier = Modifier) {
     val account by Accounts.selectedAccountFlow().collectAsState()
     val refreshTick by ComposeMainUI.skinRefreshTick.collectAsState()
-    val defaultSkin = remember {
-        BitmapFactory.decodeStream(ComposeMainUI::class.java.getResourceAsStream("/assets/img/alex.png"))
+    // 默认 alex 皮肤解码属 IO，移出组合期（produceState + Dispatchers.IO）
+    val defaultSkin by produceState<Bitmap?>(initialValue = null) {
+        value = withContext(Dispatchers.IO) {
+            BitmapFactory.decodeStream(ComposeMainUI::class.java.getResourceAsStream("/assets/img/alex.png"))
+        }
     }
     val textures by produceState<Array<Bitmap?>?>(initialValue = null, account, refreshTick) {
         val current = account

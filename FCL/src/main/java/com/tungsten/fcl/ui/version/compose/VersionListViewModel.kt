@@ -39,7 +39,7 @@ import kotlin.io.path.isRegularFile
  */
 class VersionListViewModel(
     private val application: Application,
-) : FCLViewModel<VersionListUiState, VersionListEvent>(VersionListUiState()) {
+) : FCLViewModel<VersionListUiState, VersionListEvent>(application, VersionListUiState()) {
 
     /** 当前列表所属的游戏目录（加载时快照，对齐 VersionListItem.profile）。 */
     private var profile: Profile? = null

@@ -73,10 +73,10 @@ fun FCLTheme(
  */
 @Composable
 fun FCLTheme(context: Context, content: @Composable () -> Unit) {
-    val launcherPrefs = remember {
-        context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
-    }
-    val themeMode = remember { mutableIntStateOf(launcherPrefs.getInt("themeMode", 0)) }
+    // themeMode：SharedPreferences "launcher" 一次性直读（getSharedPreferences 为廉价句柄查询，
+    // 无需 remember 缓存），remember 以句柄为 key，监听变更即时重组
+    val launcherPrefs = context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
+    val themeMode = remember(launcherPrefs) { mutableIntStateOf(launcherPrefs.getInt("themeMode", 0)) }
     DisposableEffect(launcherPrefs) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, key ->
             if (key == "themeMode") themeMode.intValue = sp.getInt("themeMode", 0)
@@ -90,8 +90,9 @@ fun FCLTheme(context: Context, content: @Composable () -> Unit) {
         else -> FCLThemeMode.FollowSystem
     }
 
-    // ThemeEngine 主题色：StateFlow → Compose State（引擎未初始化时回落默认 token）
-    val engineTheme = remember { ThemeEngine.getInstance().theme }
+    // ThemeEngine 主题色：StateFlow → Compose State（引擎未初始化时回落默认 token）；
+    // 引擎引用组合期直读（廉价 getter），不用 remember 缓存（否则引擎后初始化时永远为 null）
+    val engineTheme = ThemeEngine.getInstance().theme
     val primary = engineTheme?.colorFlow()?.collectAsState()?.value
         ?.let { Color(it) } ?: FCLThemeTokens.BrandPrimary
     val color2 = engineTheme?.color2Flow()?.collectAsState()?.value

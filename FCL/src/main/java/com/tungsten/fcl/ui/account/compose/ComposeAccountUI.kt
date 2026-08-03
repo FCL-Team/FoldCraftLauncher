@@ -8,7 +8,6 @@ import com.tungsten.fcl.ui.bridge.LegacyBridge
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI
 import com.tungsten.fcllibrary.component.view.FCLUILayout
-import com.tungsten.fcllibrary.skin.SkinViewer
 
 /**
  * 账户域 Compose 一级界面壳（小步骤 3.5）：替换 [com.tungsten.fcl.ui.account.AccountUI]
@@ -26,9 +25,10 @@ import com.tungsten.fcllibrary.skin.SkinViewer
  * - 刷新契约承接：遗留反向调用点（CreateAccountDialog.java:198、
  *   MiuixCreateAccountDialog.kt:421、旧 AccountListAdapter）均调
  *   `UIManager.accountUI.refresh().start()`，本类经 [refreshHook] 转发给 Compose 侧
- *   ViewModel 的列表重建，契约语义与旧 AccountUI.refresh 一致；
- * - GL 皮肤预览生命周期：页面内嵌的 SkinViewer（GLSurfaceView）随 onStart/onStop/
- *   onPause/onResume 暂停恢复，避免后台持续渲染耗电。
+ *   ViewModel 的列表重建，契约语义与旧 AccountUI.refresh 一致。
+ *
+ * PR #1714 review：页内 3D 皮肤预览已移除（显示空间不足），原 SkinViewer 的 GL
+ * 生命周期转发（activeSkinViewer + onStart/onStop/onPause/onResume）一并删除。
  */
 class ComposeAccountUI(
     context: Context,
@@ -42,10 +42,6 @@ class ComposeAccountUI(
         /** Compose 侧注册的刷新回调（AccountScreen DisposableEffect 维护），承接 refresh() 契约。 */
         @Volatile
         internal var refreshHook: (() -> Unit)? = null
-
-        /** 页面内嵌 GL 皮肤预览实例（AccountScreen AndroidView 维护），供生命周期转发。 */
-        @Volatile
-        internal var activeSkinViewer: SkinViewer? = null
     }
 
     override fun onCreate() {
@@ -68,22 +64,6 @@ class ComposeAccountUI(
         super.onStart()
         // 对齐旧 AccountUI.onStart：每次切入账户页都触发一次列表刷新
         refreshHook?.invoke()
-        activeSkinViewer?.onResume()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        activeSkinViewer?.onPause()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        activeSkinViewer?.onPause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (isShowing) activeSkinViewer?.onResume()
     }
 
     override fun refresh(vararg param: Any?): Task<*> {

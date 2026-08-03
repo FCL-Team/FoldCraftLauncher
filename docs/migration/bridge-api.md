@@ -198,12 +198,20 @@ fun <T> Property<T>.toMutableStateFlow(scope): MutableStateFlow<T>
 - `LauncherSettingsViewModel`：零参构造（`viewModel()` 默认工厂直建）。两个 Config fakefx 属性（`autoDownloadThreadsProperty`/`downloadThreadsProperty`）经 `asMutableStateFlow()` 双向桥接，`observeIntoState` 投影进 `LauncherSettingsUiState`；"勾选自动时强制重置线程数为 `FetchTask.DEFAULT_CONCURRENCY`"的联动收在 `setAutoDownloadThreads()` 里。
 - `LauncherSettingsScreen`：SwitchPreference + SliderPreference（范围 1f..128f，对齐原 SeekBar `android:min=1/max=128`）+ ArrowPreference（点击发一次性事件 `PickBackgroundImage`）+ GlideImage 用法示例。
 
-需要构造参数的 ViewModel（如需 Context 读 SharedPreferences 的设置项）：
+需要 Application 的 ViewModel（如需读 SharedPreferences 的设置项）：FCLViewModel 基类
+已继承 AndroidViewModel，Application 由默认 Factory 经 CreationExtras（APPLICATION_KEY）
+注入，Compose 侧直建即可（PR #1714 review：禁止捕获组合期 LocalContext 搓 initializer）：
 
 ```kotlin
-val vm: MyViewModel = viewModel(initializer = {
-    MyViewModel(context.applicationContext as Application)
-})
+val vm: MyViewModel = viewModel()
+```
+
+确有额外构造参数时，同样在 initializer 内经 CreationExtras 取 Application：
+
+```kotlin
+val vm: MyViewModel = viewModel(key = "...") {
+    MyViewModel(checkNotNull(this[APPLICATION_KEY]), otherParam)
+}
 ```
 
 ---

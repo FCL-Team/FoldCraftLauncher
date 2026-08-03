@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +33,7 @@ import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.versioning.GameVersionNumber
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Checkbox
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -152,7 +153,7 @@ fun VersionInstallScreen(
     onOpenInstallInfo: (gameVersion: String) -> Unit,
 ) {
     val context = LocalContext.current
-    val holder = androidx.compose.runtime.remember { VersionInstallStateHolder(context) }
+    val holder = remember(context) { VersionInstallStateHolder(context) }
 
     Column(
         modifier = Modifier
@@ -160,7 +161,7 @@ fun VersionInstallScreen(
             .padding(10.dp),
     ) {
         // 过滤条 + 搜索（对齐 page_install_version.xml 顶部 bar）
-        Card(
+        FCLCard(
             // 对齐 page_install_version.xml bar 的 bg_container_white +
             // auto_linear_background_tint（ltColor 染色 = primaryContainer）
             colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),

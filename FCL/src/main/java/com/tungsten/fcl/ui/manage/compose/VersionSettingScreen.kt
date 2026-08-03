@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.manage.compose
 
-import android.app.Application
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,13 +15,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tungsten.fcl.R
@@ -34,14 +33,14 @@ import com.tungsten.fclcore.util.platform.MemoryUtils
 import kotlinx.coroutines.flow.StateFlow
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.LinearProgressIndicator
 import top.yukonga.miuix.kmp.basic.ProgressIndicatorDefaults
 import top.yukonga.miuix.kmp.basic.SliderDefaults
-import top.yukonga.miuix.kmp.preference.SliderPreference
+import com.tungsten.fcl.ui.compose.FCLSliderPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -77,12 +76,13 @@ fun VersionSettingScreen(
     memoryTicks: StateFlow<Int>,
 ) {
     val context = LocalContext.current
+    // Application 经 CreationExtras 注入，不再捕获组合期 LocalContext；
     // 同一 Activity ViewModelStore 内全局页/管理页各一个实例，key 必须区分
     val viewModel: VersionSettingViewModel = viewModel(
         key = if (globalSetting) "versionSetting_global" else "versionSetting_manage",
         initializer = {
             VersionSettingViewModel(
-                context.applicationContext as Application,
+                checkNotNull(this[APPLICATION_KEY]),
                 globalSetting,
                 notifyRunDirectoryChange,
             )
@@ -354,7 +354,7 @@ private fun MemoryBlock(
         title = stringResource(R.string.settings_memory),
         summary = stringResource(R.string.settings_memory_auto_allocate),
     )
-    SliderPreference(
+    FCLSliderPreference(
         value = state.maxMemory.toFloat(),
         onValueChange = { onMaxMemoryChange(it.toInt()) },
         title = stringResource(
@@ -370,8 +370,8 @@ private fun MemoryBlock(
         ),
     )
 
-    // 空闲内存在拖动/刷新时重取（对齐遗留 StringBinding 每次失效重算）
-    val freeMemoryMB = remember(state.usedMemoryMB, state.maxMemory, state.autoMemory) {
+    // 空闲内存在拖动/刷新时重取（对齐遗留 StringBinding 每次失效重算）；context 补 key
+    val freeMemoryMB = remember(context, state.usedMemoryMB, state.maxMemory, state.autoMemory) {
         MemoryUtils.getFreeDeviceMemory(context)
     }
     val maxMemoryBytes = state.maxMemory * 1024L * 1024L
@@ -507,7 +507,7 @@ private fun ThemedCard(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
-    Card(
+    FCLCard(
         modifier = modifier,
         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
     ) {

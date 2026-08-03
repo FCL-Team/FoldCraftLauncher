@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.setting.compose
 
-import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -20,20 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tungsten.fcl.R
 import top.yukonga.miuix.kmp.basic.BasicComponent
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.TextButton
 import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.preference.ArrowPreference
-import top.yukonga.miuix.kmp.preference.SliderPreference
+import com.tungsten.fcl.ui.compose.FCLSliderPreference
 import com.tungsten.fcl.ui.compose.FCLSwitchPreference
 import top.yukonga.miuix.kmp.preference.WindowSpinnerPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -56,10 +54,8 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 fun LauncherSettingScreen(
     onEvent: (LauncherSettingEvent) -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val viewModel: LauncherSettingViewModel = viewModel(initializer = {
-        LauncherSettingViewModel(context.applicationContext as Application)
-    })
+    // Application 由默认 Factory 经 CreationExtras 注入（FCLViewModel 已改 AndroidViewModel）
+    val viewModel: LauncherSettingViewModel = viewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -75,7 +71,7 @@ fun LauncherSettingScreen(
         // ---------- 分组一：通用（对齐布局第一个容器 :21-228） ----------
         // 容器底色对齐遗留 auto_linear_background_tint 的 ltColor 染色（= primaryContainer，随主色联动）
         item(key = "general") {
-            Card(
+            FCLCard(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
             ) {
@@ -117,7 +113,7 @@ fun LauncherSettingScreen(
 
         // ---------- 分组二：外观（对齐布局第二个容器 :229-945） ----------
         item(key = "appearance") {
-            Card(
+            FCLCard(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
             ) {
@@ -163,7 +159,7 @@ fun LauncherSettingScreen(
                     onReset = viewModel::onResetLiveBackground,
                     onSet = viewModel::onPickLiveBackground,
                 )
-                SliderPreference(
+                FCLSliderPreference(
                     value = state.videoBackgroundVolume.toFloat(),
                     onValueChange = { viewModel.setVideoBackgroundVolume(it.toInt()) },
                     title = stringResource(R.string.settings_launcher_background_video_volume),
@@ -190,14 +186,14 @@ fun LauncherSettingScreen(
                     onCheckedChange = viewModel::setCloseSkinModel,
                     title = stringResource(R.string.settings_launcher_close_skin_view),
                 )
-                SliderPreference(
+                FCLSliderPreference(
                     value = state.animationSpeed.toFloat(),
                     onValueChange = { viewModel.setAnimationSpeed(it.toInt()) },
                     title = stringResource(R.string.settings_launcher_animation_speed),
                     valueText = state.animationSpeed.toString(),
                     valueRange = 1f..20f,
                 )
-                SliderPreference(
+                FCLSliderPreference(
                     value = state.vibrationDuration.toFloat(),
                     onValueChange = { viewModel.setVibrationDuration(it.toInt()) },
                     title = stringResource(R.string.settings_launcher_vibrate_duration),
@@ -232,7 +228,7 @@ fun LauncherSettingScreen(
 
         // ---------- 分组三：下载（对齐布局第三个容器 :946-1073） ----------
         item(key = "download") {
-            Card(
+            FCLCard(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
             ) {
@@ -271,7 +267,7 @@ fun LauncherSettingScreen(
                     title = stringResource(R.string.settings_launcher_download),
                     summary = stringResource(R.string.settings_launcher_download_threads_auto),
                 )
-                SliderPreference(
+                FCLSliderPreference(
                     value = state.downloadThreads.toFloat(),
                     onValueChange = { viewModel.setDownloadThreads(it.toInt()) },
                     title = stringResource(R.string.settings_launcher_download_threads),

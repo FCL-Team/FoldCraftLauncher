@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.version.compose
 
-import android.app.Application
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,7 +33,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,7 +53,7 @@ import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcl.ui.version.Versions
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -70,8 +68,9 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * 版本列表页 Compose 界面（小步骤 3.3）：page_version_list.xml + VersionListPage.kt +
  * VersionListAdapter.kt + ProfileListAdapter.java 的 Miuix 重构。
  *
- * 布局对齐遗留：左侧 30% 栏（搜索框 + 游戏目录列表 + 刷新/新建目录按钮），
- * 右侧 70% 栏（分类过滤条 + 版本卡片列表）；加载中显示进度圈、空列表隐藏右侧面板。
+ * 布局对齐遗留：左侧 30% 栏（游戏目录列表 + 刷新/新建目录按钮），
+ * 右侧 70% 栏（搜索框 + 分类过滤条 + 版本卡片列表）；加载中显示进度圈、空列表隐藏列表区。
+ * 搜索框旧版位于左栏顶部，按维护者 review 意见搬到右侧版本列表顶部，其余结构不变。
  * 根布局保持透明（露出用户壁纸），与遗留 page_version_list.xml 透明根一致。
  *
  * 行为承接：Composable 只读 uiState、只调 ViewModel 语义化方法；
@@ -81,10 +80,8 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 fun VersionListScreen(
     onEvent: (VersionListEvent) -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val viewModel: VersionListViewModel = viewModel(initializer = {
-        VersionListViewModel(context.applicationContext as Application)
-    })
+    // Application 由默认 Factory 经 CreationExtras 注入（FCLViewModel 已改 AndroidViewModel）
+    val viewModel: VersionListViewModel = viewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -96,20 +93,12 @@ fun VersionListScreen(
             .fillMaxSize()
             .padding(10.dp),
     ) {
-        // ---------- 左栏：搜索 + 游戏目录 + 刷新/新建（对齐布局 :12-58，30% 宽） ----------
+        // ---------- 左栏：游戏目录 + 刷新/新建（对齐布局 :24-58，30% 宽） ----------
         Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(0.3f),
         ) {
-            FCLTextField(
-                value = state.searchText,
-                onValueChange = viewModel::onSearchChange,
-                modifier = Modifier.fillMaxWidth(),
-                label = stringResource(R.string.search),
-                useLabelAsPlaceholder = true,
-                singleLine = true,
-            )
             ProfileListColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -136,26 +125,43 @@ fun VersionListScreen(
 
         Spacer(Modifier.width(10.dp))
 
-        // ---------- 右栏：分类条 + 版本列表（对齐 :60-146；加载中进度圈、空列表隐藏） ----------
-        Box(
+        // ---------- 右栏：搜索 + 分类条 + 版本列表（对齐 :12-22 / :60-146） ----------
+        // 搜索框旧版在左栏顶部，按维护者意见搬到右侧版本列表顶部；加载/空列表时保持可见
+        //（旧版搜索框恒在，仅右侧面板 GONE）
+        Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(0.7f),
         ) {
-            when {
-                state.loading -> {
-                    // 对齐 FCLProgressBar 的 dkColor 着色（Compose 侧 = primaryVariant，
-                    // 与 main 域 MainRightMenu.kt:368 同一约定）
-                    InfiniteProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center),
-                        color = MiuixTheme.colorScheme.primaryVariant,
-                    )
-                }
+            FCLTextField(
+                value = state.searchText,
+                onValueChange = viewModel::onSearchChange,
+                modifier = Modifier.fillMaxWidth(),
+                label = stringResource(R.string.search),
+                useLabelAsPlaceholder = true,
+                singleLine = true,
+            )
+            Spacer(Modifier.height(10.dp))
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            ) {
+                when {
+                    state.loading -> {
+                        // 对齐 FCLProgressBar 的 dkColor 着色（Compose 侧 = primaryVariant，
+                        // 与 main 域 MainRightMenu.kt:368 同一约定）
+                        InfiniteProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center),
+                            color = MiuixTheme.colorScheme.primaryVariant,
+                        )
+                    }
 
-                state.hasVersions -> {
-                    VersionListArea(state = state, viewModel = viewModel)
+                    state.hasVersions -> {
+                        VersionListArea(state = state, viewModel = viewModel)
+                    }
+                    // 空列表：旧代码隐藏整个右侧面板（binding.layout GONE），Compose 渲染空白
                 }
-                // 空列表：旧代码隐藏整个右侧面板（binding.layout GONE），Compose 渲染空白
             }
         }
     }
@@ -262,7 +268,7 @@ private fun VersionListArea(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         // 对齐 FCLAppBarLayout 的 bg_container_white + auto_tint（ltColor 染色 = primaryContainer）
-        Card(
+        FCLCard(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
         ) {
@@ -371,7 +377,7 @@ private fun VersionRow(
     onSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    FCLCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),

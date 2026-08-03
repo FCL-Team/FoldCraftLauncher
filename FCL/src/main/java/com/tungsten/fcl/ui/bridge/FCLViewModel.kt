@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.bridge
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.tungsten.fclcore.util.Logging
 import kotlinx.coroutines.flow.Flow
@@ -26,13 +27,19 @@ import java.util.logging.Level
  * - 配置对象承接：Config / VersionSetting 等配置对象的 `xxxFlow()`（StateFlow）
  *   直接投影进 UiState（见 docs/migration/bridge-api.md §3 的对照表）。
  *
- * 子类只需：声明 UiState/Event 两个类型 → 传入初始状态 → 暴露供 Compose 调用的
- * 语义化方法（setXxx / onXxx）。具体示例见 ui/bridge/example/LauncherSettingsViewModel.kt。
+ * 子类只需：声明 UiState/Event 两个类型 → 传入 Application 与初始状态 → 暴露供 Compose
+ * 调用的语义化方法（setXxx / onXxx）。Application 由默认 ViewModelProvider.Factory
+ * 经 CreationExtras（APPLICATION_KEY）注入，Compose 侧直接 `viewModel()` 获取，
+ * 不需要手搓 initializer 捕获 LocalContext。
+ * 具体示例见 ui/bridge/example/LauncherSettingsViewModel.kt。
  *
  * @param S 页面 UI 状态（不可变 data class）
  * @param E 一次性事件（sealed interface / data class）
  */
-abstract class FCLViewModel<S : Any, E : Any>(initialState: S) : ViewModel() {
+abstract class FCLViewModel<S : Any, E : Any>(
+    application: Application,
+    initialState: S,
+) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(initialState)
 

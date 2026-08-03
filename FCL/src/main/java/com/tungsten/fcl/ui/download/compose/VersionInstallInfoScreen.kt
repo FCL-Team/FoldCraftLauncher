@@ -39,7 +39,7 @@ import com.tungsten.fclcore.task.TaskExecutor
 import com.tungsten.fclcore.task.TaskListener
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.function.ExceptionalRunnable
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -296,7 +296,7 @@ fun VersionInstallInfoScreen(
             .padding(10.dp),
     ) {
         // 名称栏（对齐 name_bar：标签 + 输入框 + 安装按钮）
-        Card(
+        FCLCard(
             // 对齐 page_installer.xml name_bar 的 bg_container_white +
             // VersionInstallInfoPage:80-81 registerEvent（ltColor 染色 = primaryContainer）
             colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
@@ -340,7 +340,7 @@ fun VersionInstallInfoScreen(
                 .weight(1f),
         ) {
             items(holder.loaders, key = { it.item.libraryId }) { ui ->
-                Card(
+                FCLCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp),

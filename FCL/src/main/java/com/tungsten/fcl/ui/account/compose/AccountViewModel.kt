@@ -33,7 +33,7 @@ import java.util.UUID
  */
 class AccountViewModel(
     private val application: Application,
-) : FCLViewModel<AccountUiState, AccountEvent>(AccountUiState()) {
+) : FCLViewModel<AccountUiState, AccountEvent>(application, AccountUiState()) {
 
     init {
         Accounts.selectedAccountFlow()

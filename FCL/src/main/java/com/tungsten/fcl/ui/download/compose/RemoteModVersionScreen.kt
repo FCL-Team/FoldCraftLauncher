@@ -22,7 +22,7 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -91,7 +91,7 @@ fun RemoteModVersionScreen(
             // 入场动画对齐 ModVersionAdapter:73（animationSpeed×30，见 fclItemEntryModifier）；
             // 按压反馈对齐 anim_scale StateListAnimator（按压缩放，ModVersionAdapter:63）→
             // Miuix Card 可点击重载的 Sink 反馈（component-mapping §3 既定替代）
-            Card(
+            FCLCard(
                 onClick = { onSelect(version) },
                 pressFeedbackType = PressFeedbackType.Sink,
                 // 对齐 item_mod_version.xml 的 bg_container_white_clickable +

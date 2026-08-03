@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,7 +34,7 @@ import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fcl.ui.compose.fclCheckboxColors
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Checkbox
 import top.yukonga.miuix.kmp.basic.Icon
@@ -143,8 +144,8 @@ fun InstallerListScreen(
     onSelect: (RemoteVersion) -> Unit,
 ) {
     val context = LocalContext.current
-    var saveDialogVersion by androidx.compose.runtime.remember {
-        androidx.compose.runtime.mutableStateOf<RemoteVersion?>(null)
+    var saveDialogVersion by remember {
+        mutableStateOf<RemoteVersion?>(null)
     }
 
     Column(
@@ -153,7 +154,7 @@ fun InstallerListScreen(
             .padding(10.dp),
     ) {
         if (holder.hasType) {
-            Card(
+            FCLCard(
                 // 对齐 page_install_version.xml bar 的 bg_container_white +
                 // auto_linear_background_tint（ltColor 染色 = primaryContainer）
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),

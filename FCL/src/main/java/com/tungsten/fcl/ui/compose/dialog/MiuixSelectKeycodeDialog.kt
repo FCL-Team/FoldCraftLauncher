@@ -21,7 +21,8 @@ import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
 import kotlinx.coroutines.flow.MutableStateFlow
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
+import com.tungsten.fcl.ui.compose.FCLCornerRadius
 
 /**
  * Miuix 版键码选择弹窗（4.1，对应 control/SelectKeycodeDialog + dialog_select_keycode，
@@ -76,7 +77,8 @@ class MiuixSelectKeycodeDialog(
         }
 
         setDialogContent {
-            Card(
+            FCLCard(
+                cornerRadius = FCLCornerRadius.Dialog,
                 modifier = Modifier
                     .padding(24.dp)
                     .wrapContentWidth()

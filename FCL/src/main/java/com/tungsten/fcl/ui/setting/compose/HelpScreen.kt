@@ -1,12 +1,10 @@
 package com.tungsten.fcl.ui.setting.compose
 
-import android.app.Application
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -35,7 +33,7 @@ import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcl.util.AndroidUtils
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
@@ -52,10 +50,8 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
 fun HelpScreen(
     onEvent: (HelpEvent) -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val viewModel: HelpViewModel = viewModel(initializer = {
-        HelpViewModel(context.applicationContext as Application)
-    })
+    // Application 由默认 Factory 经 CreationExtras 注入（FCLViewModel 已改 AndroidViewModel）
+    val viewModel: HelpViewModel = viewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -153,7 +149,7 @@ fun HelpScreen(
 
                 else -> {
                     // 对齐 item_article.xml 的 auto_linear_background_tint（ltColor = primaryContainer）
-                    Card(
+                    FCLCard(
                         modifier = Modifier.fillMaxSize(),
                         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
                     ) {

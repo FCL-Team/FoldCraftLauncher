@@ -30,7 +30,8 @@ import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import com.tungsten.fcl.ui.compose.fclCheckboxColors
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
+import com.tungsten.fcl.ui.compose.FCLCornerRadius
 import top.yukonga.miuix.kmp.basic.Checkbox
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -151,7 +152,8 @@ class MiuixViewGroupDialog(
 
     @Composable
     private fun DialogContent() {
-        Card(
+        FCLCard(
+            cornerRadius = FCLCornerRadius.Dialog,
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()

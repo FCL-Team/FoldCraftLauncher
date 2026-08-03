@@ -47,8 +47,8 @@ import java.util.logging.Level
 /**
  * 账户条目（merge 版）：承接上游 d7546cd1 的 Kotlin 化与文件选择 null 安全，
  * 状态层保持本分支的 StateFlow 契约（fakefx 已彻底移除）：
- * - 标题/副标题订阅 account/server 的 revisionFlow；头像/纹理订阅 TexturesLoader 的
- *   avatarFlow/textureFlow（4c API）；
+ * - 标题/副标题订阅 account/server 的 revisionFlow；头像订阅 TexturesLoader 的
+ *   avatarFlow（4c API）；
  * - uploadSkin 文件选择改用 fileLauncher 回调（替代遗留 browse + CountDownLatch），
  *   取消选择回调 null 时 future 以 null 完成；对外签名仍为 CompletableFuture，
  *   Compose 调用方（AccountScreen）契约不变。
@@ -60,9 +60,7 @@ class AccountListItem(
     private val _title = MutableStateFlow("")
     private val _subtitle = MutableStateFlow("")
     private val _image = MutableStateFlow<Drawable?>(null)
-    private val _texture = MutableStateFlow<Array<Bitmap>?>(null)
     private var imageSubscription: FlowSubscriptions.Subscription? = null
-    private var textureSubscription: FlowSubscriptions.Subscription? = null
 
     val title: String
         get() = _title.value
@@ -98,9 +96,6 @@ class AccountListItem(
         imageSubscription = FlowSubscriptions.subscribeWithCurrent(
             TexturesLoader.avatarFlow(account, ConvertUtils.dip2px(context, 30f))
         ) { _image.value = it }
-        textureSubscription = FlowSubscriptions.subscribeWithCurrent(
-            TexturesLoader.textureFlow(account)
-        ) { _texture.value = it }
     }
 
     fun refreshAsync(): Task<*> {
@@ -171,7 +166,8 @@ class AccountListItem(
             !is YggdrasilAccount -> future.complete(null)
 
             else -> {
-                val yggAccount = account as YggdrasilAccount
+                // when 条件分支已 smart-cast，无需显式 as
+                val yggAccount = account
                 // 上游 d7546cd1：fileLauncher 回调式文件选择（移除遗留 browse + CountDownLatch
                 // 阻塞），取消选择回调 null 直接以 null 完成
                 Schedulers.androidUIThread().execute {
@@ -218,7 +214,6 @@ class AccountListItem(
     fun refreshSkinBinding() {
         // 重绑语义保留：cancel 旧订阅 + 新订阅（对齐原 unbind/bind）
         imageSubscription?.cancel()
-        textureSubscription?.cancel()
         bindSkinFlows()
         MainActivity.getInstance().refreshAvatar(account)
         // mainUI 固定为 ComposeMainUI（旧 MainUI 已删除），refreshSkin 契约不变
@@ -234,8 +229,6 @@ class AccountListItem(
     fun subtitleFlow(): MutableStateFlow<String> = _subtitle
 
     fun imageFlow(): MutableStateFlow<Drawable?> = _image
-
-    fun textureFlow(): MutableStateFlow<Array<Bitmap>?> = _texture
 
     companion object {
         @Throws(

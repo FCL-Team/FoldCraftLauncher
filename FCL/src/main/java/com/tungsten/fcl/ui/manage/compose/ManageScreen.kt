@@ -25,7 +25,7 @@ import com.tungsten.fcl.ui.compose.rememberShakeState
 import com.tungsten.fcl.ui.compose.shake
 import com.tungsten.fclauncher.utils.FCLPath
 import kotlinx.coroutines.flow.StateFlow
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.Text
@@ -58,7 +58,7 @@ fun ManageScreen(
     ) {
         // ---------- 左列（对齐 ManagePage.kt :71-104 的 9 项） ----------
         // 容器底色对齐遗留 registerEvent 的 ltColor 染色（= primaryContainer，随主色联动）
-        Card(
+        FCLCard(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight(),
@@ -77,7 +77,7 @@ fun ManageScreen(
         Spacer(Modifier.width(10.dp))
 
         // ---------- 右列（对齐 ManagePage.kt :106-147 的 7 项） ----------
-        Card(
+        FCLCard(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight(),

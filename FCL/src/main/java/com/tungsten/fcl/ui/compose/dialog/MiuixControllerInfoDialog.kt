@@ -29,7 +29,8 @@ import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.platform.OperatingSystem
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
+import com.tungsten.fcl.ui.compose.FCLCornerRadius
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Checkbox
 import top.yukonga.miuix.kmp.basic.Text
@@ -105,7 +106,8 @@ class MiuixControllerInfoDialog(
 
     @Composable
     private fun DialogContent() {
-        Card(
+        FCLCard(
+            cornerRadius = FCLCornerRadius.Dialog,
             modifier = Modifier
                 .padding(16.dp)
                 .width(400.dp),

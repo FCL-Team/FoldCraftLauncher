@@ -27,12 +27,10 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -59,11 +57,11 @@ import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
@@ -117,7 +115,8 @@ fun MainRightMenu(
     onJarLongClick: () -> Unit,
     onGoSettingClick: () -> Unit,
 ) {
-    val animSpeed = remember { ThemeEngine.getInstance().theme.animationSpeed }
+    // 动画速度直接 collect flow：改主题后立即跟随（animationSpeedFlow，Theme.java:150）
+    val animSpeed by ThemeEngine.getInstance().theme.animationSpeedFlow().collectAsState()
     val shakeState = rememberShakeState()
     val shakeTick by MainRightMenuBridge.startShakeTick.collectAsStateWithLifecycle()
     LaunchedEffect(shakeTick) {
@@ -204,20 +203,23 @@ private fun AccountBlock(onClick: () -> Unit) {
     val account by Accounts.selectedAccountFlow().collectAsState()
     val avatarTick by MainRightMenuBridge.avatarRefreshTick.collectAsStateWithLifecycle()
     val avatarSize = with(LocalDensity.current) { 52.dp.roundToPx() }
-    val defaultAvatar = remember {
-        TexturesLoader.toAvatar(
-            TexturesLoader.getDefaultSkin(TextureModel.ALEX).image,
-            avatarSize,
-        ).toDrawable(context.resources)
+    // 默认头像解码属 IO，移出组合期；avatarSize 作 key（dp→px 随密度变化）
+    val defaultAvatar by produceState<Drawable?>(initialValue = null, avatarSize) {
+        value = withContext(Dispatchers.IO) {
+            TexturesLoader.toAvatar(
+                TexturesLoader.getDefaultSkin(TextureModel.ALEX).image,
+                avatarSize,
+            ).toDrawable(context.resources)
+        }
     }
     // 头像：TexturesLoader.avatarFlow（StateFlow，直接 collect），refreshAvatar 节拍推进后重建
-    val avatar by produceState<Drawable>(defaultAvatar, account, avatarTick) {
+    val avatar by produceState<Drawable?>(initialValue = null, account, avatarTick, defaultAvatar) {
         val current = account
         if (current == null) {
             value = defaultAvatar
         } else {
             val flow = TexturesLoader.avatarFlow(current, avatarSize)
-            flow.value?.let { value = it }
+            value = flow.value ?: defaultAvatar
             flow.collect { newValue ->
                 newValue?.let { value = it }
             }
@@ -259,20 +261,17 @@ private fun AccountBlock(onClick: () -> Unit) {
 @Composable
 private fun AccountSubtitle(account: Account?, modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val text = when (account) {
         null -> stringResource(R.string.account_state_add)
         is AuthlibInjectorAccount -> {
-            val serverName by remember(account) {
-                account.server.revisionFlow()
-                    .map { account.server.name }
-                    .stateIn(scope, SharingStarted.Eagerly, account.server.name)
-            }.collectAsState()
+            // revisionFlow（StateFlow）驱动刷新，生命周期感知 collect，不再手搓 stateIn
+            val serverName by account.server.revisionFlow()
+                .map { account.server.name }
+                .collectAsStateWithLifecycle(initialValue = account.server.name)
             serverName
         }
-        else -> remember(account) {
-            Accounts.getLocalizedLoginTypeName(context, Accounts.getAccountFactory(account))
-        }
+        // 组合期直算：字符串查询开销可忽略，避免 remember 漏 key（context）
+        else -> Accounts.getLocalizedLoginTypeName(context, Accounts.getAccountFactory(account))
     }
     Text(
         text = text,

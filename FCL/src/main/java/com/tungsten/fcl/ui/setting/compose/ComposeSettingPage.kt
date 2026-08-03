@@ -3,7 +3,6 @@ package com.tungsten.fcl.ui.setting.compose
 import android.content.Context
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.compose.runtime.Composable
 import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.bridge.LegacyBridge
 import com.tungsten.fclcore.task.Task

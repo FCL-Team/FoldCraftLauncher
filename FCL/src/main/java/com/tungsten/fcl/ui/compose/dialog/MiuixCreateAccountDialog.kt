@@ -30,7 +30,6 @@ import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
-import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
 import com.tungsten.fcl.ui.compose.fclDialogTextButtonColors
 import com.tungsten.fcl.util.AndroidUtils

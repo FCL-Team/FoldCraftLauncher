@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -141,7 +141,7 @@ fun RemoteModDownloadScreen(
         // 文件信息头（对齐 name/tag/date）
         // 对齐 page_download_addon.xml 头部 FCLLinearLayout 的 bg_container_white +
         // auto_linear_background_tint（ltColor 染色 = primaryContainer）
-        Card(
+        FCLCard(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
         ) {
@@ -199,7 +199,7 @@ fun RemoteModDownloadScreen(
                 ) {
                     // EnumMap 迭代顺序 = 枚举声明顺序（对齐遗留 EnumMap keySet 顺序）
                     holder.dependencies.forEach { (type, mods) ->
-                        Card(
+                        FCLCard(
                             // 对齐 dependency_layout 的 bg_container_white +
                             // RemoteModDownloadPage:166 registerEvent（ltColor 染色 = primaryContainer）
                             colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),

@@ -1,8 +1,6 @@
 package com.tungsten.fcl.ui.account.compose
 
-import android.app.Application
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -40,7 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -62,12 +59,10 @@ import com.tungsten.fclcore.auth.offline.OfflineAccount
 import com.tungsten.fclcore.auth.offline.Skin
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
-import com.tungsten.fcllibrary.skin.SkinRenderer
-import com.tungsten.fcllibrary.skin.SkinViewer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -82,27 +77,23 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * 账户页 Compose 界面（小步骤 3.5）：ui_account.xml + item_account.xml +
  * item_authlib_injector_server.xml 的 Miuix 重构。
  *
- * 布局对齐遗留：左侧 30% 栏（"创建账户"分组头 + 离线/微软入口 + 外置登录服务器列表 +
- * 添加服务器入口），右侧 70% 栏（当前账户 3D 皮肤预览 + 账户卡片列表）。
+ * 布局对齐遗留 ui_account.xml：左侧 30% 栏（"创建账户"分组头 + 离线/微软入口 +
+ * 外置登录服务器列表 + 添加服务器入口），右侧 70% 栏（账户卡片列表占满整栏）。
  * 根布局保持透明（露出用户壁纸），与遗留 ui_account.xml 透明根一致。
  *
  * 行为承接：Composable 只读 uiState、只调 ViewModel 语义化方法；
  * 弹窗/文件选择等一次性副作用经 onEvent 转 [AccountScreenHost]；
  * 登录/刷新/换肤业务链路全部留在遗留 AccountListItem（零重写）。
  *
- * 皮肤预览：FCLLibrary 红线组件 SkinViewer（GLSurfaceView + SkinRenderer）用 AndroidView
- * 原样包装（同 3.2 MiuixOfflineAccountSkinDialog 的 GL 处置），纹理跟随选中账户的
- * AccountListItem.textureFlow（refreshSkinBinding 重绑后此处自动更新）；
- * GL 生命周期由 [ComposeAccountUI] 的 onStart/onStop/onPause/onResume 转发。
+ * PR #1714 review：账户页不放 3D 皮肤模型预览（显示空间不足），SkinViewer 已移除；
+ * 换肤预览仍在账户行皮肤按钮弹出的 MiuixOfflineAccountSkinDialog 内。
  */
 @Composable
 fun AccountScreen(
     onEvent: (AccountEvent) -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val viewModel: AccountViewModel = viewModel(initializer = {
-        AccountViewModel(context.applicationContext as Application)
-    })
+    // Application 由默认 Factory 经 CreationExtras 注入（FCLViewModel 已改 AndroidViewModel）
+    val viewModel: AccountViewModel = viewModel()
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -168,22 +159,18 @@ fun AccountScreen(
 
         Spacer(Modifier.width(10.dp))
 
-        // ---------- 右栏：选中账户皮肤预览 + 账户列表（70% 宽） ----------
-        Column(
+        // ---------- 右栏：账户列表占满整栏（对齐 ui_account.xml recycler_view，70% 宽） ----------
+        LazyColumn(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(0.7f),
         ) {
-            SelectedAccountSkinPreview(state = state)
-            Spacer(Modifier.height(3.dp))
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(state.accounts, key = { it.account.uuid.toString() }) { item ->
-                    AccountRow(
-                        item = item,
-                        selected = item.account == state.selectedAccount,
-                        viewModel = viewModel,
-                    )
-                }
+            items(state.accounts, key = { it.account.uuid.toString() }) { item ->
+                AccountRow(
+                    item = item,
+                    selected = item.account == state.selectedAccount,
+                    viewModel = viewModel,
+                )
             }
         }
     }
@@ -281,56 +268,6 @@ private fun ServerListColumn(
     }
 }
 
-/**
- * 选中账户的 3D 皮肤预览（GL 渲染，AndroidView 原样包装 SkinViewer）。
- * 纹理取选中账户 AccountListItem 的 textureFlow（StateFlow），换肤重绑后自动更新；
- * 无选中账户时显示默认 alex 皮肤（对齐 MainUI.setupSkinDisplay :154-156）。
- */
-@Composable
-private fun SelectedAccountSkinPreview(state: AccountUiState) {
-    val defaultSkin = remember {
-        BitmapFactory.decodeStream(
-            AccountScreenHost::class.java.getResourceAsStream("/assets/img/alex.png")
-        )
-    }
-    val selectedItem = state.accounts.firstOrNull { it.account == state.selectedAccount }
-    val texture = selectedItem?.textureFlow()?.collectAsState()?.value
-    val rendererHolder = remember { mutableStateOf<SkinRenderer?>(null) }
-
-    // 容器底色对齐遗留 bg_container_white + auto_tint 的 ltColor 染色（= primaryContainer，
-    // 随 ThemeEngine 主色实时联动；不用 Miuix 默认 surfaceContainer）
-    Card(
-        modifier = Modifier.fillMaxWidth().height(240.dp),
-        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
-    ) {
-        AndroidView(
-            factory = { ctx ->
-                SkinViewer(ctx).also { viewer ->
-                    val renderer = SkinRenderer(ctx)
-                    viewer.setRenderer(renderer, 5f)
-                    rendererHolder.value = renderer
-                    ComposeAccountUI.activeSkinViewer = viewer
-                }
-            },
-            update = {
-                val bitmaps = texture
-                if (bitmaps != null && bitmaps.isNotEmpty()) {
-                    rendererHolder.value?.setTexture(bitmaps[0], bitmaps.getOrNull(1))
-                } else {
-                    rendererHolder.value?.setTexture(defaultSkin, null)
-                }
-            },
-            onRelease = { viewer ->
-                viewer.onPause()
-                if (ComposeAccountUI.activeSkinViewer === viewer) {
-                    ComposeAccountUI.activeSkinViewer = null
-                }
-            },
-            modifier = Modifier.fillMaxSize(),
-        )
-    }
-}
-
 /** 账户卡片（对齐 item_account.xml：单选 + 头像 + 名称/类型 + 皮肤/刷新/复制UUID/编辑/删除）。 */
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
 @Composable
@@ -349,7 +286,7 @@ private fun AccountRow(
     var refreshing by remember { mutableStateOf(false) }
     var skinBusy by remember { mutableStateOf(false) }
 
-    Card(
+    FCLCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
@@ -419,7 +356,7 @@ private fun AccountRow(
                                     // （CountDownLatch），Compose 侧改为协程承接，契约不变
                                     is AuthlibInjectorAccount -> scope.launch {
                                         val task = withContext(Dispatchers.IO) {
-                                            runCatching { item.uploadSkin()?.get() }
+                                            runCatching { item.uploadSkin().get() }
                                                 .onFailure { it.printStackTrace() }
                                                 .getOrNull()
                                         }
@@ -434,7 +371,7 @@ private fun AccountRow(
                                     // 其他（Microsoft 等）：uploadSkin 立即完成（打开换肤网页），
                                     // 对齐旧 Adapter 主线程直取
                                     else -> {
-                                        val task = runCatching { item.uploadSkin()?.get() }
+                                        val task = runCatching { item.uploadSkin().get() }
                                             .onFailure { it.printStackTrace() }
                                             .getOrNull()
                                         if (task != null) {

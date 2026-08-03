@@ -1,28 +1,21 @@
 package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,10 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
@@ -47,14 +38,13 @@ import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.versioning.VersionNumber
-import com.tungsten.fcllibrary.component.dialog.FullImageDialog
 import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -68,11 +58,11 @@ import java.util.stream.Stream
 
 /**
  * 远程资源详情页（对齐 RemoteModInfoPage + page_download_addon_info.xml）：
- * 头部信息（图标/名称/tag/简介/mcmod/官网）+ 截图横排 + 游戏版本列表（搜索过滤、推荐置顶）。
+ * 头部信息（图标/名称/tag/简介/mcmod/官网）+ 游戏版本列表（搜索过滤、推荐置顶）。
  *
  * 行为对齐（interaction-map §5.4）：
  * - 版本搜索框实时过滤游戏版本列表，推荐版本置顶（:145-159）；
- * - mcmod/官网按钮开浏览器（:315-325）；截图长按看大图、点击重载（Adapter :45-72）；
+ * - mcmod/官网按钮开浏览器（:315-325）；
  * - 后台检测已安装加"[已安装]"前缀（:198-223）；
  * - 版本项点击 → [onOpenVersionPage]（二级临时页堆叠）。
  */
@@ -90,10 +80,6 @@ class RemoteModInfoStateHolder(
     var versionMap by mutableStateOf<Map<String, List<RemoteMod.Version>>>(emptyMap())
     var recommendedKey by mutableStateOf<String?>(null)
     var installed by mutableStateOf(false)
-
-    var screenshotLoading by mutableStateOf(true)
-    var screenshotFailed by mutableStateOf(false)
-    var screenshots by mutableStateOf<List<RemoteMod.Screenshot>?>(null)
 
     val translations: ModTranslations =
         ModTranslations.getTranslationsByRepositoryType(repository.type)
@@ -116,7 +102,6 @@ class RemoteModInfoStateHolder(
     init {
         // 对齐 onStart :141-142
         loadModVersions()
-        loadScreenshots()
     }
 
     /** 展示的游戏版本键列表（对齐 loadGameVersions :145-159：过滤 + 推荐置顶）。 */
@@ -151,26 +136,6 @@ class RemoteModInfoStateHolder(
             } catch (e: Throwable) {
                 loading = false
                 failed = true
-            }
-        }
-    }
-
-    /** 对齐 loadScreenshots :179-196。 */
-    fun loadScreenshots() {
-        screenshotLoading = true
-        screenshotFailed = false
-        scope.launch {
-            try {
-                val result = withContext(Dispatchers.IO) {
-                    addon.data.loadScreenshots(repository)
-                }
-                screenshots = result
-                screenshotLoading = false
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Throwable) {
-                screenshotLoading = false
-                screenshotFailed = true
             }
         }
     }
@@ -285,9 +250,6 @@ fun RemoteModInfoScreen(
                 item(key = "info") {
                     InfoCard(holder)
                 }
-                item(key = "screenshots") {
-                    ScreenshotRow(holder)
-                }
                 item(key = "search") {
                     FCLTextField(
                         value = holder.searchText,
@@ -306,7 +268,7 @@ fun RemoteModInfoScreen(
                 ) { gameVersion ->
                     // 入场动画对齐 ModGameVersionAdapter:69（animationSpeed×30）；
                     // 按压反馈对齐 anim_scale（ModGameVersionAdapter:62）→ Miuix Sink
-                    Card(
+                    FCLCard(
                         onClick = {
                             holder.versionMap[gameVersion]?.let(onOpenVersionPage)
                         },
@@ -341,7 +303,7 @@ fun RemoteModInfoScreen(
 @Composable
 private fun InfoCard(holder: RemoteModInfoStateHolder) {
     val context = LocalContext.current
-    Card(
+    FCLCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
@@ -416,126 +378,6 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
                             contentDescription = null,
                             tint = MiuixTheme.colorScheme.onPrimary,
                         )
-                    }
-                }
-            }
-        }
-    }
-}
-
-/** 截图横排（对齐 RemoteModScreenshotAdapter：点击重载、长按看大图）。 */
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
-@Composable
-private fun ScreenshotRow(holder: RemoteModInfoStateHolder) {
-    val context = LocalContext.current
-    // 对齐 page_download_addon_info.xml 截图面板（FCLConstraintLayout auto_tint = ltColor）：
-    // 加载/失败/空结果态均在 ltColor 面板上呈现
-    val panelModifier = Modifier.background(
-        MiuixTheme.colorScheme.primaryContainer,
-        RoundedCornerShape(5.dp),
-    )
-    when {
-        holder.screenshotLoading -> Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .padding(bottom = 8.dp)
-                .then(panelModifier),
-        ) {
-            InfiniteProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
-                color = MiuixTheme.colorScheme.primary,
-            )
-        }
-
-        holder.screenshotFailed -> Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp)
-                .padding(bottom = 8.dp)
-                .then(panelModifier),
-        ) {
-            IconButton(
-                onClick = holder::loadScreenshots,
-                modifier = Modifier.align(Alignment.Center),
-            ) {
-                // 对齐 screenshot_retry FCLImageView（无 auto_tint）：drawable 自带静态灰
-                Icon(
-                    painter = painterResource(R.drawable.ic_baseline_refresh_24),
-                    contentDescription = null,
-                    tint = FCLThemeTokens.StrokeGray,
-                )
-            }
-        }
-
-        // 对齐 screenshot_no_result（auto_text_tint = onPrimary，位于 ltColor 面板上）
-        holder.screenshots.isNullOrEmpty() -> Text(
-            text = stringResource(R.string.mods_screenshot_no_result),
-            style = MiuixTheme.textStyles.body2,
-            color = MiuixTheme.colorScheme.onPrimary,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
-                .then(panelModifier)
-                .padding(10.dp),
-        )
-
-        else -> LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-        ) {
-            items(holder.screenshots!!) { screenshot ->
-                var retryTick by remember { mutableStateOf(0) }
-                Card(
-                    // 对齐 page_download_addon_info.xml:136 截图面板 bg_container_white + auto_tint
-                    // （ltColor 染色 = primaryContainer，旧版截图项自身透明、底色由面板提供）
-                    colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
-                    modifier = Modifier.padding(end = 8.dp),
-                ) {
-                    Column {
-                        // key(retryTick)：点击重载（对齐 Adapter onClick 重新加载语义）
-                        androidx.compose.runtime.key(retryTick) {
-                            GlideImage(
-                                model = screenshot.imageUrl,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .size(width = 200.dp, height = 112.dp)
-                                    .combinedClickable(
-                                        onClick = { retryTick++ },
-                                        onLongClick = {
-                                            // 对齐 Adapter.showFullImageDialog（区域内唯一长按）
-                                            val dialog = FullImageDialog(context).apply { show() }
-                                            Glide.with(dialog.getImageView())
-                                                .load(screenshot.imageUrl)
-                                                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                                                .fitCenter()
-                                                .into(dialog.getImageView())
-                                        },
-                                    ),
-                            )
-                        }
-                        if (!screenshot.title.isNullOrBlank()) {
-                            // 对齐 view_mod_screenshot.xml：title/description 均 auto_text_tint（= onPrimary）
-                            Text(
-                                text = screenshot.title,
-                                style = MiuixTheme.textStyles.body2,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = MiuixTheme.colorScheme.onPrimary,
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                            )
-                        }
-                        if (!screenshot.description.isNullOrBlank()) {
-                            Text(
-                                text = screenshot.description,
-                                fontSize = 11.sp,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                color = MiuixTheme.colorScheme.onPrimary,
-                                modifier = Modifier.padding(horizontal = 8.dp),
-                            )
-                        }
                     }
                 }
             }

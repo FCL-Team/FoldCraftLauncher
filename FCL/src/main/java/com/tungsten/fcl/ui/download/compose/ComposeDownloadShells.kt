@@ -187,7 +187,7 @@ class ComposeRemoteModInfoPage(
     @Composable
     override fun Content() {
         val scope = rememberCoroutineScope()
-        val holder = remember {
+        val holder = remember(tab, repository, addon) {
             RemoteModInfoStateHolder(context, tab, repository, addon, isModrinth, scope)
         }
         RemoteModInfoScreen(
@@ -264,7 +264,7 @@ class ComposeRemoteModDownloadPage(
     @Composable
     override fun Content() {
         val scope = rememberCoroutineScope()
-        val holder = remember { RemoteModDownloadStateHolder(context, modVersion, scope) }
+        val holder = remember(modVersion) { RemoteModDownloadStateHolder(context, modVersion, scope) }
         RemoteModDownloadScreen(
             holder = holder,
             repository = repository,
@@ -301,7 +301,7 @@ class ComposeVersionInstallInfoPage(
 
     @Composable
     override fun Content() {
-        val holder = remember { VersionInstallInfoStateHolder(context, gameVersion) }
+        val holder = remember(gameVersion) { VersionInstallInfoStateHolder(context, gameVersion) }
         VersionInstallInfoScreen(
             holder = holder,
             onOpenInstallerList = { libraryId ->
@@ -339,7 +339,7 @@ class ComposeInstallerListPage(
 
     @Composable
     override fun Content() {
-        val holder = remember { InstallerListStateHolder(context, gameVersion, libraryId) }
+        val holder = remember(gameVersion, libraryId) { InstallerListStateHolder(context, gameVersion, libraryId) }
         DisposableEffect(Unit) {
             onDispose { holder.active = false }
         }

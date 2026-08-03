@@ -2,7 +2,6 @@ package com.tungsten.fcl.ui.compose.dialog
 
 import android.content.Context
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,7 +40,8 @@ import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fcllibrary.skin.SkinRenderer
 import com.tungsten.fcllibrary.skin.SkinViewer
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
+import com.tungsten.fcl.ui.compose.FCLCornerRadius
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.RadioButton
@@ -164,7 +164,8 @@ class MiuixOfflineAccountSkinDialog(
 
     @Composable
     private fun DialogContent() {
-        Card(
+        FCLCard(
+            cornerRadius = FCLCornerRadius.Dialog,
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxSize(),

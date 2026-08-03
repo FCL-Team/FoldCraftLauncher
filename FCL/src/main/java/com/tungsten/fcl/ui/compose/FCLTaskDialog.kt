@@ -2,7 +2,6 @@ package com.tungsten.fcl.ui.compose
 
 import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -190,8 +188,7 @@ class FCLTaskDialogState(
             val stage = task.stage ?: return
             ui.execute {
                 if (disposed) return@execute
-                val total = Lang.tryCast(task.properties["total"], Integer::class.java)
-                    .map { it.toInt() }
+                val total = Lang.tryCast(task.properties["total"], Int::class.javaObjectType)
                     .orElse(0)
                 findStage(stage)?.total = total
             }

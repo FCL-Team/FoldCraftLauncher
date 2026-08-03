@@ -19,7 +19,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
+import com.tungsten.fcl.ui.compose.FCLCornerRadius
 import androidx.compose.foundation.layout.ColumnScope
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.CardDefaults
@@ -113,7 +114,8 @@ fun FCLDialogCard(
     bottomContent: (@Composable () -> Unit)? = null,
     content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
-    Card(
+    FCLCard(
+        cornerRadius = FCLCornerRadius.Dialog,
         modifier = modifier
             .padding(24.dp)
             .widthIn(min = 350.dp, max = 560.dp)

@@ -300,7 +300,7 @@ object LegacyBridge {
         val taskRequest by taskDialogRequest.collectAsStateWithLifecycle()
         taskRequest?.let { task ->
             val context = LocalContext.current
-            val state = remember(task) { FCLTaskDialogState(context, task.executor) }
+            val state = remember(task, context) { FCLTaskDialogState(context, task.executor) }
             DisposableEffect(state) {
                 state.attach()
                 val active = java.util.concurrent.atomic.AtomicBoolean(true)

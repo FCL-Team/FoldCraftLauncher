@@ -59,7 +59,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Icon
@@ -358,7 +358,8 @@ fun RemoteModSearchScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val holder = remember { RemoteModSearchStateHolder(context, tab, scope) }
+    // tab 是 Composable 参数，切下载 Tab 重组时必须重建 holder（repository 由 tab 创建）
+    val holder = remember(tab) { RemoteModSearchStateHolder(context, tab, scope) }
 
     Row(
         modifier = Modifier
@@ -371,7 +372,7 @@ fun RemoteModSearchScreen(
                 .fillMaxHeight()
                 .weight(0.3f),
         ) {
-            Card(
+            FCLCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
@@ -480,7 +481,7 @@ fun RemoteModSearchScreen(
                 .weight(0.7f),
         ) {
             // 对齐 page_download.xml FCLAppBarLayout auto_tint（ltColor 染色 = primaryContainer）
-            Card(
+            FCLCard(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
             ) {
@@ -621,7 +622,7 @@ private fun RemoteModRow(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
+    FCLCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),

@@ -827,7 +827,6 @@
     <string name="mods_restore">Khôi phục</string>
     <string name="mods_url">Trang chính thức</string>
     <string name="mods_update_modpack_mod_warning">Việc cập nhật mods trong một modpack có thể dẫn đến kết quả không thể sửa chữa, có thể làm hỏng modpack khiến nó không thể khởi động. Bạn có chắc chắn muốn cập nhật không?</string>
-    <string name="mods_screenshot_no_result">Không có ảnh chụp màn hình nào để hiển thị</string>
 
     <string name="profile_shared">Thư mục dùng chung</string>
     <string name="profile_private">Thư mục riêng tư</string>

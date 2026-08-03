@@ -20,7 +20,7 @@
 - 工厂函数 `lightColorScheme(...)` / `darkColorScheme(...)`：53 个参数全有默认值，可只覆盖关注的槽位。
 - `ThemeController(colorSchemeMode, lightColors, darkColors, keyColor, colorSpec, paletteStyle, isDark)` 全默认参数；`ColorSchemeMode` 六值：`System / Light / Dark / MonetSystem / MonetLight / MonetDark`。Monet 由 materialkolor 实现（`ThemeColorSpec.Spec2021/2025`、`ThemePaletteStyle.TonalSpot/...`），可作 ThemeEngine 壁纸取色的远期候选。
 - `TextStyles` 14 档：`main / paragraph / body1 / body2 / button / footnote1 / footnote2 / headline1 / headline2 / subtitle / title1 / title2 / title3 / title4`。本步骤沿用默认，FCL 9 档字号（design-tokens §3）的映射属后续步骤。
-- **圆角无全局 Shape token**：各组件自带 `cornerRadius` 参数（Button/Card 默认 **16.dp**，squircle 平滑圆角由 `miuix-squircle` 传递依赖提供）。FCL 5dp/8dp 两档体系（design-tokens §4）需逐组件传参对齐，属后续步骤。
+- **圆角无全局 Shape token**：各组件自带 `cornerRadius` 参数（Button/Card 默认 **16.dp**，squircle 平滑圆角由 `miuix-squircle` 传递依赖提供）。FCL 5dp/8dp 两档体系（design-tokens §4）已经 `FCLCornerRadius` + `FCLCard` 包装对齐（见 FCLControls.kt）。
 
 ### 1.2 与 component-mapping.md（按 0.8.8 核实）的重大出入
 
@@ -105,7 +105,7 @@
 ## 4. 遗留问题（后续步骤处理）
 
 1. **Typography 未映射**：FCL 9 档字号（8–20sp，design-tokens §3）→ Miuix `TextStyles` 14 档的对照未定，本步骤沿用 Miuix 默认。
-2. **圆角体系未对齐**：Miuix 组件默认 16dp squircle；FCL 为 5dp（列表项/按钮）/8dp（面板/对话框）两档直角系圆角。逐组件传 `cornerRadius` 还是全局接受 Miuix 风格，需产品层面决策。
+2. ~~**圆角体系未对齐**~~（已解决，PR #1714 review）：`FCLCornerRadius` 两档 token（卡片 5dp / 弹窗 8dp，对齐 design-tokens §4.1）+ `FCLCard` 包装统一接入，见 FCLControls.kt。已知边界：Miuix `WindowDialog` 圆角由设备圆角推导（≥32dp，0.9.3 无公开参数），`FCLDialog`（WindowDialog 路径）暂未对齐 8dp。
 3. **disabled\*/secondary\*/tertiary\*/slider\* 等默认沿用槽位**：其中 disabledPrimary 系为 Miuix 蓝调（#C2D9FF 等），与品牌色 #7797CF 存在色相偏差，待真实页面出现后按截图微调。
 4. **ThemeEngine 对接未做**：`FCLTheme` 的自定义参数当前由调用方传入；读取 SharedPreferences "theme"（theme_color/theme_color2/theme_color2_dark）、监听取色器变更、与 `AppCompatDelegate.setDefaultNightMode` 状态同源，均为 TODO（见 FCLTheme.kt 注释）。另注意 design-tokens §2 记录的已知不一致：`LauncherSettingPage` 重置 color2Dark 写死 #000000 与出厂默认 #FFFFFF 不同，接入时需决策。
 5. **miuix-preference 成为设置页标准组件**（0.8.8 时代「不需要 preference 库」的结论已反转），component-mapping.md §1.2/§3 相关条目待批量修订。

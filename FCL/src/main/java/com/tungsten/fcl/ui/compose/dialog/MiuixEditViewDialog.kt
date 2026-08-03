@@ -47,11 +47,12 @@ import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
+import com.tungsten.fcl.ui.compose.FCLCornerRadius
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
-import top.yukonga.miuix.kmp.basic.Slider
+import com.tungsten.fcl.ui.compose.FCLSlider
 import top.yukonga.miuix.kmp.basic.Switch
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
@@ -133,7 +134,8 @@ class MiuixEditViewDialog(
 
     @Composable
     private fun DialogContent() {
-        Card(
+        FCLCard(
+            cornerRadius = FCLCornerRadius.Dialog,
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
@@ -717,7 +719,7 @@ class MiuixEditViewDialog(
                 val list = arrayListOf(event.sneakKeycode)
                 // Miuix 键码弹窗（对齐遗留 selectionProperty 单向 bind：初始同值、跟随后续变更）
                 val dialog = MiuixSelectKeycodeDialog(context, list, true, false)
-                FlowSubscriptions.subscribe(dialog.selectionFlow()) { n -> event.sneakKeycode = n.toInt() }
+                FlowSubscriptions.subscribe(dialog.selectionFlow()) { n -> event.sneakKeycode = n }
                 dialog.show()
             },
         )
@@ -864,7 +866,7 @@ class MiuixEditViewDialog(
                 style = MiuixTheme.textStyles.body2,
             )
             Spacer(Modifier.width(12.dp))
-            Slider(
+            FCLSlider(
                 value = value.coerceIn(min, max).toFloat(),
                 onValueChange = { onValueChange(it.toInt().coerceIn(min, max)) },
                 valueRange = min.toFloat()..max.toFloat(),
@@ -901,7 +903,7 @@ private fun OptionDropdown(
         )
         if (expanded.value) {
             Popup(onDismissRequest = { expanded.value = false }) {
-                Card {
+                FCLCard(cornerRadius = FCLCornerRadius.Dialog) {
                     Column {
                         options.forEachIndexed { index, option ->
                             Text(

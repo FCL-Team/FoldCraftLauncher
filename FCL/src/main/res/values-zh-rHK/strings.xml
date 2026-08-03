@@ -750,7 +750,6 @@
     <string name="mods_restore">回滾</string>
     <string name="mods_url">官方頁面</string>
     <string name="mods_update_modpack_mod_warning">更新整合包中嘅 Mod 可能導致整合包損壞，使整合包無法正常啟動。該操作不可逆，確定要更新嗎？</string>
-    <string name="mods_screenshot_no_result">冇截圖可以展示</string>
 
     <string name="profile_shared">公有目錄</string>
     <string name="profile_private">私有目錄</string>

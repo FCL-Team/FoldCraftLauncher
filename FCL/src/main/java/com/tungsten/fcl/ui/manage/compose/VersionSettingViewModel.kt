@@ -68,6 +68,7 @@ class VersionSettingViewModel(
      *  游戏目录隔离变更时联动刷新 Mod/World 页。 */
     private val notifyRunDirectoryChange: Boolean,
 ) : FCLViewModel<VersionSettingUiState, VersionSettingEvent>(
+    application,
     VersionSettingUiState(globalSetting = globalSetting),
 ) {
 

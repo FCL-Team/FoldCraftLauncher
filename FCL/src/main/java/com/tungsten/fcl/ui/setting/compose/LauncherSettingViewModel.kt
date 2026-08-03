@@ -49,7 +49,7 @@ import java.util.logging.Level
  */
 class LauncherSettingViewModel(
     private val application: Application,
-) : FCLViewModel<LauncherSettingUiState, LauncherSettingEvent>(LauncherSettingUiState()) {
+) : FCLViewModel<LauncherSettingUiState, LauncherSettingEvent>(application, LauncherSettingUiState()) {
 
     private val prefs = application.getSharedPreferences("launcher", Context.MODE_PRIVATE)
     private val engine = ThemeEngine.getInstance()

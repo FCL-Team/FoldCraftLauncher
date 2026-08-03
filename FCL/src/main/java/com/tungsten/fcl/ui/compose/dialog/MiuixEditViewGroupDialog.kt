@@ -28,7 +28,8 @@ import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
 import com.tungsten.fcl.ui.compose.fclDialogTextButtonColors
 import com.tungsten.fclcore.util.StringUtils
-import top.yukonga.miuix.kmp.basic.Card
+import com.tungsten.fcl.ui.compose.FCLCard
+import com.tungsten.fcl.ui.compose.FCLCornerRadius
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
 import com.tungsten.fcl.ui.compose.FCLTextField
@@ -153,7 +154,7 @@ private fun OptionDropdown(
         )
         if (expanded.value) {
             Popup(onDismissRequest = { expanded.value = false }) {
-                Card {
+                FCLCard(cornerRadius = FCLCornerRadius.Dialog) {
                     Column {
                         options.forEachIndexed { index, option ->
                             Text(

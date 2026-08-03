@@ -635,7 +635,6 @@
     <string name="mods_restore">Wiederherstellen</string>
     <string name="mods_url">Offizielle Seite</string>
     <string name="mods_update_modpack_mod_warning">Das Aktualisieren von Mods in einem Modpack kann zu irreparablen Schäden führen, möglicherweise wird das Modpack beschädigt und kann nicht mehr gestartet werden. Sind Sie sicher, dass Sie aktualisieren möchten?</string>
-    <string name="mods_screenshot_no_result">Keine Screenshots verfügbar</string>
 
     <string name="profile_shared">"Mit Ordner teilen \n(Gerätespeicher)"</string>
     <string name="profile_private">"Privater Ordner \n(Spielspeicher)"</string>

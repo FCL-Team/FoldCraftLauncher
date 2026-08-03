@@ -22,7 +22,7 @@ import kotlinx.coroutines.withContext
  */
 class HelpViewModel(
     private val application: Application,
-) : FCLViewModel<HelpUiState, HelpEvent>(HelpUiState()) {
+) : FCLViewModel<HelpUiState, HelpEvent>(application, HelpUiState()) {
 
     init {
         refresh()
