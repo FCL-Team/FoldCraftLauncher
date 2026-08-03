@@ -140,6 +140,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
         ArrayList<String> suffix = new ArrayList<>();
         suffix.add(".jar");
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
+            if (files == null) return;
             String path = files.get(0);
             Uri uri = Uri.parse(path);
             if (AndroidUtils.isDocUri(uri)) {

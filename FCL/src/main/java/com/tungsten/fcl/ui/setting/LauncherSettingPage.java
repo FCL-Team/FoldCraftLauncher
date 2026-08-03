@@ -7,7 +7,6 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,16 +36,12 @@ import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
-import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.FetchTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog;
 import com.tungsten.fcllibrary.component.theme.Theme;
@@ -363,6 +358,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             suffix.add(".jpg");
             suffix.add(".jpeg");
             MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
+                if (files == null) return;
                 String path = files.get(0);
                 Uri uri = Uri.parse(path);
                 if (AndroidUtils.isDocUri(uri)) {
@@ -375,6 +371,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             ArrayList<String> suffix = new ArrayList<>();
             suffix.add(".mp4");
             MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
+                if (files == null) return;
                 String path = files.get(0);
                 Uri uri = Uri.parse(path);
                 if (AndroidUtils.isDocUri(uri)) {
@@ -393,6 +390,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             suffix.add(".png");
             suffix.add(".gif");
             MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
+                if (files == null) return;
                 String path = files.get(0);
                 Uri uri = Uri.parse(path);
                 String type = AndroidUtils.getFileName(getContext(), uri);
@@ -417,6 +415,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
             suffix.add(".png");
             suffix.add(".gif");
             MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
+                if (files == null) return;
                 String path = files.get(0);
                 Uri uri = Uri.parse(path);
                 String type = AndroidUtils.getFileName(getContext(), uri);

@@ -32,22 +32,22 @@ public class ControllerUploadDialog extends FCLDialog implements View.OnClickLis
     private final Activity activity;
     private final Callback callback;
 
-    private FCLEditText name;
-    private FCLEditText author;
-    private FCLEditText intro;
-    private FCLEditText description;
+    private final FCLEditText name;
+    private final FCLEditText author;
+    private final FCLEditText intro;
+    private final FCLEditText description;
 
-    private AppCompatSpinner lang;
-    private FCLCheckBox phone;
-    private FCLCheckBox pad;
-    private FCLCheckBox other;
-    private FCLTextView iconText;
-    private FCLImageButton icon;
-    private FCLImageButton screenshot;
-    private LinearLayoutCompat screenshotLayout;
+    private final AppCompatSpinner lang;
+    private final FCLCheckBox phone;
+    private final FCLCheckBox pad;
+    private final FCLCheckBox other;
+    private final FCLTextView iconText;
+    private final FCLImageButton icon;
+    private final FCLImageButton screenshot;
+    private final LinearLayoutCompat screenshotLayout;
 
-    private FCLButton share;
-    private FCLButton negative;
+    private final FCLButton share;
+    private final FCLButton negative;
 
     private String language = "all";
     private final ArrayList<Integer> devices = new ArrayList<>();
@@ -117,6 +117,7 @@ public class ControllerUploadDialog extends FCLDialog implements View.OnClickLis
             ArrayList<String> suffix = new ArrayList<>();
             suffix.add(".png");
             MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, (files) -> {
+                if (files == null) return;
                 iconText.setText(files.get(0));
             });
         }
@@ -125,7 +126,7 @@ public class ControllerUploadDialog extends FCLDialog implements View.OnClickLis
                 ArrayList<String> suffix = new ArrayList<>();
                 suffix.add(".png");
                 MainActivity.getInstance().fileLauncher.launchMultiSelection(null, suffix, (files) -> {
-                    if (!files.isEmpty()) {
+                    if (files != null && !files.isEmpty()) {
                         files.forEach(r -> {
                             if (!screenshots.contains(r) && screenshots.size() < 16) {
                                 screenshots.add(r);

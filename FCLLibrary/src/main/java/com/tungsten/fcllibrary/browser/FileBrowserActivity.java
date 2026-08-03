@@ -167,14 +167,11 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
     }
 
     private String getMode() {
-        switch (fileBrowser.getLibMode()) {
-            case FILE_CHOOSER:
-                return getString(R.string.file_browser_mode_file);
-            case FOLDER_CHOOSER:
-                return getString(R.string.file_browser_mode_folder);
-            default:
-                return getString(R.string.file_browser_mode_browse);
-        }
+        return switch (fileBrowser.getLibMode()) {
+            case FILE_CHOOSER -> getString(R.string.file_browser_mode_file);
+            case FOLDER_CHOOSER -> getString(R.string.file_browser_mode_folder);
+            default -> getString(R.string.file_browser_mode_browse);
+        };
     }
 
     private String getType() {
@@ -264,7 +261,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
             launcher.launch(null);
         }
         if (view == confirm) {
-            if (selectedFiles.size() == 0 && fileBrowser.getLibMode() != LibMode.FILE_BROWSER) {
+            if (selectedFiles.isEmpty() && fileBrowser.getLibMode() != LibMode.FILE_BROWSER) {
                 Toast.makeText(this, getString(R.string.file_browser_positive_alert), Toast.LENGTH_SHORT).show();
             } else {
                 Intent intent = new Intent();

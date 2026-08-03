@@ -82,6 +82,7 @@ class OpenFolderDialog(
             binding.importButton -> {
                 val targetDir = internalPath
                 activity.fileLauncher.launchMultiSelection(targetDir, null) {
+                    if (it == null) return@launchMultiSelection
                     importFiles(it, targetDir)
                 }
             }

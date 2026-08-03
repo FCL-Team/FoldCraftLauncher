@@ -203,7 +203,7 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
                 null,
                 listOf(".png")
             ) {
-                binding.skinPathText.string = it[0]
+                binding.skinPathText.string = it?.get(0) ?: return@launchSingleSelection
             }
         }
         if (view === binding.capePath) {
@@ -211,7 +211,7 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
                 null,
                 listOf(".png")
             ) {
-                binding.capePathText.string = it[0]
+                binding.capePathText.string = it?.get(0) ?: return@launchSingleSelection
             }
         }
 

@@ -202,6 +202,7 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             ArrayList<String> suffix = new ArrayList<>();
             suffix.add(".json");
             MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, (files) -> {
+                if (files == null) return;
                 String path = files.get(0);
                 Uri uri = Uri.parse(path);
                 if (AndroidUtils.isDocUri(uri)) {

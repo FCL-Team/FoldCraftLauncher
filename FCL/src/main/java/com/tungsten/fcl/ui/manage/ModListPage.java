@@ -325,6 +325,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         suffix.add(".zip");
         suffix.add(".litemod");
         MainActivity.getInstance().fileLauncher.launchMultiSelection(null, suffix, files -> {
+            if (files == null) return;
             List<Object> res = files.stream().map(Uri::parse).filter(Objects::nonNull).map(uri -> {
                 if (AndroidUtils.isDocUri(uri)) {
                     return uri;

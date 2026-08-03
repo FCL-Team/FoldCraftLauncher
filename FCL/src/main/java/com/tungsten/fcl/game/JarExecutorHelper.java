@@ -34,7 +34,8 @@ public class JarExecutorHelper {
     public static void start(FCLActivity activity) {
         ArrayList<String> suffix = new ArrayList<>();
         suffix.add(".jar");
-        activity.fileLauncher.launchSingleSelection( null, suffix, files -> {
+        activity.fileLauncher.launchSingleSelection(null, suffix, files -> {
+            if (files == null) return;
             String path = files.get(0);
             Uri uri = Uri.parse(path);
             if (AndroidUtils.isDocUri(uri)) {

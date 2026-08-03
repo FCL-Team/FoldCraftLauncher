@@ -22,10 +22,12 @@ class FileBrowserLauncher(val activity: AppCompatActivity) {
         this.launcher = activity.registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result: ActivityResult? ->
-            if (currentFileBrowser != null && result!!.resultCode == Activity.RESULT_OK && result.data != null) {
-                if (currentFileBrowser!!.callback != null) {
+            if (currentFileBrowser != null && currentFileBrowser!!.callback != null) {
+                if (result!!.resultCode == Activity.RESULT_OK && result.data != null) {
                     val files = FileBrowser.getSelectedFiles(result.data)
                     currentFileBrowser!!.callback.onResult(files)
+                } else {
+                    currentFileBrowser!!.callback.onResult(null)
                 }
             }
         }

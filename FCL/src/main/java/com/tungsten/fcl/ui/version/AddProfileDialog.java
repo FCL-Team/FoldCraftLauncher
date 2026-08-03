@@ -21,11 +21,11 @@ import java.io.File;
 
 public class AddProfileDialog extends FCLDialog implements View.OnClickListener {
 
-    private FCLEditText editText;
-    private FCLTextView pathText;
-    private FCLImageButton editPath;
-    private FCLButton positive;
-    private FCLButton negative;
+    private final FCLEditText editText;
+    private final FCLTextView pathText;
+    private final FCLImageButton editPath;
+    private final FCLButton positive;
+    private final FCLButton negative;
 
     public AddProfileDialog(@NonNull Context context) {
         super(context);
@@ -45,6 +45,7 @@ public class AddProfileDialog extends FCLDialog implements View.OnClickListener 
     public void onClick(View view) {
         if (view == editPath) {
             MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
+                if (files == null) return;
                 pathText.setText(files.get(0));
             });
         }

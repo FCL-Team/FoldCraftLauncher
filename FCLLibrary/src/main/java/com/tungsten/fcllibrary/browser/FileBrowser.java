@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 
+import androidx.annotation.Nullable;
+
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.browser.options.LibMode;
 import com.tungsten.fcllibrary.browser.options.SelectionMode;
@@ -114,7 +116,7 @@ public class FileBrowser implements Serializable {
      * 回调接口 - 现代化的结果回调
      */
     public interface Callback {
-        void onResult(List<String> files);
+        void onResult(@Nullable List<String> files);
     }
 
     public static class Builder {

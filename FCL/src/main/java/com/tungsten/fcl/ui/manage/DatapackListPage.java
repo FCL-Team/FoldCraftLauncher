@@ -1,13 +1,11 @@
 package com.tungsten.fcl.ui.manage;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.widget.ListView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
-import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty;
@@ -20,9 +18,6 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.fakefx.MappedObservableList;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -159,7 +154,8 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
     public void add() {
         ArrayList<String> suffix = new ArrayList<>();
         suffix.add(".zip");
-        MainActivity.getInstance().fileLauncher.launchMultiSelection(null,suffix,files->{
+        MainActivity.getInstance().fileLauncher.launchMultiSelection(null, suffix, files -> {
+            if (files == null) return;
             List<File> res = files.stream().map(File::new).collect(Collectors.toList());
             FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
             builder1.setCancelable(false);

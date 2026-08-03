@@ -1,11 +1,9 @@
 package com.tungsten.fcl.ui.manage
 
-import android.app.Activity
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import android.view.View
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.util.showErrorDialog
@@ -15,7 +13,6 @@ import com.tungsten.fcl.databinding.PageManageWorldBinding
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.RequestCodes
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.beans.Observable
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
@@ -26,10 +23,6 @@ import com.tungsten.fclcore.fakefx.collections.FXCollections
 import com.tungsten.fclcore.game.World
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
-import com.tungsten.fcllibrary.browser.FileBrowser
-import com.tungsten.fcllibrary.browser.options.LibMode
-import com.tungsten.fcllibrary.browser.options.SelectionMode
-import com.tungsten.fcllibrary.component.ResultListener
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
@@ -180,8 +173,8 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
 
     fun add() {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, listOf(".zip")) {
-            var path = it[0]
-            val uri = Uri.parse(path)
+            var path = it?.get(0) ?: return@launchSingleSelection
+            val uri = path.toUri()
             if (AndroidUtils.isDocUri(uri)) {
                 path =
                     AndroidUtils.copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))

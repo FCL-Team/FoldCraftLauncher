@@ -73,6 +73,7 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                 null,
                 listOf(".tar.xz")
             ) { files ->
+                if (files == null) return@launchSingleSelection
                 val path = files[0]
                 val uri = path.toUri()
                 val fileName = if (AndroidUtils.isDocUri(uri)) {
