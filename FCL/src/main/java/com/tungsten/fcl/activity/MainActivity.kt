@@ -396,7 +396,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             }
             if (view === jar) {
                 if (sharedPreferences.getBoolean("showJarExecutorWarnDialog", true)) {
-                    showWarningDialog(this@MainActivity, getString(R.string.jar_executor_warn)){
+                    showWarningDialog(this@MainActivity, getString(R.string.jar_executor_warn)) {
                         sharedPreferences.edit {
                             putBoolean("showJarExecutorWarnDialog", false)
                         }
@@ -455,7 +455,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         accountHint.text = getString(R.string.account_state_add)
                         avatar.setBackgroundDrawable(
                             TexturesLoader.toAvatar(
-                                TexturesLoader.getDefaultSkin(TextureModel.ALEX).image,
+                                TexturesLoader.getDefaultSkin(TextureModel.ALEX).image(),
                                 ConvertUtils.dip2px(
                                     this@MainActivity, 52f
                                 )
@@ -825,7 +825,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun refreshScreenSize() {
-        DisplayUtil.screenWidth =  binding.root.width
+        DisplayUtil.screenWidth = binding.root.width
         DisplayUtil.screenHeight = binding.root.height
     }
 }
