@@ -75,7 +75,7 @@ import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.RadioButton
 import top.yukonga.miuix.kmp.basic.RadioButtonColors
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -585,7 +585,7 @@ private fun AccountDialogs(
                 FCLDialogButton(negative, onClick = { viewModel.onDialogDismiss() }),
             ),
         ) {
-            TextField(
+            FCLTextField(
                 value = dialog.text,
                 onValueChange = viewModel::onEditUuidTextChange,
                 modifier = Modifier.fillMaxWidth(),

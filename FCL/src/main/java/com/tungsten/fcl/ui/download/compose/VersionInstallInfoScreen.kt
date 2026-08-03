@@ -44,7 +44,7 @@ import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.io.File
 
@@ -315,7 +315,7 @@ fun VersionInstallInfoScreen(
                     color = MiuixTheme.colorScheme.onPrimary,
                 )
                 Spacer(Modifier.width(10.dp))
-                TextField(
+                FCLTextField(
                     value = holder.nameText,
                     onValueChange = holder::onNameChange,
                     modifier = Modifier.weight(1f),

@@ -11,7 +11,7 @@ import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
 import com.tungsten.fclcore.util.platform.OperatingSystem
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 
 /**
  * Miuix 版下载附加内容文件名确认弹窗（3.2 批 1，对应遗留 DownloadAddonDialog + dialog_download_addon）。
@@ -47,7 +47,7 @@ class MiuixDownloadAddonDialog(
                     ),
                 ),
             ) {
-                TextField(
+                FCLTextField(
                     value = nameState.value,
                     onValueChange = { nameState.value = it },
                     modifier = Modifier.fillMaxWidth(),

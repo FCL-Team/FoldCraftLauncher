@@ -28,6 +28,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tungsten.fcl.R
 import com.tungsten.fcl.game.FCLGameRepository
 import com.tungsten.fcl.util.AndroidUtils
+import com.tungsten.fcl.ui.compose.FCLSwitchPreference
+import com.tungsten.fcl.ui.compose.FCLTextField
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import kotlinx.coroutines.flow.StateFlow
 import top.yukonga.miuix.kmp.basic.BasicComponent
@@ -39,11 +41,7 @@ import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.LinearProgressIndicator
 import top.yukonga.miuix.kmp.basic.ProgressIndicatorDefaults
 import top.yukonga.miuix.kmp.basic.SliderDefaults
-import top.yukonga.miuix.kmp.basic.SwitchDefaults
-import top.yukonga.miuix.kmp.basic.TextField
-import top.yukonga.miuix.kmp.basic.TextFieldDefaults
 import top.yukonga.miuix.kmp.preference.SliderPreference
-import top.yukonga.miuix.kmp.preference.SwitchPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -477,19 +475,13 @@ private fun TextSettingRow(
             }
         },
         bottomAction = {
-            TextField(
+            // 对齐 FCLEditText：透明底 + 下划线（聚焦 primary / 未聚焦 primaryVariant），
+            // 文字 autoTint（onPrimary）、光标 primary——共享实现见 FCLControls.kt
+            FCLTextField(
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                // 对齐 FCLEditText：背景 tint = dkColor（未聚焦态，= primaryVariant），
-                // 光标/聚焦边框 = primary（Miuix 默认），文字 = autoTint（onPrimary）
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = MiuixTheme.colorScheme.primaryVariant,
-                ),
-                textStyle = MiuixTheme.textStyles.main.copy(
-                    color = MiuixTheme.colorScheme.onPrimary,
-                ),
             )
         },
     )
@@ -525,8 +517,9 @@ private fun ThemedCard(
 
 /**
  * SwitchPreference 包装：对齐旧版 FCLSwitch 染色——
- * 文本 autoTint（= onPrimary）；thumb checked=dkColor / unchecked=primary，
- * track checked=primary / unchecked=Gray（FCLSwitch.refreshStyle，禁用态旧版不变色）。
+ * 文本 autoTint（= onPrimary）；thumb/track 颜色走共享 [fclSwitchColors]
+ * （thumb checked=dkColor / unchecked=primary，track checked=primary / unchecked=Gray，
+ * 禁用态旧版不变色）。
  */
 @Composable
 private fun ThemedSwitchPreference(
@@ -536,23 +529,13 @@ private fun ThemedSwitchPreference(
     summary: String? = null,
     enabled: Boolean = true,
 ) {
-    SwitchPreference(
+    FCLSwitchPreference(
         checked = checked,
         onCheckedChange = onCheckedChange,
         title = title,
         titleColor = autoTintComponentColors(),
         summary = summary,
         summaryColor = autoTintComponentColors(),
-        switchColors = SwitchDefaults.switchColors(
-            checkedThumbColor = MiuixTheme.colorScheme.primaryVariant,
-            uncheckedThumbColor = MiuixTheme.colorScheme.primary,
-            disabledCheckedThumbColor = MiuixTheme.colorScheme.primaryVariant,
-            disabledUncheckedThumbColor = MiuixTheme.colorScheme.primary,
-            checkedTrackColor = MiuixTheme.colorScheme.primary,
-            uncheckedTrackColor = Color.Gray,
-            disabledCheckedTrackColor = MiuixTheme.colorScheme.primary,
-            disabledUncheckedTrackColor = Color.Gray,
-        ),
         enabled = enabled,
     )
 }

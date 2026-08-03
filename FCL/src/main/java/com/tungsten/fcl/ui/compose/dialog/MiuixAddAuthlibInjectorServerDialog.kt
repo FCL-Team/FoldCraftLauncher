@@ -24,7 +24,7 @@ import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging.LOG
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.io.IOException
 import java.util.logging.Level
@@ -102,7 +102,7 @@ class MiuixAddAuthlibInjectorServerDialog(
                 style = MiuixTheme.textStyles.body2,
             )
             Spacer(Modifier.width(8.dp))
-            TextField(
+            FCLTextField(
                 value = urlInputState.value,
                 onValueChange = { urlInputState.value = it },
                 modifier = Modifier.weight(1f),

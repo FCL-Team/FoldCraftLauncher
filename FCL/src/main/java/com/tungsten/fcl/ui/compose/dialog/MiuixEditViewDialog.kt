@@ -56,7 +56,8 @@ import top.yukonga.miuix.kmp.basic.Switch
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
+import com.tungsten.fcl.ui.compose.fclSwitchColors
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -773,7 +774,7 @@ class MiuixEditViewDialog(
                 style = MiuixTheme.textStyles.body2,
                 modifier = Modifier.weight(1f),
             )
-            Switch(checked = checked, onCheckedChange = onCheckedChange)
+            Switch(checked = checked, onCheckedChange = onCheckedChange, colors = fclSwitchColors())
         }
     }
 
@@ -790,7 +791,7 @@ class MiuixEditViewDialog(
                 style = MiuixTheme.textStyles.body2,
             )
             Spacer(Modifier.width(12.dp))
-            TextField(
+            FCLTextField(
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier.weight(1f),

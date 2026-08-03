@@ -47,7 +47,7 @@ import top.yukonga.miuix.kmp.basic.RadioButton
 import top.yukonga.miuix.kmp.basic.RadioButtonDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -305,7 +305,7 @@ class MiuixAddDirectionStyleDialog(
                     style = MiuixTheme.textStyles.body2,
                 )
                 Spacer(Modifier.width(8.dp))
-                TextField(
+                FCLTextField(
                     value = nameState.value,
                     onValueChange = {
                         nameState.value = it

@@ -63,7 +63,7 @@ import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.RadioButton
 import top.yukonga.miuix.kmp.basic.RadioButtonDefaults
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -102,7 +102,7 @@ fun VersionListScreen(
                 .fillMaxHeight()
                 .weight(0.3f),
         ) {
-            TextField(
+            FCLTextField(
                 value = state.searchText,
                 onValueChange = viewModel::onSearchChange,
                 modifier = Modifier.fillMaxWidth(),

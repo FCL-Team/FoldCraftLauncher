@@ -32,6 +32,7 @@ import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
+import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Checkbox
@@ -263,6 +264,7 @@ private fun InstallerTypeCheckbox(
         Checkbox(
             state = if (checked) ToggleableState.On else ToggleableState.Off,
             onClick = { onCheckedChange(!checked) },
+            colors = fclCheckboxColors(),
         )
         // 对齐 FCLCheckBox auto_hint_tint（文本 autoTint = onPrimary，位于 ltColor bar 上）
         Text(

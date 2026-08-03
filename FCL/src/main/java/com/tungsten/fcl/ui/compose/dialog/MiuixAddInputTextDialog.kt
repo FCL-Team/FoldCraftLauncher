@@ -21,7 +21,7 @@ import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
 import com.tungsten.fclcore.util.StringUtils
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -75,7 +75,7 @@ class MiuixAddInputTextDialog(
                 style = MiuixTheme.textStyles.body2,
             )
             Spacer(Modifier.width(8.dp))
-            TextField(
+            FCLTextField(
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier.weight(1f),

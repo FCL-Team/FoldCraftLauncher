@@ -10,7 +10,7 @@ import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
 import com.tungsten.fclcore.util.StringUtils
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 
 /**
  * Miuix 版整合包链接输入弹窗（3.2 批 1，对应 ModpackUrlDialog + dialog_modpack_url）。
@@ -45,7 +45,7 @@ class MiuixModpackUrlDialog(
                     ),
                 ),
             ) {
-                TextField(
+                FCLTextField(
                     value = urlState.value,
                     onValueChange = { urlState.value = it },
                     modifier = Modifier.fillMaxWidth(),

@@ -24,7 +24,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -59,7 +59,7 @@ class MiuixTranslationDialog(
                     ),
                 ),
             ) {
-                TextField(
+                FCLTextField(
                     value = queryState.value,
                     onValueChange = { str ->
                         queryState.value = str

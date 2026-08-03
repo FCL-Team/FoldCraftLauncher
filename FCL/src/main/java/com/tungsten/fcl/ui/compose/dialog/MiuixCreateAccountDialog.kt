@@ -55,7 +55,7 @@ import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.util.concurrent.CancellationException
 import java.util.regex.Pattern
@@ -213,7 +213,7 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
                 style = MiuixTheme.textStyles.body2,
             )
             Spacer(Modifier.width(8.dp))
-            TextField(
+            FCLTextField(
                 value = usernameState.value,
                 onValueChange = { usernameState.value = it },
                 modifier = Modifier.weight(1f),
@@ -281,7 +281,7 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
                 style = MiuixTheme.textStyles.body2,
             )
             Spacer(Modifier.width(8.dp))
-            TextField(
+            FCLTextField(
                 value = usernameState.value,
                 onValueChange = { usernameState.value = it },
                 modifier = Modifier.weight(1f),
@@ -297,7 +297,7 @@ class MiuixCreateAccountDialog : FCLComposeDialog {
                 style = MiuixTheme.textStyles.body2,
             )
             Spacer(Modifier.width(8.dp))
-            TextField(
+            FCLTextField(
                 value = passwordState.value,
                 onValueChange = { passwordState.value = it },
                 modifier = Modifier.weight(1f),

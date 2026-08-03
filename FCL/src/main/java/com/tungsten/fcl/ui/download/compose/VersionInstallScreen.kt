@@ -39,7 +39,8 @@ import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
+import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.util.logging.Level
 import java.util.stream.Collectors
@@ -206,7 +207,7 @@ fun VersionInstallScreen(
                     )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    TextField(
+                    FCLTextField(
                         value = holder.searchText,
                         onValueChange = holder::onSearchChange,
                         modifier = Modifier.weight(1f),
@@ -279,6 +280,7 @@ private fun VersionTypeCheckbox(
         Checkbox(
             state = if (checked) ToggleableState.On else ToggleableState.Off,
             onClick = { onCheckedChange(!checked) },
+            colors = fclCheckboxColors(),
         )
         // 对齐 FCLCheckBox auto_hint_tint（文本 autoTint = onPrimary，位于 ltColor bar 上）
         Text(

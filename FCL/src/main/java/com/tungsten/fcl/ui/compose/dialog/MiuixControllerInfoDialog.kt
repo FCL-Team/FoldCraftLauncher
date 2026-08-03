@@ -33,7 +33,8 @@ import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Checkbox
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
+import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -140,6 +141,7 @@ class MiuixControllerInfoDialog(
                         Checkbox(
                             state = if (moreInfoState.value) ToggleableState.On else ToggleableState.Off,
                             onClick = { moreInfoState.value = !moreInfoState.value },
+                            colors = fclCheckboxColors(),
                         )
                         Text(
                             text = stringResource(R.string.control_info_more),
@@ -207,7 +209,7 @@ class MiuixControllerInfoDialog(
                 maxLines = 1,
             )
             Spacer(Modifier.width(8.dp))
-            TextField(
+            FCLTextField(
                 value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier.width(250.dp),

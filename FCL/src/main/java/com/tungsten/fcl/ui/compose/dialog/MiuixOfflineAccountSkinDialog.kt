@@ -47,7 +47,7 @@ import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.RadioButton
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.util.logging.Level
 
@@ -332,7 +332,7 @@ class MiuixOfflineAccountSkinDialog(
                 .background(MiuixTheme.colorScheme.primary, RoundedCornerShape(5.dp))
                 .padding(10.dp),
         )
-        TextField(
+        FCLTextField(
             value = cslUrlState.value,
             onValueChange = {
                 cslUrlState.value = it

@@ -31,7 +31,7 @@ import com.tungsten.fclcore.util.StringUtils
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -90,7 +90,7 @@ class MiuixEditViewGroupDialog(
                         style = MiuixTheme.textStyles.body2,
                     )
                     Spacer(Modifier.width(12.dp))
-                    TextField(
+                    FCLTextField(
                         value = nameState.value,
                         onValueChange = { nameState.value = it },
                         modifier = Modifier.weight(1f),

@@ -23,7 +23,8 @@ import com.tungsten.fclcore.util.FutureCallback
 import com.tungsten.fclcore.util.StringUtils
 import top.yukonga.miuix.kmp.basic.Checkbox
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
+import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -69,7 +70,7 @@ class MiuixDuplicateVersionDialog(
                     text = stringResource(R.string.version_manage_duplicate_prompt),
                     style = MiuixTheme.textStyles.body2,
                 )
-                TextField(
+                FCLTextField(
                     value = nameState.value,
                     onValueChange = { nameState.value = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -82,6 +83,7 @@ class MiuixDuplicateVersionDialog(
                     Checkbox(
                         state = if (copySavesState.value) ToggleableState.On else ToggleableState.Off,
                         onClick = { copySavesState.value = !copySavesState.value },
+                        colors = fclCheckboxColors(),
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(

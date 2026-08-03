@@ -21,7 +21,7 @@ import com.tungsten.fclcore.task.TaskListener
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.platform.OperatingSystem
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.io.File
 import java.nio.file.Paths
@@ -71,7 +71,7 @@ class MiuixWorldExportDialog(
                     text = stringResource(R.string.archive_name),
                     style = MiuixTheme.textStyles.body2,
                 )
-                TextField(
+                FCLTextField(
                     value = fileNameState.value,
                     onValueChange = { fileNameState.value = it },
                     modifier = Modifier.fillMaxWidth(),
@@ -81,7 +81,7 @@ class MiuixWorldExportDialog(
                     text = stringResource(R.string.world_name),
                     style = MiuixTheme.textStyles.body2,
                 )
-                TextField(
+                FCLTextField(
                     value = nameState.value,
                     onValueChange = { nameState.value = it },
                     modifier = Modifier.fillMaxWidth(),

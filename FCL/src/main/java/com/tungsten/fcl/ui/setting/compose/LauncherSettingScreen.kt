@@ -31,10 +31,10 @@ import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.TextButton
-import top.yukonga.miuix.kmp.basic.TextField
+import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.preference.ArrowPreference
 import top.yukonga.miuix.kmp.preference.SliderPreference
-import top.yukonga.miuix.kmp.preference.SwitchPreference
+import com.tungsten.fcl.ui.compose.FCLSwitchPreference
 import top.yukonga.miuix.kmp.preference.WindowSpinnerPreference
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -105,7 +105,7 @@ fun LauncherSettingScreen(
                     summary = stringResource(R.string.settings_launcher_request),
                     onClick = viewModel::onRequestAudioPermission,
                 )
-                SwitchPreference(
+                FCLSwitchPreference(
                     checked = state.autoExitLauncher,
                     onCheckedChange = viewModel::setAutoExitLauncher,
                     title = stringResource(R.string.settings_launcher_exit_after_launching),
@@ -180,12 +180,12 @@ fun LauncherSettingScreen(
                     onReset = viewModel::onResetMenuIcon,
                     onSet = viewModel::onPickMenuIcon,
                 )
-                SwitchPreference(
+                FCLSwitchPreference(
                     checked = state.ignoreNotch,
                     onCheckedChange = viewModel::setIgnoreNotch,
                     title = stringResource(R.string.settings_launcher_ignore_notch),
                 )
-                SwitchPreference(
+                FCLSwitchPreference(
                     checked = state.closeSkinModel,
                     onCheckedChange = viewModel::setCloseSkinModel,
                     title = stringResource(R.string.settings_launcher_close_skin_view),
@@ -204,7 +204,7 @@ fun LauncherSettingScreen(
                     valueText = state.vibrationDuration.toString(),
                     valueRange = 20f..500f,
                 )
-                SwitchPreference(
+                FCLSwitchPreference(
                     checked = state.disableFullscreenInput,
                     onCheckedChange = viewModel::setDisableFullscreenInput,
                     title = stringResource(R.string.settings_disable_fullscreen_input),
@@ -212,7 +212,7 @@ fun LauncherSettingScreen(
                 BasicComponent(
                     title = stringResource(R.string.settings_launcher_custom_launcher_name),
                     bottomAction = {
-                        TextField(
+                        FCLTextField(
                             value = state.customLauncherName,
                             onValueChange = viewModel::setCustomLauncherName,
                             modifier = Modifier.fillMaxWidth(),
@@ -220,7 +220,7 @@ fun LauncherSettingScreen(
                         )
                     },
                 )
-                SwitchPreference(
+                FCLSwitchPreference(
                     checked = state.allowScreenshots,
                     onCheckedChange = viewModel::setAllowScreenshots,
                     title = stringResource(R.string.settings_launcher_allow_screenshot),
@@ -236,7 +236,7 @@ fun LauncherSettingScreen(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
             ) {
-                SwitchPreference(
+                FCLSwitchPreference(
                     checked = state.autoChooseDownloadType,
                     onCheckedChange = viewModel::setAutoChooseDownloadType,
                     title = stringResource(R.string.settings_launcher_download_source),
@@ -265,7 +265,7 @@ fun LauncherSettingScreen(
                         onSelectedIndexChange = viewModel::setDownloadType,
                     )
                 }
-                SwitchPreference(
+                FCLSwitchPreference(
                     checked = state.autoDownloadThreads,
                     onCheckedChange = viewModel::setAutoDownloadThreads,
                     title = stringResource(R.string.settings_launcher_download),
