@@ -100,7 +100,7 @@ object LauncherSettingHost {
     private fun pickBackgroundImage(context: Context, light: Boolean) {
         val activity = context as? MainActivity ?: return
         activity.fileLauncher.launchSingleSelection(null, listOf(".png", ".jpg", ".jpeg")) { files ->
-            var path = files[0]
+            var path = files?.get(0) ?: return@launchSingleSelection
             val uri = Uri.parse(path)
             if (AndroidUtils.isDocUri(uri)) {
                 path = AndroidUtils.copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
@@ -134,7 +134,7 @@ object LauncherSettingHost {
     private fun pickLiveBackground(context: Context) {
         val activity = context as? MainActivity ?: return
         activity.fileLauncher.launchSingleSelection(null, listOf(".mp4")) { files ->
-            val path = files[0]
+            val path = files?.get(0) ?: return@launchSingleSelection
             val uri = Uri.parse(path)
             if (AndroidUtils.isDocUri(uri)) {
                 AndroidUtils.copyFile(activity, uri, File(FCLPath.LIVE_BACKGROUND_PATH))
@@ -163,7 +163,7 @@ object LauncherSettingHost {
     private fun pickImageFile(context: Context, prefix: String) {
         val activity = context as? MainActivity ?: return
         activity.fileLauncher.launchSingleSelection(null, listOf(".png", ".gif")) { files ->
-            val path = files[0]
+            val path = files?.get(0) ?: return@launchSingleSelection
             val uri = Uri.parse(path)
             val fileName = AndroidUtils.getFileName(context, uri)
             val type = if (fileName.endsWith(".gif")) "gif" else "png"

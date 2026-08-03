@@ -273,7 +273,7 @@ class MiuixOfflineAccountSkinDialog(
                 null,
                 listOf(".png"),
             ) {
-                skinPathState.value = it[0]
+                skinPathState.value = it?.get(0) ?: return@launchSingleSelection
                 refreshSkin()
             }
         }
@@ -285,7 +285,7 @@ class MiuixOfflineAccountSkinDialog(
                 null,
                 listOf(".png"),
             ) {
-                capePathState.value = it[0]
+                capePathState.value = it?.get(0) ?: return@launchSingleSelection
                 refreshSkin()
             }
         }

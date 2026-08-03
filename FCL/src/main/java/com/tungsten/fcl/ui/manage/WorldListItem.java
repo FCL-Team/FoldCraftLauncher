@@ -11,13 +11,9 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.compose.dialog.MiuixWorldExportDialog;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.game.World;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
-import com.tungsten.fcllibrary.browser.FileBrowser;
-import com.tungsten.fcllibrary.browser.options.LibMode;
-import com.tungsten.fcllibrary.browser.options.SelectionMode;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
@@ -58,6 +54,7 @@ public class WorldListItem {
 
     public void export() {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
+            if (files == null) return;
             new MiuixWorldExportDialog(context, world, files.get(0)).show();
         });
     }

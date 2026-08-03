@@ -150,7 +150,7 @@ object VersionSettingHost {
     fun pickIcon(context: Context, onPicked: (String?) -> Unit) {
         val activity = MainActivity.getInstance()
         activity.fileLauncher.launchSingleSelection(null, listOf(".png")) { files ->
-            var path: String? = files[0]
+            var path: String? = files?.get(0) ?: return@launchSingleSelection
             val uri = path!!.toUri()
             if (AndroidUtils.isDocUri(uri)) {
                 path = AndroidUtils.copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))

@@ -164,7 +164,8 @@ class MiuixOpenFolderDialog(
     private fun onImport() {
         val targetDir = internalPath
         activity.fileLauncher.launchMultiSelection(targetDir, null) {
-            importFiles(it, targetDir)
+            val files = it ?: return@launchMultiSelection
+            importFiles(files, targetDir)
         }
     }
 

@@ -173,7 +173,7 @@ class MiuixJavaManageDialog(
             null,
             listOf(".tar.xz")
         ) { files ->
-            val path = files[0]
+            val path = files?.get(0) ?: return@launchSingleSelection
             val uri = path.toUri()
             val fileName = if (AndroidUtils.isDocUri(uri)) {
                 AndroidUtils.getFileName(context, uri)

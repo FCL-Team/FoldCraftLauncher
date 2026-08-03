@@ -626,8 +626,9 @@ object AccountScreenHost {
                     null,
                     listOf(".png"),
                 ) { files ->
+                    val path = files?.get(0) ?: return@launchSingleSelection
                     (event.item.account as OfflineAccount).skin =
-                        Skin(Skin.Type.LOCAL_FILE, "", null, files[0], null)
+                        Skin(Skin.Type.LOCAL_FILE, "", null, path, null)
                     event.item.refreshSkinBinding()
                 }
             }

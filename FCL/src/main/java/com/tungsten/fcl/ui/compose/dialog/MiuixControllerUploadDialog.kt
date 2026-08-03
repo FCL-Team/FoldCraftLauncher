@@ -99,7 +99,7 @@ class MiuixControllerUploadDialog(
             null,
             arrayListOf(".png"),
         ) { files ->
-            iconPathState.value = files[0]
+            iconPathState.value = files?.get(0) ?: return@launchSingleSelection
         }
     }
 
@@ -109,7 +109,7 @@ class MiuixControllerUploadDialog(
                 null,
                 arrayListOf(".png"),
             ) { files ->
-                if (files.isNotEmpty()) {
+                if (files != null && files.isNotEmpty()) {
                     files.forEach { path ->
                         if (!screenshots.contains(path) && screenshots.size < 16) {
                             screenshots.add(path)

@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
 
@@ -136,7 +137,7 @@ public class FCLBridge implements Serializable {
     }
 
     public void execute(Surface surface, FCLBridgeCallback callback) {
-        this.handler = new Handler();
+        this.handler = new Handler(Looper.getMainLooper());
         this.callback = callback;
         this.surface = surface;
         setFCLBridge(this);

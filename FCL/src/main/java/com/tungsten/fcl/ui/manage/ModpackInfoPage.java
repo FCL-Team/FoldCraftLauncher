@@ -209,7 +209,10 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
     }
 
     private void selectPath() {
-        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> path.setValue(files.get(0)));
+        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
+            if (files == null) return;
+            path.setValue(files.get(0));
+        });
     }
 
     @Override

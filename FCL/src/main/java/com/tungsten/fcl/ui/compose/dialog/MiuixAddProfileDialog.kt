@@ -97,7 +97,7 @@ class MiuixAddProfileDialog(
 
     private fun onEditPath() {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true) { files ->
-            pathState.value = files[0]
+            pathState.value = files?.get(0) ?: return@launchSingleSelection
         }
     }
 
