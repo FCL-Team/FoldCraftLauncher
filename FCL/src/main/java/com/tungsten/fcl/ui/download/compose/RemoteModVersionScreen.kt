@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -101,20 +99,21 @@ fun RemoteModVersionScreen(
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
             ) {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .padding(horizontal = 10.dp, vertical = 8.dp),
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        // 对齐 item_mod_version.xml：name/tag/date 均 auto_text_tint（autoTint = onPrimary）
+                    // 对齐 item_mod_version.xml：name/tag/date 均 auto_text_tint（autoTint = onPrimary）
+                    // 第一行：name + tag 内联（tag marginStart=10dp）
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = version.name,
                             style = MiuixTheme.textStyles.body1,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = MiuixTheme.colorScheme.onPrimary,
+                            modifier = Modifier.weight(1f, fill = false),
                         )
                         Text(
                             text = modVersionTag(context, version),
@@ -122,12 +121,17 @@ fun RemoteModVersionScreen(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = MiuixTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .padding(start = 10.dp)
+                                .weight(1f, fill = false),
                         )
                     }
-                    Spacer(Modifier.width(10.dp))
+                    // 第二行：date 12sp 单行（name 左缘对齐）
                     Text(
                         text = REMOTE_MOD_DATE_FORMATTER.format(version.datePublished),
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         color = MiuixTheme.colorScheme.onPrimary,
                     )
                 }

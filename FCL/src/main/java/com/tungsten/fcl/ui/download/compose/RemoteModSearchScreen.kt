@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.download.compose
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,7 @@ import com.tungsten.fcl.setting.DownloadProviders
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
+import com.tungsten.fcl.ui.compose.FCLDropdownField
 import com.tungsten.fcl.ui.compose.dialog.MiuixTranslationDialog
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fcl.ui.theme.FCLThemeTokens
@@ -61,14 +63,13 @@ import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
-import top.yukonga.miuix.kmp.basic.DropdownItem
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
 import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
-import top.yukonga.miuix.kmp.preference.WindowSpinnerPreference
+import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import java.util.logging.Level
 import java.util.stream.Collectors
 
@@ -385,6 +386,8 @@ fun RemoteModSearchScreen(
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState())
                         .padding(10.dp),
+                    // 对齐 page_download.xml search_layout：label/控件间距均 10dp
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     FCLTextField(
                         value = holder.searchText,
@@ -395,59 +398,64 @@ fun RemoteModSearchScreen(
                         singleLine = true,
                         enabled = !holder.loading,
                     )
+                    // 对齐 page_download.xml 的 FCLTextView label + FCLSpinner 紧凑下拉行
+                    // 纵向堆叠（S-P0-1），加载中禁用（S-P1-2，对齐 DownloadPage.setLoading）
                     if (tab.hasDownloadSource) {
-                        WindowSpinnerPreference(
+                        FCLDropdownField(
+                            label = stringResource(R.string.settings_launcher_download_source),
                             items = listOf(
-                                DropdownItem(stringResource(R.string.mods_curseforge)),
-                                DropdownItem(stringResource(R.string.mods_modrinth)),
+                                stringResource(R.string.mods_curseforge),
+                                stringResource(R.string.mods_modrinth),
                             ),
                             selectedIndex = if (holder.isModrinth) 1 else 0,
-                            title = stringResource(R.string.settings_launcher_download_source),
                             onSelectedIndexChange = holder::onSourceChange,
+                            enabled = !holder.loading,
                         )
                     }
-                    WindowSpinnerPreference(
-                        items = holder.gameVersions.map { DropdownItem(it) },
+                    FCLDropdownField(
+                        label = stringResource(R.string.world_game_version),
+                        items = holder.gameVersions,
                         selectedIndex = holder.gameVersions.indexOf(holder.gameVersion).coerceAtLeast(0),
-                        title = stringResource(R.string.world_game_version),
                         onSelectedIndexChange = { holder.gameVersion = holder.gameVersions[it] },
+                        enabled = !holder.loading,
                     )
                     if (tab.hasModLoaderFilter) {
-                        val loaderLabels = listOf(
-                            stringResource(R.string.curse_category_0),
-                            "Forge",
-                            "NeoForge",
-                            "Fabric",
-                            "Quilt",
-                        )
-                        WindowSpinnerPreference(
-                            items = loaderLabels.map { DropdownItem(it) },
+                        FCLDropdownField(
+                            label = stringResource(R.string.modloader),
+                            items = listOf(
+                                stringResource(R.string.curse_category_0),
+                                "Forge",
+                                "NeoForge",
+                                "Fabric",
+                                "Quilt",
+                            ),
                             selectedIndex = holder.modLoaderIndex,
-                            title = stringResource(R.string.modloader),
                             onSelectedIndexChange = { holder.modLoaderIndex = it },
+                            enabled = !holder.loading,
                         )
                     }
-                    WindowSpinnerPreference(
+                    FCLDropdownField(
+                        label = stringResource(R.string.mods_category),
                         items = holder.categories.map {
-                            DropdownItem(tab.localizedCategoryIndent(context, holder.isModrinth, it))
+                            tab.localizedCategoryIndent(context, holder.isModrinth, it)
                         },
                         selectedIndex = holder.categoryIndex,
-                        title = stringResource(R.string.mods_category),
                         onSelectedIndexChange = { holder.categoryIndex = it },
+                        enabled = !holder.loading,
                     )
-                    val sortLabels = listOf(
-                        stringResource(R.string.curse_sort_popularity),
-                        stringResource(R.string.curse_sort_name),
-                        stringResource(R.string.curse_sort_date_created),
-                        stringResource(R.string.curse_sort_last_updated),
-                        stringResource(R.string.curse_sort_author),
-                        stringResource(R.string.curse_sort_total_downloads),
-                    )
-                    WindowSpinnerPreference(
-                        items = sortLabels.map { DropdownItem(it) },
+                    FCLDropdownField(
+                        label = stringResource(R.string.search_sort),
+                        items = listOf(
+                            stringResource(R.string.curse_sort_popularity),
+                            stringResource(R.string.curse_sort_name),
+                            stringResource(R.string.curse_sort_date_created),
+                            stringResource(R.string.curse_sort_last_updated),
+                            stringResource(R.string.curse_sort_author),
+                            stringResource(R.string.curse_sort_total_downloads),
+                        ),
                         selectedIndex = holder.sortIndex,
-                        title = stringResource(R.string.search_sort),
                         onSelectedIndexChange = { holder.sortIndex = it },
+                        enabled = !holder.loading,
                     )
                 }
             }
@@ -614,7 +622,7 @@ private fun PageButton(
     }
 }
 
-/** 搜索结果卡片（对齐 item_remote_mod.xml：图标 + 标题 + tag + 简介 + 下载量）。 */
+/** 搜索结果卡片（对齐 item_remote_mod.xml 两行结构：title+tag 同行、下载量+description 同行）。 */
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun RemoteModRow(
@@ -623,6 +631,9 @@ private fun RemoteModRow(
     modifier: Modifier = Modifier,
 ) {
     FCLCard(
+        onClick = onClick,
+        // 按压反馈对齐 item_remote_mod.xml stateListAnimator=anim_scale（按压缩放）→ Sink
+        pressFeedbackType = PressFeedbackType.Sink,
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
@@ -632,55 +643,69 @@ private fun RemoteModRow(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(10.dp),
+                .padding(horizontal = 10.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            // 对齐 item_remote_mod.xml icon：30×30dp
             GlideImage(
                 model = item.iconUrl,
                 contentDescription = null,
-                modifier = Modifier.size(40.dp),
+                modifier = Modifier.size(30.dp),
             )
             Spacer(Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
                 // 对齐 item_remote_mod.xml：条目内全部文本 auto_text_tint（autoTint = onPrimary）
-                Text(
-                    text = item.title,
-                    style = MiuixTheme.textStyles.body1,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MiuixTheme.colorScheme.onPrimary,
-                )
-                if (item.tag.isNotBlank()) {
+                // 第一行：title + tag 内联（tag marginStart=10dp）
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = item.tag,
-                        fontSize = 11.sp,
+                        text = item.title,
+                        style = MiuixTheme.textStyles.body1,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MiuixTheme.colorScheme.onPrimary,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
+                    if (item.tag.isNotBlank()) {
+                        Text(
+                            text = item.tag,
+                            fontSize = 11.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = MiuixTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .padding(start = 10.dp)
+                                .weight(1f, fill = false),
+                        )
+                    }
+                }
+                // 第二行：icon_download + download_count + description 内联（marginStart=5dp）
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // 对齐 item_remote_mod.xml icon_download（12×12dp，auto_src_tint = onPrimary）
+                    Icon(
+                        painter = painterResource(R.drawable.ic_baseline_download_24),
+                        contentDescription = null,
+                        modifier = Modifier.size(12.dp),
+                        tint = MiuixTheme.colorScheme.onPrimary,
+                    )
+                    Text(
+                        text = item.downloadCount,
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        color = MiuixTheme.colorScheme.onPrimary,
+                        modifier = Modifier.padding(start = 5.dp),
+                    )
+                    Text(
+                        text = item.description,
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MiuixTheme.colorScheme.onPrimary,
+                        modifier = Modifier
+                            .padding(start = 5.dp)
+                            .weight(1f),
                     )
                 }
-                Text(
-                    text = item.description,
-                    fontSize = 11.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MiuixTheme.colorScheme.onPrimary,
-                )
             }
-            Spacer(Modifier.width(10.dp))
-            // 对齐 item_remote_mod.xml icon_download（auto_src_tint = onPrimary）
-            Icon(
-                painter = painterResource(R.drawable.ic_baseline_download_24),
-                contentDescription = null,
-                modifier = Modifier.size(12.dp),
-                tint = MiuixTheme.colorScheme.onPrimary,
-            )
-            Text(
-                text = item.downloadCount,
-                fontSize = 11.sp,
-                color = MiuixTheme.colorScheme.onPrimary,
-            )
         }
     }
 }

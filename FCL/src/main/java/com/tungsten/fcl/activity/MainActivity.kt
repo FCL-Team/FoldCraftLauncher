@@ -52,7 +52,7 @@ import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.bridge.LegacyBridge
-import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
+import com.tungsten.fcl.ui.download.modpack.compose.ComposeLocalModpackPage
 import com.tungsten.fcl.ui.main.compose.MainRightMenu
 import com.tungsten.fcl.ui.main.compose.MainRightMenuBridge
 import com.tungsten.fcl.ui.version.Versions
@@ -909,11 +909,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         binding.download.isSelected = true
         val downloadUI = uiManager.downloadUI
         downloadUI.runAfterInit {
-            val page = LocalModpackPage(
+            val page = ComposeLocalModpackPage(
                 this,
                 PageManager.PAGE_ID_TEMP,
                 downloadUI.container,
-                R.layout.page_modpack,
                 profile,
                 null,
                 file

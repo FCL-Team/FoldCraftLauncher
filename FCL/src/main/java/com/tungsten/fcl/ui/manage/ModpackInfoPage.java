@@ -13,6 +13,7 @@ import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.PageManager;
+import com.tungsten.fcl.ui.manage.compose.ComposeModpackFileSelectionPage;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.mod.ModAdviser;
@@ -267,7 +268,7 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
                     )));
                 }
 
-                ModpackFileSelectionPage page = new ModpackFileSelectionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack_file, profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
+                ComposeModpackFileSelectionPage page = new ComposeModpackFileSelectionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
                 ManagePageManager.getInstance().showTempPage(page);
             }
         }

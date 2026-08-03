@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +51,6 @@ import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
 import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
-import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -262,35 +260,32 @@ fun RemoteModInfoScreen(
                         singleLine = true,
                     )
                 }
-                items(
-                    holder.displayedGameVersions(),
-                    key = { it },
-                ) { gameVersion ->
-                    // 入场动画对齐 ModGameVersionAdapter:69（animationSpeed×30）；
-                    // 按压反馈对齐 anim_scale（ModGameVersionAdapter:62）→ Miuix Sink
+                // 对齐 page_download_addon_info.xml version_list：统一白容器
+                // （bg_container_white + ltColor 染色 = primaryContainer）内纯文本行，
+                // 条目透明底、无分割线（旧版 divider 为透明 10dp）——去卡片化（I-P1-1）
+                item(key = "versions") {
                     FCLCard(
-                        onClick = {
-                            holder.versionMap[gameVersion]?.let(onOpenVersionPage)
-                        },
-                        pressFeedbackType = PressFeedbackType.Sink,
-                        modifier = fclItemEntryModifier()
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp),
-                        // 对齐 version_list 容器 bg_container_white +
-                        // RemoteModInfoPage:118 registerEvent（ltColor 染色 = primaryContainer，
-                        // 旧版条目自身透明、底色由列表容器提供）
+                        // 入场动画对齐 ModGameVersionAdapter:69（animationSpeed×30）
+                        modifier = fclItemEntryModifier().fillMaxWidth(),
                         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
                     ) {
-                        Text(
-                            // 对齐 ModGameVersionAdapter：推荐项不带 "Minecraft " 前缀
-                            text = (if (gameVersion.contains(recommendPrefix)) "" else "Minecraft ") + gameVersion,
-                            style = MiuixTheme.textStyles.body2,
-                            // 对齐 ModGameVersionAdapter:60-61（autoTint = onPrimary）
-                            color = MiuixTheme.colorScheme.onPrimary,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(12.dp),
-                        )
+                        Column {
+                            holder.displayedGameVersions().forEach { gameVersion ->
+                                Text(
+                                    // 对齐 ModGameVersionAdapter：推荐项不带 "Minecraft " 前缀
+                                    text = (if (gameVersion.contains(recommendPrefix)) "" else "Minecraft ") + gameVersion,
+                                    style = MiuixTheme.textStyles.body2,
+                                    // 对齐 ModGameVersionAdapter:60-61（autoTint = onPrimary）
+                                    color = MiuixTheme.colorScheme.onPrimary,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            holder.versionMap[gameVersion]?.let(onOpenVersionPage)
+                                        }
+                                        .padding(12.dp),
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -319,37 +314,50 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
             GlideImage(
                 model = holder.addon.iconUrl,
                 contentDescription = null,
-                modifier = Modifier.size(60.dp),
+                // 对齐 page_download_addon_info.xml icon：30×30dp
+                modifier = Modifier.size(30.dp),
             )
             Spacer(Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
                 // 对齐 page_download_addon_info.xml 头部：name/tag/description/mcmod
                 // 均为 auto_text_tint（autoTint = onPrimary）
-                Text(
-                    text = if (holder.installed) {
-                        String.format(
-                            "[%s] %s",
-                            stringResource(R.string.installed),
-                            holder.displayName,
-                        )
-                    } else {
-                        holder.displayName
-                    },
-                    style = MiuixTheme.textStyles.body1,
-                    color = MiuixTheme.colorScheme.onPrimary,
-                )
-                if (holder.tag.isNotBlank()) {
+                // name + tag 同行内联（tag marginStart=10dp）
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = holder.tag,
-                        fontSize = 11.sp,
-                        maxLines = 2,
+                        text = if (holder.installed) {
+                            String.format(
+                                "[%s] %s",
+                                stringResource(R.string.installed),
+                                holder.displayName,
+                            )
+                        } else {
+                            holder.displayName
+                        },
+                        style = MiuixTheme.textStyles.body1,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MiuixTheme.colorScheme.onPrimary,
+                        modifier = Modifier.weight(1f, fill = false),
                     )
+                    if (holder.tag.isNotBlank()) {
+                        Text(
+                            text = holder.tag,
+                            fontSize = 11.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            color = MiuixTheme.colorScheme.onPrimary,
+                            modifier = Modifier
+                                .padding(start = 10.dp)
+                                .weight(1f, fill = false),
+                        )
+                    }
                 }
+                // 对齐 page_download_addon_info.xml description：singleLine 12sp
                 Text(
                     text = holder.addon.description,
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     color = MiuixTheme.colorScheme.onPrimary,
                 )
             }

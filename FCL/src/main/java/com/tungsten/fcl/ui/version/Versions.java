@@ -20,8 +20,8 @@ import com.tungsten.fcl.ui.compose.dialog.MiuixCreateAccountDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixDuplicateVersionDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixRenameVersionDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
-import com.tungsten.fcl.ui.download.modpack.LocalModpackPage;
-import com.tungsten.fcl.ui.download.modpack.ModpackSelectionPage;
+import com.tungsten.fcl.ui.download.modpack.compose.ComposeLocalModpackPage;
+import com.tungsten.fcl.ui.download.modpack.compose.ComposeModpackSelectionPage;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fcl.ui.manage.ModpackTypeSelectionPage;
 import com.tungsten.fcl.util.AndroidUtils;
@@ -54,7 +54,7 @@ public class Versions {
     public static void importModpack(Context context, FCLUILayout parent) {
         Profile profile = Profiles.getSelectedProfile();
         if (profile.getRepository().isLoaded()) {
-            ModpackSelectionPage page = new ModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_selection, profile, null);
+            ComposeModpackSelectionPage page = new ComposeModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, profile, null);
             DownloadPageManager.getInstance().showTempPage(page);
         }
     }
@@ -80,7 +80,7 @@ public class Versions {
         TaskExecutor executor = new FileDownloadTask(downloadURL, modpack.toFile())
                 .whenComplete(Schedulers.androidUIThread(), e -> {
                     if (e == null) {
-                        LocalModpackPage page = new LocalModpackPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack, profile, null, modpack.toFile());
+                        ComposeLocalModpackPage page = new ComposeLocalModpackPage(context, PageManager.PAGE_ID_TEMP, parent, profile, null, modpack.toFile());
                         DownloadPageManager.getInstance().showTempPage(page);
                     } else if (e instanceof CancellationException) {
                         Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
@@ -171,7 +171,7 @@ public class Versions {
     }
 
     public static void updateVersion(Context context, FCLUILayout parent, Profile profile, String version) {
-        ModpackSelectionPage page = new ModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_selection, profile, version);
+        ComposeModpackSelectionPage page = new ComposeModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, profile, version);
         ManagePageManager.getInstance().showTempPage(page);
     }
 
