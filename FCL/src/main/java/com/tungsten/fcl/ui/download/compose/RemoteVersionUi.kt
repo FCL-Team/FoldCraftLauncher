@@ -44,6 +44,7 @@ import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+import top.yukonga.miuix.kmp.utils.PressFeedbackType
 
 /**
  * 远程版本行（对齐 RemoteVersionListAdapter + item_remote_version.xml）：
@@ -162,13 +163,17 @@ fun RemoteVersionRow(
     FCLCard(
         // 对齐 item_remote_version.xml 的 bg_container_white_clickable + auto_tint（ltColor 染色 = primaryContainer）
         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
-        modifier = modifier.fillMaxWidth().padding(bottom = 8.dp),
+        // 按压反馈对齐 item_remote_version.xml stateListAnimator=anim_scale → Sink（X-5）
+        onClick = onClick,
+        pressFeedbackType = PressFeedbackType.Sink,
+        // 对齐 item_remote_version.xml marginBottom=10dp
+        modifier = modifier.fillMaxWidth().padding(bottom = 10.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(onClick = onClick)
-                .padding(10.dp),
+                // 对齐 item_remote_version.xml padding 10/8
+                .padding(horizontal = 10.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
@@ -206,7 +211,8 @@ fun RemoteVersionRow(
                 version.releaseDate?.let { date ->
                     Text(
                         text = LocaleUtils.formatDateTime(context, date),
-                        fontSize = 11.sp,
+                        // 对齐 item_remote_version.xml date：12sp
+                        fontSize = 12.sp,
                         color = MiuixTheme.colorScheme.onPrimary,
                     )
                 }

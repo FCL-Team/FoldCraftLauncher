@@ -164,7 +164,8 @@ fun InstallerListScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .horizontalScroll(rememberScrollState())
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
+                        // 对齐 page_install_version.xml bar padding 10/2
+                        .padding(horizontal = 10.dp, vertical = 2.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     InstallerTypeCheckbox(
@@ -193,7 +194,8 @@ fun InstallerListScreen(
                     )
                 }
             }
-            Spacer(Modifier.height(8.dp))
+            // 对齐 page_install_version.xml list marginTop=5dp，按 D5 统一 10dp 网格（IL-P2-2）
+            Spacer(Modifier.height(10.dp))
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -246,7 +248,8 @@ private fun InstallerTypeCheckbox(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(end = 8.dp),
+        // 对齐 page_install_version.xml CheckBox marginStart=10dp
+        modifier = Modifier.padding(end = 10.dp),
     ) {
         Checkbox(
             state = if (checked) ToggleableState.On else ToggleableState.Off,

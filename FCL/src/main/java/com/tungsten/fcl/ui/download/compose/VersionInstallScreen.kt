@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -173,11 +172,12 @@ fun VersionInstallScreen(
                 .fillMaxWidth()
                 .fclCollapsingBar(barState),
         ) {
-            // 对齐旧版单行 bar：CheckBox×4 + search(weight=1) + refresh（G-P1-1）
+            // 对齐旧版单行 bar：CheckBox×4 + search(weight=1) + refresh（G-P1-1），
+            // 对齐 page_install_version.xml bar padding 10/2
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                    .padding(horizontal = 10.dp, vertical = 2.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 VersionTypeCheckbox(
@@ -222,7 +222,6 @@ fun VersionInstallScreen(
                     useLabelAsPlaceholder = true,
                     singleLine = true,
                 )
-                Spacer(Modifier.width(6.dp))
                 // 对齐 page_install_version.xml refresh FCLImageButton auto_tint（图标 autoTint = onPrimary）
                 IconButton(onClick = holder::refreshList, enabled = !holder.loading) {
                     Icon(
@@ -235,7 +234,8 @@ fun VersionInstallScreen(
                 }
             }
         }
-        Spacer(Modifier.height(8.dp))
+        // 对齐 page_install_version.xml list marginTop=5dp，按 D5 统一 10dp 网格
+        Spacer(Modifier.height(10.dp))
 
         Box(modifier = Modifier.fillMaxSize()) {
             when {
@@ -281,7 +281,8 @@ private fun VersionTypeCheckbox(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(end = 8.dp),
+        // 对齐 page_install_version.xml CheckBox marginStart=10dp
+        modifier = Modifier.padding(end = 10.dp),
     ) {
         Checkbox(
             state = if (checked) ToggleableState.On else ToggleableState.Off,

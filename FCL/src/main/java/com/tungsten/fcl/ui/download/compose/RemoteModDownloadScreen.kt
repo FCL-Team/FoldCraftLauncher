@@ -146,7 +146,8 @@ fun RemoteModDownloadScreen(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
         ) {
-            Column(modifier = Modifier.padding(10.dp)) {
+            // 对齐 page_download_addon.xml 头部 padding 10/8
+            Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)) {
                 // 对齐 page_download_addon.xml 头部：name/tag/date 均 auto_text_tint（autoTint = onPrimary），
                 // name+tag 同行内联（tag marginStart=10dp，D-P2-1）
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -171,14 +172,17 @@ fun RemoteModDownloadScreen(
                 }
                 Text(
                     text = REMOTE_MOD_DATE_FORMATTER.format(holder.modVersion.datePublished),
-                    fontSize = 11.sp,
+                    // 对齐 page_download_addon.xml date：12sp 单行
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     color = MiuixTheme.colorScheme.onPrimary,
                 )
             }
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(10.dp))
 
-        // 依赖区（对齐 dependency_layout）
+        // 依赖区（对齐 dependency_layout，marginTop=10dp）
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
             when {
                 holder.loading -> InfiniteProgressIndicator(
@@ -254,12 +258,13 @@ fun RemoteModDownloadScreen(
                 }
             }
         }
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(10.dp))
 
-        // 四按钮一行等宽（对齐 page_download_addon.xml 底部 Row，间距 5dp，D-P1-1）
+        // 四按钮一行等宽（对齐 page_download_addon.xml 底部 Row：相邻按钮
+        // marginEnd=5dp + marginStart=5dp = 10dp 间距，D-P1-1）
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Button(
                 onClick = onDownload,

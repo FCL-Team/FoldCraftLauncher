@@ -2,12 +2,12 @@ package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -46,6 +46,7 @@ import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
 import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import java.io.File
 
 /**
@@ -305,7 +306,8 @@ fun VersionInstallInfoScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
+                    // 对齐 page_installer.xml name_bar padding 10/8
+                    .padding(horizontal = 10.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 // 对齐 page_installer.xml archive_name（auto_text_tint = onPrimary，位于 ltColor name_bar 上）
@@ -321,8 +323,11 @@ fun VersionInstallInfoScreen(
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                 )
-                // 对齐 install FCLImageButton auto_tint（图标 autoTint = onPrimary）
-                IconButton(onClick = { holder.install(onInstallSuccess) }) {
+                // 对齐 install FCLImageButton auto_tint（图标 autoTint = onPrimary，marginStart=10dp）
+                IconButton(
+                    onClick = { holder.install(onInstallSuccess) },
+                    modifier = Modifier.padding(start = 10.dp),
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_download_24),
                         contentDescription = null,
@@ -331,7 +336,8 @@ fun VersionInstallInfoScreen(
                 }
             }
         }
-        Spacer(Modifier.width(10.dp))
+        // 对齐 page_installer.xml scroll marginTop=10dp（VI-P2-3：原为 width 笔误）
+        Spacer(Modifier.height(10.dp))
 
         // 加载器选择列表（对齐 InstallerItemGroup.getView）
         LazyColumn(
@@ -341,9 +347,12 @@ fun VersionInstallInfoScreen(
         ) {
             items(holder.loaders, key = { it.item.libraryId }) { ui ->
                 FCLCard(
+                    // 对齐 view_installer_item.xml anim_scale 按压 → Sink（X-5）
+                    onClick = { holder.onLoaderClick(ui, onOpenInstallerList) },
+                    pressFeedbackType = PressFeedbackType.Sink,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 8.dp),
+                        .padding(bottom = 10.dp),
                     // 对齐 InstallerItemSkin 的 item 容器（InstallerItem:258-259
                     // registerEvent ltColor 染色 = primaryContainer）
                     colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
@@ -351,8 +360,8 @@ fun VersionInstallInfoScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { holder.onLoaderClick(ui, onOpenInstallerList) }
-                            .padding(10.dp),
+                            // 对齐 view_installer_item.xml padding 10/8
+                            .padding(horizontal = 10.dp, vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
@@ -373,13 +382,19 @@ fun VersionInstallInfoScreen(
                             )
                             Text(
                                 text = loaderStateText(context, ui),
-                                fontSize = 11.sp,
+                                // 对齐 view_installer_item.xml state：12sp 单行
+                                fontSize = 12.sp,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                                 color = MiuixTheme.colorScheme.onPrimary,
                             )
                         }
                         if (ui.removable) {
-                            // 对齐 remove FCLImageButton auto_tint（= onPrimary）
-                            IconButton(onClick = { holder.onLoaderRemove(ui) }) {
+                            // 对齐 remove FCLImageButton auto_tint（= onPrimary，marginStart=10dp）
+                            IconButton(
+                                onClick = { holder.onLoaderRemove(ui) },
+                                modifier = Modifier.padding(start = 10.dp),
+                            ) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_baseline_close_24),
                                     contentDescription = null,
@@ -388,12 +403,13 @@ fun VersionInstallInfoScreen(
                             }
                         }
                         // select 按钮可见性 = installable 且无互斥（对齐 :276-278）；
-                        // 对齐 select FCLImageButton auto_tint（= onPrimary）
+                        // 对齐 select FCLImageButton auto_tint（= onPrimary，marginStart=10dp）
                         if (ui.installable && ui.incompatibleLibraryName == null) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_baseline_arrow_forward_24),
                                 contentDescription = null,
                                 tint = MiuixTheme.colorScheme.onPrimary,
+                                modifier = Modifier.padding(start = 10.dp),
                             )
                         }
                     }

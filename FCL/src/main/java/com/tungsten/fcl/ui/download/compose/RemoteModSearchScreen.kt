@@ -484,17 +484,10 @@ fun RemoteModSearchScreen(
                     )
                 }
             }
-            Spacer(Modifier.height(8.dp))
-            Button(
-                onClick = holder::onSearchClick,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !holder.loading,
-                colors = ButtonDefaults.buttonColorsPrimary(),
-            ) {
-                Text(text = stringResource(R.string.search))
-            }
+            // 对齐 page_download.xml：install_modpack 位于 search 上方（S-P2-1），
+            // search_layout/install_modpack marginBottom=10dp、search 贴底
             if (tab.hasInstallLocalModpack) {
-                Spacer(Modifier.height(8.dp))
+                Spacer(Modifier.height(10.dp))
                 Button(
                     onClick = onImportModpack,
                     modifier = Modifier.fillMaxWidth(),
@@ -502,6 +495,15 @@ fun RemoteModSearchScreen(
                 ) {
                     Text(text = stringResource(R.string.install_modpack))
                 }
+            }
+            Spacer(Modifier.height(10.dp))
+            Button(
+                onClick = holder::onSearchClick,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !holder.loading,
+                colors = ButtonDefaults.buttonColorsPrimary(),
+            ) {
+                Text(text = stringResource(R.string.search))
             }
         }
 
@@ -525,7 +527,7 @@ fun RemoteModSearchScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 6.dp, vertical = 2.dp),
+                        .padding(horizontal = 10.dp, vertical = 2.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     if (tab.supportChinese && LocaleUtils.isChinese(context)) {
@@ -586,7 +588,8 @@ fun RemoteModSearchScreen(
                     )
                 }
             }
-            Spacer(Modifier.height(8.dp))
+            // 对齐 page_download.xml list marginTop=5dp，按 D5 统一 10dp 网格（S-P2-2）
+            Spacer(Modifier.height(10.dp))
 
             Box(modifier = Modifier.fillMaxSize()) {
                 when {
@@ -640,11 +643,12 @@ private fun PageButton(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    // 对齐 page_download.xml 分页 FCLButton（主色实心 = primary，文字 autoTint = onPrimary）
+    // 对齐 page_download.xml 分页 FCLButton（主色实心 = primary，文字 autoTint = onPrimary，
+    // marginStart=10dp）
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier.padding(start = 2.dp),
+        modifier = Modifier.padding(start = 10.dp),
         colors = ButtonDefaults.buttonColorsPrimary(),
     ) {
         Text(text = label, maxLines = 1)
@@ -665,7 +669,8 @@ private fun RemoteModRow(
         pressFeedbackType = PressFeedbackType.Sink,
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            // 对齐 item_remote_mod.xml marginBottom=10dp
+            .padding(bottom = 10.dp),
         // 对齐 item_remote_mod.xml 的 bg_container_white_clickable + auto_tint（ltColor 染色 = primaryContainer）
         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
     ) {
@@ -721,7 +726,6 @@ private fun RemoteModRow(
                         fontSize = 12.sp,
                         maxLines = 1,
                         color = MiuixTheme.colorScheme.onPrimary,
-                        modifier = Modifier.padding(start = 5.dp),
                     )
                     Text(
                         text = item.description,

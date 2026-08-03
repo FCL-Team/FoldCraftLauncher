@@ -406,3 +406,83 @@ ConstraintLayout (padding=10dp)
 | D5 | 间距严格回 10dp 网格，还是保留 8dp？ | 建议回 10dp（维护者痛感主要来自密度）。 |
 | D6 | 整合包安装向导（ModpackSelectionPage 等）仍是原生旧式页面，与 Compose 页混排风格断裂，是否一并 Compose 化？ | 本方案不含；若维护者痛感强，另立任务（估 3-4d）。 |
 | D7 | 加载/失败态图标与染色（primary 进度环、灰 retry）：保留 Miuix 样式？ | 建议保留。 |
+
+---
+
+## 附录 A：执行核销表（批 1-3）
+
+> 状态：✅ 已核销 / 🔵 决策保留（有意 Miuix 风格化，见 §11.5）/ ➖ 无差距（核对后确认一致）。
+> 批 3 执行日期 2026-08-03，构建门禁 `./gradlew :FCL:assembleDebug` 通过。
+
+### 批 1（结构还原）
+
+| 编号 | 状态 | 备注 |
+|---|---|---|
+| X-1 / S-P0-1 | ✅ | `FCLDropdownField` 替换 5 处 `WindowSpinnerPreference` |
+| S-P1-2 | ✅ | `FCLDropdownField` enabled 透传 `!holder.loading` |
+| R-P0-1 | ✅ | 结果项两行重写（title+tag / 下载量+description） |
+| I-P0-1 / I-P1-1 | ✅ | 详情页单栏 + 版本列表白容器纯文本行（D2） |
+| I-P2-2 | ✅ | 头部图标 30dp |
+| I-P2-3 | ✅ | description 单行 12sp Ellipsis |
+| I-P2-4 | ✅ | name+tag 同行内联 |
+| V-P1-1 | ✅ | date 归位第二行 |
+| R-P2-1 | ✅ | 结果项图标 30dp |
+| R-P2-2 | ✅ | 下载量/简介 12sp |
+
+### 批 2（交互还原）
+
+| 编号 | 状态 | 备注 |
+|---|---|---|
+| X-2 / S-P0-2 / G-P1-2 | ✅ | `fclCollapsingBar` 折叠顶栏（搜索页 + 游戏版本页） |
+| X-3 / S-P1-1 | ✅ | IME actionSearch |
+| S-P1-3 | ✅ | supportChinese 中英文 hint |
+| G-P1-3 | ✅ | Compose 默认禁横屏全屏输入，语义等价 flagNoFullscreen |
+| G-P1-1 | ✅ | 顶栏恢复单行 |
+| D-P1-1 | ✅ | 四按钮一行等宽 |
+| D-P1-2 | ✅ | 依赖区单容器 + 1px 分隔线 |
+| D-P2-1 | ✅ | 头部 name+tag 同行 |
+| VR-P2-1 / IL-P2-1 | ✅ | save 按钮移入 `RemoteVersionRow` 卡片内部右端 |
+
+### 批 3（视觉对齐）
+
+| 编号 | 状态 | 备注 |
+|---|---|---|
+| X-4 | ✅ | 10dp 网格：搜索页左栏/分页栏-列表间距、各页条目 marginBottom、安装信息页 name_bar 间距、加载器选择页顶栏-列表间距全部 8→10dp；各容器 padding 回 10/8（实测旧版 XML） |
+| X-5 | ✅ | 按压反馈统一 Sink：`RemoteVersionRow`、`VersionInstallInfoScreen` 加载器项由裸 `clickable` 改 `FCLCard(onClick, Sink)`；`RemoteModRow`/版本文件项批 1 已是 Sink |
+| S-P2-1 | ✅ | 按钮顺序：安装本地整合包在上、搜索贴底（page_download.xml install_modpack 约束在 search 上方） |
+| S-P2-2 | ✅ | 间距体系回 10dp 网格（含分页按钮 marginStart 2→10dp、download_count 去掉多余 5dp 起始间距） |
+| I-P2-1 | ✅ | website 图标换回 `ic_baseline_jump_24` |
+| G-P2-1 | ✅ | 游戏版本页条目间距 10dp（随 `RemoteVersionRow` marginBottom） |
+| VI-P2-3 | ✅ | `VersionInstallInfoScreen` `Spacer(width)` → `Spacer(height(10.dp))` 笔误修复 |
+| IL-P2-2 | ✅ | 加载器选择页顶栏-列表间距 8→10dp（D5 取 10dp） |
+
+### 批 3 新增核销（方案差距表外、逐页 diff 实测发现的偏差）
+
+| 位置 | 旧版实测 | 现状（原） | 修复 |
+|---|---|---|---|
+| `RemoteModDownloadScreen` 头部 date | 12sp（page_download_addon.xml） | 11sp | 12sp + 单行 Ellipsis |
+| `RemoteVersionUi` date | 12sp（item_remote_version.xml） | 11sp | 12sp |
+| `VersionInstallInfoScreen` 加载器 state | 12sp（view_installer_item.xml） | 11sp | 12sp + 单行 Ellipsis |
+| 下载确认页四按钮间距 | 10dp（相邻 marginEnd=5 + marginStart=5 实测；方案正文"5dp"系笔误） | spacedBy(5) | spacedBy(10) |
+| 详情页版本行 padding | 10dp（ModGameVersionAdapter:55-56 实测；方案正文"12dp"系笔误） | 12dp | 10dp |
+| 游戏版本页/加载器页顶栏 padding | 10/2（page_install_version.xml bar） | 10/6 | 10/2 |
+| CheckBox 组间距 | 10dp（CheckBox marginStart=10） | 8dp | 10dp |
+| name_bar / 详情页头部 / 下载确认页头部 padding | 10/8 | 10/10 | 10/8 |
+| name_bar install 按钮、view_installer_item remove/select | marginStart=10dp | 0 | 补 10dp |
+
+### 决策保留项（不核销，维持 Miuix 风格化）
+
+| 编号 | 状态 | 备注 |
+|---|---|---|
+| S-P2-3 | 🔵 | 翻译按钮保留 Miuix `IconButton` |
+| R-P2-3 / VR-P2-2 / X-6 | 🔵 | marquee → Ellipsis（D4） |
+| X-7 / D7 | 🔵 | Miuix `InfiniteProgressIndicator` + 灰 retry |
+| VI-P2-1 | 🔵 | select 箭头为纯图标 + 整行 clickable，行为等价 |
+| VI-P2-2 | ➖ | 加载器列表 LazyColumn 卡片，形态等价 |
+| V-P2-2 / VR-P2-3 | ➖ | 核对无差距 |
+
+### 批 3 遗留说明
+
+- 详情页版本列表行为 `Modifier.clickable` 纯文本行：旧版 `ModGameVersionAdapter` 条目带 anim_scale，但单容器纯文本行无卡片载体，方案 §3 明确"Sink 反馈可省"，维持现状。
+- 字号层级（`body1`=16sp/`body2`=14sp 与旧版 14sp/12sp 的映射）属全局主题步骤（FCLTheme.kt:29 注明），不在本方案范围。
+- `InstallerListScreen` 过滤栏未渲染刷新按钮（旧版 page_install_version.xml 有 refresh，方案 §9 差距清单未列入），失败态可重试；如需补齐另立条目。

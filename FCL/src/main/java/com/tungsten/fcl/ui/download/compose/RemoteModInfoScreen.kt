@@ -254,7 +254,7 @@ fun RemoteModInfoScreen(
                         onValueChange = { holder.searchText = it },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 8.dp),
+                            .padding(bottom = 10.dp),
                         label = stringResource(R.string.search),
                         useLabelAsPlaceholder = true,
                         singleLine = true,
@@ -282,7 +282,8 @@ fun RemoteModInfoScreen(
                                         .clickable {
                                             holder.versionMap[gameVersion]?.let(onOpenVersionPage)
                                         }
-                                        .padding(12.dp),
+                                        // 对齐 ModGameVersionAdapter:55-56（padding 10dp）
+                                        .padding(10.dp),
                                 )
                             }
                         }
@@ -301,7 +302,7 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
     FCLCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .padding(bottom = 10.dp),
         // 对齐 page_download_addon_info.xml 头部 FCLLinearLayout 的 bg_container_white +
         // auto_linear_background_tint（ltColor 染色 = primaryContainer）
         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
@@ -309,7 +310,8 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(10.dp),
+                // 对齐 page_download_addon_info.xml 头部 padding 10/8
+                .padding(horizontal = 10.dp, vertical = 8.dp),
         ) {
             GlideImage(
                 model = holder.addon.iconUrl,
@@ -373,16 +375,17 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
                             .clickable {
                                 AndroidUtils.openLink(context, holder.translations.getMcmodUrl(mod))
                             }
-                            .padding(horizontal = 8.dp, vertical = 4.dp),
+                            .padding(horizontal = 10.dp, vertical = 4.dp),
                     )
                 }
                 if (StringUtils.isNotBlank(holder.addon.pageUrl)) {
-                    // 对齐 website FCLImageButton auto_tint（图标 autoTint = onPrimary）
+                    // 对齐 website FCLImageButton auto_tint（图标 autoTint = onPrimary），
+                    // 图标为 ic_baseline_jump_24（I-P2-1）
                     IconButton(onClick = {
                         AndroidUtils.openLink(context, holder.addon.pageUrl)
                     }) {
                         Icon(
-                            painter = painterResource(R.drawable.ic_baseline_earth_24),
+                            painter = painterResource(R.drawable.ic_baseline_jump_24),
                             contentDescription = null,
                             tint = MiuixTheme.colorScheme.onPrimary,
                         )

@@ -97,7 +97,7 @@ fun RemoteModVersionScreen(
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
                 modifier = fclItemEntryModifier()
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(bottom = 10.dp),
             ) {
                 Column(
                     modifier = Modifier
