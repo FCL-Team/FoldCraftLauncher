@@ -155,6 +155,8 @@ fun RemoteVersionRow(
     version: RemoteVersion,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    /** 镜像地址按钮回调；非空且 [remoteVersionShowSave] 时在条目内部右端渲染（VR-P2-1）。 */
+    onSave: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
     FCLCard(
@@ -222,6 +224,17 @@ fun RemoteVersionRow(
                 }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_earth_24),
+                        contentDescription = null,
+                        tint = MiuixTheme.colorScheme.onPrimary,
+                    )
+                }
+            }
+            if (onSave != null && remoteVersionShowSave(version)) {
+                // 对齐 item_remote_version.xml save FCLImageButton auto_tint（= onPrimary），
+                // 位于条目内部右端、随卡片一起染色/按压（VR-P2-1）
+                IconButton(onClick = onSave) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_baseline_jump_24),
                         contentDescription = null,
                         tint = MiuixTheme.colorScheme.onPrimary,
                     )

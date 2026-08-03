@@ -19,6 +19,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,9 +31,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,7 +49,9 @@ import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDropdownField
 import com.tungsten.fcl.ui.compose.dialog.MiuixTranslationDialog
+import com.tungsten.fcl.ui.compose.fclCollapsingBar
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
+import com.tungsten.fcl.ui.compose.rememberFCLCollapsingBarState
 import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.ModLoaderType
@@ -361,6 +367,8 @@ fun RemoteModSearchScreen(
     val scope = rememberCoroutineScope()
     // tab 是 Composable 参数，切下载 Tab 重组时必须重建 holder（repository 由 tab 创建）
     val holder = remember(tab) { RemoteModSearchStateHolder(context, tab, scope) }
+    // 对齐 page_download.xml FCLAppBarLayout scroll|enterAlways|snap（S-P0-2）
+    val barState = rememberFCLCollapsingBarState()
 
     Row(
         modifier = Modifier
@@ -389,12 +397,29 @@ fun RemoteModSearchScreen(
                     // 对齐 page_download.xml search_layout：label/控件间距均 10dp
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
+                    // 对齐 page_download.xml "名称" FCLTextView 小字 label（13sp，auto_text_tint）
+                    Text(
+                        text = stringResource(R.string.mods_name),
+                        fontSize = 13.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MiuixTheme.colorScheme.onPrimary.copy(
+                            alpha = if (holder.loading) 0.38f else 1f,
+                        ),
+                    )
+                    // 对齐 DownloadPage :280-287：imeOptions=actionSearch 触发搜索；
+                    // hint 按 supportChinese 切换中英文提示（S-P1-1 / S-P1-3）
                     FCLTextField(
                         value = holder.searchText,
                         onValueChange = { holder.searchText = it },
                         modifier = Modifier.fillMaxWidth(),
-                        label = stringResource(R.string.mods_name),
+                        label = stringResource(
+                            if (tab.supportChinese) R.string.search_hint_chinese
+                            else R.string.search_hint_english,
+                        ),
                         useLabelAsPlaceholder = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(onSearch = { holder.onSearchClick() }),
                         singleLine = true,
                         enabled = !holder.loading,
                     )
@@ -486,11 +511,15 @@ fun RemoteModSearchScreen(
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(0.7f),
+                .weight(0.7f)
+                .nestedScroll(barState.nestedScrollConnection),
         ) {
             // 对齐 page_download.xml FCLAppBarLayout auto_tint（ltColor 染色 = primaryContainer）
+            // + scroll|enterAlways|snap 折叠（S-P0-2）
             FCLCard(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fclCollapsingBar(barState),
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
             ) {
                 Row(

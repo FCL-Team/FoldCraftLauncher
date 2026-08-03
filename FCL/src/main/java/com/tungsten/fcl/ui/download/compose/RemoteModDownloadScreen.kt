@@ -43,6 +43,7 @@ import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
+import top.yukonga.miuix.kmp.basic.HorizontalDivider
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
@@ -146,21 +147,28 @@ fun RemoteModDownloadScreen(
             colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
         ) {
             Column(modifier = Modifier.padding(10.dp)) {
-                // 对齐 page_download_addon.xml 头部：name/tag/date 均 auto_text_tint（autoTint = onPrimary）
-                Text(
-                    text = holder.modVersion.name,
-                    style = MiuixTheme.textStyles.body1,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MiuixTheme.colorScheme.onPrimary,
-                )
-                Text(
-                    text = modVersionTag(context, holder.modVersion),
-                    fontSize = 11.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MiuixTheme.colorScheme.onPrimary,
-                )
+                // 对齐 page_download_addon.xml 头部：name/tag/date 均 auto_text_tint（autoTint = onPrimary），
+                // name+tag 同行内联（tag marginStart=10dp，D-P2-1）
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = holder.modVersion.name,
+                        style = MiuixTheme.textStyles.body1,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MiuixTheme.colorScheme.onPrimary,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
+                    Text(
+                        text = modVersionTag(context, holder.modVersion),
+                        fontSize = 11.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MiuixTheme.colorScheme.onPrimary,
+                        modifier = Modifier
+                            .padding(start = 10.dp)
+                            .weight(1f, fill = false),
+                    )
+                }
                 Text(
                     text = REMOTE_MOD_DATE_FORMATTER.format(holder.modVersion.datePublished),
                     fontSize = 11.sp,
@@ -192,82 +200,91 @@ fun RemoteModDownloadScreen(
                     )
                 }
 
-                holder.dependencies.isNotEmpty() -> Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
+                holder.dependencies.isNotEmpty() -> FCLCard(
+                    // 对齐 dependency_layout 的 bg_container_white +
+                    // RemoteModDownloadPage:166 registerEvent（ltColor 染色 = primaryContainer）
+                    colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+                    modifier = Modifier.fillMaxSize(),
                 ) {
-                    // EnumMap 迭代顺序 = 枚举声明顺序（对齐遗留 EnumMap keySet 顺序）
-                    holder.dependencies.forEach { (type, mods) ->
-                        FCLCard(
-                            // 对齐 dependency_layout 的 bg_container_white +
-                            // RemoteModDownloadPage:166 registerEvent（ltColor 染色 = primaryContainer）
-                            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
-                            modifier = Modifier.fillMaxWidth(),
-                        ) {
-                            Column {
-                                // 分组标题位于 ltColor 容器内（对齐 :120-127 autoTint 文本 = onPrimary）
-                                Text(
-                                    text = AndroidUtils.getLocalizedText(
-                                        context,
-                                        DEPENDENCY_STRING_ID_KEY[type],
-                                    ),
-                                    style = MiuixTheme.textStyles.body2,
-                                    color = MiuixTheme.colorScheme.onPrimary,
-                                    modifier = Modifier.padding(
-                                        start = 10.dp,
-                                        top = 8.dp,
-                                        end = 10.dp,
-                                    ),
+                    // 单容器 + 1px 灰分隔线（D-P1-2，对齐 loadDependencyList：
+                    // 组间 preSplit、组标题下 split、组内行 divider 均为 1px darker_gray）
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState()),
+                    ) {
+                        // EnumMap 迭代顺序 = 枚举声明顺序（对齐遗留 EnumMap keySet 顺序）
+                        holder.dependencies.entries.forEachIndexed { groupIndex, (type, mods) ->
+                            if (groupIndex > 0) {
+                                HorizontalDivider(
+                                    thickness = 1.dp,
+                                    color = FCLThemeTokens.StrokeGray,
                                 )
-                                mods.forEach { mod ->
-                                    DependencyRow(
-                                        mod = mod,
-                                        repository = repository,
-                                        onClick = { onOpenDependency(mod) },
+                            }
+                            // 分组标题（对齐 :120-127 autoTint 文本 = onPrimary，padding 10dp）
+                            Text(
+                                text = AndroidUtils.getLocalizedText(
+                                    context,
+                                    DEPENDENCY_STRING_ID_KEY[type],
+                                ),
+                                style = MiuixTheme.textStyles.body2,
+                                maxLines = 1,
+                                color = MiuixTheme.colorScheme.onPrimary,
+                                modifier = Modifier.padding(10.dp),
+                            )
+                            HorizontalDivider(
+                                thickness = 1.dp,
+                                color = FCLThemeTokens.StrokeGray,
+                            )
+                            mods.forEachIndexed { index, mod ->
+                                if (index > 0) {
+                                    HorizontalDivider(
+                                        thickness = 1.dp,
+                                        color = FCLThemeTokens.StrokeGray,
                                     )
                                 }
+                                DependencyRow(
+                                    mod = mod,
+                                    repository = repository,
+                                    onClick = { onOpenDependency(mod) },
+                                )
                             }
                         }
-                        Spacer(Modifier.height(8.dp))
                     }
                 }
             }
         }
         Spacer(Modifier.height(8.dp))
 
-        // 四按钮（对齐 download/save_as/cancel/back）
+        // 四按钮一行等宽（对齐 page_download_addon.xml 底部 Row，间距 5dp，D-P1-1）
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
         ) {
             Button(
                 onClick = onDownload,
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColorsPrimary(),
             ) {
-                Text(text = stringResource(R.string.button_download))
+                Text(text = stringResource(R.string.button_download), maxLines = 1)
             }
             Button(
                 onClick = onSaveAs,
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColorsPrimary(),
             ) {
-                Text(text = stringResource(R.string.button_save_as))
+                Text(text = stringResource(R.string.button_save_as), maxLines = 1)
             }
-        }
-        Spacer(Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
             Button(
                 // 对齐 :219-221：取消 = 一次返回；旧版四按钮均为 FCLButton（主色实心 = primary）
                 onClick = { LegacyBridge.onBackPressed() },
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColorsPrimary(),
             ) {
-                Text(text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative))
+                Text(
+                    text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative),
+                    maxLines = 1,
+                )
             }
             Button(
                 // 对齐 :222-227：返回 = 连续 3 次返回弹三层，点击后禁用
@@ -279,7 +296,7 @@ fun RemoteModDownloadScreen(
                 enabled = !backClicked,
                 colors = ButtonDefaults.buttonColorsPrimary(),
             ) {
-                Text(text = stringResource(R.string.button_back))
+                Text(text = stringResource(R.string.button_back), maxLines = 1)
             }
         }
     }

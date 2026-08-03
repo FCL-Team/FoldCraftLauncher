@@ -217,27 +217,13 @@ fun InstallerListScreen(
 
                 else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(holder.items, key = { it.selfVersion }) { version ->
-                        // 入场动画对齐 RemoteVersionListAdapter:108（animationSpeed×30）
-                        Row(
+                        RemoteVersionRow(
+                            version = version,
+                            onClick = { onSelect(version) },
+                            onSave = { saveDialogVersion = version },
+                            // 入场动画对齐 RemoteVersionListAdapter:108（animationSpeed×30）
                             modifier = fclItemEntryModifier(),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            RemoteVersionRow(
-                                version = version,
-                                onClick = { onSelect(version) },
-                                modifier = Modifier.weight(1f),
-                            )
-                            if (remoteVersionShowSave(version)) {
-                                // 对齐 item_remote_version.xml save FCLImageButton auto_tint（= onPrimary）
-                                IconButton(onClick = { saveDialogVersion = version }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_baseline_jump_24),
-                                        contentDescription = null,
-                                        tint = MiuixTheme.colorScheme.onPrimary,
-                                    )
-                                }
-                            }
-                        }
+                        )
                     }
                 }
             }

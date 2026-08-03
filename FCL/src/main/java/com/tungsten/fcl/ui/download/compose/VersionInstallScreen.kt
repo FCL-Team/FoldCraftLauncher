@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,13 +19,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.DownloadProviders
+import com.tungsten.fcl.ui.compose.fclCollapsingBar
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
+import com.tungsten.fcl.ui.compose.rememberFCLCollapsingBarState
 import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.task.Schedulers
@@ -154,79 +155,83 @@ fun VersionInstallScreen(
 ) {
     val context = LocalContext.current
     val holder = remember(context) { VersionInstallStateHolder(context) }
+    // 对齐 page_install_version.xml FCLAppBarLayout scroll|enterAlways|snap（G-P1-2）
+    val barState = rememberFCLCollapsingBarState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(10.dp)
+            .nestedScroll(barState.nestedScrollConnection),
     ) {
         // 过滤条 + 搜索（对齐 page_install_version.xml 顶部 bar）
         FCLCard(
             // 对齐 page_install_version.xml bar 的 bg_container_white +
             // auto_linear_background_tint（ltColor 染色 = primaryContainer）
             colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .fclCollapsingBar(barState),
         ) {
-            Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    VersionTypeCheckbox(
-                        label = stringResource(R.string.version_game_release),
-                        checked = holder.checkRelease,
-                        onCheckedChange = {
-                            holder.checkRelease = it
-                            holder.refreshDisplayVersions()
-                        },
+            // 对齐旧版单行 bar：CheckBox×4 + search(weight=1) + refresh（G-P1-1）
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                VersionTypeCheckbox(
+                    label = stringResource(R.string.version_game_release),
+                    checked = holder.checkRelease,
+                    onCheckedChange = {
+                        holder.checkRelease = it
+                        holder.refreshDisplayVersions()
+                    },
+                )
+                VersionTypeCheckbox(
+                    label = stringResource(R.string.version_game_snapshot),
+                    checked = holder.checkSnapshot,
+                    onCheckedChange = {
+                        holder.checkSnapshot = it
+                        holder.refreshDisplayVersions()
+                    },
+                )
+                VersionTypeCheckbox(
+                    label = stringResource(R.string.version_game_old),
+                    checked = holder.checkOld,
+                    onCheckedChange = {
+                        holder.checkOld = it
+                        holder.refreshDisplayVersions()
+                    },
+                )
+                VersionTypeCheckbox(
+                    label = stringResource(R.string.version_game_april_fools),
+                    checked = holder.checkAprilFools,
+                    onCheckedChange = {
+                        holder.checkAprilFools = it
+                        holder.refreshDisplayVersions()
+                    },
+                )
+                // 旧版 imeOptions=flagNoFullscreen：Compose 文本框默认禁用横屏全屏输入
+                // （IME_FLAG_NO_EXTRACT_UI），语义等价，无需额外配置（G-P1-3）
+                FCLTextField(
+                    value = holder.searchText,
+                    onValueChange = holder::onSearchChange,
+                    modifier = Modifier.weight(1f),
+                    label = stringResource(R.string.search),
+                    useLabelAsPlaceholder = true,
+                    singleLine = true,
+                )
+                Spacer(Modifier.width(6.dp))
+                // 对齐 page_install_version.xml refresh FCLImageButton auto_tint（图标 autoTint = onPrimary）
+                IconButton(onClick = holder::refreshList, enabled = !holder.loading) {
+                    Icon(
+                        painter = androidx.compose.ui.res.painterResource(
+                            R.drawable.ic_baseline_refresh_24,
+                        ),
+                        contentDescription = null,
+                        tint = MiuixTheme.colorScheme.onPrimary,
                     )
-                    VersionTypeCheckbox(
-                        label = stringResource(R.string.version_game_snapshot),
-                        checked = holder.checkSnapshot,
-                        onCheckedChange = {
-                            holder.checkSnapshot = it
-                            holder.refreshDisplayVersions()
-                        },
-                    )
-                    VersionTypeCheckbox(
-                        label = stringResource(R.string.version_game_old),
-                        checked = holder.checkOld,
-                        onCheckedChange = {
-                            holder.checkOld = it
-                            holder.refreshDisplayVersions()
-                        },
-                    )
-                    VersionTypeCheckbox(
-                        label = stringResource(R.string.version_game_april_fools),
-                        checked = holder.checkAprilFools,
-                        onCheckedChange = {
-                            holder.checkAprilFools = it
-                            holder.refreshDisplayVersions()
-                        },
-                    )
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    FCLTextField(
-                        value = holder.searchText,
-                        onValueChange = holder::onSearchChange,
-                        modifier = Modifier.weight(1f),
-                        label = stringResource(R.string.search),
-                        useLabelAsPlaceholder = true,
-                        singleLine = true,
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    // 对齐 page_install_version.xml refresh FCLImageButton auto_tint（图标 autoTint = onPrimary）
-                    IconButton(onClick = holder::refreshList, enabled = !holder.loading) {
-                        Icon(
-                            painter = androidx.compose.ui.res.painterResource(
-                                R.drawable.ic_baseline_refresh_24,
-                            ),
-                            contentDescription = null,
-                            tint = MiuixTheme.colorScheme.onPrimary,
-                        )
-                    }
                 }
             }
         }
