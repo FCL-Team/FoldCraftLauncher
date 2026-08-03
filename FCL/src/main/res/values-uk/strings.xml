@@ -924,4 +924,6 @@
     <string name="tip_hide_menu_view">Меню приховано. Натисніть клавішу гучності, щоб відкрити меню.</string>
     <string name="modloader">Завантажувач модів</string>
     <string name="message_warn_renderer_global_setting">Вибрана вами версія має окремі налаштування для кожного профілю, тому вказаний тут рендерер не може бути застосований до поточної версії. Рекомендується тривале натискання кнопки "Запуск" для вибору рендерера.</string>
+    <string name="settings_memory_allocate_auto">%1$.1f ГБ мінімум / %2$.1f ГБ виділено</string>
+    <string name="settings_memory_used_per_total">%1$.1f ГБ використано / %2$.1f ГБ всього</string>
 </resources>

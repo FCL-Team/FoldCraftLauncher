@@ -907,4 +907,6 @@
     <string name="tip_hide_menu_view">Menü ist ausgeblendet. Drücken Sie die Lautstärketaste, um das Menü zu öffnen.</string>
     <string name="modloader">Mod-Loader</string>
     <string name="message_warn_renderer_global_setting">Die von Ihnen gewählte Version hat separate Einstellungen für jedes Profil, daher kann der hier angegebene Renderer nicht auf die aktuelle Version angewendet werden. Es wird empfohlen, die "Starten"-Taste lange zu drücken, um den Renderer auszuwählen.</string>
+    <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB zugewiesen</string>
+    <string name="settings_memory_used_per_total">%1$.1f GB verwendet / %2$.1f GB gesamt</string>
 </resources>

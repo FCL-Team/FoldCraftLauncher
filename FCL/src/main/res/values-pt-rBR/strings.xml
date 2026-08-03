@@ -922,4 +922,6 @@ desfeita!</string>
     <string name="world_reveal">Mostrar no explorador</string>
     <string name="world_show_all">Mostrar tudo</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
+    <string name="settings_memory_allocate_auto">%1$.1f GB mínimo / %2$.1f GB alocado</string>
+    <string name="settings_memory_used_per_total">%1$.1f GB usados / %2$.1f GB total</string>
 </resources>

@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.util.function.Consumer
 
@@ -31,12 +30,25 @@ object FlowSubscriptions {
     }
 
     /**
-     * 订阅 Flow 的后续变化，跳过当前值（对齐 `addListener` 语义：注册时不立即回调）。
+     * 订阅 Flow 的后续变化（对齐 `addListener` 语义：注册时不为当前值回调）。
+     *
+     * 实现注意：不能用 `drop(1)`——Unconfined 作用域下，若订阅后、收集协程启动前
+     * 值已变化（例如在另一个 Unconfined 回调里 setValue 的重入场景），收集到的
+     * 第一个值会是**新值**而非订阅时的当前值，`drop(1)` 会把它误吞。
+     * 这里在订阅时刻快照当前值，仅当收集到的首值仍等于快照时才跳过。
      */
     @JvmStatic
     fun <T> subscribe(flow: StateFlow<T>, consumer: Consumer<in T>): Subscription {
+        val atSubscribe = flow.value
         val job = scope.launch {
-            flow.drop(1).collect { consumer.accept(it) }
+            var first = true
+            flow.collect { v ->
+                if (first) {
+                    first = false
+                    if (v == atSubscribe) return@collect
+                }
+                consumer.accept(v)
+            }
         }
         return Subscription { job.cancel() }
     }

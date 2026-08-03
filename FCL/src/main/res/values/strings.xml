@@ -1245,4 +1245,6 @@
     <string name="slide_selection">Slide Selection</string>
     <string name="swap_hands">Double Tap Swap Hands</string>
     <string name="jar_executor_warn">Note! This feature is not for installing mods. If you are installing mods, please use the launcher\'s download function or add them in "Manage Mods".</string>
+    <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>
+    <string name="settings_memory_used_per_total">%1$.1f GB Used / %2$.1f GB Total</string>
 </resources>

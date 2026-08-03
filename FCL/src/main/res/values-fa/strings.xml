@@ -921,4 +921,6 @@
     <string name="world_reveal">نمایش در فایل منیجر</string>
     <string name="world_show_all">نمایش همه</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
+    <string name="settings_memory_allocate_auto">%1$.1f گیگابایت حداقل / %2$.1f گیگابایت اختصاص داده شده است</string>
+    <string name="settings_memory_used_per_total">%1$.1f گیگابایت استفاده شده / %2$.1f گیگابایت کل</string>
 </resources>

@@ -1033,4 +1033,6 @@
     <string name="message_select_url">請選擇一個鏈接進行下載（將會跳轉至瀏覽器）</string>
     <string name="supported_mc_version">支持嘅MC版本：</string>
     <string name="message_check_renderer">當前渲染器 %s 唔支持該遊戲版本，繼續使用可能導致渲染錯誤或遊戲崩潰！是否繼續？</string>
+    <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 實際分配 %2$.1f GB</string>
+    <string name="settings_memory_used_per_total">設備中已使用 %1$.1f GB / 設備總內存 %2$.1f GB</string>
 </resources>

@@ -1245,4 +1245,6 @@
     <string name="slide_selection">Lựa chọn Trượt</string>
     <string name="swap_hands">Nhấp đúp để Đổi Tay</string>
     <string name="jar_executor_warn">Lưu ý! Tính năng này không dành cho việc cài đặt mods. Nếu bạn đang cài đặt mods, vui lòng sử dụng chức năng tải xuống của trình khởi chạy hoặc thêm chúng trong "Quản lý Mods".</string>
+    <string name="settings_memory_allocate_auto">%1$.1f GB Tối thiểu / %2$.1f GB Đã phân bổ</string>
+    <string name="settings_memory_used_per_total">%1$.1f GB Đã sử dụng / %2$.1f GB Tổng</string>
 </resources>
