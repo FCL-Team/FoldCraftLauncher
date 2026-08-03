@@ -157,7 +157,9 @@ private val rightEntries = listOf(
     ManageEntry(R.drawable.ic_baseline_delete_24, R.string.version_manage_clean) { onClearJunkFiles() },
 )
 
-/** 菜单项行（对齐 item_manage.xml：左图标 + 标题 + 右箭头，上下 15dp 等效内边距）。 */
+/** 菜单项行（对齐 item_manage.xml：左图标 + 标题 + 右箭头，上下 15dp 等效内边距）。
+ *  染色对齐 item_manage.xml 的 auto_text_tint="true"：文字与左右 drawable 均染
+ *  ThemeEngine autoTint（按主色亮度取黑/白）= colorScheme.onPrimary。 */
 @Composable
 private fun ManageEntryRow(
     entry: ManageEntry,
@@ -175,12 +177,13 @@ private fun ManageEntryRow(
         Icon(
             painter = painterResource(entry.icon),
             contentDescription = null,
-            tint = MiuixTheme.colorScheme.onSurface,
+            tint = MiuixTheme.colorScheme.onPrimary,
         )
         Spacer(Modifier.width(10.dp))
         Text(
             text = stringResource(entry.text),
             style = MiuixTheme.textStyles.body2,
+            color = MiuixTheme.colorScheme.onPrimary,
             modifier = Modifier.weight(1f),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -188,7 +191,7 @@ private fun ManageEntryRow(
         Icon(
             painter = painterResource(R.drawable.ic_baseline_arrow_forward_24),
             contentDescription = null,
-            tint = MiuixTheme.colorScheme.onSurface,
+            tint = MiuixTheme.colorScheme.onPrimary,
         )
     }
 }

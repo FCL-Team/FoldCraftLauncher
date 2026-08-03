@@ -308,9 +308,11 @@ fun VersionInstallInfoScreen(
                     .padding(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                // 对齐 page_installer.xml archive_name（auto_text_tint = onPrimary，位于 ltColor name_bar 上）
                 Text(
                     text = stringResource(R.string.archive_name),
                     style = MiuixTheme.textStyles.body2,
+                    color = MiuixTheme.colorScheme.onPrimary,
                 )
                 Spacer(Modifier.width(10.dp))
                 TextField(
@@ -319,11 +321,12 @@ fun VersionInstallInfoScreen(
                     modifier = Modifier.weight(1f),
                     singleLine = true,
                 )
+                // 对齐 install FCLImageButton auto_tint（图标 autoTint = onPrimary）
                 IconButton(onClick = { holder.install(onInstallSuccess) }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_download_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        tint = MiuixTheme.colorScheme.onPrimary,
                     )
                 }
             }
@@ -360,33 +363,37 @@ fun VersionInstallInfoScreen(
                         )
                         Spacer(Modifier.width(10.dp))
                         Column(modifier = Modifier.weight(1f)) {
+                            // 对齐 view_installer_item.xml：name/state 均 auto_text_tint（autoTint = onPrimary）
                             Text(
                                 text = ui.item.name,
                                 style = MiuixTheme.textStyles.body1,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
+                                color = MiuixTheme.colorScheme.onPrimary,
                             )
                             Text(
                                 text = loaderStateText(context, ui),
                                 fontSize = 11.sp,
-                                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                                color = MiuixTheme.colorScheme.onPrimary,
                             )
                         }
                         if (ui.removable) {
+                            // 对齐 remove FCLImageButton auto_tint（= onPrimary）
                             IconButton(onClick = { holder.onLoaderRemove(ui) }) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_baseline_close_24),
                                     contentDescription = null,
-                                    tint = MiuixTheme.colorScheme.onSurface,
+                                    tint = MiuixTheme.colorScheme.onPrimary,
                                 )
                             }
                         }
-                        // select 按钮可见性 = installable 且无互斥（对齐 :276-278）
+                        // select 按钮可见性 = installable 且无互斥（对齐 :276-278）；
+                        // 对齐 select FCLImageButton auto_tint（= onPrimary）
                         if (ui.installable && ui.incompatibleLibraryName == null) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_baseline_arrow_forward_24),
                                 contentDescription = null,
-                                tint = MiuixTheme.colorScheme.onSurface,
+                                tint = MiuixTheme.colorScheme.onPrimary,
                             )
                         }
                     }

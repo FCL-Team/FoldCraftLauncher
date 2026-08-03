@@ -42,11 +42,13 @@ import com.tungsten.fcl.control.data.CustomControl
 import com.tungsten.fcl.control.data.DirectionEventData
 import com.tungsten.fcl.control.data.DirectionStyles
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
+import com.tungsten.fcl.ui.compose.fclDialogTextButtonColors
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Slider
@@ -136,6 +138,8 @@ class MiuixEditViewDialog(
                 .fillMaxWidth()
                 .fillMaxHeight(),
             insideMargin = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            // 对齐遗留 dialog_background（#F4F4F4 / #232323）→ surface token
+            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.surface),
         ) {
             Column(Modifier.fillMaxSize()) {
                 Text(
@@ -159,13 +163,11 @@ class MiuixEditViewDialog(
                         Spacer(Modifier.weight(1f))
                         PageSwitchIcon(
                             icon = R.drawable.ic_baseline_settings_24,
-                            selected = pageState.intValue == 0,
                             onClick = { pageState.intValue = 0 },
                         )
                         Spacer(Modifier.weight(1f))
                         PageSwitchIcon(
                             icon = R.drawable.ic_baseline_keyboard_24,
-                            selected = pageState.intValue == 1,
                             onClick = { pageState.intValue = 1 },
                         )
                         Spacer(Modifier.weight(1f))
@@ -205,6 +207,7 @@ class MiuixEditViewDialog(
                                 callback.onClone(customControl.cloneView())
                                 dismiss()
                             },
+                            colors = fclDialogTextButtonColors(),
                         )
                     }
                     TextButton(
@@ -213,15 +216,18 @@ class MiuixEditViewDialog(
                             callback.onDelete()
                             dismiss()
                         },
+                        colors = fclDialogTextButtonColors(),
                     )
                     Spacer(Modifier.weight(1f))
                     TextButton(
                         text = stringResource(com.tungsten.fcllibrary.R.string.dialog_positive),
                         onClick = { onPositive() },
+                        colors = fclDialogTextButtonColors(),
                     )
                     TextButton(
                         text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative),
                         onClick = { dismiss() },
+                        colors = fclDialogTextButtonColors(),
                     )
                 }
             }
@@ -229,12 +235,14 @@ class MiuixEditViewDialog(
     }
 
     @Composable
-    private fun PageSwitchIcon(icon: Int, selected: Boolean, onClick: () -> Unit) {
+    private fun PageSwitchIcon(icon: Int, onClick: () -> Unit) {
         IconButton(onClick = onClick) {
             Icon(
                 painter = painterResource(icon),
                 contentDescription = null,
-                tint = if (selected) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.onSurface,
+                // 对齐遗留 dialog_edit_view：info/event 图标 darker_gray 静态描边色，
+                // 旧版无选中态变色（既不用 primary 也不用 color2）
+                tint = MiuixTheme.colorScheme.outline,
             )
         }
     }
@@ -556,6 +564,7 @@ class MiuixEditViewDialog(
             TextButton(
                 text = stringResource(R.string.menu_control_set),
                 onClick = onClick,
+                colors = fclDialogTextButtonColors(),
             )
         }
     }
@@ -806,6 +815,7 @@ class MiuixEditViewDialog(
             TextButton(
                 text = stringResource(R.string.menu_control_set),
                 onClick = onClick,
+                colors = fclDialogTextButtonColors(),
             )
         }
     }
@@ -886,6 +896,7 @@ private fun OptionDropdown(
         TextButton(
             text = options[selectedIndex],
             onClick = { expanded.value = true },
+            colors = fclDialogTextButtonColors(),
         )
         if (expanded.value) {
             Popup(onDismissRequest = { expanded.value = false }) {

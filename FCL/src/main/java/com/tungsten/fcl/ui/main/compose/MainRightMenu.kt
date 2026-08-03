@@ -285,8 +285,10 @@ private fun AccountSubtitle(account: Account?, modifier: Modifier = Modifier) {
 }
 
 /**
- * 启动区（对齐 activity_main.xml :169-241）：
+ * 启动区（对齐 activity_main.xml :169-241 + MainActivity.updateColor）：
  * "启动"粗体 + 版本图标/版本名跑马灯/设置入口；加载中显示进度（对齐 version_progress）。
+ * 容器底色对齐 updateColor 的 createBackground：透明底 + 1dp color2 描边 + 8dp 圆角；
+ * 进度圈对齐 FCLProgressBar 的 dkColor 着色（Compose 侧 = primaryVariant）。
  * 点击 = 启动游戏，长按 = 选择渲染器后启动（回调转 MainActivity，逻辑零改动）。
  */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
@@ -301,6 +303,8 @@ private fun StartBlock(
     val display by MainRightMenuBridge.versionDisplay.collectAsStateWithLifecycle()
     Box(
         modifier = modifier
+            // 对齐 MainActivity.updateColor：start 容器透明底 + 1dp color2 描边 + 8dp 圆角
+            .border(1.dp, MiuixTheme.colorScheme.onSurface, RoundedCornerShape(8.dp))
             .combinedClickable(onClick = onClick, onLongClick = onLongClick)
             .shake(shakeState)
             .padding(5.dp),
@@ -360,7 +364,8 @@ private fun StartBlock(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .size(24.dp),
-                color = MiuixTheme.colorScheme.primary,
+                // 对齐 FCLProgressBar：进度着色为 dkColor（Compose 侧 = primaryVariant）
+                color = MiuixTheme.colorScheme.primaryVariant,
             )
         }
     }

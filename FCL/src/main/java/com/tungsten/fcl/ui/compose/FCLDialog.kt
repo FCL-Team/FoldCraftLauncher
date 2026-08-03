@@ -15,13 +15,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import top.yukonga.miuix.kmp.basic.Card
 import androidx.compose.foundation.layout.ColumnScope
+import top.yukonga.miuix.kmp.basic.ButtonDefaults
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.basic.TextButtonColors
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.window.WindowDialog
 
@@ -77,6 +81,9 @@ fun FCLDialog(
         title = title,
         summary = summary,
         onDismissRequest = onDismissRequest,
+        // 对齐遗留 dialog_background（#F4F4F4 / #232323）→ surface token，
+        // 不用 Miuix 默认 background（light 为纯白）
+        backgroundColor = MiuixTheme.colorScheme.surface,
     ) {
         // WindowDialog 的内容槽是普通 Column（手机端不限高、不滚动），
         // 这里自包一层 Column 让 FCLDialogBody 的 weight 限高生效。
@@ -112,6 +119,9 @@ fun FCLDialogCard(
             .widthIn(min = 350.dp, max = 560.dp)
             .fillMaxWidth(),
         insideMargin = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
+        // 对齐遗留 dialog_background（#F4F4F4 / #232323）→ surface token，
+        // 不用 Miuix Card 默认 surfaceContainer（light 为纯白）
+        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.surface),
     ) {
         Column {
             title?.let {
@@ -191,7 +201,23 @@ fun FCLDialogButtonsRow(buttons: List<FCLDialogButton>, modifier: Modifier = Mod
                 text = button.text,
                 onClick = button.onClick,
                 enabled = button.enabled,
+                colors = fclDialogTextButtonColors(),
             )
         }
     }
 }
+
+/**
+ * 遗留 FCLButton 默认（非 ripple）配色的 Compose 等价（FCLButton.java applyTheme）：
+ * 透明底 + ltColor（= primaryContainer）文字，跟随主题色实时变化；
+ * 禁用时旧版 setTextColor 为纯色、无状态列表，文字仍显示 ltColor，
+ * 故 disabledTextColor 同样取 primaryContainer（对齐旧视觉，不用 Miuix 默认灰）。
+ * Miuix TextButton 默认 secondaryVariant/onSecondaryVariant 灰系不跟随主题色，不能使用。
+ */
+@Composable
+fun fclDialogTextButtonColors(): TextButtonColors = ButtonDefaults.textButtonColors(
+    color = Color.Transparent,
+    disabledColor = Color.Transparent,
+    textColor = MiuixTheme.colorScheme.primaryContainer,
+    disabledTextColor = MiuixTheme.colorScheme.primaryContainer,
+)

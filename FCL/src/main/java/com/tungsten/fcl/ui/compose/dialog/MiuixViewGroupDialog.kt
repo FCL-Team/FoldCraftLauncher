@@ -26,6 +26,7 @@ import com.tungsten.fcl.control.EditViewGroupDialog
 import com.tungsten.fcl.control.GameMenu
 import com.tungsten.fcl.control.data.ControlViewGroup
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
+import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import top.yukonga.miuix.kmp.basic.Card
@@ -207,7 +208,8 @@ class MiuixViewGroupDialog(
             Icon(
                 painter = painterResource(R.drawable.ic_baseline_keyboard_24),
                 contentDescription = null,
-                tint = MiuixTheme.colorScheme.onSurface,
+                // 对齐遗留 item_view_group：android:tint="@android:color/darker_gray"（静态，不随主题）
+                tint = FCLThemeTokens.StrokeGray,
             )
             Text(
                 text = group.name,
@@ -227,28 +229,32 @@ class MiuixViewGroupDialog(
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_arrow_upward_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐遗留 item_view_group：android:tint="@android:color/darker_gray"（静态，不随主题）
+                        tint = FCLThemeTokens.StrokeGray,
                     )
                 }
                 IconButton(onClick = { onMove(index, false) }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_arrow_downward_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐遗留 item_view_group：android:tint="@android:color/darker_gray"（静态，不随主题）
+                        tint = FCLThemeTokens.StrokeGray,
                     )
                 }
                 IconButton(onClick = { onEditViewGroup(group) }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_edit_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐遗留 item_view_group：android:tint="@android:color/darker_gray"（静态，不随主题）
+                        tint = FCLThemeTokens.StrokeGray,
                     )
                 }
                 IconButton(onClick = { onDeleteViewGroup(group) }) {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_delete_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐遗留 item_view_group：android:tint="@android:color/darker_gray"（静态，不随主题）
+                        tint = FCLThemeTokens.StrokeGray,
                     )
                 }
             }

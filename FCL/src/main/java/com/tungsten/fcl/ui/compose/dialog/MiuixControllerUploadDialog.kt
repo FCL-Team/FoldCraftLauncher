@@ -36,6 +36,7 @@ import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
 import com.tungsten.fclcore.util.StringUtils
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Checkbox
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
@@ -162,6 +163,8 @@ class MiuixControllerUploadDialog(
                 .padding(16.dp)
                 .width(400.dp),
             insideMargin = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            // 对齐遗留 dialog_background（#F4F4F4 / #232323）→ surface token
+            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.surface),
         ) {
             Text(
                 text = stringResource(R.string.control_info_edit),
@@ -365,7 +368,8 @@ class MiuixControllerUploadDialog(
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_edit_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐遗留 dialog_controller_upload：darker_gray 静态描边色，不用 color2
+                        tint = MiuixTheme.colorScheme.outline,
                     )
                 }
             }
@@ -396,7 +400,8 @@ class MiuixControllerUploadDialog(
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_edit_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐遗留 dialog_controller_upload：darker_gray 静态描边色，不用 color2
+                        tint = MiuixTheme.colorScheme.outline,
                     )
                 }
             }
@@ -420,7 +425,8 @@ class MiuixControllerUploadDialog(
                 Icon(
                     painter = painterResource(R.drawable.ic_baseline_close_24),
                     contentDescription = null,
-                    tint = MiuixTheme.colorScheme.onSurface,
+                    // 对齐遗留 item_screenshot_path：darker_gray 静态描边色，不用 color2
+                    tint = MiuixTheme.colorScheme.outline,
                 )
             }
         }

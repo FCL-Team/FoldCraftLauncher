@@ -51,6 +51,7 @@ import com.tungsten.fcl.ui.compose.rememberShakeState
 import com.tungsten.fcl.ui.compose.shake
 import com.tungsten.fcl.ui.compose.dialog.MiuixAddProfileDialog
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
+import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcl.ui.version.Versions
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
@@ -60,6 +61,7 @@ import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.RadioButton
+import top.yukonga.miuix.kmp.basic.RadioButtonDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -142,9 +144,11 @@ fun VersionListScreen(
         ) {
             when {
                 state.loading -> {
+                    // 对齐 FCLProgressBar 的 dkColor 着色（Compose 侧 = primaryVariant，
+                    // 与 main 域 MainRightMenu.kt:368 同一约定）
                     InfiniteProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
-                        color = MiuixTheme.colorScheme.primary,
+                        color = MiuixTheme.colorScheme.primaryVariant,
                     )
                 }
 
@@ -191,8 +195,10 @@ private fun ProfileRow(
         modifier = modifier
             .fillMaxWidth()
             .shake(shakeState)
+            // 对齐 bg_container_transparent_selected（ui_bg_color #40F4F4F4，无 night
+            // 变体、昼夜同色；不是 ltColor 染色），与 setting 域 HelpScreen.kt:187 同一约定
             .background(
-                if (selected) MiuixTheme.colorScheme.primaryContainer else Color.Transparent,
+                if (selected) FCLThemeTokens.UiBackgroundLight else Color.Transparent,
             )
             .clickable {
                 // 对齐 ProfileListAdapter :69-76：版本加载中禁止切换目录并播抖动
@@ -211,12 +217,15 @@ private fun ProfileRow(
                 style = MiuixTheme.textStyles.body2,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                // 对齐 item_profile.xml 的 use_theme_color（color2 = onSurface）
+                color = MiuixTheme.colorScheme.onSurface,
             )
             BasicText(
                 text = profile.gameDir.absolutePath,
                 style = MiuixTheme.textStyles.body2.copy(
                     fontSize = 11.sp,
-                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                    // 对齐 item_profile.xml：path 同为 use_theme_color（全量 color2），不是弱化变体
+                    color = MiuixTheme.colorScheme.onSurface,
                 ),
                 maxLines = 1,
                 // 对齐 item_profile.xml 的路径跑马灯（marquee 与 Ellipsis 冲突，省略号移除）
@@ -252,7 +261,11 @@ private fun VersionListArea(
     viewModel: VersionListViewModel,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        Card(modifier = Modifier.fillMaxWidth()) {
+        // 对齐 FCLAppBarLayout 的 bg_container_white + auto_tint（ltColor 染色 = primaryContainer）
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -329,13 +342,21 @@ private fun CategoryOption(
             .padding(horizontal = 8.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        RadioButton(selected = selected, onClick = onClick)
+        // 对齐 FCLRadioButton：选中态圆点着色为 dkColor（Compose 侧 = primaryVariant）
+        RadioButton(
+            selected = selected,
+            onClick = onClick,
+            colors = RadioButtonDefaults.radioButtonColors(
+                selectedColor = MiuixTheme.colorScheme.primaryVariant,
+            ),
+        )
         Spacer(Modifier.width(4.dp))
         Text(
             text = label,
             style = MiuixTheme.textStyles.body2,
-            color = if (selected) MiuixTheme.colorScheme.primary
-            else MiuixTheme.colorScheme.onSurface,
+            // 对齐 FCLRadioButton text_use_theme_color：文字恒定染 color（primary），
+            // 与选中态无关（FCLRadioButton.java:45-47 setTextColor(getColor())）
+            color = MiuixTheme.colorScheme.primary,
         )
     }
 }
@@ -364,7 +385,14 @@ private fun VersionRow(
                 .padding(5.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            RadioButton(selected = selected, onClick = onSelect)
+            // 对齐 item_version.xml 的 FCLRadioButton：选中态圆点 dkColor（= primaryVariant）
+            RadioButton(
+                selected = selected,
+                onClick = onSelect,
+                colors = RadioButtonDefaults.radioButtonColors(
+                    selectedColor = MiuixTheme.colorScheme.primaryVariant,
+                ),
+            )
             val iconBitmap = remember(item.icon) { item.icon?.toBitmap()?.asImageBitmap() }
             if (iconBitmap != null) {
                 Image(
@@ -383,13 +411,16 @@ private fun VersionRow(
                         style = MiuixTheme.textStyles.body1,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
+                        // 对齐 item_version.xml 的 auto_text_tint（按主色亮度取黑/白 = onPrimary）
+                        color = MiuixTheme.colorScheme.onPrimary,
                     )
                     if (item.tag != null) {
                         Text(
                             text = item.tag,
                             fontSize = 11.sp,
                             maxLines = 1,
-                            color = MiuixTheme.colorScheme.primary,
+                            // 同标题：auto_text_tint = onPrimary，不是主色本色
+                            color = MiuixTheme.colorScheme.onPrimary,
                             modifier = Modifier.padding(start = 10.dp),
                         )
                     }
@@ -398,7 +429,8 @@ private fun VersionRow(
                     // 对齐 Adapter :89-93 的副标题拼接（"%s  Mods:%d"）
                     text = "%s  Mods:%d".format(item.libraries, item.modCount),
                     fontSize = 11.sp,
-                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                    // 同标题：auto_text_tint = onPrimary
+                    color = MiuixTheme.colorScheme.onPrimary,
                 )
             }
             // 设置按钮仅版本独立设置可见（对齐 Adapter :67-80）
@@ -407,7 +439,8 @@ private fun VersionRow(
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_settings_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐 item_version.xml 的 FCLImageButton auto_tint（按主色亮度取黑/白 = onPrimary）
+                        tint = MiuixTheme.colorScheme.onPrimary,
                     )
                 }
             }
@@ -415,7 +448,8 @@ private fun VersionRow(
                 Icon(
                     painter = painterResource(R.drawable.ic_baseline_delete_24),
                     contentDescription = null,
-                    tint = MiuixTheme.colorScheme.onSurface,
+                    // 同上：auto_tint = onPrimary
+                    tint = MiuixTheme.colorScheme.onPrimary,
                 )
             }
         }

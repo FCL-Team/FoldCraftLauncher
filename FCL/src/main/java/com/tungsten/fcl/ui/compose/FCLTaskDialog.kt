@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.compose
 
 import android.content.Context
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -33,11 +35,10 @@ import com.tungsten.fclcore.task.TaskExecutor
 import com.tungsten.fclcore.task.TaskListener
 import com.tungsten.fclcore.util.Lang
 import com.tungsten.fclcore.util.flow.FlowSubscriptions
-import top.yukonga.miuix.kmp.basic.Button
-import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.LinearProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.util.function.Consumer
 
@@ -279,13 +280,14 @@ fun FCLTaskDialogContent(
             )
             Spacer(Modifier.width(8.dp))
             Spacer(Modifier.weight(1f))
-            Button(
+            // 对齐遗留 dialog_task 取消按钮（FCLButton 默认形态：透明底 + ltColor 文字），
+            // 不用主色实心按钮
+            TextButton(
+                text = cancelText,
                 onClick = { onCancel?.invoke() },
                 enabled = onCancel != null,
-                colors = ButtonDefaults.buttonColorsPrimary(),
-            ) {
-                Text(cancelText)
-            }
+                colors = fclDialogTextButtonColors(),
+            )
         }
     }
 }
@@ -309,7 +311,9 @@ private fun StageRowItem(entry: FCLTaskDialogState.StageEntry) {
             ),
             contentDescription = null,
             modifier = Modifier.size(20.dp),
-            tint = MiuixTheme.colorScheme.onSurface,
+            // 对齐遗留 TaskListPane.StageNode：icon tint = systemAutoTint（按昼夜取黑/白），
+            // 不用 color2（onSurface）——旧版不跟随内容色
+            tint = if (isSystemInDarkTheme()) Color.White else Color.Black,
         )
         Spacer(Modifier.width(8.dp))
         Text(
@@ -348,7 +352,7 @@ private fun TaskRowItem(entry: FCLTaskDialogState.TaskEntry) {
             Text(
                 text = it,
                 style = MiuixTheme.textStyles.footnote1,
-                color = MiuixTheme.colorScheme.error,
+                // 对齐遗留 TaskListPane.setThrowable：复用 state 文本默认色，不额外染红
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )

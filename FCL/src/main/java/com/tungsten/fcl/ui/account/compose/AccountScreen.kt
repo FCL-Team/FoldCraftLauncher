@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -72,6 +73,7 @@ import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.RadioButton
+import top.yukonga.miuix.kmp.basic.RadioButtonColors
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
@@ -135,7 +137,10 @@ fun AccountScreen(
                 Modifier
                     .padding(horizontal = 10.dp, vertical = 5.dp)
                     .fillMaxWidth()
-                    .height(1.dp),
+                    .height(1.dp)
+                    // 对齐 ui_account.xml 分隔线 FCLView 的 darker_gray 底色
+                    // （固定 #AAAAAA 不随主题 = colorScheme.outline token）
+                    .background(MiuixTheme.colorScheme.outline),
             )
             AddAccountEntry(
                 icon = R.drawable.ic_baseline_person_add_24,
@@ -234,6 +239,14 @@ private fun ServerListColumn(
                     .padding(horizontal = 10.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                // 对齐 item_authlib_injector_server.xml 的服务器图标（use_theme_color = onSurface）
+                Icon(
+                    painter = painterResource(R.drawable.ic_baseline_server_24),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MiuixTheme.colorScheme.onSurface,
+                )
+                Spacer(Modifier.width(10.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = server.name,
@@ -245,7 +258,9 @@ private fun ServerListColumn(
                         text = server.url,
                         style = MiuixTheme.textStyles.body2.copy(
                             fontSize = 11.sp,
-                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                            // 对齐 item_authlib_injector_server.xml URL 的 use_theme_color
+                            // （color2 全量 = onSurface，旧版无降透明度）
+                            color = MiuixTheme.colorScheme.onSurface,
                         ),
                         maxLines = 1,
                         // 对齐 item_authlib_injector_server.xml 的 URL 跑马灯
@@ -348,9 +363,15 @@ private fun AccountRow(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // 单选：设为当前账户（对齐 AccountListAdapter.kt:63-66）
+            // 旧版 FCLRadioButton buttonTintList = dkColor（= primaryVariant，昼夜同一通道），
+            // 覆盖 Miuix 默认的 primary；未选中描边色 Miuix 0.9.3 未开放配置
             RadioButton(
                 selected = selected,
                 onClick = { viewModel.onSelectAccount(item) },
+                colors = RadioButtonColors(
+                    selectedColor = MiuixTheme.colorScheme.primaryVariant,
+                    disabledSelectedColor = MiuixTheme.colorScheme.primaryVariant,
+                ),
             )
             // 头像：TexturesLoader 纹理绑定产物（本地生成的 BitmapDrawable），
             // 图片加载按 bridge-api.md §4 决策走 glide-compose
@@ -364,7 +385,9 @@ private fun AccountRow(
                 BasicText(
                     text = title,
                     style = MiuixTheme.textStyles.body1.copy(
-                        color = MiuixTheme.colorScheme.onSurface,
+                        // 对齐 item_account.xml name 的 auto_text_tint
+                        // （= autoTint(主色) 黑/白二值 = onPrimary，非 color2）
+                        color = MiuixTheme.colorScheme.onPrimary,
                     ),
                     maxLines = 1,
                     // 对齐 item_account.xml 的名称跑马灯
@@ -374,7 +397,8 @@ private fun AccountRow(
                     text = subtitle,
                     style = MiuixTheme.textStyles.body2.copy(
                         fontSize = 11.sp,
-                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                        // 对齐 item_account.xml type 的 auto_text_tint（同 name = onPrimary）
+                        color = MiuixTheme.colorScheme.onPrimary,
                     ),
                     maxLines = 1,
                     modifier = Modifier.basicMarquee(),
@@ -428,15 +452,19 @@ private fun AccountRow(
                     contentAlignment = Alignment.Center,
                 ) {
                     if (skinBusy) {
+                        // 对齐 item_account.xml skin_progress 的 FCLProgressBar
+                        // indeterminateTint = dkColor（= primaryVariant）
                         InfiniteProgressIndicator(
                             modifier = Modifier.size(20.dp),
-                            color = MiuixTheme.colorScheme.primary,
+                            color = MiuixTheme.colorScheme.primaryVariant,
                         )
                     } else {
                         Icon(
                             painter = painterResource(R.drawable.ic_baseline_hanger_24),
                             contentDescription = null,
-                            tint = MiuixTheme.colorScheme.onSurface,
+                            // 对齐 item_account.xml skin 按钮的 auto_tint
+                            // （= autoTint(主色) 黑/白二值 = onPrimary）
+                            tint = MiuixTheme.colorScheme.onPrimary,
                         )
                     }
                 }
@@ -460,15 +488,18 @@ private fun AccountRow(
                 contentAlignment = Alignment.Center,
             ) {
                 if (refreshing) {
+                    // 对齐 item_account.xml refresh_progress 的 FCLProgressBar
+                    // indeterminateTint = dkColor（= primaryVariant）
                     InfiniteProgressIndicator(
                         modifier = Modifier.size(20.dp),
-                        color = MiuixTheme.colorScheme.primary,
+                        color = MiuixTheme.colorScheme.primaryVariant,
                     )
                 } else {
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_refresh_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐 item_account.xml refresh 按钮的 auto_tint（= onPrimary）
+                        tint = MiuixTheme.colorScheme.onPrimary,
                     )
                 }
             }
@@ -482,7 +513,8 @@ private fun AccountRow(
                 Icon(
                     painter = painterResource(R.drawable.ic_baseline_content_copy_24),
                     contentDescription = null,
-                    tint = MiuixTheme.colorScheme.onSurface,
+                    // 对齐 item_account.xml copy_uuid 按钮的 auto_tint（= onPrimary）
+                    tint = MiuixTheme.colorScheme.onPrimary,
                 )
             }
             // 编辑 UUID（仅离线账户，对齐 AccountListAdapter.kt:60-62）
@@ -491,7 +523,8 @@ private fun AccountRow(
                     Icon(
                         painter = painterResource(R.drawable.ic_baseline_edit_24),
                         contentDescription = null,
-                        tint = MiuixTheme.colorScheme.onSurface,
+                        // 对齐 item_account.xml edit 按钮的 auto_tint（= onPrimary）
+                        tint = MiuixTheme.colorScheme.onPrimary,
                     )
                 }
             }
@@ -500,7 +533,8 @@ private fun AccountRow(
                 Icon(
                     painter = painterResource(R.drawable.ic_baseline_delete_24),
                     contentDescription = null,
-                    tint = MiuixTheme.colorScheme.onSurface,
+                    // 对齐 item_account.xml delete 按钮的 auto_tint（= onPrimary）
+                    tint = MiuixTheme.colorScheme.onPrimary,
                 )
             }
         }

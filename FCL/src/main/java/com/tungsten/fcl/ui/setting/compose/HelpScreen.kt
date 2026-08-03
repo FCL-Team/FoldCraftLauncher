@@ -31,10 +31,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.setting.DocIndex
+import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcl.util.AndroidUtils
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
+import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.preference.ArrowPreference
@@ -75,7 +77,8 @@ fun HelpScreen(
             Text(
                 text = stringResource(R.string.help_category),
                 fontSize = 11.sp,
-                color = MiuixTheme.colorScheme.primary,
+                // 对齐遗留 use_theme_color="true"（color2 = onSurface）
+                color = MiuixTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(horizontal = 10.dp),
             )
             Spacer(
@@ -132,22 +135,28 @@ fun HelpScreen(
                 state.loading -> {
                     InfiniteProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
-                        color = MiuixTheme.colorScheme.primary,
+                        // 对齐遗留 FCLProgressBar 的 dkColor 染色（= primaryVariant）
+                        color = MiuixTheme.colorScheme.primaryVariant,
                     )
                 }
 
                 !state.success -> {
+                    // 遗留为重试图标（FCLImageButton，不染主色，仅 ripple ltColor），
+                    // 故用默认中性配色的按钮而非主色实心按钮
                     Button(
                         onClick = viewModel::refresh,
                         modifier = Modifier.align(Alignment.Center),
-                        colors = ButtonDefaults.buttonColorsPrimary(),
                     ) {
                         Text(text = stringResource(R.string.action_refresh))
                     }
                 }
 
                 else -> {
-                    Card(modifier = Modifier.fillMaxSize()) {
+                    // 对齐 item_article.xml 的 auto_linear_background_tint（ltColor = primaryContainer）
+                    Card(
+                        modifier = Modifier.fillMaxSize(),
+                        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+                    ) {
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
                             items(state.articles, key = { it.path }) { item ->
                                 ArrowPreference(
@@ -175,8 +184,9 @@ private fun CategoryRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 2.dp)
+            // 对齐 bg_container_transparent_selected（ui_bg_color #40F4F4F4，无 night 变体、昼夜同色）
             .background(
-                if (selected) MiuixTheme.colorScheme.primaryContainer
+                if (selected) FCLThemeTokens.UiBackgroundLight
                 else Color.Transparent,
             )
             .clickable(onClick = onClick)
@@ -186,8 +196,8 @@ private fun CategoryRow(
             text = category.getDisplayName(LocalContext.current),
             style = MiuixTheme.textStyles.body2,
             maxLines = 1,
-            color = if (selected) MiuixTheme.colorScheme.onPrimaryContainer
-            else MiuixTheme.colorScheme.onSurface,
+            // 对齐 DocCategoryAdapter 的 setUseThemeColor(true)（color2 = onSurface，选中不变色）
+            color = MiuixTheme.colorScheme.onSurface,
         )
     }
 }

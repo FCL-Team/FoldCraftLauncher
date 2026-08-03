@@ -36,6 +36,7 @@ import com.tungsten.fcl.control.data.DirectionStyles
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
+import com.tungsten.fcl.ui.compose.fclDialogTextButtonColors
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.component.dialog.EditDialog
@@ -43,6 +44,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog
 import com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
 import kotlinx.coroutines.flow.MutableStateFlow
 import top.yukonga.miuix.kmp.basic.RadioButton
+import top.yukonga.miuix.kmp.basic.RadioButtonDefaults
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
@@ -370,6 +372,10 @@ class MiuixAddDirectionStyleDialog(
                     typeState.value = type
                     style.styleType = type
                 },
+                // 对齐遗留 FCLRadioButton：按钮圆点 tint = dkColor（primaryVariant），不用 primary
+                colors = RadioButtonDefaults.radioButtonColors(
+                    selectedColor = MiuixTheme.colorScheme.primaryVariant,
+                ),
             )
             Spacer(Modifier.width(4.dp))
             Text(
@@ -407,6 +413,7 @@ class MiuixAddDirectionStyleDialog(
                 TextButton(
                     text = stringResource(R.string.menu_control_set),
                     onClick = { openButtonStyleDialog() },
+                    colors = fclDialogTextButtonColors(),
                 )
             }
         }
@@ -482,6 +489,7 @@ class MiuixAddDirectionStyleDialog(
             TextButton(
                 text = stringResource(R.string.menu_control_set),
                 onClick = { openColorPicker(spec.get, spec.set) },
+                colors = fclDialogTextButtonColors(),
             )
         }
     }

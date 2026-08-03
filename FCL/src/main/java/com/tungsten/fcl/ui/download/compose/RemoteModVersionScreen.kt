@@ -108,25 +108,27 @@ fun RemoteModVersionScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
+                        // 对齐 item_mod_version.xml：name/tag/date 均 auto_text_tint（autoTint = onPrimary）
                         Text(
                             text = version.name,
                             style = MiuixTheme.textStyles.body1,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
+                            color = MiuixTheme.colorScheme.onPrimary,
                         )
                         Text(
                             text = modVersionTag(context, version),
                             fontSize = 11.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = MiuixTheme.colorScheme.primary,
+                            color = MiuixTheme.colorScheme.onPrimary,
                         )
                     }
                     Spacer(Modifier.width(10.dp))
                     Text(
                         text = REMOTE_MOD_DATE_FORMATTER.format(version.datePublished),
                         fontSize = 11.sp,
-                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                        color = MiuixTheme.colorScheme.onPrimary,
                     )
                 }
             }

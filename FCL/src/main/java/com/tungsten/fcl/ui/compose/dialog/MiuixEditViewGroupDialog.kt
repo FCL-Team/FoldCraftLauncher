@@ -26,6 +26,7 @@ import com.tungsten.fcl.control.data.ControlViewGroup
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
+import com.tungsten.fcl.ui.compose.fclDialogTextButtonColors
 import com.tungsten.fclcore.util.StringUtils
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.Text
@@ -148,6 +149,7 @@ private fun OptionDropdown(
         TextButton(
             text = options[selectedIndex],
             onClick = { expanded.value = true },
+            colors = fclDialogTextButtonColors(),
         )
         if (expanded.value) {
             Popup(onDismissRequest = { expanded.value = false }) {

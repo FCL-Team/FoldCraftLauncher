@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -37,6 +39,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
+import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.download.LibraryAnalyzer
@@ -57,7 +60,6 @@ import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
@@ -271,10 +273,11 @@ fun RemoteModInfoScreen(
                 onClick = holder::loadModVersions,
                 modifier = Modifier.align(Alignment.Center),
             ) {
+                // 对齐 page_download_addon_info.xml retry（无 auto_tint）：drawable 自带静态灰
                 Icon(
                     painter = painterResource(R.drawable.ic_baseline_refresh_24),
                     contentDescription = null,
-                    tint = MiuixTheme.colorScheme.onSurface,
+                    tint = FCLThemeTokens.StrokeGray,
                 )
             }
 
@@ -320,6 +323,8 @@ fun RemoteModInfoScreen(
                             // 对齐 ModGameVersionAdapter：推荐项不带 "Minecraft " 前缀
                             text = (if (gameVersion.contains(recommendPrefix)) "" else "Minecraft ") + gameVersion,
                             style = MiuixTheme.textStyles.body2,
+                            // 对齐 ModGameVersionAdapter:60-61（autoTint = onPrimary）
+                            color = MiuixTheme.colorScheme.onPrimary,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(12.dp),
@@ -356,6 +361,8 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
             )
             Spacer(Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
+                // 对齐 page_download_addon_info.xml 头部：name/tag/description/mcmod
+                // 均为 auto_text_tint（autoTint = onPrimary）
                 Text(
                     text = if (holder.installed) {
                         String.format(
@@ -367,6 +374,7 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
                         holder.displayName
                     },
                     style = MiuixTheme.textStyles.body1,
+                    color = MiuixTheme.colorScheme.onPrimary,
                 )
                 if (holder.tag.isNotBlank()) {
                     Text(
@@ -374,33 +382,39 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
                         fontSize = 11.sp,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
-                        color = MiuixTheme.colorScheme.primary,
+                        color = MiuixTheme.colorScheme.onPrimary,
                     )
                 }
                 Text(
                     text = holder.addon.description,
                     fontSize = 11.sp,
-                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                    color = MiuixTheme.colorScheme.onPrimary,
                 )
             }
             Column {
-                // mcmod 按钮仅存在中文译名时可见（对齐 :132）
+                // mcmod 按钮仅存在中文译名时可见（对齐 :132）；
+                // 旧版为 auto_text_tint 纯文本（autoTint = onPrimary）
                 holder.translatedMod?.let { mod ->
-                    TextButton(
+                    Text(
                         text = stringResource(R.string.mcmod),
-                        onClick = {
-                            AndroidUtils.openLink(context, holder.translations.getMcmodUrl(mod))
-                        },
+                        style = MiuixTheme.textStyles.body2,
+                        color = MiuixTheme.colorScheme.onPrimary,
+                        modifier = Modifier
+                            .clickable {
+                                AndroidUtils.openLink(context, holder.translations.getMcmodUrl(mod))
+                            }
+                            .padding(horizontal = 8.dp, vertical = 4.dp),
                     )
                 }
                 if (StringUtils.isNotBlank(holder.addon.pageUrl)) {
+                    // 对齐 website FCLImageButton auto_tint（图标 autoTint = onPrimary）
                     IconButton(onClick = {
                         AndroidUtils.openLink(context, holder.addon.pageUrl)
                     }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_baseline_earth_24),
                             contentDescription = null,
-                            tint = MiuixTheme.colorScheme.onSurface,
+                            tint = MiuixTheme.colorScheme.onPrimary,
                         )
                     }
                 }
@@ -414,12 +428,19 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
 @Composable
 private fun ScreenshotRow(holder: RemoteModInfoStateHolder) {
     val context = LocalContext.current
+    // 对齐 page_download_addon_info.xml 截图面板（FCLConstraintLayout auto_tint = ltColor）：
+    // 加载/失败/空结果态均在 ltColor 面板上呈现
+    val panelModifier = Modifier.background(
+        MiuixTheme.colorScheme.primaryContainer,
+        RoundedCornerShape(5.dp),
+    )
     when {
         holder.screenshotLoading -> Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
-                .padding(bottom = 8.dp),
+                .padding(bottom = 8.dp)
+                .then(panelModifier),
         ) {
             InfiniteProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
@@ -431,24 +452,32 @@ private fun ScreenshotRow(holder: RemoteModInfoStateHolder) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(120.dp)
-                .padding(bottom = 8.dp),
+                .padding(bottom = 8.dp)
+                .then(panelModifier),
         ) {
             IconButton(
                 onClick = holder::loadScreenshots,
                 modifier = Modifier.align(Alignment.Center),
             ) {
+                // 对齐 screenshot_retry FCLImageView（无 auto_tint）：drawable 自带静态灰
                 Icon(
                     painter = painterResource(R.drawable.ic_baseline_refresh_24),
                     contentDescription = null,
-                    tint = MiuixTheme.colorScheme.onSurface,
+                    tint = FCLThemeTokens.StrokeGray,
                 )
             }
         }
 
+        // 对齐 screenshot_no_result（auto_text_tint = onPrimary，位于 ltColor 面板上）
         holder.screenshots.isNullOrEmpty() -> Text(
             text = stringResource(R.string.mods_screenshot_no_result),
             style = MiuixTheme.textStyles.body2,
-            modifier = Modifier.padding(bottom = 8.dp),
+            color = MiuixTheme.colorScheme.onPrimary,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+                .then(panelModifier)
+                .padding(10.dp),
         )
 
         else -> LazyRow(
@@ -487,11 +516,13 @@ private fun ScreenshotRow(holder: RemoteModInfoStateHolder) {
                             )
                         }
                         if (!screenshot.title.isNullOrBlank()) {
+                            // 对齐 view_mod_screenshot.xml：title/description 均 auto_text_tint（= onPrimary）
                             Text(
                                 text = screenshot.title,
                                 style = MiuixTheme.textStyles.body2,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
+                                color = MiuixTheme.colorScheme.onPrimary,
                                 modifier = Modifier.padding(horizontal = 8.dp),
                             )
                         }
@@ -501,7 +532,7 @@ private fun ScreenshotRow(holder: RemoteModInfoStateHolder) {
                                 fontSize = 11.sp,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                                color = MiuixTheme.colorScheme.onPrimary,
                                 modifier = Modifier.padding(horizontal = 8.dp),
                             )
                         }

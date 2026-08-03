@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -42,6 +44,7 @@ import com.tungsten.fcl.ui.compose.FCLDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.dialog.MiuixTranslationDialog
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
+import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod
@@ -63,7 +66,6 @@ import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
-import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.preference.WindowSpinnerPreference
@@ -477,7 +479,11 @@ fun RemoteModSearchScreen(
                 .fillMaxHeight()
                 .weight(0.7f),
         ) {
-            Card(modifier = Modifier.fillMaxWidth()) {
+            // 对齐 page_download.xml FCLAppBarLayout auto_tint（ltColor 染色 = primaryContainer）
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -499,6 +505,9 @@ fun RemoteModSearchScreen(
                             )
                         }
                     }
+                    // 对齐 page_download.xml page：bg_container_white +
+                    // auto_text_background_tint（主色实心 chip = primary）+
+                    // auto_text_tint（文字 autoTint = onPrimary）
                     Text(
                         text = stringResource(
                             R.string.search_page_n,
@@ -506,9 +515,14 @@ fun RemoteModSearchScreen(
                             if (holder.pageCount == -1) "-" else holder.pageCount.toString(),
                         ),
                         style = MiuixTheme.textStyles.body2,
+                        color = MiuixTheme.colorScheme.onPrimary,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         modifier = Modifier
                             .weight(1f)
+                            .background(
+                                MiuixTheme.colorScheme.primary,
+                                RoundedCornerShape(5.dp),
+                            )
                             .clickable(onClick = holder::onPageClick)
                             .padding(vertical = 10.dp),
                     )
@@ -547,10 +561,12 @@ fun RemoteModSearchScreen(
                         onClick = holder::onRetry,
                         modifier = Modifier.align(Alignment.Center),
                     ) {
+                        // 对齐 page_download.xml retry（无 auto_tint）：
+                        // 图标保持 drawable 自带 darker_gray 静态着色，不随主题变化
                         Icon(
                             painter = painterResource(R.drawable.ic_baseline_refresh_24),
                             contentDescription = null,
-                            tint = MiuixTheme.colorScheme.onSurface,
+                            tint = FCLThemeTokens.StrokeGray,
                         )
                     }
 
@@ -586,12 +602,15 @@ private fun PageButton(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    TextButton(
-        text = label,
+    // 对齐 page_download.xml 分页 FCLButton（主色实心 = primary，文字 autoTint = onPrimary）
+    Button(
         onClick = onClick,
         enabled = enabled,
         modifier = Modifier.padding(start = 2.dp),
-    )
+        colors = ButtonDefaults.buttonColorsPrimary(),
+    ) {
+        Text(text = label, maxLines = 1)
+    }
 }
 
 /** 搜索结果卡片（对齐 item_remote_mod.xml：图标 + 标题 + tag + 简介 + 下载量）。 */
@@ -623,11 +642,13 @@ private fun RemoteModRow(
             )
             Spacer(Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
+                // 对齐 item_remote_mod.xml：条目内全部文本 auto_text_tint（autoTint = onPrimary）
                 Text(
                     text = item.title,
                     style = MiuixTheme.textStyles.body1,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
+                    color = MiuixTheme.colorScheme.onPrimary,
                 )
                 if (item.tag.isNotBlank()) {
                     Text(
@@ -635,7 +656,7 @@ private fun RemoteModRow(
                         fontSize = 11.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = MiuixTheme.colorScheme.primary,
+                        color = MiuixTheme.colorScheme.onPrimary,
                     )
                 }
                 Text(
@@ -643,14 +664,21 @@ private fun RemoteModRow(
                     fontSize = 11.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                    color = MiuixTheme.colorScheme.onPrimary,
                 )
             }
             Spacer(Modifier.width(10.dp))
+            // 对齐 item_remote_mod.xml icon_download（auto_src_tint = onPrimary）
+            Icon(
+                painter = painterResource(R.drawable.ic_baseline_download_24),
+                contentDescription = null,
+                modifier = Modifier.size(12.dp),
+                tint = MiuixTheme.colorScheme.onPrimary,
+            )
             Text(
                 text = item.downloadCount,
                 fontSize = 11.sp,
-                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                color = MiuixTheme.colorScheme.onPrimary,
             )
         }
     }
