@@ -6,7 +6,6 @@ import static com.tungsten.fclcore.util.Lang.thread;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -62,7 +61,6 @@ import java.util.logging.Level;
 
 public class LauncherSettingPage extends FCLCommonPage implements View.OnClickListener, AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
 
-    public static final long ONE_DAY = 1000 * 60 * 60 * 24;
     private PageSettingLauncherBinding binding;
     private boolean isFirst = true;
     private SharedPreferences sharedPreferences;
@@ -202,23 +200,6 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
         binding.threads.setProgress(config().getDownloadThreads());
         binding.threads.addProgressListener();
         binding.threads.progressProperty().bindBidirectional(config().downloadThreadsProperty());
-
-        if (System.currentTimeMillis() - getLastClearCacheTime() >= 3 * ONE_DAY) {
-            FileUtils.cleanDirectoryQuietly(new File(FCLPath.CACHE_DIR).getParentFile());
-            setLastClearCacheTime(System.currentTimeMillis());
-        }
-    }
-
-    public long getLastClearCacheTime() {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("launcher", MODE_PRIVATE);
-        return sharedPreferences.getLong("clear_cache", 0L);
-    }
-
-    public void setLastClearCacheTime(long time) {
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("launcher", MODE_PRIVATE);
-        @SuppressLint("CommitPrefEdits") SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong("clear_cache", time);
-        editor.apply();
     }
 
     private int getSourcePosition(String source) {
