@@ -2,10 +2,15 @@ package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,12 +20,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,22 +53,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.tungsten.fcl.ui.compose.FCLCard
+import com.tungsten.fcl.ui.compose.fclCursorBrush
+import com.tungsten.fcl.ui.compose.fclTextFieldColors
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
-import com.tungsten.fcl.ui.compose.FCLTextField
+import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
 /**
  * 远程资源详情页（对齐 RemoteModInfoPage + page_download_addon_info.xml）：
- * 头部信息（图标/名称/tag/简介/mcmod/官网）+ 游戏版本列表（搜索过滤、推荐置顶）。
+ * 头部信息（图标/名称/tag/简介/mcmod/官网）+ 双栏主体——
+ * 左栏（weight 0.5）搜索框（截图面板不恢复），右栏（weight 1）游戏版本列表
+ * （搜索过滤、推荐置顶）。
  *
  * 行为对齐（interaction-map §5.4）：
- * - 版本搜索框实时过滤游戏版本列表，推荐版本置顶（:145-159）；
+ * - 左栏版本搜索框实时过滤游戏版本列表，推荐版本置顶（:145-159）；
  * - mcmod/官网按钮开浏览器（:315-325）；
  * - 后台检测已安装加"[已安装]"前缀（:198-223）；
  * - 版本项点击 → [onOpenVersionPage]（二级临时页堆叠）。
@@ -222,10 +235,11 @@ fun RemoteModInfoScreen(
     holder: RemoteModInfoStateHolder,
     onOpenVersionPage: (versions: List<RemoteMod.Version>) -> Unit,
 ) {
-    val context = LocalContext.current
     val recommendPrefix = stringResource(R.string.recommend_version)
 
-    Box(modifier = Modifier.fillMaxSize().padding(10.dp)) {
+    // 对齐 page_download_addon_info.xml 根 ConstraintLayout：
+    // paddingStart/Top/End=10dp，无 paddingBottom
+    Box(modifier = Modifier.fillMaxSize().padding(start = 10.dp, top = 10.dp, end = 10.dp)) {
         when {
             holder.loading -> InfiniteProgressIndicator(
                 modifier = Modifier.align(Alignment.Center),
@@ -244,47 +258,57 @@ fun RemoteModInfoScreen(
                 )
             }
 
-            else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
-                item(key = "info") {
-                    InfoCard(holder)
-                }
-                item(key = "search") {
-                    FCLTextField(
-                        value = holder.searchText,
-                        onValueChange = { holder.searchText = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 10.dp),
-                        label = stringResource(R.string.search),
-                        useLabelAsPlaceholder = true,
-                        singleLine = true,
-                    )
-                }
-                // 对齐 page_download_addon_info.xml version_list：统一白容器
-                // （bg_container_white + ltColor 染色 = primaryContainer）内纯文本行，
-                // 条目透明底、无分割线（旧版 divider 为透明 10dp）——去卡片化（I-P1-1）
-                item(key = "versions") {
+            // 对齐根 LinearLayout(vertical)：头部信息卡（wrap）+ 双栏主体（填满剩余，marginTop=10dp）
+            else -> Column(modifier = Modifier.fillMaxSize()) {
+                InfoCard(holder)
+                Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
+                    // 左栏（对齐左 FCLConstraintLayout）：weight 0.5、match_parent 高、
+                    // marginEnd=10dp、bg_container_white + auto_tint（ltColor = primaryContainer）、
+                    // paddingHorizontal=8dp；顶部为搜索框，截图面板不恢复
                     FCLCard(
-                        // 入场动画对齐 ModGameVersionAdapter:69（animationSpeed×30）
-                        modifier = fclItemEntryModifier().fillMaxWidth(),
+                        modifier = Modifier
+                            .weight(0.5f)
+                            .fillMaxHeight()
+                            .padding(end = 10.dp),
                         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+                        insideMargin = PaddingValues(horizontal = 8.dp),
                     ) {
-                        Column {
+                        VersionSearchField(holder)
+                    }
+                    // 右栏（对齐 version_list）：weight 1、match_parent 高、
+                    // bg_container_white + ltColor 染色（primaryContainer）内纯文本行，
+                    // 条目透明底、divider 透明 10dp（= 行间 10dp 间距）——去卡片化（I-P1-1）
+                    FCLCard(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                        colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+                        insideMargin = PaddingValues(0.dp),
+                    ) {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                        ) {
                             holder.displayedGameVersions().forEach { gameVersion ->
-                                Text(
-                                    // 对齐 ModGameVersionAdapter：推荐项不带 "Minecraft " 前缀
-                                    text = (if (gameVersion.contains(recommendPrefix)) "" else "Minecraft ") + gameVersion,
-                                    style = MiuixTheme.textStyles.body2,
-                                    // 对齐 ModGameVersionAdapter:60-61（autoTint = onPrimary）
-                                    color = MiuixTheme.colorScheme.onPrimary,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            holder.versionMap[gameVersion]?.let(onOpenVersionPage)
-                                        }
-                                        // 对齐 ModGameVersionAdapter:55-56（padding 10dp）
-                                        .padding(10.dp),
-                                )
+                                item(key = gameVersion) {
+                                    Text(
+                                        // 对齐 ModGameVersionAdapter：推荐项不带 "Minecraft " 前缀
+                                        text = (if (gameVersion.contains(recommendPrefix)) "" else "Minecraft ") + gameVersion,
+                                        // 对齐 ModGameVersionAdapter:60-61（默认 14sp、autoTint = onPrimary）
+                                        style = MiuixTheme.textStyles.body2,
+                                        color = MiuixTheme.colorScheme.onPrimary,
+                                        // 对齐 ModGameVersionAdapter:58（singleLine）
+                                        maxLines = 1,
+                                        // 入场动画对齐 ModGameVersionAdapter:69（animationSpeed×30，逐项）
+                                        modifier = fclItemEntryModifier()
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                holder.versionMap[gameVersion]?.let(onOpenVersionPage)
+                                            }
+                                            // 对齐 ModGameVersionAdapter:55-56（padding 10dp）
+                                            .padding(10.dp),
+                                    )
+                                }
                             }
                         }
                     }
@@ -292,6 +316,44 @@ fun RemoteModInfoScreen(
             }
         }
     }
+}
+
+/**
+ * 左栏版本搜索框（对齐 search FCLEditText：match_parent 宽、gravity=center、
+ * hint=@string/search、singleLine、auto_edit_tint：文字 onPrimary、hint autoHintTint、
+ * 下划线聚焦 color/未聚焦 dkColor——规格同 FCLControls.FCLTextField，仅文字居中为其特有）。
+ */
+@Composable
+private fun VersionSearchField(holder: RemoteModInfoStateHolder) {
+    val scheme = MiuixTheme.colorScheme
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val underlineColor = if (isFocused) scheme.primary else scheme.primaryVariant
+    TextField(
+        value = holder.searchText,
+        onValueChange = { holder.searchText = it },
+        modifier = Modifier.fillMaxWidth().drawBehind {
+            val strokeWidth = (if (isFocused) 2.dp else 1.dp).toPx()
+            val y = size.height - strokeWidth / 2
+            drawLine(
+                color = underlineColor,
+                start = Offset(0f, y),
+                end = Offset(size.width, y),
+                strokeWidth = strokeWidth,
+            )
+        },
+        colors = fclTextFieldColors(),
+        label = stringResource(R.string.search),
+        useLabelAsPlaceholder = true,
+        // 对齐 search 的 android:gravity="center"
+        textStyle = MiuixTheme.textStyles.main.copy(
+            color = scheme.onPrimary,
+            textAlign = TextAlign.Center,
+        ),
+        singleLine = true,
+        interactionSource = interactionSource,
+        cursorBrush = fclCursorBrush(),
+    )
 }
 
 /** 头部信息卡（对齐 page_download_addon_info.xml 顶部：图标/名称/tag/简介 + mcmod/官网）。 */
@@ -312,6 +374,8 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
                 .fillMaxWidth()
                 // 对齐 page_download_addon_info.xml 头部 padding 10/8
                 .padding(horizontal = 10.dp, vertical = 8.dp),
+            // 对齐 icon/文字列/mcmod/website 的 android:layout_gravity="center"
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             GlideImage(
                 model = holder.addon.iconUrl,
@@ -335,7 +399,8 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
                         } else {
                             holder.displayName
                         },
-                        style = MiuixTheme.textStyles.body1,
+                        // 对齐 name：textSize=14sp（body2=14sp）
+                        style = MiuixTheme.textStyles.body2,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MiuixTheme.colorScheme.onPrimary,
@@ -349,7 +414,9 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
                             overflow = TextOverflow.Ellipsis,
                             color = MiuixTheme.colorScheme.onPrimary,
                             modifier = Modifier
+                                // 对齐 tag：marginStart=10dp + padding 4/2
                                 .padding(start = 10.dp)
+                                .padding(horizontal = 4.dp, vertical = 2.dp)
                                 .weight(1f, fill = false),
                         )
                     }
@@ -363,34 +430,37 @@ private fun InfoCard(holder: RemoteModInfoStateHolder) {
                     color = MiuixTheme.colorScheme.onPrimary,
                 )
             }
-            Column {
-                // mcmod 按钮仅存在中文译名时可见（对齐 :132）；
-                // 旧版为 auto_text_tint 纯文本（autoTint = onPrimary）
-                holder.translatedMod?.let { mod ->
-                    Text(
-                        text = stringResource(R.string.mcmod),
-                        style = MiuixTheme.textStyles.body2,
-                        color = MiuixTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .clickable {
-                                AndroidUtils.openLink(context, holder.translations.getMcmodUrl(mod))
-                            }
-                            .padding(horizontal = 10.dp, vertical = 4.dp),
-                    )
-                }
-                if (StringUtils.isNotBlank(holder.addon.pageUrl)) {
-                    // 对齐 website FCLImageButton auto_tint（图标 autoTint = onPrimary），
-                    // 图标为 ic_baseline_jump_24（I-P2-1）
-                    IconButton(onClick = {
-                        AndroidUtils.openLink(context, holder.addon.pageUrl)
-                    }) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_baseline_jump_24),
-                            contentDescription = null,
-                            tint = MiuixTheme.colorScheme.onPrimary,
-                        )
-                    }
-                }
+            // mcmod 按钮仅存在中文译名时可见（对齐 :132）；
+            // 旧版为 auto_text_tint 纯文本（默认 14sp，autoTint = onPrimary），
+            // 与 website 同为头部行内兄弟节点（marginStart=10dp、gravity=center）
+            holder.translatedMod?.let { mod ->
+                Text(
+                    text = stringResource(R.string.mcmod),
+                    style = MiuixTheme.textStyles.body2,
+                    maxLines = 1,
+                    color = MiuixTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .clickable {
+                            AndroidUtils.openLink(context, holder.translations.getMcmodUrl(mod))
+                        },
+                )
+            }
+            if (StringUtils.isNotBlank(holder.addon.pageUrl)) {
+                // 对齐 website FCLImageButton：auto_tint（图标 autoTint = onPrimary）、
+                // no_padding（按钮=drawable 24dp）、marginStart=10dp，
+                // 图标为 ic_baseline_jump_24（I-P2-1）
+                Icon(
+                    painter = painterResource(R.drawable.ic_baseline_jump_24),
+                    contentDescription = null,
+                    tint = MiuixTheme.colorScheme.onPrimary,
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .size(24.dp)
+                        .clickable {
+                            AndroidUtils.openLink(context, holder.addon.pageUrl)
+                        },
+                )
             }
         }
     }

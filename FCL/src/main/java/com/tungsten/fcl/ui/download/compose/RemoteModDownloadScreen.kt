@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -135,9 +136,10 @@ fun RemoteModDownloadScreen(
     var backClicked by remember { mutableStateOf(false) }
 
     Column(
+        // 对齐 page_download_addon.xml 根布局：仅 top/start/end 10dp，无 bottom
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
     ) {
         // 文件信息头（对齐 name/tag/date）
         // 对齐 page_download_addon.xml 头部 FCLLinearLayout 的 bg_container_white +
@@ -145,6 +147,8 @@ fun RemoteModDownloadScreen(
         FCLCard(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+            // 旧版头部容器无额外内边距（内层 10/8 即全部），去掉 Miuix 默认 16dp InsideMargin
+            insideMargin = PaddingValues(0.dp),
         ) {
             // 对齐 page_download_addon.xml 头部 padding 10/8
             Column(modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp)) {
@@ -153,7 +157,8 @@ fun RemoteModDownloadScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = holder.modVersion.name,
-                        style = MiuixTheme.textStyles.body1,
+                        // 对齐 page_download_addon.xml name：14sp 单行
+                        fontSize = 14.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MiuixTheme.colorScheme.onPrimary,
@@ -165,9 +170,14 @@ fun RemoteModDownloadScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MiuixTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                            .weight(1f, fill = false),
+                        // 对齐 page_download_addon.xml tag：marginStart=10dp +
+                        // padding start/end=4dp、top/bottom=2dp（wrap_content，不占 weight）
+                        modifier = Modifier.padding(
+                            start = 14.dp,
+                            top = 2.dp,
+                            end = 4.dp,
+                            bottom = 2.dp,
+                        ),
                     )
                 }
                 Text(
@@ -208,6 +218,9 @@ fun RemoteModDownloadScreen(
                     // 对齐 dependency_layout 的 bg_container_white +
                     // RemoteModDownloadPage:166 registerEvent（ltColor 染色 = primaryContainer）
                     colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+                    // 旧版 ScrollView 无内边距（分组标题/行自衬 10dp，分隔线全宽），
+                    // 去掉 Miuix 默认 16dp InsideMargin
+                    insideMargin = PaddingValues(0.dp),
                     modifier = Modifier.fillMaxSize(),
                 ) {
                     // 单容器 + 1px 灰分隔线（D-P1-2，对齐 loadDependencyList：

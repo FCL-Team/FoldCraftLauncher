@@ -160,7 +160,8 @@ fun VersionInstallScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp)
+            // 对齐 page_install_version.xml 根布局 paddingStart/Top/End=10dp（无 paddingBottom）
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp)
             .nestedScroll(barState.nestedScrollConnection),
     ) {
         // 过滤条 + 搜索（对齐 page_install_version.xml 顶部 bar）

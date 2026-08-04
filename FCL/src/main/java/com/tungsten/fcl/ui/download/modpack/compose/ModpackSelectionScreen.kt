@@ -38,6 +38,7 @@ import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import java.io.File
 import java.io.IOException
 import java.net.URL
@@ -181,6 +182,8 @@ private fun ModpackEntryCard(text: String, onClick: () -> Unit) {
         // 对齐 auto_linear_background_tint（ltColor = primaryContainer）
         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
         onClick = onClick,
+        // 对齐 bg_container_white_clickable 的按压反馈 → Sink（component-mapping X-5 既定替代）
+        pressFeedbackType = PressFeedbackType.Sink,
     ) {
         Row(
             modifier = Modifier

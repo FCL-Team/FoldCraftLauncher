@@ -86,6 +86,8 @@ internal fun showModpackInstallWarnDialog(context: Context, onConfirm: () -> Uni
         message = context.getString(R.string.modpack_download_warn_msg),
         negativeText = context.getString(com.tungsten.fcllibrary.R.string.dialog_negative),
         onResult = { confirmed -> if (confirmed == true) onConfirm() },
+        // 对齐旧版 dialog.setCanceledOnTouchOutside(false)
+        cancelable = false,
     )
 }
 

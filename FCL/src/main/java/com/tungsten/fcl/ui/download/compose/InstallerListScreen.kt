@@ -2,7 +2,6 @@ package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -151,7 +149,8 @@ fun InstallerListScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            // 对齐 page_install_version.xml 根布局：paddingStart/Top/End=10dp，无 paddingBottom
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
     ) {
         if (holder.hasType) {
             FCLCard(
@@ -163,7 +162,6 @@ fun InstallerListScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState())
                         // 对齐 page_install_version.xml bar padding 10/2
                         .padding(horizontal = 10.dp, vertical = 2.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -192,10 +190,25 @@ fun InstallerListScreen(
                             holder.refreshDisplayVersions()
                         },
                     )
+                    // 对齐 page_install_version.xml：search（weight=1）INVISIBLE 占位
+                    // 把 refresh 推到 bar 右端（INVISIBLE 元素 Compose 侧不渲染，weight 占位等效）
+                    Spacer(Modifier.weight(1f))
+                    // 对齐 refresh FCLImageButton：auto_tint（= onPrimary），
+                    // 加载中 enabled=false（InstallerListPage:108/:133/:145）
+                    IconButton(
+                        onClick = holder::refreshList,
+                        enabled = !holder.loading,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_baseline_refresh_24),
+                            contentDescription = null,
+                            tint = MiuixTheme.colorScheme.onPrimary,
+                        )
+                    }
                 }
             }
-            // 对齐 page_install_version.xml list marginTop=5dp，按 D5 统一 10dp 网格（IL-P2-2）
-            Spacer(Modifier.height(10.dp))
+            // 对齐 page_install_version.xml list marginTop=5dp
+            Spacer(Modifier.height(5.dp))
         }
 
         Box(modifier = Modifier.fillMaxSize()) {

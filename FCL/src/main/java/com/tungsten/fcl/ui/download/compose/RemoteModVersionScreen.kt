@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.download.compose
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -81,9 +82,10 @@ fun RemoteModVersionScreen(
 ) {
     val context = LocalContext.current
     LazyColumn(
+        // 对齐 page_download_addon_version.xml 根布局：仅 top/start/end 10dp，无 bottom
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
     ) {
         items(versions, key = { it.modid + "@" + it.name + "@" + it.version }) { version ->
             // 入场动画对齐 ModVersionAdapter:73（animationSpeed×30，见 fclItemEntryModifier）；
@@ -95,6 +97,8 @@ fun RemoteModVersionScreen(
                 // 对齐 item_mod_version.xml 的 bg_container_white_clickable +
                 // auto_linear_background_tint（ltColor 染色 = primaryContainer）
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+                // 旧版无内边距容器（内层 Column 自带 10/8），去掉 Miuix 默认 16dp InsideMargin
+                insideMargin = PaddingValues(0.dp),
                 modifier = fclItemEntryModifier()
                     .fillMaxWidth()
                     .padding(bottom = 10.dp),
@@ -109,7 +113,8 @@ fun RemoteModVersionScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = version.name,
-                            style = MiuixTheme.textStyles.body1,
+                            // 对齐 item_mod_version.xml name：14sp 单行
+                            fontSize = 14.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = MiuixTheme.colorScheme.onPrimary,
@@ -121,9 +126,14 @@ fun RemoteModVersionScreen(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             color = MiuixTheme.colorScheme.onPrimary,
-                            modifier = Modifier
-                                .padding(start = 10.dp)
-                                .weight(1f, fill = false),
+                            // 对齐 item_mod_version.xml tag：marginStart=10dp +
+                            // padding start/end=4dp、top/bottom=2dp（wrap_content，不占 weight）
+                            modifier = Modifier.padding(
+                                start = 14.dp,
+                                top = 2.dp,
+                                end = 4.dp,
+                                bottom = 2.dp,
+                            ),
                         )
                     }
                     // 第二行：date 12sp 单行（name 左缘对齐）

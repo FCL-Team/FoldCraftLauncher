@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -184,16 +185,17 @@ fun RemoteVersionRow(
             Spacer(Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    // 对齐 item_remote_version.xml：version/date 为 auto_text_tint（= onPrimary）
+                    // 对齐 item_remote_version.xml：version/date 为 auto_text_tint（= onPrimary），
+                    // version 14sp singleLine（无 ellipsize → 默认 Clip）
                     Text(
                         text = version.selfVersion,
-                        style = MiuixTheme.textStyles.body1,
+                        fontSize = 14.sp,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                         color = MiuixTheme.colorScheme.onPrimary,
                     )
                     // 对齐 RemoteVersionListAdapter:61-69：tag 为 bg_container_white +
-                    // autoBackgroundTint（主色实心 chip = primary）+ auto_text_tint（= onPrimary）
+                    // autoBackgroundTint（主色实心 chip = primary）+ auto_text_tint（= onPrimary）；
+                    // 对齐 item_remote_version.xml tag：singleLine + marquee_forever → basicMarquee
                     Text(
                         text = remoteVersionTag(context, version),
                         fontSize = 11.sp,
@@ -205,15 +207,18 @@ fun RemoteVersionRow(
                                 MiuixTheme.colorScheme.primary,
                                 RoundedCornerShape(5.dp),
                             )
-                            .padding(horizontal = 4.dp, vertical = 2.dp),
+                            .padding(horizontal = 4.dp, vertical = 2.dp)
+                            .basicMarquee(),
                     )
                 }
                 version.releaseDate?.let { date ->
+                    // 对齐 item_remote_version.xml date：12sp、singleLine + marquee_forever → basicMarquee
                     Text(
                         text = LocaleUtils.formatDateTime(context, date),
-                        // 对齐 item_remote_version.xml date：12sp
                         fontSize = 12.sp,
+                        maxLines = 1,
                         color = MiuixTheme.colorScheme.onPrimary,
+                        modifier = Modifier.basicMarquee(),
                     )
                 }
             }

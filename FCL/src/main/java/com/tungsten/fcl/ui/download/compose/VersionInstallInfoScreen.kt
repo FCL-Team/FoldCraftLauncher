@@ -310,10 +310,11 @@ fun VersionInstallInfoScreen(
                     .padding(horizontal = 10.dp, vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                // 对齐 page_installer.xml archive_name（auto_text_tint = onPrimary，位于 ltColor name_bar 上）
+                // 对齐 page_installer.xml archive_name（auto_text_tint = onPrimary，位于 ltColor name_bar 上；singleLine）
                 Text(
                     text = stringResource(R.string.archive_name),
                     style = MiuixTheme.textStyles.body2,
+                    maxLines = 1,
                     color = MiuixTheme.colorScheme.onPrimary,
                 )
                 Spacer(Modifier.width(10.dp))

@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.download.compose
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -373,13 +374,15 @@ fun RemoteModSearchScreen(
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            // 对齐 page_download.xml 根 ConstraintLayout：paddingStart/Top/End=10dp，无 paddingBottom
+            // （底部间距由 search 按钮 marginBottom=8dp 提供）
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
     ) {
-        // ---------- 左栏：搜索条件（对齐 search_layout，30% 宽） ----------
+        // ---------- 左栏：搜索条件（对齐 search_layout，constraintWidth_percent=0.3） ----------
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(0.3f),
+                .fillMaxWidth(0.3f),
         ) {
             FCLCard(
                 modifier = Modifier
@@ -397,10 +400,11 @@ fun RemoteModSearchScreen(
                     // 对齐 page_download.xml search_layout：label/控件间距均 10dp
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    // 对齐 page_download.xml "名称" FCLTextView 小字 label（13sp，auto_text_tint）
+                    // 对齐 page_download.xml "名称" FCLTextView 小字 label
+                    // （无 textSize → 平台默认 14sp，auto_text_tint = onPrimary）
                     Text(
                         text = stringResource(R.string.mods_name),
-                        fontSize = 13.sp,
+                        fontSize = 14.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MiuixTheme.colorScheme.onPrimary.copy(
@@ -505,15 +509,17 @@ fun RemoteModSearchScreen(
             ) {
                 Text(text = stringResource(R.string.search))
             }
+            // 对齐 page_download.xml search marginBottom=8dp（根布局无 paddingBottom）
+            Spacer(Modifier.height(8.dp))
         }
 
         Spacer(Modifier.width(10.dp))
 
-        // ---------- 右栏：分页栏 + 结果列表（对齐 list_layout + recyclerView，70% 宽） ----------
+        // ---------- 右栏：分页栏 + 结果列表（对齐 list_layout + recyclerView，占满剩余宽度） ----------
         Column(
             modifier = Modifier
                 .fillMaxHeight()
-                .weight(0.7f)
+                .weight(1f)
                 .nestedScroll(barState.nestedScrollConnection),
         ) {
             // 对齐 page_download.xml FCLAppBarLayout auto_tint（ltColor 染色 = primaryContainer）
@@ -525,29 +531,38 @@ fun RemoteModSearchScreen(
                 colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
             ) {
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 2.dp),
+                    // 对齐 page_download.xml list_layout：容器自身无 padding，
+                    // 元素间距全靠 translate marginEnd=5dp / 分页按钮 marginStart=10dp
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     if (tab.supportChinese && LocaleUtils.isChinese(context)) {
-                        IconButton(onClick = {
-                            MiuixTranslationDialog(
-                                context,
-                                holder.repository,
-                                holder::onTranslationResult,
-                            ).show()
-                        }) {
+                        // 对齐 page_download.xml translate：40×40dp、marginEnd=5dp、
+                        // use_theme_color（背景 ic_translation 染 color2 = onSurface）
+                        Box(
+                            modifier = Modifier
+                                .padding(end = 5.dp)
+                                .size(40.dp)
+                                .clickable(onClick = {
+                                    MiuixTranslationDialog(
+                                        context,
+                                        holder.repository,
+                                        holder::onTranslationResult,
+                                    ).show()
+                                }),
+                            contentAlignment = Alignment.Center,
+                        ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_translation),
                                 contentDescription = null,
                                 tint = MiuixTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(40.dp),
                             )
                         }
                     }
                     // 对齐 page_download.xml page：bg_container_white +
                     // auto_text_background_tint（主色实心 chip = primary）+
-                    // auto_text_tint（文字 autoTint = onPrimary）
+                    // auto_text_tint（文字 autoTint = onPrimary）；无 textSize → 默认 14sp
                     Text(
                         text = stringResource(
                             R.string.search_page_n,
@@ -555,6 +570,7 @@ fun RemoteModSearchScreen(
                             if (holder.pageCount == -1) "-" else holder.pageCount.toString(),
                         ),
                         style = MiuixTheme.textStyles.body2,
+                        fontSize = 14.sp,
                         color = MiuixTheme.colorScheme.onPrimary,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         modifier = Modifier
@@ -588,8 +604,8 @@ fun RemoteModSearchScreen(
                     )
                 }
             }
-            // 对齐 page_download.xml list marginTop=5dp，按 D5 统一 10dp 网格（S-P2-2）
-            Spacer(Modifier.height(10.dp))
+            // 对齐 page_download.xml list marginTop=5dp
+            Spacer(Modifier.height(5.dp))
 
             Box(modifier = Modifier.fillMaxSize()) {
                 when {
@@ -691,24 +707,28 @@ private fun RemoteModRow(
                 // 对齐 item_remote_mod.xml：条目内全部文本 auto_text_tint（autoTint = onPrimary）
                 // 第一行：title + tag 内联（tag marginStart=10dp）
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    // 对齐 item_remote_mod.xml title：textSize=14sp、singleLine
                     Text(
                         text = item.title,
                         style = MiuixTheme.textStyles.body1,
+                        fontSize = 14.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MiuixTheme.colorScheme.onPrimary,
                         modifier = Modifier.weight(1f, fill = false),
                     )
                     if (item.tag.isNotBlank()) {
+                        // 对齐 item_remote_mod.xml tag：11sp、marginStart=10dp、marquee
+                        // （Adapter 中 setSelected(true) 使跑马灯常开）
                         Text(
                             text = item.tag,
                             fontSize = 11.sp,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
                             color = MiuixTheme.colorScheme.onPrimary,
                             modifier = Modifier
                                 .padding(start = 10.dp)
-                                .weight(1f, fill = false),
+                                .weight(1f, fill = false)
+                                .basicMarquee(),
                         )
                     }
                 }
@@ -727,15 +747,16 @@ private fun RemoteModRow(
                         maxLines = 1,
                         color = MiuixTheme.colorScheme.onPrimary,
                     )
+                    // 对齐 item_remote_mod.xml description：12sp、marginStart=5dp、marquee
                     Text(
                         text = item.description,
                         fontSize = 12.sp,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                         color = MiuixTheme.colorScheme.onPrimary,
                         modifier = Modifier
                             .padding(start = 5.dp)
-                            .weight(1f),
+                            .weight(1f)
+                            .basicMarquee(),
                     )
                 }
             }

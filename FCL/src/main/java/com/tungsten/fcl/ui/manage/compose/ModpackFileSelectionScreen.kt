@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
@@ -451,6 +452,11 @@ private fun ModpackTreeNode(item: FCLCheckBoxTreeItem<String>, depth: Int) {
         }
     }
     if (expanded) {
-        item.subItem.forEach { ModpackTreeNode(it, depth + 1) }
+        // 对齐 item_check_box_tree.xml：子列表 marginTop=1px + 兄弟项 dividerHeight=1px（透明）
+        val px1 = with(LocalDensity.current) { 1.toDp() }
+        item.subItem.forEach {
+            Spacer(Modifier.height(px1))
+            ModpackTreeNode(it, depth + 1)
+        }
     }
 }
