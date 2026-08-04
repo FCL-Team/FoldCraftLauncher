@@ -165,6 +165,7 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
         res.addDefault("-Dorg.lwjgl.openal.libname=", context.getApplicationInfo().nativeLibraryDir + "/libopenal.so");
         res.addDefault("-Dorg.lwjgl.freetype.libname=", context.getApplicationInfo().nativeLibraryDir + "/libfreetype.so");
+        res.addDefault("-Dorg.lwjgl.system.allocator=", "system");
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
         res.addDefault("-Dglfwstub.windowWidth=", options.getWidth() + "");
         res.addDefault("-Dglfwstub.windowHeight=", options.getHeight() + "");
