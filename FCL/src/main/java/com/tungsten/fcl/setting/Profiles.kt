@@ -192,6 +192,11 @@ object Profiles {
         versionsListeners.add(listener)
     }
 
+    @JvmStatic
+    fun unregisterVersionsListener(listener: Consumer<Profile>) {
+        versionsListeners.remove(listener)
+    }
+
     fun getSelectedGameVersion(): String {
         val gameVersion: Optional<String> =
             getSelectedProfile().repository.getGameVersion(getSelectedVersion())

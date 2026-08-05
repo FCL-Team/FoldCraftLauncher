@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners
+        android:topLeftRadius="8dp"
+        android:topRightRadius="8dp"
+        android:bottomLeftRadius="8dp"
+        android:bottomRightRadius="8dp"/>
+    <!-- 液态玻璃表面层：半透明白色 + 淡蓝调，模拟教程中的 Color.White.copy(alpha=0.5f) + #0088FF Hue blend -->
+    <solid
+        android:color="#80D6EAFA" />
+</shape>
