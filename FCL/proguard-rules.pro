@@ -20,3 +20,6 @@
 # Compose 运行时（官方建议的基础保留）
 -keep class kotlin.Metadata { *; }
 -keep class kotlin.coroutines.** { *; }
+
+# slf4j 无日志绑定实现（运行时有 no-op 回退，属正常缺失）
+-dontwarn org.slf4j.impl.StaticLoggerBinder
