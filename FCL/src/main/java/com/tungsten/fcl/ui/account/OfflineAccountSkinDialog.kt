@@ -120,12 +120,22 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
     }
 
     private val skin: Skin
-        get() = Skin(
-            Skin.Type.LOCAL_FILE,
-            model,
-            if (StringUtils.isBlank(binding.skinPathText.string)) null else binding.skinPathText.string,
-            if (StringUtils.isBlank(binding.capePathText.string)) null else binding.capePathText.string
-        )
+        get() {
+            val skinPath = binding.skinPathText.string
+            val capePath = binding.capePathText.string
+            val hasSkin = StringUtils.isNotBlank(skinPath)
+            val hasCape = StringUtils.isNotBlank(capePath)
+            return if (hasSkin || hasCape) {
+                Skin(
+                    Skin.Type.LOCAL_FILE,
+                    model,
+                    if (hasSkin) skinPath else null,
+                    if (hasCape) capePath else null
+                )
+            } else {
+                Skin(Skin.Type.DEFAULT, model, null, null)
+            }
+        }
 
     override fun onClick(view: View?) {
         when (view) {

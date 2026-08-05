@@ -140,7 +140,7 @@ class MicrosoftAccountSkinDialog(
         scope.launch {
             try {
                 val profile = account.profile
-                capes = profile.map { it.capes }.orElse(emptyList())
+                capes = profile.map { it.capes.filterNotNull() }.orElse(emptyList())
                 withContext(Dispatchers.Main) {
                     buildCapeList()
                 }
@@ -362,7 +362,14 @@ class MicrosoftAccountSkinDialog(
             }
 
             binding.upload -> uploadFromFile()
-            binding.resetSkinBtn -> resetSkin()
+            binding.resetSkinBtn -> {
+                val builder = FCLAlertDialog.Builder(context)
+                builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+                builder.setMessage(context.getString(R.string.account_skin_reset_confirm))
+                builder.setPositiveButton { resetSkin() }
+                builder.setNegativeButton(null)
+                builder.create().show()
+            }
             binding.hideCapeBtn -> hideCape()
             binding.positive -> dismiss()
         }

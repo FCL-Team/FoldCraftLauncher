@@ -21,24 +21,13 @@ import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Lang.tryCast;
 import static com.tungsten.fclcore.util.Pair.pair;
 
-import com.google.gson.annotations.SerializedName;
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
-import com.tungsten.fclcore.task.FetchTask;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
-import org.jetbrains.annotations.Nullable;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -58,9 +47,10 @@ public record Skin(Type type, TextureModel textureModel, String localSkinPath,
             return switch (type) {
                 case "default" -> DEFAULT;
                 case "alex" -> ALEX;
+                case "steve" -> STEVE;
                 case "local_file" -> LOCAL_FILE;
                 case "yggdrasil_api" -> YGGDRASIL_API;
-                default -> STEVE;
+                default -> null;
             };
         }
     }
@@ -136,111 +126,6 @@ public record Skin(Type type, TextureModel textureModel, String localSkinPath,
         return new Skin(type, model, localSkinPath, localCapePath);
     }
 
-    private static class FetchBytesTask extends FetchTask<InputStream> {
-
-        public FetchBytesTask(URL url, int retry) {
-            super(Collections.singletonList(url), retry);
-        }
-
-        @Override
-        protected void useCachedResult(Path cachedFile) throws IOException {
-            setResult(Files.newInputStream(cachedFile));
-        }
-
-        @Override
-        protected EnumCheckETag shouldCheckETag() {
-            return EnumCheckETag.CHECK_E_TAG;
-        }
-
-        @Override
-        protected Context getContext(URLConnection conn, boolean checkETag) throws IOException {
-            return new Context() {
-                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-                @Override
-                public void write(byte[] buffer, int offset, int len) {
-                    baos.write(buffer, offset, len);
-                }
-
-                @Override
-                public void close() throws IOException {
-                    if (!isSuccess()) return;
-
-                    setResult(new ByteArrayInputStream(baos.toByteArray()));
-
-                    if (checkETag) {
-                        repository.cacheBytes(baos.toByteArray(), conn);
-                    }
-                }
-            };
-        }
-    }
-
     public record LoadedSkin(TextureModel model, Texture skin, Texture cape) {
-    }
-
-    private record SkinJson(String username, String skin, String cape, String elytra,
-                            @SerializedName(value = "textures", alternate = {"skins"}) TextureJson textures) {
-
-        public boolean hasSkin() {
-            return StringUtils.isNotBlank(username);
-        }
-
-        @Nullable
-        public TextureModel getModel() {
-            if (textures != null && textures.slim != null) {
-                return TextureModel.ALEX;
-            } else if (textures != null && textures.defaultSkin != null) {
-                return TextureModel.STEVE;
-            } else {
-                return null;
-            }
-        }
-
-        public String getAlexModelHash() {
-            if (textures != null && textures.slim != null) {
-                return textures.slim;
-            } else {
-                return null;
-            }
-        }
-
-        public String getSteveModelHash() {
-            if (textures != null && textures.defaultSkin != null) {
-                return textures.defaultSkin;
-            } else return skin;
-        }
-
-        public String getHash() {
-            TextureModel model = getModel();
-            if (model == TextureModel.ALEX)
-                return getAlexModelHash();
-            else if (model == TextureModel.STEVE)
-                return getSteveModelHash();
-            else
-                return null;
-        }
-
-        public String getCapeHash() {
-            if (textures != null && textures.cape != null) {
-                return textures.cape;
-            } else return cape;
-        }
-
-        public static class TextureJson {
-            @SerializedName("default")
-            private final String defaultSkin;
-
-            private final String slim;
-            private final String cape;
-            private final String elytra;
-
-            public TextureJson(String defaultSkin, String slim, String cape, String elytra) {
-                this.defaultSkin = defaultSkin;
-                this.slim = slim;
-                this.cape = cape;
-                this.elytra = elytra;
-            }
-        }
     }
 }

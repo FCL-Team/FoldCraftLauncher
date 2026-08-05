@@ -23,7 +23,7 @@ import com.tungsten.fclcore.game.LaunchOptions;
 import java.io.IOException;
 import java.util.UUID;
 
-public class AuthInfo implements AutoCloseable {
+public class AuthInfo {
     public static final String USER_TYPE_MSA = "msa";
     public static final String USER_TYPE_MOJANG = "mojang";
     public static final String USER_TYPE_LEGACY = "legacy";
@@ -75,9 +75,5 @@ public class AuthInfo implements AutoCloseable {
      */
     public Arguments getLaunchArguments(LaunchOptions options) throws IOException {
         return null;
-    }
-
-    @Override
-    public void close() throws Exception {
     }
 }

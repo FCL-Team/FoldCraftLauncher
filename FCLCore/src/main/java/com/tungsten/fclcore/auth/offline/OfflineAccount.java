@@ -169,14 +169,6 @@ public class OfflineAccount extends Account {
                     "-Dauthlibinjector.side=client"
             );
         }
-
-        @Override
-        public void close() throws Exception {
-            super.close();
-
-            if (server != null)
-                server.stop();
-        }
     }
 
     @Override

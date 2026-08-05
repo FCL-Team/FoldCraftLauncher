@@ -89,9 +89,9 @@
     <string name="account_skin_upload_file">上传</string>
     <string name="account_skin_no_file_selected">未选择文件</string>
     <string name="account_skin_reset">重置</string>
-    <string name="account_skin_reset_confirm">重置皮肤和披风？这将移除自定义皮肤和披风。</string>
+    <string name="account_skin_reset_confirm">重置皮肤？这将移除自定义皮肤。</string>
     <string name="account_skin_uploaded">皮肤上传成功</string>
-    <string name="account_skin_reset_done">披风已重置为默认</string>
+    <string name="account_skin_reset_done">皮肤已重置为默认</string>
     <string name="account_cape_management">披风管理</string>
     <string name="account_cape_none">没有披风可以选择</string>
     <string name="account_cape_active">选中</string>

@@ -106,7 +106,7 @@
     <string name="account_skin_upload_file">Upload</string>
     <string name="account_skin_no_file_selected">No file selected</string>
     <string name="account_skin_reset">Reset</string>
-    <string name="account_skin_reset_confirm">Reset skin and cape? This will remove your custom skin and cape.</string>
+    <string name="account_skin_reset_confirm">Reset skin? This will remove your custom skin.</string>
     <string name="account_skin_uploaded">Skin uploaded successfully</string>
     <string name="account_skin_reset_done">Skin reset to default</string>
     <string name="account_cape_management">Cape Management</string>

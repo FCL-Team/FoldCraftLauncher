@@ -163,6 +163,7 @@ public class MicrosoftAccount extends OAuthAccount {
     public void uploadSkin(String model, Path file) throws AuthenticationException {
         requireNonNull(model);
         requireNonNull(file);
+        logIn();
         MinecraftSkinService.uploadSkin(session.getAccessToken(), model, file);
         clearCache();
     }
@@ -173,6 +174,7 @@ public class MicrosoftAccount extends OAuthAccount {
      * @throws AuthenticationException on API errors
      */
     public void resetSkin() throws AuthenticationException {
+        logIn();
         MinecraftSkinService.resetSkin(session.getAccessToken());
         clearCache();
     }
@@ -185,6 +187,7 @@ public class MicrosoftAccount extends OAuthAccount {
      */
     public void showCape(String capeId) throws AuthenticationException {
         requireNonNull(capeId);
+        logIn();
         MinecraftSkinService.showCape(session.getAccessToken(), capeId);
         clearCache();
     }
@@ -195,6 +198,7 @@ public class MicrosoftAccount extends OAuthAccount {
      * @throws AuthenticationException on API errors
      */
     public void hideCape() throws AuthenticationException {
+        logIn();
         MinecraftSkinService.hideCape(session.getAccessToken());
         clearCache();
     }
@@ -206,6 +210,7 @@ public class MicrosoftAccount extends OAuthAccount {
      * @throws AuthenticationException on API errors
      */
     public Optional<MicrosoftService.MinecraftProfileResponse> getProfile() throws AuthenticationException {
+        logIn();
         return service.getCompleteProfile(session.getAuthorization());
     }
 
