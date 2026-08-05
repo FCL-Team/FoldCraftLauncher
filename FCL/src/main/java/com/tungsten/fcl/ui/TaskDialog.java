@@ -116,7 +116,7 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
     public void onClick(View view) {
         if (view == cancelButton) {
             Optional.ofNullable(executor).ifPresent(TaskExecutor::cancel);
-            onCancel.getCancellationAction().accept(this);
+            onCancel.getCancellationAction().run();
             dismiss();
         }
     }

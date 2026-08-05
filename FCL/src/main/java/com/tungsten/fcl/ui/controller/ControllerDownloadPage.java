@@ -194,7 +194,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
         String cache = FCLPath.CACHE_DIR + "/control/" + index.getId() + ".json";
         boolean exist = new File(destPath).exists();
         Controller old = exist ? Controllers.findControllerById(index.getId()) : null;
-        TaskDialog taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
+        TaskDialog taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(() -> {}));
         taskDialog.setTitle(getContext().getString(R.string.message_downloading));
         TaskExecutor executor = Task.composeAsync(() -> {
             if (exist && old != null) {

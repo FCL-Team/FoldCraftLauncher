@@ -58,6 +58,7 @@ import com.tungsten.fcl.ui.main.compose.MainRightMenuBridge
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
+import com.tungsten.fcl.util.NavigationBus
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -206,6 +207,25 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     true
                 }
 
+                NavigationBus.selectedMenu
+                    .onEach { menu ->
+                        val selectedView = when (menu) {
+                            NavigationBus.Menu.HOME -> home
+                            NavigationBus.Menu.MANAGE -> manage
+                            NavigationBus.Menu.DOWNLOAD -> download
+                            NavigationBus.Menu.CONTROLLER -> controller
+                            NavigationBus.Menu.MULTIPLAYER -> multiplayer
+                            NavigationBus.Menu.SETTING -> setting
+                            null -> null
+                        }
+                        if (selectedView != null) {
+                            refreshMenuView(selectedView)
+                            selectedView.isSelected = true
+                        } else {
+                            refreshMenuView(null)
+                        }
+                    }
+                    .launchIn(lifecycleScope)
                 uiManager = UIManager(this@MainActivity, uiLayout)
                 _uiManager = uiManager
                 uiManager.registerDefaultBackEvent {
@@ -906,7 +926,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             getString(R.string.modpack_external_detected, file.name),
             Toast.LENGTH_SHORT
         ).show()
-        binding.download.isSelected = true
+        NavigationBus.select(NavigationBus.Menu.DOWNLOAD)
         val downloadUI = uiManager.downloadUI
         downloadUI.runAfterInit {
             val page = ComposeLocalModpackPage(

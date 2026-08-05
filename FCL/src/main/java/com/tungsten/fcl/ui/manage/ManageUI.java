@@ -7,6 +7,7 @@ import android.content.Context;
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
+import com.tungsten.fcl.util.NavigationBus;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fclcore.event.EventBus;
 import com.tungsten.fclcore.event.EventPriority;
@@ -70,8 +71,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
                     !getProfile().getRepository().hasVersion(getVersion())) {
                 Schedulers.androidUIThread().execute(() -> {
                     if (isShowing()) {
-                        MainActivity.getInstance().refreshMenuView(null);
-                        MainActivity.getInstance().binding.home.setSelected(true);
+                        NavigationBus.select(NavigationBus.Menu.HOME);
                     }
                 });
                 return;
@@ -169,8 +169,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
                 if (preferredVersionName != null) {
                     loadVersion(preferredVersionName, this.version.getValue().getProfile());
                 } else if (isShowing()) {
-                    MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().binding.home.setSelected(true);
+                    NavigationBus.select(NavigationBus.Menu.HOME);
                 }
             }
         });
@@ -187,8 +186,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
                 !getProfile().getRepository().hasVersion(version))) {
             Schedulers.androidUIThread().execute(() -> {
                 if (isShowing()) {
-                    MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().binding.home.setSelected(true);
+                    NavigationBus.select(NavigationBus.Menu.HOME);
                 }
             });
             return;

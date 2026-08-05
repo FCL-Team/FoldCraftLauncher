@@ -25,6 +25,7 @@ import com.tungsten.fcl.ui.download.modpack.compose.ComposeModpackSelectionPage;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fcl.ui.manage.ModpackTypeSelectionPage;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fcl.util.NavigationBus;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
@@ -214,10 +215,7 @@ public class Versions {
 
     private static boolean checkVersionForLaunching(Context context, Profile profile, String id) {
         if (id == null || !profile.getRepository().isLoaded() || !profile.getRepository().hasVersion(id)) {
-            Runnable jumpToDownload = () -> {
-                MainActivity.getInstance().refreshMenuView(null);
-                MainActivity.getInstance().binding.download.setSelected(true);
-            };
+            Runnable jumpToDownload = () -> NavigationBus.select(NavigationBus.Menu.DOWNLOAD);
             FCLDialogs.showAlert(context, context.getString(R.string.launch_failed),
                     context.getString(R.string.version_empty_launch),
                     null, null,

@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
+import com.tungsten.fcl.util.NavigationBus
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.compose.rememberShakeState
@@ -478,7 +479,7 @@ object VersionListScreenHost {
             VersionListEvent.OpenVersionSettings -> {
                 // 对齐 VersionListAdapter :69-77：跳 Manage UI 并选中第一个 Tab
                 val uiManager = MainActivity.getInstance().uiManager
-                MainActivity.getInstance().binding.manage.isSelected = true
+                NavigationBus.select(NavigationBus.Menu.MANAGE)
                 uiManager.manageUI.runAfterInit {
                     val tab = uiManager.manageUI.tabLayout.getTabAt(0)
                     uiManager.manageUI.tabLayout.selectTab(tab)

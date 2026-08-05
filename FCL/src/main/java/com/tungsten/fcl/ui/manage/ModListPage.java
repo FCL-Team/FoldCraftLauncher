@@ -25,6 +25,7 @@ import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.AndroidUtils;
+import com.tungsten.fcl.util.NavigationBus;
 import com.tungsten.fcl.util.FlowList;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fcl.util.TaskCancellationAction;
@@ -465,8 +466,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
     }
 
     public void download() {
-        MainActivity.getInstance().refreshMenuView(null);
-        MainActivity.getInstance().binding.download.setSelected(true);
+        NavigationBus.select(NavigationBus.Menu.DOWNLOAD);
         DownloadPageManager.getInstance().switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD);
     }
 

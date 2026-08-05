@@ -27,8 +27,8 @@ import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
  * - `setCancel(null)`（按钮置灰）→ `setCancelAction(null)`；
  * - `setExecutor(executor[, autoClose])`、`setTitle(...)`、`show()` 语义一致。
  *
- * 注意：本类不接收遗留 TaskCancellationAction（其 Consumer<TaskDialog> 签名绑定遗留
- * 对话框类型）；调用点动作多为 dismiss/no-op，其余场景传 [Runnable] 即可。
+ * 遗留 TaskCancellationAction 现以无参数 Runnable 为取消动作契约；本类继续使用直接的
+ * Runnable 取消回调，避免与任一具体对话框类型耦合。
  */
 class MiuixTaskDialog @JvmOverloads constructor(
     context: Context,

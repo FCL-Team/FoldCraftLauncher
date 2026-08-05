@@ -49,6 +49,7 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.util.NavigationBus;
 import com.tungsten.fcl.ui.compose.dialog.MiuixSkipLoginDialog;
 import com.tungsten.fcl.ui.compose.dialog.MiuixTipReLoginDialog;
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -443,7 +444,7 @@ public final class LauncherHelper {
                             .setNeutralButton(context.getString(R.string.button_install), () -> {
                                 future.completeExceptionally(new CancellationException());
                                 UIManager manager = UIManager.getInstance();
-                                MainActivity.getInstance().binding.manage.setSelected(true);
+                                NavigationBus.select(NavigationBus.Menu.MANAGE);
                                 manager.getManageUI().runAfterInit(() -> {
                                     FCLTabLayout tabLayout = manager.getManageUI().tabLayout;
                                     tabLayout.selectTab(tabLayout.getTabAt(2));

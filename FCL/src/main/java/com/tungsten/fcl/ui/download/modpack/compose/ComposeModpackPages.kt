@@ -13,8 +13,7 @@ import java.io.File
 /**
  * 整合包安装向导 Compose 壳层（对齐 ComposeDownloadShells 范式）：
  * 页面仍走既有 DownloadPageManager/ManagePageManager 临时页栈，
- * 仅内容区换 ComposeView。旧类（ModpackSelectionPage/LocalModpackPage/
- * RemoteModpackPage）保留不删，回滚时把调用点指回旧类即可。
+ * 仅内容区使用 ComposeView，安装向导入口与信息页均已切换到 Compose 实现。
  */
 
 /** 入口页（本地/远程两入口），对齐 ModpackSelectionPage。 */

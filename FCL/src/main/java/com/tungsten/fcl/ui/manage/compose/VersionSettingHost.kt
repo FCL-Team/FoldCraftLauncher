@@ -8,6 +8,7 @@ import com.mio.util.showErrorDialog
 import com.mio.util.showItemSelectionDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
+import com.tungsten.fcl.util.NavigationBus
 import com.tungsten.fcl.setting.Profiles.getSelectedProfile
 import com.tungsten.fcl.ui.compose.FCLDialogs
 import com.tungsten.fcl.ui.compose.dialog.MiuixDriverSelectDialog
@@ -93,7 +94,7 @@ object VersionSettingHost {
     /** 对齐 :469-476：跨 UI 跳转控制器仓库页（interaction-map G11 原样保留）。 */
     private fun jumpToControllerRepo() {
         val uiManager = MainActivity.getInstance().uiManager
-        MainActivity.getInstance().binding.controller.setSelected(true)
+        NavigationBus.select(NavigationBus.Menu.CONTROLLER)
         uiManager.controllerUI.runAfterInit {
             uiManager.controllerUI.pageManager
                 .switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO)

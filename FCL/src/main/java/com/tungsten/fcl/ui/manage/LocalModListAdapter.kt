@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.mio.ui.adapter.ViewHolder
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
+import com.tungsten.fcl.util.NavigationBus
 import com.tungsten.fcl.databinding.ItemLocalModBinding
 import com.tungsten.fcl.ui.compose.dialog.MiuixModInfoDialog
 import com.tungsten.fcl.ui.compose.dialog.MiuixModRollbackDialog
@@ -207,7 +208,7 @@ class LocalModListAdapter(
         binding.jump.visibility = View.GONE
         binding.jump.setOnClickListener {
             val uiManager = MainActivity.getInstance().uiManager
-            MainActivity.getInstance().binding.download.isSelected = true
+            NavigationBus.select(NavigationBus.Menu.DOWNLOAD)
             MainActivity.getInstance().uiManager.downloadUI.runAfterInit {
                 uiManager.downloadUI.tabLayout.selectTab(uiManager.downloadUI.tabLayout.getTabAt(2))
                 uiManager.downloadUI.pageManager

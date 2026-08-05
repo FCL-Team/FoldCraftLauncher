@@ -32,7 +32,7 @@ import java.nio.charset.Charset;
 public class ModpackInstaller {
 
     public static void installModpack(Context context, Task<?> task, boolean update) {
-        TaskDialog pane = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
+        TaskDialog pane = new TaskDialog(context, new TaskCancellationAction(() -> {}));
         pane.setTitle(context.getString(R.string.install_modpack));
         Schedulers.androidUIThread().execute(() -> {
             TaskExecutor executor = task.executor(new TaskListener() {
