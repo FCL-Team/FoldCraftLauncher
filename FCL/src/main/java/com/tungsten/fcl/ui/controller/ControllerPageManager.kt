@@ -4,6 +4,7 @@ import android.content.Context
 import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIListener
+import com.tungsten.fcl.ui.controller.compose.ComposeControllerManagePage
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 
@@ -16,12 +17,13 @@ class ControllerPageManager(
     companion object {
         const val PAGE_ID_CONTROLLER_MANAGER: Int = 15040
         const val PAGE_ID_CONTROLLER_REPO: Int = 15041
+        const val USE_COMPOSE_CONTROLLER_PAGES: Boolean = true
 
         @JvmStatic
         var instance: ControllerPageManager? = null
     }
 
-    private lateinit var controllerManagePage: ControllerManagePage
+    private lateinit var controllerManagePage: FCLCommonPage
     private val controllerRepoPage: ControllerRepoPage by lazy {
         ControllerRepoPage(
             context,
@@ -36,12 +38,16 @@ class ControllerPageManager(
     }
 
     override fun init(listener: UIListener?) {
-        controllerManagePage = ControllerManagePage(
-            context,
-            PAGE_ID_CONTROLLER_MANAGER,
-            parent,
-            R.layout.page_controller_manager
-        )
+        controllerManagePage = if (USE_COMPOSE_CONTROLLER_PAGES) {
+            ComposeControllerManagePage(context!!, PAGE_ID_CONTROLLER_MANAGER, parent!!)
+        } else {
+            ControllerManagePage(
+                context,
+                PAGE_ID_CONTROLLER_MANAGER,
+                parent,
+                R.layout.page_controller_manager
+            )
+        }
         listener?.onLoad()
     }
 
