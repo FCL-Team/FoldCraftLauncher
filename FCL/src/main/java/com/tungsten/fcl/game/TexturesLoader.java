@@ -70,21 +70,10 @@ public final class TexturesLoader {
     }
 
     // ==== Texture Loading ====
-    public static class LoadedTexture {
-        private final Bitmap image;
-        private final Map<String, String> metadata;
-
+    public record LoadedTexture(Bitmap image, Map<String, String> metadata) {
         public LoadedTexture(Bitmap image, Map<String, String> metadata) {
             this.image = requireNonNull(image);
             this.metadata = requireNonNull(metadata);
-        }
-
-        public Bitmap getImage() {
-            return image;
-        }
-
-        public Map<String, String> getMetadata() {
-            return metadata;
         }
     }
 
@@ -117,11 +106,11 @@ public final class TexturesLoader {
             OfflineAccount account = accounts[0];
             Skin skin = account.getSkin();
             if (skin != null) {
-                Skin.LoadedSkin loadedSkin = skin.load(account.getUsername()).run();
+                Skin.LoadedSkin loadedSkin = skin.load().run();
                 if (loadedSkin != null) {
-                    Bitmap img = loadedSkin.getSkin() == null ? null : loadedSkin.getSkin().getImage();
+                    Bitmap img = loadedSkin.skin() == null ? null : loadedSkin.skin().getImage();
                     if (img == null) {
-                        img = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
+                        img = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).image();
                     }
                     return new LoadedTexture(img, metadata);
                 }
@@ -164,9 +153,9 @@ public final class TexturesLoader {
             OfflineAccount account = accounts[0];
             Skin skin = account.getSkin();
             if (skin != null) {
-                Skin.LoadedSkin loadedSkin = skin.load(account.getUsername()).run();
+                Skin.LoadedSkin loadedSkin = skin.load().run();
                 if (loadedSkin != null) {
-                    return loadedSkin.getSkin() == null ? null : loadedSkin.getCape().getImage();
+                    return loadedSkin.skin() == null ? null : loadedSkin.cape().getImage();
                 }
             }
             return null;
@@ -278,7 +267,7 @@ public final class TexturesLoader {
     }
 
     public static ObjectBinding<Bitmap[]> textureBinding(Account account) {
-        Bitmap[] fallback = new Bitmap[] { getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage(), null };
+        Bitmap[] fallback = new Bitmap[]{getDefaultSkin(TextureModel.detectUUID(account.getUUID())).image(), null};
         return BindingMapping.of(account.getTextures())
                 .asyncMap(it -> {
                     if (it.isPresent()) {
@@ -287,15 +276,15 @@ public final class TexturesLoader {
                         boolean loadSkin = skin != null && StringUtils.isNotBlank(skin.getUrl());
                         boolean loadCape = cape != null && StringUtils.isNotBlank(cape.getUrl());
                         return CompletableFuture.supplyAsync(() -> {
-                            Bitmap finalSkin = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
+                            Bitmap finalSkin = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).image();
                             Bitmap finalCape = null;
                             try {
                                 if (loadSkin) {
                                     if (account instanceof OfflineAccount) {
-                                        finalSkin = loadTexture(skin, (OfflineAccount) account).getImage();
+                                        finalSkin = loadTexture(skin, (OfflineAccount) account).image();
                                         finalCape = loadCape(skin, (OfflineAccount) account);
                                     } else {
-                                        finalSkin = loadTexture(skin).getImage();
+                                        finalSkin = loadTexture(skin).image();
                                     }
                                 }
                                 if (loadCape) {
@@ -304,7 +293,7 @@ public final class TexturesLoader {
                             } catch (Exception e) {
                                 LOG.log(Level.WARNING, "Failed to load texture, using default", e);
                             }
-                            return new Bitmap[] { finalSkin, finalCape };
+                            return new Bitmap[]{finalSkin, finalCape};
                         }, POOL);
                     } else {
                         return CompletableFuture.completedFuture(fallback);

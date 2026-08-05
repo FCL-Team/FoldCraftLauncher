@@ -77,9 +77,6 @@
     <string name="account_select_character">انتخاب شخصیت</string>
     <string name="account_skin">اسکین</string>
     <string name="account_skin_type_default">پیش فرض</string>
-    <string name="account_skin_type_csl_api_location_hint">لینک CustomSkinAPI</string>
-    <string name="account_skin_type_csl_api_hint">شما باید یک شخصیت با نام حساب آفلاین خود در وبسایت ارائه دهنده اسکین خود ایجاد کنید. سپس اسکین شما، اسکینی خواهد بود که در آن سایت آپلود کرده اید.</string>
-    <string name="account_skin_type_local_file">فایل محلی اسکین</string>
     <string name="account_skin_upload">انتخاب فایل اسکین</string>
     <string name="account_state_no_account">حسابی وجود ندارد</string>
     <string name="account_state_add">برای افزودن کلیک کنید</string>

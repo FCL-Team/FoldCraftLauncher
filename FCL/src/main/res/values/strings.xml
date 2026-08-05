@@ -35,7 +35,7 @@
     <string name="controller">Controller</string>
     <string name="multiplayer">Multiplayer</string>
     <string name="setting">Setting</string>
-    
+
     <string name="about">About</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
@@ -99,11 +99,22 @@
     <string name="account_skin_type_default">Default</string>
     <string name="account_skin_type_steve" translatable="false">Steve</string>
     <string name="account_skin_type_alex" translatable="false">Alex</string>
-    <string name="account_skin_type_csl_api" translatable="false">Custom Skin Loader</string>
-    <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI URL</string>
-    <string name="account_skin_type_csl_api_hint">You need to create a character with the same name as your offline account on your skin provider website. Your skin will then be your uploaded skin to that site.</string>
-    <string name="account_skin_type_local_file">Local Skin File</string>
     <string name="account_skin_upload">Select skin file</string>
+    <string name="account_skin_model_classic" translatable="false">Classic (Steve)</string>
+    <string name="account_skin_model_slim" translatable="false">Slim (Alex)</string>
+    <string name="account_skin_model">Skin Model</string>
+    <string name="account_skin_upload_file">Upload</string>
+    <string name="account_skin_no_file_selected">No file selected</string>
+    <string name="account_skin_reset">Reset</string>
+    <string name="account_skin_reset_confirm">Reset skin? This will remove your custom skin.</string>
+    <string name="account_skin_uploaded">Skin uploaded successfully</string>
+    <string name="account_skin_reset_done">Skin reset to default</string>
+    <string name="account_cape_management">Cape Management</string>
+    <string name="account_cape_none">No capes available</string>
+    <string name="account_cape_active">Active</string>
+    <string name="account_cape_hide">Hide Cape</string>
+    <string name="account_cape_activated">Cape activated</string>
+    <string name="account_cape_hidden">Cape hidden</string>
     <string name="account_state_no_account">No account</string>
     <string name="account_state_add">Click to add</string>
 
@@ -397,8 +408,8 @@
     <string name="folder_log">Browse log directory</string>
     <string name="folder_fcl_log">Browse FCL logs</string>
     <string name="upload_log">Upload Log</string>
-     <string name="log_not_found">Log file not found</string>
-     <string name="log_too_large">Log file is too large</string>
+    <string name="log_not_found">Log file not found</string>
+    <string name="log_too_large">Log file is too large</string>
     <string name="upload_fcl_log">Upload FCL log</string>
     <string name="upload_game_log">Upload game log</string>
     <string name="upload_success">Upload success! URL copied to clipboard: %s</string>
@@ -881,9 +892,9 @@
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core</string>
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
-    <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, only support 1.17-)</string>
+    <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, only support 1.17-)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Kopper Zink (OpenGL 4.6)</string>
-    <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, only support GPU a616-a660)</string>
+    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, only support GPU a616-a660)</string>
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, built-in)</string>
 
     <string name="settings_fcl_driver">Vulkan Driver</string>

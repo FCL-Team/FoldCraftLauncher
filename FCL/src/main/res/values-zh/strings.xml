@@ -84,10 +84,20 @@
     <string name="account_select_character">选择角色</string>
     <string name="account_skin">皮肤</string>
     <string name="account_skin_type_default">默认</string>
-    <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI 地址</string>
-    <string name="account_skin_type_csl_api_hint">你需要在皮肤站中创建并使用和该离线账户角色同名角色，此时离线账户皮肤将为皮肤站上角色所设定的皮肤。</string>
-    <string name="account_skin_type_local_file">本地文件</string>
     <string name="account_skin_upload">选择皮肤文件</string>
+    <string name="account_skin_model">皮肤模型</string>
+    <string name="account_skin_upload_file">上传</string>
+    <string name="account_skin_no_file_selected">未选择文件</string>
+    <string name="account_skin_reset">重置</string>
+    <string name="account_skin_reset_confirm">重置皮肤？这将移除自定义皮肤。</string>
+    <string name="account_skin_uploaded">皮肤上传成功</string>
+    <string name="account_skin_reset_done">皮肤已重置为默认</string>
+    <string name="account_cape_management">披风管理</string>
+    <string name="account_cape_none">没有披风可以选择</string>
+    <string name="account_cape_active">选中</string>
+    <string name="account_cape_hide">隐藏披风</string>
+    <string name="account_cape_activated">披风已启用</string>
+    <string name="account_cape_hidden">披风已隐藏</string>
     <string name="account_state_no_account">没有账户</string>
     <string name="account_state_add">点击添加账户</string>
 
@@ -374,8 +384,8 @@
     <string name="folder_log">浏览日志文件夹</string>
     <string name="folder_fcl_log">浏览FCL日志文件夹</string>
     <string name="upload_log">上传日志</string>
-     <string name="log_not_found">未找到日志文件</string>
-     <string name="log_too_large">日志文件过大</string>
+    <string name="log_not_found">未找到日志文件</string>
+    <string name="log_too_large">日志文件过大</string>
     <string name="upload_fcl_log">上传FCL日志</string>
     <string name="upload_game_log">上传游戏日志</string>
     <string name="upload_success">上传成功！URL已复制到剪贴板：%s</string>
@@ -831,7 +841,7 @@
     <string name="settings_fcl_graphics_backend">图形后端（仅对26.2+生效）</string>
     <string name="settings_fcl_renderer">OpenGL实现方式 (渲染器)</string>
     <string name="settings_fcl_pojav_bigcore">强制渲染器在大核上运行</string>
-    <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
+    <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 仅支持GPU a616-a660)</string>
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, 内置的)</string>
 

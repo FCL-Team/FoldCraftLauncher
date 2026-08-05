@@ -9,7 +9,6 @@ import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.ui.UIManager
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.AuthInfo
@@ -144,10 +143,7 @@ class AccountListItem(
 
             is MicrosoftAccount -> {
                 withContext(Dispatchers.Main) {
-                    AndroidUtils.openLink(
-                        context,
-                        "https://www.minecraft.net/msaprofile/mygames/editskin"
-                    )
+                    MicrosoftAccountSkinDialog(context, this@AccountListItem).show()
                 }
                 null
             }

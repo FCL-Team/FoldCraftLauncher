@@ -18,13 +18,6 @@
 package com.tungsten.fclcore.auth.microsoft;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.logging.Level;
-
 import static java.util.Objects.requireNonNull;
 
 import com.tungsten.fclcore.auth.AuthInfo;
@@ -37,6 +30,13 @@ import com.tungsten.fclcore.auth.yggdrasil.TextureType;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService;
 import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.util.fakefx.BindingMapping;
+
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Level;
 
 public class MicrosoftAccount extends OAuthAccount {
 
@@ -153,9 +153,71 @@ public class MicrosoftAccount extends OAuthAccount {
                 }));
     }
 
+    /**
+     * Upload a new skin from a local file.
+     *
+     * @param model skin model: "classic" for Steve, "slim" for Alex
+     * @param file  path to the skin PNG file
+     * @throws AuthenticationException on API errors
+     */
+    public void uploadSkin(String model, Path file) throws AuthenticationException {
+        requireNonNull(model);
+        requireNonNull(file);
+        logIn();
+        MinecraftSkinService.uploadSkin(session.getAccessToken(), model, file);
+        clearCache();
+    }
+
+    /**
+     * Reset the active skin (remove custom skin, revert to default).
+     *
+     * @throws AuthenticationException on API errors
+     */
+    public void resetSkin() throws AuthenticationException {
+        logIn();
+        MinecraftSkinService.resetSkin(session.getAccessToken());
+        clearCache();
+    }
+
+    /**
+     * Show a specific cape by setting it as active.
+     *
+     * @param capeId the UUID of the cape to show
+     * @throws AuthenticationException on API errors
+     */
+    public void showCape(String capeId) throws AuthenticationException {
+        requireNonNull(capeId);
+        logIn();
+        MinecraftSkinService.showCape(session.getAccessToken(), capeId);
+        clearCache();
+    }
+
+    /**
+     * Hide the active cape.
+     *
+     * @throws AuthenticationException on API errors
+     */
+    public void hideCape() throws AuthenticationException {
+        logIn();
+        MinecraftSkinService.hideCape(session.getAccessToken());
+        clearCache();
+    }
+
+    /**
+     * Get the full Minecraft profile including skin and cape details with IDs.
+     *
+     * @return the profile response with skins and capes lists
+     * @throws AuthenticationException on API errors
+     */
+    public Optional<MicrosoftService.MinecraftProfileResponse> getProfile() throws AuthenticationException {
+        logIn();
+        return service.getCompleteProfile(session.getAuthorization());
+    }
+
     @Override
     public void clearCache() {
         authenticated = false;
+        service.getProfileRepository().invalidate(characterUUID);
     }
 
     @Override

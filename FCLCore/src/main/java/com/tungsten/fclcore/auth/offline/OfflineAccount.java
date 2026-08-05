@@ -19,16 +19,6 @@ package com.tungsten.fclcore.auth.offline;
 
 import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Pair.pair;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutionException;
-
 import static java.util.Objects.requireNonNull;
 
 import com.tungsten.fclcore.auth.Account;
@@ -46,6 +36,15 @@ import com.tungsten.fclcore.game.LaunchOptions;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 
 public class OfflineAccount extends Account {
 
@@ -99,7 +98,7 @@ public class OfflineAccount extends Account {
     }
 
     protected boolean loadAuthlibInjector(Skin skin) {
-        return skin != null && skin.getType() != Skin.Type.DEFAULT;
+        return skin != null && skin.type() != Skin.Type.DEFAULT;
     }
 
     @Override
@@ -158,7 +157,7 @@ public class OfflineAccount extends Account {
 
             try {
                 server.addCharacter(new YggdrasilServer.Character(uuid, username,
-                        skin != null ? skin.load(username).run() : null));
+                        skin != null ? skin.load().run() : null));
             } catch (IOException e) {
                 // ignore
             } catch (Exception e) {
@@ -169,14 +168,6 @@ public class OfflineAccount extends Account {
                     "-javaagent:" + artifact.getLocation().toString() + "=" + "http://localhost:" + server.getListeningPort(),
                     "-Dauthlibinjector.side=client"
             );
-        }
-
-        @Override
-        public void close() throws Exception {
-            super.close();
-
-            if (server != null)
-                server.stop();
         }
     }
 
@@ -216,9 +207,8 @@ public class OfflineAccount extends Account {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof OfflineAccount))
+        if (!(obj instanceof OfflineAccount another))
             return false;
-        OfflineAccount another = (OfflineAccount) obj;
         return isPortable() == another.isPortable() && username.equals(another.username);
     }
 }
