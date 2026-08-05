@@ -10,8 +10,14 @@
 # JNI 本地方法
 -keepclasseswithmembernames class * { native <methods>; }
 
-# gson：@SerializedName 与 TypeAdapter 相关保留
--keepclassmembers class * { @com.google.gson.annotations.SerializedName <fields>; }
+# gson：注解类本身必须保留，否则 R8 会把模型类上的 @JsonAdapter/@SerializedName 一并剥掉
+#（导致回退反射反序列化、实例化 StateFlow 接口字段而崩溃）
+-keep class com.google.gson.annotations.** { *; }
+-keep @com.google.gson.annotations.JsonAdapter class * { *; }
+-keepclassmembers class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+    @com.google.gson.annotations.JsonAdapter <fields>;
+}
 -keep class * implements com.google.gson.TypeAdapter { *; }
 -keep class * implements com.google.gson.TypeAdapterFactory { *; }
 -keep class * implements com.google.gson.JsonSerializer { *; }
