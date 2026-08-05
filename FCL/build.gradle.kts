@@ -52,13 +52,20 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            // R8 优化：压缩+优化但不混淆（gson 字段序列化与 JNI 反射依赖命名稳定）
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("FCLKey")
         }
         create("fordebug") {
             initWith(getByName("debug"))
             applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("FCLDebugKey")
+            // 与 release 同步开启 R8（产物用于真机验证 Compose 优化效果）
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         configureEach {
             resValue("string", "app_version", defaultConfig.versionName.toString())
