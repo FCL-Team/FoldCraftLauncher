@@ -52,10 +52,10 @@ android {
 
     buildTypes {
         getByName("release") {
-            // R8 优化：压缩+优化但不混淆（gson 字段序列化与 JNI 反射依赖命名稳定）
+            // R8 优化：压缩但不混淆不优化（gson 反射/JNI/枚举反射依赖命名与语义稳定）
+            // shrinkResources 关闭：AndroidUtils.getLocalizedText 经 getIdentifier 动态查找字符串
             isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("FCLKey")
         }
         create("fordebug") {
@@ -64,8 +64,7 @@ android {
             signingConfig = signingConfigs.getByName("FCLDebugKey")
             // 与 release 同步开启 R8（产物用于真机验证 Compose 优化效果）
             isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
         configureEach {
             resValue("string", "app_version", defaultConfig.versionName.toString())
