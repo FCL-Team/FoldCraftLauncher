@@ -357,7 +357,6 @@ class VersionSettingPage(
         }
         binding.graphicsBackend.text = versionSetting.graphicsBackend
         val renderer = getRenderer(versionSetting.renderer)
-        binding.renderer.setSelected(true)
         binding.renderer.text = renderer.des
         binding.driverContainer.visibility =
             if (binding.switchVulkanDriverSystem.checkProperty().get()) View.GONE else View.VISIBLE

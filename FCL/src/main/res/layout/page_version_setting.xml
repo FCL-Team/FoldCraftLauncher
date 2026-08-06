@@ -120,16 +120,17 @@
                             android:text="@string/settings_game_java_version"
                             app:auto_text_tint="true" />
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-
                         <com.tungsten.fcllibrary.component.view.FCLTextView
                             android:id="@+id/java"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:gravity="end|center_vertical"
+                            android:singleLine="true"
                             app:auto_text_tint="true" />
 
                         <com.tungsten.fcllibrary.component.view.FCLImageButton
@@ -312,16 +313,17 @@
                             android:text="@string/settings_fcl_controller"
                             app:auto_text_tint="true" />
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-
                         <com.tungsten.fcllibrary.component.view.FCLTextView
                             android:id="@+id/controller"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:gravity="end|center_vertical"
+                            android:singleLine="true"
                             app:auto_text_tint="true" />
 
                         <com.tungsten.fcllibrary.component.view.FCLImageButton
@@ -379,16 +381,16 @@
                             android:text="@string/settings_fcl_graphics_backend"
                             app:auto_text_tint="true" />
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-
                         <com.tungsten.fcllibrary.component.view.FCLTextView
                             android:id="@+id/graphics_backend"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:gravity="end|center_vertical"
                             android:singleLine="true"
                             app:auto_text_tint="true" />
 
@@ -426,18 +428,16 @@
                             android:text="@string/settings_fcl_renderer"
                             app:auto_text_tint="true" />
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-
                         <com.tungsten.fcllibrary.component.view.FCLTextView
                             android:id="@+id/renderer"
-                            android:layout_width="150dp"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:ellipsize="marquee"
-                            android:marqueeRepeatLimit="marquee_forever"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:gravity="end|center_vertical"
                             android:singleLine="true"
                             app:auto_text_tint="true" />
 
@@ -509,16 +509,17 @@
                             android:text="@string/settings_fcl_driver"
                             app:auto_text_tint="true" />
 
-                        <View
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-
                         <com.tungsten.fcllibrary.component.view.FCLTextView
                             android:id="@+id/driver"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:gravity="end|center_vertical"
+                            android:singleLine="true"
                             app:auto_text_tint="true" />
 
                         <com.tungsten.fcllibrary.component.view.FCLImageButton
