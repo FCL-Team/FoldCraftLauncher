@@ -25,6 +25,9 @@
     <string name="crash_reporter_close">退出軟件</string>
     <string name="crash_reporter_copy">複製日誌</string>
     <string name="crash_reporter_share">分享日誌</string>
+    <string name="crash_reporter_upload">上傳日誌</string>
+    <string name="upload_success">上傳成功！URL 已複製到剪貼板：%s</string>
+    <string name="upload_failed">上傳失敗：%s</string>
     <string name="crash_reporter_toast">複製成功！</string>
 
     <string name="color_picker_title">選擇顏色</string>
@@ -36,4 +39,10 @@
     <string name="dialog_negative">取消</string>
     <string name="file_browser_select_external">用外部應用程式選擇</string>
     <string name="edit">編輯</string>
+    <string name="log_upload_success_title">日誌上傳成功</string>
+    <string name="log_upload_copy">複製連結</string>
+    <string name="log_upload_open">開啟連結</string>
+    <string name="log_upload_share">分享連結</string>
+    <string name="log_upload_share_template">我喺啟動器入面遇到咗問題，呢度係日誌連結：\n%s</string>
+    <string name="close">關閉</string>
 </resources>

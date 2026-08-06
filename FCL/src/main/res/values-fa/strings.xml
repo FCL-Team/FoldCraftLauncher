@@ -86,7 +86,7 @@
     <string name="action_share">اشتراک گذاری</string>
     <string name="action_skip">رد کردن</string>
 
-    <string name="announcement">اطلاعیه ها</string>
+    <string name="announcement">اطلاعیه: %s</string>
     <string name="announcement_significant">این یک اطلاعیه مهم است. لطفا قبل از پنهان کردن آن، تایید کنید که آن را خوانده اید. آیا می خواهید آن را پنهان کنید؟</string>
 
     <string name="archive_author">سازنده(ها)</string>

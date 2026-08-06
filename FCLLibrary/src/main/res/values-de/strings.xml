@@ -26,6 +26,9 @@
     <string name="crash_reporter_close">Beenden</string>
     <string name="crash_reporter_copy">Kopieren</string>
     <string name="crash_reporter_share">Teilen</string>
+    <string name="crash_reporter_upload">Protokoll hochladen</string>
+    <string name="upload_success">Upload erfolgreich! URL in Zwischenablage kopiert: %s</string>
+    <string name="upload_failed">Upload fehlgeschlagen: %s</string>
     <string name="crash_reporter_toast">Erfolgreich kopiert!</string>
 
     <string name="color_picker_title">Farbauswahl</string>
@@ -36,4 +39,10 @@
     <string name="dialog_positive">OK</string>
     <string name="dialog_negative">Abbrechen</string>
     <string name="edit">Bearbeiten</string>
+    <string name="log_upload_success_title">Protokoll erfolgreich hochgeladen</string>
+    <string name="log_upload_copy">Link kopieren</string>
+    <string name="log_upload_open">Link öffnen</string>
+    <string name="log_upload_share">Link teilen</string>
+    <string name="log_upload_share_template">Ich habe ein Problem mit dem Launcher, hier ist der Log-Link:\n%s</string>
+    <string name="close">Schließen</string>
 </resources>

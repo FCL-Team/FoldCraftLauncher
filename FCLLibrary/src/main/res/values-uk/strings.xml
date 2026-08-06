@@ -26,6 +26,9 @@
     <string name="crash_reporter_close">Вийти</string>
     <string name="crash_reporter_copy">Копіювати</string>
     <string name="crash_reporter_share">Поділитися</string>
+    <string name="crash_reporter_upload">Завантажити журнал</string>
+    <string name="upload_success">Журнал успішно завантажено! URL скопійовано в буфер обміну: %s</string>
+    <string name="upload_failed">Завантаження не вдалося: %s</string>
     <string name="crash_reporter_toast">Скопійовано!</string>
 
     <string name="color_picker_title">Палітра кольорів</string>
@@ -36,4 +39,10 @@
     <string name="dialog_positive">OK</string>
     <string name="dialog_negative">Скасувати</string>
     <string name="edit">Змінити</string>
+    <string name="log_upload_success_title">Журнал успішно завантажено</string>
+    <string name="log_upload_copy">Копіювати посилання</string>
+    <string name="log_upload_open">Відкрити посилання</string>
+    <string name="log_upload_share">Поділитися посиланням</string>
+    <string name="log_upload_share_template">Я зіткнувся з проблемою в лаунчері, ось посилання на журнал:\n%s</string>
+    <string name="close">Закрити</string>
 </resources>

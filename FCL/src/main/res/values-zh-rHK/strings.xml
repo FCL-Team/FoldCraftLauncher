@@ -383,7 +383,7 @@
     <string name="game_crash_reason_forgemod_resolution">當前遊戲因為 Mod 依賴問題，無法繼續運行。Forge 提供咗如下信息：\n%1$s</string>
     <string name="game_crash_reason_mod_resolution_collection">當前遊戲因為前置 Mod 版本唔匹配，無法繼續運行。\n%1$s 需要前置 Mod：%2$s 才能繼續運行。\n呢表示你需要更新或降級前置。你可以到下載頁嘅模組下載，或到網上下載 %3$s。</string>
     <string name="game_crash_reason_mod_resolution_conflict">當前遊戲因為 Mod 衝突，無法繼續運行。\n%1$s 與 %2$s 唔能兼容。</string>
-    <string name="game_crash_reason_mod_resolution_missing">當前遊戲因為缺少 Mod 前置，無法繼續運行。\n%1$s 需要前置 Mod：%2$s 才能繼續運行。\n呢表示你少安裝咗 Mod，或該 Mod 版本唔夠。你可以到下載頁嘅模組下載，或到網上下載 %3$s。</string>
+    <string name="game_crash_reason_mod_resolution_missing">當前遊戲因為缺少 Mod 前置，無法繼續運行。\n%1$s 需要前置 Mod：%2$s 才能繼續運行。\n呢表示你少安裝咗 Mod，或該 Mod 版本唔夠。你可以到下載頁嘅模組下載，或到網上下載 %2$s。</string>
     <string name="game_crash_reason_mod_resolution_missing_minecraft">當前遊戲因為 Mod 同 Minecraft 遊戲版本唔匹配，無法繼續運行。\n%1$s 需要 Minecraft %2$s 才能運行。\n如果你要繼續使用你已經安裝嘅 Mod，你可以選擇安裝對應嘅 Minecraft 版本；如果你要繼續使用當前 Minecraft 版本，你需要安裝對應版本嘅 Mod。</string>
     <string name="game_crash_reason_mod_resolution_mod_version">%1$s (版本號 %2$s)</string>
     <string name="game_crash_reason_mod_resolution_mod_version_any">%1$s (任意版本)</string>
@@ -413,7 +413,7 @@
     <string name="game_crash_reason_processing_of_javaagent_failed">當前遊戲因執行 -javaagent 失敗，無法繼續運行。\n如果你添加咗相關參數，請檢查參數係否正確。</string>
     <string name="game_crash_reason_stacktrace">原因未知，請點擊日誌按鈕查看詳細信息。\n下面係一啲關鍵詞，其中可能包含 Mod 名稱，你可以通過搜索嘅方式查找有關信息。\n%s</string>
     <string name="game_crash_reason_unknown">原因未知，請參考日誌。\n如果你要求助他人，請你導出遊戲崩潰信息後將導出嘅文件發送畀他人以供分析。</string>
-    <string name="game_crash_reason_unsatisfied_link_error">當前遊戲因為缺少本地庫，無法繼續運行。</string>
+    <string name="game_crash_reason_unsatisfied_link_error">當前遊戲因為缺少本地庫：%1$s，無法繼續運行。</string>
     <string name="game_crash_title">遊戲意外退出</string>
     <string name="game_crash_title_add">(你應該將完整嘅日誌文件發送出來，而唔係喺呢個界面截圖)</string>
 
@@ -431,8 +431,8 @@
     <string name="install_change_version_confirm">你確定將 %s 版本從 %s 改為 %s 嗎?</string>
     <string name="install_failed">安裝失敗</string>
     <string name="install_failed_downloading">無法下載一啲所需文件。</string>
-    <string name="install_failed_downloading_detail">無法下載</string>
-    <string name="install_failed_downloading_timeout">下載超時</string>
+    <string name="install_failed_downloading_detail">無法下載文件：%s</string>
+    <string name="install_failed_downloading_timeout">下載超時：%s</string>
     <string name="install_failed_install_online">無法識別該文件。如果你需要添加模組，請前往模組管理頁面。</string>
     <string name="install_failed_malformed">文件下載中斷，你可以切換下載源以嘗試修復此問題。</string>
     <string name="install_failed_optifine_conflict">喺 Minecraft 1.13 及更新嘅版本中無法同時安裝 Forge，OptiFine 同 Fabric。</string>
