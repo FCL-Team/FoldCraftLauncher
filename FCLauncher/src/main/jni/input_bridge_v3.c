@@ -676,7 +676,7 @@ Java_org_lwjgl_glfw_CallbackBridge_nativeSetWindowAttrib(__attribute__((unused))
             pojav_environ->method_glftSetWindowAttrib,
             (jlong) pojav_environ->showingWindow, attrib, value
     );
-    (*jvm)->DetachCurrentThread(jvm);
+//    (*jvm)->DetachCurrentThread(jvm);
     // Attaching every time is annoying, so stick the attachment to the Android GUI thread around
 }
 
