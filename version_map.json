@@ -1,8 +1,8 @@
 [
   {
     "type": "release",
-    "versionCode": 1323,
-    "versionName": "1.3.2.3",
+    "versionCode": 1324,
+    "versionName": "1.3.2.4",
     "date": "2026.08.07",
     "description": [
       {
@@ -14,7 +14,7 @@
         "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.实现微软账号皮肤与披风管理功能（支持上传、重置皮肤与披风管理）\n2.重构离线账户皮肤管理逻辑，简化模型选择并移除 CSL 支持\n3.支持 -Dmiolibpatcher.alc10=true 参数，修复低版本游戏无声音的问题\n4.修复 26.2+ 版本退出游戏卡住的问题\n5.修复 LWJGL 尝试加载 jemalloc 报错的问题\n6.修复多语言字符串资源中的占位符错误并补全漏译键\n7.OpenAL-Soft 默认改用 OpenSL 作为音频后端\n8.重构多架构 JRE 资产裁剪，按架构过滤生成资产源，显著减小安装包体积\n9.优化 CI 构建流程，合并重复的构建 job 并复用工作流\n10.自动清理缓存逻辑迁移至启动页\n11.更新 LWJGL 运行时组件与相关依赖库\n12.更新 MioLibPatcher / MioLaunchWrapper / FCLBridge 等运行时组件\n13.AccountListItem 迁移至 Kotlin 并增强文件选择逻辑的空安全性"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/b96a92e85ee7",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.3/FCL-release-1.3.2.3-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/a614778d294b",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.4/FCL-release-1.3.2.4-all.apk"
   }
 ]
