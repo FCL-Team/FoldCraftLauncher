@@ -107,7 +107,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                 installerItem.upgradable.setValue(libraryConfigurable);
                 installerItem.installable.setValue(true);
                 installerItem.action.setValue(() -> {
-                    com.tungsten.fcl.ui.download.version.InstallerListPage page = new com.tungsten.fcl.ui.download.version.InstallerListPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
+                    com.tungsten.fcl.ui.download.compose.ComposeInstallerListPage page = new com.tungsten.fcl.ui.download.compose.ComposeInstallerListPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), gameVersion, libraryId, remoteVersion -> {
                         if (libraryVersion == null) {
                             finish(profile, remoteVersion);
                         } else {
@@ -120,6 +120,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                             builder.setNegativeButton(null);
                             builder.create().show();
                         }
+                        return null;
                     });
                     ManagePageManager.getInstance().showTempPage(page);
                 });

@@ -187,7 +187,7 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
     }
 
     public static final class ModUpdateObject {
-        final LocalModFile.ModUpdate data;
+        public final LocalModFile.ModUpdate data;
         final MutableStateFlow<Boolean> enabled = StateFlowKt.MutableStateFlow(false);
         final MutableStateFlow<String> fileName = StateFlowKt.MutableStateFlow(null);
         final MutableStateFlow<String> currentVersion = StateFlowKt.MutableStateFlow(null);
@@ -275,7 +275,7 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
         private final Collection<Task<?>> dependents;
         private final List<LocalModFile> failedMods = new ArrayList<>();
 
-        ModUpdateTask(ModManager modManager, List<Pair<LocalModFile, RemoteMod.Version>> mods, boolean keepOldVersion) {
+        public ModUpdateTask(ModManager modManager, List<Pair<LocalModFile, RemoteMod.Version>> mods, boolean keepOldVersion) {
             setStage("mods.check_updates.update");
             getProperties().put("total", mods.size());
 

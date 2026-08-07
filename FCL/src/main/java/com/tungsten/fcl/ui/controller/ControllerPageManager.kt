@@ -5,6 +5,7 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIListener
 import com.tungsten.fcl.ui.controller.compose.ComposeControllerManagePage
+import com.tungsten.fcl.ui.controller.compose.ComposeControllerRepoPage
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 
@@ -18,19 +19,19 @@ class ControllerPageManager(
         const val PAGE_ID_CONTROLLER_MANAGER: Int = 15040
         const val PAGE_ID_CONTROLLER_REPO: Int = 15041
         const val USE_COMPOSE_CONTROLLER_PAGES: Boolean = true
+        const val USE_COMPOSE_CONTROLLER_REPO: Boolean = true
 
         @JvmStatic
         var instance: ControllerPageManager? = null
     }
 
     private lateinit var controllerManagePage: FCLCommonPage
-    private val controllerRepoPage: ControllerRepoPage by lazy {
-        ControllerRepoPage(
-            context,
-            PAGE_ID_CONTROLLER_REPO,
-            parent,
-            R.layout.page_controller_repo
-        )
+    private val controllerRepoPage: FCLCommonPage by lazy {
+        if (USE_COMPOSE_CONTROLLER_REPO) {
+            ComposeControllerRepoPage(context!!, PAGE_ID_CONTROLLER_REPO, parent!!)
+        } else {
+            ControllerRepoPage(context, PAGE_ID_CONTROLLER_REPO, parent, R.layout.page_controller_repo)
+        }
     }
 
     init {

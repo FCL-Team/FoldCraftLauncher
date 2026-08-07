@@ -547,7 +547,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         private final ModTranslations.Mod mod;
         private RemoteMod remoteMod;
 
-        ModInfoObject(Context context, LocalModFile localModFile) {
+        public ModInfoObject(Context context, LocalModFile localModFile) {
             this.localModFile = localModFile;
             this.active = localModFile.activeFlow();
 
@@ -570,15 +570,15 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
             return active;
         }
 
-        String getTitle() {
+        public String getTitle() {
             return title;
         }
 
-        String getSubtitle() {
+        public String getSubtitle() {
             return message;
         }
 
-        LocalModFile getModInfo() {
+        public LocalModFile getModInfo() {
             return localModFile;
         }
 

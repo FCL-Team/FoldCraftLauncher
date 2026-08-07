@@ -22,8 +22,9 @@ import com.tungsten.fcl.ui.compose.dialog.MiuixRenameVersionDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.download.modpack.compose.ComposeLocalModpackPage;
 import com.tungsten.fcl.ui.download.modpack.compose.ComposeModpackSelectionPage;
+import com.tungsten.fcl.ui.download.compose.ComposeTempPage;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
-import com.tungsten.fcl.ui.manage.ModpackTypeSelectionPage;
+import com.tungsten.fcl.ui.manage.compose.ComposeModpackTypeSelectionPage;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.NavigationBus;
 import com.tungsten.fclcore.auth.Account;
@@ -143,7 +144,7 @@ public class Versions {
     }
 
     public static void exportVersion(Context context, FCLUILayout parent, Profile profile, String version) {
-        ModpackTypeSelectionPage page = new ModpackTypeSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_type, profile, version);
+        ComposeModpackTypeSelectionPage page = new ComposeModpackTypeSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, profile, version);
         ManagePageManager.getInstance().showTempPage(page);
     }
 
