@@ -663,9 +663,11 @@ Java_org_lwjgl_glfw_CallbackBridge_nativeSetWindowAttrib(__attribute__((unused))
 
     JavaVM *jvm = pojav_environ->runtimeJavaVMPtr;
     JNIEnv *jvm_env = NULL;
+    jboolean attached = JNI_FALSE;
     jint env_result = (*jvm)->GetEnv(jvm, (void **) &jvm_env, JNI_VERSION_1_4);
     if (env_result == JNI_EDETACHED) {
         env_result = (*jvm)->AttachCurrentThread(jvm, &jvm_env, NULL);
+        attached = JNI_TRUE;
     }
     if (env_result != JNI_OK) {
         printf("input_bridge nativeSetWindowAttrib() JNI call failed: %i\n", env_result);
@@ -676,7 +678,9 @@ Java_org_lwjgl_glfw_CallbackBridge_nativeSetWindowAttrib(__attribute__((unused))
             pojav_environ->method_glftSetWindowAttrib,
             (jlong) pojav_environ->showingWindow, attrib, value
     );
-//    (*jvm)->DetachCurrentThread(jvm);
+    if (attached) {
+        (*jvm)->DetachCurrentThread(jvm);
+    }
     // Attaching every time is annoying, so stick the attachment to the Android GUI thread around
 }
 
