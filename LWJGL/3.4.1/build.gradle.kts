@@ -25,16 +25,21 @@ dependencies {
 tasks.jar {
     // Modules to copy over to the components directory instead of patching and merging
     val excludedModules = arrayOf(
-        "jsr305.jar",
+        "lwjgl-lwjglx.jar",
         "lwjgl.jar",
+        "jsr305.jar",
         "lwjgl-freetype.jar",
         "lwjgl-jemalloc.jar",
-        "lwjgl-lwjglx.jar",
         "lwjgl-nanovg.jar",
         "lwjgl-openal.jar",
-        "lwjgl-opengl.jar",
         "lwjgl-stb.jar",
         "lwjgl-tinyfd.jar",
+        "lwjgl-shaderc.jar",
+        "lwjgl-spvc.jar",
+        "lwjgl-vma.jar",
+        "lwjgl-vulkan.jar",
+        "lwjgl-sdl.jar",
+        "lwjgl-spng.jar"
     )
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
