@@ -79,7 +79,7 @@ jint JNI_OnLoad(JavaVM *vm, __attribute__((unused)) void *reserved) {
                 "glfwSetWindowAttrib", "(JII)V");
         pojav_environ->method_internalWindowSizeChanged = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetStaticMethodID(
                 pojav_environ->runtimeJNIEnvPtr_JRE, pojav_environ->vmGlfwClass,
-                "internalWindowSizeChanged", "(JII)V");
+                "internalWindowSizeChanged", "(J)V");
         jfieldID field_keyDownBuffer = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetStaticFieldID(
                 pojav_environ->runtimeJNIEnvPtr_JRE, pojav_environ->vmGlfwClass, "keyDownBuffer",
                 "Ljava/nio/ByteBuffer;");
