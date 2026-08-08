@@ -13,34 +13,28 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.SplashActivity;
+import com.tungsten.fcl.activity.compose.EulaScreenKt;
+import com.tungsten.fcl.activity.compose.EulaStateHolder;
 import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fcllibrary.component.FCLFragment;
-import com.tungsten.fcllibrary.component.view.FCLButton;
-import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 import java.io.IOException;
 
-public class EulaFragment extends FCLFragment implements View.OnClickListener {
+/**
+ * 用户协议页（EULA）。UI 已迁移 Compose/Miuix（activity/compose/EulaScreen.kt，
+ * 经 LegacyBridge.createComposeView 嵌入）；本类保留宿主逻辑：eula.txt 异步加载、
+ * 「下一步」写 isFirstLaunch 并推进 SplashActivity.start()。
+ * 旧 fragment_eula.xml 已随 Compose 固化删除。
+ */
+public class EulaFragment extends FCLFragment {
 
-    private FCLProgressBar progressBar;
-    private FCLTextView eula;
-    private FCLButton next;
+    private final EulaStateHolder holder = new EulaStateHolder();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_eula, container, false);
-
-        progressBar = findViewById(view, R.id.progress);
-        eula = findViewById(view, R.id.eula);
-
-        next = findViewById(view, R.id.next);
-        next.setOnClickListener(this);
-
         loadEula();
-
-        return view;
+        return EulaScreenKt.createEulaView(requireContext(), holder, this::onNext);
     }
 
     private void loadEula() {
@@ -54,24 +48,18 @@ public class EulaFragment extends FCLFragment implements View.OnClickListener {
             }
             final String s = str;
             if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    progressBar.setVisibility(View.GONE);
-                    eula.setText(s);
-                });
+                getActivity().runOnUiThread(() -> holder.setEulaText(s));
             }
         }).start();
     }
 
-    @Override
-    public void onClick(View view) {
-        if (view == next) {
-            if (getActivity() != null) {
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean("isFirstLaunch", false);
-                editor.apply();
-                ((SplashActivity) getActivity()).start();
-            }
+    private void onNext() {
+        if (getActivity() != null) {
+            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("isFirstLaunch", false);
+            editor.apply();
+            ((SplashActivity) getActivity()).start();
         }
     }
 }

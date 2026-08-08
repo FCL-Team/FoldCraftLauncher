@@ -74,7 +74,6 @@ import com.tungsten.fcl.ui.compose.FCLDialogs
 import com.tungsten.fcl.ui.compose.FCLDropdownField
 import com.tungsten.fcl.ui.compose.FCLTextField
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog
-import com.tungsten.fcl.ui.compose.fclSwitchColors
 import com.tungsten.fcl.ui.download.compose.ComposeInstallerListPage
 import com.tungsten.fcl.ui.download.compose.ComposeTempPage
 import com.tungsten.fcl.ui.download.version.InstallFailureAlert.alertFailureMessage
@@ -122,7 +121,7 @@ import top.yukonga.miuix.kmp.basic.DropdownArrowEndAction
 import top.yukonga.miuix.kmp.basic.DropdownImpl
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.ListPopupColumn
-import top.yukonga.miuix.kmp.basic.Switch
+import com.tungsten.fcl.ui.compose.FCLSwitch
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.window.WindowListPopup
@@ -686,7 +685,7 @@ class ComposeWorldInfoPage(context: Context, id: Int, parent: FCLUILayout, priva
                 modifier = Modifier.weight(1f),
                 maxLines = 1,
             )
-            Switch(checked = current, onCheckedChange = { on -> current = on; onChange?.invoke(on) }, colors = fclSwitchColors())
+            FCLSwitch(checked = current, onCheckedChange = { on -> current = on; onChange?.invoke(on) })
         }
     }
 

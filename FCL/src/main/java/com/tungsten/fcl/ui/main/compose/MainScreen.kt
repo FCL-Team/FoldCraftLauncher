@@ -118,11 +118,12 @@ fun MainScreen() {
             .fillMaxSize()
             .padding(10.dp),
     ) {
-        // 皮肤 3D 预览：居中 50% 宽 × 80% 高（对齐 ui_main.xml :87-95）
+        // 皮肤 3D 预览：靠右 50% 宽 × 80% 高（对齐 ui_main.xml :87-95 的 End_toEndOf，
+        // 上下贴 parent 即垂直居中 → CenterEnd）
         if (!skinModelClosed) {
             SkinModelPreview(
                 modifier = Modifier
-                    .align(Alignment.Center)
+                    .align(Alignment.CenterEnd)
                     .fillMaxWidth(0.5f)
                     .fillMaxHeight(0.8f),
             )
@@ -276,10 +277,11 @@ private fun SkinModelPreview(modifier: Modifier = Modifier) {
             BitmapFactory.decodeStream(ComposeMainUI::class.java.getResourceAsStream("/assets/img/alex.png"))
         }
     }
-    val textures by produceState<Array<Bitmap?>?>(initialValue = null, account, refreshTick) {
+    val textures by produceState<Array<Bitmap?>?>(initialValue = null, account, refreshTick, defaultSkin) {
         val current = account
         if (current == null) {
-            value = arrayOf(defaultSkin, null)
+            // 对齐旧版无账户显示 alex 皮肤；解码未完成前保持 null，避免向渲染器传空纹理
+            value = defaultSkin?.let { arrayOf(it, null) }
         } else {
             val flow = TexturesLoader.textureFlow(current)
             value = flow.value?.let { arrayOf(it.getOrNull(0), it.getOrNull(1)) }
@@ -294,7 +296,8 @@ private fun SkinModelPreview(modifier: Modifier = Modifier) {
     DisposableEffect(textures) {
         ComposeMainUI.textureRefreshHook = {
             val t = textures
-            if (t != null) rendererHolder[0]?.updateTexture(t[0], t.getOrNull(1))
+            // NormalizedSkin 不接受空 skin 位图（NPE），仅在上传非空纹理时调用
+            if (t != null && t[0] != null) rendererHolder[0]?.updateTexture(t[0], t.getOrNull(1))
         }
         onDispose { ComposeMainUI.textureRefreshHook = null }
     }
@@ -310,7 +313,8 @@ private fun SkinModelPreview(modifier: Modifier = Modifier) {
         },
         update = {
             val t = textures
-            if (t != null) rendererHolder[0]?.updateTexture(t[0], t.getOrNull(1))
+            // NormalizedSkin 不接受空 skin 位图（NPE），仅在上传非空纹理时调用
+            if (t != null && t[0] != null) rendererHolder[0]?.updateTexture(t[0], t.getOrNull(1))
         },
         onRelease = { viewer ->
             viewer.onPause()

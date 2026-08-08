@@ -488,9 +488,9 @@ class ComposeControllerRepoPage(context: Context, id: Int, parent: FCLUILayout) 
                 val indexStr = NetworkUtils.doGet(NetworkUtils.toURL(head + "index.json"))
                 val categoryStr = NetworkUtils.doGet(NetworkUtils.toURL(head + "category.json"))
                 val allIndexes: ArrayList<ControllerIndex> =
-                    JsonUtils.GSON.fromJson(indexStr, object : TypeToken<ArrayList<ControllerIndex>>() {}.type)
+                    JsonUtils.GSON.fromJson(indexStr, TypeToken.getParameterized(ArrayList::class.java, ControllerIndex::class.java).type)
                 val loaded: ArrayList<ControllerCategory> =
-                    JsonUtils.GSON.fromJson(categoryStr, object : TypeToken<ArrayList<ControllerCategory>>() {}.type)
+                    JsonUtils.GSON.fromJson(categoryStr, TypeToken.getParameterized(ArrayList::class.java, ControllerCategory::class.java).type)
                 loaded.add(0, ControllerCategory(0, null))
                 val filtered = allIndexes.filter { i ->
                     (i.lang == "all" || langSel == 0 ||
@@ -666,7 +666,7 @@ class ComposeControllerRepoPage(context: Context, id: Int, parent: FCLUILayout) 
             val data = ArrayList<Array<String>>()
             val indexStr = NetworkUtils.doGet(NetworkUtils.toURL(head + "index.json"))
             val indexes: ArrayList<ControllerIndex> =
-                JsonUtils.GSON.fromJson(indexStr, object : TypeToken<ArrayList<ControllerIndex>>() {}.type)
+                JsonUtils.GSON.fromJson(indexStr, TypeToken.getParameterized(ArrayList::class.java, ControllerIndex::class.java).type)
             for (controller in Controllers.getControllers()) {
                 val index = indexes.firstOrNull { it.id == controller.id } ?: continue
                 // 单个控件的 version.json 拉取/解析失败只跳过本项并记日志：

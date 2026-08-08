@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui.compose
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,23 +11,30 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tungsten.fcl.ui.compose.FCLCard
 import com.tungsten.fcl.ui.compose.FCLCornerRadius
 import androidx.compose.foundation.layout.ColumnScope
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.CardDefaults
+import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
 import top.yukonga.miuix.kmp.basic.TextButtonColors
+import top.yukonga.miuix.kmp.theme.LocalContentColor
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import top.yukonga.miuix.kmp.window.WindowDialog
 
@@ -77,10 +85,16 @@ fun FCLDialog(
     buttons: List<FCLDialogButton> = emptyList(),
     content: (@Composable () -> Unit)? = null,
 ) {
+    // 弹窗文字不跟随自定义 onBackground(color2)：对齐遗留 FCLTextView 的
+    // systemAutoTint（深色白字/浅色黑字），避免 color2 为白色时白底白字
+    val contentColor = if (isSystemInDarkTheme()) Color.White else Color.Black
     WindowDialog(
         show = show,
-        title = title,
+        // 标题不由 WindowDialog 自绘（无图标、样式不符旧版），改由内容区
+        // [FCLAlertTitle] 统一渲染（对齐遗留 dialog_alert 的图标+标题行）
+        title = null,
         summary = summary,
+        summaryColor = contentColor,
         onDismissRequest = onDismissRequest,
         // 对齐遗留 dialog_background（#F4F4F4 / #232323）→ surface token，
         // 不用 Miuix 默认 background（light 为纯白）
@@ -89,8 +103,39 @@ fun FCLDialog(
         // WindowDialog 的内容槽是普通 Column（手机端不限高、不滚动），
         // 这里自包一层 Column 让 FCLDialogBody 的 weight 限高生效。
         Column {
-            FCLDialogBody(summary = null, buttons = buttons, content = content?.let { c -> { c() } })
+            CompositionLocalProvider(LocalContentColor provides contentColor) {
+                FCLAlertTitle(title = title)
+                FCLDialogBody(summary = null, buttons = buttons, content = content?.let { c -> { c() } })
+            }
         }
+    }
+}
+
+/**
+ * 旧版弹窗标题行（对齐 dialog_alert.xml :16-41）：24dp 信息图标 + 18sp 粗体标题、
+ * 整体居中、图标与标题间距 10dp；title 为 null 时对齐 FCLAlertDialog 默认
+ * （info 图标 + 「提示」dialog_info）。图标用矢量自带 darker_gray 染色，不再着色。
+ */
+@Composable
+fun FCLAlertTitle(title: String?) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painter = painterResource(com.tungsten.fcllibrary.R.drawable.ic_baseline_info_24),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = Color.Unspecified,
+        )
+        Spacer(Modifier.width(10.dp))
+        Text(
+            text = title ?: stringResource(com.tungsten.fcllibrary.R.string.dialog_info),
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+        )
     }
 }
 
@@ -125,24 +170,23 @@ fun FCLDialogCard(
         // 不用 Miuix Card 默认 surfaceContainer（light 为纯白）
         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.surface),
     ) {
-        Column {
-            title?.let {
-                Text(
-                    text = it,
-                    modifier = Modifier.fillMaxWidth(),
-                    style = MiuixTheme.textStyles.title4,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                )
+        // 弹窗文字不跟随自定义 onBackground(color2)：对齐遗留 systemAutoTint
+        // （深色白字/浅色黑字）；显式指定颜色（如 onPrimary 着色卡片）不受影响
+        CompositionLocalProvider(
+            LocalContentColor provides (if (isSystemInDarkTheme()) Color.White else Color.Black),
+        ) {
+            Column {
+                // 对齐遗留 dialog_alert 的图标+标题行（null 时显示 info 图标 + 「提示」）
+                FCLAlertTitle(title = title)
                 Spacer(Modifier.height(12.dp))
+                FCLDialogBody(
+                    summary = summary,
+                    buttons = buttons,
+                    scrollable = scrollable,
+                    bottomContent = bottomContent,
+                    content = content,
+                )
             }
-            FCLDialogBody(
-                summary = summary,
-                buttons = buttons,
-                scrollable = scrollable,
-                bottomContent = bottomContent,
-                content = content,
-            )
         }
     }
 }

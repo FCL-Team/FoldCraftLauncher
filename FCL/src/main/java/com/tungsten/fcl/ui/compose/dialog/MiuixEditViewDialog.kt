@@ -53,12 +53,11 @@ import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import com.tungsten.fcl.ui.compose.FCLSlider
-import top.yukonga.miuix.kmp.basic.Switch
+import com.tungsten.fcl.ui.compose.FCLSwitch
 import top.yukonga.miuix.kmp.basic.TabRow
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextButton
 import com.tungsten.fcl.ui.compose.FCLTextField
-import com.tungsten.fcl.ui.compose.fclSwitchColors
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -776,7 +775,7 @@ class MiuixEditViewDialog(
                 style = MiuixTheme.textStyles.body2,
                 modifier = Modifier.weight(1f),
             )
-            Switch(checked = checked, onCheckedChange = onCheckedChange, colors = fclSwitchColors())
+            FCLSwitch(checked = checked, onCheckedChange = onCheckedChange)
         }
     }
 

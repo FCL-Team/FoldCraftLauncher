@@ -17,7 +17,11 @@
 -keep class org.main.** { *; }
 
 -dontobfuscate
--keepattributes Signature,Exceptions,InnerClasses,EnclosingMethod,Annotation,*Annotation*,RuntimeVisible*Annotation*,AnnotationDefault
+# 注意：keepattributes 属性名必须是 R8 合法值（Signature/Exceptions/InnerClasses/
+# EnclosingMethod/RuntimeVisibleAnnotations 等）；此前混入的裸 `Annotation` 与
+# `*Annotation*` 通配写法会导致 R8 整条忽略该选项，泛型签名（gson TypeToken
+# 匿名类依赖）被整体剥离，fordebug/release 启动即崩（Config$Serializer$1）。
+-keepattributes Signature,Exceptions,InnerClasses,EnclosingMethod,RuntimeVisibleAnnotations,RuntimeInvisibleAnnotations,AnnotationDefault
 
 # ---- androidx.startup：manifest metadata 反射发现 Initializer ----
 -keep class androidx.startup.** { *; }
@@ -26,6 +30,10 @@
 -keepclasseswithmembernames class * { native <methods>; }
 
 # ---- gson：注解类 + 被注解模型 + TypeAdapter 实现 ----
+# TypeToken 匿名子类泛型签名保留三件套（R8 官方 FAQ GSON 小节：缺一不可，
+# full/compat 模式均需要；gson 2.11.0+ 内置 gson.pro 同义规则，本项目 gson 2.10.1 需手配）。
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
 -keep class com.google.gson.annotations.** { *; }
 -keep @com.google.gson.annotations.JsonAdapter class * { *; }
 -keepclassmembers class * {

@@ -161,8 +161,7 @@ public class ControlViewGroup implements Cloneable {
 
             viewGroup.setName(Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse(""));
             viewGroup.setVisibility(Optional.ofNullable(obj.get("visibility")).map(JsonElement::getAsString).orElse(Visibility.VISIBLE.toString()).equals(Visibility.INVISIBLE.toString()) ? Visibility.INVISIBLE : Visibility.VISIBLE);
-            viewGroup.setViewData(gson.fromJson(Optional.ofNullable(obj.get("viewData")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ViewData()).getAsJsonObject()), new TypeToken<ViewData>() {
-            }.getType()));
+            viewGroup.setViewData(gson.fromJson(Optional.ofNullable(obj.get("viewData")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ViewData()).getAsJsonObject()), ViewData.class));
 
             return viewGroup;
         }
@@ -309,10 +308,8 @@ public class ControlViewGroup implements Cloneable {
                 JsonObject obj = new JsonObject();
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-                obj.add("buttonList", gson.toJsonTree(new ArrayList<>(src.getButtonList()), new TypeToken<ArrayList<ControlButtonData>>() {
-                }.getType()).getAsJsonArray());
-                obj.add("directionList", gson.toJsonTree(new ArrayList<>(src.getDirectionList()), new TypeToken<ArrayList<ControlDirectionData>>() {
-                }.getType()).getAsJsonArray());
+                obj.add("buttonList", gson.toJsonTree(new ArrayList<>(src.getButtonList()), TypeToken.getParameterized(ArrayList.class, ControlButtonData.class).getType()).getAsJsonArray());
+                obj.add("directionList", gson.toJsonTree(new ArrayList<>(src.getDirectionList()), TypeToken.getParameterized(ArrayList.class, ControlDirectionData.class).getType()).getAsJsonArray());
 
                 return obj;
             }
@@ -338,8 +335,7 @@ public class ControlViewGroup implements Cloneable {
                             throw new JsonParseException("ControlButtonData broken!");
                         }).collect(Collectors.toList());
                 data.setButtonList(buttonList);
-                data.setDirectionList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionData>>() {
-                }.getType()));
+                data.setDirectionList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), TypeToken.getParameterized(ArrayList.class, ControlDirectionData.class).getType()));
 
                 return data;
             }

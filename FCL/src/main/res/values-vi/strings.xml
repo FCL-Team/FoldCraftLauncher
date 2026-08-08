@@ -143,6 +143,7 @@
     <string name="button_save_as">Lưu thành</string>
     <string name="button_select_all">Chọn tất cả</string>
     <string name="button_select_invert">Đảo ngược lựa chọn</string>
+    <string name="button_set">Đặt</string>
     <string name="button_reset">Đặt lại</string>
     <string name="button_overwrite">Ghi đè</string>
     <string name="button_up" translatable="false">▲</string>
@@ -827,6 +828,7 @@
     <string name="mods_restore">Khôi phục</string>
     <string name="mods_url">Trang chính thức</string>
     <string name="mods_update_modpack_mod_warning">Việc cập nhật mods trong một modpack có thể dẫn đến kết quả không thể sửa chữa, có thể làm hỏng modpack khiến nó không thể khởi động. Bạn có chắc chắn muốn cập nhật không?</string>
+    <string name="mods_screenshot_no_result">Không có ảnh chụp màn hình nào để hiển thị</string>
 
     <string name="profile_shared">Thư mục dùng chung</string>
     <string name="profile_private">Thư mục riêng tư</string>

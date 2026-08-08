@@ -93,8 +93,7 @@ public class Terracotta {
                 TerracottaState.Ready state = STATE.getValue();
                 int index = state == null ? -1 : state.index;
                 String stateJson = TerracottaAndroidAPI.getState();
-                TerracottaState.Ready object = JsonUtils.fromNonNullJson(stateJson, new TypeToken<TerracottaState.Ready>() {
-                }.getType());
+                TerracottaState.Ready object = JsonUtils.fromNonNullJson(stateJson, TerracottaState.Ready.class);
                 TerracottaState.Ready next = object.index <= index ? null : object;
                 if (next != null) {
                     compareAndSet(state, next);

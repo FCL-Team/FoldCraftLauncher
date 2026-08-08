@@ -172,8 +172,8 @@ public class ControlDirectionStyle implements Cloneable {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             style.setStyleType(Optional.ofNullable(obj.get("styleType")).map(JsonElement::getAsString).orElse(Type.BUTTON.toString()).equals(Type.ROCKER.toString()) ? Type.ROCKER : Type.BUTTON);
-            style.setButtonStyle(gson.fromJson(Optional.ofNullable(obj.get("buttonStyle")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ButtonStyle()).getAsJsonObject()), new TypeToken<ButtonStyle>(){}.getType()));
-            style.setRockerStyle(gson.fromJson(Optional.ofNullable(obj.get("rockerStyle")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new RockerStyle()).getAsJsonObject()), new TypeToken<RockerStyle>(){}.getType()));
+            style.setButtonStyle(gson.fromJson(Optional.ofNullable(obj.get("buttonStyle")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ButtonStyle()).getAsJsonObject()), ButtonStyle.class));
+            style.setRockerStyle(gson.fromJson(Optional.ofNullable(obj.get("rockerStyle")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new RockerStyle()).getAsJsonObject()), RockerStyle.class));
 
             return style;
         }

@@ -240,6 +240,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     }
                 }
                 uiManager.init {
+                    // 启动等待遮罩：主 UI 加载完成（onLoad，主线程回调）后淡出移除
+                    dismissSplashOverlay()
                     home.setOnSelectListener(this@MainActivity)
                     manage.setOnSelectListener(this@MainActivity)
                     download.setOnSelectListener(this@MainActivity)
@@ -328,10 +330,24 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // 启动等待遮罩显示期间直接消费返回键，不传给 UIManager
+            if (binding.splashOverlay.visibility == View.VISIBLE) return true
             _uiManager?.onBackPressed()
             return true
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    /** 移除启动等待遮罩：短淡出后 GONE，动画时长对齐 ThemeEngine.animationSpeed 既有约定（speed*100ms）。 */
+    private fun dismissSplashOverlay() {
+        val overlay = binding.splashOverlay
+        if (overlay.visibility != View.VISIBLE) return
+        val duration = ThemeEngine.getInstance().theme.animationSpeed * 100L
+        overlay.animate()
+            .alpha(0f)
+            .setDuration(duration)
+            .withEndAction { overlay.visibility = View.GONE }
+            .start()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

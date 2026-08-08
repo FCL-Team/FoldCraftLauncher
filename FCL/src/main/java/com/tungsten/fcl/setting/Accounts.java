@@ -259,8 +259,7 @@ public final class Accounts {
         if (Files.exists(globalAccountsFile)) {
             try (Reader reader = Files.newBufferedReader(globalAccountsFile)) {
                 globalAccountStorages.setValue((List<Map<Object, Object>>)
-                        Config.CONFIG_GSON.fromJson(reader, new TypeToken<List<Map<Object, Object>>>() {
-                        }.getType()));
+                        Config.CONFIG_GSON.fromJson(reader, TypeToken.getParameterized(List.class, TypeToken.getParameterized(Map.class, Object.class, Object.class).getType()).getType()));
             } catch (Throwable e) {
                 LOG.log(Level.WARNING, "Failed to load global accounts", e);
             }

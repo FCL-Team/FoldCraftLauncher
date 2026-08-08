@@ -57,7 +57,7 @@ public class UpdateChecker {
                 Schedulers.androidUIThread().execute(() -> Toast.makeText(context, context.getString(R.string.update_checking), Toast.LENGTH_SHORT).show());
             }
             String res = NetworkUtils.doGet(NetworkUtils.toURL(LocaleUtils.isChinese(context) ? UPDATE_CHECK_URL_CN : UPDATE_CHECK_URL));
-            ArrayList<RemoteVersion> versions = JsonUtils.GSON.fromJson(res, new TypeToken<ArrayList<RemoteVersion>>(){}.getType());
+            ArrayList<RemoteVersion> versions = JsonUtils.GSON.fromJson(res, TypeToken.getParameterized(ArrayList.class, RemoteVersion.class).getType());
             for (RemoteVersion version : versions) {
                 if (version.getVersionCode() > getCurrentVersionCode(context)) {
                     if (showBeta || !version.isBeta()) {

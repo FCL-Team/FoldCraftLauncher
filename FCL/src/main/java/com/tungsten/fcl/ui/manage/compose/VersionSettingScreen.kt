@@ -1,24 +1,35 @@
 package com.tungsten.fcl.ui.manage.compose
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.state.ToggleableState
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -27,20 +38,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.tungsten.fcl.R
 import com.tungsten.fcl.game.FCLGameRepository
 import com.tungsten.fcl.util.AndroidUtils
+import com.tungsten.fcl.ui.compose.FCLCard
+import com.tungsten.fcl.ui.compose.FCLCheckBox
+import com.tungsten.fcl.ui.compose.FCLDialog
+import com.tungsten.fcl.ui.compose.FCLDialogButton
+import com.tungsten.fcl.ui.compose.FCLSliderHeight
 import com.tungsten.fcl.ui.compose.FCLSwitchPreference
 import com.tungsten.fcl.ui.compose.FCLTextField
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import kotlinx.coroutines.flow.StateFlow
 import top.yukonga.miuix.kmp.basic.BasicComponent
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
-import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.LinearProgressIndicator
 import top.yukonga.miuix.kmp.basic.ProgressIndicatorDefaults
+import top.yukonga.miuix.kmp.basic.Slider
 import top.yukonga.miuix.kmp.basic.SliderDefaults
-import com.tungsten.fcl.ui.compose.FCLSliderPreference
+import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -50,10 +66,12 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * special_setting_layout，仅单版本页显示（对齐 :175 的 GONE/VISIBLE）。
  *
  * 组件选型（bridge-api.md §3.3 对照表）：
- * - FXUtils.bindBoolean × 10 → SwitchPreference（写即回写 observable 属性）；
+ * - FXUtils.bindBoolean × 10 → SwitchPreference（check_auto_allocate 复原为圆圈套球
+ *   FCLCheckBox；写即回写 observable 属性）；
  * - FXUtils.bindString × 4 → BasicComponent + TextField（逐键回写，等价 EditText 绑定）；
- * - barMemory/maxMemory 双向 → SliderPreference（范围 0..设备总内存，对齐
- *   FCLNumberSeekBar.setMax(MemoryUtils.getTotalDeviceMemory)）；
+ * - barMemory/maxMemory 双向 → memory_state 文本 + Slider + 可点数值文本行（范围
+ *   0..设备总内存，对齐 FCLNumberSeekBar.setMax(MemoryUtils.getTotalDeviceMemory)），
+ *   点击数值弹输入弹窗（对齐 FCLNumberSeekBar.java:122-136）；
  * - 可见性绑定（settingLayout / driverContainer / disableProperty）→ if (state.x)。
  *
  * 染色对齐旧版 page_version_setting.xml / FCLLibrary 组件主题（见文件底部
@@ -338,8 +356,10 @@ fun VersionSettingScreen(
 }
 
 /**
- * 内存区块（对齐 :118-173 + XML :174-250）：自动分配开关 + 分配滑杆 +
- * 内存占用条 + 两行信息文本（文本格式串与遗留 AndroidUtils.getLocalizedText 调用一致）。
+ * 内存区块（对齐 :118-173 + XML :174-250）：「内存」label + 自动分配复选框
+ * （check_auto_allocate，圆圈套球 FCLCheckBox）+ memory_state/分配滑杆行（点击数值
+ * 弹输入弹窗，对齐 FCLNumberSeekBar.java:122-136）+ 内存占用条 + 两行信息文本
+ * （文本格式串与遗留 AndroidUtils.getLocalizedText 调用一致）。
  */
 @Composable
 private fun MemoryBlock(
@@ -348,27 +368,79 @@ private fun MemoryBlock(
     onMaxMemoryChange: (Int) -> Unit,
 ) {
     val context = LocalContext.current
-    ThemedSwitchPreference(
-        checked = state.autoMemory,
-        onCheckedChange = onAutoMemoryChange,
+    // 「内存」label（对齐 XML :181-187 的 FCLTextView）
+    BasicComponent(
         title = stringResource(R.string.settings_memory),
-        summary = stringResource(R.string.settings_memory_auto_allocate),
-    )
-    FCLSliderPreference(
-        value = state.maxMemory.toFloat(),
-        onValueChange = { onMaxMemoryChange(it.toInt()) },
-        title = stringResource(
-            if (state.autoMemory) R.string.settings_memory_lower_bound else R.string.settings_memory,
-        ),
         titleColor = autoTintComponentColors(),
-        valueText = "${state.maxMemory}MB",
-        valueRange = 0f..state.totalMemoryMB.toFloat(),
-        // 对齐 FCLNumberSeekBar：thumb/progress tint = dkColor（= primaryVariant）
-        sliderColors = SliderDefaults.sliderColors(
-            foregroundColor = MiuixTheme.colorScheme.primaryVariant,
-            thumbColor = MiuixTheme.colorScheme.primaryVariant,
-        ),
     )
+    // check_auto_allocate 复选框（对齐 XML :188-194；旧 CheckBox 文本随框一并响应点击）
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        FCLCheckBox(
+            state = if (state.autoMemory) ToggleableState.On else ToggleableState.Off,
+            onClick = { onAutoMemoryChange(!state.autoMemory) },
+        )
+        Text(
+            text = stringResource(R.string.settings_memory_auto_allocate),
+            style = MiuixTheme.textStyles.body2,
+            color = MiuixTheme.colorScheme.onPrimary,
+            modifier = Modifier.clickable { onAutoMemoryChange(!state.autoMemory) },
+        )
+    }
+
+    // memory_state + bar_memory（对齐 XML :196-219）：状态文本 + 滑杆 + 可点数值文本
+    var showMemoryInput by remember { mutableStateOf(false) }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(
+                if (state.autoMemory) R.string.settings_memory_lower_bound else R.string.settings_memory,
+            ),
+            style = MiuixTheme.textStyles.body2,
+            color = MiuixTheme.colorScheme.onPrimary,
+            maxLines = 1,
+        )
+        // 对齐 XML bar_memory marginStart=10dp
+        Spacer(Modifier.width(10.dp))
+        Slider(
+            value = state.maxMemory.toFloat(),
+            onValueChange = { onMaxMemoryChange(it.toInt()) },
+            modifier = Modifier.weight(1f),
+            valueRange = 0f..state.totalMemoryMB.toFloat(),
+            height = FCLSliderHeight,
+            // 对齐 FCLNumberSeekBar：thumb/progress tint = dkColor（= primaryVariant）
+            colors = SliderDefaults.sliderColors(
+                foregroundColor = MiuixTheme.colorScheme.primaryVariant,
+                thumbColor = MiuixTheme.colorScheme.primaryVariant,
+            ),
+        )
+        // 数值文本（对齐 FCLNumberSeekBar 画在 thumb 处的 progress+suffix）：点击弹数值输入框
+        Text(
+            text = "${state.maxMemory}MB",
+            style = MiuixTheme.textStyles.body2,
+            color = MiuixTheme.colorScheme.onPrimary,
+            textAlign = TextAlign.End,
+            maxLines = 1,
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .clickable { showMemoryInput = true },
+        )
+    }
+    if (showMemoryInput) {
+        MemoryInputDialog(
+            totalMemoryMB = state.totalMemoryMB,
+            onConfirm = onMaxMemoryChange,
+            onDismiss = { showMemoryInput = false },
+        )
+    }
 
     // 空闲内存在拖动/刷新时重取（对齐遗留 StringBinding 每次失效重算）；context 补 key
     val freeMemoryMB = remember(context, state.usedMemoryMB, state.maxMemory, state.autoMemory) {
@@ -432,6 +504,51 @@ private fun MemoryBlock(
             }
         },
     )
+}
+
+/**
+ * 内存数值输入弹窗（对齐 FCLNumberSeekBar.java:122-136 单击数值区弹出的 EditDialog）：
+ * 标题 "(min ~ max)"、数字键盘、初始为空（旧版 defaultText=""）；确认时非数字或
+ * 越界（旧版判定 min..max 之外）静默忽略，空白输入不确认也不收起（对齐 EditDialog
+ * positive 空白不响应）；弹窗不可取消（对齐 EditDialog setCancelable(false)）。
+ */
+@Composable
+private fun MemoryInputDialog(
+    totalMemoryMB: Int,
+    onConfirm: (Int) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var input by remember { mutableStateOf("") }
+    FCLDialog(
+        show = true,
+        onDismissRequest = null,
+        title = "(0 ~ $totalMemoryMB)",
+        buttons = listOf(
+            FCLDialogButton(
+                stringResource(com.tungsten.fcllibrary.R.string.dialog_positive),
+                onClick = {
+                    if (input.isNotBlank()) {
+                        input.toIntOrNull()?.let { value ->
+                            if (value in 0..totalMemoryMB) onConfirm(value)
+                        }
+                        onDismiss()
+                    }
+                },
+            ),
+            FCLDialogButton(
+                stringResource(com.tungsten.fcllibrary.R.string.dialog_negative),
+                onClick = onDismiss,
+            ),
+        ),
+    ) {
+        FCLTextField(
+            value = input,
+            onValueChange = { input = it },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        )
+    }
 }
 
 /** 带当前值与编辑/安装按钮的设置行（对齐 XML 中"标题 + 值 + 设置/下载图标按钮"行）。 */

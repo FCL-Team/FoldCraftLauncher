@@ -118,6 +118,7 @@
     <string name="button_remove_confirm">آیا از حذف دائمی آن مطمئن هستید؟ این عمل قابل بازگشت نیست!</string>
     <string name="button_save_as">ذخیره به عنوان…</string>
     <string name="button_select_all">انتخاب همه</string>
+    <string name="button_set">تنظیم</string>
     <string name="button_reset">بازنشانی</string>
 
     <string name="community">انجمن</string>

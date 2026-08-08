@@ -66,8 +66,7 @@ public class QuickInputTexts {
             if (file.exists()) {
                 String json = FileUtils.readText(file);
                 Gson gson = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-                return gson.fromJson(json, new TypeToken<ArrayList<String>>() {
-                }.getType());
+                return gson.fromJson(json, TypeToken.getParameterized(ArrayList.class, String.class).getType());
             }
         } catch (IOException e) {
             Logging.LOG.log(Level.SEVERE, "Failed to get quick input text", e);

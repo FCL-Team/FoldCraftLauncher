@@ -68,8 +68,7 @@ public final class HMCLModpackInstallTask extends Task<Void> {
         ModpackConfiguration<Modpack> config = null;
         try {
             if (json.exists()) {
-                config = JsonUtils.GSON.fromJson(FileUtils.readText(json), new TypeToken<ModpackConfiguration<Modpack>>() {
-                }.getType());
+                config = JsonUtils.GSON.fromJson(FileUtils.readText(json), TypeToken.getParameterized(ModpackConfiguration.class, Modpack.class).getType());
 
                 if (!HMCLModpackProvider.INSTANCE.getName().equals(config.getType()))
                     throw new IllegalArgumentException("Version " + name + " is not a HMCL modpack. Cannot update this version.");

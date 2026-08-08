@@ -1,7 +1,15 @@
 package com.tungsten.fcl.ui.compose
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
@@ -10,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -18,7 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.state.ToggleableState
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
@@ -137,6 +148,46 @@ fun FCLCheckBox(
 }
 
 /**
+ * 旧版 FCLSwitch（AppCompat Material Switch）的 Compose 复原（FCLSwitch.java:37-46）：
+ * 几何对齐 Material Switch——34×14dp 全圆角轨道 + 20dp 圆形滑块（滑动动画）；
+ * 染色对齐 applyTheme：滑块 checked = dkColor（primaryVariant）/ unchecked = color（primary），
+ * 轨道 checked = color（primary）/ unchecked = Color.GRAY。
+ * Miuix Switch 为 MIUI 形态（squircle 轨道、比例不同），设置类开关一律走本组件。
+ * 参数对齐 Miuix Switch（checked/onCheckedChange，null 回调即禁用点击）。
+ */
+@Composable
+fun FCLSwitch(
+    checked: Boolean,
+    onCheckedChange: ((Boolean) -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    val scheme = MiuixTheme.colorScheme
+    val trackColor = if (checked) scheme.primary else Color.Gray
+    val thumbColor = if (checked) scheme.primaryVariant else scheme.primary
+    // 滑块位移：unchecked 0dp ↔ checked 14dp（34dp 轨道 - 20dp 滑块）
+    val thumbOffset by animateDpAsState(if (checked) 14.dp else 0.dp)
+    Box(
+        modifier = modifier
+            .size(width = 34.dp, height = 20.dp)
+            .clickable(enabled = onCheckedChange != null) { onCheckedChange?.invoke(!checked) },
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        Box(
+            Modifier
+                .align(Alignment.Center)
+                .size(width = 34.dp, height = 14.dp)
+                .background(trackColor, RoundedCornerShape(50)),
+        )
+        Box(
+            Modifier
+                .offset(x = thumbOffset)
+                .size(20.dp)
+                .background(thumbColor, CircleShape),
+        )
+    }
+}
+
+/**
  * FCLEditText 配色：透明背景（下划线由 [FCLTextField] 自绘），
  * label/hint = autoHintTint（onPrimary 0.6 alpha，Theme.getAutoHintTint 的 #99 同构），
  * 透明边框（抑制 Miuix 聚焦 squircle 描边）。
@@ -157,8 +208,9 @@ fun fclCursorBrush(): Brush = SolidColor(MiuixTheme.colorScheme.primary)
 
 /**
  * FCLEditText 的 Miuix 包装：透明底 + 底部指示线（聚焦 = primary 2dp，未聚焦 = primaryVariant 1dp），
- * 文字 = onPrimary，hint = onPrimary 0.6 alpha，光标 = primary。
- * 参数为 Miuix [TextField]（String 重载）的直通子集，业务行为零改动。
+ * 文字 = onPrimary 14sp（旧 FCLEditText 平台默认字号，替代 Miuix 默认 17sp），
+ * hint = onPrimary 0.6 alpha，光标 = primary；内边距收敛为 12/8dp（旧 AppCompat 紧凑高度，
+ * 替代 Miuix 默认大内边距）。参数为 Miuix [TextField]（String 重载）的直通子集，业务行为零改动。
  */
 @Composable
 fun FCLTextField(
@@ -195,12 +247,13 @@ fun FCLTextField(
                 strokeWidth = strokeWidth,
             )
         },
+        insideMargin = DpSize(width = 12.dp, height = 8.dp),
         colors = fclTextFieldColors(),
         label = label,
         useLabelAsPlaceholder = useLabelAsPlaceholder,
         enabled = enabled,
         readOnly = readOnly,
-        textStyle = MiuixTheme.textStyles.main.copy(color = scheme.onPrimary),
+        textStyle = MiuixTheme.textStyles.main.copy(fontSize = 14.sp, color = scheme.onPrimary),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         singleLine = singleLine,
@@ -323,6 +376,9 @@ fun fclButtonColors(): ButtonColors = ButtonDefaults.buttonColorsPrimary()
  * Miuix [Button] 的 FCL 包装：圆角固定 [FCLCornerRadius.Card]（5dp，fcl_button.xml），
  * 配色默认 [fclButtonColors]（主题色实心底）。页面上的实色操作按钮一律走本组件，
  * 不要直接用 Miuix 默认 Button（16dp 灰系，不跟随主题）。
+ * [minWidth] 直通 Miuix [Button] 的 minWidth：默认保持 Miuix 现状；
+ * 旧 XML 按行宽比例定宽的窄按钮（如主题色三行 0.13/0.25/0.11）传 0.dp，
+ * 否则默认 minWidth 会把按比例计算的宽度撑回去、挤掉后续按钮文字。
  * 其余参数直通 Miuix [Button]，业务行为零改动。
  */
 @Composable
@@ -330,6 +386,7 @@ fun FCLButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    minWidth: Dp = ButtonDefaults.MinWidth,
     colors: ButtonColors = fclButtonColors(),
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -338,6 +395,7 @@ fun FCLButton(
         modifier = modifier,
         enabled = enabled,
         cornerRadius = FCLCornerRadius.Card,
+        minWidth = minWidth,
         colors = colors,
         content = content,
     )

@@ -37,7 +37,7 @@ class HelpViewModel(
                     val res = NetworkUtils.doGet(NetworkUtils.toURL(DOC_INDEX_URL))
                     JsonUtils.GSON.fromJson<ArrayList<DocIndex>?>(
                         res,
-                        object : TypeToken<ArrayList<DocIndex>>() {}.type,
+                        TypeToken.getParameterized(ArrayList::class.java, DocIndex::class.java).type,
                     )
                 }
             }

@@ -309,4 +309,29 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- 启动等待遮罩：UIManager 初始化完成（onLoad）前覆盖全屏，吞掉触摸，避免过早操作页面崩溃；
+         elevation 需高于 left_menu/right_menu 的 100dp 才能真正盖住 -->
+    <FrameLayout
+        android:id="@+id/splash_overlay"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?android:attr/windowBackground"
+        android:clickable="true"
+        android:elevation="200dp"
+        android:focusable="true"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:contentDescription="@string/app_name"
+            android:src="@mipmap/ic_launcher" />
+
+    </FrameLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

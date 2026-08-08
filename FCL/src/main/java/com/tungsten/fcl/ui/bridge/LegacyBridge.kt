@@ -23,6 +23,7 @@ import com.tungsten.fcl.FCLApplication
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.compose.FCLDialog
+import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLTaskDialogContent
 import com.tungsten.fcl.ui.compose.FCLTaskDialogState
 import com.tungsten.fcl.ui.theme.FCLTheme
@@ -274,27 +275,30 @@ object LegacyBridge {
         val request by alertDialogRequest.collectAsStateWithLifecycle()
         val current = request
         if (current != null) {
-            WindowDialog(
+            // 对齐遗留 FCLAlertDialog：图标+标题行（FCLDialog/FCLAlertTitle 统一渲染）、
+            // 摘要、右侧按钮区（首个按钮为主按钮）
+            FCLDialog(
                 show = true,
+                onDismissRequest = { resolveAlertDialog(false) },
                 title = current.title,
                 summary = current.message,
-                onDismissRequest = { resolveAlertDialog(false) },
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    current.negativeText?.let { negative ->
-                        TextButton(text = negative, onClick = { resolveAlertDialog(false) })
-                        Spacer(Modifier.width(8.dp))
-                    }
-                    TextButton(
-                        text = current.positiveText ?: "OK",
-                        onClick = { resolveAlertDialog(true) },
+                buttons = buildList {
+                    add(
+                        FCLDialogButton(
+                            text = current.positiveText ?: "OK",
+                            onClick = { resolveAlertDialog(true) },
+                        ),
                     )
-                }
-            }
+                    current.negativeText?.let { negative ->
+                        add(
+                            FCLDialogButton(
+                                text = negative,
+                                onClick = { resolveAlertDialog(false) },
+                            ),
+                        )
+                    }
+                },
+            )
         }
 
         val taskRequest by taskDialogRequest.collectAsStateWithLifecycle()

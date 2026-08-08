@@ -4,18 +4,22 @@ import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialog
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
 import com.tungsten.fcl.ui.theme.FCLTheme
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
+import top.yukonga.miuix.kmp.theme.LocalContentColor
 import java.util.function.Consumer
 
 /**
@@ -50,11 +54,18 @@ open class FCLComposeDialog @JvmOverloads constructor(
         composeView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
         composeView.setContent {
             FCLTheme(context) {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
+                // 弹窗文字不跟随自定义 onBackground(color2)：对齐遗留 FCLTextView 的
+                // systemAutoTint（深色白字/浅色黑字），避免 color2 为白色时白底白字；
+                // 显式指定颜色（如 onPrimary 着色卡片）的文字不受影响
+                CompositionLocalProvider(
+                    LocalContentColor provides (if (isSystemInDarkTheme()) Color.White else Color.Black),
                 ) {
-                    content()
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        content()
+                    }
                 }
             }
         }

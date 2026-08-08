@@ -118,6 +118,7 @@
     <string name="button_remove_confirm">Tem certeza de que deseja remover-lo permanentemente? Esta ação não pode ser desfeita!</string>
     <string name="button_save_as">Salvar como</string>
     <string name="button_select_all">Selecionar tudo</string>
+    <string name="button_set">Definir</string>
     <string name="button_reset">Redefinir</string>
 
     <string name="community">Comunidade</string>

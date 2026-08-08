@@ -76,6 +76,7 @@ import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
 import com.tungsten.fcl.ui.compose.FCLTextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+import top.yukonga.miuix.kmp.theme.defaultTextStyles
 import top.yukonga.miuix.kmp.utils.PressFeedbackType
 import java.util.logging.Level
 import java.util.stream.Collectors
@@ -667,7 +668,9 @@ private fun PageButton(
         modifier = Modifier.padding(start = 10.dp),
         colors = ButtonDefaults.buttonColorsPrimary(),
     ) {
-        Text(text = label, maxLines = 1)
+        // 对齐 page_download.xml 分页 FCLButton：无 textSize → 平台默认 14sp
+        // （Miuix Text 默认 main=17sp，需显式收敛）
+        Text(text = label, fontSize = 14.sp, maxLines = 1)
     }
 }
 
@@ -764,33 +767,50 @@ private fun RemoteModRow(
     }
 }
 
-/** 页码跳转弹窗（对齐 :414-436 的 EditDialog：数字解析、失败静默、越界钳制）。 */
+/** 页码跳转弹窗（对齐 :414-436 的 EditDialog：标题 edit、不可取消、数字解析、失败静默、越界钳制）。 */
 @Composable
 private fun PageJumpDialog(
     onConfirm: (String) -> Unit,
     onDismiss: () -> Unit,
 ) {
     var input by remember { mutableStateOf("") }
-    FCLDialog(
-        show = true,
-        onDismissRequest = onDismiss,
-        buttons = listOf(
-            FCLDialogButton(
-                text = stringResource(com.tungsten.fcllibrary.R.string.dialog_positive),
-                onClick = { onConfirm(input) },
-            ),
-            FCLDialogButton(
-                text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative),
-                onClick = onDismiss,
-            ),
+    // 对齐旧版 dialog_edit.xml：FCLEditText textSize=14sp、按钮无 textSize（默认 14sp）；
+    // Miuix main/button 默认均为 17sp，仅本弹窗覆盖为 14sp。
+    // LocalTextStyles 为 Miuix internal，改经嵌套 MiuixTheme 覆盖 textStyles
+    // （FCLTheme 未自定义 TextStyles，defaultTextStyles 其余样式即当前主题值；
+    //   WindowDialog 标题走 title4，不受影响；colors 原样透传当前主题）
+    MiuixTheme(
+        colors = MiuixTheme.colorScheme,
+        textStyles = defaultTextStyles(
+            main = MiuixTheme.textStyles.main.copy(fontSize = 14.sp),
+            button = MiuixTheme.textStyles.button.copy(fontSize = 14.sp),
         ),
-        content = {
-            FCLTextField(
-                value = input,
-                onValueChange = { input = it },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-            )
-        },
-    )
+    ) {
+        FCLDialog(
+            show = true,
+            // 对齐 EditDialog setCancelable(false)：只能经按钮关闭
+            onDismissRequest = null,
+            // 对齐 dialog_edit.xml 标题 @string/edit
+            title = stringResource(com.tungsten.fcllibrary.R.string.edit),
+            buttons = listOf(
+                FCLDialogButton(
+                    text = stringResource(com.tungsten.fcllibrary.R.string.dialog_positive),
+                    // 对齐 EditDialog.onClick：空白输入不回调也不关闭
+                    onClick = { if (input.isNotBlank()) onConfirm(input) },
+                ),
+                FCLDialogButton(
+                    text = stringResource(com.tungsten.fcllibrary.R.string.dialog_negative),
+                    onClick = onDismiss,
+                ),
+            ),
+            content = {
+                FCLTextField(
+                    value = input,
+                    onValueChange = { input = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                )
+            },
+        )
+    }
 }

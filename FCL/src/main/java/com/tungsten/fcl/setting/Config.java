@@ -388,12 +388,11 @@ public final class Config implements Cloneable {
      */
     public static final class Serializer implements JsonSerializer<Config>, JsonDeserializer<Config> {
 
-        private static final Type CONFIGURATIONS_TYPE = new TypeToken<TreeMap<String, Profile>>() {
-        }.getType();
-        private static final Type ACCOUNT_STORAGES_TYPE = new TypeToken<List<Map<Object, Object>>>() {
-        }.getType();
-        private static final Type SERVER_LIST_TYPE = new TypeToken<List<AuthlibInjectorServer>>() {
-        }.getType();
+        // R8 会擦除匿名 TypeToken 的 Signature 泛型实参（fordebug/release 运行时崩溃），
+        // 改用 TypeToken.getParameterized 直接构造类型，不依赖 Signature 注解。
+        private static final Type CONFIGURATIONS_TYPE = TypeToken.getParameterized(TreeMap.class, String.class, Profile.class).getType();
+        private static final Type ACCOUNT_STORAGES_TYPE = TypeToken.getParameterized(List.class, TypeToken.getParameterized(Map.class, Object.class, Object.class).getType()).getType();
+        private static final Type SERVER_LIST_TYPE = TypeToken.getParameterized(List.class, AuthlibInjectorServer.class).getType();
 
         @Override
         public JsonElement serialize(Config src, Type typeOfSrc, JsonSerializationContext context) {

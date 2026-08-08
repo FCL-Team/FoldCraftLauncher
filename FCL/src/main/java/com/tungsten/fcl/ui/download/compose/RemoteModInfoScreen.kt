@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -26,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
@@ -44,6 +49,7 @@ import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteModRepository
+import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.versioning.VersionNumber
 import com.tungsten.fcllibrary.util.LocaleUtils
@@ -62,17 +68,20 @@ import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.basic.TextField
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+import java.util.logging.Level
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
 /**
  * 远程资源详情页（对齐 RemoteModInfoPage + page_download_addon_info.xml）：
  * 头部信息（图标/名称/tag/简介/mcmod/官网）+ 双栏主体——
- * 左栏（weight 0.5）搜索框（截图面板不恢复），右栏（weight 1）游戏版本列表
- * （搜索过滤、推荐置顶）。
+ * 左栏（weight 0.5）搜索框 + 截图面板（加载圈/重试/无结果/列表），
+ * 右栏（weight 1）游戏版本列表（搜索过滤、推荐置顶）。
  *
  * 行为对齐（interaction-map §5.4）：
  * - 左栏版本搜索框实时过滤游戏版本列表，推荐版本置顶（:145-159）；
+ * - onStart 同时加载版本与截图（:141-142），截图三态机对齐 loadScreenshots :179-193
+ *   （加载中→进度圈、空→无结果提示、失败→重试图标）；
  * - mcmod/官网按钮开浏览器（:315-325）；
  * - 后台检测已安装加"[已安装]"前缀（:198-223）；
  * - 版本项点击 → [onOpenVersionPage]（二级临时页堆叠）。
@@ -92,6 +101,12 @@ class RemoteModInfoStateHolder(
     var recommendedKey by mutableStateOf<String?>(null)
     var installed by mutableStateOf(false)
 
+    /** 截图状态（对齐 screenshot_loading / screenshot_retry / screenshot_no_result 三态）。 */
+    var screenshotLoading by mutableStateOf(false)
+    var screenshotFailed by mutableStateOf(false)
+    var screenshotNoResult by mutableStateOf(false)
+    var screenshots by mutableStateOf<List<RemoteMod.Screenshot>>(emptyList())
+
     val translations: ModTranslations =
         ModTranslations.getTranslationsByRepositoryType(repository.type)
     val translatedMod: ModTranslations.Mod? = translations.getModByCurseForgeId(addon.slug)
@@ -101,9 +116,9 @@ class RemoteModInfoStateHolder(
         if (translatedMod != null && LocaleUtils.isChinese(context)) translatedMod.displayName
         else addon.title
 
-    /** 分类 tag（对齐 :135-139）。 */
+    /** 分类 tag（对齐 :135-139；categories 可能为 null，回退空列表避免 holder 初始化即 NPE）。 */
     val tag: String = StringUtils.removeSuffix(
-        addon.categories.stream()
+        (addon.categories ?: emptyList()).stream()
             .map { tab.localizedCategory(context, isModrinth, it) }
             .collect(Collectors.toList())
             .joinToString("   ") + "   ",
@@ -111,8 +126,9 @@ class RemoteModInfoStateHolder(
     )
 
     init {
-        // 对齐 onStart :141-142
+        // 对齐 onStart :141-142（同时加载版本与截图）
         loadModVersions()
+        loadScreenshots()
     }
 
     /** 展示的游戏版本键列表（对齐 loadGameVersions :145-159：过滤 + 推荐置顶）。 */
@@ -145,8 +161,33 @@ class RemoteModInfoStateHolder(
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Throwable) {
+                // 旧版 Task.whenComplete 静默置失败态；保留语义但输出真实异常（排查地图等详情页秒失败）
+                Logging.LOG.log(Level.WARNING, "Failed to load versions of ${addon.title}", e)
                 loading = false
                 failed = true
+            }
+        }
+    }
+
+    /** 对齐 loadScreenshots :179-193（加载中→进度圈、空→无结果、失败→重试图标）。 */
+    fun loadScreenshots() {
+        screenshotLoading = true
+        screenshotFailed = false
+        screenshotNoResult = false
+        scope.launch {
+            try {
+                val result = withContext(Dispatchers.IO) {
+                    addon.data.loadScreenshots(repository)
+                }
+                screenshots = result
+                screenshotLoading = false
+                if (result.isEmpty()) screenshotNoResult = true
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                Logging.LOG.log(Level.WARNING, "Failed to load screenshots of ${addon.title}", e)
+                screenshotLoading = false
+                screenshotFailed = true
             }
         }
     }
@@ -204,25 +245,34 @@ class RemoteModInfoStateHolder(
     /** 已安装检测（对齐 checkInstalled :198-223）。 */
     private fun checkInstalled() {
         scope.launch {
-            val found = withContext(Dispatchers.IO) {
-                val remoteName = addon.title.replace(" ", "").lowercase()
-                val modFiles = Profiles.getSelectedProfile().repository
-                    .getModManager(Profiles.getSelectedVersion())
-                    .mods.parallelStream()
-                    .filter { localModFile ->
-                        remoteName.contains(localModFile.name.replace(" ", "").lowercase())
-                    }
-                    .collect(Collectors.toList())
-                for (localModFile in modFiles) {
-                    try {
-                        val optional =
-                            repository.getRemoteVersionByLocalFile(localModFile, localModFile.file)
-                        if (optional.isPresent && addon.modID == optional.get().modid) {
-                            return@withContext true
+            // 旧版 Task.whenComplete 对异常静默忽略；此处同步吞掉，
+            // 避免异常逃逸协程导致整个 composition scope 被取消（页面假死、重试失效）
+            val found = try {
+                withContext(Dispatchers.IO) {
+                    val remoteName = addon.title.replace(" ", "").lowercase()
+                    val modFiles = Profiles.getSelectedProfile().repository
+                        .getModManager(Profiles.getSelectedVersion())
+                        .mods.parallelStream()
+                        .filter { localModFile ->
+                            remoteName.contains(localModFile.name.replace(" ", "").lowercase())
                         }
-                    } catch (_: Throwable) {
+                        .collect(Collectors.toList())
+                    for (localModFile in modFiles) {
+                        try {
+                            val optional =
+                                repository.getRemoteVersionByLocalFile(localModFile, localModFile.file)
+                            if (optional.isPresent && addon.modID == optional.get().modid) {
+                                return@withContext true
+                            }
+                        } catch (_: Throwable) {
+                        }
                     }
+                    false
                 }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Throwable) {
+                Logging.LOG.log(Level.WARNING, "Failed to check installed state of ${addon.title}", e)
                 false
             }
             if (found) installed = true
@@ -264,7 +314,8 @@ fun RemoteModInfoScreen(
                 Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
                     // 左栏（对齐左 FCLConstraintLayout）：weight 0.5、match_parent 高、
                     // marginEnd=10dp、bg_container_white + auto_tint（ltColor = primaryContainer）、
-                    // paddingHorizontal=8dp；顶部为搜索框，截图面板不恢复
+                    // paddingHorizontal=8dp；顶部搜索框，下方截图面板
+                    // （screenshot_recyclerView/loading/retry/no_result，约束填满 search 以下区域）
                     FCLCard(
                         modifier = Modifier
                             .weight(0.5f)
@@ -273,7 +324,10 @@ fun RemoteModInfoScreen(
                         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
                         insideMargin = PaddingValues(horizontal = 8.dp),
                     ) {
-                        VersionSearchField(holder)
+                        Column(modifier = Modifier.fillMaxSize()) {
+                            VersionSearchField(holder)
+                            ScreenshotPanel(holder, Modifier.fillMaxWidth().weight(1f))
+                        }
                     }
                     // 右栏（对齐 version_list）：weight 1、match_parent 高、
                     // bg_container_white + ltColor 染色（primaryContainer）内纯文本行，
@@ -354,6 +408,108 @@ private fun VersionSearchField(holder: RemoteModInfoStateHolder) {
         interactionSource = interactionSource,
         cursorBrush = fclCursorBrush(),
     )
+}
+
+/**
+ * 左栏截图面板（对齐 page_download_addon_info.xml 左栏 search 下方的
+ * screenshot_recyclerView / screenshot_loading / screenshot_retry / screenshot_no_result）：
+ * 加载中→居中进度圈；失败→居中重试图标（点击重新加载）；空→居中无结果提示；
+ * 否则竖向截图列表（对齐 RecyclerView + LinearLayoutManager）。
+ */
+@Composable
+private fun ScreenshotPanel(holder: RemoteModInfoStateHolder, modifier: Modifier = Modifier) {
+    Box(modifier = modifier) {
+        when {
+            holder.screenshotLoading -> InfiniteProgressIndicator(
+                // 对齐 screenshot_loading：居中 + margin 8dp
+                modifier = Modifier.align(Alignment.Center).padding(8.dp),
+                color = MiuixTheme.colorScheme.primary,
+            )
+
+            holder.screenshotFailed -> Icon(
+                painter = painterResource(R.drawable.ic_baseline_refresh_24),
+                contentDescription = null,
+                // 对齐 screenshot_retry（FCLImageView 无 auto_tint）：drawable 自带静态灰
+                tint = FCLThemeTokens.StrokeGray,
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(8.dp)
+                    .clickable(onClick = holder::loadScreenshots),
+            )
+
+            holder.screenshotNoResult -> Text(
+                text = stringResource(R.string.mods_screenshot_no_result),
+                // 对齐 screenshot_no_result（auto_text_tint = onPrimary，默认 14sp）
+                style = MiuixTheme.textStyles.body2,
+                color = MiuixTheme.colorScheme.onPrimary,
+                modifier = Modifier.align(Alignment.Center).padding(8.dp),
+            )
+
+            else -> LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(holder.screenshots) { screenshot ->
+                    ScreenshotItem(screenshot)
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 截图条目（对齐 view_mod_screenshot.xml + RemoteModScreenshotAdapter）：
+ * 全宽 adjustViewBounds 图（marginTop=10dp，加载中显示进度圈、失败显示 refresh 占位、
+ * 点击图片重新加载）+ 标题（14sp 居中）+ 描述（11sp 居中），标题/描述为空白时隐藏。
+ */
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+private fun ScreenshotItem(screenshot: RemoteMod.Screenshot) {
+    // 对齐 RemoteModScreenshotAdapter 点击重载：key 重建触发全新 Glide 请求
+    var retryKey by remember { mutableStateOf(0) }
+    Column(modifier = Modifier.fillMaxWidth()) {
+        key(retryKey) {
+            GlideImage(
+                model = screenshot.imageUrl,
+                contentDescription = null,
+                // 对齐 screenshot：match_parent 宽 + adjustViewBounds/fitCenter + marginTop=10dp
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp)
+                    .clickable { retryKey++ },
+                contentScale = ContentScale.FillWidth,
+                // 对齐 loading FCLProgressBar（加载中显示进度圈）
+                loading = placeholder {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        InfiniteProgressIndicator(color = MiuixTheme.colorScheme.primary)
+                    }
+                },
+                // 对齐 .error(R.drawable.ic_baseline_refresh_24)
+                failure = placeholder(R.drawable.ic_baseline_refresh_24),
+                // 对齐 DiskCacheStrategy.NONE + fitCenter
+                requestBuilderTransform = {
+                    it.diskCacheStrategy(DiskCacheStrategy.NONE).fitCenter()
+                },
+            )
+        }
+        // 对齐 title（auto_text_tint = onPrimary，默认 14sp，居中，空白隐藏）
+        if (StringUtils.isNotBlank(screenshot.title)) {
+            Text(
+                text = screenshot.title.orEmpty(),
+                style = MiuixTheme.textStyles.body2,
+                color = MiuixTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+        // 对齐 description（11sp，居中，空白隐藏）
+        if (StringUtils.isNotBlank(screenshot.description)) {
+            Text(
+                text = screenshot.description.orEmpty(),
+                fontSize = 11.sp,
+                color = MiuixTheme.colorScheme.onPrimary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    }
 }
 
 /** 头部信息卡（对齐 page_download_addon_info.xml 顶部：图标/名称/tag/简介 + mcmod/官网）。 */

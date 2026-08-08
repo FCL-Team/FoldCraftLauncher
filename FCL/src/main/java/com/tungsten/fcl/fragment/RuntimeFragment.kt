@@ -1,89 +1,61 @@
 package com.tungsten.fcl.fragment
 
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.SplashActivity
-import com.tungsten.fcl.databinding.FragmentRuntimeBinding
+import com.tungsten.fcl.activity.compose.RuntimeComponentState
+import com.tungsten.fcl.activity.compose.RuntimeStateHolder
+import com.tungsten.fcl.activity.compose.createRuntimeView
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclauncher.utils.FCLPath
-import com.tungsten.fclcore.util.Logging
 import com.tungsten.fcllibrary.component.FCLFragment
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class RuntimeFragment : FCLFragment(), View.OnClickListener {
-    private lateinit var bind: FragmentRuntimeBinding
-    var lwjgl = false
-    var cacio = false
-    var cacio17 = false
-    var java8 = false
-    var java25 = false
-    var java17 = false
-    var java21 = false
-    var jna = false
+/**
+ * 运行时下载页。UI 已迁移 Compose/Miuix（activity/compose/RuntimeScreen.kt，
+ * 经 LegacyBridge.createComposeView 嵌入）；本类保留宿主逻辑：组件状态初始化、
+ * 安装任务并发推进、失败重试（错误弹窗后 installing 复位，可重新点击安装）、
+ * 全部就绪后推进 SplashActivity.enterLauncher()。
+ * 旧 fragment_runtime.xml 已随 Compose 固化删除。
+ */
+class RuntimeFragment : FCLFragment() {
+
+    private val holder = RuntimeStateHolder()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_runtime, container, false)
-        bind = FragmentRuntimeBinding.bind(view)
-        bind.install.setOnClickListener(this)
+    ): View {
         lifecycleScope.launch {
             withContext(Dispatchers.IO) { initState() }
-            refreshDrawables()
             check()
         }
-        return view
+        return createRuntimeView(requireContext(), holder, ::onInstallClick)
     }
 
     private fun initState() {
-        lwjgl = (activity as SplashActivity).lwjgl
-        cacio = (activity as SplashActivity).cacio
-        cacio17 = (activity as SplashActivity).cacio17
-        java8 = (activity as SplashActivity).java8
-        java17 = (activity as SplashActivity).java17
-        java21 = (activity as SplashActivity).java21
-        java25 = (activity as SplashActivity).java25
-        jna = (activity as SplashActivity).jna
-    }
-
-    private fun refreshDrawables() {
-        if (context != null) {
-            val stateUpdate =
-                AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_update_24)
-            val stateDone =
-                AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_done_24)
-
-            stateUpdate?.setTint(Color.GRAY)
-            stateDone?.setTint(Color.GRAY)
-
-            bind.apply {
-                lwjglState.setBackgroundDrawable(if (lwjgl) stateDone else stateUpdate)
-                cacioState.setBackgroundDrawable(if (cacio) stateDone else stateUpdate)
-                cacio17State.setBackgroundDrawable(if (cacio17) stateDone else stateUpdate)
-                java8State.setBackgroundDrawable(if (java8) stateDone else stateUpdate)
-                java17State.setBackgroundDrawable(if (java17) stateDone else stateUpdate)
-                java21State.setBackgroundDrawable(if (java21) stateDone else stateUpdate)
-                java25State.setBackgroundDrawable(if (java25) stateDone else stateUpdate)
-                jnaState.setBackgroundDrawable(if (jna) stateDone else stateUpdate)
-            }
-        }
+        val activity = activity as SplashActivity
+        holder.lwjgl.installed = activity.lwjgl
+        holder.cacio.installed = activity.cacio
+        holder.cacio17.installed = activity.cacio17
+        holder.java8.installed = activity.java8
+        holder.java17.installed = activity.java17
+        holder.java21.installed = activity.java21
+        holder.java25.installed = activity.java25
+        holder.jna.installed = activity.jna
     }
 
     private val isLatest: Boolean
-        get() = lwjgl && cacio && cacio17 && java8 && java25 && java17 && java21 && jna
+        get() = holder.isLatest
 
     private fun check() {
         if (isLatest) {
@@ -95,184 +67,71 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
 
     private fun install() {
         if (installing) return
-
-        bind.apply {
-            installing = true
-            if (!lwjgl) {
-                lwjglState.visibility = View.GONE
-                lwjglProgress.visibility = View.VISIBLE
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        runCatching {
-                            RuntimeUtils.install(context, FCLPath.LWJGL_DIR, "app_runtime/lwjgl")
-                            lwjgl = true
-                        }
-                    }
-                    lwjglState.visibility = View.VISIBLE
-                    lwjglProgress.visibility = View.GONE
-                    refreshDrawables()
-                    check()
-                }
-            }
-            if (!cacio) {
-                cacioState.visibility = View.GONE
-                cacioProgress.visibility = View.VISIBLE
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        runCatching {
-                            RuntimeUtils.install(
-                                context,
-                                FCLPath.CACIOCAVALLO_8_DIR,
-                                "app_runtime/caciocavallo"
-                            )
-                            cacio = true
-                        }
-                    }
-                    cacioState.visibility = View.VISIBLE
-                    cacioProgress.visibility = View.GONE
-                    refreshDrawables()
-                    check()
-                }
-            }
-            if (!cacio17) {
-                cacio17State.visibility = View.GONE
-                cacio17Progress.visibility = View.VISIBLE
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        runCatching {
-                            RuntimeUtils.install(
-                                context,
-                                FCLPath.CACIOCAVALLO_17_DIR,
-                                "app_runtime/caciocavallo17"
-                            )
-                            cacio17 = true
-                        }
-                    }
-                    cacio17State.visibility = View.VISIBLE
-                    cacio17Progress.visibility = View.GONE
-                    refreshDrawables()
-                    check()
-                }
-            }
-            if (!java8) {
-                java8State.visibility = View.GONE
-                java8Progress.visibility = View.VISIBLE
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        runCatching {
-                            RuntimeUtils.installJava(
-                                context,
-                                FCLPath.JAVA_8_PATH,
-                                "app_runtime/java/jre8"
-                            )
-                            java8 = true
-                        }.exceptionOrNull()?.let { showErrorDialog(it.toString()) }
-                    }
-                    java8State.visibility = View.VISIBLE
-                    java8Progress.visibility = View.GONE
-                    refreshDrawables()
-                    check()
-                }
-            }
-            if (!java17) {
-                java17State.visibility = View.GONE
-                java17Progress.visibility = View.VISIBLE
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        runCatching {
-                            RuntimeUtils.installJava(
-                                context,
-                                FCLPath.JAVA_17_PATH,
-                                "app_runtime/java/jre17"
-                            )
-                            java17 = true
-                        }.exceptionOrNull()?.let { showErrorDialog(it.toString()) }
-                    }
-                    java17State.visibility = View.VISIBLE
-                    java17Progress.visibility = View.GONE
-                    refreshDrawables()
-                    check()
-                }
-            }
-            if (!java21) {
-                java21State.visibility = View.GONE
-                java21Progress.visibility = View.VISIBLE
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        runCatching {
-                            RuntimeUtils.installJava(
-                                context,
-                                FCLPath.JAVA_21_PATH,
-                                "app_runtime/java/jre21"
-                            )
-                            java21 = true
-                        }.exceptionOrNull()?.let { showErrorDialog(it.toString()) }
-                    }
-                    java21State.visibility = View.VISIBLE
-                    java21Progress.visibility = View.GONE
-                    refreshDrawables()
-                    check()
-                }
-            }
-            if (!java25) {
-                java25State.visibility = View.GONE
-                java25Progress.visibility = View.VISIBLE
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        runCatching {
-                            RuntimeUtils.installJava(
-                                context,
-                                FCLPath.JAVA_25_PATH,
-                                "app_runtime/java/jre25"
-                            )
-                            java25 = true
-                        }.exceptionOrNull()?.let { showErrorDialog(it.toString()) }
-                    }
-                    java25State.visibility = View.VISIBLE
-                    java25Progress.visibility = View.GONE
-                    refreshDrawables()
-                    check()
-                }
-            }
-            if (!jna) {
-                jnaState.visibility = View.GONE
-                jnaProgress.visibility = View.VISIBLE
-                lifecycleScope.launch {
-                    withContext(Dispatchers.IO) {
-                        runCatching {
-                            RuntimeUtils.installJna(
-                                context,
-                                FCLPath.JNA_PATH,
-                                "app_runtime/jna"
-                            )
-                            jna = true
-                        }
-                    }
-                    jnaState.visibility = View.VISIBLE
-                    jnaProgress.visibility = View.GONE
-                    refreshDrawables()
-                    check()
-                }
-            }
+        installing = true
+        // 任务顺序与旧 install() 一致：lwjgl → cacio → cacio17 → java8/17/21/25 → jna，
+        // 各组件并发安装；仅 Java 组件失败时弹错误弹窗（对齐旧行为）
+        installComponent(holder.lwjgl) {
+            RuntimeUtils.install(context, FCLPath.LWJGL_DIR, "app_runtime/lwjgl")
+        }
+        installComponent(holder.cacio) {
+            RuntimeUtils.install(context, FCLPath.CACIOCAVALLO_8_DIR, "app_runtime/caciocavallo")
+        }
+        installComponent(holder.cacio17) {
+            RuntimeUtils.install(context, FCLPath.CACIOCAVALLO_17_DIR, "app_runtime/caciocavallo17")
+        }
+        installComponent(holder.java8, showError = true) {
+            RuntimeUtils.installJava(context, FCLPath.JAVA_8_PATH, "app_runtime/java/jre8")
+        }
+        installComponent(holder.java17, showError = true) {
+            RuntimeUtils.installJava(context, FCLPath.JAVA_17_PATH, "app_runtime/java/jre17")
+        }
+        installComponent(holder.java21, showError = true) {
+            RuntimeUtils.installJava(context, FCLPath.JAVA_21_PATH, "app_runtime/java/jre21")
+        }
+        installComponent(holder.java25, showError = true) {
+            RuntimeUtils.installJava(context, FCLPath.JAVA_25_PATH, "app_runtime/java/jre25")
+        }
+        installComponent(holder.jna) {
+            RuntimeUtils.installJna(context, FCLPath.JNA_PATH, "app_runtime/jna")
         }
     }
 
-    override fun onClick(view: View) {
-        if (view === bind.install) {
-            val deviceArch = Architecture.archAsString(Architecture.getDeviceArchitecture())
-            if (!isJavaArchSupported(deviceArch)) {
-                showErrorDialog(
-                    getString(
-                        R.string.missing_runtime_arch_files,
-                        deviceArch,
-                        "FCL-release-x.x.x.x-$deviceArch.apk",
-                        "FCL-release-x.x.x.x-all.apk"
-                    )
-                )
-                return
+    /** 单个组件安装：未就绪才启动；完成后复位进度并 check()（对齐旧各组件块的控制流）。 */
+    private fun installComponent(
+        component: RuntimeComponentState,
+        showError: Boolean = false,
+        task: () -> Unit,
+    ) {
+        if (component.installed) return
+        component.installing = true
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    task()
+                    component.installed = true
+                }.exceptionOrNull()?.let {
+                    if (showError) showErrorDialog(it.toString())
+                }
             }
-            install()
+            component.installing = false
+            check()
         }
+    }
+
+    private fun onInstallClick() {
+        val deviceArch = Architecture.archAsString(Architecture.getDeviceArchitecture())
+        if (!isJavaArchSupported(deviceArch)) {
+            showErrorDialog(
+                getString(
+                    R.string.missing_runtime_arch_files,
+                    deviceArch,
+                    "FCL-release-x.x.x.x-$deviceArch.apk",
+                    "FCL-release-x.x.x.x-all.apk"
+                )
+            )
+            return
+        }
+        install()
     }
 
     private fun isJavaArchSupported(arch: String): Boolean {

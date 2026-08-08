@@ -197,10 +197,10 @@ public class ButtonEventData implements Cloneable {
 
             data.setPointerFollow(Optional.ofNullable(obj.get("pointerFollow")).map(JsonElement::getAsBoolean).orElse(false));
             data.setMovable(Optional.ofNullable(obj.get("Movable")).map(JsonElement::getAsBoolean).orElse(false));
-            data.setPressEvent(gson.fromJson(Optional.ofNullable(obj.get("pressEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), new TypeToken<Event>(){}.getType()));
-            data.setLongPressEvent(gson.fromJson(Optional.ofNullable(obj.get("longPressEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), new TypeToken<Event>(){}.getType()));
-            data.setClickEvent(gson.fromJson(Optional.ofNullable(obj.get("clickEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), new TypeToken<Event>(){}.getType()));
-            data.setDoubleClickEvent(gson.fromJson(Optional.ofNullable(obj.get("doubleClickEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), new TypeToken<Event>(){}.getType()));
+            data.setPressEvent(gson.fromJson(Optional.ofNullable(obj.get("pressEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), Event.class));
+            data.setLongPressEvent(gson.fromJson(Optional.ofNullable(obj.get("longPressEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), Event.class));
+            data.setClickEvent(gson.fromJson(Optional.ofNullable(obj.get("clickEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), Event.class));
+            data.setDoubleClickEvent(gson.fromJson(Optional.ofNullable(obj.get("doubleClickEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), Event.class));
 
             return data;
         }
@@ -435,8 +435,8 @@ public class ButtonEventData implements Cloneable {
                 obj.addProperty("input", src.isInput());
                 obj.addProperty("quickInput", src.isQuickInput());
                 obj.addProperty("outputText", src.getOutputText());
-                obj.add("outputKeycodes", gson.toJsonTree(new ArrayList<>(src.getOutputKeycodes()), new TypeToken<ArrayList<Integer>>(){}.getType()).getAsJsonArray());
-                obj.add("bindViewGroup", gson.toJsonTree(new ArrayList<>(src.getBindViewGroups()), new TypeToken<ArrayList<String>>(){}.getType()).getAsJsonArray());
+                obj.add("outputKeycodes", gson.toJsonTree(new ArrayList<>(src.getOutputKeycodes()), TypeToken.getParameterized(ArrayList.class, Integer.class).getType()).getAsJsonArray());
+                obj.add("bindViewGroup", gson.toJsonTree(new ArrayList<>(src.getBindViewGroups()), TypeToken.getParameterized(ArrayList.class, String.class).getType()).getAsJsonArray());
 
                 return obj;
             }
@@ -458,8 +458,8 @@ public class ButtonEventData implements Cloneable {
                 event.setInput(Optional.ofNullable(obj.get("input")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setQuickInput(Optional.ofNullable(obj.get("quickInput")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setOutputText(Optional.ofNullable(obj.get("outputText")).map(JsonElement::getAsString).orElse(""));
-                event.setOutputKeycodes(gson.fromJson(Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<Integer>>(){}.getType()));
-                event.setBindViewGroup(gson.fromJson(Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<String>>(){}.getType()));
+                event.setOutputKeycodes(gson.fromJson(Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), TypeToken.getParameterized(ArrayList.class, Integer.class).getType()));
+                event.setBindViewGroup(gson.fromJson(Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), TypeToken.getParameterized(ArrayList.class, String.class).getType()));
 
                 return event;
             }

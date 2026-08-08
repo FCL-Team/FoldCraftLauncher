@@ -4,12 +4,14 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -42,7 +44,9 @@ import com.tungsten.fcl.ui.compose.FCLCornerRadius
  * - 原生确定按钮行隐藏，由 Miuix 卡片按钮区替代。
  *
  * 卡片宽度说明：view_keyboard 固定 600dp，超出 FCLDialogCard 的 560dp 上限，
- * 故此处自建 Card（wrapContentWidth，上限 640dp），不用 FCLDialogCard。
+ * 故此处自建 Card（wrapContentWidth），不用 FCLDialogCard。
+ * 宽度上限取屏宽 - 48dp（两侧各 24dp 卡片外边距），避免窄屏右侧溢出；
+ * 键盘区在卡片宽不足以容纳 600dp 时以 horizontalScroll 横向滚动兜底（宽屏视觉不变）。
  *
  * 运行于游戏内（GameMenu/EditViewDialog → ControllerActivity），
  * AppCompatDialog + ComposeView 可用（同批 2/批 4 各 Miuix 游戏内弹窗）。
@@ -82,19 +86,23 @@ class MiuixSelectKeycodeDialog(
                 modifier = Modifier
                     .padding(24.dp)
                     .wrapContentWidth()
-                    .widthIn(max = 640.dp),
+                    // 上限随屏宽收缩（两侧各 24dp 外边距），窄屏不右溢
+                    .widthIn(max = (LocalConfiguration.current.screenWidthDp - 48).dp),
                 insideMargin = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
             ) {
                 Column {
                     // 键盘区限高随屏幕收缩：游戏内横屏（屏高常仅 360~410dp）下固定 400dp
                     // 会把确定按钮挤出屏幕；预留 ~150dp 给卡片边距与按钮区
                     AndroidView(
-                        modifier = Modifier.heightIn(
-                            max = minOf(
-                                400.dp,
-                                (LocalConfiguration.current.screenHeightDp - 150).dp,
+                        modifier = Modifier
+                            // 卡片宽不足以容纳 600dp 键盘时横向滚动兜底（宽屏视觉不变）
+                            .horizontalScroll(rememberScrollState())
+                            .heightIn(
+                                max = minOf(
+                                    400.dp,
+                                    (LocalConfiguration.current.screenHeightDp - 150).dp,
+                                ),
                             ),
-                        ),
                         factory = { ctx ->
                             LayoutInflater.from(ctx)
                                 .inflate(R.layout.dialog_select_keycode, null)

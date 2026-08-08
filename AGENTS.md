@@ -178,6 +178,15 @@ FCL 的主要构建变体为 `debug`、`fordebug` 和 `release`。`fordebug` 使
 
 `release` 和 `fordebug` 的 R8 配置见 `FCL/proguard-rules.pro`。当前配置使用 `-dontobfuscate` 和 `-dontoptimize`，并保留自有包、JNI、Gson 注解模型和 AndroidX Startup 等反射或 native 需要的符号；由于项目通过 `getIdentifier` 动态查找资源，未启用 `shrinkResources`。
 
+Gson/反射兼容的硬性约定（经 R8 官方 FAQ GSON 小节与 Gson Troubleshooting.md 核实）：
+
+- 匿名 `TypeToken` 子类（`new TypeToken<...>() {}`）的泛型签名，必须三条规则同时配置才能在 R8 下存活：`-keepattributes Signature` + `-keep class com.google.gson.reflect.TypeToken { *; }` + `-keep class * extends com.google.gson.reflect.TypeToken`，full/compat 模式皆然（`proguard-rules.pro` 已配置）。
+- 即使如此，源码中**优先使用 `TypeToken.getParameterized(...)`**（gson 官方认可的匿名子类替代方案，不依赖 Signature 属性，天然免疫签名擦除）：泛型容器用它构造，非泛型直接传 `X.class`；注意 `getParameterized` 的实参个数必须等于 rawType 自身声明的类型变量数（嵌套泛型需分层构造），通配符类型（`<?>`）没有公开 API，只能按上界显式给出类型实参。
+- `-keepattributes` 只写 R8/ProGuard 合法属性名（Signature/Exceptions/InnerClasses/EnclosingMethod/RuntimeVisibleAnnotations 等），非法名不报错、静默失效；多条 `-keepattributes` 为叠加关系。
+- full mode 下 `-keepclassmembers` 不再隐式保留宿主类的可实例化性，仅靠反射创建的对象（反序列化目标、adapter）需要类级 `-keep`。
+- 项目 gson 版本 2.10.1 早于 2.11.0，不含 jar 内置 `META-INF/proguard/gson.pro` 自动规则，相关 keep 需手工维护；升级 gson 后应重评本节规则。
+- 改动 R8 规则或升级 AGP/gson 后，必须构建 fordebug 并真机验证（R8 官方与 gson 官方均要求 minify 后实测）。
+
 FCL 中的 `*AarMetadata` 任务目前被临时禁用，因为 Miuix 0.9.3 和部分 Compose 依赖声明的 `minCompileSdk` 高于当前 `compileSdk 35`。相关说明在 `FCL/build.gradle.kts`。升级构建栈和 compile SDK 后，应重新评估并恢复该检查。
 
 ## 测试与验证

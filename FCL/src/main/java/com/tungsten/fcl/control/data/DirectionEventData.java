@@ -204,14 +204,10 @@ public class DirectionEventData implements Cloneable {
             if (src == null) return JsonNull.INSTANCE;
             JsonObject obj = new JsonObject();
 
-            obj.add("upKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getUpKeycodes()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
-            obj.add("downKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getDownKeycodes()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
-            obj.add("leftKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getLeftKeycodes()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
-            obj.add("rightKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getRightKeycodes()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
+            obj.add("upKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getUpKeycodes()), TypeToken.getParameterized(ArrayList.class, Integer.class).getType()).getAsJsonArray());
+            obj.add("downKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getDownKeycodes()), TypeToken.getParameterized(ArrayList.class, Integer.class).getType()).getAsJsonArray());
+            obj.add("leftKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getLeftKeycodes()), TypeToken.getParameterized(ArrayList.class, Integer.class).getType()).getAsJsonArray());
+            obj.add("rightKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getRightKeycodes()), TypeToken.getParameterized(ArrayList.class, Integer.class).getType()).getAsJsonArray());
             obj.addProperty("followOption", src.getFollowOption().toString());
             obj.addProperty("sneak", src.isSneak());
             obj.addProperty("sneakKeycode", src.getSneakKeycode());
@@ -245,8 +241,7 @@ public class DirectionEventData implements Cloneable {
             if (obj.get(keyName).isJsonArray()) {
                 setter.accept(JsonUtils.GSON_SIMPLE.fromJson(
                         Optional.ofNullable(obj.get(keyName)).map(JsonElement::getAsJsonArray).orElse(new JsonArray()),
-                        new TypeToken<ArrayList<Integer>>() {
-                        }.getType()
+                        TypeToken.getParameterized(ArrayList.class, Integer.class).getType()
                 ));
             } else {
                 setter.accept(Collections.singletonList(

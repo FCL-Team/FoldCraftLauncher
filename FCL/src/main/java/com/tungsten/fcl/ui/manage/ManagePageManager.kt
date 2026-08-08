@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.manage
 
 import android.content.Context
-import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIListener
@@ -28,9 +27,6 @@ class ManagePageManager(
         const val PAGE_ID_MANAGE_INSTALL: Int = 15002
         const val PAGE_ID_MANAGE_MOD: Int = 15003
         const val PAGE_ID_MANAGE_WORLD: Int = 15004
-
-        /** Mod 列表/更新页 Compose 开关：false 回滚旧 ModListPage/ModUpdatesPage。 */
-        const val USE_COMPOSE_MOD_PAGES: Boolean = true
     }
 
     var profile: Profile? = null
@@ -43,16 +39,9 @@ class ManagePageManager(
     }
     private val installerListPage: FCLCommonPage = ComposeManageInstallerListPage(context, PAGE_ID_MANAGE_INSTALL, parent)
     private val modListPage: FCLCommonPage by lazy {
-        if (USE_COMPOSE_MOD_PAGES) {
-            ComposeModListPage(context, PAGE_ID_MANAGE_MOD, parent)
-        } else {
-            ModListPage(
-                context,
-                PAGE_ID_MANAGE_MOD,
-                parent,
-                R.layout.page_manage_mod
-            )
-        }
+        // Compose 开关已固化，旧 View 页面（ModListPage/ModUpdatesPage 与对应 XML）已删除；
+        // 共享数据模型迁至 ModListModels。
+        ComposeModListPage(context, PAGE_ID_MANAGE_MOD, parent)
     }
     private val worldListPage: FCLCommonPage = ComposeWorldListPage(context, PAGE_ID_MANAGE_WORLD, parent)
 

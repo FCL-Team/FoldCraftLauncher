@@ -12,31 +12,18 @@ import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.QUILT_AP
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
-import android.view.LayoutInflater;
-import android.view.View;
-
-import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.versioning.GameVersionNumber;
-import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.view.FCLImageButton;
-import com.tungsten.fcllibrary.component.view.FCLImageView;
-import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.util.ConvertUtils;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import kotlinx.coroutines.flow.MutableStateFlow;
@@ -105,11 +92,6 @@ public class InstallerItem {
             default:
                 return context.getDrawable(R.drawable.img_grass);
         }
-    }
-
-    public View createView() {
-        InstallerItemSkin skin = new InstallerItemSkin(context, this);
-        return skin.getView();
     }
 
     public final static class InstallerItemGroup {
@@ -220,128 +202,6 @@ public class InstallerItem {
 
         public InstallerItem[] getLibraries() {
             return libraries;
-        }
-
-        public View getView() {
-            LinearLayoutCompat parent = new LinearLayoutCompat(context);
-            parent.setOrientation(LinearLayoutCompat.VERTICAL);
-            boolean first = true;
-            for (InstallerItem installerItem : getLibraries()) {
-                View view = installerItem.createView();
-                if (first) {
-                    first = false;
-                } else {
-                    view.setPadding(0, ConvertUtils.dip2px(context, 10), 0, 0);
-                }
-                parent.addView(view);
-            }
-            return parent;
-        }
-    }
-
-    public static class InstallerItemSkin implements View.OnClickListener {
-
-        private final InstallerItem installerItem;
-
-        private final LinearLayoutCompat parent;
-        private final FCLLinearLayout item;
-        private final FCLTextView state;
-        private final FCLImageButton remove;
-        private final FCLImageButton select;
-
-        @SuppressLint("UseCompatLoadingForDrawables")
-        public InstallerItemSkin(Context context, InstallerItem installerItem) {
-            this.installerItem = installerItem;
-
-            parent = (LinearLayoutCompat) LayoutInflater.from(context).inflate(R.layout.view_installer_item, null);
-            item = parent.findViewById(R.id.item);
-            FCLImageView icon = parent.findViewById(R.id.icon);
-            FCLTextView name = parent.findViewById(R.id.name);
-            state = parent.findViewById(R.id.state);
-            remove = parent.findViewById(R.id.remove);
-            select = parent.findViewById(R.id.select);
-
-            ColorStateList colorStateList = new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()});
-            ThemeEngine.getInstance().registerEvent(item, () -> item.setBackgroundTintList(colorStateList));
-            icon.setBackground(installerItem.getIcon());
-            name.setText(installerItem.getName());
-            state.stringFlow().setValue(computeStateText());
-            remove.visibilityFlow().setValue(installerItem.removable.getValue());
-            select.visibilityFlow().setValue(computeSelectVisibility());
-            select.imageFlow().setValue(computeSelectImage());
-            // 原 bind(...) 对目标是弱引用：视图回收后即不再更新。订阅回调经 WeakReference
-            // 触达 skin，对齐该弱监听语义；skin 由视图 OnClickListener 强持有，页面存活期间必然可达
-            WeakReference<InstallerItemSkin> ref = new WeakReference<>(this);
-            Consumer<Object> stateUpdater = v -> {
-                InstallerItemSkin skin = ref.get();
-                if (skin != null) skin.state.stringFlow().setValue(skin.computeStateText());
-            };
-            FlowSubscriptions.subscribe(installerItem.incompatibleLibraryName, stateUpdater);
-            FlowSubscriptions.subscribe(installerItem.incompatibleWithGame, stateUpdater);
-            FlowSubscriptions.subscribe(installerItem.libraryVersion, stateUpdater);
-            FlowSubscriptions.subscribe(installerItem.removable, v -> {
-                InstallerItemSkin skin = ref.get();
-                if (skin != null) skin.remove.visibilityFlow().setValue(v);
-            });
-            Consumer<Object> selectVisibilityUpdater = v -> {
-                InstallerItemSkin skin = ref.get();
-                if (skin != null) skin.select.visibilityFlow().setValue(skin.computeSelectVisibility());
-            };
-            FlowSubscriptions.subscribe(installerItem.installable, selectVisibilityUpdater);
-            FlowSubscriptions.subscribe(installerItem.incompatibleLibraryName, selectVisibilityUpdater);
-            FlowSubscriptions.subscribe(installerItem.upgradable, v -> {
-                InstallerItemSkin skin = ref.get();
-                if (skin != null) skin.select.imageFlow().setValue(skin.computeSelectImage());
-            });
-            item.setOnClickListener(this);
-            remove.setOnClickListener(this);
-            select.setOnClickListener(this);
-        }
-
-        private String computeStateText() {
-            Context context = parent.getContext();
-            String incompatibleWith = installerItem.incompatibleLibraryName.getValue();
-            String version = installerItem.libraryVersion.getValue();
-            if (installerItem.incompatibleWithGame.getValue()) {
-                return AndroidUtils.getLocalizedText(context, "install_installer_change_version", version);
-            } else if (incompatibleWith != null) {
-                return AndroidUtils.getLocalizedText(context, "install_installer_incompatible", AndroidUtils.getLocalizedText(context, "install_installer_" + incompatibleWith.replace("-", "_")));
-            } else if (version == null) {
-                return context.getString(R.string.install_installer_not_installed);
-            } else {
-                return version;
-            }
-        }
-
-        private boolean computeSelectVisibility() {
-            return installerItem.installable.getValue() && installerItem.incompatibleLibraryName.getValue() == null;
-        }
-
-        @SuppressLint("UseCompatLoadingForDrawables")
-        private Drawable computeSelectImage() {
-            Context context = parent.getContext();
-            return installerItem.upgradable.getValue()
-                    ? context.getDrawable(R.drawable.ic_baseline_update_24)
-                    : context.getDrawable(R.drawable.ic_baseline_arrow_forward_24);
-        }
-
-        public View getView() {
-            return parent;
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (view == item || view == select) {
-                if (select.getVisibilityValue()) {
-                    installerItem.action.getValue().run();
-                }
-            }
-            if (view == remove) {
-                Runnable runnable = installerItem.removeAction.getValue();
-                if (runnable != null) {
-                    runnable.run();
-                }
-            }
         }
     }
 }

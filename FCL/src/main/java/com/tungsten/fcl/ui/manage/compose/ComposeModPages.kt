@@ -58,8 +58,8 @@ import com.tungsten.fcl.ui.download.compose.ComposeTempPage
 import com.tungsten.fcl.ui.manage.ManagePageManager
 import com.tungsten.fcl.ui.manage.ManageUI
 import com.tungsten.fcl.ui.manage.ModCheckUpdatesTask
-import com.tungsten.fcl.ui.manage.ModListPage.ModInfoObject
-import com.tungsten.fcl.ui.manage.ModUpdatesPage
+import com.tungsten.fcl.ui.manage.ModListModels
+import com.tungsten.fcl.ui.manage.ModListModels.ModInfoObject
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.NavigationBus
 import com.tungsten.fclcore.download.LibraryAnalyzer
@@ -97,9 +97,8 @@ import java.util.regex.Pattern
 
 /**
  * 管理域 Mod 列表页（对齐 ModListPage + page_manage_mod.xml + item_local_mod.xml）。
- * 旧 ModListPage/LocalModListAdapter 与 XML 全部保留，由
- * ManagePageManager.USE_COMPOSE_MOD_PAGES 开关双分支回滚。
- * 数据模型直接复用 ModListPage.ModInfoObject，搜索/筛选/启停/删除/更新检查/
+ * 旧 ModListPage/LocalModListAdapter 与 XML 已随 Compose 固化删除。
+ * 数据模型直接复用 ModListModels.ModInfoObject，搜索/筛选/启停/删除/更新检查/
  * 回滚/跳转下载页等行为与旧实现逐项对齐。
  */
 class ComposeModListPage(context: Context, id: Int, parent: FCLUILayout) :
@@ -682,7 +681,7 @@ private fun modLoaderText(context: Context, type: ModLoaderType): String = when 
 
 /**
  * Mod 更新结果页（对齐 ModUpdatesPage + page_mod_update.xml + item_update_mod.xml）。
- * 数据模型与更新任务直接复用 ModUpdatesPage.ModUpdateObject/ModUpdateTask。
+ * 数据模型与更新任务直接复用 ModListModels.ModUpdateObject/ModUpdateTask。
  * 旧 update_without 按钮的 selected 高亮为旧 FCLButton 染色细节，Compose 侧不再复制。
  */
 class ComposeModUpdatesPage(
@@ -694,8 +693,8 @@ class ComposeModUpdatesPage(
     updates: List<LocalModFile.ModUpdate>,
 ) : ComposeTempPage(context, id, parent) {
 
-    private val objects: List<ModUpdatesPage.ModUpdateObject> =
-        updates.map { ModUpdatesPage.ModUpdateObject(context, it) }
+    private val objects: List<ModListModels.ModUpdateObject> =
+        updates.map { ModListModels.ModUpdateObject(context, it) }
 
     @Composable
     override fun Content() {
@@ -743,7 +742,7 @@ class ComposeModUpdatesPage(
 
     /** 对齐旧 updateMods：逐 Mod 下载新版本，结束后关页刷新；失败列表与成功提示均保留。 */
     private fun updateMods(keepOldVersion: Boolean) {
-        val task = ModUpdatesPage.ModUpdateTask(
+        val task = ModListModels.ModUpdateTask(
             modManager,
             objects.filter { it.isEnabled }
                 .map { com.tungsten.fclcore.util.Pair.pair(it.data.localMod, it.data.candidates[0]) },
@@ -808,7 +807,7 @@ class ComposeModUpdatesPage(
 
 /** 对齐 item_update_mod.xml：勾选框 + 文件名/来源/版本变化。 */
 @Composable
-private fun ModUpdateRow(obj: ModUpdatesPage.ModUpdateObject) {
+private fun ModUpdateRow(obj: ModListModels.ModUpdateObject) {
     val enabled by obj.enabledFlow().collectAsState()
     val contentColor = MiuixTheme.colorScheme.onPrimary
     FCLCard(

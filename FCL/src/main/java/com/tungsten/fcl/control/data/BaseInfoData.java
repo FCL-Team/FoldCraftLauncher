@@ -252,8 +252,8 @@ public class BaseInfoData implements Cloneable {
             data.setSizeType(Optional.ofNullable(obj.get("sizeType")).map(JsonElement::getAsString).orElse(SizeType.PERCENTAGE.toString()).equals(SizeType.ABSOLUTE.toString()) ? SizeType.ABSOLUTE : SizeType.PERCENTAGE);
             data.setAbsoluteWidth(Optional.ofNullable(obj.get("absoluteWidth")).map(JsonElement::getAsInt).orElse(50));
             data.setAbsoluteHeight(Optional.ofNullable(obj.get("absoluteHeight")).map(JsonElement::getAsInt).orElse(50));
-            data.setPercentageWidth(gson.fromJson(Optional.ofNullable(obj.get("percentageWidth")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), new TypeToken<PercentageSize>(){}.getType()));
-            data.setPercentageHeight(gson.fromJson(Optional.ofNullable(obj.get("percentageHeight")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), new TypeToken<PercentageSize>(){}.getType()));
+            data.setPercentageWidth(gson.fromJson(Optional.ofNullable(obj.get("percentageWidth")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), PercentageSize.class));
+            data.setPercentageHeight(gson.fromJson(Optional.ofNullable(obj.get("percentageHeight")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), PercentageSize.class));
 
             return data;
         }

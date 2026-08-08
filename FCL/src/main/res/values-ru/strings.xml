@@ -122,6 +122,7 @@
     <string name="button_remove_confirm">Вы уверены, что хотите удалить его навсегда? Это действие не может быть отменено!</string>
     <string name="button_save_as">Загрузить в</string>
     <string name="button_select_all">Выбрать всё</string>
+    <string name="button_set">Выбрать</string>
     <string name="button_reset">Сбросить</string>
 
     <string name="community">Сообщество</string>
@@ -688,6 +689,7 @@
     <string name="mods_restore">Восстановить</string>
     <string name="mods_url">Официальная страница</string>
     <string name="mods_update_modpack_mod_warning">Обновление модов в модпаке может привести к непоправимым результатам, возможно, к повреждению модпака, из-за которого он не сможет запуститься. Вы уверены, что хотите обновить?</string>
+    <string name="mods_screenshot_no_result">Нет доступных скриншотов</string>
 
     <string name="profile_shared">"Поделиться с папкой \n(хранилище устройства)"</string>
     <string name="profile_private">"Приватная папка \n(хранилище игры)"</string>

@@ -97,8 +97,7 @@ public class DirectionStyles {
         try {
             String json = FileUtils.readText(new File(FCLPath.CONTROLLER_DIR + "/styles/direction_styles.json"));
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            ArrayList<ControlDirectionStyle> styles = gson.fromJson(json, new TypeToken<ArrayList<ControlDirectionStyle>>() {
-            }.getType());
+            ArrayList<ControlDirectionStyle> styles = gson.fromJson(json, TypeToken.getParameterized(ArrayList.class, ControlDirectionStyle.class).getType());
             if (Objects.isNull(styles)) {
                 new File(FCLPath.CONTROLLER_DIR + "/styles/button_styles.json").delete();
             } else {

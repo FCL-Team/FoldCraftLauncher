@@ -14,8 +14,7 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
-import com.tungsten.fcl.ui.compose.fclSwitchColors
-import top.yukonga.miuix.kmp.basic.Switch
+import com.tungsten.fcl.ui.compose.FCLSwitch
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
@@ -63,13 +62,12 @@ class MiuixGameItemBarSettingDialog(
                         style = MiuixTheme.textStyles.body2,
                         modifier = Modifier.weight(1f),
                     )
-                    Switch(
+                    FCLSwitch(
                         checked = slideSelectionState.value,
                         onCheckedChange = {
                             slideSelectionState.value = it
                             callback(GameItemBarSetting(it, swapHandsState.value))
                         },
-                        colors = fclSwitchColors(),
                     )
                 }
                 Row(
@@ -83,13 +81,12 @@ class MiuixGameItemBarSettingDialog(
                         style = MiuixTheme.textStyles.body2,
                         modifier = Modifier.weight(1f),
                     )
-                    Switch(
+                    FCLSwitch(
                         checked = swapHandsState.value,
                         onCheckedChange = {
                             swapHandsState.value = it
                             callback(GameItemBarSetting(slideSelectionState.value, it))
                         },
-                        colors = fclSwitchColors(),
                     )
                 }
             }
