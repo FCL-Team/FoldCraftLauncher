@@ -3,7 +3,9 @@ package com.tungsten.fcl.activity;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -36,6 +38,7 @@ import com.tungsten.fcllibrary.component.FCLActivity;
 
 import org.lwjgl.glfw.CallbackBridge;
 
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Level;
 
@@ -58,6 +61,16 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Display display = getDisplay();
+            if (display != null) {
+                Float max = Arrays.stream(display.getSupportedModes()).map(Display.Mode::getRefreshRate).max(Float::compareTo).orElse(60f);
+                Logging.LOG.info("Max fps: " + max);
+                WindowManager.LayoutParams attributes = getWindow().getAttributes();
+                attributes.preferredRefreshRate = max;
+                getWindow().setAttributes(attributes);
+            }
+        }
         FCLBridge.setOpenFolderCallback(this);
 
         setContentView(R.layout.activity_jvm);
