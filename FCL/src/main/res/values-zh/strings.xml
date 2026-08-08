@@ -85,8 +85,6 @@
     <string name="account_skin">皮肤</string>
     <string name="account_skin_type_default">默认</string>
     <string name="account_skin_type_local_file">本地文件</string>
-    <string name="menu_settings_disable_be_gesture">禁用仿基岩版手势</string>
-    <string name="settings_fcl_controller_injector">基岩版触控手势</string>
     <string name="account_skin_upload">选择皮肤文件</string>
     <string name="account_skin_model">皮肤模型</string>
     <string name="account_skin_upload_file">上传</string>

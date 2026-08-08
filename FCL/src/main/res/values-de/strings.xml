@@ -79,8 +79,6 @@
     <string name="account_skin">Skin</string>
     <string name="account_skin_type_default">Standard</string>
     <string name="account_skin_type_local_file">Lokaler Skin</string>
-    <string name="menu_settings_disable_be_gesture">Erweiterte Gesten deaktivieren</string>
-    <string name="settings_fcl_controller_injector">Serverseitige Gesten</string>
     <string name="account_skin_upload">Skin auf dem Gerät auswählen</string>
     <string name="account_state_no_account">Kein Konto</string>
     <string name="account_state_add">Zum Hinzufügen klicken</string>

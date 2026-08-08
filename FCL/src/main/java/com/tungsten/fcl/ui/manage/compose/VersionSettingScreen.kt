@@ -250,11 +250,6 @@ fun VersionSettingScreen(
                         onEdit = viewModel::onEditController,
                         onInstall = viewModel::onInstallController,
                     )
-                    ThemedSwitchPreference(
-                        checked = state.beGesture,
-                        onCheckedChange = viewModel::setBeGesture,
-                        title = stringResource(R.string.settings_fcl_controller_injector),
-                    )
                     ValueSettingRow(
                         title = stringResource(R.string.settings_fcl_graphics_backend),
                         value = state.graphicsBackend,

@@ -100,8 +100,6 @@
     <string name="account_skin_type_steve" translatable="false">Steve</string>
     <string name="account_skin_type_alex" translatable="false">Alex</string>
     <string name="account_skin_type_local_file">Local Skin File</string>
-    <string name="menu_settings_disable_be_gesture">Disable Advanced Gesture</string>
-    <string name="settings_fcl_controller_injector">BE Gesture</string>
     <string name="account_skin_upload">Select skin file</string>
     <string name="account_skin_model_classic" translatable="false">Classic (Steve)</string>
     <string name="account_skin_model_slim" translatable="false">Slim (Alex)</string>

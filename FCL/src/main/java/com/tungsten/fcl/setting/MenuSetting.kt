@@ -114,13 +114,6 @@ class MenuSetting {
             disableGestureFlow.value = disableGesture
         }
 
-    val disableBEGestureFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    var isDisableBEGesture: Boolean
-        get() = disableBEGestureFlow.value
-        set(disableBEGesture) {
-            disableBEGestureFlow.value = disableBEGesture
-        }
-
     val gestureModeFlow: MutableStateFlow<GestureMode> = MutableStateFlow(GestureMode.BUILD)
     var gestureMode: GestureMode
         get() = gestureModeFlow.value
@@ -245,7 +238,7 @@ class MenuSetting {
             autoFitFlow, autoFitDistFlow, lockMenuViewFlow, hideMenuViewFlow,
             showFpsFlow, showMemoryFlow, disableSoftKeyAdjustFlow, showLogFlow,
             autoShowLogFlow, performanceModeFlow, menuPositionXFlow, menuPositionYFlow,
-            disableGestureFlow, disableBEGestureFlow, gestureModeFlow,
+            disableGestureFlow, gestureModeFlow,
             disableLeftTouchFlow, enableGyroscopeFlow, invertGyroscopeFlow,
             gyroscopeSensitivityFlow, mouseMoveModeFlow, mouseSensitivityFlow,
             mouseSensitivityCursorFlow, mouseSizeFlow, mouseOffsetXFlow, mouseOffsetYFlow,
@@ -280,7 +273,6 @@ class MenuSetting {
                 addProperty("menuPositionX", src.menuPositionX)
                 addProperty("menuPositionY", src.menuPositionY)
                 addProperty("disableGesture", src.isDisableGesture)
-                addProperty("disableBEGesture", src.isDisableBEGesture)
                 addProperty("gestureMode", src.gestureMode.id)
                 addProperty("disableLeftTouch", src.isDisableLeftTouch)
                 addProperty("enableGyroscope", src.isEnableGyroscope)
@@ -322,7 +314,6 @@ class MenuSetting {
                 ms.menuPositionX = json["menuPositionX"]?.asDouble ?: 0.5
                 ms.menuPositionY = json["menuPositionY"]?.asDouble ?: 0.5
                 ms.isDisableGesture = json["disableGesture"]?.asBoolean ?: false
-                ms.isDisableBEGesture = json["disableBEGesture"]?.asBoolean ?: false
                 ms.gestureMode = GestureMode.getById(json["gestureMode"]?.asInt ?: 0)
                 ms.isDisableLeftTouch = json["disableLeftTouch"]?.asBoolean ?: false
                 ms.isEnableGyroscope = json["enableGyroscope"]?.asBoolean ?: false

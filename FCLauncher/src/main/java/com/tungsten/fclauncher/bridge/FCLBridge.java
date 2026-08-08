@@ -40,14 +40,6 @@ public class FCLBridge implements Serializable {
     public static final int DEFAULT_WIDTH = 1280;
     public static final int DEFAULT_HEIGHT = 720;
 
-    public static final int HIT_RESULT_TYPE_UNKNOWN = 0;
-    public static final int HIT_RESULT_TYPE_MISS = 1;
-    public static final int HIT_RESULT_TYPE_BLOCK = 2;
-    public static final int HIT_RESULT_TYPE_ENTITY = 3;
-
-    public static final int INJECTOR_MODE_ENABLE = 1;
-    public static final int INJECTOR_MODE_DISABLE = 0;
-
     public static final int KeyPress = 2;
     public static final int KeyRelease = 3;
     public static final int ButtonPress = 4;
@@ -111,8 +103,6 @@ public class FCLBridge implements Serializable {
     public native void setLdLibraryPath(String path);
 
     public native void setupExitTrap(FCLBridge bridge);
-
-    public native void refreshHitResultType();
 
     public native void setFCLBridge(FCLBridge fclBridge);
 
@@ -207,12 +197,6 @@ public class FCLBridge implements Serializable {
         if (callback != null) {
             callback.onLog("\nOpenJDK exited with code : " + code + "\n");
             callback.onExit(code);
-        }
-    }
-
-    public void setHitResultType(int type) {
-        if (callback != null) {
-            callback.onHitResultTypeChange(type);
         }
     }
 

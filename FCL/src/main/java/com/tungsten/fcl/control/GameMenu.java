@@ -148,7 +148,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         controllerRevisionSubscription = getController() == null ? null :
                 FlowSubscriptions.subscribe(getController().revisionFlow(), v -> refreshViewGroupList(currentViewGroupSpinner));
     }
-    private int hitResultType = FCLBridge.HIT_RESULT_TYPE_UNKNOWN;
     private int cursorX;
     private int cursorY;
     private int pointerX;
@@ -216,10 +215,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     @Override
     public int getCursorMode() {
         return cursorModeFlow.getValue();
-    }
-
-    public int getHitResultType() {
-        return hitResultType;
     }
 
     public int getCursorX() {
@@ -462,7 +457,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FCLSwitch showMemory = findViewById(R.id.switch_show_memory);
         FCLSwitch disableSoftKeyAdjustSwitch = findViewById(R.id.switch_soft_keyboard_adjust);
         FCLSwitch disableGestureSwitch = findViewById(R.id.switch_gesture);
-        FCLSwitch disableBEGestureSwitch = findViewById(R.id.switch_be_gesture);
         FCLSwitch disableLeftTouchSwitch = findViewById(R.id.switch_left_touch);
         FCLSwitch gyroSwitch = findViewById(R.id.switch_gyro);
         FCLSwitch gyroInvertSwitch = findViewById(R.id.switch_gyro_invert);
@@ -508,7 +502,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         bindMenuSettingSwitch(hideMenuSwitch, menuSetting.getHideMenuViewFlow());
         bindMenuSettingSwitch(disableSoftKeyAdjustSwitch, menuSetting.getDisableSoftKeyAdjustFlow());
         bindMenuSettingSwitch(disableGestureSwitch, menuSetting.getDisableGestureFlow());
-        bindMenuSettingSwitch(disableBEGestureSwitch, menuSetting.getDisableBEGestureFlow());
         bindMenuSettingSwitch(disableLeftTouchSwitch, menuSetting.getDisableLeftTouchFlow());
         bindMenuSettingSwitch(gyroSwitch, menuSetting.getEnableGyroscopeFlow());
         bindMenuSettingSwitch(gyroInvertSwitch, menuSetting.getInvertGyroscopeFlow());
@@ -1093,11 +1086,6 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         @Override
         public void onCursorModeChange(int mode) {
             gameMenu.onCursorModeChange(mode);
-        }
-
-        @Override
-        public void onHitResultTypeChange(int type) {
-            gameMenu.hitResultType = type;
         }
 
         @Override

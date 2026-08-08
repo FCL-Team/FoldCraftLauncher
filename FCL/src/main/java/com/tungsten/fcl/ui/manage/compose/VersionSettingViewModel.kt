@@ -91,7 +91,6 @@ class VersionSettingViewModel(
     private var notCheckModFlow: MutableStateFlow<Boolean>? = null
     private var debugLogFlow: MutableStateFlow<Boolean>? = null
     private var forceResolutionFlow: MutableStateFlow<Boolean>? = null
-    private var beGestureFlow: MutableStateFlow<Boolean>? = null
     private var vkDriverSystemFlow: MutableStateFlow<Boolean>? = null
 
     /** maxMemory：VersionSetting 的 MutableStateFlow<Int>（阶段 4a）。 */
@@ -182,8 +181,6 @@ class VersionSettingViewModel(
             .also { f -> f.collectIntoState(scope) { v -> copy(debugLog = v) } }
         forceResolutionFlow = vs.forceResolutionFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(forceResolution = v) } }
-        beGestureFlow = vs.beGestureFlow
-            .also { f -> f.collectIntoState(scope) { v -> copy(beGesture = v) } }
         vkDriverSystemFlow = vs.vkDriverSystemFlow
             .also { f -> f.collectIntoState(scope) { v -> copy(vkDriverSystem = v) } }
         maxMemoryFlow = vs.maxMemoryFlow
@@ -288,10 +285,6 @@ class VersionSettingViewModel(
 
     fun setDebugLog(value: Boolean) {
         debugLogFlow?.value = value
-    }
-
-    fun setBeGesture(value: Boolean) {
-        beGestureFlow?.value = value
     }
 
     /** 系统 Vulkan 驱动开关（对齐 :192-209）：Adreno GPU 开启时弹 INFO 提示；
@@ -451,7 +444,6 @@ data class VersionSettingUiState(
     val notCheckMod: Boolean = false,
     val debugLog: Boolean = false,
     val forceResolution: Boolean = false,
-    val beGesture: Boolean = true,
     val vkDriverSystem: Boolean = false,
     // 内存展示
     val totalMemoryMB: Int = 1,

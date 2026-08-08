@@ -82,8 +82,6 @@
     <string name="account_skin">皮膚</string>
     <string name="account_skin_type_default">默認</string>
     <string name="account_skin_type_local_file">本地文件</string>
-    <string name="menu_settings_disable_be_gesture">禁用仿基岩版手勢</string>
-    <string name="settings_fcl_controller_injector">基岩版觸控手勢</string>
     <string name="account_skin_upload">選擇皮膚文件</string>
     <string name="account_state_no_account">冇賬戶</string>
     <string name="account_state_add">點擊添加賬戶</string>

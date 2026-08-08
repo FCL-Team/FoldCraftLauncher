@@ -82,8 +82,6 @@
     <string name="account_skin">Скин</string>
     <string name="account_skin_type_default">По умолчанию</string>
     <string name="account_skin_type_local_file">Локальный скин</string>
-    <string name="menu_settings_disable_be_gesture">Отключить расширенные жесты</string>
-    <string name="settings_fcl_controller_injector">Жесты на стороне сервера</string>
     <string name="account_skin_upload">Выбрать скин на устройстве</string>
     <string name="account_state_no_account">Нет аккаунта</string>
     <string name="account_state_add">Нажмите, чтобы добавить</string>

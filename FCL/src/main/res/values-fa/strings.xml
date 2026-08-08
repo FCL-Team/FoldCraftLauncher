@@ -78,8 +78,6 @@
     <string name="account_skin">اسکین</string>
     <string name="account_skin_type_default">پیش فرض</string>
     <string name="account_skin_type_local_file">فایل محلی اسکین</string>
-    <string name="menu_settings_disable_be_gesture">غیرفعال کردن ژست پیشرفته</string>
-    <string name="settings_fcl_controller_injector">اینجکتور کنترلر</string>
     <string name="account_skin_upload">انتخاب فایل اسکین</string>
     <string name="account_state_no_account">حسابی وجود ندارد</string>
     <string name="account_state_add">برای افزودن کلیک کنید</string>

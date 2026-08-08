@@ -174,13 +174,6 @@ class VersionSetting : Cloneable {
             isolateGameDirFlow.value = isolate
         }
 
-    val beGestureFlow: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    var isBeGesture: Boolean
-        get() = beGestureFlow.value
-        set(beGesture) {
-            beGestureFlow.value = beGesture
-        }
-
     val graphicsBackendFlow: MutableStateFlow<String> = MutableStateFlow("default")
     var graphicsBackend: String
         get() = graphicsBackendFlow.value
@@ -259,7 +252,7 @@ class VersionSetting : Cloneable {
         listOf(
             usesGlobalFlow, javaFlow, maxMemoryFlow, minMemoryFlow, autoMemoryFlow,
             javaArgsFlow, minecraftArgsFlow, notCheckGameFlow, notCheckJVMFlow,
-            serverIpFlow, isolateGameDirFlow, beGestureFlow, graphicsBackendFlow,
+            serverIpFlow, isolateGameDirFlow, graphicsBackendFlow,
             vkDriverSystemFlow, controllerFlow, rendererFlow, driverFlow,
             pojavBigCoreFlow, uuidFlow, notCheckModFlow, debugLogFlow, forceResolutionFlow,
         )
@@ -283,7 +276,6 @@ class VersionSetting : Cloneable {
             it.isNotCheckJVM = isNotCheckJVM
             it.serverIp = serverIp
             it.isIsolateGameDir = isIsolateGameDir
-            it.isBeGesture = isBeGesture
             it.graphicsBackend = graphicsBackend
             it.isVKDriverSystem = isVKDriverSystem
             it.controller = controller
@@ -318,7 +310,6 @@ class VersionSetting : Cloneable {
                 addProperty("java", src.java)
                 addProperty("notCheckGame", src.isNotCheckGame)
                 addProperty("notCheckJVM", src.isNotCheckJVM)
-                addProperty("beGesture", src.isBeGesture)
                 addProperty("graphicsBackend", src.graphicsBackend)
                 addProperty("vulkanDriverSystem", src.isVKDriverSystem)
                 addProperty("controller", src.controller)
@@ -359,7 +350,6 @@ class VersionSetting : Cloneable {
                         ?: "Auto"
                 vs.isNotCheckGame = json["notCheckGame"]?.asBoolean ?: false
                 vs.isNotCheckJVM = json["notCheckJVM"]?.asBoolean ?: false
-                vs.isBeGesture = json["beGesture"]?.asBoolean ?: false
                 vs.graphicsBackend = json["graphicsBackend"]?.asString ?: "default"
                 vs.isVKDriverSystem = json["vulkanDriverSystem"]?.asBoolean ?: false
                 vs.controller = json["controller"]?.asString ?: ("00000000")
