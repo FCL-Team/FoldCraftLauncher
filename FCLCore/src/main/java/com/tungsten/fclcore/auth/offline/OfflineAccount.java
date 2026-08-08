@@ -100,7 +100,7 @@ public class OfflineAccount extends Account {
     }
 
     protected boolean loadAuthlibInjector(Skin skin) {
-        return skin != null && skin.getType() != Skin.Type.DEFAULT;
+        return skin != null && skin.type() != Skin.Type.DEFAULT;
     }
 
     @Override
@@ -159,7 +159,7 @@ public class OfflineAccount extends Account {
 
             try {
                 server.addCharacter(new YggdrasilServer.Character(uuid, username,
-                        skin != null ? skin.load(username).run() : null));
+                        skin != null ? skin.load().run() : null));
             } catch (IOException e) {
                 // ignore
             } catch (Exception e) {
@@ -170,14 +170,6 @@ public class OfflineAccount extends Account {
                     "-javaagent:" + artifact.getLocation().toString() + "=" + "http://localhost:" + server.getListeningPort(),
                     "-Dauthlibinjector.side=client"
             );
-        }
-
-        @Override
-        public void close() throws Exception {
-            super.close();
-
-            if (server != null)
-                server.stop();
         }
     }
 

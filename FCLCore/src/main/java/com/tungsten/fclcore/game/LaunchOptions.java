@@ -41,7 +41,6 @@ public class LaunchOptions implements Serializable {
     private Integer width;
     private Integer height;
     private String serverIp;
-    private boolean beGesture;
     private boolean vulkanDriverSystem;
     private boolean pojavBigCore;
     private Renderer renderer;
@@ -134,13 +133,6 @@ public class LaunchOptions implements Serializable {
      */
     public String getServerIp() {
         return serverIp;
-    }
-
-    /**
-     * BE Gesture
-     */
-    public boolean isBeGesture() {
-        return beGesture;
     }
 
     /**
@@ -251,11 +243,6 @@ public class LaunchOptions implements Serializable {
 
         public Builder setServerIp(String serverIp) {
             options.serverIp = serverIp;
-            return this;
-        }
-
-        public Builder setBEGesture(boolean beGesture) {
-            options.beGesture = beGesture;
             return this;
         }
 

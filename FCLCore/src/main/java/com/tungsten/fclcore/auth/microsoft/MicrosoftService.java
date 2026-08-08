@@ -21,6 +21,8 @@ import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Lang.threadPool;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.Pair.pair;
+import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
+import static java.util.Objects.requireNonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -47,13 +49,16 @@ import com.tungsten.fclcore.util.io.ResponseCodeException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-
-import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
-import static java.util.Objects.requireNonNull;
 
 public class MicrosoftService {
     private static final String SCOPE = "XboxLive.signin offline_access";
@@ -225,9 +230,9 @@ public class MicrosoftService {
         if (!profile.skins.isEmpty()) {
             textures.put(TextureType.SKIN, new Texture(profile.skins.get(0).url, null));
         }
-        // if (!profile.capes.isEmpty()) {
-        // textures.put(TextureType.CAPE, new Texture(profile.capes.get(0).url, null);
-        // }
+        if (!profile.capes.isEmpty()) {
+            textures.put(TextureType.CAPE, new Texture(profile.capes.get(0).url, null));
+        }
 
         return Optional.of(textures);
     }
@@ -420,8 +425,18 @@ public class MicrosoftService {
         }
     }
 
-    public static class MinecraftProfileResponseCape {
+    public static class MinecraftProfileResponseCape implements Validation {
+        public String id;
+        public String state;
+        public String url;
+        public String alias;
 
+        @Override
+        public void validate() throws JsonParseException, TolerableValidationException {
+            Validation.requireNonNull(id, "cape id cannot be null");
+            Validation.requireNonNull(state, "cape state cannot be null");
+            Validation.requireNonNull(url, "cape url cannot be null");
+        }
     }
 
     public record MinecraftLicense(
@@ -453,6 +468,10 @@ public class MicrosoftService {
             Validation.requireNonNull(name, "name cannot be null");
             Validation.requireNonNull(skins, "skins cannot be null");
             Validation.requireNonNull(capes, "capes cannot be null");
+        }
+
+        public List<MinecraftProfileResponseCape> getCapes() {
+            return capes;
         }
     }
 

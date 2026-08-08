@@ -119,9 +119,9 @@ public final class TexturesLoader {
             OfflineAccount account = accounts[0];
             Skin skin = account.getSkin();
             if (skin != null) {
-                Skin.LoadedSkin loadedSkin = skin.load(account.getUsername()).run();
+                Skin.LoadedSkin loadedSkin = skin.load().run();
                 if (loadedSkin != null) {
-                    Bitmap img = loadedSkin.getSkin() == null ? null : loadedSkin.getSkin().getImage();
+                    Bitmap img = loadedSkin.skin() == null ? null : loadedSkin.skin().getImage();
                     if (img == null) {
                         img = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
                     }
@@ -166,9 +166,9 @@ public final class TexturesLoader {
             OfflineAccount account = accounts[0];
             Skin skin = account.getSkin();
             if (skin != null) {
-                Skin.LoadedSkin loadedSkin = skin.load(account.getUsername()).run();
+                Skin.LoadedSkin loadedSkin = skin.load().run();
                 if (loadedSkin != null) {
-                    return loadedSkin.getSkin() == null ? null : loadedSkin.getCape().getImage();
+                    return loadedSkin.skin() == null ? null : loadedSkin.cape().getImage();
                 }
             }
             return null;

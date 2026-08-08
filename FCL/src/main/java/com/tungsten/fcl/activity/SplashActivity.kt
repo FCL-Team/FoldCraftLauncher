@@ -63,8 +63,7 @@ class SplashActivity : FCLActivity() {
         sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE)
         val background = findViewById<ConstraintLayout>(R.id.background)
         ImageUtil.loadInto(
-            background,
-            ThemeEngine.getInstance().getTheme().getBackground(this)
+            background, ThemeEngine.getInstance().getTheme().getBackground(this)
         )
         if (sharedPreferences.getBoolean("isAgree", false)) {
             checkPermission()
@@ -134,6 +133,15 @@ class SplashActivity : FCLActivity() {
                 runCatching { ConfigHolder.init() }.exceptionOrNull()?.let {
                     Logging.LOG.log(Level.WARNING, it.message)
                 }
+                if (System.currentTimeMillis() - sharedPreferences.getLong(
+                        "clear_cache", 0L
+                    ) >= 3 * 1000 * 60 * 60 * 24
+                ) {
+                    FileUtils.cleanDirectoryQuietly(File(FCLPath.CACHE_DIR).getParentFile())
+                    sharedPreferences.edit {
+                        putLong("clear_cache", System.currentTimeMillis())
+                    }
+                }
             }
             startActivity(
                 handleModpack(Intent(this@SplashActivity, MainActivity::class.java)),
@@ -160,8 +168,7 @@ class SplashActivity : FCLActivity() {
                 newIntent.putExtra("modpack_cache_path", cacheFile.absolutePath)
             } catch (e: Exception) {
                 Logging.LOG.log(
-                    Level.WARNING,
-                    "Failed to handle modpack intent: ${e.message}"
+                    Level.WARNING, "Failed to handle modpack intent: ${e.message}"
                 )
             }
         }
@@ -184,17 +191,14 @@ class SplashActivity : FCLActivity() {
             }
         } else {
             if (!ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    permission.WRITE_EXTERNAL_STORAGE
+                    this, permission.WRITE_EXTERNAL_STORAGE
                 ) || !ActivityCompat.shouldShowRequestPermissionRationale(
-                    this,
-                    permission.READ_EXTERNAL_STORAGE
+                    this, permission.READ_EXTERNAL_STORAGE
                 )
             ) {
                 requestPermissions(
                     arrayOf(
-                        permission.WRITE_EXTERNAL_STORAGE,
-                        permission.READ_EXTERNAL_STORAGE
+                        permission.WRITE_EXTERNAL_STORAGE, permission.READ_EXTERNAL_STORAGE
                     )
                 ) {
                     checkPermission()
@@ -217,27 +221,22 @@ class SplashActivity : FCLActivity() {
             return Environment.isExternalStorageManager()
         }
         return ContextCompat.checkSelfPermission(
-            this,
-            permission.READ_EXTERNAL_STORAGE
+            this, permission.READ_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-            this,
-            permission.WRITE_EXTERNAL_STORAGE
+            this, permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun initState() {
         try {
             lwjgl = RuntimeUtils.isLatest(
-                FCLPath.LWJGL_DIR,
-                "/assets/app_runtime/lwjgl"
+                FCLPath.LWJGL_DIR, "/assets/app_runtime/lwjgl"
             )
             cacio = RuntimeUtils.isLatest(
-                FCLPath.CACIOCAVALLO_8_DIR,
-                "/assets/app_runtime/caciocavallo"
+                FCLPath.CACIOCAVALLO_8_DIR, "/assets/app_runtime/caciocavallo"
             )
             cacio17 = RuntimeUtils.isLatest(
-                FCLPath.CACIOCAVALLO_17_DIR,
-                "/assets/app_runtime/caciocavallo17"
+                FCLPath.CACIOCAVALLO_17_DIR, "/assets/app_runtime/caciocavallo17"
             )
             java8 = RuntimeUtils.isLatest(FCLPath.JAVA_8_PATH, "/assets/app_runtime/java/jre8")
             java17 = RuntimeUtils.isLatest(FCLPath.JAVA_17_PATH, "/assets/app_runtime/java/jre17")

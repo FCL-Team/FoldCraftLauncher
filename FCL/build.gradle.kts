@@ -1,5 +1,4 @@
 import com.android.build.api.variant.FilterConfiguration.FilterType.ABI
-import com.android.build.gradle.tasks.MergeSourceSetFolders
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -46,8 +45,8 @@ android {
         applicationId = "com.tungsten.fcl"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1322
-        versionName = "1.3.2.2"
+        versionCode = 1324
+        versionName = "1.3.2.4"
     }
 
     buildTypes {
@@ -111,6 +110,27 @@ android {
     }
 }
 
+/**
+ * 按 -Darch 过滤 JRE 压缩包，生成当前架构需要的资产目录。
+ * 非 all 构建只保留 version、universal 和 bin-<arch>.tar.xz（运行时两者都需要，见 RuntimeUtils#installJava）。
+ */
+abstract class FilterJreAssets : Sync() {
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+}
+
+val filterJreAssets = tasks.register<FilterJreAssets>("filterJreAssets") {
+    val arch = System.getProperty("arch", "all")
+    // Copy/Sync 的 up-to-date 检查不包含 copy spec 的过滤规则，必须显式声明 arch 输入，
+    // 否则切换架构时任务不会重跑，产物会残留上一架构的 JRE 包
+    inputs.property("arch", arch)
+    from(layout.projectDirectory.dir("src/main/jreAssets"))
+    into(outputDir)
+    if (arch != "all") {
+        exclude { it.name.startsWith("bin-") && it.name != "bin-$arch.tar.xz" }
+    }
+}
+
 androidComponents {
     onVariants { variant ->
         variant.outputs.forEach { output ->
@@ -119,28 +139,15 @@ androidComponents {
                     output.outputFileName =
                         "FCL-${variant.buildType}-${project.android.defaultConfig.versionName}-${abi}.apk"
                 }
-
-                val variantName = variant.name.replaceFirstChar { it.uppercaseChar() }
-                afterEvaluate {
-                    val task =
-                        tasks.named("merge${variantName}Assets").get() as MergeSourceSetFolders
-                    task.doLast {
-                        val arch = System.getProperty("arch", "all")
-                        val assetsDir = task.outputDir.get().asFile
-                        val jreList = listOf("jre8", "jre17", "jre21", "jre25")
-                        println("arch:$arch")
-                        jreList.forEach { jre ->
-                            val runtimeDir = "$assetsDir/app_runtime/java/$jre"
-                            println("runtimeDir:$runtimeDir")
-                            File(runtimeDir).listFiles().forEach {
-                                if (arch != "all" && it.name != "version" && !it.name.contains("universal") && it.name != "bin-${arch}.tar.xz") {
-                                    println("delete:${it} : ${it.delete()}")
-                                }
-                            }
-                        }
-                    }
-                }
             }
+        }
+
+        // JRE 资产不放在 src/main/assets 里（AGP 的 mergeAssets 不应用 source set 的 exclude 过滤），
+        // 而是按架构注册为生成源；arch 变化会让 Sync 任务重新执行，mergeAssets 随之重跑，避免产物残留旧架构文件。
+        if (System.getProperty("arch", "all") != "all") {
+            variant.sources.assets?.addGeneratedSourceDirectory(filterJreAssets) { it.outputDir }
+        } else {
+            variant.sources.assets?.addStaticSourceDirectory("src/main/jreAssets")
         }
     }
 }

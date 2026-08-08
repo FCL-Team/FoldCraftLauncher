@@ -26,6 +26,9 @@
     <string name="crash_reporter_close">Выйти</string>
     <string name="crash_reporter_copy">Копировать</string>
     <string name="crash_reporter_share">Поделиться</string>
+    <string name="crash_reporter_upload">Загрузить журнал</string>
+    <string name="upload_success">Журнал успешно загружен! URL скопирован в буфер обмена: %s</string>
+    <string name="upload_failed">Загрузка не удалась: %s</string>
     <string name="crash_reporter_toast">Скопировано!</string>
 
     <string name="color_picker_title">Палитра цветов</string>
@@ -36,4 +39,10 @@
     <string name="dialog_positive">ОК</string>
     <string name="dialog_negative">Отменить</string>
     <string name="edit">Изменить</string>
+    <string name="log_upload_success_title">Журнал успешно загружен</string>
+    <string name="log_upload_copy">Копировать ссылку</string>
+    <string name="log_upload_open">Открыть ссылку</string>
+    <string name="log_upload_share">Поделиться ссылкой</string>
+    <string name="log_upload_share_template">Я столкнулся с проблемой в лаунчере, вот ссылка на журнал:\n%s</string>
+    <string name="close">Закрыть</string>
 </resources>

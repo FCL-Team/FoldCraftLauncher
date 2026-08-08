@@ -165,6 +165,7 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
         res.addDefault("-Dorg.lwjgl.openal.libname=", context.getApplicationInfo().nativeLibraryDir + "/libopenal.so");
         res.addDefault("-Dorg.lwjgl.freetype.libname=", context.getApplicationInfo().nativeLibraryDir + "/libfreetype.so");
+        res.addDefault("-Dorg.lwjgl.system.allocator=", "system");
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
         res.addDefault("-Dglfwstub.windowWidth=", options.getWidth() + "");
         res.addDefault("-Dglfwstub.windowHeight=", options.getHeight() + "");
@@ -185,10 +186,6 @@ public class DefaultLauncher extends Launcher {
             libJna = new File(libJna, jnaVersion);
         }
         res.addDefault("-Djna.boot.library.path=", libJna.exists() ? libJna.getAbsolutePath() : context.getApplicationInfo().nativeLibraryDir);
-
-        if (getInjectorArg() != null && options.isBeGesture()) {
-            res.addDefault("-Dfcl.injector=", getInjectorArg());
-        }
 
         // Fix 1.7.2 Forge
         if (repository.getGameVersion(version).isPresent() && repository.getGameVersion(version).get().equals("1.7.2")) {
@@ -335,40 +332,6 @@ public class DefaultLauncher extends Launcher {
             }
         }
         res.add(cacioClasspath.toString());
-    }
-
-    public String getInjectorArg() {
-        try {
-            String map = IOUtils.readFullyAsString(DefaultLauncher.class.getResourceAsStream("/assets/map.json"));
-            InjectorMap injectorMap = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .create()
-                    .fromJson(map, InjectorMap.class);
-            Optional<InjectorMap.MapInfo> mapInfo = injectorMap.getMaps().stream()
-                    .filter(it -> {
-                        String versionTypeId = version.getAssetIndex().getId();
-                        if (versionTypeId.equals("legacy") || versionTypeId.equals("pre-1.6")) {
-                            versionTypeId = repository.getGameVersion(version).orElse("");
-                        }
-                        if (versionTypeId.equals("1.8")
-                                && repository.getGameVersion(version).isPresent()
-                                && (repository.getGameVersion(version).get().equals("1.8.8")
-                                || repository.getGameVersion(version).get().equals("1.8.9"))) {
-                            versionTypeId = "1.8.8";
-                        }
-                        if (versionTypeId.equals("1.9")
-                                && repository.getGameVersion(version).isPresent()
-                                && repository.getGameVersion(version).get().equals("1.9.4")) {
-                            versionTypeId = "1.9.4";
-                        }
-                        return it.getId().equals(versionTypeId);
-                    })
-                    .findFirst();
-            return mapInfo.map(it -> it.getArgument().getArgument(version, repository.getGameVersion(version).orElse(null))).orElse(null);
-        } catch (IOException e) {
-            LOG.log(Level.WARNING, "Failed to get game map", e);
-            return null;
-        }
     }
 
     public Map<String, Boolean> getFeatures() {

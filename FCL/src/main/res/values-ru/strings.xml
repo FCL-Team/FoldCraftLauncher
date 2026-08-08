@@ -81,9 +81,9 @@
     <string name="account_select_character">Выберите персонажа</string>
     <string name="account_skin">Скин</string>
     <string name="account_skin_type_default">По умолчанию</string>
-    <string name="account_skin_type_csl_api_location_hint">URL-адрес</string>
-    <string name="account_skin_type_csl_api_hint">"Имя персонажа на сайте должно совпадать с именем аккаунта. Скин загрузится автоматически."</string>
     <string name="account_skin_type_local_file">Локальный скин</string>
+    <string name="menu_settings_disable_be_gesture">Отключить расширенные жесты</string>
+    <string name="settings_fcl_controller_injector">Жесты на стороне сервера</string>
     <string name="account_skin_upload">Выбрать скин на устройстве</string>
     <string name="account_state_no_account">Нет аккаунта</string>
     <string name="account_state_add">Нажмите, чтобы добавить</string>
@@ -473,7 +473,6 @@
 
     <string name="menu_settings">Настройки</string>
     <string name="menu_settings_debug">Лог</string>
-    <string name="menu_settings_disable_be_gesture">Отключить расширенные жесты</string>
     <string name="menu_settings_disable_gesture">Отключить жесты</string>
     <string name="menu_settings_disable_left_touch">Отключить касания в левой половине экрана</string>
     <string name="menu_settings_force_exit">Принудительный выход</string>
@@ -724,7 +723,6 @@
     <string name="settings_advanced_server_ip">Адрес сервера</string>
 
     <string name="settings_fcl_controller">Контроллер</string>
-    <string name="settings_fcl_controller_injector">Жесты на стороне сервера</string>
     <string name="settings_fcl_vulkan_driver_system">Использовать системные драйверы Vulkan</string>
     <string name="settings_fcl_renderer">Реализация OpenGL (рендерер)</string>
     <string name="settings_fcl_pojav_bigcore">Принудительно использовать производительные ядра для рендеринга</string>

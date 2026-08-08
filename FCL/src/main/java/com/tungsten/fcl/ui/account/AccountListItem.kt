@@ -98,6 +98,14 @@ class AccountListItem(
         ) { _image.value = it }
     }
 
+    /**
+     * 纹理快照（对齐上游微软皮肤管理弹窗对 texture binding 的用法）：
+     * 当前账户皮肤/披风位图数组（[0]=皮肤，[1]=披风，可能为 null）。
+     */
+    fun textureSnapshot(): Array<out Bitmap?>? {
+        return TexturesLoader.textureFlow(account).value
+    }
+
     fun refreshAsync(): Task<*> {
         return Task.runAsync {
             account.clearCache()

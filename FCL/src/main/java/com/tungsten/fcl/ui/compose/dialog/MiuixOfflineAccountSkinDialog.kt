@@ -79,7 +79,7 @@ class MiuixOfflineAccountSkinDialog(
     private var skinView: SkinViewer? = null
 
     private val typeState = mutableStateOf(Skin.Type.DEFAULT)
-    private val cslUrlState = mutableStateOf("")
+    private val modelState = mutableStateOf(TextureModel.STEVE)
     private val skinPathState = mutableStateOf<String?>(null)
     private val capePathState = mutableStateOf<String?>(null)
 
@@ -89,12 +89,11 @@ class MiuixOfflineAccountSkinDialog(
                 Skin.Type.STEVE -> Skin.Type.STEVE
                 Skin.Type.ALEX -> Skin.Type.ALEX
                 Skin.Type.LOCAL_FILE -> Skin.Type.LOCAL_FILE
-                Skin.Type.CUSTOM_SKIN_LOADER_API -> Skin.Type.CUSTOM_SKIN_LOADER_API
                 else -> Skin.Type.DEFAULT
             }
+            modelState.value = skin.textureModel
             skinPathState.value = skin.localSkinPath
             capePathState.value = skin.localCapePath
-            cslUrlState.value = skin.cslApi ?: ""
         }
 
         setDialogContent {
@@ -126,14 +125,13 @@ class MiuixOfflineAccountSkinDialog(
     private val skin: Skin
         get() = Skin(
             typeState.value,
-            cslUrlState.value,
-            null,
+            modelState.value,
             if (StringUtils.isBlank(skinPathState.value)) null else skinPathState.value,
             if (StringUtils.isBlank(capePathState.value)) null else capePathState.value,
         )
 
     private fun refreshSkin() {
-        this.skin.load(account.username)
+        this.skin.load()
             .whenComplete(Schedulers.androidUIThread()) { result: Skin.LoadedSkin?, exception: Exception? ->
                 if (exception != null) {
                     Logging.LOG.log(Level.WARNING, "Failed to load skin", exception)
@@ -203,12 +201,16 @@ class MiuixOfflineAccountSkinDialog(
                         SkinTypeRadio(Skin.Type.STEVE, stringResource(R.string.account_skin_type_steve))
                         SkinTypeRadio(Skin.Type.ALEX, stringResource(R.string.account_skin_type_alex))
                         SkinTypeRadio(Skin.Type.LOCAL_FILE, stringResource(R.string.account_skin_type_local_file))
-                        SkinTypeRadio(Skin.Type.CUSTOM_SKIN_LOADER_API, stringResource(R.string.account_skin_type_csl_api))
                         if (typeState.value == Skin.Type.LOCAL_FILE) {
+                            // 对齐上游新 Skin record：本地文件的皮肤模型（classic/slim）选择
+                            Text(
+                                text = stringResource(R.string.account_skin_model),
+                                style = MiuixTheme.textStyles.body2,
+                                modifier = Modifier.padding(top = 8.dp),
+                            )
+                            ModelRadio(TextureModel.STEVE, stringResource(R.string.account_skin_model_classic))
+                            ModelRadio(TextureModel.ALEX, stringResource(R.string.account_skin_model_slim))
                             LocalFileSection()
-                        }
-                        if (typeState.value == Skin.Type.CUSTOM_SKIN_LOADER_API) {
-                            CslSection()
                         }
                     }
                 }
@@ -320,28 +322,30 @@ class MiuixOfflineAccountSkinDialog(
     }
 
     @Composable
-    private fun CslSection() {
-        // 对齐遗留 bg_container_white + auto_text_background_tint + auto_text_tint：
-        // 5dp 圆角底染主色（color），文字按主色亮度取黑/白（autoTint）
-        Text(
-            text = stringResource(R.string.account_skin_type_csl_api_hint),
-            style = MiuixTheme.textStyles.footnote1,
-            color = MiuixTheme.colorScheme.onPrimary,
+    private fun ModelRadio(model: TextureModel, label: String) {
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .background(MiuixTheme.colorScheme.primary, RoundedCornerShape(5.dp))
-                .padding(10.dp),
-        )
-        FCLTextField(
-            value = cslUrlState.value,
-            onValueChange = {
-                cslUrlState.value = it
-                refreshSkin()
-            },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            label = stringResource(R.string.account_skin_type_csl_api_location_hint),
-        )
+                .clickable {
+                    modelState.value = model
+                    refreshSkin()
+                }
+                .padding(vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            RadioButton(
+                selected = modelState.value == model,
+                onClick = {
+                    modelState.value = model
+                    refreshSkin()
+                },
+            )
+            Spacer(Modifier.width(4.dp))
+            Text(
+                text = label,
+                style = MiuixTheme.textStyles.body2,
+                color = MiuixTheme.colorScheme.primary,
+            )
+        }
     }
 }
