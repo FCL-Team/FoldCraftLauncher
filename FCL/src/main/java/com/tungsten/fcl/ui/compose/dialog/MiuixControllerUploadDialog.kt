@@ -38,12 +38,11 @@ import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fcl.ui.compose.FCLCard
 import com.tungsten.fcl.ui.compose.FCLCornerRadius
 import top.yukonga.miuix.kmp.basic.CardDefaults
-import top.yukonga.miuix.kmp.basic.Checkbox
+import com.tungsten.fcl.ui.compose.FCLCheckBox
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
 import com.tungsten.fcl.ui.compose.FCLTextField
-import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -329,10 +328,9 @@ class MiuixControllerUploadDialog(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Checkbox(
+            FCLCheckBox(
                 state = if (checked) ToggleableState.On else ToggleableState.Off,
                 onClick = { onDeviceChanged(id, !checked) },
-                colors = fclCheckboxColors(),
             )
             Text(
                 text = label,

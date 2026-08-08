@@ -78,9 +78,9 @@ import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import top.yukonga.miuix.kmp.basic.Button
+import com.tungsten.fcl.ui.compose.FCLButton
 import top.yukonga.miuix.kmp.basic.CardDefaults
-import top.yukonga.miuix.kmp.basic.Checkbox
+import com.tungsten.fcl.ui.compose.FCLCheckBox
 import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.Text
@@ -379,7 +379,7 @@ class ComposeModListPage(context: Context, id: Int, parent: FCLUILayout) :
                     .verticalScroll(rememberScrollState())
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
+                    FCLCheckBox(
                         state = if (enabledFilter) ToggleableState.On else ToggleableState.Off,
                         onClick = { enabledFilter = !enabledFilter },
                     )
@@ -389,7 +389,7 @@ class ComposeModListPage(context: Context, id: Int, parent: FCLUILayout) :
                     )
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
+                    FCLCheckBox(
                         state = if (disabledFilter) ToggleableState.On else ToggleableState.Off,
                         onClick = { disabledFilter = !disabledFilter },
                     )
@@ -491,7 +491,7 @@ class ComposeModListPage(context: Context, id: Int, parent: FCLUILayout) :
 
     @Composable
     private fun ModActionButton(textRes: Int, enabled: Boolean, onClick: () -> Unit) {
-        Button(
+        FCLButton(
             onClick = onClick,
             enabled = enabled,
             modifier = Modifier
@@ -583,7 +583,7 @@ private fun ModListItemRow(
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Checkbox(
+            FCLCheckBox(
                 state = if (active) ToggleableState.On else ToggleableState.Off,
                 onClick = {
                     item.modInfo.setActive(!active)
@@ -713,25 +713,25 @@ class ComposeModUpdatesPage(
                 items(objects) { obj -> ModUpdateRow(obj) }
             }
             Row(Modifier.fillMaxWidth()) {
-                Button(
+                FCLButton(
                     onClick = { exportList() },
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 7.dp),
                 ) { Text(stringResource(R.string.button_export)) }
-                Button(
+                FCLButton(
                     onClick = { updateMods(true) },
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 3.dp, end = 3.dp),
                 ) { Text(stringResource(R.string.mods_check_updates_update), maxLines = 1, overflow = TextOverflow.Ellipsis) }
-                Button(
+                FCLButton(
                     onClick = { updateMods(false) },
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 3.dp, end = 3.dp),
                 ) { Text(stringResource(R.string.mods_check_updates_update_without), maxLines = 1, overflow = TextOverflow.Ellipsis) }
-                Button(
+                FCLButton(
                     onClick = { ManagePageManager.instance?.dismissCurrentTempPage() },
                     modifier = Modifier
                         .weight(1f)
@@ -822,7 +822,7 @@ private fun ModUpdateRow(obj: ModUpdatesPage.ModUpdateObject) {
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Checkbox(
+            FCLCheckBox(
                 state = if (enabled) ToggleableState.On else ToggleableState.Off,
                 onClick = { obj.setEnabled(!enabled) },
                 modifier = Modifier.size(30.dp),

@@ -8,7 +8,6 @@ import com.tungsten.fcl.ui.download.DownloadUI
 import com.tungsten.fcl.ui.main.compose.ComposeMainUI
 import com.tungsten.fcl.ui.manage.ManageUI
 import com.tungsten.fcl.ui.multiplayer.ComposeMultiplayerUI
-import com.tungsten.fcl.ui.multiplayer.MultiplayerUI
 import com.tungsten.fcl.ui.setting.SettingUI
 import com.tungsten.fcl.ui.version.VersionUI
 import com.tungsten.fclcore.util.Logging
@@ -21,7 +20,6 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
     companion object {
         @JvmStatic
         lateinit var instance: UIManager
-        const val USE_COMPOSE_MULTIPLAYER_UI = true
         const val USE_COMPOSE_CONTROLLER_PAGES = true
     }
 
@@ -39,10 +37,8 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
     val manageUI: ManageUI by lazy { ManageUI(context, parent, R.layout.ui_manage) }
     val downloadUI: DownloadUI by lazy { DownloadUI(context, parent, R.layout.ui_download) }
     val controllerUI: ControllerUI by lazy { ControllerUI(context, parent, R.layout.ui_controller) }
-    val multiplayerUI: FCLCommonUI by lazy {
-        if (USE_COMPOSE_MULTIPLAYER_UI) ComposeMultiplayerUI(context, parent)
-        else MultiplayerUI(context, parent, R.layout.ui_multiplayer)
-    }
+    // 批 3：联机页固化 Compose（旧 MultiplayerUI + ui_multiplayer.xml 已删除）。
+    val multiplayerUI: FCLCommonUI by lazy { ComposeMultiplayerUI(context, parent) }
     val settingUI: SettingUI by lazy { SettingUI(context, parent, R.layout.ui_setting) }
 
     private val allUIList = mutableListOf<FCLBaseUI>()

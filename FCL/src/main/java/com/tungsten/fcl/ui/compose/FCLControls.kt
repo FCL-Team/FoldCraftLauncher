@@ -4,6 +4,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -18,13 +19,20 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.state.ToggleableState
 import top.yukonga.miuix.kmp.basic.BasicComponentColors
 import top.yukonga.miuix.kmp.basic.BasicComponentDefaults
+import top.yukonga.miuix.kmp.basic.Button
+import top.yukonga.miuix.kmp.basic.ButtonColors
+import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.Card
 import top.yukonga.miuix.kmp.basic.CardColors
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.CheckboxColors
 import top.yukonga.miuix.kmp.basic.CheckboxDefaults
+import top.yukonga.miuix.kmp.basic.RadioButton
+import top.yukonga.miuix.kmp.basic.RadioButtonColors
+import top.yukonga.miuix.kmp.basic.RadioButtonDefaults
 import top.yukonga.miuix.kmp.basic.Slider
 import top.yukonga.miuix.kmp.basic.SliderColors
 import top.yukonga.miuix.kmp.basic.SliderDefaults
@@ -100,6 +108,31 @@ fun fclCheckboxColors(): CheckboxColors {
         uncheckedBackgroundColor = scheme.primaryContainer,
         disabledCheckedBackgroundColor = scheme.primaryVariant,
         disabledUncheckedBackgroundColor = scheme.primaryContainer,
+    )
+}
+
+/** FCLRadioButton 配色（FCLRadioButton.applyTheme:38-42）：选中球/环 = dkColor（primaryVariant）。 */
+@Composable
+fun fclRadioColors(): RadioButtonColors = RadioButtonDefaults.radioButtonColors(
+    selectedColor = MiuixTheme.colorScheme.primaryVariant,
+)
+
+/**
+ * FCL 选择控件（对齐旧版「圆圈套球」形态：未选中空心圆环、选中圆环 + 实心圆球）。
+ * Miuix Checkbox 为实心圆 + 对勾，与旧版观感不符；选择/勾选类控件一律走本组件。
+ * 参数对齐 Miuix Checkbox（state/onClick），调用点零改动迁移。
+ */
+@Composable
+fun FCLCheckBox(
+    state: ToggleableState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    RadioButton(
+        selected = state == ToggleableState.On,
+        onClick = onClick,
+        modifier = modifier,
+        colors = fclRadioColors(),
     )
 }
 
@@ -271,6 +304,41 @@ fun FCLCard(
         holdDownState = holdDownState,
         onClick = onClick,
         onLongPress = onLongPress,
+        content = content,
+    )
+}
+
+// ---------- 按钮体系（对齐旧版 FCLButton(app:ripple=true)：主题色实心底 + autoTint 文字 + 5dp 圆角） ----------
+
+/**
+ * FCL 页面按钮配色（FCLButton.setRipple，FCLLibrary FCLButton.java:144-157）：
+ * 背景 = fcl_button.xml（5dp 圆角矩形）tint color（primary）；文字 = autoTint（onPrimary）。
+ * Miuix 默认 Button 为 16dp squircle 灰系配色（buttonColors），不跟随 FCL 主题；
+ * buttonColorsPrimary 提供 primary 实心底 + onPrimary 文字，与旧版一致。
+ */
+@Composable
+fun fclButtonColors(): ButtonColors = ButtonDefaults.buttonColorsPrimary()
+
+/**
+ * Miuix [Button] 的 FCL 包装：圆角固定 [FCLCornerRadius.Card]（5dp，fcl_button.xml），
+ * 配色默认 [fclButtonColors]（主题色实心底）。页面上的实色操作按钮一律走本组件，
+ * 不要直接用 Miuix 默认 Button（16dp 灰系，不跟随主题）。
+ * 其余参数直通 Miuix [Button]，业务行为零改动。
+ */
+@Composable
+fun FCLButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    colors: ButtonColors = fclButtonColors(),
+    content: @Composable RowScope.() -> Unit,
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        cornerRadius = FCLCornerRadius.Card,
+        colors = colors,
         content = content,
     )
 }

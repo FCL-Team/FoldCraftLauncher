@@ -43,7 +43,7 @@ import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.io.CompressingUtils
 import com.tungsten.fclcore.util.io.FileUtils
-import top.yukonga.miuix.kmp.basic.Button
+import com.tungsten.fcl.ui.compose.FCLButton
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.CardDefaults
 import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
@@ -403,7 +403,7 @@ fun ModpackInfoScreen(ui: ModpackInfoUi) {
             }
             // 对齐 describe / install（FCLButton ripple = 主色实心按钮）
             if (ui.describeVisible) {
-                Button(
+                FCLButton(
                     onClick = ui::onDescribe,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -413,7 +413,7 @@ fun ModpackInfoScreen(ui: ModpackInfoUi) {
                     Text(text = stringResource(R.string.modpack_description))
                 }
             }
-            Button(
+            FCLButton(
                 onClick = ui::onInstallClick,
                 modifier = Modifier
                     .fillMaxWidth()

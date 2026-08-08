@@ -66,7 +66,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import top.yukonga.miuix.kmp.basic.Button
+import com.tungsten.fcl.ui.compose.FCLButton
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
@@ -492,7 +492,7 @@ fun RemoteModSearchScreen(
             // search_layout/install_modpack marginBottom=10dp、search 贴底
             if (tab.hasInstallLocalModpack) {
                 Spacer(Modifier.height(10.dp))
-                Button(
+                FCLButton(
                     onClick = onImportModpack,
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.buttonColorsPrimary(),
@@ -501,7 +501,7 @@ fun RemoteModSearchScreen(
                 }
             }
             Spacer(Modifier.height(10.dp))
-            Button(
+            FCLButton(
                 onClick = holder::onSearchClick,
                 modifier = Modifier.fillMaxWidth(),
                 enabled = !holder.loading,
@@ -661,7 +661,7 @@ private fun PageButton(
 ) {
     // 对齐 page_download.xml 分页 FCLButton（主色实心 = primary，文字 autoTint = onPrimary，
     // marginStart=10dp）
-    Button(
+    FCLButton(
         onClick = onClick,
         enabled = enabled,
         modifier = Modifier.padding(start = 10.dp),

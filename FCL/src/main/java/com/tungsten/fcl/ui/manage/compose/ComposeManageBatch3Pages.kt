@@ -6,6 +6,7 @@ import android.net.Uri
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -34,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
@@ -111,14 +114,18 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import top.yukonga.miuix.kmp.basic.Button
+import com.tungsten.fcl.ui.compose.FCLButton
 import top.yukonga.miuix.kmp.basic.CardDefaults
-import top.yukonga.miuix.kmp.basic.Checkbox
+import com.tungsten.fcl.ui.compose.FCLCheckBox
 import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
+import top.yukonga.miuix.kmp.basic.DropdownArrowEndAction
+import top.yukonga.miuix.kmp.basic.DropdownImpl
 import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.ListPopupColumn
 import top.yukonga.miuix.kmp.basic.Switch
 import top.yukonga.miuix.kmp.basic.Text
 import top.yukonga.miuix.kmp.theme.MiuixTheme
+import top.yukonga.miuix.kmp.window.WindowListPopup
 import java.io.File
 import java.io.IOException
 import java.net.URL
@@ -200,7 +207,7 @@ class ComposeWorldListPage(context: Context, id: Int, parent: FCLUILayout) :
             // 左栏（对齐 page_manage_world.xml guideline 0.3：复选框置顶，按钮组置底）
             Column(Modifier.weight(3f).fillMaxHeight()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
+                    FCLCheckBox(
                         state = if (showAll) ToggleableState.On else ToggleableState.Off,
                         onClick = { showAll = !showAll },
                     )
@@ -208,7 +215,7 @@ class ComposeWorldListPage(context: Context, id: Int, parent: FCLUILayout) :
                 }
                 Spacer(Modifier.weight(1f))
                 if (privateDir && worlds.isNotEmpty()) {
-                    Button(
+                    FCLButton(
                         onClick = {
                             // 对齐旧 fixPrivate：递归 chmod 1535
                             Files.walk(savesDir).forEach { path -> Files.setAttribute(path, "unix:mode", 1535) }
@@ -218,12 +225,12 @@ class ComposeWorldListPage(context: Context, id: Int, parent: FCLUILayout) :
                         modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
                     ) { Text(stringResource(R.string.world_permission_fix)) }
                 }
-                Button(
+                FCLButton(
                     onClick = { addWorld(scope, savesDir) { reloadTick.intValue++ } },
                     enabled = !loading && savesDir != null,
                     modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
                 ) { Text(stringResource(R.string.world_add)) }
-                Button(
+                FCLButton(
                     onClick = { reloadTick.intValue++ },
                     enabled = !loading,
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
@@ -351,7 +358,7 @@ private fun WorldListComposeItem(context: Context, parent: FCLUILayout, world: W
     val contentColor = MiuixTheme.colorScheme.onPrimary
     FCLCard(
         onClick = { openWorldInfo(context, parent, world) },
-        modifier = Modifier.fillMaxWidth().padding(bottom = 5.dp),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
         colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
     ) {
         Row(
@@ -469,174 +476,174 @@ class ComposeWorldInfoPage(context: Context, id: Int, parent: FCLUILayout, priva
         val dataTag = levelDat.get<CompoundTag>("Data") ?: return
         val worldGenSettings = dataTag.get<CompoundTag>("WorldGenSettings")
 
-        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
-            InfoRow(R.string.world_name, world.worldName)
-            InfoRow(R.string.world_info_game_version, world.gameVersion ?: "")
-            // 对齐旧页：新格式 seed 在 WorldGenSettings，旧格式在 RandomSeed
-            when (val seedTag = worldGenSettings?.get<Tag>("seed") ?: dataTag.get<Tag>("RandomSeed")) {
-                is LongTag -> InfoRow(R.string.world_info_random_seed, seedTag.value.toString())
-            }
-            InfoRow(R.string.world_info_last_played, LocaleUtils.formatDateTime(context, Instant.ofEpochMilli(world.lastPlayed)))
-            when (val timeTag = dataTag.get<Tag>("Time")) {
-                is LongTag -> InfoRow(
-                    R.string.world_info_time,
-                    AndroidUtils.getLocalizedText(context, "world_info_time_format", timeTag.value / 24000),
-                )
-            }
-
-            // 允许作弊：tag 缺失或取值非 0/1 时旧页禁用开关
-            val cheatTag = dataTag.get<Tag>("allowCommands")
-            if (cheatTag is ByteTag && (cheatTag.value == 0.toByte() || cheatTag.value == 1.toByte())) {
-                SwitchRow(R.string.world_info_allow_cheats, cheatTag.value == 1.toByte()) { on ->
-                    cheatTag.value = (if (on) 1 else 0).toByte()
-                    saveLevelDat()
+        // 对齐 page_manage_world_info.xml：ScrollView + padding=10dp，两张 bg_container_white 卡片，
+        // 卡片内每行为「label ←→ 值/控件」横向排布，行间 1dp darker_gray 分隔线
+        Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(10.dp)) {
+            FCLCard(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+            ) {
+                Column {
+                    InfoRow(R.string.world_name, world.worldName)
+                    RowDivider()
+                    InfoRow(R.string.world_info_game_version, world.gameVersion ?: "")
+                    RowDivider()
+                    // 对齐旧页：新格式 seed 在 WorldGenSettings，旧格式在 RandomSeed；行常驻，无 tag 时空值
+                    val seedTag = worldGenSettings?.get<Tag>("seed") ?: dataTag.get<Tag>("RandomSeed")
+                    InfoRow(R.string.world_info_random_seed, if (seedTag is LongTag) seedTag.value.toString() else "")
+                    RowDivider()
+                    InfoRow(R.string.world_info_last_played, LocaleUtils.formatDateTime(context, Instant.ofEpochMilli(world.lastPlayed)))
+                    RowDivider()
+                    val timeTag = dataTag.get<Tag>("Time")
+                    InfoRow(
+                        R.string.world_info_time,
+                        if (timeTag is LongTag) AndroidUtils.getLocalizedText(context, "world_info_time_format", timeTag.value / 24000) else "",
+                    )
+                    RowDivider()
+                    // 允许作弊：tag 缺失或取值非 0/1 时旧页禁用开关
+                    val cheatTag = dataTag.get<Tag>("allowCommands")
+                    if (cheatTag is ByteTag && (cheatTag.value == 0.toByte() || cheatTag.value == 1.toByte())) {
+                        SwitchRow(R.string.world_info_allow_cheats, cheatTag.value == 1.toByte()) { on ->
+                            cheatTag.value = (if (on) 1 else 0).toByte()
+                            saveLevelDat()
+                        }
+                    } else {
+                        SwitchRow(R.string.world_info_allow_cheats, false, onChange = null)
+                    }
+                    RowDivider()
+                    // 生成结构：新格式 generate_features，旧格式 MapFeatures
+                    val genTag = worldGenSettings?.get<Tag>("generate_features") ?: dataTag.get<Tag>("MapFeatures")
+                    if (genTag is ByteTag && (genTag.value == 0.toByte() || genTag.value == 1.toByte())) {
+                        SwitchRow(R.string.world_info_generate_features, genTag.value == 1.toByte()) { on ->
+                            genTag.value = (if (on) 1 else 0).toByte()
+                            saveLevelDat()
+                        }
+                    } else {
+                        SwitchRow(R.string.world_info_generate_features, false, onChange = null)
+                    }
+                    RowDivider()
+                    // 难度
+                    val difficultyTag = dataTag.get<Tag>("Difficulty")
+                    val difficultyNames = remember {
+                        listOf("peaceful", "easy", "normal", "hard").map {
+                            AndroidUtils.getLocalizedText(FCLPath.CONTEXT, "world_info_difficulty_$it")
+                        }
+                    }
+                    if (difficultyTag is ByteTag && difficultyTag.value >= 0 && difficultyTag.value <= 3) {
+                        var difficultyIndex by remember { mutableIntStateOf(difficultyTag.value.toInt()) }
+                        SpinnerRow(R.string.world_info_difficulty, difficultyNames, difficultyIndex) { index ->
+                            difficultyIndex = index
+                            difficultyTag.value = index.toByte()
+                            saveLevelDat()
+                        }
+                    } else {
+                        SpinnerRow(R.string.world_info_difficulty, difficultyNames, 0, enabled = false) {}
+                    }
                 }
-            } else {
-                SwitchRow(R.string.world_info_allow_cheats, false, onChange = null)
             }
 
-            // 生成结构：新格式 generate_features，旧格式 MapFeatures
-            val genTag = worldGenSettings?.get<Tag>("generate_features") ?: dataTag.get<Tag>("MapFeatures")
-            if (genTag is ByteTag && (genTag.value == 0.toByte() || genTag.value == 1.toByte())) {
-                SwitchRow(R.string.world_info_generate_features, genTag.value == 1.toByte()) { on ->
-                    genTag.value = (if (on) 1 else 0).toByte()
-                    saveLevelDat()
-                }
-            } else {
-                SwitchRow(R.string.world_info_generate_features, false, onChange = null)
-            }
-
-            // 难度
-            val difficultyTag = dataTag.get<Tag>("Difficulty")
-            val difficultyNames = remember {
-                listOf("peaceful", "easy", "normal", "hard").map {
-                    AndroidUtils.getLocalizedText(FCLPath.CONTEXT, "world_info_difficulty_$it")
-                }
-            }
-            if (difficultyTag is ByteTag && difficultyTag.value >= 0 && difficultyTag.value <= 3) {
-                var difficultyIndex by remember { mutableIntStateOf(difficultyTag.value.toInt()) }
-                FCLDropdownField(
-                    label = stringResource(R.string.world_info_difficulty),
-                    items = difficultyNames,
-                    selectedIndex = difficultyIndex,
-                    onSelectedIndexChange = { index ->
-                        difficultyIndex = index
-                        difficultyTag.value = index.toByte()
-                        saveLevelDat()
-                    },
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                )
-            } else {
-                FCLDropdownField(
-                    label = stringResource(R.string.world_info_difficulty),
-                    items = difficultyNames,
-                    selectedIndex = 0,
-                    onSelectedIndexChange = {},
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    enabled = false,
-                )
-            }
-
-            // 玩家信息（无 Player 标签时旧页整区隐藏）
+            // 玩家信息卡（对齐 player_info：无 Player 标签时整卡隐藏）
             val playerTag = dataTag.get<Tag>("Player")
             if (playerTag is CompoundTag) {
-                WorldDimension.of(playerTag.get<Tag>("Dimension"))?.formatPosition(playerTag.get<Tag>("Pos"))?.let {
-                    InfoRow(R.string.world_info_player_location, it)
-                }
-                (playerTag.get("LastDeathLocation") as? CompoundTag)?.let { lastDeathTag ->
-                    WorldDimension.of(lastDeathTag.get<Tag>("dimension"))?.formatPosition(lastDeathTag.get<Tag>("pos"))?.let {
-                        InfoRow(R.string.world_info_player_last_death_location, it)
-                    }
-                }
-                WorldDimension.of(playerTag.get("SpawnDimension"))?.let { spawnDim ->
-                    val x = playerTag.get<Tag>("SpawnX")
-                    val y = playerTag.get<Tag>("SpawnY")
-                    val z = playerTag.get<Tag>("SpawnZ")
-                    if (x is IntTag && y is IntTag && z is IntTag) {
-                        InfoRow(R.string.world_info_player_spawn, spawnDim.formatPosition(x.value, y.value, z.value))
-                    }
-                }
-
-                val gameTypeNames = remember {
-                    listOf("survival", "creative", "adventure", "spectator").map {
-                        AndroidUtils.getLocalizedText(FCLPath.CONTEXT, "world_info_player_game_type_$it")
-                    }
-                }
-                val gameTypeTag = playerTag.get<Tag>("playerGameType")
-                if (gameTypeTag is IntTag && gameTypeTag.value >= 0 && gameTypeTag.value <= 3) {
-                    var gameTypeIndex by remember { mutableIntStateOf(gameTypeTag.value) }
-                    FCLDropdownField(
-                        label = stringResource(R.string.world_info_player_game_type),
-                        items = gameTypeNames,
-                        selectedIndex = gameTypeIndex,
-                        onSelectedIndexChange = { index ->
-                            gameTypeIndex = index
-                            gameTypeTag.value = index
-                            saveLevelDat()
-                        },
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    )
-                } else {
-                    FCLDropdownField(
-                        label = stringResource(R.string.world_info_player_game_type),
-                        items = gameTypeNames,
-                        selectedIndex = 0,
-                        onSelectedIndexChange = {},
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                        enabled = false,
-                    )
-                }
-
-                // 生命值/饱食度/经验等级：对齐旧页输入即校验并即时保存
-                val healthTag = playerTag.get<Tag>("Health")
-                NumberFieldRow(
-                    labelRes = R.string.world_info_player_health,
-                    initial = if (healthTag is FloatTag) DecimalFormat("#").format(healthTag.value.toFloat()) else "",
-                    enabled = healthTag is FloatTag,
-                ) { text ->
-                    if (healthTag !is FloatTag) return@NumberFieldRow
-                    if (StringUtils.isBlank(text) && Lang.toDoubleOrNull(text) == null) {
-                        Toast.makeText(context, context.getString(R.string.input_number), Toast.LENGTH_SHORT).show()
-                    } else {
-                        try {
-                            healthTag.value = text.toFloat()
-                            saveLevelDat()
-                        } catch (e: Throwable) {
-                            // 与旧实现一致忽略解析失败
+                Spacer(Modifier.height(10.dp))
+                FCLCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.defaultColors(color = MiuixTheme.colorScheme.primaryContainer),
+                ) {
+                    Column {
+                        val locationText = WorldDimension.of(playerTag.get<Tag>("Dimension"))
+                            ?.formatPosition(playerTag.get<Tag>("Pos")) ?: ""
+                        InfoRow(R.string.world_info_player_location, locationText)
+                        RowDivider()
+                        val lastDeathTag = playerTag.get("LastDeathLocation") as? CompoundTag
+                        val lastDeathText = lastDeathTag?.let {
+                            WorldDimension.of(it.get<Tag>("dimension"))?.formatPosition(it.get<Tag>("pos"))
+                        } ?: ""
+                        InfoRow(R.string.world_info_player_last_death_location, lastDeathText)
+                        RowDivider()
+                        val spawnDim = WorldDimension.of(playerTag.get("SpawnDimension"))
+                        val sx = playerTag.get<Tag>("SpawnX")
+                        val sy = playerTag.get<Tag>("SpawnY")
+                        val sz = playerTag.get<Tag>("SpawnZ")
+                        val spawnText = if (spawnDim != null && sx is IntTag && sy is IntTag && sz is IntTag) {
+                            spawnDim.formatPosition(sx.value, sy.value, sz.value)
+                        } else {
+                            ""
                         }
-                    }
-                }
-                val foodTag = playerTag.get<Tag>("foodLevel")
-                NumberFieldRow(
-                    labelRes = R.string.world_info_player_food_level,
-                    initial = if (foodTag is IntTag) foodTag.value.toString() else "",
-                    enabled = foodTag is IntTag,
-                ) { text ->
-                    if (foodTag !is IntTag) return@NumberFieldRow
-                    if (StringUtils.isBlank(text) && Lang.toDoubleOrNull(text) == null) {
-                        Toast.makeText(context, context.getString(R.string.input_number), Toast.LENGTH_SHORT).show()
-                    } else {
-                        try {
-                            foodTag.value = text.toInt()
-                            saveLevelDat()
-                        } catch (e: Throwable) {
+                        InfoRow(R.string.world_info_player_spawn, spawnText)
+                        RowDivider()
+                        // 游戏模式
+                        val gameTypeNames = remember {
+                            listOf("survival", "creative", "adventure", "spectator").map {
+                                AndroidUtils.getLocalizedText(FCLPath.CONTEXT, "world_info_player_game_type_$it")
+                            }
                         }
-                    }
-                }
-                val xpTag = playerTag.get<Tag>("XpLevel")
-                NumberFieldRow(
-                    labelRes = R.string.world_info_player_xp_level,
-                    initial = if (xpTag is IntTag) xpTag.value.toString() else "",
-                    enabled = xpTag is IntTag,
-                ) { text ->
-                    if (xpTag !is IntTag) return@NumberFieldRow
-                    if (StringUtils.isBlank(text) && Lang.toDoubleOrNull(text) == null) {
-                        Toast.makeText(context, context.getString(R.string.input_number), Toast.LENGTH_SHORT).show()
-                    } else {
-                        try {
-                            xpTag.value = text.toInt()
-                            saveLevelDat()
-                        } catch (e: Throwable) {
+                        val gameTypeTag = playerTag.get<Tag>("playerGameType")
+                        if (gameTypeTag is IntTag && gameTypeTag.value >= 0 && gameTypeTag.value <= 3) {
+                            var gameTypeIndex by remember { mutableIntStateOf(gameTypeTag.value) }
+                            SpinnerRow(R.string.world_info_player_game_type, gameTypeNames, gameTypeIndex) { index ->
+                                gameTypeIndex = index
+                                gameTypeTag.value = index
+                                saveLevelDat()
+                            }
+                        } else {
+                            SpinnerRow(R.string.world_info_player_game_type, gameTypeNames, 0, enabled = false) {}
+                        }
+                        RowDivider()
+                        // 生命值/饱食度/经验等级：对齐旧页输入即校验并即时保存
+                        val healthTag = playerTag.get<Tag>("Health")
+                        NumberFieldRow(
+                            labelRes = R.string.world_info_player_health,
+                            initial = if (healthTag is FloatTag) DecimalFormat("#").format(healthTag.value.toFloat()) else "",
+                            enabled = healthTag is FloatTag,
+                        ) { text ->
+                            if (healthTag !is FloatTag) return@NumberFieldRow
+                            if (StringUtils.isBlank(text) && Lang.toDoubleOrNull(text) == null) {
+                                Toast.makeText(context, context.getString(R.string.input_number), Toast.LENGTH_SHORT).show()
+                            } else {
+                                try {
+                                    healthTag.value = text.toFloat()
+                                    saveLevelDat()
+                                } catch (e: Throwable) {
+                                    // 与旧实现一致忽略解析失败
+                                }
+                            }
+                        }
+                        RowDivider()
+                        val foodTag = playerTag.get<Tag>("foodLevel")
+                        NumberFieldRow(
+                            labelRes = R.string.world_info_player_food_level,
+                            initial = if (foodTag is IntTag) foodTag.value.toString() else "",
+                            enabled = foodTag is IntTag,
+                        ) { text ->
+                            if (foodTag !is IntTag) return@NumberFieldRow
+                            if (StringUtils.isBlank(text) && Lang.toDoubleOrNull(text) == null) {
+                                Toast.makeText(context, context.getString(R.string.input_number), Toast.LENGTH_SHORT).show()
+                            } else {
+                                try {
+                                    foodTag.value = text.toInt()
+                                    saveLevelDat()
+                                } catch (e: Throwable) {
+                                }
+                            }
+                        }
+                        RowDivider()
+                        val xpTag = playerTag.get<Tag>("XpLevel")
+                        NumberFieldRow(
+                            labelRes = R.string.world_info_player_xp_level,
+                            initial = if (xpTag is IntTag) xpTag.value.toString() else "",
+                            enabled = xpTag is IntTag,
+                        ) { text ->
+                            if (xpTag !is IntTag) return@NumberFieldRow
+                            if (StringUtils.isBlank(text) && Lang.toDoubleOrNull(text) == null) {
+                                Toast.makeText(context, context.getString(R.string.input_number), Toast.LENGTH_SHORT).show()
+                            } else {
+                                try {
+                                    xpTag.value = text.toInt()
+                                    saveLevelDat()
+                                } catch (e: Throwable) {
+                                }
+                            }
                         }
                     }
                 }
@@ -644,15 +651,22 @@ class ComposeWorldInfoPage(context: Context, id: Int, parent: FCLUILayout, priva
         }
     }
 
+    /** 行分隔线（对齐 page_manage_world_info.xml 行间的 1dp darker_gray 分隔 View）。 */
+    @Composable
+    private fun RowDivider() {
+        Box(Modifier.fillMaxWidth().height(1.dp).background(Color(0xFFA9A9A9)))
+    }
+
+    /** 对齐旧页信息行：label ←→ 值，padding 10/8。 */
     @Composable
     private fun InfoRow(labelRes: Int, value: String) {
-        Column(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-            Text(
-                text = stringResource(labelRes),
-                style = MiuixTheme.textStyles.body2,
-                color = MiuixTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
-            )
-            Text(text = value, color = MiuixTheme.colorScheme.onPrimary)
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(stringResource(labelRes), fontSize = 14.sp, color = MiuixTheme.colorScheme.onPrimary, maxLines = 1)
+            Spacer(Modifier.weight(1f))
+            Text(value, fontSize = 14.sp, color = MiuixTheme.colorScheme.onPrimary, maxLines = 1)
         }
     }
 
@@ -662,25 +676,84 @@ class ComposeWorldInfoPage(context: Context, id: Int, parent: FCLUILayout, priva
         // NBT tag 变更不触发重组，开关视觉由本地状态承载
         var current by remember(checked) { mutableStateOf(checked) }
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 text = stringResource(labelRes),
+                fontSize = 14.sp,
                 color = MiuixTheme.colorScheme.onPrimary,
                 modifier = Modifier.weight(1f),
+                maxLines = 1,
             )
             Switch(checked = current, onCheckedChange = { on -> current = on; onChange?.invoke(on) }, colors = fclSwitchColors())
         }
     }
 
+    /** 对齐旧页 FCLSpinner 行：左 label，右紧凑下拉（当前值 + 箭头，点击弹窗选择）。 */
+    @Composable
+    private fun SpinnerRow(labelRes: Int, items: List<String>, selectedIndex: Int, enabled: Boolean = true, onSelected: (Int) -> Unit) {
+        var expanded by remember { mutableStateOf(false) }
+        val textColor = MiuixTheme.colorScheme.onPrimary.copy(alpha = if (enabled) 1f else 0.38f)
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(stringResource(labelRes), fontSize = 14.sp, color = textColor, maxLines = 1)
+            Spacer(Modifier.weight(1f))
+            Box {
+                Row(
+                    modifier = Modifier
+                        .clickable(enabled = enabled) { expanded = true }
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = items.getOrElse(selectedIndex) { "" },
+                        fontSize = 14.sp,
+                        color = textColor,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    DropdownArrowEndAction(actionColor = textColor)
+                }
+                WindowListPopup(
+                    show = expanded,
+                    onDismissRequest = { expanded = false },
+                ) {
+                    ListPopupColumn {
+                        items.forEachIndexed { index, text ->
+                            DropdownImpl(
+                                text = text,
+                                optionSize = items.size,
+                                isSelected = index == selectedIndex,
+                                index = index,
+                                onSelectedIndexChange = {
+                                    onSelected(it)
+                                    expanded = false
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /** 对齐旧页数值编辑行：label ←→ 50dp FCLEditText（14sp）。 */
     @Composable
     private fun NumberFieldRow(labelRes: Int, initial: String, enabled: Boolean, onChange: (String) -> Unit) {
         var text by remember { mutableStateOf(initial) }
-        Column(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Text(
                 text = stringResource(labelRes),
+                fontSize = 14.sp,
                 color = MiuixTheme.colorScheme.onPrimary,
+                modifier = Modifier.weight(1f),
+                maxLines = 1,
             )
             FCLTextField(
                 value = text,
@@ -688,7 +761,7 @@ class ComposeWorldInfoPage(context: Context, id: Int, parent: FCLUILayout, priva
                     text = it
                     onChange(it)
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.width(50.dp),
                 singleLine = true,
                 enabled = enabled,
             )
@@ -813,10 +886,10 @@ class ComposeDatapackListPage(context: Context, id: Int, parent: FCLUILayout, pr
             }
         }
 
-        Row(Modifier.fillMaxSize().padding(start = 10.dp, top = 10.dp, end = 10.dp, bottom = 10.dp)) {
-            // 左栏按钮组（对齐 page_datapack_list.xml left）
-            Column(Modifier.weight(3f)) {
-                Button(
+        Row(Modifier.fillMaxSize().padding(start = 10.dp, top = 10.dp, end = 10.dp)) {
+            // 左栏按钮组（对齐 page_datapack_list.xml left：删除/启用/禁用置顶，添加/刷新置底）
+            Column(Modifier.weight(3f).fillMaxHeight()) {
+                FCLButton(
                     onClick = {
                         // 对齐旧删除确认弹窗
                         FCLDialogs.showAlert(
@@ -832,22 +905,23 @@ class ComposeDatapackListPage(context: Context, id: Int, parent: FCLUILayout, pr
                     enabled = !loading,
                     modifier = Modifier.fillMaxWidth(),
                 ) { Text(stringResource(R.string.button_remove)) }
-                Button(
+                FCLButton(
                     onClick = { packs.filter { selected.contains(it.id) }.forEach { it.setActive(true) } },
                     enabled = !loading,
                     modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 ) { Text(stringResource(R.string.mods_enable)) }
-                Button(
+                FCLButton(
                     onClick = { packs.filter { selected.contains(it.id) }.forEach { it.setActive(false) } },
                     enabled = !loading,
                     modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 ) { Text(stringResource(R.string.mods_disable)) }
-                Button(
+                Spacer(Modifier.weight(1f))
+                FCLButton(
                     onClick = { import() },
                     enabled = !loading,
                     modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 ) { Text(stringResource(R.string.datapack_add)) }
-                Button(
+                FCLButton(
                     onClick = { refresh() },
                     enabled = !loading,
                     modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
@@ -881,7 +955,7 @@ private fun DatapackRow(pack: Datapack.Pack, selected: Boolean, onToggleSelect: 
     val contentColor = MiuixTheme.colorScheme.onPrimary
     FCLCard(
         onClick = onToggleSelect,
-        modifier = Modifier.fillMaxWidth().padding(bottom = 5.dp),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
         colors = CardDefaults.defaultColors(
             color = if (selected) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.primaryContainer
         ),
@@ -890,7 +964,7 @@ private fun DatapackRow(pack: Datapack.Pack, selected: Boolean, onToggleSelect: 
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Checkbox(
+            FCLCheckBox(
                 state = if (active) ToggleableState.On else ToggleableState.Off,
                 onClick = { pack.setActive(!active) },
                 modifier = Modifier.size(30.dp),
@@ -1036,7 +1110,7 @@ class ComposeManageInstallerListPage(context: Context, id: Int, parent: FCLUILay
                     )
                 }
             }
-            Button(
+            FCLButton(
                 onClick = { installOffline() },
                 modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
             ) { Text(stringResource(R.string.install_installer_install_offline)) }
@@ -1290,8 +1364,8 @@ class ComposeModpackInfoPage(context: Context, id: Int, parent: FCLUILayout, pri
                     ExportField(R.string.archive_name, fileName) { fileName = it }
                 }
             }
-            Button(onClick = { MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true) { files -> if (!files.isNullOrEmpty()) outputPath = files[0] } }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) { Text(stringResource(R.string.modpack_wizard_step_initialization_save)) }
-            Button(onClick = { submit(name, author, packVersion, fileApi, launchArguments, javaArguments, url, originId, minMemory, forceUpdate, serverUrls.getOrNull(authlibIndex), description, outputPath, fileName) }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) { Text(stringResource(R.string.button_next)) }
+            FCLButton(onClick = { MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true) { files -> if (!files.isNullOrEmpty()) outputPath = files[0] } }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) { Text(stringResource(R.string.modpack_wizard_step_initialization_save)) }
+            FCLButton(onClick = { submit(name, author, packVersion, fileApi, launchArguments, javaArguments, url, originId, minMemory, forceUpdate, serverUrls.getOrNull(authlibIndex), description, outputPath, fileName) }, modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) { Text(stringResource(R.string.button_next)) }
         }
     }
 

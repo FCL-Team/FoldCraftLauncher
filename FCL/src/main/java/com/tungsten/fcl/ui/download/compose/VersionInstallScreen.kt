@@ -35,13 +35,12 @@ import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.versioning.GameVersionNumber
 import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
-import top.yukonga.miuix.kmp.basic.Checkbox
+import com.tungsten.fcl.ui.compose.FCLCheckBox
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
 import top.yukonga.miuix.kmp.basic.Text
 import com.tungsten.fcl.ui.compose.FCLTextField
-import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 import java.util.logging.Level
 import java.util.stream.Collectors
@@ -285,10 +284,9 @@ private fun VersionTypeCheckbox(
         // 对齐 page_install_version.xml CheckBox marginStart=10dp
         modifier = Modifier.padding(end = 10.dp),
     ) {
-        Checkbox(
+        FCLCheckBox(
             state = if (checked) ToggleableState.On else ToggleableState.Off,
             onClick = { onCheckedChange(!checked) },
-            colors = fclCheckboxColors(),
         )
         // 对齐 FCLCheckBox auto_hint_tint（文本 autoTint = onPrimary，位于 ltColor bar 上）
         Text(

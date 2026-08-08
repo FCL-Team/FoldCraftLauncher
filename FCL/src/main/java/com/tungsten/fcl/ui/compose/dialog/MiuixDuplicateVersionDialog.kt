@@ -21,10 +21,9 @@ import com.tungsten.fcl.ui.compose.FCLDialogButton
 import com.tungsten.fcl.ui.compose.FCLDialogCard
 import com.tungsten.fclcore.util.FutureCallback
 import com.tungsten.fclcore.util.StringUtils
-import top.yukonga.miuix.kmp.basic.Checkbox
+import com.tungsten.fcl.ui.compose.FCLCheckBox
 import top.yukonga.miuix.kmp.basic.Text
 import com.tungsten.fcl.ui.compose.FCLTextField
-import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -80,10 +79,9 @@ class MiuixDuplicateVersionDialog(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clickable { copySavesState.value = !copySavesState.value },
                 ) {
-                    Checkbox(
+                    FCLCheckBox(
                         state = if (copySavesState.value) ToggleableState.On else ToggleableState.Off,
                         onClick = { copySavesState.value = !copySavesState.value },
-                        colors = fclCheckboxColors(),
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(

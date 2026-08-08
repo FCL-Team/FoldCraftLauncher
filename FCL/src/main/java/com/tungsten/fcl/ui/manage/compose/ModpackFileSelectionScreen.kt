@@ -34,7 +34,6 @@ import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.compose.FCLCard
 import com.tungsten.fcl.ui.compose.FCLDialogs
 import com.tungsten.fcl.ui.compose.MiuixTaskDialog
-import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import com.tungsten.fcl.ui.download.compose.ComposeTempPage
 import com.tungsten.fcl.ui.manage.ManagePageManager
 import com.tungsten.fcl.ui.manage.ModpackTypeSelectionPage
@@ -53,10 +52,10 @@ import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fcllibrary.component.FCLCheckBoxTreeItem
 import com.tungsten.fcllibrary.component.view.FCLUILayout
-import top.yukonga.miuix.kmp.basic.Button
+import com.tungsten.fcl.ui.compose.FCLButton
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.CardDefaults
-import top.yukonga.miuix.kmp.basic.Checkbox
+import com.tungsten.fcl.ui.compose.FCLCheckBox
 import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.Text
@@ -377,7 +376,7 @@ fun ModpackFileSelectionScreen(holder: ModpackFileSelectionStateHolder) {
             }
             Spacer(Modifier.height(10.dp))
             // 对齐 next（FCLButton ripple = 主色实心按钮）
-            Button(
+            FCLButton(
                 onClick = holder::finish,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColorsPrimary(),
@@ -424,14 +423,13 @@ private fun ModpackTreeNode(item: FCLCheckBoxTreeItem<String>, depth: Int) {
             Spacer(Modifier.width(24.dp))
         }
         Spacer(Modifier.width(10.dp))
-        Checkbox(
+        FCLCheckBox(
             state = if (selected || indeterminate) ToggleableState.On else ToggleableState.Off,
             onClick = {
                 // 对齐 FCLCheckBox.addCheckedChangeListener：从当前显示态取反写 selected + 清半选
                 item.setSelected(!(selected || indeterminate))
                 item.setIndeterminate(false)
             },
-            colors = fclCheckboxColors(),
         )
         Spacer(Modifier.width(10.dp))
         // 对齐 text/comment（auto_text_tint = onPrimary）

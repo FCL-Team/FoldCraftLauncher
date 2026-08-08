@@ -40,7 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import top.yukonga.miuix.kmp.basic.Button
+import com.tungsten.fcl.ui.compose.FCLButton
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
@@ -279,21 +279,21 @@ fun RemoteModDownloadScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            Button(
+            FCLButton(
                 onClick = onDownload,
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColorsPrimary(),
             ) {
                 Text(text = stringResource(R.string.button_download), maxLines = 1)
             }
-            Button(
+            FCLButton(
                 onClick = onSaveAs,
                 modifier = Modifier.weight(1f),
                 colors = ButtonDefaults.buttonColorsPrimary(),
             ) {
                 Text(text = stringResource(R.string.button_save_as), maxLines = 1)
             }
-            Button(
+            FCLButton(
                 // 对齐 :219-221：取消 = 一次返回；旧版四按钮均为 FCLButton（主色实心 = primary）
                 onClick = { LegacyBridge.onBackPressed() },
                 modifier = Modifier.weight(1f),
@@ -304,7 +304,7 @@ fun RemoteModDownloadScreen(
                     maxLines = 1,
                 )
             }
-            Button(
+            FCLButton(
                 // 对齐 :222-227：返回 = 连续 3 次返回弹三层，点击后禁用
                 onClick = {
                     backClicked = true

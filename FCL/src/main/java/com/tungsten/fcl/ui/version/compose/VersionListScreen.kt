@@ -52,7 +52,7 @@ import com.tungsten.fcl.ui.compose.dialog.MiuixAddProfileDialog
 import com.tungsten.fcl.ui.compose.fclItemEntryModifier
 import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcl.ui.version.Versions
-import top.yukonga.miuix.kmp.basic.Button
+import com.tungsten.fcl.ui.compose.FCLButton
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
@@ -69,9 +69,8 @@ import top.yukonga.miuix.kmp.theme.MiuixTheme
  * 版本列表页 Compose 界面（小步骤 3.3）：page_version_list.xml + VersionListPage.kt +
  * VersionListAdapter.kt + ProfileListAdapter.java 的 Miuix 重构。
  *
- * 布局对齐遗留：左侧 30% 栏（游戏目录列表 + 刷新/新建目录按钮），
- * 右侧 70% 栏（搜索框 + 分类过滤条 + 版本卡片列表）；加载中显示进度圈、空列表隐藏列表区。
- * 搜索框旧版位于左栏顶部，按维护者 review 意见搬到右侧版本列表顶部，其余结构不变。
+ * 布局对齐遗留：左侧 30% 栏（顶部搜索框 + 游戏目录列表 + 刷新/新建目录按钮），
+ * 右侧 70% 栏（分类过滤条 + 版本卡片列表）；加载中显示进度圈、空列表隐藏列表区。
  * 根布局保持透明（露出用户壁纸），与遗留 page_version_list.xml 透明根一致。
  *
  * 行为承接：Composable 只读 uiState、只调 ViewModel 语义化方法；
@@ -92,48 +91,15 @@ fun VersionListScreen(
     Row(
         modifier = Modifier
             .fillMaxSize()
-            .padding(10.dp),
+            .padding(start = 10.dp, top = 10.dp, end = 10.dp),
     ) {
-        // ---------- 左栏：游戏目录 + 刷新/新建（对齐布局 :24-58，30% 宽） ----------
+        // ---------- 左栏：搜索 + 游戏目录 + 刷新/新建（对齐 page_version_list.xml :15-58，30% 宽） ----------
         Column(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(0.3f),
         ) {
-            ProfileListColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(bottom = 8.dp),
-            )
-            Button(
-                onClick = viewModel::onRefresh,
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !state.loading,
-                colors = ButtonDefaults.buttonColorsPrimary(),
-            ) {
-                Text(text = stringResource(R.string.action_refresh))
-            }
-            Spacer(Modifier.height(8.dp))
-            Button(
-                onClick = viewModel::onNewProfile,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColorsPrimary(),
-            ) {
-                Text(text = stringResource(R.string.version_new_profile))
-            }
-        }
-
-        Spacer(Modifier.width(10.dp))
-
-        // ---------- 右栏：搜索 + 分类条 + 版本列表（对齐 :12-22 / :60-146） ----------
-        // 搜索框旧版在左栏顶部，按维护者意见搬到右侧版本列表顶部；加载/空列表时保持可见
-        //（旧版搜索框恒在，仅右侧面板 GONE）
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(0.7f),
-        ) {
+            // 搜索框在左栏顶部（对齐旧版 :15-26，宽 30%、居中、hint=search）
             FCLTextField(
                 value = state.searchText,
                 onValueChange = viewModel::onSearchChange,
@@ -142,7 +108,41 @@ fun VersionListScreen(
                 useLabelAsPlaceholder = true,
                 singleLine = true,
             )
-            Spacer(Modifier.height(10.dp))
+            ProfileListColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(bottom = 8.dp),
+            )
+            FCLButton(
+                onClick = viewModel::onRefresh,
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !state.loading,
+                colors = ButtonDefaults.buttonColorsPrimary(),
+            ) {
+                Text(text = stringResource(R.string.action_refresh))
+            }
+            // 旧版间距：refresh marginBottom=8 + new_profile marginTop=10 = 18dp
+            Spacer(Modifier.height(18.dp))
+            FCLButton(
+                onClick = viewModel::onNewProfile,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                colors = ButtonDefaults.buttonColorsPrimary(),
+            ) {
+                Text(text = stringResource(R.string.version_new_profile))
+            }
+        }
+
+        Spacer(Modifier.width(10.dp))
+
+        // ---------- 右栏：分类条 + 版本列表（对齐 :60-146）；加载/空列表时保持分类条可见 ----------
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(0.7f),
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

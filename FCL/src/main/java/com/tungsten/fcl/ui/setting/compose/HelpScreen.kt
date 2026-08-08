@@ -31,7 +31,7 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.setting.DocIndex
 import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcl.util.AndroidUtils
-import top.yukonga.miuix.kmp.basic.Button
+import com.tungsten.fcl.ui.compose.FCLButton
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
@@ -97,7 +97,7 @@ fun HelpScreen(
                     )
                 }
             }
-            Button(
+            FCLButton(
                 onClick = viewModel::refresh,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -107,7 +107,7 @@ fun HelpScreen(
             ) {
                 Text(text = stringResource(R.string.action_refresh))
             }
-            Button(
+            FCLButton(
                 onClick = viewModel::onWebsiteClick,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -139,7 +139,7 @@ fun HelpScreen(
                 !state.success -> {
                     // 遗留为重试图标（FCLImageButton，不染主色，仅 ripple ltColor），
                     // 故用默认中性配色的按钮而非主色实心按钮
-                    Button(
+                    FCLButton(
                         onClick = viewModel::refresh,
                         modifier = Modifier.align(Alignment.Center),
                     ) {

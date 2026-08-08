@@ -52,7 +52,7 @@ import com.tungsten.fcllibrary.skin.SkinViewer
 import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import top.yukonga.miuix.kmp.basic.Button
+import com.tungsten.fcl.ui.compose.FCLButton
 import top.yukonga.miuix.kmp.basic.ButtonDefaults
 import top.yukonga.miuix.kmp.basic.HorizontalDivider
 import top.yukonga.miuix.kmp.basic.Text
@@ -229,7 +229,7 @@ private fun AnnouncementPanel(
             )
         }
         Spacer(Modifier.height(10.dp))
-        Button(
+        FCLButton(
             onClick = onHide,
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColorsPrimary(),

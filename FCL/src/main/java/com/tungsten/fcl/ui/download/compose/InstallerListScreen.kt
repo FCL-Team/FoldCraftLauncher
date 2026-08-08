@@ -31,10 +31,9 @@ import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
-import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import com.tungsten.fcl.ui.compose.FCLCard
 import top.yukonga.miuix.kmp.basic.CardDefaults
-import top.yukonga.miuix.kmp.basic.Checkbox
+import com.tungsten.fcl.ui.compose.FCLCheckBox
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.InfiniteProgressIndicator
@@ -264,10 +263,9 @@ private fun InstallerTypeCheckbox(
         // 对齐 page_install_version.xml CheckBox marginStart=10dp
         modifier = Modifier.padding(end = 10.dp),
     ) {
-        Checkbox(
+        FCLCheckBox(
             state = if (checked) ToggleableState.On else ToggleableState.Off,
             onClick = { onCheckedChange(!checked) },
-            colors = fclCheckboxColors(),
         )
         // 对齐 FCLCheckBox auto_hint_tint（文本 autoTint = onPrimary，位于 ltColor bar 上）
         Text(

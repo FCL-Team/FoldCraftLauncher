@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.controller
 
 import android.content.Context
-import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIListener
 import com.tungsten.fcl.ui.controller.compose.ComposeControllerManagePage
@@ -18,8 +17,6 @@ class ControllerPageManager(
     companion object {
         const val PAGE_ID_CONTROLLER_MANAGER: Int = 15040
         const val PAGE_ID_CONTROLLER_REPO: Int = 15041
-        const val USE_COMPOSE_CONTROLLER_PAGES: Boolean = true
-        const val USE_COMPOSE_CONTROLLER_REPO: Boolean = true
 
         @JvmStatic
         var instance: ControllerPageManager? = null
@@ -27,11 +24,7 @@ class ControllerPageManager(
 
     private lateinit var controllerManagePage: FCLCommonPage
     private val controllerRepoPage: FCLCommonPage by lazy {
-        if (USE_COMPOSE_CONTROLLER_REPO) {
-            ComposeControllerRepoPage(context!!, PAGE_ID_CONTROLLER_REPO, parent!!)
-        } else {
-            ControllerRepoPage(context, PAGE_ID_CONTROLLER_REPO, parent, R.layout.page_controller_repo)
-        }
+        ComposeControllerRepoPage(context!!, PAGE_ID_CONTROLLER_REPO, parent!!)
     }
 
     init {
@@ -39,16 +32,8 @@ class ControllerPageManager(
     }
 
     override fun init(listener: UIListener?) {
-        controllerManagePage = if (USE_COMPOSE_CONTROLLER_PAGES) {
-            ComposeControllerManagePage(context!!, PAGE_ID_CONTROLLER_MANAGER, parent!!)
-        } else {
-            ControllerManagePage(
-                context,
-                PAGE_ID_CONTROLLER_MANAGER,
-                parent,
-                R.layout.page_controller_manager
-            )
-        }
+        // 旧 View 页面（ControllerManagePage/ControllerRepoPage 及 XML）已随批3固化删除。
+        controllerManagePage = ComposeControllerManagePage(context!!, PAGE_ID_CONTROLLER_MANAGER, parent!!)
         listener?.onLoad()
     }
 

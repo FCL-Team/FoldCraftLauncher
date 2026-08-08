@@ -29,10 +29,9 @@ import com.tungsten.fcl.ui.compose.FCLComposeDialog
 import com.tungsten.fcl.ui.theme.FCLThemeTokens
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
-import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import com.tungsten.fcl.ui.compose.FCLCard
 import com.tungsten.fcl.ui.compose.FCLCornerRadius
-import top.yukonga.miuix.kmp.basic.Checkbox
+import com.tungsten.fcl.ui.compose.FCLCheckBox
 import top.yukonga.miuix.kmp.basic.Icon
 import top.yukonga.miuix.kmp.basic.IconButton
 import top.yukonga.miuix.kmp.basic.Text
@@ -223,10 +222,9 @@ class MiuixViewGroupDialog(
             )
             if (select) {
                 val checked = selectedState.value.any { it.id == group.id }
-                Checkbox(
+                FCLCheckBox(
                     state = if (checked) ToggleableState.On else ToggleableState.Off,
                     onClick = { onToggleSelect(group, !checked) },
-                    colors = fclCheckboxColors(),
                 )
             } else {
                 IconButton(onClick = { onMove(index, true) }) {

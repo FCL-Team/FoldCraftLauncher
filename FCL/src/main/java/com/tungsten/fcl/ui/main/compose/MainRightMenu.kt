@@ -311,6 +311,8 @@ private fun StartBlock(
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = stringResource(R.string.launch),
+                // 对齐旧 text_start：14sp + bold + use_theme_color（onSurface），不用 Miuix 默认大字号
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = MiuixTheme.colorScheme.onSurface,
                 textAlign = TextAlign.Center,
@@ -338,6 +340,8 @@ private fun StartBlock(
                 BasicText(
                     text = display.name,
                     style = MiuixTheme.textStyles.body2.copy(
+                        // 对齐旧 version_name：14sp + 居中跑马灯
+                        fontSize = 14.sp,
                         color = MiuixTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
                     ),

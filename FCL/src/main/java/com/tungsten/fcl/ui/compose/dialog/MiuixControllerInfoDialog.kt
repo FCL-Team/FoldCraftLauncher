@@ -32,10 +32,9 @@ import com.tungsten.fclcore.util.platform.OperatingSystem
 import com.tungsten.fcl.ui.compose.FCLCard
 import com.tungsten.fcl.ui.compose.FCLCornerRadius
 import top.yukonga.miuix.kmp.basic.CardDefaults
-import top.yukonga.miuix.kmp.basic.Checkbox
+import com.tungsten.fcl.ui.compose.FCLCheckBox
 import top.yukonga.miuix.kmp.basic.Text
 import com.tungsten.fcl.ui.compose.FCLTextField
-import com.tungsten.fcl.ui.compose.fclCheckboxColors
 import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /**
@@ -140,10 +139,9 @@ class MiuixControllerInfoDialog(
                             .padding(vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Checkbox(
+                        FCLCheckBox(
                             state = if (moreInfoState.value) ToggleableState.On else ToggleableState.Off,
                             onClick = { moreInfoState.value = !moreInfoState.value },
-                            colors = fclCheckboxColors(),
                         )
                         Text(
                             text = stringResource(R.string.control_info_more),
