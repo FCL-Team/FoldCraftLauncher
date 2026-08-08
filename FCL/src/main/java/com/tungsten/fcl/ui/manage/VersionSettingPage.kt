@@ -202,8 +202,11 @@ class VersionSettingPage(
         }
         val listener = OnLongClickListener { view: View? ->
             val dialog = FullEditDialog(
-                context
-            ) { str: String? -> (view as FCLEditText).setText(str) }
+                context,
+                true
+            ) {
+                (view as FCLEditText).setText(it)
+            }
             dialog.getEditText().setText((view as FCLEditText).getText())
             dialog.show()
             true
