@@ -310,6 +310,11 @@ public class JarExecutorMenu implements MenuCallback, View.OnClickListener, View
         }
 
         @Override
+        public void onHitResultTypeChange(int type) {
+            // Ignore
+        }
+
+        @Override
         public void onLog(String log) {
             menu.onLog(log);
         }

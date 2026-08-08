@@ -1,6 +1,5 @@
 package com.tungsten.fcl.setting;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import android.content.Context;
 
@@ -26,21 +25,12 @@ import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.util.Constants;
+import com.tungsten.fcl.util.FlowList;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyIntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
-import com.tungsten.fclcore.fakefx.collections.FXCollections;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.ToStringBuilder;
-import com.tungsten.fclcore.util.fakefx.ObservableHelper;
-import com.tungsten.fclcore.util.gson.fakefx.factories.JavaFxPropertyTypeAdapterFactory;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 
@@ -48,117 +38,134 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 控制器布局（阶段 4a/4b）：标量属性与 viewGroups 均已 StateFlow 化；任何字段、
+ * 分组增删或分组内部变更都会递增 {@link #revisionFlow()}
+ * （对齐原 Observable 失效语义，Controllers 据此冒泡落盘）。
+ *
+ * <p>磁盘 JSON 由手写 {@link Serializer} 产出，与属性类型无关，格式不变。</p>
+ */
 @JsonAdapter(Controller.Serializer.class)
-public class Controller implements Cloneable, Observable {
+public class Controller implements Cloneable {
 
-    private final SimpleStringProperty id;
+    private final MutableStateFlow<String> id = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty idProperty() {
+    public StateFlow<String> idFlow() {
         return id;
     }
 
     public String getId() {
-        return id.get();
+        return id.getValue();
     }
 
     public void setId(String id) {
-        this.id.set(id);
+        this.id.setValue(id);
     }
 
-    private final SimpleStringProperty name;
+    private final MutableStateFlow<String> name = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty nameProperty() {
+    public StateFlow<String> nameFlow() {
         return name;
     }
 
     public String getName() {
-        return name.get();
+        return name.getValue();
     }
 
     public void setName(String name) {
-        this.name.set(name);
+        this.name.setValue(name);
     }
 
-    private final SimpleStringProperty version;
+    private final MutableStateFlow<String> version = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty versionProperty() {
+    public StateFlow<String> versionFlow() {
         return version;
     }
 
     public String getVersion() {
-        return version.get();
+        return version.getValue();
     }
 
     public void setVersion(String version) {
-        this.version.set(version);
+        this.version.setValue(version);
     }
 
-    private final SimpleIntegerProperty versionCode;
+    private final MutableStateFlow<Integer> versionCode = StateFlowKt.MutableStateFlow(0);
 
-    public IntegerProperty versionCodeProperty() {
+    public StateFlow<Integer> versionCodeFlow() {
         return versionCode;
     }
 
     public int getVersionCode() {
-        return versionCode.get();
+        return versionCode.getValue();
     }
 
     public void setVersionCode(int versionCode) {
-        this.versionCode.set(versionCode);
+        this.versionCode.setValue(versionCode);
     }
 
-    private final SimpleStringProperty author;
+    private final MutableStateFlow<String> author = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty authorProperty() {
+    public StateFlow<String> authorFlow() {
         return author;
     }
 
     public String getAuthor() {
-        return author.get();
+        return author.getValue();
     }
 
     public void setAuthor(String author) {
-        this.author.set(author);
+        this.author.setValue(author);
     }
 
-    private final SimpleStringProperty description;
+    private final MutableStateFlow<String> description = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty descriptionProperty() {
+    public StateFlow<String> descriptionFlow() {
         return description;
     }
 
     public String getDescription() {
-        return description.get();
+        return description.getValue();
     }
 
     public void setDescription(String description) {
-        this.description.set(description);
+        this.description.setValue(description);
     }
 
-    private final IntegerProperty controllerVersion = new SimpleIntegerProperty(this, "controllerVersion");
+    private final MutableStateFlow<Integer> controllerVersion = StateFlowKt.MutableStateFlow(0);
 
-    public ReadOnlyIntegerProperty controllerVersionProperty() {
+    public StateFlow<Integer> controllerVersionFlow() {
         return controllerVersion;
     }
 
     public int getControllerVersion() {
-        return controllerVersion.get();
+        return controllerVersion.getValue();
     }
 
-    private final ObservableList<ControlViewGroup> viewGroups;
+    private final FlowList<ControlViewGroup> viewGroups;
 
-    public ObservableList<ControlViewGroup> viewGroups() {
-        return viewGroups;
+    public StateFlow<List<ControlViewGroup>> viewGroupsFlow() {
+        return viewGroups.flow();
     }
 
-    public void setViewGroups(ObservableList<ControlViewGroup> viewGroups) {
+    public List<ControlViewGroup> viewGroups() {
+        return viewGroups.get();
+    }
+
+    public void setViewGroups(List<ControlViewGroup> viewGroups) {
         this.viewGroups.addAll(viewGroups);
     }
 
@@ -187,21 +194,21 @@ public class Controller implements Cloneable, Observable {
     }
 
     public Controller(String id, String name, String version, int versionCode, String author, String description, int controllerVersion) {
-        this(id, name, version, versionCode, author, description, controllerVersion, FXCollections.observableArrayList(new ArrayList<>()));
+        this(id, name, version, versionCode, author, description, controllerVersion, new ArrayList<>());
     }
 
-    public Controller(String id, String name, String version, int versionCode, String author, String description, int controllerVersion, ObservableList<ControlViewGroup> viewGroups) {
-        this.id = new SimpleStringProperty(this, "id", id);
-        this.name = new SimpleStringProperty(this, "name", name);
-        this.version = new SimpleStringProperty(this, "version", version);
-        this.versionCode = new SimpleIntegerProperty(this, "versionCode", versionCode);
-        this.author = new SimpleStringProperty(this, "author", author);
-        this.description = new SimpleStringProperty(this, "description", description);
-        this.viewGroups = viewGroups;
+    public Controller(String id, String name, String version, int versionCode, String author, String description, int controllerVersion, List<ControlViewGroup> viewGroups) {
+        this.id.setValue(id);
+        this.name.setValue(name);
+        this.version.setValue(version);
+        this.versionCode.setValue(versionCode);
+        this.author.setValue(author);
+        this.description.setValue(description);
+        this.viewGroups = new FlowList<>(viewGroups);
 
-        this.controllerVersion.set(controllerVersion);
+        this.controllerVersion.setValue(controllerVersion);
 
-        addPropertyChangedListener(onInvalidating(this::invalidate));
+        addPropertyChangedListener();
     }
 
     public static String generateRandomId() {
@@ -241,6 +248,11 @@ public class Controller implements Cloneable, Observable {
         }
     }
 
+    /** 交换两个分组的位置（对齐原直接 Collections.swap(viewGroups(), i, j) 语义）。 */
+    public void swapViewGroups(int i, int j) {
+        viewGroups.swap(i, j);
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -255,42 +267,47 @@ public class Controller implements Cloneable, Observable {
                 .toString();
     }
 
-    private void addPropertyChangedListener(InvalidationListener listener) {
-        id.addListener(listener);
-        name.addListener(listener);
-        version.addListener(listener);
-        versionCode.addListener(listener);
-        author.addListener(listener);
-        description.addListener(listener);
-        viewGroups.addListener(listener);
-        viewGroups.forEach(it -> it.addListener(listener));
-        viewGroups.addListener((InvalidationListener) observable -> {
-            viewGroups.forEach(it -> it.removeListener(listener));
-            viewGroups.forEach(it -> it.addListener(listener));
+    private void addPropertyChangedListener() {
+        FlowSubscriptions.subscribe(id, v -> invalidate());
+        FlowSubscriptions.subscribe(name, v -> invalidate());
+        FlowSubscriptions.subscribe(version, v -> invalidate());
+        FlowSubscriptions.subscribe(versionCode, v -> invalidate());
+        FlowSubscriptions.subscribe(author, v -> invalidate());
+        FlowSubscriptions.subscribe(description, v -> invalidate());
+        FlowSubscriptions.subscribe(controllerVersion, v -> invalidate());
+        // 分组列表成员变更 → 失效 + 重挂元素冒泡（对齐原 ObservableList 监听重挂）
+        FlowSubscriptions.subscribe(viewGroups.flow(), v -> {
+            invalidate();
+            rewireViewGroupSubscriptions();
         });
-        controllerVersion.addListener(listener);
+        rewireViewGroupSubscriptions();
     }
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
+    // 元素冒泡：分组内部（name/visibility/viewData 替换式）变更汇入 revision
+    private final Map<ControlViewGroup, FlowSubscriptions.Subscription> viewGroupSubscriptions = new IdentityHashMap<>();
 
-    @Override
-    public void addListener(InvalidationListener listener) {
-        observableHelper.addListener(listener);
+    private void rewireViewGroupSubscriptions() {
+        viewGroupSubscriptions.values().forEach(FlowSubscriptions.Subscription::cancel);
+        viewGroupSubscriptions.clear();
+        for (ControlViewGroup group : viewGroups.get()) {
+            viewGroupSubscriptions.put(group, FlowSubscriptions.subscribe(group.revisionFlow(), v -> invalidate()));
+        }
     }
 
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        observableHelper.removeListener(listener);
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
+
+    /** 任何字段/分组变更时递增（对齐原 Observable 失效语义）。 */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        revision.setValue(revision.getValue() + 1);
     }
 
     @Override
     public Controller clone() {
-        ObservableList<ControlViewGroup> viewGroups = FXCollections.observableArrayList(new ArrayList<>());
-        viewGroups.addAll(viewGroups().stream().map(ControlViewGroup::clone).collect(Collectors.toList()));
+        List<ControlViewGroup> viewGroups = viewGroups().stream().map(ControlViewGroup::clone).collect(Collectors.toList());
         return new Controller(generateRandomId(), getName() + "_clone", getVersion(), getVersionCode(), getAuthor(), getDescription(), getControllerVersion(), viewGroups);
     }
 
@@ -303,7 +320,6 @@ public class Controller implements Cloneable, Observable {
     public synchronized void saveToDisk() {
         Schedulers.io().execute(() -> {
             String str = new GsonBuilder()
-                    .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                     .setPrettyPrinting()
                     .create().toJson(this);
             try {
@@ -325,7 +341,7 @@ public class Controller implements Cloneable, Observable {
     }
 
     public void upgrade() {
-        this.controllerVersion.set(Constants.CONTROLLER_VERSION);
+        this.controllerVersion.setValue(Constants.CONTROLLER_VERSION);
     }
 
     public static void showUpgradeDialog(Context context, String name, String id) {
@@ -367,14 +383,11 @@ public class Controller implements Cloneable, Observable {
             jsonObject.addProperty("author", src.getAuthor());
             jsonObject.addProperty("description", src.getDescription());
             jsonObject.addProperty("controllerVersion", src.getControllerVersion());
-            Stream<ControlButtonStyle> buttonStyleStream = src.viewGroups().stream().map(viewGroup -> viewGroup.getViewData().buttonList()).flatMap(buttonList -> buttonList.stream().map(data -> data.getStyle().getName()).distinct()).distinct().map(ButtonStyles::findStyleByName);
-            Stream<ControlDirectionStyle> directionStyleStream = src.viewGroups().stream().map(viewGroup -> viewGroup.getViewData().directionList()).flatMap(directionList -> directionList.stream().map(data -> data.getStyle().getName()).distinct()).distinct().map(DirectionStyles::findStyleByName);
-            jsonObject.add("buttonStyles", gson.toJsonTree(buttonStyleStream.collect(Collectors.toList()), new TypeToken<ArrayList<ControlButtonStyle>>() {
-            }.getType()).getAsJsonArray());
-            jsonObject.add("directionStyles", gson.toJsonTree(directionStyleStream.collect(Collectors.toList()), new TypeToken<ArrayList<ControlDirectionStyle>>() {
-            }.getType()).getAsJsonArray());
-            jsonObject.add("viewGroups", gson.toJsonTree(new ArrayList<>(src.viewGroups()), new TypeToken<ArrayList<ControlViewGroup>>() {
-            }.getType()).getAsJsonArray());
+            Stream<ControlButtonStyle> buttonStyleStream = src.viewGroups().stream().map(viewGroup -> viewGroup.getViewData().getButtonList()).flatMap(buttonList -> buttonList.stream().map(data -> data.getStyle().getName()).distinct()).distinct().map(ButtonStyles::findStyleByName);
+            Stream<ControlDirectionStyle> directionStyleStream = src.viewGroups().stream().map(viewGroup -> viewGroup.getViewData().getDirectionList()).flatMap(directionList -> directionList.stream().map(data -> data.getStyle().getName()).distinct()).distinct().map(DirectionStyles::findStyleByName);
+            jsonObject.add("buttonStyles", gson.toJsonTree(buttonStyleStream.collect(Collectors.toList()), TypeToken.getParameterized(ArrayList.class, ControlButtonStyle.class).getType()).getAsJsonArray());
+            jsonObject.add("directionStyles", gson.toJsonTree(directionStyleStream.collect(Collectors.toList()), TypeToken.getParameterized(ArrayList.class, ControlDirectionStyle.class).getType()).getAsJsonArray());
+            jsonObject.add("viewGroups", gson.toJsonTree(new ArrayList<>(src.viewGroups()), TypeToken.getParameterized(ArrayList.class, ControlViewGroup.class).getType()).getAsJsonArray());
 
             return jsonObject;
         }
@@ -399,16 +412,13 @@ public class Controller implements Cloneable, Observable {
                     return new Controller("Incompatible Controller - " + name);
                 }
 
-                List<ControlButtonStyle> buttonStyles = gson.fromJson(Optional.ofNullable(obj.get("buttonStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlButtonStyle>>() {
-                }.getType());
-                List<ControlDirectionStyle> directionStyles = gson.fromJson(Optional.ofNullable(obj.get("directionStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionStyle>>() {
-                }.getType());
+                List<ControlButtonStyle> buttonStyles = gson.fromJson(Optional.ofNullable(obj.get("buttonStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), TypeToken.getParameterized(ArrayList.class, ControlButtonStyle.class).getType());
+                List<ControlDirectionStyle> directionStyles = gson.fromJson(Optional.ofNullable(obj.get("directionStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), TypeToken.getParameterized(ArrayList.class, ControlDirectionStyle.class).getType());
                 ButtonStyles.init();
                 DirectionStyles.init();
                 buttonStyles.forEach(ButtonStyles::addStyle);
                 directionStyles.forEach(DirectionStyles::addStyle);
-                ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlViewGroup>>() {
-                }.getType()));
+                List<ControlViewGroup> viewGroups = gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), TypeToken.getParameterized(ArrayList.class, ControlViewGroup.class).getType());
 
                 if (controllerVersion < Constants.CONTROLLER_VERSION) {
                     showUpgradeDialog(FCLPath.CONTEXT, name, id);

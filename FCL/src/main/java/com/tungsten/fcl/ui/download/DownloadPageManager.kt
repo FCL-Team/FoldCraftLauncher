@@ -1,15 +1,12 @@
 package com.tungsten.fcl.ui.download
 
 import android.content.Context
-import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIListener
-import com.tungsten.fcl.ui.download.common.DownloadPage
-import com.tungsten.fcl.ui.download.modpack.ModpackDownloadPage
-import com.tungsten.fcl.ui.download.version.VersionInstallPage
+import com.tungsten.fcl.ui.download.compose.ComposeDownloadPage
+import com.tungsten.fcl.ui.download.compose.DownloadTab
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
-import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 
@@ -32,50 +29,17 @@ class DownloadPageManager(
 
     var profile: Profile? = null
     var version: String? = null
-    private lateinit var versionInstallPage: VersionInstallPage
-    private val downloadModpackPage: ModpackDownloadPage by lazy {
-        ModpackDownloadPage(context, PAGE_ID_DOWNLOAD_MODPACK, parent, R.layout.page_download)
-    }
-    private val downloadModPage: ModDownloadPage by lazy {
-        ModDownloadPage(context, PAGE_ID_DOWNLOAD_MOD, parent, R.layout.page_download)
-    }
-    private val downloadResourcePackPage: ResourcePackDownloadPage by lazy {
-        ResourcePackDownloadPage(
-            context,
-            PAGE_ID_DOWNLOAD_RESOURCE_PACK,
-            parent,
-            R.layout.page_download
-        )
-    }
-    private val downloadWorldPage: DownloadPage by lazy {
-        DownloadPage(
-            context,
-            PAGE_ID_DOWNLOAD_WORLD,
-            parent,
-            R.layout.page_download,
-            CurseForgeRemoteModRepository.WORLDS
-        )
-    }
-    private val downloadShaderPackPage: ShaderPackDownloadPage by lazy {
-        ShaderPackDownloadPage(
-            context,
-            PAGE_ID_DOWNLOAD_SHADER_PACK,
-            parent,
-            R.layout.page_download
-        )
-    }
+    private lateinit var versionInstallPage: FCLCommonPage
+
+    /** Compose 页缓存（按 Tab 懒创建，对齐遗留 by lazy 语义）。 */
+    private val composePages = HashMap<Int, ComposeDownloadPage>()
 
     init {
         instance = this
     }
 
     override fun init(listener: UIListener?) {
-        versionInstallPage = VersionInstallPage(
-            context,
-            PAGE_ID_DOWNLOAD_GAME,
-            parent,
-            R.layout.page_install_version
-        )
+        versionInstallPage = ComposeDownloadPage(context!!, PAGE_ID_DOWNLOAD_GAME, parent!!, null)
         listener?.onLoad()
     }
 
@@ -86,13 +50,16 @@ class DownloadPageManager(
     }
 
     override fun createPageById(id: Int): FCLCommonPage? {
-        val page: FCLCommonPage? = when (id) {
-            PAGE_ID_DOWNLOAD_MODPACK -> downloadModpackPage
-            PAGE_ID_DOWNLOAD_MOD -> downloadModPage
-            PAGE_ID_DOWNLOAD_RESOURCE_PACK -> downloadResourcePackPage
-            PAGE_ID_DOWNLOAD_WORLD -> downloadWorldPage
-            PAGE_ID_DOWNLOAD_SHADER_PACK -> downloadShaderPackPage
+        val tab = when (id) {
+            PAGE_ID_DOWNLOAD_MODPACK -> DownloadTab.MODPACK
+            PAGE_ID_DOWNLOAD_MOD -> DownloadTab.MOD
+            PAGE_ID_DOWNLOAD_RESOURCE_PACK -> DownloadTab.RESOURCE_PACK
+            PAGE_ID_DOWNLOAD_WORLD -> DownloadTab.WORLD
+            PAGE_ID_DOWNLOAD_SHADER_PACK -> DownloadTab.SHADER_PACK
             else -> null
+        }
+        val page: FCLCommonPage? = tab?.let {
+            composePages.getOrPut(id) { ComposeDownloadPage(context!!, id, parent!!, it) }
         }
         if (page != null) {
             allPages.add(page)

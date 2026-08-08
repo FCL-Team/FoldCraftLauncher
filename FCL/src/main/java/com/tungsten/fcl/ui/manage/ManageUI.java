@@ -7,13 +7,11 @@ import android.content.Context;
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
+import com.tungsten.fcl.util.NavigationBus;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.event.EventBus;
 import com.tungsten.fclcore.event.EventPriority;
 import com.tungsten.fclcore.event.RefreshedVersionsEvent;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -24,7 +22,11 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedListener {
 
@@ -33,8 +35,8 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     private FCLUILayout container;
     private Runnable runnable;
 
-    private final ObjectProperty<Profile.ProfileVersion> version = new SimpleObjectProperty<>();
-    private final WeakListenerHolder listenerHolder = new WeakListenerHolder();
+    private final MutableStateFlow<Profile.ProfileVersion> version = StateFlowKt.MutableStateFlow(null);
+    private final Consumer<RefreshedVersionsEvent> refreshedVersionsListener = event -> checkSelectedVersion();
     public String preferredVersionName = null;
     public FCLTabLayout tabLayout;
 
@@ -50,7 +52,13 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
 
         tabLayout.addOnTabSelectedListener(this);
         initPages();
-        listenerHolder.add(EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).registerWeak(event -> checkSelectedVersion(), EventPriority.HIGHEST));
+        EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).register(refreshedVersionsListener, EventPriority.HIGHEST);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).unregister(refreshedVersionsListener);
     }
 
     @Override
@@ -63,8 +71,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
                     !getProfile().getRepository().hasVersion(getVersion())) {
                 Schedulers.androidUIThread().execute(() -> {
                     if (isShowing()) {
-                        MainActivity.getInstance().refreshMenuView(null);
-                        MainActivity.getInstance().binding.home.setSelected(true);
+                        NavigationBus.select(NavigationBus.Menu.HOME);
                     }
                 });
                 return;
@@ -156,32 +163,30 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
 
     private void checkSelectedVersion() {
         Schedulers.androidUIThread().execute(() -> {
-            if (this.version.get() == null) return;
-            GameRepository repository = this.version.get().getProfile().getRepository();
-            if (!repository.hasVersion(this.version.get().getVersion())) {
+            if (this.version.getValue() == null) return;
+            GameRepository repository = this.version.getValue().getProfile().getRepository();
+            if (!repository.hasVersion(this.version.getValue().getVersion())) {
                 if (preferredVersionName != null) {
-                    loadVersion(preferredVersionName, this.version.get().getProfile());
+                    loadVersion(preferredVersionName, this.version.getValue().getProfile());
                 } else if (isShowing()) {
-                    MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().binding.home.setSelected(true);
+                    NavigationBus.select(NavigationBus.Menu.HOME);
                 }
             }
         });
     }
 
     public void setVersion(String version, Profile profile) {
-        this.version.set(new Profile.ProfileVersion(profile, version));
+        this.version.setValue(new Profile.ProfileVersion(profile, version));
     }
 
     public void loadVersion(String version, Profile profile) {
         // If we jumped to game list page and deleted this version
         // and back to this page, we should return to main page.
-        if (this.version.get() != null && (!getProfile().getRepository().isLoaded() ||
+        if (this.version.getValue() != null && (!getProfile().getRepository().isLoaded() ||
                 !getProfile().getRepository().hasVersion(version))) {
             Schedulers.androidUIThread().execute(() -> {
                 if (isShowing()) {
-                    MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().binding.home.setSelected(true);
+                    NavigationBus.select(NavigationBus.Menu.HOME);
                 }
             });
             return;
@@ -195,11 +200,11 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     }
 
     public Profile getProfile() {
-        return Optional.ofNullable(version.get()).map(Profile.ProfileVersion::getProfile).orElse(null);
+        return Optional.ofNullable(version.getValue()).map(Profile.ProfileVersion::getProfile).orElse(null);
     }
 
     public String getVersion() {
-        return Optional.ofNullable(version.get()).map(Profile.ProfileVersion::getVersion).orElse(null);
+        return Optional.ofNullable(version.getValue()).map(Profile.ProfileVersion::getVersion).orElse(null);
     }
 
     public interface VersionLoadable {

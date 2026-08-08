@@ -13,28 +13,31 @@ import androidx.core.graphics.ColorUtils;
 
 import com.mio.util.ImageUtil;
 import com.tungsten.fcl.FCLApplication;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 主题数据：字段为 StateFlow，Compose 侧直接 collect
+ * （FCLTheme.kt / LauncherSettingViewModel / ListItemAnimation），
+ * 原生 View 侧（FCLLibrary component/view）经 FlowSubscriptions.subscribeWithCurrent 跟随。
+ */
 public class Theme {
 
-    private final IntegerProperty color = new SimpleIntegerProperty();
-    private final IntegerProperty color2 = new SimpleIntegerProperty();
-    private final IntegerProperty color2Dark = new SimpleIntegerProperty();
-    private final IntegerProperty ltColor = new SimpleIntegerProperty();
-    private final IntegerProperty dkColor = new SimpleIntegerProperty();
-    private final IntegerProperty autoTint = new SimpleIntegerProperty();
-    private final BooleanProperty fullscreen = new SimpleBooleanProperty();
-    private final BooleanProperty closeSkinModel = new SimpleBooleanProperty();
-    private final IntegerProperty animationSpeed = new SimpleIntegerProperty();
-    private final ObjectProperty<BitmapDrawable> backgroundLt = new SimpleObjectProperty<>();
-    private final ObjectProperty<BitmapDrawable> backgroundDk = new SimpleObjectProperty<>();
+    private final MutableStateFlow<Integer> color = StateFlowKt.MutableStateFlow(0);
+    private final MutableStateFlow<Integer> color2 = StateFlowKt.MutableStateFlow(0);
+    private final MutableStateFlow<Integer> color2Dark = StateFlowKt.MutableStateFlow(0);
+    private final MutableStateFlow<Integer> ltColor = StateFlowKt.MutableStateFlow(0);
+    private final MutableStateFlow<Integer> dkColor = StateFlowKt.MutableStateFlow(0);
+    private final MutableStateFlow<Integer> autoTint = StateFlowKt.MutableStateFlow(0);
+    private final MutableStateFlow<Boolean> fullscreen = StateFlowKt.MutableStateFlow(false);
+    private final MutableStateFlow<Boolean> closeSkinModel = StateFlowKt.MutableStateFlow(false);
+    private final MutableStateFlow<Integer> animationSpeed = StateFlowKt.MutableStateFlow(8);
+    private final MutableStateFlow<BitmapDrawable> backgroundLt = StateFlowKt.MutableStateFlow(null);
+    private final MutableStateFlow<BitmapDrawable> backgroundDk = StateFlowKt.MutableStateFlow(null);
 
     public Theme(int color, int color2, int color2Dark, boolean fullscreen, boolean closeSkinModel, int animationSpeed, BitmapDrawable backgroundLt, BitmapDrawable backgroundDk) {
         float[] ltHsv = new float[3];
@@ -45,45 +48,45 @@ public class Theme {
         Color.colorToHSV(color, dkHsv);
         dkHsv[1] += (1 - dkHsv[1]) * 0.3f;
         dkHsv[2] -= (1 - dkHsv[2]) * 0.3f;
-        this.color.set(color);
-        this.color2.set(color2);
-        this.color2Dark.set(color2Dark);
-        this.ltColor.set(Color.HSVToColor(ltHsv));
-        this.dkColor.set(Color.HSVToColor(dkHsv));
-        this.fullscreen.set(fullscreen);
-        this.closeSkinModel.set(closeSkinModel);
-        this.animationSpeed.set(animationSpeed);
-        this.autoTint.set(ColorUtils.calculateLuminance(color) >= 0.5 ? Color.parseColor("#FF000000") : Color.parseColor("#FFFFFFFF"));
-        this.backgroundLt.set(backgroundLt);
-        this.backgroundDk.set(backgroundDk);
+        this.color.setValue(color);
+        this.color2.setValue(color2);
+        this.color2Dark.setValue(color2Dark);
+        this.ltColor.setValue(Color.HSVToColor(ltHsv));
+        this.dkColor.setValue(Color.HSVToColor(dkHsv));
+        this.fullscreen.setValue(fullscreen);
+        this.closeSkinModel.setValue(closeSkinModel);
+        this.animationSpeed.setValue(animationSpeed);
+        this.autoTint.setValue(ColorUtils.calculateLuminance(color) >= 0.5 ? Color.parseColor("#FF000000") : Color.parseColor("#FFFFFFFF"));
+        this.backgroundLt.setValue(backgroundLt);
+        this.backgroundDk.setValue(backgroundDk);
     }
 
     public int getColor() {
-        return color.get();
+        return color.getValue();
     }
 
     public int getColor2() {
         boolean isNightMode = (FCLApplication.getCurrentActivity().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        return isNightMode ? color2Dark.get() : color2.get();
+        return isNightMode ? color2Dark.getValue() : color2.getValue();
     }
 
     public int _getColor2() {
-        return color2.get();
+        return color2.getValue();
     }
     public int getColor2Dark() {
-        return color2Dark.get();
+        return color2Dark.getValue();
     }
 
     public int getLtColor() {
-        return ltColor.get();
+        return ltColor.getValue();
     }
 
     public int getDkColor() {
-        return dkColor.get();
+        return dkColor.getValue();
     }
 
     public int getAutoTint() {
-        return autoTint.get();
+        return autoTint.getValue();
     }
 
     public int getAutoHintTint() {
@@ -91,72 +94,74 @@ public class Theme {
     }
 
     public boolean isFullscreen() {
-        return fullscreen.get();
+        return fullscreen.getValue();
     }
 
     public boolean isCloseSkinModel() {
-        return closeSkinModel.get();
+        return closeSkinModel.getValue();
     }
 
     public int getAnimationSpeed() {
-        return animationSpeed.get();
+        return animationSpeed.getValue();
     }
 
     public BitmapDrawable getBackgroundLt() {
-        return backgroundLt.get();
+        return backgroundLt.getValue();
     }
 
     public BitmapDrawable getBackgroundDk() {
-        return backgroundDk.get();
+        return backgroundDk.getValue();
     }
 
-    public IntegerProperty colorProperty() {
+    // ---- StateFlow 访问器（Compose/新代码消费侧） ----
+
+    public StateFlow<Integer> colorFlow() {
         return color;
     }
 
-    public IntegerProperty color2Property() {
+    public StateFlow<Integer> color2Flow() {
         return color2;
     }
 
-    public IntegerProperty color2DarkProperty() {
+    public StateFlow<Integer> color2DarkFlow() {
         return color2Dark;
     }
 
-    public IntegerProperty ltColorProperty() {
+    public StateFlow<Integer> ltColorFlow() {
         return ltColor;
     }
 
-    public IntegerProperty dkColorProperty() {
+    public StateFlow<Integer> dkColorFlow() {
         return dkColor;
     }
 
-    public IntegerProperty autoTintProperty() {
+    public StateFlow<Integer> autoTintFlow() {
         return autoTint;
     }
 
-    public BooleanProperty fullscreenProperty() {
+    public StateFlow<Boolean> fullscreenFlow() {
         return fullscreen;
     }
 
-    public BooleanProperty ignoreSkinContainerProperty() {
-        return fullscreen;
+    public StateFlow<Boolean> closeSkinModelFlow() {
+        return closeSkinModel;
     }
 
-    public IntegerProperty animationSpeedProperty() {
+    public StateFlow<Integer> animationSpeedFlow() {
         return animationSpeed;
     }
 
-    public ObjectProperty<BitmapDrawable> ltBackgroundProperty() {
+    public StateFlow<BitmapDrawable> ltBackgroundFlow() {
         return backgroundLt;
     }
 
-    public ObjectProperty<BitmapDrawable> dkBackgroundProperty() {
+    public StateFlow<BitmapDrawable> dkBackgroundFlow() {
         return backgroundDk;
     }
 
     public BitmapDrawable getBackground(Context context) {
         boolean isNightMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        return isNightMode ? backgroundDk.get() : backgroundLt.get();
+        return isNightMode ? backgroundDk.getValue() : backgroundLt.getValue();
     }
 
     public void setColor(int color) {
@@ -168,38 +173,38 @@ public class Theme {
         Color.colorToHSV(color, dkHsv);
         dkHsv[1] += (1 - dkHsv[1]) * 0.3f;
         dkHsv[2] -= (1 - dkHsv[2]) * 0.3f;
-        this.ltColor.set(Color.HSVToColor(ltHsv));
-        this.dkColor.set(Color.HSVToColor(dkHsv));
-        this.autoTint.set(ColorUtils.calculateLuminance(color) >= 0.5 ? Color.parseColor("#FF000000") : Color.parseColor("#FFFFFFFF"));
-        this.color.set(color);
+        this.ltColor.setValue(Color.HSVToColor(ltHsv));
+        this.dkColor.setValue(Color.HSVToColor(dkHsv));
+        this.autoTint.setValue(ColorUtils.calculateLuminance(color) >= 0.5 ? Color.parseColor("#FF000000") : Color.parseColor("#FFFFFFFF"));
+        this.color.setValue(color);
     }
 
     public void setColor2(int color) {
-        this.color2.set(color);
+        this.color2.setValue(color);
     }
 
     public void setColor2Dark(int color) {
-        this.color2Dark.set(color);
+        this.color2Dark.setValue(color);
     }
 
     public void setFullscreen(boolean fullscreen) {
-        this.fullscreen.set(fullscreen);
+        this.fullscreen.setValue(fullscreen);
     }
 
     public void setiIgnoreSkinContainer(boolean ignoreSkinContainer) {
-        this.closeSkinModel.set(ignoreSkinContainer);
+        this.closeSkinModel.setValue(ignoreSkinContainer);
     }
 
     public void setAnimationSpeed(int animationSpeed) {
-        this.animationSpeed.set(animationSpeed);
+        this.animationSpeed.setValue(animationSpeed);
     }
 
     public void setBackgroundLt(BitmapDrawable backgroundLt) {
-        this.backgroundLt.set(backgroundLt);
+        this.backgroundLt.setValue(backgroundLt);
     }
 
     public void setBackgroundDk(BitmapDrawable backgroundDk) {
-        this.backgroundDk.set(backgroundDk);
+        this.backgroundDk.setValue(backgroundDk);
     }
 
     public static Theme getTheme(Context context) {

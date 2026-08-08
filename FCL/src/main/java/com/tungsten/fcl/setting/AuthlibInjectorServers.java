@@ -81,7 +81,7 @@ public final class AuthlibInjectorServers implements Validation {
                 for (String url : configInstance.urls) {
                     Task.supplyAsync(Schedulers.io(), () -> AuthlibInjectorServer.locateServer(url))
                             .thenAcceptAsync(Schedulers.androidUIThread(), server -> {
-                                config().getAuthlibInjectorServers().add(server);
+                                config().addAuthlibInjectorServer(server);
                                 servers.add(server);
                             })
                             .start();

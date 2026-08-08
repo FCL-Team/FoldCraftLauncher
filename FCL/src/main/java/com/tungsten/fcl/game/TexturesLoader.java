@@ -43,11 +43,9 @@ import com.tungsten.fclcore.auth.yggdrasil.TextureModel;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccount;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fclcore.util.fakefx.BindingMapping;
+import com.tungsten.fclcore.util.flow.FlowMappings;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,7 +60,11 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.logging.Level;
+
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public final class TexturesLoader {
 
@@ -70,10 +72,21 @@ public final class TexturesLoader {
     }
 
     // ==== Texture Loading ====
-    public record LoadedTexture(Bitmap image, Map<String, String> metadata) {
+    public static class LoadedTexture {
+        private final Bitmap image;
+        private final Map<String, String> metadata;
+
         public LoadedTexture(Bitmap image, Map<String, String> metadata) {
             this.image = requireNonNull(image);
             this.metadata = requireNonNull(metadata);
+        }
+
+        public Bitmap getImage() {
+            return image;
+        }
+
+        public Map<String, String> getMetadata() {
+            return metadata;
         }
     }
 
@@ -110,7 +123,7 @@ public final class TexturesLoader {
                 if (loadedSkin != null) {
                     Bitmap img = loadedSkin.skin() == null ? null : loadedSkin.skin().getImage();
                     if (img == null) {
-                        img = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).image();
+                        img = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
                     }
                     return new LoadedTexture(img, metadata);
                 }
@@ -209,10 +222,23 @@ public final class TexturesLoader {
         return DEFAULT_SKINS.get(model);
     }
 
-    public static ObjectBinding<LoadedTexture> skinBinding(YggdrasilService service, UUID uuid) {
+    // mapFlow/asyncMapFlow 已上移为 FCLCore 公共基建
+    // com.tungsten.fclcore.util.flow.FlowMappings（语义对齐原 BindingMapping：
+    // 源值去重、asyncMap 仅最新代际生效、弱引用目标 GC 后自动取消订阅）。
+
+    private static <S, T> StateFlow<T> mapFlow(StateFlow<S> source, Function<? super S, ? extends T> mapper) {
+        return FlowMappings.map(source, mapper);
+    }
+
+    private static <S, T> StateFlow<T> asyncMapFlow(StateFlow<S> source, Function<? super S, ? extends CompletableFuture<? extends T>> mapper, T initial) {
+        return FlowMappings.asyncMap(source, mapper, initial);
+    }
+
+    public static StateFlow<LoadedTexture> skinFlow(YggdrasilService service, UUID uuid) {
         LoadedTexture uuidFallback = getDefaultSkin(TextureModel.detectUUID(uuid));
-        return BindingMapping.of(service.getProfileRepository().binding(uuid))
-                .map(profile -> profile
+        StateFlow<Optional<Texture>> skinTexture = mapFlow(
+                service.getProfileRepository().bindingFlow(uuid),
+                profile -> profile
                         .flatMap(it -> {
                             try {
                                 return YggdrasilService.getTextures(it);
@@ -222,83 +248,82 @@ public final class TexturesLoader {
                             }
                         })
                         .flatMap(it -> Optional.ofNullable(it.get(TextureType.SKIN)))
-                        .filter(it -> StringUtils.isNotBlank(it.getUrl())))
-                .asyncMap(it -> {
-                    if (it.isPresent()) {
-                        Texture texture = it.get();
-                        return CompletableFuture.supplyAsync(() -> {
-                            try {
-                                return loadTexture(texture);
-                            } catch (Exception e) {
-                                LOG.log(Level.WARNING, "Failed to load texture " + texture.getUrl() + ", using fallback texture", e);
-                                return uuidFallback;
-                            }
-                        }, POOL);
-                    } else {
-                        return CompletableFuture.completedFuture(uuidFallback);
+                        .filter(it -> StringUtils.isNotBlank(it.getUrl())));
+        return asyncMapFlow(skinTexture, it -> {
+            if (it.isPresent()) {
+                Texture texture = it.get();
+                return CompletableFuture.supplyAsync(() -> {
+                    try {
+                        return loadTexture(texture);
+                    } catch (Exception e) {
+                        LOG.log(Level.WARNING, "Failed to load texture " + texture.getUrl() + ", using fallback texture", e);
+                        return uuidFallback;
                     }
-                }, uuidFallback);
+                }, POOL);
+            } else {
+                return CompletableFuture.completedFuture(uuidFallback);
+            }
+        }, uuidFallback);
     }
 
-    public static ObjectBinding<LoadedTexture> skinBinding(Account account) {
+    public static StateFlow<LoadedTexture> skinFlow(Account account) {
         LoadedTexture uuidFallback = getDefaultSkin(TextureModel.detectUUID(account.getUUID()));
-        return BindingMapping.of(account.getTextures())
-                .map(textures -> textures
+        StateFlow<Optional<Texture>> skinTexture = mapFlow(account.texturesFlow(),
+                textures -> textures
                         .flatMap(it -> Optional.ofNullable(it.get(TextureType.SKIN)))
-                        .filter(it -> StringUtils.isNotBlank(it.getUrl())))
-                .asyncMap(it -> {
-                    if (it.isPresent()) {
-                        Texture texture = it.get();
-                        return CompletableFuture.supplyAsync(() -> {
-                            try {
-                                if (account instanceof OfflineAccount) {
-                                    return loadTexture(texture, (OfflineAccount) account);
-                                }
-                                return loadTexture(texture);
-                            } catch (Exception e) {
-                                LOG.log(Level.WARNING, "Failed to load texture " + texture.getUrl() + ", using fallback texture", e);
-                                return uuidFallback;
-                            }
-                        }, POOL);
-                    } else {
-                        return CompletableFuture.completedFuture(uuidFallback);
+                        .filter(it -> StringUtils.isNotBlank(it.getUrl())));
+        return asyncMapFlow(skinTexture, it -> {
+            if (it.isPresent()) {
+                Texture texture = it.get();
+                return CompletableFuture.supplyAsync(() -> {
+                    try {
+                        if (account instanceof OfflineAccount) {
+                            return loadTexture(texture, (OfflineAccount) account);
+                        }
+                        return loadTexture(texture);
+                    } catch (Exception e) {
+                        LOG.log(Level.WARNING, "Failed to load texture " + texture.getUrl() + ", using fallback texture", e);
+                        return uuidFallback;
                     }
-                }, uuidFallback);
+                }, POOL);
+            } else {
+                return CompletableFuture.completedFuture(uuidFallback);
+            }
+        }, uuidFallback);
     }
 
-    public static ObjectBinding<Bitmap[]> textureBinding(Account account) {
-        Bitmap[] fallback = new Bitmap[]{getDefaultSkin(TextureModel.detectUUID(account.getUUID())).image(), null};
-        return BindingMapping.of(account.getTextures())
-                .asyncMap(it -> {
-                    if (it.isPresent()) {
-                        Texture skin = it.get().get(TextureType.SKIN);
-                        Texture cape = it.get().get(TextureType.CAPE);
-                        boolean loadSkin = skin != null && StringUtils.isNotBlank(skin.getUrl());
-                        boolean loadCape = cape != null && StringUtils.isNotBlank(cape.getUrl());
-                        return CompletableFuture.supplyAsync(() -> {
-                            Bitmap finalSkin = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).image();
-                            Bitmap finalCape = null;
-                            try {
-                                if (loadSkin) {
-                                    if (account instanceof OfflineAccount) {
-                                        finalSkin = loadTexture(skin, (OfflineAccount) account).image();
-                                        finalCape = loadCape(skin, (OfflineAccount) account);
-                                    } else {
-                                        finalSkin = loadTexture(skin).image();
-                                    }
-                                }
-                                if (loadCape) {
-                                    finalCape = loadCape(cape);
-                                }
-                            } catch (Exception e) {
-                                LOG.log(Level.WARNING, "Failed to load texture, using default", e);
+    public static StateFlow<Bitmap[]> textureFlow(Account account) {
+        Bitmap[] fallback = new Bitmap[] { getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage(), null };
+        return asyncMapFlow(account.texturesFlow(), it -> {
+            if (it.isPresent()) {
+                Texture skin = it.get().get(TextureType.SKIN);
+                Texture cape = it.get().get(TextureType.CAPE);
+                boolean loadSkin = skin != null && StringUtils.isNotBlank(skin.getUrl());
+                boolean loadCape = cape != null && StringUtils.isNotBlank(cape.getUrl());
+                return CompletableFuture.supplyAsync(() -> {
+                    Bitmap finalSkin = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).getImage();
+                    Bitmap finalCape = null;
+                    try {
+                        if (loadSkin) {
+                            if (account instanceof OfflineAccount) {
+                                finalSkin = loadTexture(skin, (OfflineAccount) account).getImage();
+                                finalCape = loadCape(skin, (OfflineAccount) account);
+                            } else {
+                                finalSkin = loadTexture(skin).getImage();
                             }
-                            return new Bitmap[]{finalSkin, finalCape};
-                        }, POOL);
-                    } else {
-                        return CompletableFuture.completedFuture(fallback);
+                        }
+                        if (loadCape) {
+                            finalCape = loadCape(cape);
+                        }
+                    } catch (Exception e) {
+                        LOG.log(Level.WARNING, "Failed to load texture, using default", e);
                     }
-                }, fallback);
+                    return new Bitmap[] { finalSkin, finalCape };
+                }, POOL);
+            } else {
+                return CompletableFuture.completedFuture(fallback);
+            }
+        }, fallback);
     }
 
     // ====
@@ -340,20 +365,15 @@ public final class TexturesLoader {
         return avatar;
     }
 
-    public static ObjectBinding<BitmapDrawable> avatarBinding(YggdrasilService service, UUID uuid, int size) {
-        return BindingMapping.of(skinBinding(service, uuid))
-                .map(it -> toAvatar(it.image, size))
-                .map(BitmapDrawable::new);
+    public static StateFlow<BitmapDrawable> avatarFlow(YggdrasilService service, UUID uuid, int size) {
+        return mapFlow(skinFlow(service, uuid), it -> new BitmapDrawable(toAvatar(it.image, size)));
     }
 
-    public static ObjectBinding<BitmapDrawable> avatarBinding(Account account, int size) {
+    public static StateFlow<BitmapDrawable> avatarFlow(Account account, int size) {
         if (account instanceof YggdrasilAccount || account instanceof MicrosoftAccount || account instanceof OfflineAccount) {
-            return BindingMapping.of(skinBinding(account))
-                    .map(it -> toAvatar(it.image, size))
-                    .map(BitmapDrawable::new);
+            return mapFlow(skinFlow(account), it -> new BitmapDrawable(toAvatar(it.image, size)));
         } else {
-            return Bindings.createObjectBinding(
-                    () -> new BitmapDrawable(toAvatar(getDefaultSkin(account == null ? TextureModel.ALEX : TextureModel.detectUUID(account.getUUID())).image, size)));
+            return StateFlowKt.MutableStateFlow(new BitmapDrawable(toAvatar(getDefaultSkin(account == null ? TextureModel.ALEX : TextureModel.detectUUID(account.getUUID())).image, size)));
         }
     }
     // ====

@@ -5,10 +5,10 @@ import android.content.res.ColorStateList
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.withStyledAttributes
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
 import com.tungsten.fcllibrary.R
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import java.lang.ref.WeakReference
 
 class FCLConstraintLayout @JvmOverloads constructor(
     context: Context,
@@ -16,25 +16,24 @@ class FCLConstraintLayout @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
     var autoTint = false
-    private val theme: IntegerProperty = object : IntegerPropertyBase() {
-        override fun invalidated() {
-            get()
-            if (autoTint) {
-                setBackgroundTintList(
-                    ColorStateList(
-                        arrayOf<IntArray?>(intArrayOf()),
-                        intArrayOf(ThemeEngine.getInstance().getTheme().getLtColor())
-                    )
+
+    private fun applyTheme() {
+        if (autoTint) {
+            setBackgroundTintList(
+                ColorStateList(
+                    arrayOf<IntArray?>(intArrayOf()),
+                    intArrayOf(ThemeEngine.getInstance().getTheme().getLtColor())
                 )
-            }
+            )
         }
+    }
 
-        override fun getBean(): Any {
-            return this
-        }
-
-        override fun getName(): String {
-            return "theme"
+    private fun bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        val ref = WeakReference(this)
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow()) { c ->
+            val self = ref.get()
+            self?.applyTheme()
         }
     }
 
@@ -42,7 +41,7 @@ class FCLConstraintLayout @JvmOverloads constructor(
         context.withStyledAttributes(attrs, R.styleable.FCLConstraintLayout) {
             autoTint = getBoolean(R.styleable.FCLConstraintLayout_auto_tint, false)
         }
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty())
+        bindTheme()
     }
 
 }

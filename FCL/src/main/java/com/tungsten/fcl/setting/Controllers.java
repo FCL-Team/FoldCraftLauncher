@@ -1,49 +1,99 @@
 package com.tungsten.fcl.setting;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableArrayList;
-
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListWrapper;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
-import com.tungsten.fclcore.util.gson.fakefx.factories.JavaFxPropertyTypeAdapterFactory;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 控制器仓库（阶段 4a）：列表已 StateFlow 化（成员增删 → 新快照发射）。
+ * 元素冒泡（extractor 语义：控制器内部任何变更 → 全部落盘）由对每个控制器
+ * revisionFlow 的直接订阅承接，控制器移出列表时取消订阅。
+ * 任何变化（成员或元素）都会递增 {@link #controllersSignal}（供 UI 刷新）。
+ */
 public class Controllers {
 
     private Controllers() {
     }
 
-    private static final ObservableList<Controller> controllers = observableArrayList(controller -> new Observable[]{controller});
-    private static final ReadOnlyListWrapper<Controller> controllersWrapper = new ReadOnlyListWrapper<>(controllers);
+    private static final MutableStateFlow<List<Controller>> controllers = StateFlowKt.MutableStateFlow(new ArrayList<>());
+
+    /** 列表任何变化（成员增删或元素内部变更）时递增的信号流（供 UI 刷新）。 */
+    private static final MutableStateFlow<Long> controllersSignal = StateFlowKt.MutableStateFlow(0L);
+
+    private static final Map<Controller, FlowSubscriptions.Subscription> controllerSubscriptions = new IdentityHashMap<>();
+
     public static Controller DEFAULT_CONTROLLER;
 
     private static final List<Runnable> CALLBACKS = new ArrayList<>();
 
-    public static void checkControllers() {
-        if (controllers.contains(null)) {
-            controllers.remove(null);
+    private static void bumpControllersSignal() {
+        controllersSignal.setValue(controllersSignal.getValue() + 1);
+    }
+
+    private static void attachControllerSubscription(Controller controller) {
+        if (controller == null || controllerSubscriptions.containsKey(controller))
+            return;
+        controllerSubscriptions.put(controller,
+                FlowSubscriptions.subscribe(controller.revisionFlow(), revision -> bumpControllersSignal()));
+    }
+
+    private static void detachControllerSubscription(Controller controller) {
+        FlowSubscriptions.Subscription subscription = controllerSubscriptions.remove(controller);
+        if (subscription != null)
+            subscription.cancel();
+    }
+
+    private static void setControllersInternal(List<Controller> newList) {
+        for (Controller controller : controllers.getValue()) {
+            if (!newList.contains(controller))
+                detachControllerSubscription(controller);
         }
-        if (controllers.isEmpty()) {
+        newList.forEach(Controllers::attachControllerSubscription);
+        controllers.setValue(newList);
+        bumpControllersSignal();
+    }
+
+    /** 对齐原静态块：列表任何变化（成员增删或元素冒泡）→ 落盘 + 自检。 */
+    static {
+        FlowSubscriptions.subscribe(controllersSignal, signal -> onControllersChanged());
+    }
+
+    private static void onControllersChanged() {
+        updateControllerStorages();
+        checkControllers();
+    }
+
+    public static void checkControllers() {
+        List<Controller> list = controllers.getValue();
+        if (list.contains(null)) {
+            List<Controller> newList = new ArrayList<>(list);
+            newList.remove(null);
+            setControllersInternal(newList);
+        }
+        if (controllers.getValue().isEmpty()) {
             try {
                 if (DEFAULT_CONTROLLER == null) {
                     String str = IOUtils.readFullyAsString(Controllers.class.getResourceAsStream("/assets/controllers/00000000.json"));
                     DEFAULT_CONTROLLER = new GsonBuilder()
-                            .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                             .setPrettyPrinting()
                             .create().fromJson(str, Controller.class);
                 }
@@ -51,7 +101,7 @@ public class Controllers {
             } catch (IOException e) {
                 Logging.LOG.log(Level.SEVERE, "Failed to generate default controller!", e.getMessage());
             }
-            controllers.addAll(getControllersFromDisk());
+            setControllersInternal(getControllersFromDisk());
         }
     }
 
@@ -72,28 +122,23 @@ public class Controllers {
         // update storage
         File[] files = new File(FCLPath.CONTROLLER_DIR).listFiles();
         if (files != null) {
-            ArrayList<String> fileNames = (ArrayList<String>) controllers.stream().map(Controller::getFileName).collect(Collectors.toList());
+            ArrayList<String> fileNames = (ArrayList<String>) controllers.getValue().stream().map(Controller::getFileName).collect(Collectors.toList());
             for (File file : files) {
                 if (((file.isDirectory() && !file.getName().equals("styles") && !file.getName().equals("input")) || !fileNames.contains(file.getName())) && !file.getName().endsWith(".bak")) {
                     file.delete();
                 }
             }
         }
-        for (Controller controller : controllers) {
+        for (Controller controller : controllers.getValue()) {
             controller.saveToDisk();
         }
-    }
-
-    static {
-        controllers.addListener(onInvalidating(Controllers::updateControllerStorages));
-        controllers.addListener(onInvalidating(Controllers::checkControllers));
     }
 
     public static void init() {
         if (initialized)
             return;
 
-        controllers.addAll(getControllersFromDisk());
+        setControllersInternal(getControllersFromDisk());
         checkControllers();
 
         initialized = true;
@@ -109,7 +154,6 @@ public class Controllers {
                 try {
                     String str = FileUtils.readText(json);
                     Controller controller = new GsonBuilder()
-                            .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                             .setPrettyPrinting()
                             .create().fromJson(str, Controller.class);
                     if (controller == null) {
@@ -130,31 +174,46 @@ public class Controllers {
         return list;
     }
 
-    public static ObservableList<Controller> getControllers() {
-        if (controllers.contains(null)) {
-            controllers.remove(null);
+    /** 控制器列表快照（只读）；任何变化经 {@link #controllersSignalFlow()} 通知。 */
+    public static List<Controller> getControllers() {
+        List<Controller> list = controllers.getValue();
+        if (list.contains(null)) {
+            List<Controller> newList = new ArrayList<>(list);
+            newList.remove(null);
+            setControllersInternal(newList);
         }
-        if (controllers.isEmpty()) controllers.add(DEFAULT_CONTROLLER);
-        return controllers;
+        if (controllers.getValue().isEmpty()) {
+            List<Controller> newList = new ArrayList<>(controllers.getValue());
+            newList.add(DEFAULT_CONTROLLER);
+            setControllersInternal(newList);
+        }
+        return Collections.unmodifiableList(controllers.getValue());
     }
 
-    public static ReadOnlyListProperty<Controller> controllersProperty() {
-        return controllersWrapper.getReadOnlyProperty();
+    /** 控制器列表变化信号（成员增删与元素内部变更都会递增）。 */
+    public static StateFlow<Long> controllersSignalFlow() {
+        return controllersSignal;
     }
 
     public static void addController(Controller controller) {
         if (!initialized) return;
-        controllers.add(controller);
+        List<Controller> newList = new ArrayList<>(controllers.getValue());
+        newList.add(controller);
+        setControllersInternal(newList);
     }
 
     public static void removeControllers(Controller controller) {
         if (!initialized) return;
-        controllers.remove(controller);
+        List<Controller> newList = new ArrayList<>(controllers.getValue());
+        if (newList.remove(controller)) {
+            setControllersInternal(newList);
+        }
     }
 
     public static Controller findControllerById(String id) {
         checkControllers();
-        return controllers.stream().filter(it -> it.getId().equals(id)).findFirst().orElse(controllers.get(0));
+        List<Controller> list = controllers.getValue();
+        return list.stream().filter(it -> it.getId().equals(id)).findFirst().orElse(list.get(0));
     }
 
     public static void addCallback(Runnable callback) {

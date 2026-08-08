@@ -10,7 +10,7 @@ import com.tungsten.fcl.game.ModpackHelper;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
-import com.tungsten.fcl.ui.download.version.VersionInstallInfoPage;
+import com.tungsten.fcl.ui.download.version.InstallFailureAlert;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.mod.MismatchedModpackTypeException;
@@ -32,7 +32,7 @@ import java.nio.charset.Charset;
 public class ModpackInstaller {
 
     public static void installModpack(Context context, Task<?> task, boolean update) {
-        TaskDialog pane = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
+        TaskDialog pane = new TaskDialog(context, new TaskCancellationAction(() -> {}));
         pane.setTitle(context.getString(R.string.install_modpack));
         Schedulers.androidUIThread().execute(() -> {
             TaskExecutor executor = task.executor(new TaskListener() {
@@ -85,7 +85,7 @@ public class ModpackInstaller {
                                     builder1.create().show();
                                 }
                             } else {
-                                VersionInstallInfoPage.alertFailureMessage(context, executor.getException(), () -> {});
+                                InstallFailureAlert.alertFailureMessage(context, executor.getException(), () -> {});
                             }
                         }
 

@@ -30,7 +30,7 @@ import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 import com.tungsten.fclcore.util.io.HttpServer;
-import com.tungsten.fclcore.util.png.fakefx.PNGFakeFXUtils;
+import com.tungsten.fclcore.util.png.PNGUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -141,7 +141,7 @@ public class YggdrasilServer extends HttpServer {
 
         if (Texture.hasTexture(hash)) {
             Texture texture = Texture.getTexture(hash);
-            byte[] data = PNGFakeFXUtils.writeImageToArray(texture.getImage());
+            byte[] data = PNGUtils.writeImageToArray(texture.getImage());
             Response response = newFixedLengthResponse(Response.Status.OK, "image/png", new ByteArrayInputStream(data), data.length);
             response.addHeader("Etag", String.format("\"%s\"", hash));
             response.addHeader("Cache-Control", "max-age=2592000, public");

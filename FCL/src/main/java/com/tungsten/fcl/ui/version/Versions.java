@@ -14,15 +14,19 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcllibrary.ui.ProgressDialog;
-import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.account.CreateAccountDialog;
+import com.tungsten.fcl.ui.compose.FCLDialogs;
+import com.tungsten.fcl.ui.compose.MiuixTaskDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixCreateAccountDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixDuplicateVersionDialog;
+import com.tungsten.fcl.ui.compose.dialog.MiuixRenameVersionDialog;
 import com.tungsten.fcl.ui.download.DownloadPageManager;
-import com.tungsten.fcl.ui.download.modpack.LocalModpackPage;
-import com.tungsten.fcl.ui.download.modpack.ModpackSelectionPage;
+import com.tungsten.fcl.ui.download.modpack.compose.ComposeLocalModpackPage;
+import com.tungsten.fcl.ui.download.modpack.compose.ComposeModpackSelectionPage;
+import com.tungsten.fcl.ui.download.compose.ComposeTempPage;
 import com.tungsten.fcl.ui.manage.ManagePageManager;
-import com.tungsten.fcl.ui.manage.ModpackTypeSelectionPage;
+import com.tungsten.fcl.ui.manage.compose.ComposeModpackTypeSelectionPage;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.TaskCancellationAction;
+import com.tungsten.fcl.util.NavigationBus;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
@@ -31,16 +35,17 @@ import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
+import com.tungsten.fclcore.util.FutureCallback;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -51,9 +56,16 @@ public class Versions {
     public static void importModpack(Context context, FCLUILayout parent) {
         Profile profile = Profiles.getSelectedProfile();
         if (profile.getRepository().isLoaded()) {
-            ModpackSelectionPage page = new ModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_selection, profile, null);
+            ComposeModpackSelectionPage page = new ComposeModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, profile, null);
             DownloadPageManager.getInstance().showTempPage(page);
         }
+    }
+
+    /** 5.1 遗留 L3：下载失败提示（AlertLevel.ALERT 等价于 showAlert 的标题/文案，按钮仅 dismiss）。 */
+    private static void showModpackDownloadFailed(Context context, String url, Exception e) {
+        String title = context.getString(R.string.download_failed);
+        String message = AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + StringUtils.getStackTrace(e);
+        FCLDialogs.showAlert(context, title, message, null, null, null, false);
     }
 
     public static void downloadModpackImpl(Context context, FCLUILayout parent, Profile profile, RemoteMod.Version file) {
@@ -63,35 +75,23 @@ public class Versions {
             modpack = Files.createTempFile("modpack", ".zip");
             downloadURL = new URL(file.getFile().getUrl());
         } catch (IOException e) {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-            builder.setCancelable(false);
-            builder.setTitle(context.getString(R.string.download_failed));
-            builder.setMessage(AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
-            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-            builder.create().show();
+            showModpackDownloadFailed(context, file.getFile().getUrl(), e);
             return;
         }
 
-        TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
-        taskDialog.setTitle(context.getString(R.string.message_downloading));
         TaskExecutor executor = new FileDownloadTask(downloadURL, modpack.toFile())
                 .whenComplete(Schedulers.androidUIThread(), e -> {
                     if (e == null) {
-                        LocalModpackPage page = new LocalModpackPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack, profile, null, modpack.toFile());
+                        ComposeLocalModpackPage page = new ComposeLocalModpackPage(context, PageManager.PAGE_ID_TEMP, parent, profile, null, modpack.toFile());
                         DownloadPageManager.getInstance().showTempPage(page);
                     } else if (e instanceof CancellationException) {
                         Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
                     } else {
-                        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-                        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-                        builder.setCancelable(false);
-                        builder.setTitle(context.getString(R.string.download_failed));
-                        builder.setMessage(AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
-                        builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
-                        builder.create().show();
+                        showModpackDownloadFailed(context, file.getFile().getUrl(), e);
                     }
                 }).executor();
+        MiuixTaskDialog taskDialog = new MiuixTaskDialog(context);
+        taskDialog.setTitle(context.getString(R.string.message_downloading));
         taskDialog.setExecutor(executor);
         taskDialog.show();
         executor.start();
@@ -101,23 +101,21 @@ public class Versions {
         boolean isIndependent = profile.getVersionSetting(version).isIsolateGameDir();
         String message = isIndependent ? String.format(context.getString(R.string.version_manage_remove_confirm_independent), version) : String.format(context.getString(R.string.version_manage_remove_confirm), version);
 
-        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-        builder.setMessage(message);
-        builder.setPositiveButton(() -> {
-            ProgressDialog progress = new ProgressDialog(context);
+        Runnable deleteAction = () -> {
+            AppCompatDialog progress = FCLDialogs.showProgress(context);
             Task.runAsync(() -> {
                 profile.getRepository().removeVersionFromDisk(version);
             }).whenComplete(Schedulers.androidUIThread(), (e) -> {
                 progress.dismiss();
             }).start();
-        });
-        builder.setNegativeButton(null);
-        builder.create().show();
+        };
+        FCLDialogs.showAlert(context, null, message, null,
+                context.getString(com.tungsten.fcllibrary.R.string.dialog_negative),
+                result -> { if (result) deleteAction.run(); });
     }
 
     public static CompletableFuture<String> renameVersion(Context context, Profile profile, String version) {
-        RenameVersionDialog dialog = new RenameVersionDialog(context, version, (newName, resolve, reject) -> {
+        FutureCallback<String> callback = (newName, resolve, reject) -> {
             if (!OperatingSystem.isNameValid(newName) || !ParseUtil.isValidCharacters(newName)) {
                 reject.accept(context.getString(R.string.install_new_game_malformed));
                 return;
@@ -139,18 +137,19 @@ public class Versions {
                         }
                         return null;
                     }).start();
-        });
+        };
+        MiuixRenameVersionDialog dialog = new MiuixRenameVersionDialog(context, version, callback);
         dialog.show();
         return dialog.getFuture();
     }
 
     public static void exportVersion(Context context, FCLUILayout parent, Profile profile, String version) {
-        ModpackTypeSelectionPage page = new ModpackTypeSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_type, profile, version);
+        ComposeModpackTypeSelectionPage page = new ComposeModpackTypeSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, profile, version);
         ManagePageManager.getInstance().showTempPage(page);
     }
 
     public static void duplicateVersion(Context context, Profile profile, String version) {
-        DuplicateVersionDialog dialog = new DuplicateVersionDialog(context, profile, version, (res, resolve, reject) -> {
+        FutureCallback<ArrayList<Object>> callback = (res, resolve, reject) -> {
             String newVersionName = (String) res.get(0);
             if (!OperatingSystem.isNameValid(newVersionName) || !ParseUtil.isValidCharacters(newVersionName)) {
                 reject.accept(context.getString(R.string.install_new_game_malformed));
@@ -169,19 +168,19 @@ public class Versions {
                             profile.getRepository().removeVersionFromDisk(newVersionName);
                         }
                     }).start();
-        });
-        dialog.show();
+        };
+        new MiuixDuplicateVersionDialog(context, profile, version, callback).show();
     }
 
     public static void updateVersion(Context context, FCLUILayout parent, Profile profile, String version) {
-        ModpackSelectionPage page = new ModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_selection, profile, version);
+        ComposeModpackSelectionPage page = new ComposeModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, profile, version);
         ManagePageManager.getInstance().showTempPage(page);
     }
 
     public static void updateGameAssets(Context context, Profile profile, String version) {
         TaskExecutor executor = new GameAssetDownloadTask(profile.getDependency(), profile.getRepository().getVersion(version), GameAssetDownloadTask.DOWNLOAD_INDEX_FORCIBLY, true)
                 .executor();
-        TaskDialog dialog = new TaskDialog(context, TaskCancellationAction.NORMAL);
+        MiuixTaskDialog dialog = new MiuixTaskDialog(context);
         dialog.setExecutor(executor);
         dialog.setTitle(context.getString(R.string.version_manage_redownload_assets_index));
         dialog.show();
@@ -217,16 +216,11 @@ public class Versions {
 
     private static boolean checkVersionForLaunching(Context context, Profile profile, String id) {
         if (id == null || !profile.getRepository().isLoaded() || !profile.getRepository().hasVersion(id)) {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
-            builder.setCancelable(false);
-            builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-            builder.setTitle(context.getString(R.string.launch_failed));
-            builder.setMessage(context.getString(R.string.version_empty_launch));
-            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
-                MainActivity.getInstance().refreshMenuView(null);
-                MainActivity.getInstance().binding.download.setSelected(true);
-            });
-            builder.create().show();
+            Runnable jumpToDownload = () -> NavigationBus.select(NavigationBus.Menu.DOWNLOAD);
+            FCLDialogs.showAlert(context, context.getString(R.string.launch_failed),
+                    context.getString(R.string.version_empty_launch),
+                    null, null,
+                    result -> { if (result) jumpToDownload.run(); }, false);
             return false;
         } else {
             return true;
@@ -236,15 +230,16 @@ public class Versions {
     private static void ensureSelectedAccount(Context context, Consumer<Account> action) {
         Account account = Accounts.getSelectedAccount();
         if (account == null) {
-            CreateAccountDialog dialog = new CreateAccountDialog(context, (AccountFactory<?>) null);
-            dialog.setOnDismissListener(dialogInterface -> {
+            android.content.DialogInterface.OnDismissListener dismissListener = dialogInterface -> {
                 Account newAccount = Accounts.getSelectedAccount();
                 if (newAccount == null) {
                     // user cancelled operation
                 } else {
                     action.accept(newAccount);
                 }
-            });
+            };
+            MiuixCreateAccountDialog dialog = new MiuixCreateAccountDialog(context, (AccountFactory<?>) null);
+            dialog.setOnDismissListener(dismissListener);
             dialog.show();
         } else {
             action.accept(account);

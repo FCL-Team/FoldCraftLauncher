@@ -12,36 +12,22 @@ import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.QUILT_AP
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
-import android.view.LayoutInflater;
-import android.view.View;
-
-import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.versioning.GameVersionNumber;
-import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.view.FCLImageButton;
-import com.tungsten.fcllibrary.component.view.FCLImageView;
-import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class InstallerItem {
 
@@ -49,15 +35,15 @@ public class InstallerItem {
     private final String id;
     private final String name;
     private final Drawable icon;
-    public final StringProperty libraryVersion = new SimpleStringProperty();
-    public final StringProperty incompatibleLibraryName = new SimpleStringProperty();
-    public final StringProperty dependencyName = new SimpleStringProperty();
-    public final BooleanProperty incompatibleWithGame = new SimpleBooleanProperty();
-    public final BooleanProperty removable = new SimpleBooleanProperty();
-    public final BooleanProperty upgradable = new SimpleBooleanProperty(false);
-    public final BooleanProperty installable = new SimpleBooleanProperty(true);
-    public final ObjectProperty<Runnable> removeAction = new SimpleObjectProperty<>();
-    public final ObjectProperty<Runnable> action = new SimpleObjectProperty<>();
+    public final MutableStateFlow<String> libraryVersion = StateFlowKt.MutableStateFlow(null);
+    public final MutableStateFlow<String> incompatibleLibraryName = StateFlowKt.MutableStateFlow(null);
+    public final MutableStateFlow<String> dependencyName = StateFlowKt.MutableStateFlow(null);
+    public final MutableStateFlow<Boolean> incompatibleWithGame = StateFlowKt.MutableStateFlow(false);
+    public final MutableStateFlow<Boolean> removable = StateFlowKt.MutableStateFlow(false);
+    public final MutableStateFlow<Boolean> upgradable = StateFlowKt.MutableStateFlow(false);
+    public final MutableStateFlow<Boolean> installable = StateFlowKt.MutableStateFlow(true);
+    public final MutableStateFlow<Runnable> removeAction = StateFlowKt.MutableStateFlow(null);
+    public final MutableStateFlow<Runnable> action = StateFlowKt.MutableStateFlow(null);
 
     public InstallerItem(Context context, LibraryAnalyzer.LibraryType id) {
         this.context = context;
@@ -79,9 +65,9 @@ public class InstallerItem {
     }
 
     public void setState(String libraryVersion, boolean incompatibleWithGame, boolean removable) {
-        this.libraryVersion.set(libraryVersion);
-        this.incompatibleWithGame.set(incompatibleWithGame);
-        this.removable.set(removable);
+        this.libraryVersion.setValue(libraryVersion);
+        this.incompatibleWithGame.setValue(incompatibleWithGame);
+        this.removable.setValue(removable);
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -106,11 +92,6 @@ public class InstallerItem {
             default:
                 return context.getDrawable(R.drawable.img_grass);
         }
-    }
-
-    public View createView() {
-        InstallerItemSkin skin = new InstallerItemSkin(context, this);
-        return skin.getView();
     }
 
     public final static class InstallerItemGroup {
@@ -173,34 +154,40 @@ public class InstallerItem {
             addIncompatibles(fabricApi, forge, quiltApi, neoForge, liteLoader, optiFine, cleanroom);
             addIncompatibles(quiltApi, forge, fabric, fabricApi, neoForge, liteLoader, optiFine, cleanroom);
 
-            InvalidationListener listener = o -> {
+            // 原为注册在各 item.libraryVersion 上的强 InvalidationListener：强捕获 group，
+            // 由页面视图 → skin → item → flow 订阅链保持存活，对齐原监听器的可达性
+            Runnable listener = () -> {
                 for (Map.Entry<InstallerItem, Set<InstallerItem>> entry : incompatibleMap.entrySet()) {
                     InstallerItem item = entry.getKey();
 
                     String incompatibleId = null;
                     for (InstallerItem other : entry.getValue()) {
-                        if (other.libraryVersion.get() != null) {
+                        if (other.libraryVersion.getValue() != null) {
                             incompatibleId = other.id;
                             break;
                         }
                     }
 
-                    item.incompatibleLibraryName.set(incompatibleId);
+                    item.incompatibleLibraryName.setValue(incompatibleId);
                 }
             };
             for (InstallerItem item : incompatibleMap.keySet()) {
-                item.libraryVersion.addListener(listener);
+                FlowSubscriptions.subscribe(item.libraryVersion, v -> listener.run());
             }
 
-            fabricApi.dependencyName.bind(Bindings.createStringBinding(() -> {
-                if (fabric.libraryVersion.get() == null) return FABRIC.getPatchId();
+            Supplier<String> fabricApiDependency = () -> {
+                if (fabric.libraryVersion.getValue() == null) return FABRIC.getPatchId();
                 else return null;
-            }, fabric.libraryVersion));
+            };
+            fabricApi.dependencyName.setValue(fabricApiDependency.get());
+            FlowSubscriptions.subscribe(fabric.libraryVersion, v -> fabricApi.dependencyName.setValue(fabricApiDependency.get()));
 
-            quiltApi.dependencyName.bind(Bindings.createStringBinding(() -> {
-                if (quilt.libraryVersion.get() == null) return QUILT.getPatchId();
+            Supplier<String> quiltApiDependency = () -> {
+                if (quilt.libraryVersion.getValue() == null) return QUILT.getPatchId();
                 else return null;
-            }, quilt.libraryVersion));
+            };
+            quiltApi.dependencyName.setValue(quiltApiDependency.get());
+            FlowSubscriptions.subscribe(quilt.libraryVersion, v -> quiltApi.dependencyName.setValue(quiltApiDependency.get()));
 
             if (gameVersion == null) {
                 this.libraries = new InstallerItem[]{forge, neoForge, liteLoader, optiFine, fabric, fabricApi, quilt, quiltApi, cleanroom};
@@ -215,93 +202,6 @@ public class InstallerItem {
 
         public InstallerItem[] getLibraries() {
             return libraries;
-        }
-
-        public View getView() {
-            LinearLayoutCompat parent = new LinearLayoutCompat(context);
-            parent.setOrientation(LinearLayoutCompat.VERTICAL);
-            boolean first = true;
-            for (InstallerItem installerItem : getLibraries()) {
-                View view = installerItem.createView();
-                if (first) {
-                    first = false;
-                } else {
-                    view.setPadding(0, ConvertUtils.dip2px(context, 10), 0, 0);
-                }
-                parent.addView(view);
-            }
-            return parent;
-        }
-    }
-
-    public static class InstallerItemSkin implements View.OnClickListener {
-
-        private final InstallerItem installerItem;
-
-        private final LinearLayoutCompat parent;
-        private final FCLLinearLayout item;
-        private final FCLImageButton remove;
-        private final FCLImageButton select;
-
-        @SuppressLint("UseCompatLoadingForDrawables")
-        public InstallerItemSkin(Context context, InstallerItem installerItem) {
-            this.installerItem = installerItem;
-
-            parent = (LinearLayoutCompat) LayoutInflater.from(context).inflate(R.layout.view_installer_item, null);
-            item = parent.findViewById(R.id.item);
-            FCLImageView icon = parent.findViewById(R.id.icon);
-            FCLTextView name = parent.findViewById(R.id.name);
-            FCLTextView state = parent.findViewById(R.id.state);
-            remove = parent.findViewById(R.id.remove);
-            select = parent.findViewById(R.id.select);
-
-            ColorStateList colorStateList = new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()});
-            ThemeEngine.getInstance().registerEvent(item, () -> item.setBackgroundTintList(colorStateList));
-            icon.setBackground(installerItem.getIcon());
-            name.setText(installerItem.getName());
-            state.stringProperty().bind(Bindings.createStringBinding(() -> {
-                String incompatibleWith = installerItem.incompatibleLibraryName.get();
-                String version = installerItem.libraryVersion.get();
-                if (installerItem.incompatibleWithGame.get()) {
-                    return AndroidUtils.getLocalizedText(context, "install_installer_change_version", version);
-                } else if (incompatibleWith != null) {
-                    return AndroidUtils.getLocalizedText(context, "install_installer_incompatible", AndroidUtils.getLocalizedText(context, "install_installer_" + incompatibleWith.replace("-", "_")));
-                } else if (version == null) {
-                    return context.getString(R.string.install_installer_not_installed);
-                } else {
-                    return version;
-                }
-            }, installerItem.incompatibleLibraryName, installerItem.incompatibleWithGame, installerItem.libraryVersion));
-            remove.visibilityProperty().bind(installerItem.removable);
-            select.visibilityProperty().bind(Bindings.createBooleanBinding(
-                    () -> installerItem.installable.get() && installerItem.incompatibleLibraryName.get() == null,
-                    installerItem.installable, installerItem.incompatibleLibraryName));
-            select.imageProperty().bind(Bindings.createObjectBinding(() -> installerItem.upgradable.get()
-                            ? context.getDrawable(R.drawable.ic_baseline_update_24)
-                            : context.getDrawable(R.drawable.ic_baseline_arrow_forward_24),
-                    installerItem.upgradable));
-            item.setOnClickListener(this);
-            remove.setOnClickListener(this);
-            select.setOnClickListener(this);
-        }
-
-        public View getView() {
-            return parent;
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (view == item || view == select) {
-                if (select.getVisibilityValue()) {
-                    installerItem.action.get().run();
-                }
-            }
-            if (view == remove) {
-                Runnable runnable = installerItem.removeAction.get();
-                if (runnable != null) {
-                    runnable.run();
-                }
-            }
         }
     }
 }

@@ -28,8 +28,9 @@ import com.tungsten.fclcore.auth.ServerResponseMalformedException;
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilService;
-import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
-import com.tungsten.fclcore.util.fakefx.BindingMapping;
+import com.tungsten.fclcore.util.flow.FlowMappings;
+
+import kotlinx.coroutines.flow.StateFlow;
 
 import java.nio.file.Path;
 import java.util.Map;
@@ -140,17 +141,22 @@ public class MicrosoftAccount extends OAuthAccount {
         return service;
     }
 
+    private StateFlow<Optional<Map<TextureType, Texture>>> textures;
+
     @Override
-    public ObjectBinding<Optional<Map<TextureType, Texture>>> getTextures() {
-        return BindingMapping.of(service.getProfileRepository().binding(getUUID()))
-                .map(profile -> profile.flatMap(it -> {
-                    try {
-                        return YggdrasilService.getTextures(it);
-                    } catch (ServerResponseMalformedException e) {
-                        LOG.log(Level.WARNING, "Failed to parse texture payload", e);
-                        return Optional.empty();
-                    }
-                }));
+    public synchronized StateFlow<Optional<Map<TextureType, Texture>>> texturesFlow() {
+        if (textures == null) {
+            textures = FlowMappings.map(service.getProfileRepository().bindingFlow(getUUID()),
+                    profile -> profile.flatMap(it -> {
+                        try {
+                            return YggdrasilService.getTextures(it);
+                        } catch (ServerResponseMalformedException e) {
+                            LOG.log(Level.WARNING, "Failed to parse texture payload", e);
+                            return Optional.empty();
+                        }
+                    }));
+        }
+        return textures;
     }
 
     /**

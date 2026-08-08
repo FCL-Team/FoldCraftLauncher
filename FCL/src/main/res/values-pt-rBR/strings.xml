@@ -77,6 +77,9 @@
     <string name="account_select_character">Selecionar personagem</string>
     <string name="account_skin">Skin</string>
     <string name="account_skin_type_default">Padrão</string>
+    <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI URL</string>
+    <string name="account_skin_type_csl_api_hint">Você deve criar um personagem com o mesmo nome que a sua conta offline na página do seu fornecedor de skin. Sua skin será então enviada para esse site.</string>
+    <string name="account_skin_type_local_file">Arquivo de skin local</string>
     <string name="account_skin_upload">Selecione o arquivo de skin</string>
     <string name="account_state_no_account">Sem conta</string>
     <string name="account_state_add">Clique para adicionar</string>
@@ -411,7 +414,6 @@
     <string name="help_website">Site</string>
 
     <string name="input_hint_not_empty">Obrigatório</string>
-    <string name="input_hint_optional">Opcional</string>
     <string name="input_not_empty">Preencha a caixa de entrada.</string>
     <string name="input_number">A entrada deve ser um número.</string>
     <string name="input_url">A entrada deve ser um endereço URL válido.</string>
@@ -499,6 +501,7 @@
 
     <string name="menu_settings">Configurações</string>
     <string name="menu_settings_debug">Depuração</string>
+    <string name="menu_settings_disable_be_gesture">Desativar gestos avançados</string>
     <string name="menu_settings_disable_gesture">Desativar gestos</string>
     <string name="menu_settings_force_exit">Forçar parada</string>
     <string name="menu_settings_force_exit_button">Sair</string>
@@ -726,11 +729,10 @@
     <string name="settings_advanced_game_dir_independent">Isolado (.minecraft/versions/&#60;instance name>/, exceto por assets e bibliotecas)</string>
     <string name="settings_advanced_jvm_args">Argumentos Java VM</string>
     <string name="settings_advanced_minecraft_arguments">Argumentos de inicialização</string>
-    <string name="settings_advanced_minecraft_arguments_prompt">Padrão</string>
     <string name="settings_advanced_server_ip">Endereço de servidor</string>
-    <string name="settings_advanced_server_ip_prompt">Entra automaticamente após iniciar o jogo.</string>
 
     <string name="settings_fcl_controller">Controle</string>
+    <string name="settings_fcl_controller_injector">Gestos do Bedrock</string>
     <string name="settings_fcl_renderer">Implementação OpenGL (Renderizador)</string>
     <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, suporta 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, suporta GPU Adreno 616-660)</string>
@@ -772,13 +774,11 @@
     <string name="settings_launcher_animation_speed">Velocidade de animação</string>
 
     <string name="settings_memory">Memória</string>
-    <string name="settings_memory_allocate_auto">%1$.1f GB mínimo / %2$.1f GB alocado</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB mínimo / %2$.1f GB alocado (%3$.1f GB disponível)</string>
     <string name="settings_memory_allocate_manual">%1$.1f GB alocado</string>
     <string name="settings_memory_allocate_manual_exceeded">%1$.1f GB alocado (%3$.1f GB disponível)</string>
     <string name="settings_memory_auto_allocate">Alocar automaticamente</string>
     <string name="settings_memory_lower_bound">Memória mínima</string>
-    <string name="settings_memory_used_per_total">%1$.1f GB usados / %2$.1f GB total</string>
     <string name="settings_physical_memory">Tamanho da memória física</string>
     <string name="settings_tabs_installers">Modloaders</string>
     <string name="settings_type_global_manage">Config. Globais</string>
@@ -920,8 +920,9 @@ desfeita!</string>
     <string name="world_info_time_format">%s dias</string>
     <string name="world_manage">Mundos / Datapacks</string>
     <string name="world_name">Nome do mundo</string>
-    <string name="world_name_enter">Insira o nome do mundo</string>
     <string name="world_reveal">Mostrar no explorador</string>
     <string name="world_show_all">Mostrar tudo</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
+    <string name="settings_memory_allocate_auto">%1$.1f GB mínimo / %2$.1f GB alocado</string>
+    <string name="settings_memory_used_per_total">%1$.1f GB usados / %2$.1f GB total</string>
 </resources>

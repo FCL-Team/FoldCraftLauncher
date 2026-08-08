@@ -156,8 +156,7 @@ public final class ModpackHelper {
             throw new FileNotFoundException(file.getPath());
         else
             try {
-                return JsonUtils.GSON.fromJson(FileUtils.readText(file), new TypeToken<ModpackConfiguration<?>>() {
-                }.getType());
+                return JsonUtils.GSON.fromJson(FileUtils.readText(file), TypeToken.getParameterized(ModpackConfiguration.class, Object.class).getType());
             } catch (JsonParseException e) {
                 throw new IOException("Malformed modpack configuration");
             }

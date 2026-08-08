@@ -2,12 +2,12 @@ package com.tungsten.fcl.ui
 
 import android.content.Context
 import com.tungsten.fcl.R
-import com.tungsten.fcl.ui.account.AccountUI
+import com.tungsten.fcl.ui.account.compose.ComposeAccountUI
 import com.tungsten.fcl.ui.controller.ControllerUI
 import com.tungsten.fcl.ui.download.DownloadUI
-import com.tungsten.fcl.ui.main.MainUI
+import com.tungsten.fcl.ui.main.compose.ComposeMainUI
 import com.tungsten.fcl.ui.manage.ManageUI
-import com.tungsten.fcl.ui.multiplayer.MultiplayerUI
+import com.tungsten.fcl.ui.multiplayer.ComposeMultiplayerUI
 import com.tungsten.fcl.ui.setting.SettingUI
 import com.tungsten.fcl.ui.version.VersionUI
 import com.tungsten.fclcore.util.Logging
@@ -20,16 +20,25 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
     companion object {
         @JvmStatic
         lateinit var instance: UIManager
+        const val USE_COMPOSE_CONTROLLER_PAGES = true
     }
 
     private var initialized = false
-    lateinit var mainUI: MainUI
-    val accountUI: AccountUI by lazy { AccountUI(context, parent, R.layout.ui_account) }
+    // 阶段三 3.6：迁移开关已固化（批 3），UIManager.mainUI 固定实例化 ComposeMainUI，
+    // 旧 MainUI 回滚分支已删除；类型放宽为 FCLCommonUI 保持，
+    // 既有反向调用点（switchUI / currentUI === 比较）签名不变；refreshSkin 契约由
+    // AccountListItem 按实例类型分发（ComposeMainUI.refreshSkin / MainUI.refreshSkin）。
+    val mainUI: FCLCommonUI by lazy { ComposeMainUI(context, parent) }
+    // 阶段三 3.5：迁移开关已固化（批 3），UIManager.accountUI 固定实例化 ComposeAccountUI，
+    // 旧 AccountUI 回滚分支已删除；类型放宽为 FCLCommonUI 保持，
+    // 既有反向调用点（refresh().start() / switchUI）签名不变。
+    val accountUI: FCLCommonUI by lazy { ComposeAccountUI(context, parent) }
     val versionUI: VersionUI by lazy { VersionUI(context, parent, R.layout.ui_version) }
     val manageUI: ManageUI by lazy { ManageUI(context, parent, R.layout.ui_manage) }
     val downloadUI: DownloadUI by lazy { DownloadUI(context, parent, R.layout.ui_download) }
     val controllerUI: ControllerUI by lazy { ControllerUI(context, parent, R.layout.ui_controller) }
-    val multiplayerUI: MultiplayerUI by lazy { MultiplayerUI(context, parent, R.layout.ui_multiplayer) }
+    // 批 3：联机页固化 Compose（旧 MultiplayerUI + ui_multiplayer.xml 已删除）。
+    val multiplayerUI: FCLCommonUI by lazy { ComposeMultiplayerUI(context, parent) }
     val settingUI: SettingUI by lazy { SettingUI(context, parent, R.layout.ui_setting) }
 
     private val allUIList = mutableListOf<FCLBaseUI>()
@@ -41,7 +50,6 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
             return
         }
         instance = this
-        mainUI = MainUI(context, parent, R.layout.ui_main)
         allUIList.add(mainUI)
         mainUI.addLoadingCallback {
             listener.onLoad()

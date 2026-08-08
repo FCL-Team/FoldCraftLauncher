@@ -19,21 +19,19 @@ package com.tungsten.fclcore.auth;
 
 import com.tungsten.fclcore.auth.yggdrasil.Texture;
 import com.tungsten.fclcore.auth.yggdrasil.TextureType;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.util.ToStringBuilder;
-import com.tungsten.fclcore.util.fakefx.ObservableHelper;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-public abstract class Account implements Observable {
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+public abstract class Account {
 
     /**
      * @return the name of the account who owns the character
@@ -68,32 +66,33 @@ public abstract class Account implements Observable {
     public void clearCache() {
     }
 
-    private final BooleanProperty portable = new SimpleBooleanProperty(false);
+    private final MutableStateFlow<Boolean> portable = StateFlowKt.MutableStateFlow(false);
 
-    public BooleanProperty portableProperty() {
+    public StateFlow<Boolean> portableFlow() {
         return portable;
     }
 
     public boolean isPortable() {
-        return portable.get();
+        return portable.getValue();
     }
 
     public void setPortable(boolean value) {
-        this.portable.set(value);
+        this.portable.setValue(value);
     }
 
     public abstract String getIdentifier();
 
-    private final ObservableHelper helper = new ObservableHelper(this);
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-    @Override
-    public void addListener(InvalidationListener listener) {
-        helper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        helper.removeListener(listener);
+    /**
+     * 账户内容变更信号：每次 {@link #invalidate()} 递增。
+     *
+     * <p>对齐原 {@code Observable} 失效语义，消费方（存盘、UI 刷新）应幂等。
+     * Java 调用方用 {@link FlowSubscriptions#subscribe} 订阅；回调在发射线程执行，
+     * 不做隐式线程切换。</p>
+     */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     /**
@@ -101,16 +100,22 @@ public abstract class Account implements Observable {
      * This method can be called from any thread.
      */
     protected void invalidate() {
-        helper.invalidate();
+        revision.setValue(revision.getValue() + 1);
     }
 
-    public ObjectBinding<Optional<Map<TextureType, Texture>>> getTextures() {
-        return Bindings.createObjectBinding(Optional::empty);
+    private static final StateFlow<Optional<Map<TextureType, Texture>>> EMPTY_TEXTURES =
+            StateFlowKt.MutableStateFlow(Optional.empty());
+
+    /**
+     * 该账户的皮肤/披风纹理。默认恒为空，子类按数据源覆写。
+     */
+    public StateFlow<Optional<Map<TextureType, Texture>>> texturesFlow() {
+        return EMPTY_TEXTURES;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(portable);
+        return Objects.hash(isPortable());
     }
 
     @Override

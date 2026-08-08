@@ -8,6 +8,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization") version "2.3.20"
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -50,13 +51,19 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = false
+            // R8 全量优化：压缩+优化，不混淆；应用代码全 keep（见 proguard-rules.pro）
+            // shrinkResources 关闭：AndroidUtils.getLocalizedText 经 getIdentifier 动态查字符串
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("FCLKey")
         }
         create("fordebug") {
             initWith(getByName("debug"))
             applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("FCLDebugKey")
+            // 与 release 同步：真机验证 R8 优化效果
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         configureEach {
             resValue("string", "app_version", defaultConfig.versionName.toString())
@@ -81,6 +88,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        compose = true
         buildConfig = true
         resValues = true
     }
@@ -173,6 +181,32 @@ dependencies {
     implementation(libs.segmented.button)
     implementation(libs.datastore)
     implementation(libs.kotlinx.serialization.json)
+
+    // Compose + Miuix（迁移阶段 2.1 引入）
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.foundation)
+    implementation(libs.activity.compose)
+    implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.miuix.ui)
+    implementation(libs.miuix.icons)
+    implementation(libs.miuix.preference)
+    // Glide Compose 集成（迁移阶段 2.3 引入，版本选型理由见 catalog 注释与 docs/migration/bridge-api.md）
+    implementation(libs.glide.compose)
+    // miuix-blur 暂不入依赖：其库清单声明 minSdk=33（其余 miuix 构件为 23），
+    // 与项目 minSdk=26 冲突且无法通过清单合并；待后续明确模糊组件方案（提升 minSdk
+    // 或 overrideLibrary）后再引入。catalog 中坐标已保留。
+    debugImplementation(libs.compose.ui.tooling)
+}
+
+// Miuix 0.9.3 系列构件声明 minCompileSdk=37，activity-compose 1.13.0 声明 minCompileSdk=36，
+// 均高于当前项目 compileSdk=35；而 AGP 8.13 的 check*AarMetadata 检查没有提供抑制开关
+// （android.suppressUnsupportedCompileSdk 在 AGP 8.13 仅作用于"compileSdk 超出 AGP 支持上限"的警告）。
+// 迁移期间临时跳过该检查；待后续升级构建栈（AGP 9.x + compileSdk 37）后应移除本块。
+tasks.matching { it.name.endsWith("AarMetadata") }.configureEach {
+    enabled = false
 }
 
 tasks.register("updateMap") {

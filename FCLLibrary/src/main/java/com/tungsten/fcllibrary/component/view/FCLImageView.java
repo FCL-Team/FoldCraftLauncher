@@ -10,103 +10,80 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
+import java.lang.ref.WeakReference;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class FCLImageView extends AppCompatImageView {
 
-    private ObjectProperty<Drawable> image;
+    private MutableStateFlow<Drawable> imageFlow;
     private boolean autoTint;
     private boolean useThemeColor;
-    private BooleanProperty visibilityProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
+    private void applyTheme() {
+        if (autoTint) {
+            int[][] state = {
+                    {
 
-        @Override
-        protected void invalidated() {
-            get();
-            if (autoTint) {
-                int[][] state = {
-                        {
+                    }
+            };
+            int[] color = {
+                    ThemeEngine.getInstance().getTheme().getAutoTint()
+            };
+            setImageTintList(new ColorStateList(state, color));
+        }
+        if (useThemeColor && getBackground() != null) {
+            getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
+        }
+    }
 
-                        }
-                };
-                int[] color = {
-                        ThemeEngine.getInstance().getTheme().getAutoTint()
-                };
-                setImageTintList(new ColorStateList(state, color));
+    private void applyTheme2() {
+        if (useThemeColor && getBackground() != null) {
+            getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
+        }
+    }
+
+    private void applyThemeDark() {
+        if (useThemeColor && getBackground() != null) {
+            getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
+        }
+    }
+
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLImageView> ref = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLImageView self = ref.get();
+            if (self != null) {
+                self.applyTheme();
             }
-            if (useThemeColor && getBackground() != null) {
-                getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
+        });
+        WeakReference<FCLImageView> ref2 = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().color2Flow(), c2 -> {
+            FCLImageView self2 = ref2.get();
+            if (self2 != null) {
+                self2.applyTheme2();
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
-
-    private final IntegerProperty theme2 = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            if (useThemeColor && getBackground() != null) {
-                getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
+        });
+        WeakReference<FCLImageView> refDark = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().color2DarkFlow(), cDark -> {
+            FCLImageView selfDark = refDark.get();
+            if (selfDark != null) {
+                selfDark.applyThemeDark();
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2";
-        }
-    };
-
-    private final IntegerProperty theme2Dark = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            if (useThemeColor && getBackground() != null) {
-                getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
-            }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2Dark";
-        }
-    };
-
+        });
+    }
 
     public FCLImageView(@NonNull Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        bindTheme();
     }
 
     public FCLImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -115,9 +92,7 @@ public class FCLImageView extends AppCompatImageView {
         autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
         useThemeColor = typedArray.getBoolean(R.styleable.FCLImageView_use_theme_color, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        bindTheme();
     }
 
     public FCLImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -126,9 +101,7 @@ public class FCLImageView extends AppCompatImageView {
         autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
         useThemeColor = typedArray.getBoolean(R.styleable.FCLImageView_use_theme_color, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        bindTheme();
     }
 
     public void setAutoTint(boolean autoTint) {
@@ -148,66 +121,60 @@ public class FCLImageView extends AppCompatImageView {
     }
 
     public final void setImage(Drawable drawable) {
-        imageProperty().set(drawable);
+        imageFlow().setValue(drawable);
     }
 
     public final Drawable getImage() {
-        return image == null ? null : image.get();
+        return imageFlow == null ? null : imageFlow.getValue();
     }
 
-    public final ObjectProperty<Drawable> imageProperty() {
-        if (image == null) {
-            image = new ObjectPropertyBase<Drawable>() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Drawable> imageFlow() {
+        if (imageFlow == null) {
+            imageFlow = StateFlowKt.MutableStateFlow(null);
+            WeakReference<FCLImageView> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(imageFlow, v -> {
+                FCLImageView self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        Drawable drawable = get();
-                        setBackground(drawable);
+                        FCLImageView s = ref.get();
+                        if (s != null) {
+                            Drawable drawable = s.imageFlow.getValue();
+                            s.setBackground(drawable);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "image";
-                }
-            };
+            });
         }
 
-        return this.image;
+        return this.imageFlow;
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLImageView> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLImageView self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLImageView s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 }

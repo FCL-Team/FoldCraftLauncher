@@ -1,9 +1,10 @@
 package com.tungsten.fcl.ui.controller
 
 import android.content.Context
-import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIListener
+import com.tungsten.fcl.ui.controller.compose.ComposeControllerManagePage
+import com.tungsten.fcl.ui.controller.compose.ComposeControllerRepoPage
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 
@@ -21,14 +22,9 @@ class ControllerPageManager(
         var instance: ControllerPageManager? = null
     }
 
-    private lateinit var controllerManagePage: ControllerManagePage
-    private val controllerRepoPage: ControllerRepoPage by lazy {
-        ControllerRepoPage(
-            context,
-            PAGE_ID_CONTROLLER_REPO,
-            parent,
-            R.layout.page_controller_repo
-        )
+    private lateinit var controllerManagePage: FCLCommonPage
+    private val controllerRepoPage: FCLCommonPage by lazy {
+        ComposeControllerRepoPage(context!!, PAGE_ID_CONTROLLER_REPO, parent!!)
     }
 
     init {
@@ -36,12 +32,8 @@ class ControllerPageManager(
     }
 
     override fun init(listener: UIListener?) {
-        controllerManagePage = ControllerManagePage(
-            context,
-            PAGE_ID_CONTROLLER_MANAGER,
-            parent,
-            R.layout.page_controller_manager
-        )
+        // 旧 View 页面（ControllerManagePage/ControllerRepoPage 及 XML）已随批3固化删除。
+        controllerManagePage = ComposeControllerManagePage(context!!, PAGE_ID_CONTROLLER_MANAGER, parent!!)
         listener?.onLoad()
     }
 

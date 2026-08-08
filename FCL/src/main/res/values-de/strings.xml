@@ -78,6 +78,9 @@
     <string name="account_select_character">Charakter auswählen</string>
     <string name="account_skin">Skin</string>
     <string name="account_skin_type_default">Standard</string>
+    <string name="account_skin_type_local_file">Lokaler Skin</string>
+    <string name="menu_settings_disable_be_gesture">Erweiterte Gesten deaktivieren</string>
+    <string name="settings_fcl_controller_injector">Serverseitige Gesten</string>
     <string name="account_skin_upload">Skin auf dem Gerät auswählen</string>
     <string name="account_state_no_account">Kein Konto</string>
     <string name="account_state_add">Zum Hinzufügen klicken</string>
@@ -379,7 +382,6 @@
     <string name="help_website">Website</string>
 
     <string name="input_hint_not_empty">Pflichtfeld</string>
-    <string name="input_hint_optional">Optional</string>
     <string name="input_not_empty">Füllen Sie die Pflichtfelder aus.</string>
     <string name="input_number">Geben Sie eine Zahl ein</string>
     <string name="input_url">Geben Sie eine gültige URL ein.</string>
@@ -664,9 +666,7 @@
     <string name="settings_advanced_game_dir_independent">Isoliert in (.minecraft/versions/&lt;instance name&gt;/, außer Ressourcen und Bibliotheken)</string>
     <string name="settings_advanced_jvm_args">JVM-Argumente</string>
     <string name="settings_advanced_minecraft_arguments">Launcher-Argumente</string>
-    <string name="settings_advanced_minecraft_arguments_prompt">Standard</string>
     <string name="settings_advanced_server_ip">Serveradresse</string>
-    <string name="settings_advanced_server_ip_prompt">Automatisch nach dem Start beitreten</string>
 
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_vulkan_driver_system">System-Vulkan-Treiber verwenden</string>
@@ -716,13 +716,11 @@
     <string name="settings_launcher_animation_speed">Geschwindigkeit der Übergangsanimationen</string>
 
     <string name="settings_memory">Speicher</string>
-    <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB zugewiesen</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB Minimum / %2$.1f GB zugewiesen (%3$.1f GB frei)</string>
     <string name="settings_memory_allocate_manual">%1$.1f GB verwendet</string>
     <string name="settings_memory_allocate_manual_exceeded">%1$.1f GB verwendet (%3$.1f GB frei)</string>
     <string name="settings_memory_auto_allocate">Automatische RAM-Zuweisung</string>
     <string name="settings_memory_lower_bound">RAM-Minimum</string>
-    <string name="settings_memory_used_per_total">%1$.1f GB verwendet / %2$.1f GB gesamt</string>
     <string name="settings_physical_memory">Größe des physischen Speichers</string>
     <string name="settings_tabs_installers">Mod-Loader</string>
     <string name="settings_type_global_manage">Hauptspiel-Einstellungen</string>
@@ -863,7 +861,6 @@
     <string name="world_info_time_format">%s Tage</string>
     <string name="world_manage">Welten / Datenpakete</string>
     <string name="world_name">Weltname</string>
-    <string name="world_name_enter">Weltname eingeben</string>
     <string name="world_reveal">Im Explorer anzeigen</string>
     <string name="world_show_all">Alle anzeigen</string>
 
@@ -909,4 +906,6 @@
     <string name="tip_hide_menu_view">Menü ist ausgeblendet. Drücken Sie die Lautstärketaste, um das Menü zu öffnen.</string>
     <string name="modloader">Mod-Loader</string>
     <string name="message_warn_renderer_global_setting">Die von Ihnen gewählte Version hat separate Einstellungen für jedes Profil, daher kann der hier angegebene Renderer nicht auf die aktuelle Version angewendet werden. Es wird empfohlen, die "Starten"-Taste lange zu drücken, um den Renderer auszuwählen.</string>
+    <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB zugewiesen</string>
+    <string name="settings_memory_used_per_total">%1$.1f GB verwendet / %2$.1f GB gesamt</string>
 </resources>

@@ -29,7 +29,7 @@ import com.tungsten.fclcore.auth.AuthenticationException;
 import com.tungsten.fclcore.auth.ServerDisconnectException;
 import com.tungsten.fclcore.auth.ServerResponseMalformedException;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fclcore.util.fakefx.ObservableOptionalCache;
+import com.tungsten.fclcore.util.flow.FlowOptionalCache;
 import com.tungsten.fclcore.util.gson.UUIDTypeAdapter;
 import com.tungsten.fclcore.util.gson.ValidationTypeAdapterFactory;
 import com.tungsten.fclcore.util.io.FileUtils;
@@ -55,11 +55,11 @@ public class YggdrasilService {
     private static final ThreadPoolExecutor POOL = threadPool("YggdrasilProfileProperties", true, 2, 10, TimeUnit.SECONDS);
 
     private final YggdrasilProvider provider;
-    private final ObservableOptionalCache<UUID, CompleteGameProfile, AuthenticationException> profileRepository;
+    private final FlowOptionalCache<UUID, CompleteGameProfile, AuthenticationException> profileRepository;
 
     public YggdrasilService(YggdrasilProvider provider) {
         this.provider = provider;
-        this.profileRepository = new ObservableOptionalCache<>(
+        this.profileRepository = new FlowOptionalCache<>(
                 uuid -> {
                     LOG.info("Fetching properties of " + uuid + " from " + provider);
                     return getCompleteGameProfile(uuid);
@@ -68,7 +68,7 @@ public class YggdrasilService {
                 POOL);
     }
 
-    public ObservableOptionalCache<UUID, CompleteGameProfile, AuthenticationException> getProfileRepository() {
+    public FlowOptionalCache<UUID, CompleteGameProfile, AuthenticationException> getProfileRepository() {
         return profileRepository;
     }
 

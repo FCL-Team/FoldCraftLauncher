@@ -26,7 +26,6 @@ import android.content.Context;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.AndroidUtils;
-import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.download.AdaptedDownloadProvider;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.download.AutoDownloadProvider;
@@ -34,10 +33,10 @@ import com.tungsten.fclcore.download.BMCLAPIDownloadProvider;
 import com.tungsten.fclcore.download.BalancedDownloadProvider;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.download.MojangDownloadProvider;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.task.DownloadException;
 import com.tungsten.fclcore.task.FetchTask;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.io.ResponseCodeException;
 
 import javax.net.ssl.SSLHandshakeException;
@@ -67,8 +66,6 @@ public final class DownloadProviders {
     public static final String DEFAULT_PROVIDER_ID = "balanced";
     public static final String DEFAULT_RAW_PROVIDER_ID = "bmclapi";
 
-    private static final InvalidationListener observer;
-
     static {
         String bmclapiRoot = "https://bmclapi2.bangbang93.com";
 
@@ -88,14 +85,19 @@ public final class DownloadProviders {
                 pair("balanced", new AutoDownloadProvider(balanced, fileProvider)),
                 pair("mirror", new AutoDownloadProvider(BMCLAPI, fileProvider)));
 
-        observer = FXUtils.observeWeak(() -> {
-            FetchTask.setDownloadExecutorConcurrency(
-                    config().getAutoDownloadThreads() ? DEFAULT_CONCURRENCY : config().getDownloadThreads());
-        }, config().autoDownloadThreadsProperty(), config().downloadThreadsProperty());
+        // 阶段 4a：Config 属性已 StateFlow 化。对齐原 FXUtils.observeWeak（注册时先执行一次），
+        // 两个 Flow 任一变化即重设并发数（订阅为静态长寿命，与 observeWeak 的静态持有等价）。
+        Runnable applyDownloadConcurrency = () ->
+                FetchTask.setDownloadExecutorConcurrency(
+                        config().getAutoDownloadThreads() ? DEFAULT_CONCURRENCY : config().getDownloadThreads());
+        FlowSubscriptions.subscribe(config().autoDownloadThreadsFlow(), v -> applyDownloadConcurrency.run());
+        FlowSubscriptions.subscribe(config().downloadThreadsFlow(), v -> applyDownloadConcurrency.run());
+        applyDownloadConcurrency.run();
     }
 
     static void init() {
-        FXUtils.onChangeAndOperate(config().versionListSourceProperty(), versionListSource -> {
+        // 对齐原 FXUtils.onChangeAndOperate：先同步当前值，再跟随后续变化
+        FlowSubscriptions.subscribeWithCurrent(config().versionListSourceFlow(), versionListSource -> {
             if (!providersById.containsKey(versionListSource)) {
                 config().setVersionListSource(DEFAULT_PROVIDER_ID);
                 return;
@@ -109,7 +111,7 @@ public final class DownloadProviders {
             config().setDownloadType(DEFAULT_RAW_PROVIDER_ID);
         }
 
-        FXUtils.onChangeAndOperate(config().downloadTypeProperty(), downloadType -> {
+        FlowSubscriptions.subscribeWithCurrent(config().downloadTypeFlow(), downloadType -> {
             DownloadProvider primary = Optional.ofNullable(rawProviders.get(downloadType))
                     .orElse(rawProviders.get(DEFAULT_RAW_PROVIDER_ID));
             fileDownloadProvider.setDownloadProviderCandidates(

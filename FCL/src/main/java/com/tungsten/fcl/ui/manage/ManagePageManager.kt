@@ -1,11 +1,15 @@
 package com.tungsten.fcl.ui.manage
 
 import android.content.Context
-import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIListener
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
+import com.tungsten.fcl.ui.manage.compose.ComposeManageInstallerListPage
+import com.tungsten.fcl.ui.manage.compose.ComposeManagePage
+import com.tungsten.fcl.ui.manage.compose.ComposeModListPage
+import com.tungsten.fcl.ui.manage.compose.ComposeVersionSettingPage
+import com.tungsten.fcl.ui.manage.compose.ComposeWorldListPage
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 
@@ -28,34 +32,18 @@ class ManagePageManager(
     var profile: Profile? = null
     var version: String? = null
 
-    private lateinit var versionSettingPage: VersionSettingPage
-    private val managePage: ManagePage by lazy {
-        ManagePage(context, PAGE_ID_MANAGE_MANAGE, parent, R.layout.page_manage_version)
+    private lateinit var versionSettingPage: FCLCommonPage
+    private val managePage: FCLCommonPage by lazy {
+        // 批 2：Compose 开关已固化，旧 View 页面（ManagePage + page_manage_version.xml）已删除。
+        ComposeManagePage(context, PAGE_ID_MANAGE_MANAGE, parent)
     }
-    private val installerListPage: InstallerListPage by lazy {
-        InstallerListPage(
-            context,
-            PAGE_ID_MANAGE_INSTALL,
-            parent,
-            R.layout.page_manage_auto_install
-        )
+    private val installerListPage: FCLCommonPage = ComposeManageInstallerListPage(context, PAGE_ID_MANAGE_INSTALL, parent)
+    private val modListPage: FCLCommonPage by lazy {
+        // Compose 开关已固化，旧 View 页面（ModListPage/ModUpdatesPage 与对应 XML）已删除；
+        // 共享数据模型迁至 ModListModels。
+        ComposeModListPage(context, PAGE_ID_MANAGE_MOD, parent)
     }
-    private val modListPage: ModListPage by lazy {
-        ModListPage(
-            context,
-            PAGE_ID_MANAGE_MOD,
-            parent,
-            R.layout.page_manage_mod
-        )
-    }
-    private val worldListPage: WorldListPage by lazy {
-        WorldListPage(
-            context,
-            PAGE_ID_MANAGE_WORLD,
-            parent,
-            R.layout.page_manage_world
-        )
-    }
+    private val worldListPage: FCLCommonPage = ComposeWorldListPage(context, PAGE_ID_MANAGE_WORLD, parent)
 
     private var versionLoaded = false
     private lateinit var runnable: () -> Unit
@@ -65,13 +53,8 @@ class ManagePageManager(
     }
 
     override fun init(listener: UIListener?) {
-        versionSettingPage = VersionSettingPage(
-            context,
-            PAGE_ID_MANAGE_SETTING,
-            parent,
-            R.layout.page_version_setting,
-            false
-        )
+        // 批 2：Compose 开关已固化，旧 View 页面（VersionSettingPage + page_version_setting.xml）已删除。
+        versionSettingPage = ComposeVersionSettingPage(context, PAGE_ID_MANAGE_SETTING, parent, false)
         listener?.onLoad()
     }
 
@@ -117,7 +100,7 @@ class ManagePageManager(
     }
 
     fun onRunDirectoryChange(profile: Profile, version: String?) {
-        modListPage.loadVersion(profile, version)
-        worldListPage.loadVersion(profile, version)
+        (modListPage as VersionLoadable).loadVersion(profile, version)
+        (worldListPage as VersionLoadable).loadVersion(profile, version)
     }
 }

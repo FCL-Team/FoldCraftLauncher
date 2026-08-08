@@ -19,66 +19,61 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSeekBar;
 
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty;
-import com.tungsten.fclcore.fakefx.beans.property.DoublePropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
+import java.lang.ref.WeakReference;
 import java.util.Optional;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class FCLNumberSeekBar extends AppCompatSeekBar {
 
     private boolean fromUserOrSystem = false;
-    private BooleanProperty visibilityProperty;
-    private BooleanProperty disableProperty;
-    private DoubleProperty percentProgressProperty;
-    private IntegerProperty progressProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
+    private MutableStateFlow<Boolean> disableFlow;
+    private MutableStateFlow<Double> percentProgressFlow;
+    private MutableStateFlow<Integer> progressFlow;
     private Paint textPaint;
     private String suffix;
     private GestureDetector gestureDetector;
     private ShapeDrawable thumbDrawable;
     private Rect textBounds;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
+    private void applyTheme() {
+        int[][] state = {
+                {
 
-        @Override
-        protected void invalidated() {
-            get();
-            int[][] state = {
-                    {
+                }
+        };
+        int[] color = {
+                ThemeEngine.getInstance().getTheme().getDkColor()
+        };
+        setThumbTintList(new ColorStateList(state, color));
+        setProgressTintList(new ColorStateList(state, color));
+    }
 
-                    }
-            };
-            int[] color = {
-                    ThemeEngine.getInstance().getTheme().getDkColor()
-            };
-            setThumbTintList(new ColorStateList(state, color));
-            setProgressTintList(new ColorStateList(state, color));
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLNumberSeekBar> ref = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLNumberSeekBar self = ref.get();
+            if (self != null) {
+                self.applyTheme();
+            }
+        });
+    }
 
     public void addProgressListener() {
         setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                 fromUserOrSystem = true;
-                progressProperty().set(i);
+                progressFlow().setValue(i);
                 fromUserOrSystem = false;
             }
 
@@ -96,19 +91,19 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
 
     public FCLNumberSeekBar(@NonNull Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
         init(null);
     }
 
     public FCLNumberSeekBar(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
         init(attrs);
     }
 
     public FCLNumberSeekBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
         init(attrs);
     }
 
@@ -146,101 +141,92 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLNumberSeekBar> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLNumberSeekBar self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
-                    });
-                }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
-        }
-
-        return visibilityProperty;
-    }
-
-    public final void setDisableValue(boolean disableValue) {
-        disableProperty().set(disableValue);
-    }
-
-    public final boolean getDisableValue() {
-        return disableProperty == null || disableProperty.get();
-    }
-
-    public final BooleanProperty disableProperty() {
-        if (disableProperty == null) {
-            disableProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
-                    Schedulers.androidUIThread().execute(() -> {
-                        boolean disable = get();
-                        setEnabled(!disable);
-                    });
-                }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "disable";
-                }
-            };
-        }
-
-        return disableProperty;
-    }
-
-    public final void setProgressValue(int progressValue) {
-        progressProperty().set(progressValue);
-    }
-
-    public final int getProgressValue() {
-        return progressProperty == null ? -1 : progressProperty().get();
-    }
-
-    public final IntegerProperty progressProperty() {
-        if (progressProperty == null) {
-            progressProperty = new IntegerPropertyBase() {
-
-                public void invalidated() {
-                    Schedulers.androidUIThread().execute(() -> {
-                        if (!fromUserOrSystem) {
-                            int progress = get();
-                            setProgress(progress);
+                        FCLNumberSeekBar s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
                         }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "progress";
-                }
-            };
+            });
         }
 
-        return progressProperty;
+        return visibilityFlow;
+    }
+
+    public final void setDisableValue(boolean disableValue) {
+        disableFlow().setValue(disableValue);
+    }
+
+    public final boolean getDisableValue() {
+        return disableFlow == null || disableFlow.getValue();
+    }
+
+    public final MutableStateFlow<Boolean> disableFlow() {
+        if (disableFlow == null) {
+            disableFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLNumberSeekBar> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(disableFlow, v -> {
+                FCLNumberSeekBar self = ref.get();
+                if (self != null) {
+                    Schedulers.androidUIThread().execute(() -> {
+                        FCLNumberSeekBar s = ref.get();
+                        if (s != null) {
+                            boolean disable = s.disableFlow.getValue();
+                            s.setEnabled(!disable);
+                        }
+                    });
+                }
+            });
+        }
+
+        return disableFlow;
+    }
+
+    public final void setProgressValue(int progressValue) {
+        progressFlow().setValue(progressValue);
+    }
+
+    public final int getProgressValue() {
+        return progressFlow == null ? -1 : progressFlow().getValue();
+    }
+
+    public final MutableStateFlow<Integer> progressFlow() {
+        if (progressFlow == null) {
+            progressFlow = StateFlowKt.MutableStateFlow(0);
+            WeakReference<FCLNumberSeekBar> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(progressFlow, v -> {
+                FCLNumberSeekBar self = ref.get();
+                if (self != null) {
+                    Schedulers.androidUIThread().execute(() -> {
+                        FCLNumberSeekBar s = ref.get();
+                        if (s != null) {
+                            if (!s.fromUserOrSystem) {
+                                int progress = s.progressFlow.getValue();
+                                s.setProgress(progress);
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        return progressFlow;
     }
 
     @Override
