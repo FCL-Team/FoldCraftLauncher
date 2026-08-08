@@ -35,7 +35,7 @@
     <string name="controller">Bộ điều khiển</string>
     <string name="multiplayer">Nhiều người chơi</string>
     <string name="setting">Cài đặt</string>
-    
+
     <string name="about">Giới thiệu</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
@@ -393,8 +393,8 @@
     <string name="folder_log">Duyệt thư mục nhật ký</string>
     <string name="folder_fcl_log">Duyệt nhật ký FCL</string>
     <string name="upload_log">Tải lên Nhật ký</string>
-     <string name="log_not_found">Không tìm thấy tệp nhật ký</string>
-     <string name="log_too_large">Tệp nhật ký quá lớn</string>
+    <string name="log_not_found">Không tìm thấy tệp nhật ký</string>
+    <string name="log_too_large">Tệp nhật ký quá lớn</string>
     <string name="upload_fcl_log">Tải lên nhật ký FCL</string>
     <string name="upload_game_log">Tải lên nhật ký trò chơi</string>
     <string name="upload_success">Tải lên thành công! URL đã được sao chép vào khay nhớ tạm: %s</string>
@@ -569,7 +569,6 @@
 
     <string name="menu_settings">Cài đặt</string>
     <string name="menu_settings_debug">Gỡ lỗi</string>
-    <string name="menu_settings_disable_be_gesture">Tắt Cử chỉ Nâng cao</string>
     <string name="menu_settings_disable_gesture">Tắt Cử chỉ</string>
     <string name="menu_settings_disable_left_touch">Tắt cảm ứng nửa màn hình bên trái</string>
     <string name="menu_settings_force_exit">Thoát cưỡng bức</string>
@@ -876,9 +875,9 @@
     <string name="settings_fcl_pojav_bigcore">Buộc trình kết xuất chạy trên lõi lớn</string>
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
-    <string name="settings_fcl_renderer_vgpu" >VGPU (OpenGL 2.1+, chỉ hỗ trợ 1.17-)</string>
+    <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, chỉ hỗ trợ 1.17-)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Kopper Zink (OpenGL 4.6)</string>
-    <string name="settings_fcl_renderer_freedreno" >Freedreno (OpenGL 4.6, chỉ hỗ trợ GPU a616-a660)</string>
+    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, chỉ hỗ trợ GPU a616-a660)</string>
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, tích hợp sẵn)</string>
 
     <string name="settings_fcl_driver">Trình điều khiển Vulkan</string>
