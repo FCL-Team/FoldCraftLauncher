@@ -314,10 +314,6 @@ class VersionSettingPage(
                 lastVersionSetting.forceResolutionProperty
             )
             FXUtils.unbindBoolean(
-                binding.switchControllerInjector,
-                lastVersionSetting.beGestureProperty
-            )
-            FXUtils.unbindBoolean(
                 binding.switchVulkanDriverSystem,
                 lastVersionSetting.vkDriverSystemProperty
             )
@@ -342,7 +338,6 @@ class VersionSettingPage(
         FXUtils.bindBoolean(binding.switchNotCheckMod, versionSetting.notCheckModProperty)
         FXUtils.bindBoolean(binding.switchDebugLog, versionSetting.debugLogProperty)
         FXUtils.bindBoolean(binding.switchForceResolution, versionSetting.forceResolutionProperty)
-        FXUtils.bindBoolean(binding.switchControllerInjector, versionSetting.beGestureProperty)
         FXUtils.bindBoolean(binding.switchVulkanDriverSystem, versionSetting.vkDriverSystemProperty)
         maxMemory.bindBidirectional(versionSetting.maxMemoryProperty)
 

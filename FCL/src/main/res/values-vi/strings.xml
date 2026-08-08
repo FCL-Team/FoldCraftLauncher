@@ -870,7 +870,6 @@
     <string name="settings_advanced_force_resolution">Buộc đặt độ phân giải (tùy chọn thử nghiệm, sử dụng thận trọng)</string>
 
     <string name="settings_fcl_controller">Bộ điều khiển</string>
-    <string name="settings_fcl_controller_injector">Cử chỉ BE</string>
     <string name="settings_fcl_vulkan_driver_system">Sử dụng trình điều khiển Vulkan hệ thống</string>
     <string name="settings_fcl_graphics_backend">Backend Đồ họa (chỉ có hiệu lực cho 26.2+)</string>
     <string name="settings_fcl_renderer">Triển khai OpenGL (Trình kết xuất)</string>

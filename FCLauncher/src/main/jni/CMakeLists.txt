@@ -24,7 +24,6 @@ add_library(
     fcl
     SHARED
     fcl/fcl_bridge.c
-    fcl/fcl_event.c
     fcl/fcl_loader.c
 )
 

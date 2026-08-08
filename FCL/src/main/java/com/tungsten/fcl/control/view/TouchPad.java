@@ -84,21 +84,7 @@ public class TouchPad extends View {
     };
 
     private GestureMode getGestureMode() {
-        if (gameMenu.getMenuSetting().isDisableBEGesture()) {
-            return gameMenu.getMenuSetting().getGestureMode();
-        } else {
-            if (gameMenu.getBridge() != null) {
-                if (gameMenu.getHitResultType() == FCLBridge.HIT_RESULT_TYPE_UNKNOWN) {
-                    return gameMenu.getMenuSetting().getGestureMode();
-                } else if (gameMenu.getHitResultType() == FCLBridge.HIT_RESULT_TYPE_BLOCK) {
-                    return GestureMode.BUILD;
-                } else {
-                    return GestureMode.FIGHT;
-                }
-            } else {
-                return gameMenu.getMenuSetting().getGestureMode();
-            }
-        }
+        return gameMenu.getMenuSetting().getGestureMode();
     }
 
     private Path path;
@@ -228,9 +214,6 @@ public class TouchPad extends View {
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     currentPointerID = event.getPointerId(0);
-                    if (gameMenu.getBridge() != null) {
-                        gameMenu.getBridge().refreshHitResultType();
-                    }
                     downX = (int) event.getX();
                     downY = (int) event.getY();
                     downTime = System.currentTimeMillis();
