@@ -4839,6 +4839,8 @@ public final class GLCapabilities {
     GLCapabilities(FunctionProvider provider, Set<String> ext, boolean fc, IntFunction<PointerBuffer> bufferFactory) {
         forwardCompatible = fc;
 
+        PojavRendererInit.onCreateCapabilities(provider);
+
         PointerBuffer caps = bufferFactory.apply(ADDRESS_BUFFER_SIZE);
 
         OpenGL11 = check_GL11(provider, caps, ext, fc);
@@ -7521,10 +7523,6 @@ public final class GLCapabilities {
     }
 
     private static boolean check_GL11(FunctionProvider provider, PointerBuffer caps, Set<String> ext, boolean fc) {
-        if (!ext.contains("OpenGL11")) {
-            return false;
-        }
-
         int flag0 = !fc || ext.contains("GL_NV_vertex_buffer_unified_memory") ? 0 : Integer.MIN_VALUE;
 
         return ((fc || checkFunctions(provider, caps, new int[] {
@@ -7568,7 +7566,7 @@ public final class GLCapabilities {
                 "glVertex2f", "glVertex2s", "glVertex2i", "glVertex2d", "glVertex2fv", "glVertex2sv", "glVertex2iv", "glVertex2dv", "glVertex3f", "glVertex3s",
                 "glVertex3i", "glVertex3d", "glVertex3fv", "glVertex3sv", "glVertex3iv", "glVertex3dv", "glVertex4f", "glVertex4s", "glVertex4i", "glVertex4d",
                 "glVertex4fv", "glVertex4sv", "glVertex4iv", "glVertex4dv", "glVertexPointer"
-        )) && checkFunctions(provider, caps, new int[] {
+        )) & checkFunctions(provider, caps, new int[] {
                         0, 1, 7, 9, 12, 14, 15, 17, 51, 55, 57, 58, 59, flag0 + 60, 61, 62, 63, flag0 + 68, 83, 84, 89, 91, 92, 94, 95, 96, 97, 98, 109, 111, 117, 118, 119,
                         120, 121, 122, 137, 139, 149, 155, 190, 191, 195, 196, 197, 232, 233, 247, 250, 251, 252, 296, 297, 298, 299, 300, 301, 302, 303, 304, 305, 306,
                         307, 335
@@ -7581,26 +7579,18 @@ public final class GLCapabilities {
                 "glPolygonMode", "glPolygonOffset", "glReadBuffer", "glReadPixels", "glScissor", "glStencilFunc", "glStencilMask", "glStencilOp", "glTexImage1D",
                 "glTexImage2D", "glCopyTexImage1D", "glCopyTexImage2D", "glCopyTexSubImage1D", "glCopyTexSubImage2D", "glTexParameteri", "glTexParameteriv",
                 "glTexParameterf", "glTexParameterfv", "glTexSubImage1D", "glTexSubImage2D", "glViewport"
-        )) || reportMissing("GL", "OpenGL11");
+        ) & ext.contains("OpenGL11")) || reportMissing("GL", "OpenGL11");
     }
 
     private static boolean check_GL12(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
-        if (!ext.contains("OpenGL12")) {
-            return false;
-        }
-
         return (checkFunctions(provider, caps, new int[] {
                         336, 337, 338, 339
                 },
                 "glTexImage3D", "glTexSubImage3D", "glCopyTexSubImage3D", "glDrawRangeElements"
-        )) || reportMissing("GL", "OpenGL12");
+        ) & ext.contains("OpenGL12")) || reportMissing("GL", "OpenGL12");
     }
 
     private static boolean check_GL13(FunctionProvider provider, PointerBuffer caps, Set<String> ext, boolean fc) {
-        if (!ext.contains("OpenGL13")) {
-            return false;
-        }
-
         return ((fc || checkFunctions(provider, caps, new int[] {
                         349, 350, 351, 352, 353, 354, 355, 356, 357, 358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377,
                         378, 379, 380, 381, 382, 383, 384, 385
@@ -7610,21 +7600,17 @@ public final class GLCapabilities {
                 "glMultiTexCoord2d", "glMultiTexCoord2fv", "glMultiTexCoord2sv", "glMultiTexCoord2iv", "glMultiTexCoord2dv", "glMultiTexCoord3f",
                 "glMultiTexCoord3s", "glMultiTexCoord3i", "glMultiTexCoord3d", "glMultiTexCoord3fv", "glMultiTexCoord3sv", "glMultiTexCoord3iv",
                 "glMultiTexCoord3dv", "glMultiTexCoord4f", "glMultiTexCoord4s", "glMultiTexCoord4i", "glMultiTexCoord4d", "glMultiTexCoord4fv",
-                "glMultiTexCoord4sv", "glMultiTexCoord4iv", "glMultiTexCoord4dv", "glLoadTransposeMatrixf", "glLoadTransposeMatrixd", "glMultTransposeMatrixf",
+                "glMultiTexCoord4sv", "glMultiTexCoord4iv",                 "glMultiTexCoord4dv", "glLoadTransposeMatrixf", "glLoadTransposeMatrixd", "glMultTransposeMatrixf",
                 "glMultTransposeMatrixd"
-        )) && checkFunctions(provider, caps, new int[] {
+        )) & checkFunctions(provider, caps, new int[] {
                         340, 341, 342, 343, 344, 345, 346, 347, 348
                 },
                 "glCompressedTexImage3D", "glCompressedTexImage2D", "glCompressedTexImage1D", "glCompressedTexSubImage3D", "glCompressedTexSubImage2D",
                 "glCompressedTexSubImage1D", "glGetCompressedTexImage", "glSampleCoverage", "glActiveTexture"
-        )) || reportMissing("GL", "OpenGL13");
+        ) & ext.contains("OpenGL13")) || reportMissing("GL", "OpenGL13");
     }
 
     private static boolean check_GL14(FunctionProvider provider, PointerBuffer caps, Set<String> ext, boolean fc) {
-        if (!ext.contains("OpenGL14")) {
-            return false;
-        }
-
         return ((fc || checkFunctions(provider, caps, new int[] {
                         388, 389, 390, 391, 392, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 417, 418, 419, 420, 421, 422, 423,
                         424, 425, 426, 427, 428, 429, 430, 431, 432
@@ -7635,33 +7621,25 @@ public final class GLCapabilities {
                 "glSecondaryColor3uiv", "glSecondaryColorPointer", "glWindowPos2i", "glWindowPos2s", "glWindowPos2f", "glWindowPos2d", "glWindowPos2iv",
                 "glWindowPos2sv", "glWindowPos2fv", "glWindowPos2dv", "glWindowPos3i", "glWindowPos3s", "glWindowPos3f", "glWindowPos3d", "glWindowPos3iv",
                 "glWindowPos3sv", "glWindowPos3fv", "glWindowPos3dv"
-        )) && checkFunctions(provider, caps, new int[] {
+        )) & checkFunctions(provider, caps, new int[] {
                         386, 387, 393, 394, 395, 396, 397, 398, 416
                 },
                 "glBlendColor", "glBlendEquation", "glMultiDrawArrays", "glMultiDrawElements", "glPointParameterf", "glPointParameteri", "glPointParameterfv",
                 "glPointParameteriv", "glBlendFuncSeparate"
-        )) || reportMissing("GL", "OpenGL14");
+        ) & ext.contains("OpenGL14")) || reportMissing("GL", "OpenGL14");
     }
 
     private static boolean check_GL15(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
-        if (!ext.contains("OpenGL15")) {
-            return false;
-        }
-
         return (checkFunctions(provider, caps, new int[] {
                         433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451
                 },
                 "glBindBuffer", "glDeleteBuffers", "glGenBuffers", "glIsBuffer", "glBufferData", "glBufferSubData", "glGetBufferSubData", "glMapBuffer",
                 "glUnmapBuffer", "glGetBufferParameteriv", "glGetBufferPointerv", "glGenQueries", "glDeleteQueries", "glIsQuery", "glBeginQuery", "glEndQuery",
                 "glGetQueryiv", "glGetQueryObjectiv", "glGetQueryObjectuiv"
-        )) || reportMissing("GL", "OpenGL15");
+        ) & ext.contains("OpenGL15")) || reportMissing("GL", "OpenGL15");
     }
 
     private static boolean check_GL20(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
-        if (!ext.contains("OpenGL20")) {
-            return false;
-        }
-
         return (checkFunctions(provider, caps, new int[] {
                         452, 453, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473, 474, 475, 476, 477, 478, 479, 480,
                         481, 482, 483, 484, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509,
@@ -7682,19 +7660,15 @@ public final class GLCapabilities {
                 "glEnableVertexAttribArray", "glDisableVertexAttribArray", "glBindAttribLocation", "glGetActiveAttrib", "glGetAttribLocation",
                 "glGetVertexAttribiv", "glGetVertexAttribfv", "glGetVertexAttribdv", "glGetVertexAttribPointerv", "glDrawBuffers", "glBlendEquationSeparate",
                 "glStencilOpSeparate", "glStencilFuncSeparate", "glStencilMaskSeparate"
-        )) || reportMissing("GL", "OpenGL20");
+        ) & ext.contains("OpenGL20")) || reportMissing("GL", "OpenGL20");
     }
 
     private static boolean check_GL21(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
-        if (!ext.contains("OpenGL21")) {
-            return false;
-        }
-
         return (checkFunctions(provider, caps, new int[] {
                         545, 546, 547, 548, 549, 550
                 },
                 "glUniformMatrix2x3fv", "glUniformMatrix3x2fv", "glUniformMatrix2x4fv", "glUniformMatrix4x2fv", "glUniformMatrix3x4fv", "glUniformMatrix4x3fv"
-        )) || reportMissing("GL", "OpenGL21");
+        ) & ext.contains("OpenGL21")) || reportMissing("GL", "OpenGL21");
     }
 
     private static boolean check_GL30(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
@@ -7717,7 +7691,7 @@ public final class GLCapabilities {
                 "glGetTexParameterIuiv", "glColorMaski", "glGetBooleani_v", "glGetIntegeri_v", "glEnablei", "glDisablei", "glIsEnabledi", "glBindBufferRange",
                 "glBindBufferBase", "glBeginTransformFeedback", "glEndTransformFeedback", "glTransformFeedbackVaryings", "glGetTransformFeedbackVarying",
                 "glBindVertexArray", "glDeleteVertexArrays", "glGenVertexArrays", "glIsVertexArray"
-        )) && ext.contains("OpenGL30") || reportMissing("GL", "OpenGL30");
+        ) & ext.contains("OpenGL30")) || reportMissing("GL", "OpenGL30");
     }
 
     private static boolean check_GL31(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
@@ -7727,7 +7701,7 @@ public final class GLCapabilities {
                 "glDrawArraysInstanced", "glDrawElementsInstanced", "glCopyBufferSubData", "glPrimitiveRestartIndex", "glTexBuffer", "glGetUniformIndices",
                 "glGetActiveUniformsiv", "glGetActiveUniformName", "glGetUniformBlockIndex", "glGetActiveUniformBlockiv", "glGetActiveUniformBlockName",
                 "glUniformBlockBinding"
-        )) && ext.contains("OpenGL31") || reportMissing("GL", "OpenGL31");
+        ) & ext.contains("OpenGL31")) || reportMissing("GL", "OpenGL31");
     }
 
     private static boolean check_GL32(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
@@ -7738,7 +7712,7 @@ public final class GLCapabilities {
                 "glMultiDrawElementsBaseVertex", "glProvokingVertex", "glTexImage2DMultisample", "glTexImage3DMultisample", "glGetMultisamplefv", "glSampleMaski",
                 "glFramebufferTexture", "glFenceSync", "glIsSync", "glDeleteSync", "glClientWaitSync", "glWaitSync", "glGetInteger64v", "glGetInteger64i_v",
                 "glGetSynciv"
-        )) && ext.contains("OpenGL32") || reportMissing("GL", "OpenGL32");
+        ) & ext.contains("OpenGL32")) || reportMissing("GL", "OpenGL32");
     }
 
     private static boolean check_GL33(FunctionProvider provider, PointerBuffer caps, Set<String> ext, boolean fc) {
@@ -7751,7 +7725,7 @@ public final class GLCapabilities {
                 "glMultiTexCoordP2ui", "glMultiTexCoordP3ui", "glMultiTexCoordP4ui", "glMultiTexCoordP1uiv", "glMultiTexCoordP2uiv", "glMultiTexCoordP3uiv",
                 "glMultiTexCoordP4uiv", "glNormalP3ui", "glNormalP3uiv", "glColorP3ui", "glColorP4ui", "glColorP3uiv", "glColorP4uiv", "glSecondaryColorP3ui",
                 "glSecondaryColorP3uiv"
-        )) && checkFunctions(provider, caps, new int[] {
+        )) & checkFunctions(provider, caps, new int[] {
                         666, 667, 668, 669, 670, 671, 672, 673, 674, 675, 676, 677, 678, 679, 680, 681, 682, 683, 684, 685, 716, 717, 718, 719, 720, 721, 722, 723
                 },
                 "glBindFragDataLocationIndexed", "glGetFragDataIndex", "glGenSamplers", "glDeleteSamplers", "glIsSampler", "glBindSampler", "glSamplerParameteri",
@@ -7759,7 +7733,7 @@ public final class GLCapabilities {
                 "glGetSamplerParameterfv", "glGetSamplerParameterIiv", "glGetSamplerParameterIuiv", "glQueryCounter", "glGetQueryObjecti64v",
                 "glGetQueryObjectui64v", "glVertexAttribDivisor", "glVertexAttribP1ui", "glVertexAttribP2ui", "glVertexAttribP3ui", "glVertexAttribP4ui",
                 "glVertexAttribP1uiv", "glVertexAttribP2uiv", "glVertexAttribP3uiv", "glVertexAttribP4uiv"
-        )) && ext.contains("OpenGL33") || reportMissing("GL", "OpenGL33");
+        ) & ext.contains("OpenGL33")) || reportMissing("GL", "OpenGL33");
     }
 
     private static boolean check_GL40(FunctionProvider provider, PointerBuffer caps, Set<String> ext) {
@@ -7871,11 +7845,11 @@ public final class GLCapabilities {
         int flag4 = provider.getFunctionAddress("glGetPixelMapuiv") != NULL ? 0 : Integer.MIN_VALUE;
         int flag5 = provider.getFunctionAddress("glGetPixelMapusv") != NULL ? 0 : Integer.MIN_VALUE;
         int flag6 = provider.getFunctionAddress("glGetPolygonStipple") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag7 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetColorTable") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag8 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetConvolutionFilter") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag9 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetSeparableFilter") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag10 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetHistogram") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag11 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetMinmax") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag7 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetColorTable") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag8 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetConvolutionFilter") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag9 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetSeparableFilter") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag10 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetHistogram") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag11 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetMinmax") != NULL ? 0 : Integer.MIN_VALUE;
 
         return (checkFunctions(provider, caps, new int[] {
                         922, 923, 924, 925, 926, 927, 928, 929, 930, 931, 932, 933, 934, 935, 936, 937, 938, 939, 940, 941, 942, 943, 944, 945, 946, 947, 948, 949, 950,
@@ -8754,11 +8728,11 @@ public final class GLCapabilities {
         int flag4 = provider.getFunctionAddress("glGetPixelMapuiv") != NULL ? 0 : Integer.MIN_VALUE;
         int flag5 = provider.getFunctionAddress("glGetPixelMapusv") != NULL ? 0 : Integer.MIN_VALUE;
         int flag6 = provider.getFunctionAddress("glGetPolygonStipple") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag7 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetColorTable") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag8 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetConvolutionFilter") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag9 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetSeparableFilter") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag10 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetHistogram") != NULL ? 0 : Integer.MIN_VALUE;
-        int flag11 = ext.contains("GL_ARB_imaging") && provider.getFunctionAddress("glGetMinmax") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag7 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetColorTable") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag8 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetConvolutionFilter") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag9 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetSeparableFilter") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag10 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetHistogram") != NULL ? 0 : Integer.MIN_VALUE;
+        int flag11 = ext.contains("GL_ARB_imaging") & provider.getFunctionAddress("glGetMinmax") != NULL ? 0 : Integer.MIN_VALUE;
         int flag12 = ext.contains("OpenGL13") ? 0 : Integer.MIN_VALUE;
         int flag13 = ext.contains("OpenGL20") ? 0 : Integer.MIN_VALUE;
         int flag15 = ext.contains("OpenGL30") ? 0 : Integer.MIN_VALUE;
