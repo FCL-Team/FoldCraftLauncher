@@ -23,6 +23,10 @@ dependencies {
 }
 
 tasks.jar {
+    // 被排除的模块只经 doLast 复制、不参与合并，需显式声明为输入，
+    // 否则更新这些 jar 后任务会误判 UP-TO-DATE，导致 copy 与 version 不更新
+    inputs.files(configurations["lwjglModules"])
+
     // Modules to copy over to the components directory instead of patching and merging
     val excludedModules = arrayOf(
         "lwjgl-lwjglx.jar",
