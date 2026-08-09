@@ -1,7 +1,5 @@
 package com.tungsten.fcl.control.data;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -15,24 +13,30 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
-import com.tungsten.fclcore.fakefx.collections.FXCollections;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
-import com.tungsten.fclcore.util.fakefx.ObservableHelper;
+import com.tungsten.fcl.util.FlowList;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 控件视图分组（阶段 4b）：属性已 StateFlow 化；name/visibility/viewData（替换式）
+ * 变更递增 {@link #revisionFlow()}（对齐原 Observable 失效语义）。
+ *
+ * <p>磁盘 JSON 由手写 {@link Serializer} 产出，与属性类型无关，格式不变。</p>
+ */
 @JsonAdapter(ControlViewGroup.Serializer.class)
-public class ControlViewGroup implements Cloneable, Observable {
+public class ControlViewGroup implements Cloneable {
 
     public enum Visibility {
         VISIBLE,
@@ -55,80 +59,71 @@ public class ControlViewGroup implements Cloneable, Observable {
     /**
      * Name
      */
-    private final StringProperty nameProperty = new SimpleStringProperty(this, "name", "");
+    private final MutableStateFlow<String> name = StateFlowKt.MutableStateFlow("");
 
-    public StringProperty nameProperty() {
-        return nameProperty;
+    public StateFlow<String> nameFlow() {
+        return name;
     }
 
     public void setName(String name) {
-        nameProperty.set(name);
+        this.name.setValue(name);
     }
 
     public String getName() {
-        return nameProperty.get();
+        return name.getValue();
     }
 
     /**
      * Initial visibility
      */
-    private final ObjectProperty<Visibility> visibilityProperty = new SimpleObjectProperty<>(this, "visibility", Visibility.VISIBLE);
+    private final MutableStateFlow<Visibility> visibility = StateFlowKt.MutableStateFlow(Visibility.VISIBLE);
 
-    public ObjectProperty<Visibility> visibilityProperty() {
-        return visibilityProperty;
+    public StateFlow<Visibility> visibilityFlow() {
+        return visibility;
     }
 
     public void setVisibility(Visibility visibility) {
-        visibilityProperty.set(visibility);
+        this.visibility.setValue(visibility);
     }
 
     public Visibility getVisibility() {
-        return visibilityProperty.get();
+        return visibility.getValue();
     }
 
     /**
      * View data
      */
-    private final ObjectProperty<ViewData> viewDataProperty = new SimpleObjectProperty<>(this, "viewData", new ViewData());
+    private final MutableStateFlow<ViewData> viewData = StateFlowKt.MutableStateFlow(new ViewData());
 
-    public ObjectProperty<ViewData> viewDataProperty() {
-        return viewDataProperty;
+    public StateFlow<ViewData> viewDataFlow() {
+        return viewData;
     }
 
     public void setViewData(ViewData viewData) {
-        viewDataProperty.set(viewData);
+        this.viewData.setValue(viewData);
     }
 
     public ViewData getViewData() {
-        return viewDataProperty.get();
+        return viewData.getValue();
     }
 
     public ControlViewGroup(String id) {
         this.id = id;
 
-        addPropertyChangedListener(onInvalidating(this::invalidate));
+        FlowSubscriptions.subscribe(name, v -> invalidate());
+        FlowSubscriptions.subscribe(visibility, v -> invalidate());
+        FlowSubscriptions.subscribe(viewData, v -> invalidate());
     }
 
-    public void addPropertyChangedListener(InvalidationListener listener) {
-        nameProperty.addListener(listener);
-        visibilityProperty.addListener(listener);
-        viewDataProperty.addListener(listener);
-    }
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-        observableHelper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        observableHelper.removeListener(listener);
+    /** 任何字段（替换式）变更时递增（对齐原 Observable 失效语义）。 */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        revision.setValue(revision.getValue() + 1);
     }
 
     @Override
@@ -166,45 +161,52 @@ public class ControlViewGroup implements Cloneable, Observable {
 
             viewGroup.setName(Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse(""));
             viewGroup.setVisibility(Optional.ofNullable(obj.get("visibility")).map(JsonElement::getAsString).orElse(Visibility.VISIBLE.toString()).equals(Visibility.INVISIBLE.toString()) ? Visibility.INVISIBLE : Visibility.VISIBLE);
-            viewGroup.setViewData(gson.fromJson(Optional.ofNullable(obj.get("viewData")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ViewData()).getAsJsonObject()), new TypeToken<ViewData>() {
-            }.getType()));
+            viewGroup.setViewData(gson.fromJson(Optional.ofNullable(obj.get("viewData")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ViewData()).getAsJsonObject()), ViewData.class));
 
             return viewGroup;
         }
     }
 
     @JsonAdapter(ViewData.Serializer.class)
-    public static class ViewData implements Cloneable, Observable {
+    public static class ViewData implements Cloneable {
 
         /**
          * Button data list
          */
-        private final ObservableList<ControlButtonData> buttonList = FXCollections.observableArrayList(new ArrayList<>());
+        private final FlowList<ControlButtonData> buttonList = new FlowList<>();
 
-        public ObservableList<ControlButtonData> buttonList() {
-            return buttonList;
+        public StateFlow<List<ControlButtonData>> buttonListFlow() {
+            return buttonList.flow();
         }
 
-        public void setButtonList(ObservableList<ControlButtonData> list) {
+        public List<ControlButtonData> getButtonList() {
+            return buttonList.get();
+        }
+
+        public void setButtonList(List<ControlButtonData> list) {
             buttonList.setAll(list);
         }
 
         /**
          * Direction data list
          */
-        private final ObservableList<ControlDirectionData> directionList = FXCollections.observableArrayList(new ArrayList<>());
+        private final FlowList<ControlDirectionData> directionList = new FlowList<>();
 
-        public ObservableList<ControlDirectionData> directionList() {
-            return directionList;
+        public StateFlow<List<ControlDirectionData>> directionListFlow() {
+            return directionList.flow();
         }
 
-        public void setDirectionList(ObservableList<ControlDirectionData> list) {
+        public List<ControlDirectionData> getDirectionList() {
+            return directionList.get();
+        }
+
+        public void setDirectionList(List<ControlDirectionData> list) {
             directionList.setAll(list);
         }
 
         public void addButton(ControlButtonData data) {
             boolean exist = false;
-            for (ControlButtonData buttonData : buttonList()) {
+            for (ControlButtonData buttonData : getButtonList()) {
                 if (buttonData.equals(data)) {
                     exist = true;
                     break;
@@ -216,7 +218,7 @@ public class ControlViewGroup implements Cloneable, Observable {
         }
 
         public void removeButton(ControlButtonData data) {
-            for (ControlButtonData buttonData : buttonList()) {
+            for (ControlButtonData buttonData : getButtonList()) {
                 if (buttonData.equals(data)) {
                     buttonList.remove(buttonData);
                     break;
@@ -226,7 +228,7 @@ public class ControlViewGroup implements Cloneable, Observable {
 
         public void addDirection(ControlDirectionData data) {
             boolean exist = false;
-            for (ControlDirectionData directionData : directionList()) {
+            for (ControlDirectionData directionData : getDirectionList()) {
                 if (directionData.equals(data)) {
                     exist = true;
                     break;
@@ -238,7 +240,7 @@ public class ControlViewGroup implements Cloneable, Observable {
         }
 
         public void removeDirection(ControlDirectionData data) {
-            for (ControlDirectionData directionData : directionList()) {
+            for (ControlDirectionData directionData : getDirectionList()) {
                 if (directionData.equals(data)) {
                     directionList.remove(directionData);
                     break;
@@ -246,46 +248,56 @@ public class ControlViewGroup implements Cloneable, Observable {
             }
         }
 
+        // 元素冒泡：列表成员变更或元素自身 revision 变更均使本 ViewData 失效
+        //（对齐原 addPropertyChangedListener 对列表与每个元素挂监听 + 列表变更时重挂）。
+        private final Map<ControlButtonData, FlowSubscriptions.Subscription> buttonSubscriptions = new IdentityHashMap<>();
+        private final Map<ControlDirectionData, FlowSubscriptions.Subscription> directionSubscriptions = new IdentityHashMap<>();
+
         public ViewData() {
-            addPropertyChangedListener(onInvalidating(this::invalidate));
-        }
-
-        public void addPropertyChangedListener(InvalidationListener listener) {
-            buttonList.addListener(listener);
-            buttonList.forEach(it -> it.addListener(listener));
-            buttonList.addListener((InvalidationListener) observable -> {
-                buttonList.forEach(it -> it.removeListener(listener));
-                buttonList.forEach(it -> it.addListener(listener));
+            FlowSubscriptions.subscribe(buttonList.flow(), v -> {
+                invalidate();
+                rewireButtonSubscriptions();
             });
-            directionList.addListener(listener);
-            directionList.forEach(it -> it.addListener(listener));
-            directionList.addListener((InvalidationListener) observable -> {
-                directionList.forEach(it -> it.removeListener(listener));
-                directionList.forEach(it -> it.addListener(listener));
+            FlowSubscriptions.subscribe(directionList.flow(), v -> {
+                invalidate();
+                rewireDirectionSubscriptions();
             });
+            rewireButtonSubscriptions();
+            rewireDirectionSubscriptions();
         }
 
-        private ObservableHelper observableHelper = new ObservableHelper(this);
-
-        @Override
-        public void addListener(InvalidationListener listener) {
-            observableHelper.addListener(listener);
+        private void rewireButtonSubscriptions() {
+            buttonSubscriptions.values().forEach(FlowSubscriptions.Subscription::cancel);
+            buttonSubscriptions.clear();
+            for (ControlButtonData data : getButtonList()) {
+                buttonSubscriptions.put(data, FlowSubscriptions.subscribe(data.revisionFlow(), v -> invalidate()));
+            }
         }
 
-        @Override
-        public void removeListener(InvalidationListener listener) {
-            observableHelper.removeListener(listener);
+        private void rewireDirectionSubscriptions() {
+            directionSubscriptions.values().forEach(FlowSubscriptions.Subscription::cancel);
+            directionSubscriptions.clear();
+            for (ControlDirectionData data : getDirectionList()) {
+                directionSubscriptions.put(data, FlowSubscriptions.subscribe(data.revisionFlow(), v -> invalidate()));
+            }
+        }
+
+        private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
+
+        /** 列表成员或元素内部变更时递增（对齐原 Observable 失效语义）。 */
+        public StateFlow<Long> revisionFlow() {
+            return revision;
         }
 
         private void invalidate() {
-            observableHelper.invalidate();
+            revision.setValue(revision.getValue() + 1);
         }
 
         @Override
         public ViewData clone() {
             ViewData data = new ViewData();
-            data.setButtonList(buttonList());
-            data.setDirectionList(directionList());
+            data.setButtonList(getButtonList());
+            data.setDirectionList(getDirectionList());
             return data;
         }
 
@@ -296,10 +308,8 @@ public class ControlViewGroup implements Cloneable, Observable {
                 JsonObject obj = new JsonObject();
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-                obj.add("buttonList", gson.toJsonTree(new ArrayList<>(src.buttonList()), new TypeToken<ArrayList<ControlButtonData>>() {
-                }.getType()).getAsJsonArray());
-                obj.add("directionList", gson.toJsonTree(new ArrayList<>(src.directionList()), new TypeToken<ArrayList<ControlDirectionData>>() {
-                }.getType()).getAsJsonArray());
+                obj.add("buttonList", gson.toJsonTree(new ArrayList<>(src.getButtonList()), TypeToken.getParameterized(ArrayList.class, ControlButtonData.class).getType()).getAsJsonArray());
+                obj.add("directionList", gson.toJsonTree(new ArrayList<>(src.getDirectionList()), TypeToken.getParameterized(ArrayList.class, ControlDirectionData.class).getType()).getAsJsonArray());
 
                 return obj;
             }
@@ -312,7 +322,7 @@ public class ControlViewGroup implements Cloneable, Observable {
 
                 ViewData data = new ViewData();
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                ObservableList<ControlButtonData> buttonList = FXCollections.observableList(Optional.ofNullable(obj.get("buttonList"))
+                List<ControlButtonData> buttonList = Optional.ofNullable(obj.get("buttonList"))
                         .map(JsonElement::getAsJsonArray)
                         .orElse(new JsonArray())
                         .asList()
@@ -323,10 +333,9 @@ public class ControlViewGroup implements Cloneable, Observable {
                                 return gson.fromJson(button, ControlButtonData.class);
                             }
                             throw new JsonParseException("ControlButtonData broken!");
-                        }).collect(Collectors.toList()));
+                        }).collect(Collectors.toList());
                 data.setButtonList(buttonList);
-                data.setDirectionList(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionData>>() {
-                }.getType())));
+                data.setDirectionList(gson.fromJson(Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), TypeToken.getParameterized(ArrayList.class, ControlDirectionData.class).getType()));
 
                 return data;
             }

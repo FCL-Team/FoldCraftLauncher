@@ -9,15 +9,25 @@ import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ViewManager {
 
     private final GameMenu gameMenu;
 
+    // 阶段 4c：menu 属性订阅句柄，GameMenu.onDestroy 时统一取消（对齐原长寿命监听 + 防泄漏）。
+    private final List<FlowSubscriptions.Subscription> subscriptions = new ArrayList<>();
+
     public ViewManager(GameMenu gameMenu) {
         this.gameMenu = gameMenu;
+    }
+
+    public void onDestroy() {
+        subscriptions.forEach(FlowSubscriptions.Subscription::cancel);
+        subscriptions.clear();
     }
 
     public void setup() {
@@ -30,15 +40,15 @@ public class ViewManager {
         menuView.initPosition();
         gameMenu.fpsText.initPosition();
         gameMenu.memoryText.initPosition();
-        gameMenu.hideAllViewsProperty().addListener(observable -> menuView.setAlpha(gameMenu.isHideAllViews() ? 0 : 1));
+        subscriptions.add(FlowSubscriptions.subscribe(gameMenu.hideAllViewsFlow(), v -> menuView.setAlpha(gameMenu.isHideAllViews() ? 0 : 1)));
         if (gameMenu.getMenuSetting().isHideMenuView()) {
             menuView.setVisibility(View.INVISIBLE);
         }
         // Initialize controller
         initializeController();
-        gameMenu.controllerProperty().addListener(i -> initializeController());
-        gameMenu.viewGroupProperty().addListener(i -> initializeController());
-        gameMenu.editModeProperty().addListener(i -> initializeController());
+        subscriptions.add(FlowSubscriptions.subscribe(gameMenu.controllerFlow(), i -> initializeController()));
+        subscriptions.add(FlowSubscriptions.subscribe(gameMenu.viewGroupFlow(), i -> initializeController()));
+        subscriptions.add(FlowSubscriptions.subscribe(gameMenu.editModeFlow(), i -> initializeController()));
     }
 
     public void addView(CustomControl control) {
@@ -103,13 +113,13 @@ public class ViewManager {
         removeAllCustomViews();
         if (gameMenu.isEditMode()) {
             if (gameMenu.getViewGroup() != null) {
-                gameMenu.getViewGroup().getViewData().buttonList().forEach(it -> loadView(it, true));
-                gameMenu.getViewGroup().getViewData().directionList().forEach(it -> loadView(it, true));
+                gameMenu.getViewGroup().getViewData().getButtonList().forEach(it -> loadView(it, true));
+                gameMenu.getViewGroup().getViewData().getDirectionList().forEach(it -> loadView(it, true));
             }
         } else {
             gameMenu.getController().viewGroups().forEach(it -> {
-                it.getViewData().buttonList().forEach(data -> loadView(data, it.getVisibility() == ControlViewGroup.Visibility.VISIBLE));
-                it.getViewData().directionList().forEach(data -> loadView(data, it.getVisibility() == ControlViewGroup.Visibility.VISIBLE));
+                it.getViewData().getButtonList().forEach(data -> loadView(data, it.getVisibility() == ControlViewGroup.Visibility.VISIBLE));
+                it.getViewData().getDirectionList().forEach(data -> loadView(data, it.getVisibility() == ControlViewGroup.Visibility.VISIBLE));
             });
         }
     }
@@ -133,8 +143,8 @@ public class ViewManager {
         for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
             View view = gameMenu.getBaseLayout().getChildAt(i);
             if (view instanceof CustomView) {
-                if (viewGroup.getViewData().buttonList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))
-                        || viewGroup.getViewData().directionList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))) {
+                if (viewGroup.getViewData().getButtonList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))
+                        || viewGroup.getViewData().getDirectionList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))) {
                     ((CustomView) view).switchParentVisibility();
                 }
             }

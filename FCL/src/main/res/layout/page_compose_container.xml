@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 迁移期通用 Compose 页面容器：FCLCommonPage 的最小 contentView，
+     由 ComposeSettingPage 在运行时向内填充 LegacyBridge.createComposeView 产物。 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/compose_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />

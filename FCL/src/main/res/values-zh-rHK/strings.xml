@@ -81,6 +81,7 @@
     <string name="account_select_character">選擇角色</string>
     <string name="account_skin">皮膚</string>
     <string name="account_skin_type_default">默認</string>
+    <string name="account_skin_type_local_file">本地文件</string>
     <string name="account_skin_upload">選擇皮膚文件</string>
     <string name="account_state_no_account">冇賬戶</string>
     <string name="account_state_add">點擊添加賬戶</string>
@@ -422,7 +423,6 @@
     <string name="help_website">網站</string>
 
     <string name="input_hint_not_empty">必填</string>
-    <string name="input_hint_optional">選填</string>
     <string name="input_not_empty">請先填寫必要嘅輸入框。</string>
     <string name="input_number">指定嘅輸入框必須輸入數字。</string>
     <string name="input_url">指定嘅輸入框必須輸入有效嘅鏈接。</string>
@@ -780,9 +780,7 @@
     <string name="settings_advanced_game_dir_independent">各版本獨立 (存放在 .minecraft/versions/&#60;版本名>/，除 assets、libraries 外)</string>
     <string name="settings_advanced_jvm_args">Java 虛擬機參數</string>
     <string name="settings_advanced_minecraft_arguments">遊戲參數</string>
-    <string name="settings_advanced_minecraft_arguments_prompt">默認</string>
     <string name="settings_advanced_server_ip">伺服器地址</string>
-    <string name="settings_advanced_server_ip_prompt">啟動遊戲後自動加入對應伺服器</string>
 
     <string name="settings_fcl_controller">控制</string>
     <string name="settings_fcl_vulkan_driver_system">使用系統Vulkan驅動</string>
@@ -833,13 +831,11 @@
     <string name="settings_launcher_vibrate_duration">震動時長（用於TouchController模組）</string>
 
     <string name="settings_memory">遊戲內存</string>
-    <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 實際分配 %2$.1f GB</string>
     <string name="settings_memory_allocate_auto_exceeded">最低分配 %1$.1f GB / 實際分配 %2$.1f GB (%3$.1f GB 可用)</string>
     <string name="settings_memory_allocate_manual">遊戲分配 %1$.1f GB</string>
     <string name="settings_memory_allocate_manual_exceeded">遊戲分配 %1$.1f GB (設備僅 %3$.1f GB 可用)</string>
     <string name="settings_memory_auto_allocate">自動分配內存</string>
     <string name="settings_memory_lower_bound">最低內存分配</string>
-    <string name="settings_memory_used_per_total">設備中已使用 %1$.1f GB / 設備總內存 %2$.1f GB</string>
     <string name="settings_physical_memory">物理內存大小</string>
     <string name="settings_tabs_installers">自動安裝</string>
     <string name="settings_type_global_manage">全局遊戲設置</string>
@@ -981,7 +977,6 @@
     <string name="world_info_time_format">%s 天</string>
     <string name="world_manage">世界/數據包</string>
     <string name="world_name">世界名稱</string>
-    <string name="world_name_enter">輸入世界名稱</string>
     <string name="world_reveal">打開文件夾</string>
     <string name="world_show_all">顯示全部</string>
     <string name="world_time">yyyy 年 MM 月 dd 日 HH:mm:ss</string>
@@ -1035,4 +1030,6 @@
     <string name="message_select_url">請選擇一個鏈接進行下載（將會跳轉至瀏覽器）</string>
     <string name="supported_mc_version">支持嘅MC版本：</string>
     <string name="message_check_renderer">當前渲染器 %s 唔支持該遊戲版本，繼續使用可能導致渲染錯誤或遊戲崩潰！是否繼續？</string>
+    <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 實際分配 %2$.1f GB</string>
+    <string name="settings_memory_used_per_total">設備中已使用 %1$.1f GB / 設備總內存 %2$.1f GB</string>
 </resources>

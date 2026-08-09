@@ -10,20 +10,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSpinner;
 
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class FCLSpinner<T> extends AppCompatSpinner {
 
     private boolean fromUserOrSystem = false;
     private ArrayList<T> dataList;
-    private ObjectProperty<T> selectedItemProperty;
-    private BooleanProperty visibilityProperty;
+    private MutableStateFlow<T> selectedItemFlow;
+    private MutableStateFlow<Boolean> visibilityFlow;
 
     public void addSelectListener() {
         setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -31,7 +32,7 @@ public class FCLSpinner<T> extends AppCompatSpinner {
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (dataList != null && dataList.size() > i) {
                     fromUserOrSystem = true;
-                    selectedItemProperty().set(dataList.get(i));
+                    selectedItemFlow().setValue(dataList.get(i));
                     fromUserOrSystem = false;
                 }
             }
@@ -76,64 +77,58 @@ public class FCLSpinner<T> extends AppCompatSpinner {
     }
 
     public final Object getSelectedItemValue() {
-        return selectedItemProperty == null ? null : selectedItemProperty.get();
+        return selectedItemFlow == null ? null : selectedItemFlow.getValue();
     }
 
-    public final ObjectProperty<T> selectedItemProperty() {
-        if (selectedItemProperty == null) {
-            selectedItemProperty = new ObjectPropertyBase<T>() {
-
-                public void invalidated() {
+    public final MutableStateFlow<T> selectedItemFlow() {
+        if (selectedItemFlow == null) {
+            selectedItemFlow = StateFlowKt.MutableStateFlow(null);
+            WeakReference<FCLSpinner<T>> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(selectedItemFlow, v -> {
+                FCLSpinner<T> self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        if (!fromUserOrSystem) {
-                            T data = get();
-                            setSelection(dataList.indexOf(data));
+                        FCLSpinner<T> s = ref.get();
+                        if (s != null) {
+                            if (!s.fromUserOrSystem) {
+                                T data = s.selectedItemFlow.getValue();
+                                s.setSelection(s.dataList.indexOf(data));
+                            }
                         }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "selectedItem";
-                }
-            };
+            });
         }
 
-        return selectedItemProperty;
+        return selectedItemFlow;
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLSpinner<T>> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLSpinner<T> self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLSpinner<T> s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 }

@@ -7,35 +7,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowBindings;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
+import java.util.List;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class FCLCheckBoxTreeAdapter<T> extends FCLAdapter {
 
-    private final ObservableList<FCLCheckBoxTreeItem<T>> list;
+    private final List<FCLCheckBoxTreeItem<T>> list;
 
-    private final SimpleBooleanProperty checkHeightProperty = new SimpleBooleanProperty(false);
+    private final MutableStateFlow<Boolean> checkHeightFlow = StateFlowKt.MutableStateFlow(false);
 
-    public SimpleBooleanProperty checkHeightProperty() {
-        return checkHeightProperty;
+    public MutableStateFlow<Boolean> checkHeightFlow() {
+        return checkHeightFlow;
     }
 
     public void setCheckHeight(boolean checkHeight) {
-        checkHeightProperty.set(checkHeight);
+        checkHeightFlow.setValue(checkHeight);
     }
 
     public boolean isCheckHeight() {
-        return checkHeightProperty.get();
+        return checkHeightFlow.getValue();
     }
 
-    public FCLCheckBoxTreeAdapter(Context context, ObservableList<FCLCheckBoxTreeItem<T>> list) {
+    public FCLCheckBoxTreeAdapter(Context context, List<FCLCheckBoxTreeItem<T>> list) {
         super(context);
         this.list = list;
     }
@@ -78,17 +82,18 @@ public class FCLCheckBoxTreeAdapter<T> extends FCLAdapter {
         }
         FCLCheckBoxTreeItem<T> item = list.get(i);
         viewHolder.switchView.setVisibility(item.getSubItem().size() == 0 ? View.INVISIBLE : View.VISIBLE);
-        viewHolder.switchView.imageProperty().bind(Bindings.createObjectBinding(() -> item.isExpanded() ? getContext().getDrawable(R.drawable.ic_baseline_arrow_drop_down_24) : getContext().getDrawable(R.drawable.ic_baseline_arrow_right_24), item.expandedProperty()));
+        viewHolder.switchView.imageFlow().setValue(item.isExpanded() ? getContext().getDrawable(R.drawable.ic_baseline_arrow_drop_down_24) : getContext().getDrawable(R.drawable.ic_baseline_arrow_right_24));
+        FlowSubscriptions.subscribe(item.expandedFlow(), expanded -> viewHolder.switchView.imageFlow().setValue(expanded ? getContext().getDrawable(R.drawable.ic_baseline_arrow_drop_down_24) : getContext().getDrawable(R.drawable.ic_baseline_arrow_right_24)));
         viewHolder.switchView.setOnClickListener(v -> item.setExpanded(!item.isExpanded()));
         viewHolder.checkBox.addCheckedChangeListener();
-        viewHolder.checkBox.checkProperty().bindBidirectional(item.selectedProperty());
-        viewHolder.checkBox.indeterminateProperty().bindBidirectional(item.indeterminateProperty());
+        FlowBindings.bindBidirectional(viewHolder.checkBox.checkFlow(), item.selectedFlow());
+        FlowBindings.bindBidirectional(viewHolder.checkBox.indeterminateFlow(), item.indeterminateFlow());
         viewHolder.textView.setText(item.getText());
         viewHolder.comment.setVisibility(item.getComment() == null ? View.GONE : View.VISIBLE);
         if (item.getComment() != null)
             viewHolder.comment.setText(item.getComment());
         viewHolder.listView.setVisibility((item.isExpanded() && item.getSubItem().size() > 0) ? View.VISIBLE : View.GONE);
-        item.expandedProperty().addListener(observable -> viewHolder.listView.setVisibility((item.isExpanded() && item.getSubItem().size() > 0) ? View.VISIBLE : View.GONE));
+        FlowSubscriptions.subscribe(item.expandedFlow(), expanded -> viewHolder.listView.setVisibility((item.isExpanded() && item.getSubItem().size() > 0) ? View.VISIBLE : View.GONE));
         if (item.getSubItem().size() > 0) {
             viewHolder.main.post(() -> {
                 viewHolder.listView.setAdapter(new FCLCheckBoxTreeAdapter<>(getContext(), item.getSubItem()));
@@ -97,8 +102,8 @@ public class FCLCheckBoxTreeAdapter<T> extends FCLAdapter {
                     layoutParams.height = getListViewHeight(item, viewHolder.listView.getDividerHeight(), viewHolder.main.getMeasuredHeight());
                     Schedulers.androidUIThread().execute(() -> viewHolder.listView.setLayoutParams(layoutParams));
                 }).start();
-                item.expandedProperty().addListener(observable -> setCheckHeight(true));
-                ((FCLCheckBoxTreeAdapter<?>) viewHolder.listView.getAdapter()).checkHeightProperty().addListener(observable -> {
+                FlowSubscriptions.subscribe(item.expandedFlow(), expanded -> setCheckHeight(true));
+                FlowSubscriptions.subscribe(((FCLCheckBoxTreeAdapter<?>) viewHolder.listView.getAdapter()).checkHeightFlow(), checkHeight -> {
                     if (((FCLCheckBoxTreeAdapter<?>) viewHolder.listView.getAdapter()).isCheckHeight()) {
                         ViewGroup.LayoutParams lp = viewHolder.listView.getLayoutParams();
                         new Thread(() -> {

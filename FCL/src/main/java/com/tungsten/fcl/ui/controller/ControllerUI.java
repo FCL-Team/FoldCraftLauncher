@@ -41,7 +41,7 @@ public class ControllerUI extends FCLMultiPageUI {
     public void onBackPressed() {
         if (pageManager != null && pageManager.canReturn()) {
             pageManager.dismissCurrentTempPage();
-        } else if (pageManager != null && pageManager.getCurrentPage() instanceof ControllerRepoPage) {
+        } else if (pageManager != null && pageManager.getCurrentPage() instanceof com.tungsten.fcl.ui.controller.compose.ComposeControllerRepoPage) {
             pageManager.switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER);
         } else {
             super.onBackPressed();

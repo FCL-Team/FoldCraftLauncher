@@ -18,8 +18,6 @@
 package com.tungsten.fcl.setting;
 
 import static com.tungsten.fcl.setting.ConfigHolder.config;
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableArrayList;
 import static com.tungsten.fclcore.util.Lang.immutableListOf;
 import static com.tungsten.fclcore.util.Lang.mapOf;
 import static com.tungsten.fclcore.util.Logging.LOG;
@@ -32,7 +30,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -70,17 +70,16 @@ import com.tungsten.fclcore.auth.microsoft.MicrosoftService;
 import com.tungsten.fclcore.auth.offline.OfflineAccount;
 import com.tungsten.fclcore.auth.offline.OfflineAccountFactory;
 import com.tungsten.fclcore.auth.yggdrasil.RemoteAuthenticationException;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
-import com.tungsten.fclcore.fakefx.collections.FXCollections;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.InvocationDispatcher;
 import com.tungsten.fclcore.util.Lang;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.skin.InvalidSkinException;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public final class Accounts {
     private Accounts() {
@@ -152,10 +151,72 @@ public final class Accounts {
     }
 
     private static final String GLOBAL_PREFIX = "$GLOBAL:";
-    private static final ObservableList<Map<Object, Object>> globalAccountStorages = FXCollections.observableArrayList();
 
-    private static final ObservableList<Account> accounts = observableArrayList(account -> new Observable[]{account});
-    private static final ObjectProperty<Account> selectedAccount = new SimpleObjectProperty<>(Accounts.class, "selectedAccount");
+    // 阶段 4a：列表/选中项已 StateFlow 化。元素冒泡（extractor 语义）由对每个账户
+    // revisionFlow 的直接订阅承接：账户内部任何变更 → accountsSignal 递增 →
+    // 存盘（updateAccountStorages）+ 选中项校验 + UI 刷新，触发时机与原 wasUpdated 一致；
+    // 账户移出列表时取消订阅。
+    private static final MutableStateFlow<List<Map<Object, Object>>> globalAccountStorages = StateFlowKt.MutableStateFlow(new ArrayList<>());
+
+    private static final MutableStateFlow<List<Account>> accounts = StateFlowKt.MutableStateFlow(new ArrayList<>());
+
+    /** 任何账户列表变化（成员增删或元素内部变更）时递增的信号流（供 UI 刷新）。 */
+    private static final MutableStateFlow<Long> accountsSignal = StateFlowKt.MutableStateFlow(0L);
+
+    private static final MutableStateFlow<Account> selectedAccount = StateFlowKt.MutableStateFlow(null);
+
+    private static final Map<Account, FlowSubscriptions.Subscription> accountSubscriptions = new IdentityHashMap<>();
+
+    private static void bumpAccountsSignal() {
+        accountsSignal.setValue(accountsSignal.getValue() + 1);
+    }
+
+    private static void attachAccountSubscription(Account account) {
+        if (accountSubscriptions.containsKey(account))
+            return;
+        accountSubscriptions.put(account,
+                FlowSubscriptions.subscribe(account.revisionFlow(), revision -> bumpAccountsSignal()));
+    }
+
+    private static void detachAccountSubscription(Account account) {
+        FlowSubscriptions.Subscription subscription = accountSubscriptions.remove(account);
+        if (subscription != null)
+            subscription.cancel();
+    }
+
+    private static void addAccountInternal(Account account) {
+        List<Account> newList = new ArrayList<>(accounts.getValue());
+        newList.add(account);
+        attachAccountSubscription(account);
+        accounts.setValue(newList);
+        bumpAccountsSignal();
+    }
+
+    private static void addAccountInternal(int index, Account account) {
+        List<Account> newList = new ArrayList<>(accounts.getValue());
+        newList.add(index, account);
+        attachAccountSubscription(account);
+        accounts.setValue(newList);
+        bumpAccountsSignal();
+    }
+
+    private static void removeAccountInternal(Account account) {
+        List<Account> newList = new ArrayList<>(accounts.getValue());
+        if (newList.remove(account)) {
+            detachAccountSubscription(account);
+            accounts.setValue(newList);
+            bumpAccountsSignal();
+        }
+    }
+
+    private static void removeAccountInternal(int index) {
+        List<Account> newList = new ArrayList<>(accounts.getValue());
+        Account removed = newList.remove(index);
+        if (removed != null)
+            detachAccountSubscription(removed);
+        accounts.setValue(newList);
+        bumpAccountsSignal();
+    }
 
     /**
      * True if {@link #init()} hasn't been called.
@@ -178,7 +239,7 @@ public final class Accounts {
         ArrayList<Map<Object, Object>> global = new ArrayList<>();
         ArrayList<Map<Object, Object>> portable = new ArrayList<>();
 
-        for (Account account : accounts) {
+        for (Account account : accounts.getValue()) {
             Map<Object, Object> storage = getAccountStorage(account);
             if (account.isPortable())
                 portable.add(storage);
@@ -186,10 +247,10 @@ public final class Accounts {
                 global.add(storage);
         }
 
-        if (!global.equals(globalAccountStorages))
-            globalAccountStorages.setAll(global);
+        if (!global.equals(globalAccountStorages.getValue()))
+            globalAccountStorages.setValue(global);
         if (!portable.equals(config().getAccountStorages()))
-            config().getAccountStorages().setAll(portable);
+            config().setAccountStorages(portable);
     }
 
     @SuppressWarnings("unchecked")
@@ -197,9 +258,8 @@ public final class Accounts {
         Path globalAccountsFile = new File(FCLPath.FILES_DIR, "accounts.json").toPath();
         if (Files.exists(globalAccountsFile)) {
             try (Reader reader = Files.newBufferedReader(globalAccountsFile)) {
-                globalAccountStorages.setAll((List<Map<Object, Object>>)
-                        Config.CONFIG_GSON.fromJson(reader, new TypeToken<List<Map<Object, Object>>>() {
-                        }.getType()));
+                globalAccountStorages.setValue((List<Map<Object, Object>>)
+                        Config.CONFIG_GSON.fromJson(reader, TypeToken.getParameterized(List.class, TypeToken.getParameterized(Map.class, Object.class, Object.class).getType()).getType()));
             } catch (Throwable e) {
                 LOG.log(Level.WARNING, "Failed to load global accounts", e);
             }
@@ -218,12 +278,12 @@ public final class Accounts {
             }
         });
 
-        globalAccountStorages.addListener(onInvalidating(() -> {
+        FlowSubscriptions.subscribe(globalAccountStorages, list -> {
             try {
-                dispatcher.accept(Config.CONFIG_GSON.toJson(globalAccountStorages));
+                dispatcher.accept(Config.CONFIG_GSON.toJson(list));
             } catch (Throwable ignore) {
             }
-        }));
+        });
     }
 
     private static Account parseAccount(Map<Object, Object> storage) {
@@ -256,17 +316,17 @@ public final class Accounts {
             Account account = parseAccount(storage);
             if (account != null) {
                 account.setPortable(true);
-                accounts.add(account);
+                addAccountInternal(account);
                 if (Boolean.TRUE.equals(storage.get("selected"))) {
                     selected = account;
                 }
             }
         }
 
-        for (Map<Object, Object> storage : globalAccountStorages) {
+        for (Map<Object, Object> storage : globalAccountStorages.getValue()) {
             Account account = parseAccount(storage);
             if (account != null) {
-                accounts.add(account);
+                addAccountInternal(account);
             }
         }
 
@@ -278,7 +338,7 @@ public final class Accounts {
                 selectedAccountIdentifier = selectedAccountIdentifier.substring(GLOBAL_PREFIX.length());
             }
 
-            for (Account account : accounts) {
+            for (Account account : accounts.getValue()) {
                 if (selectedAccountIdentifier.equals(account.getIdentifier())) {
                     if (portable == account.isPortable()) {
                         selected = account;
@@ -290,47 +350,29 @@ public final class Accounts {
             }
         }
 
-        if (selected == null && !accounts.isEmpty()) {
-            selected = accounts.get(0);
+        if (selected == null && !accounts.getValue().isEmpty()) {
+            selected = accounts.getValue().get(0);
         }
 
-        selectedAccount.set(selected);
+        selectedAccount.setValue(selected);
 
-        InvalidationListener listener = o -> {
-            // this method first checks whether the current selection is valid
-            // if it's valid, the underlying storage will be updated
-            // otherwise, the first account will be selected as an alternative(or null if accounts is empty)
-            Account account = selectedAccount.get();
-            if (accounts.isEmpty()) {
-                if (account == null) {
-                    // valid
-                } else {
-                    // the previously selected account is gone, we can only set it to null here
-                    selectedAccount.set(null);
-                }
-            } else {
-                if (accounts.contains(account)) {
-                    // valid
-                } else {
-                    // the previously selected account is gone
-                    selectedAccount.set(accounts.get(0));
-                }
-            }
-        };
-        selectedAccount.addListener(listener);
-        selectedAccount.addListener(onInvalidating(() -> {
-            Account account = selectedAccount.get();
+        // 选中项有效性校验（对齐原同时挂在 selectedAccount 与 accounts 上的失效监听）：
+        // 选中项变化或列表任何变化（含元素冒泡）时校验，失效则回退到第 0 项（或 null）。
+        FlowSubscriptions.subscribe(selectedAccount, account -> validateSelectedAccount());
+        FlowSubscriptions.subscribe(selectedAccount, account -> {
             if (account != null)
                 config().setSelectedAccount(account.isPortable() ? account.getIdentifier() : GLOBAL_PREFIX + account.getIdentifier());
             else
                 config().setSelectedAccount(null);
-        }));
-        accounts.addListener(listener);
-        accounts.addListener(onInvalidating(Accounts::updateAccountStorages));
+        });
+        FlowSubscriptions.subscribe(accountsSignal, signal -> {
+            validateSelectedAccount();
+            updateAccountStorages();
+        });
 
         initialized = true;
 
-        config().getAuthlibInjectorServers().addListener(onInvalidating(Accounts::removeDanglingAuthlibInjectorAccounts));
+        FlowSubscriptions.subscribe(config().authlibInjectorServersFlow(), servers -> removeDanglingAuthlibInjectorAccounts());
 
         if (selected != null) {
             Account finalSelected = selected;
@@ -358,42 +400,71 @@ public final class Accounts {
         }
     }
 
-    public static ObservableList<Account> getAccounts() {
-        return accounts;
+    private static void validateSelectedAccount() {
+        // this method first checks whether the current selection is valid
+        // if it's valid, the underlying storage will be updated
+        // otherwise, the first account will be selected as an alternative(or null if accounts is empty)
+        Account account = selectedAccount.getValue();
+        List<Account> list = accounts.getValue();
+        if (list.isEmpty()) {
+            if (account != null) {
+                // the previously selected account is gone, we can only set it to null here
+                selectedAccount.setValue(null);
+            }
+        } else {
+            if (!list.contains(account)) {
+                // the previously selected account is gone
+                selectedAccount.setValue(list.get(0));
+            }
+        }
+    }
+
+    /** 账户列表快照（只读）；任何变化经 {@link #accountsSignalFlow()} 通知。 */
+    public static List<Account> getAccounts() {
+        return Collections.unmodifiableList(accounts.getValue());
+    }
+
+    /** 账户列表变化信号（成员增删与元素内部变更都会递增）。 */
+    public static StateFlow<Long> accountsSignalFlow() {
+        return accountsSignal;
     }
 
     public static Account getSelectedAccount() {
-        return selectedAccount.get();
+        return selectedAccount.getValue();
     }
 
     public static void setSelectedAccount(Account selectedAccount) {
-        Accounts.selectedAccount.set(selectedAccount);
+        Accounts.selectedAccount.setValue(selectedAccount);
     }
 
-    public static ObjectProperty<Account> selectedAccountProperty() {
+    public static StateFlow<Account> selectedAccountFlow() {
         return selectedAccount;
     }
 
     public static void addAccount(Account account) {
         int oldIndex = Accounts.getAccounts().indexOf(account);
         if (oldIndex == -1) {
-            Accounts.getAccounts().add(account);
+            addAccountInternal(account);
         } else {
             // adding an already-added account
             // instead of discarding the new account, we first remove the existing one then add the new one
-            Accounts.getAccounts().remove(oldIndex);
-            Accounts.getAccounts().add(oldIndex, account);
+            removeAccountInternal(oldIndex);
+            addAccountInternal(oldIndex, account);
         }
+    }
+
+    public static void removeAccount(Account account) {
+        removeAccountInternal(account);
     }
 
     public static void replaceAccount(UUID uuid, Account account) {
         List<Account> list = Accounts.getAccounts().stream().filter(a -> a.getUUID().equals(uuid)).collect(Collectors.toList());
         if (list.isEmpty()) {
-            Accounts.getAccounts().add(account);
+            addAccountInternal(account);
         } else {
             int oldIndex = Accounts.getAccounts().indexOf(list.get(0));
-            Accounts.getAccounts().remove(oldIndex);
-            Accounts.getAccounts().add(oldIndex, account);
+            removeAccountInternal(oldIndex);
+            addAccountInternal(oldIndex, account);
         }
     }
 
@@ -421,7 +492,7 @@ public final class Accounts {
                 .findFirst()
                 .orElseGet(() -> {
                     AuthlibInjectorServer server = new AuthlibInjectorServer(url);
-                    config().getAuthlibInjectorServers().add(server);
+                    config().addAuthlibInjectorServer(server);
                     return server;
                 });
     }
@@ -431,12 +502,12 @@ public final class Accounts {
      * This method performs a check and removes the dangling accounts.
      */
     private static void removeDanglingAuthlibInjectorAccounts() {
-        accounts.stream()
+        accounts.getValue().stream()
                 .filter(AuthlibInjectorAccount.class::isInstance)
                 .map(AuthlibInjectorAccount.class::cast)
                 .filter(it -> !config().getAuthlibInjectorServers().contains(it.getServer()))
                 .collect(toList())
-                .forEach(accounts::remove);
+                .forEach(Accounts::removeAccountInternal);
     }
     // ====
 

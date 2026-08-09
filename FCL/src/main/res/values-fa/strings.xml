@@ -77,6 +77,7 @@
     <string name="account_select_character">انتخاب شخصیت</string>
     <string name="account_skin">اسکین</string>
     <string name="account_skin_type_default">پیش فرض</string>
+    <string name="account_skin_type_local_file">فایل محلی اسکین</string>
     <string name="account_skin_upload">انتخاب فایل اسکین</string>
     <string name="account_state_no_account">حسابی وجود ندارد</string>
     <string name="account_state_add">برای افزودن کلیک کنید</string>
@@ -411,7 +412,6 @@
     <string name="help_website">وبسایت</string>
 
     <string name="input_hint_not_empty">ضروری</string>
-    <string name="input_hint_optional">اختیاری</string>
     <string name="input_not_empty">ابتدا کادر ورودی مورد نیاز را پر کنید.</string>
     <string name="input_number">ورودی باید یک عدد باشد.</string>
     <string name="input_url">ورودی باید یک URL معتبر باشد.</string>
@@ -726,9 +726,7 @@
     <string name="settings_advanced_game_dir_independent">جدا شده (minecraft/versions/&lt;نام نمونه&gt;/، به جز دارایی ها و کتابخانه ها)</string>
     <string name="settings_advanced_jvm_args">آرگومان های ماشین مجازی جاوا</string>
     <string name="settings_advanced_minecraft_arguments">اجرا با آرگومان ها</string>
-    <string name="settings_advanced_minecraft_arguments_prompt">پیش فرض</string>
     <string name="settings_advanced_server_ip">آدرس سرور</string>
-    <string name="settings_advanced_server_ip_prompt">پس از اجرای بازی به صورت خودکار متصل شوید.</string>
 
     <string name="settings_fcl_controller">کنترلر</string>
     <string name="settings_fcl_renderer">پیاده‌سازی OpenGL (رندر)</string>
@@ -772,13 +770,11 @@
     <string name="settings_launcher_animation_speed">سرعت انیمیشن</string>
 
     <string name="settings_memory">حافظه</string>
-    <string name="settings_memory_allocate_auto">%1$.1f گیگابایت حداقل / %2$.1f گیگابایت اختصاص داده شده است</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f گیگابایت حداقل / %2$.1f گیگابایت اختصاص داده شده (%3$.1f گیگابایت موجود است)</string>
     <string name="settings_memory_allocate_manual">%1$.1f گیگابایت اختصاص داده شده است</string>
     <string name="settings_memory_allocate_manual_exceeded">%1$.1f گیگابایت اختصاص داده شد (%3$.1f گیگابایت موجود است)</string>
     <string name="settings_memory_auto_allocate">تخصیص خودکار</string>
     <string name="settings_memory_lower_bound">حداقل حافظه</string>
-    <string name="settings_memory_used_per_total">%1$.1f گیگابایت استفاده شده / %2$.1f گیگابایت کل</string>
     <string name="settings_physical_memory">اندازه حافظه فیزیکی</string>
     <string name="settings_tabs_installers">ماد لودر ها</string>
     <string name="settings_type_global_manage">تنظیمات سراسری بازی</string>
@@ -919,8 +915,9 @@
     <string name="world_info_time_format">%s روز</string>
     <string name="world_manage">دنیا ها / دیتاپک ها</string>
     <string name="world_name">نام دنیا</string>
-    <string name="world_name_enter">نام دنیا را وارد کنید</string>
     <string name="world_reveal">نمایش در فایل منیجر</string>
     <string name="world_show_all">نمایش همه</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
+    <string name="settings_memory_allocate_auto">%1$.1f گیگابایت حداقل / %2$.1f گیگابایت اختصاص داده شده است</string>
+    <string name="settings_memory_used_per_total">%1$.1f گیگابایت استفاده شده / %2$.1f گیگابایت کل</string>
 </resources>

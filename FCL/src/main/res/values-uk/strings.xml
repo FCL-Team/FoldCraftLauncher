@@ -78,6 +78,7 @@
     <string name="account_select_character">Виберіть персонажа</string>
     <string name="account_skin">Скін</string>
     <string name="account_skin_type_default">За замовчуванням</string>
+    <string name="account_skin_type_local_file">Локальний скін</string>
     <string name="account_skin_upload">Вибрати скін на пристрої</string>
     <string name="account_state_no_account">Немає облікового запису</string>
     <string name="account_state_add">Натисніть, щоб додати</string>
@@ -379,7 +380,6 @@
     <string name="help_website">Вебсайт</string>
 
     <string name="input_hint_not_empty">Обов’язково</string>
-    <string name="input_hint_optional">Необов’язково</string>
     <string name="input_not_empty">Заповніть обов’язкові поля.</string>
     <string name="input_number">Введіть число</string>
     <string name="input_url">Введіть коректну URL-адресу.</string>
@@ -681,9 +681,7 @@
     <string name="settings_advanced_game_dir_independent">Ізольовано в (.minecraft/versions/&lt;instance name&gt;/, крім ресурсів і бібліотек)</string>
     <string name="settings_advanced_jvm_args">Аргументи JVM</string>
     <string name="settings_advanced_minecraft_arguments">Аргументи лаунчера</string>
-    <string name="settings_advanced_minecraft_arguments_prompt">За замовчуванням</string>
     <string name="settings_advanced_server_ip">Адреса сервера</string>
-    <string name="settings_advanced_server_ip_prompt">Автоприєднання після запуску</string>
 
     <string name="settings_fcl_controller">Контролер</string>
     <string name="settings_fcl_vulkan_driver_system">Використання системних драйверів Vulkan</string>
@@ -733,13 +731,11 @@
     <string name="settings_launcher_animation_speed">Швидкість анімації переходів</string>
 
     <string name="settings_memory">Пам\'ять</string>
-    <string name="settings_memory_allocate_auto">%1$.1f ГБ мінімум / %2$.1f ГБ виділено</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f ГБ мінімум / %2$.1f ГБ виділено (%3$.1f ГБ вільно)</string>
     <string name="settings_memory_allocate_manual">%1$.1f ГБ використовується</string>
     <string name="settings_memory_allocate_manual_exceeded">%1$.1f ГБ використовується (%3$.1f ГБ вільно)</string>
     <string name="settings_memory_auto_allocate">Автовиділення ОЗП</string>
     <string name="settings_memory_lower_bound">Мінімум ОЗП</string>
-    <string name="settings_memory_used_per_total">%1$.1f ГБ використано / %2$.1f ГБ всього</string>
     <string name="settings_physical_memory">Розмір фізичної пам\'яті</string>
     <string name="settings_tabs_installers">Завантажувачі модів</string>
     <string name="settings_type_global_manage">Основні налаштування гри</string>
@@ -880,7 +876,6 @@
     <string name="world_info_time_format">%s днів</string>
     <string name="world_manage">Світи / Датапаки</string>
     <string name="world_name">Назва світу</string>
-    <string name="world_name_enter">Введіть назву світу</string>
     <string name="world_reveal">Показати в провіднику</string>
     <string name="world_show_all">Показати всі</string>
 
@@ -926,4 +921,6 @@
     <string name="tip_hide_menu_view">Меню приховано. Натисніть клавішу гучності, щоб відкрити меню.</string>
     <string name="modloader">Завантажувач модів</string>
     <string name="message_warn_renderer_global_setting">Вибрана вами версія має окремі налаштування для кожного профілю, тому вказаний тут рендерер не може бути застосований до поточної версії. Рекомендується тривале натискання кнопки "Запуск" для вибору рендерера.</string>
+    <string name="settings_memory_allocate_auto">%1$.1f ГБ мінімум / %2$.1f ГБ виділено</string>
+    <string name="settings_memory_used_per_total">%1$.1f ГБ використано / %2$.1f ГБ всього</string>
 </resources>

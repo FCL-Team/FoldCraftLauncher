@@ -13,18 +13,17 @@ import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.PageManager;
-import com.tungsten.fcl.util.FXUtils;
+import com.tungsten.fcl.ui.manage.compose.ComposeModpackFileSelectionPage;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.mod.ModAdviser;
 import com.tungsten.fclcore.mod.ModpackExportInfo;
 import com.tungsten.fclcore.mod.mcbbs.McbbsModpackManifest;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.flow.FlowBindings;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
 import com.tungsten.fcllibrary.component.ui.FCLTempPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -48,6 +47,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener {
 
     private final Profile profile;
@@ -57,21 +59,21 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
 
     private final ModpackExportInfo exportInfo = new ModpackExportInfo();
 
-    private final SimpleStringProperty path = new SimpleStringProperty("");
-    private final SimpleStringProperty fileName = new SimpleStringProperty("");
+    private final MutableStateFlow<String> path = StateFlowKt.MutableStateFlow("");
+    private final MutableStateFlow<String> fileName = StateFlowKt.MutableStateFlow("");
 
-    private final SimpleStringProperty name = new SimpleStringProperty("");
-    private final SimpleStringProperty author = new SimpleStringProperty("");
-    private final SimpleStringProperty version = new SimpleStringProperty("1.0");
-    private final SimpleStringProperty description = new SimpleStringProperty("");
-    private final SimpleStringProperty url = new SimpleStringProperty("");
-    private final SimpleBooleanProperty forceUpdate = new SimpleBooleanProperty();
-    private final SimpleStringProperty fileApi = new SimpleStringProperty("");
-    private final SimpleIntegerProperty minMemory = new SimpleIntegerProperty(0);
-    private final SimpleStringProperty authlibInjectorServer = new SimpleStringProperty();
-    private final SimpleStringProperty launchArguments = new SimpleStringProperty("");
-    private final SimpleStringProperty javaArguments = new SimpleStringProperty("");
-    private final SimpleStringProperty mcbbsThreadId = new SimpleStringProperty("");
+    private final MutableStateFlow<String> name = StateFlowKt.MutableStateFlow("");
+    private final MutableStateFlow<String> author = StateFlowKt.MutableStateFlow("");
+    private final MutableStateFlow<String> version = StateFlowKt.MutableStateFlow("1.0");
+    private final MutableStateFlow<String> description = StateFlowKt.MutableStateFlow("");
+    private final MutableStateFlow<String> url = StateFlowKt.MutableStateFlow("");
+    private final MutableStateFlow<Boolean> forceUpdate = StateFlowKt.MutableStateFlow(false);
+    private final MutableStateFlow<String> fileApi = StateFlowKt.MutableStateFlow("");
+    private final MutableStateFlow<Integer> minMemory = StateFlowKt.MutableStateFlow(0);
+    private final MutableStateFlow<String> authlibInjectorServer = StateFlowKt.MutableStateFlow(null);
+    private final MutableStateFlow<String> launchArguments = StateFlowKt.MutableStateFlow("");
+    private final MutableStateFlow<String> javaArguments = StateFlowKt.MutableStateFlow("");
+    private final MutableStateFlow<String> mcbbsThreadId = StateFlowKt.MutableStateFlow("");
 
     private FCLImageButton pathButton;
     private FCLButton next;
@@ -83,13 +85,13 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
         this.type = type;
         this.options = options;
 
-        name.set(version);
-        author.set(Optional.ofNullable(Accounts.getSelectedAccount()).map(Account::getUsername).orElse(""));
+        name.setValue(version);
+        author.setValue(Optional.ofNullable(Accounts.getSelectedAccount()).map(Account::getUsername).orElse(""));
 
         VersionSetting versionSetting = profile.getRepository().getVersionSetting(versionName);
-        minMemory.set(Optional.ofNullable(versionSetting.getMinMemory()).orElse(0));
-        launchArguments.set(versionSetting.getMinecraftArgs());
-        javaArguments.set(versionSetting.getJavaArgs());
+        minMemory.setValue(Optional.ofNullable(versionSetting.getMinMemory()).orElse(0));
+        launchArguments.setValue(versionSetting.getMinecraftArgs());
+        javaArguments.setValue(versionSetting.getJavaArgs());
     }
 
     @Override
@@ -127,47 +129,47 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
         next = findViewById(R.id.next);
 
         versionNameText.setText(versionName);
-        nameText.setText(name.get());
-        nameText.stringProperty().bindBidirectional(name);
-        authorText.setText(author.get());
-        authorText.stringProperty().bindBidirectional(author);
-        versionText.setText(version.get());
-        versionText.stringProperty().bindBidirectional(version);
+        nameText.setText(name.getValue());
+        FlowBindings.bindBidirectional(nameText.stringFlow(), name);
+        authorText.setText(author.getValue());
+        FlowBindings.bindBidirectional(authorText.stringFlow(), author);
+        versionText.setText(version.getValue());
+        FlowBindings.bindBidirectional(versionText.stringFlow(), version);
         if (options.isRequireFileApi()) {
             if (options.isValidateFileApi()) {
                 fileApiText.setHint(getContext().getString(R.string.input_hint_not_empty));
             } else {
                 fileApiText.setHint("");
             }
-            fileApiText.stringProperty().bindBidirectional(fileApi);
+            FlowBindings.bindBidirectional(fileApiText.stringFlow(), fileApi);
         }
         fileApiLayout.setVisibility(options.isRequireFileApi() ? View.VISIBLE : View.GONE);
         if (options.isRequireLaunchArguments()) {
-            launchArgsText.setText(launchArguments.get());
-            launchArgsText.stringProperty().bindBidirectional(launchArguments);
+            launchArgsText.setText(launchArguments.getValue());
+            FlowBindings.bindBidirectional(launchArgsText.stringFlow(), launchArguments);
         }
         launchArgsLayout.setVisibility(options.isRequireLaunchArguments() ? View.VISIBLE : View.GONE);
         if (options.isRequireJavaArguments()) {
-            jvmArgsText.setText(javaArguments.get());
-            jvmArgsText.stringProperty().bindBidirectional(javaArguments);
+            jvmArgsText.setText(javaArguments.getValue());
+            FlowBindings.bindBidirectional(jvmArgsText.stringFlow(), javaArguments);
         }
         jvmArgsLayout.setVisibility(options.isRequireJavaArguments() ? View.VISIBLE : View.GONE);
         if (options.isRequireUrl()) {
-            originUrlText.stringProperty().bindBidirectional(url);
+            FlowBindings.bindBidirectional(originUrlText.stringFlow(), url);
         }
         originUrlLayout.setVisibility(options.isRequireUrl() ? View.VISIBLE : View.GONE);
         if (options.isRequireOrigins()) {
-            mcbbsText.stringProperty().bindBidirectional(mcbbsThreadId);
+            FlowBindings.bindBidirectional(mcbbsText.stringFlow(), mcbbsThreadId);
         }
         mcbbsLayout.setVisibility(options.isRequireOrigins() ? View.VISIBLE : View.GONE);
         if (options.isRequireMinMemory()) {
-            memorySeekbar.setProgress(minMemory.get());
+            memorySeekbar.setProgress(minMemory.getValue());
             memorySeekbar.addProgressListener();
-            memorySeekbar.progressProperty().bindBidirectional(minMemory);
+            FlowBindings.bindBidirectional(memorySeekbar.progressFlow(), minMemory);
         }
         memoryLayout.setVisibility(options.isRequireMinMemory() ? View.VISIBLE : View.GONE);
         splitF.setVisibility(options.isRequireMinMemory() ? View.VISIBLE : View.GONE);
-        descText.stringProperty().bindBidirectional(description);
+        FlowBindings.bindBidirectional(descText.stringFlow(), description);
         if (options.isRequireAuthlibInjectorServer()) {
             ArrayList<String> list = (ArrayList<String>) config().getAuthlibInjectorServers().stream().map(AuthlibInjectorServer::getName).collect(Collectors.toList());
             Map<String, String> map = new HashMap<>();
@@ -178,21 +180,22 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
             ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, list);
             adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
             serverSpinner.setAdapter(adapter);
-            SimpleStringProperty serverName = new SimpleStringProperty("");
-            FXUtils.bindSelection(serverSpinner, serverName);
-            serverName.addListener(observable -> authlibInjectorServer.set(map.get(serverName.get())));
+            MutableStateFlow<String> serverName = StateFlowKt.MutableStateFlow("");
+            FlowBindings.bindBidirectional(serverSpinner.selectedItemFlow(), serverName);
+            FlowSubscriptions.subscribe(serverName, v -> authlibInjectorServer.setValue(map.get(v)));
         }
         serverLayout.setVisibility(options.isRequireAuthlibInjectorServer() ? View.VISIBLE : View.GONE);
         splitS.setVisibility(options.isRequireAuthlibInjectorServer() ? View.VISIBLE : View.GONE);
         if (options.isRequireForceUpdate()) {
             forceUpdateSwitch.addCheckedChangeListener();
-            forceUpdateSwitch.checkProperty().bindBidirectional(forceUpdate);
+            FlowBindings.bindBidirectional(forceUpdateSwitch.checkFlow(), forceUpdate);
         }
         forceUpdateLayout.setVisibility(options.isRequireForceUpdate() ? View.VISIBLE : View.GONE);
         splitT.setVisibility(options.isRequireForceUpdate() ? View.VISIBLE : View.GONE);
-        pathText.stringProperty().bind(path);
+        pathText.stringFlow().setValue(path.getValue());
+        FlowSubscriptions.subscribe(path, v -> pathText.stringFlow().setValue(v));
         pathButton.setOnClickListener(this);
-        fileNameText.stringProperty().bindBidirectional(fileName);
+        FlowBindings.bindBidirectional(fileNameText.stringFlow(), fileName);
         next.setOnClickListener(this);
     }
 
@@ -209,7 +212,7 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
     private void selectPath() {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
             if (files == null) return;
-            path.set(files.get(0));
+            path.setValue(files.get(0));
         });
     }
 
@@ -220,52 +223,52 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
         }
         if (v == next) {
             boolean urlValid = false;
-            if (StringUtils.isNotBlank(fileApi.get())) {
+            if (StringUtils.isNotBlank(fileApi.getValue())) {
                 try {
-                    new URL(fileApi.get()).toURI();
+                    new URL(fileApi.getValue()).toURI();
                     urlValid = true;
                 } catch (IOException | URISyntaxException ignored) {
                 }
             }
-            if (StringUtils.isBlank(name.get()) || StringUtils.isBlank(author.get()) || StringUtils.isBlank(version.get()) || StringUtils.isBlank(fileName.get())
-                    || (options.isRequireFileApi() && options.isValidateFileApi() && StringUtils.isBlank(fileApi.get()))) {
+            if (StringUtils.isBlank(name.getValue()) || StringUtils.isBlank(author.getValue()) || StringUtils.isBlank(version.getValue()) || StringUtils.isBlank(fileName.getValue())
+                    || (options.isRequireFileApi() && options.isValidateFileApi() && StringUtils.isBlank(fileApi.getValue()))) {
                 Toast.makeText(getContext(), getContext().getString(R.string.input_not_empty), Toast.LENGTH_SHORT).show();
-            } else if (options.isRequireFileApi() && StringUtils.isNotBlank(fileApi.get()) && !urlValid) {
+            } else if (options.isRequireFileApi() && StringUtils.isNotBlank(fileApi.getValue()) && !urlValid) {
                 Toast.makeText(getContext(), getContext().getString(R.string.input_url), Toast.LENGTH_SHORT).show();
-            } else if (options.isRequireOrigins() && StringUtils.isNotBlank(mcbbsThreadId.get()) && Lang.toIntOrNull(mcbbsThreadId.get()) == null) {
+            } else if (options.isRequireOrigins() && StringUtils.isNotBlank(mcbbsThreadId.getValue()) && Lang.toIntOrNull(mcbbsThreadId.getValue()) == null) {
                 Toast.makeText(getContext(), getContext().getString(R.string.input_number), Toast.LENGTH_SHORT).show();
-            } else if (!OperatingSystem.isNameValid(fileName.get())) {
+            } else if (!OperatingSystem.isNameValid(fileName.getValue())) {
                 Toast.makeText(getContext(), getContext().getString(R.string.install_new_game_malformed), Toast.LENGTH_SHORT).show();
-            } else if (StringUtils.isBlank(path.get())) {
+            } else if (StringUtils.isBlank(path.getValue())) {
                 selectPath();
             } else {
-                File file = new File(path.get(), fileName.get() + ".zip");
+                File file = new File(path.getValue(), fileName.getValue() + ".zip");
 
                 if (file.exists()) {
                     Toast.makeText(getContext(), getContext().getString(R.string.message_file_exist), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                exportInfo.setName(name.get());
-                exportInfo.setFileApi(fileApi.get());
-                exportInfo.setVersion(version.get());
-                exportInfo.setAuthor(author.get());
-                exportInfo.setDescription(description.get());
+                exportInfo.setName(name.getValue());
+                exportInfo.setFileApi(fileApi.getValue());
+                exportInfo.setVersion(version.getValue());
+                exportInfo.setAuthor(author.getValue());
+                exportInfo.setDescription(description.getValue());
                 exportInfo.setPackWithLauncher(false);
-                exportInfo.setUrl(url.get());
-                exportInfo.setForceUpdate(forceUpdate.get());
-                exportInfo.setMinMemory(minMemory.get());
-                exportInfo.setLaunchArguments(launchArguments.get());
-                exportInfo.setJavaArguments(javaArguments.get());
-                exportInfo.setAuthlibInjectorServer(authlibInjectorServer.get());
+                exportInfo.setUrl(url.getValue());
+                exportInfo.setForceUpdate(forceUpdate.getValue());
+                exportInfo.setMinMemory(minMemory.getValue());
+                exportInfo.setLaunchArguments(launchArguments.getValue());
+                exportInfo.setJavaArguments(javaArguments.getValue());
+                exportInfo.setAuthlibInjectorServer(authlibInjectorServer.getValue());
 
-                if (StringUtils.isNotBlank(mcbbsThreadId.get())) {
+                if (StringUtils.isNotBlank(mcbbsThreadId.getValue())) {
                     exportInfo.setOrigins(Collections.singletonList(new McbbsModpackManifest.Origin(
-                            "mcbbs", Integer.parseInt(mcbbsThreadId.get())
+                            "mcbbs", Integer.parseInt(mcbbsThreadId.getValue())
                     )));
                 }
 
-                ModpackFileSelectionPage page = new ModpackFileSelectionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack_file, profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
+                ComposeModpackFileSelectionPage page = new ComposeModpackFileSelectionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
                 ManagePageManager.getInstance().showTempPage(page);
             }
         }

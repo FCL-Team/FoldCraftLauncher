@@ -15,57 +15,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
+import java.lang.ref.WeakReference;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class FCLButton extends AppCompatButton {
 
-    private BooleanProperty visibilityProperty;
-    private BooleanProperty disableProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
+    private MutableStateFlow<Boolean> disableFlow;
 
     private final boolean ripple;
     private boolean isDown;
 
     private GradientDrawable drawableNormal;
     private GradientDrawable drawablePress;
-
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            drawableNormal.setColor(Color.TRANSPARENT);
-            drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
-            if (!ripple) {
-                if (isDown) {
-                    setBackgroundDrawable(drawablePress);
-                    setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
-                }
-                else {
-                    setBackgroundDrawable(drawableNormal);
-                    setTextColor(ThemeEngine.getInstance().getTheme().getLtColor());
-                }
-            } else {
-                setRipple();
-            }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
 
     private void init(int shape, boolean autoPadding) {
         setSingleLine(true);
@@ -95,11 +65,39 @@ public class FCLButton extends AppCompatButton {
         setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), R.xml.anim_scale));
     }
 
+    private void applyTheme() {
+        drawableNormal.setColor(Color.TRANSPARENT);
+        drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
+        if (!ripple) {
+            if (isDown) {
+                setBackgroundDrawable(drawablePress);
+                setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+            }
+            else {
+                setBackgroundDrawable(drawableNormal);
+                setTextColor(ThemeEngine.getInstance().getTheme().getLtColor());
+            }
+        } else {
+            setRipple();
+        }
+    }
+
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLButton> ref = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLButton self = ref.get();
+            if (self != null) {
+                self.applyTheme();
+            }
+        });
+    }
+
     public FCLButton(@NonNull Context context) {
         super(context);
         this.ripple = false;
         init(GradientDrawable.RECTANGLE, true);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -111,7 +109,7 @@ public class FCLButton extends AppCompatButton {
         this.ripple = ripple;
         init(shape, autoPadding);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -123,7 +121,7 @@ public class FCLButton extends AppCompatButton {
         this.ripple = ripple;
         init(shape, autoPadding);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     @Override
@@ -172,66 +170,60 @@ public class FCLButton extends AppCompatButton {
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLButton> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLButton self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLButton s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 
     public final void setDisableValue(boolean disableValue) {
-        disableProperty().set(disableValue);
+        disableFlow().setValue(disableValue);
     }
 
     public final boolean getDisableValue() {
-        return disableProperty == null || disableProperty.get();
+        return disableFlow == null || disableFlow.getValue();
     }
 
-    public final BooleanProperty disableProperty() {
-        if (disableProperty == null) {
-            disableProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> disableFlow() {
+        if (disableFlow == null) {
+            disableFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLButton> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(disableFlow, v -> {
+                FCLButton self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean disable = get();
-                        setEnabled(!disable);
+                        FCLButton s = ref.get();
+                        if (s != null) {
+                            boolean disable = s.disableFlow.getValue();
+                            s.setEnabled(!disable);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "disable";
-                }
-            };
+            });
         }
 
-        return disableProperty;
+        return disableFlow;
     }
 }

@@ -85,7 +85,7 @@ class MicrosoftAccountSkinDialog(
     }
 
     private fun refreshPreview() {
-        val texture = accountListItem.texture.get()
+        val texture = accountListItem.textureSnapshot()
         if (texture != null && texture.size >= 2) {
             renderer.setTexture(
                 texture[0],
@@ -99,7 +99,7 @@ class MicrosoftAccountSkinDialog(
      * and update the radio button accordingly.
      */
     private fun detectCurrentModel() {
-        val texture = accountListItem.texture.get()
+        val texture = accountListItem.textureSnapshot()
         val skinBitmap = texture?.getOrNull(0) ?: return
         try {
             val normalized = NormalizedSkin(skinBitmap)
@@ -129,7 +129,7 @@ class MicrosoftAccountSkinDialog(
                 binding.modelClassic.isChecked = true
             }
             // Update 3D preview: new skin, keep current cape
-            val currentCape = accountListItem.texture.get()?.getOrNull(1)
+            val currentCape = accountListItem.textureSnapshot()?.getOrNull(1)
             renderer.setTexture(normalized.normalizedTexture, currentCape)
         } catch (_: Exception) {
             // Ignore preview errors

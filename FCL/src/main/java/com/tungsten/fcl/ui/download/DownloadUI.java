@@ -9,6 +9,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
@@ -98,7 +99,8 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     private void loadVersions(Profile profile) {
         if (profile == Profiles.getSelectedProfile()) {
             pageManager.loadVersion(profile, null);
-            profile.selectedVersionProperty().addListener(observable -> pageManager.loadVersion(profile, null));
+            // 阶段 4a：subscribe 跳过当前值（对齐 addListener 语义）；订阅不摘除（与原监听一致）
+            FlowSubscriptions.subscribe(profile.selectedVersionFlow(), version -> pageManager.loadVersion(profile, null));
         }
     }
 

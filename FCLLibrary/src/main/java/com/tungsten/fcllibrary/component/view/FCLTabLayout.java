@@ -10,67 +10,65 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.tabs.TabLayout;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
+import java.lang.ref.WeakReference;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
 public class FCLTabLayout extends TabLayout {
 
-    private BooleanProperty visibilityProperty;
+    private MutableStateFlow<Boolean> visibilityFlow;
     private final boolean followTheme;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
+    private void applyTheme() {
+        int[][] state = {
+                {
+                        android.R.attr.state_selected
+                },
+                {
 
-        @Override
-        protected void invalidated() {
-            get();
-            int[][] state = {
-                    {
-                            android.R.attr.state_selected
-                    },
-                    {
+                }
+        };
+        int[] color = {
+                ThemeEngine.getInstance().getTheme().getDkColor(),
+                followTheme ? ThemeEngine.getInstance().getTheme().getAutoTint() : Color.GRAY
+        };
+        int[][] bgState = {
+                {
 
-                    }
-            };
-            int[] color = {
-                    ThemeEngine.getInstance().getTheme().getDkColor(),
-                    followTheme ? ThemeEngine.getInstance().getTheme().getAutoTint() : Color.GRAY
-            };
-            int[][] bgState = {
-                    {
+                }
+        };
+        int[] bgColor = {
+                ThemeEngine.getInstance().getTheme().getLtColor()
+        };
+        setSelectedTabIndicatorColor(ThemeEngine.getInstance().getTheme().getDkColor());
+        setTabTextColors(new ColorStateList(state, color));
+        setTabIconTint(new ColorStateList(state, color));
+        if (followTheme) {
+            setBackgroundTintList(new ColorStateList(bgState, bgColor));
+        }
+    }
 
-                    }
-            };
-            int[] bgColor = {
-                    ThemeEngine.getInstance().getTheme().getLtColor()
-            };
-            setSelectedTabIndicatorColor(ThemeEngine.getInstance().getTheme().getDkColor());
-            setTabTextColors(new ColorStateList(state, color));
-            setTabIconTint(new ColorStateList(state, color));
-            if (followTheme) {
-                setBackgroundTintList(new ColorStateList(bgState, bgColor));
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLTabLayout> ref = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLTabLayout self = ref.get();
+            if (self != null) {
+                self.applyTheme();
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+        });
+    }
 
     public FCLTabLayout(@NonNull Context context) {
         super(context);
         followTheme = false;
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLTabLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -78,7 +76,7 @@ public class FCLTabLayout extends TabLayout {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTabLayout);
         followTheme = typedArray.getBoolean(R.styleable.FCLTabLayout_follow_theme, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public FCLTabLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -86,7 +84,7 @@ public class FCLTabLayout extends TabLayout {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTabLayout);
         followTheme = typedArray.getBoolean(R.styleable.FCLTabLayout_follow_theme, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        bindTheme();
     }
 
     public boolean isFollowTheme() {
@@ -94,34 +92,31 @@ public class FCLTabLayout extends TabLayout {
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLTabLayout> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLTabLayout self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLTabLayout s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 }

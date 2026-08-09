@@ -17,8 +17,6 @@
  */
 package com.tungsten.fcl.setting;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
 import com.tungsten.fcl.game.FCLCacheRepository;
@@ -30,77 +28,76 @@ import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.event.EventBus;
 import com.tungsten.fclcore.event.EventPriority;
 import com.tungsten.fclcore.event.RefreshedVersionsEvent;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyObjectWrapper;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.util.ToStringBuilder;
-import com.tungsten.fclcore.util.fakefx.ObservableHelper;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.Optional;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 游戏目录（阶段 4a）：属性已 StateFlow 化；name/gameDir/selectedVersion 任一变更
+ * 或全局 VersionSetting 变更都会递增 {@link #revisionFlow()}（对齐原 Observable
+ * 失效语义，Profiles 据此冒泡触发 configurations 存盘）。
+ *
+ * <p>磁盘 JSON 由手写 {@link Serializer} 产出，与属性类型无关，格式不变。</p>
+ */
 @JsonAdapter(Profile.Serializer.class)
-public final class Profile implements Observable {
+public final class Profile {
     private final WeakListenerHolder listenerHolder = new WeakListenerHolder();
     private final FCLGameRepository repository;
 
-    private final StringProperty selectedVersion = new SimpleStringProperty();
+    private final MutableStateFlow<String> selectedVersion = StateFlowKt.MutableStateFlow(null);
 
-    public StringProperty selectedVersionProperty() {
+    public StateFlow<String> selectedVersionFlow() {
         return selectedVersion;
     }
 
     public String getSelectedVersion() {
-        return selectedVersion.get();
+        return selectedVersion.getValue();
     }
 
     public void setSelectedVersion(String selectedVersion) {
-        this.selectedVersion.set(selectedVersion);
+        this.selectedVersion.setValue(selectedVersion);
     }
 
-    private final ObjectProperty<File> gameDir;
+    private final MutableStateFlow<File> gameDir;
 
-    public ObjectProperty<File> gameDirProperty() {
+    public StateFlow<File> gameDirFlow() {
         return gameDir;
     }
 
     public File getGameDir() {
-        return gameDir.get();
+        return gameDir.getValue();
     }
 
     public void setGameDir(File gameDir) {
-        this.gameDir.set(gameDir);
+        this.gameDir.setValue(gameDir);
     }
 
-    private final ReadOnlyObjectWrapper<VersionSetting> global = new ReadOnlyObjectWrapper<>(this, "global");
-
-    public ReadOnlyObjectProperty<VersionSetting> globalProperty() {
-        return global.getReadOnlyProperty();
-    }
+    private VersionSetting global;
 
     public VersionSetting getGlobal() {
-        return global.get();
+        return global;
     }
 
-    private final SimpleStringProperty name;
+    private final MutableStateFlow<String> name;
 
-    public StringProperty nameProperty() {
+    public StateFlow<String> nameFlow() {
         return name;
     }
 
     public String getName() {
-        return name.get();
+        return name.getValue();
     }
 
     public void setName(String name) {
-        this.name.set(name);
+        this.name.setValue(name);
     }
 
     public Profile(String name) {
@@ -116,22 +113,22 @@ public final class Profile implements Observable {
     }
 
     public Profile(String name, File initialGameDir, VersionSetting global, String selectedVersion) {
-        this.name = new SimpleStringProperty(this, "name", name);
-        gameDir = new SimpleObjectProperty<>(this, "gameDir", initialGameDir);
+        this.name = StateFlowKt.MutableStateFlow(name);
+        gameDir = StateFlowKt.MutableStateFlow(initialGameDir);
         repository = new FCLGameRepository(this, initialGameDir);
-        this.global.set(global == null ? new VersionSetting() : global);
-        this.selectedVersion.set(selectedVersion);
+        this.global = global == null ? new VersionSetting() : global;
+        this.selectedVersion.setValue(selectedVersion);
 
-        gameDir.addListener((a, b, newValue) -> repository.changeDirectory(newValue));
-        this.selectedVersion.addListener(o -> checkSelectedVersion());
+        FlowSubscriptions.subscribe(gameDir, newValue -> repository.changeDirectory(newValue));
+        FlowSubscriptions.subscribe(this.selectedVersion, o -> checkSelectedVersion());
         listenerHolder.add(EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).registerWeak(event -> checkSelectedVersion(), EventPriority.HIGHEST));
 
-        addPropertyChangedListener(onInvalidating(this::invalidate));
+        addPropertyChangedListener();
     }
 
     private void checkSelectedVersion() {
         if (!repository.isLoaded()) return;
-        String newValue = selectedVersion.get();
+        String newValue = selectedVersion.getValue();
         if (!repository.hasVersion(newValue)) {
             Optional<String> version = repository.getVersions().stream().findFirst().map(Version::getId);
             if (version.isPresent())
@@ -169,28 +166,22 @@ public final class Profile implements Observable {
                 .toString();
     }
 
-    private void addPropertyChangedListener(InvalidationListener listener) {
-        name.addListener(listener);
-        global.addListener(listener);
-        gameDir.addListener(listener);
-        global.get().addPropertyChangedListener(listener);
-        selectedVersion.addListener(listener);
+    private void addPropertyChangedListener() {
+        FlowSubscriptions.subscribe(name, v -> invalidate());
+        FlowSubscriptions.subscribe(gameDir, v -> invalidate());
+        FlowSubscriptions.subscribe(selectedVersion, v -> invalidate());
+        global.addPropertyChangedListener(this::invalidate);
     }
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-    @Override
-    public void addListener(InvalidationListener listener) {
-        observableHelper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        observableHelper.removeListener(listener);
+    /** 任何属性变更（含全局 VersionSetting 变更）时递增（对齐原 Observable 失效语义）。 */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        revision.setValue(revision.getValue() + 1);
     }
 
     public static class ProfileVersion {

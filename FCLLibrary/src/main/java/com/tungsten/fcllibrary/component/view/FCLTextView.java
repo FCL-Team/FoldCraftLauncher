@@ -11,103 +11,79 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
-import com.tungsten.fclcore.fakefx.beans.property.StringPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fcllibrary.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
+
+import java.lang.ref.WeakReference;
+
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
 
 public class FCLTextView extends AppCompatTextView {
 
     private boolean autoTint;
     private boolean autoBackgroundTint;
     private boolean useThemeColor;
-    private StringProperty string;
-    private BooleanProperty visibilityProperty;
+    private MutableStateFlow<String> stringFlow;
+    private MutableStateFlow<Boolean> visibilityFlow;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            if (autoTint) {
-                setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
-                Drawable[] drawables = getCompoundDrawablesRelative();
-                for (Drawable drawable : drawables) {
-                    if (drawable != null) {
-                        drawable.setTint(ThemeEngine.getInstance().getTheme().getAutoTint());
-                    }
+    private void applyTheme() {
+        if (autoTint) {
+            setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+            Drawable[] drawables = getCompoundDrawablesRelative();
+            for (Drawable drawable : drawables) {
+                if (drawable != null) {
+                    drawable.setTint(ThemeEngine.getInstance().getTheme().getAutoTint());
                 }
             }
-            if (autoBackgroundTint) {
-                setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getColor()}));
+        }
+        if (autoBackgroundTint) {
+            setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getColor()}));
+        }
+    }
+
+    private void applyTheme2() {
+        if (useThemeColor) {
+            setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
+        }
+    }
+
+    private void applyThemeDark() {
+        if (useThemeColor) {
+            setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
+        }
+    }
+
+    private void bindTheme() {
+        // 弱引用自身：对齐原 theme.bind(...) 的弱监听语义，视图可被 GC
+        WeakReference<FCLTextView> ref = new WeakReference<>(this);
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().colorFlow(), c -> {
+            FCLTextView self = ref.get();
+            if (self != null) {
+                self.applyTheme();
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
-
-    private final IntegerProperty theme2 = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            if (useThemeColor) {
-                setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
+        });
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().color2Flow(), c2 -> {
+            FCLTextView self = ref.get();
+            if (self != null) {
+                self.applyTheme2();
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2";
-        }
-    };
-
-    private final IntegerProperty theme2Dark = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            if (useThemeColor) {
-                setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
+        });
+        FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().getTheme().color2DarkFlow(), c3 -> {
+            FCLTextView self = ref.get();
+            if (self != null) {
+                self.applyThemeDark();
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2Dark";
-        }
-    };
+        });
+    }
 
     public FCLTextView(@NonNull Context context) {
         super(context);
         autoTint = false;
         autoBackgroundTint = false;
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        bindTheme();
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -117,9 +93,7 @@ public class FCLTextView extends AppCompatTextView {
         autoBackgroundTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_background_tint, false);
         useThemeColor = typedArray.getBoolean(R.styleable.FCLTextView_use_theme_color, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        bindTheme();
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -129,9 +103,7 @@ public class FCLTextView extends AppCompatTextView {
         autoBackgroundTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_background_tint, false);
         useThemeColor = typedArray.getBoolean(R.styleable.FCLTextView_use_theme_color, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        bindTheme();
     }
 
     public void alert() {
@@ -172,66 +144,60 @@ public class FCLTextView extends AppCompatTextView {
     }
 
     public final void setString(String string) {
-        stringProperty().set(string);
+        stringFlow().setValue(string);
     }
 
     public final String getString() {
-        return string == null ? null : string.get();
+        return stringFlow == null ? null : stringFlow.getValue();
     }
 
-    public final StringProperty stringProperty() {
-        if (string == null) {
-            string = new StringPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<String> stringFlow() {
+        if (stringFlow == null) {
+            stringFlow = StateFlowKt.MutableStateFlow(null);
+            WeakReference<FCLTextView> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(stringFlow, v -> {
+                FCLTextView self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        String string = get();
-                        setText(string);
+                        FCLTextView s = ref.get();
+                        if (s != null) {
+                            String string = s.stringFlow.getValue();
+                            s.setText(string);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "string";
-                }
-            };
+            });
         }
 
-        return string;
+        return stringFlow;
     }
 
     public final void setVisibilityValue(boolean visibility) {
-        visibilityProperty().set(visibility);
+        visibilityFlow().setValue(visibility);
     }
 
     public final boolean getVisibilityValue() {
-        return visibilityProperty == null || visibilityProperty.get();
+        return visibilityFlow == null || visibilityFlow.getValue();
     }
 
-    public final BooleanProperty visibilityProperty() {
-        if (visibilityProperty == null) {
-            visibilityProperty = new BooleanPropertyBase() {
-
-                public void invalidated() {
+    public final MutableStateFlow<Boolean> visibilityFlow() {
+        if (visibilityFlow == null) {
+            visibilityFlow = StateFlowKt.MutableStateFlow(false);
+            WeakReference<FCLTextView> ref = new WeakReference<>(this);
+            FlowSubscriptions.subscribe(visibilityFlow, v -> {
+                FCLTextView self = ref.get();
+                if (self != null) {
                     Schedulers.androidUIThread().execute(() -> {
-                        boolean visible = get();
-                        setVisibility(visible ? VISIBLE : GONE);
+                        FCLTextView s = ref.get();
+                        if (s != null) {
+                            boolean visible = s.visibilityFlow.getValue();
+                            s.setVisibility(visible ? VISIBLE : GONE);
+                        }
                     });
                 }
-
-                public Object getBean() {
-                    return this;
-                }
-
-                public String getName() {
-                    return "visibility";
-                }
-            };
+            });
         }
 
-        return visibilityProperty;
+        return visibilityFlow;
     }
 }

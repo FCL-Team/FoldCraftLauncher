@@ -2,9 +2,9 @@ package com.tungsten.fcl.ui.version;
 
 import android.content.Context;
 
-import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIListener;
+import com.tungsten.fcl.ui.version.compose.ComposeVersionListPage;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
@@ -16,7 +16,7 @@ public class VersionPageManager extends PageManager {
 
     private static VersionPageManager instance;
 
-    private VersionListPage versionListPage;
+    private FCLCommonPage versionListPage;
 
     public static VersionPageManager getInstance() {
         if (instance == null) {
@@ -32,7 +32,8 @@ public class VersionPageManager extends PageManager {
 
     @Override
     public void init(UIListener listener) {
-        versionListPage = new VersionListPage(getContext(), PAGE_ID_VERSION_LIST, getParent(), R.layout.page_version_list);
+        // 批 2：Compose 开关已固化，旧 View 页面（VersionListPage + page_version_list.xml）已删除。
+        versionListPage = new ComposeVersionListPage(getContext(), PAGE_ID_VERSION_LIST, getParent());
 
         if (listener != null) {
             listener.onLoad();

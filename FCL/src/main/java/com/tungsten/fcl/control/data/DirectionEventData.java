@@ -1,9 +1,5 @@
 package com.tungsten.fcl.control.data;
 
-import static com.tungsten.fcl.util.FXUtils.onInvalidating;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -16,25 +12,28 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.fakefx.beans.Observable;
-import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
-import com.tungsten.fclcore.fakefx.collections.FXCollections;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
-import com.tungsten.fclcore.util.fakefx.ObservableHelper;
+import com.tungsten.fcl.util.FlowList;
+import com.tungsten.fclcore.util.flow.FlowSubscriptions;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
+import kotlinx.coroutines.flow.MutableStateFlow;
+import kotlinx.coroutines.flow.StateFlow;
+import kotlinx.coroutines.flow.StateFlowKt;
+
+/**
+ * 方向键事件数据（阶段 4b）：属性已 StateFlow 化；任何字段（含键码列表成员）变更递增
+ * {@link #revisionFlow()}（对齐原 Observable 失效语义）。
+ *
+ * <p>磁盘 JSON 由手写 {@link Serializer} 产出，与属性类型无关，格式不变。</p>
+ */
 @JsonAdapter(DirectionEventData.Serializer.class)
-public class DirectionEventData implements Cloneable, Observable {
+public class DirectionEventData implements Cloneable {
 
     public enum FollowOption {
         FIXED,
@@ -46,146 +45,153 @@ public class DirectionEventData implements Cloneable, Observable {
      * Up keycode
      * Default is W
      */
-    private final ObservableList<Integer> upKeycodeList = FXCollections.observableArrayList(FCLKeycodes.KEY_W);
+    private final FlowList<Integer> upKeycodes = new FlowList<>(Collections.singletonList(FCLKeycodes.KEY_W));
 
-    public ObservableList<Integer> upKeycodeList() {
-        return upKeycodeList;
+    public StateFlow<List<Integer>> upKeycodesFlow() {
+        return upKeycodes.flow();
     }
 
-    public void setUpKeycode(ObservableList<Integer> keycode) {
-        upKeycodeList.setAll(keycode);
+    public List<Integer> getUpKeycodes() {
+        return upKeycodes.get();
+    }
+
+    public void setUpKeycode(List<Integer> keycode) {
+        upKeycodes.setAll(keycode);
     }
 
     /**
      * Down keycode
      * Default is S
      */
-    private final ObservableList<Integer> downKeycodeList = FXCollections.observableArrayList(FCLKeycodes.KEY_S);
+    private final FlowList<Integer> downKeycodes = new FlowList<>(Collections.singletonList(FCLKeycodes.KEY_S));
 
-    public ObservableList<Integer> downKeycodeList() {
-        return downKeycodeList;
+    public StateFlow<List<Integer>> downKeycodesFlow() {
+        return downKeycodes.flow();
     }
 
-    public void setDownKeycode(ObservableList<Integer> keycode) {
-        downKeycodeList.setAll(keycode);
+    public List<Integer> getDownKeycodes() {
+        return downKeycodes.get();
+    }
+
+    public void setDownKeycode(List<Integer> keycode) {
+        downKeycodes.setAll(keycode);
     }
 
     /**
      * Left keycode
      * Default is A
      */
-    private final ObservableList<Integer> leftKeycodeList = FXCollections.observableArrayList(FCLKeycodes.KEY_A);
+    private final FlowList<Integer> leftKeycodes = new FlowList<>(Collections.singletonList(FCLKeycodes.KEY_A));
 
-    public ObservableList<Integer> leftKeycodeList() {
-        return leftKeycodeList;
+    public StateFlow<List<Integer>> leftKeycodesFlow() {
+        return leftKeycodes.flow();
     }
 
-    public void setLeftKeycode(ObservableList<Integer> keycode) {
-        leftKeycodeList.setAll(keycode);
+    public List<Integer> getLeftKeycodes() {
+        return leftKeycodes.get();
+    }
+
+    public void setLeftKeycode(List<Integer> keycode) {
+        leftKeycodes.setAll(keycode);
     }
 
     /**
      * Right keycode
      * Default is D
      */
-    private final ObservableList<Integer> rightKeycodeList = FXCollections.observableArrayList(FCLKeycodes.KEY_D);
+    private final FlowList<Integer> rightKeycodes = new FlowList<>(Collections.singletonList(FCLKeycodes.KEY_D));
 
-    public ObservableList<Integer> rightKeycodeList() {
-        return rightKeycodeList;
+    public StateFlow<List<Integer>> rightKeycodesFlow() {
+        return rightKeycodes.flow();
     }
 
-    public void setRightKeycode(ObservableList<Integer> keycode) {
-        rightKeycodeList.setAll(keycode);
+    public List<Integer> getRightKeycodes() {
+        return rightKeycodes.get();
+    }
+
+    public void setRightKeycode(List<Integer> keycode) {
+        rightKeycodes.setAll(keycode);
     }
 
     /**
      * Follow option (only rocker style)
      */
-    private final ObjectProperty<FollowOption> followOptionProperty = new SimpleObjectProperty<>(this, "followOption", FollowOption.CENTER_FOLLOW);
+    private final MutableStateFlow<FollowOption> followOption = StateFlowKt.MutableStateFlow(FollowOption.CENTER_FOLLOW);
 
-    public ObjectProperty<FollowOption> followOptionProperty() {
-        return followOptionProperty;
+    public StateFlow<FollowOption> followOptionFlow() {
+        return followOption;
     }
 
     public void setFollowOption(FollowOption followOption) {
-        followOptionProperty.set(followOption);
+        this.followOption.setValue(followOption);
     }
 
     public FollowOption getFollowOption() {
-        return followOptionProperty.get();
+        return followOption.getValue();
     }
 
     /**
      * Double click center to enable sneak
      */
-    private final BooleanProperty sneakProperty = new SimpleBooleanProperty(this, "sneak", true);
+    private final MutableStateFlow<Boolean> sneak = StateFlowKt.MutableStateFlow(true);
 
-    public BooleanProperty sneakProperty() {
-        return sneakProperty;
+    public StateFlow<Boolean> sneakFlow() {
+        return sneak;
     }
 
     public void setSneak(boolean sneak) {
-        sneakProperty.set(sneak);
+        this.sneak.setValue(sneak);
     }
 
     public boolean isSneak() {
-        return sneakProperty.get();
+        return sneak.getValue();
     }
 
     /**
      * Sneak keycode
      */
-    private final IntegerProperty sneakKeycodeProperty = new SimpleIntegerProperty(this, "sneakKeycode", FCLKeycodes.KEY_LEFTSHIFT);
+    private final MutableStateFlow<Integer> sneakKeycode = StateFlowKt.MutableStateFlow(FCLKeycodes.KEY_LEFTSHIFT);
 
-    public IntegerProperty sneakKeycodeProperty() {
-        return sneakKeycodeProperty;
+    public StateFlow<Integer> sneakKeycodeFlow() {
+        return sneakKeycode;
     }
 
     public void setSneakKeycode(int keycode) {
-        sneakKeycodeProperty.set(keycode);
+        sneakKeycode.setValue(keycode);
     }
 
     public int getSneakKeycode() {
-        return sneakKeycodeProperty.get();
+        return sneakKeycode.getValue();
     }
 
     public DirectionEventData() {
-        addPropertyChangedListener(onInvalidating(this::invalidate));
+        FlowSubscriptions.subscribe(upKeycodes.flow(), v -> invalidate());
+        FlowSubscriptions.subscribe(downKeycodes.flow(), v -> invalidate());
+        FlowSubscriptions.subscribe(leftKeycodes.flow(), v -> invalidate());
+        FlowSubscriptions.subscribe(rightKeycodes.flow(), v -> invalidate());
+        FlowSubscriptions.subscribe(followOption, v -> invalidate());
+        FlowSubscriptions.subscribe(sneak, v -> invalidate());
+        FlowSubscriptions.subscribe(sneakKeycode, v -> invalidate());
     }
 
-    public void addPropertyChangedListener(InvalidationListener listener) {
-        upKeycodeList.addListener(listener);
-        downKeycodeList.addListener(listener);
-        leftKeycodeList.addListener(listener);
-        rightKeycodeList.addListener(listener);
-        followOptionProperty.addListener(listener);
-        sneakProperty.addListener(listener);
-        sneakKeycodeProperty.addListener(listener);
-    }
+    private final MutableStateFlow<Long> revision = StateFlowKt.MutableStateFlow(0L);
 
-    private ObservableHelper observableHelper = new ObservableHelper(this);
-
-    @Override
-    public void addListener(InvalidationListener listener) {
-        observableHelper.addListener(listener);
-    }
-
-    @Override
-    public void removeListener(InvalidationListener listener) {
-        observableHelper.removeListener(listener);
+    /** 任何字段（含键码列表成员）变更时递增（对齐原 Observable 失效语义）。 */
+    public StateFlow<Long> revisionFlow() {
+        return revision;
     }
 
     private void invalidate() {
-        observableHelper.invalidate();
+        revision.setValue(revision.getValue() + 1);
     }
 
     @Override
     public DirectionEventData clone() {
         DirectionEventData data = new DirectionEventData();
-        data.setUpKeycode(upKeycodeList());
-        data.setDownKeycode(downKeycodeList());
-        data.setLeftKeycode(leftKeycodeList());
-        data.setRightKeycode(rightKeycodeList());
+        data.setUpKeycode(getUpKeycodes());
+        data.setDownKeycode(getDownKeycodes());
+        data.setLeftKeycode(getLeftKeycodes());
+        data.setRightKeycode(getRightKeycodes());
         data.setFollowOption(getFollowOption());
         data.setSneak(isSneak());
         data.setSneakKeycode(getSneakKeycode());
@@ -198,14 +204,10 @@ public class DirectionEventData implements Cloneable, Observable {
             if (src == null) return JsonNull.INSTANCE;
             JsonObject obj = new JsonObject();
 
-            obj.add("upKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.upKeycodeList()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
-            obj.add("downKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.downKeycodeList()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
-            obj.add("leftKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.leftKeycodeList()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
-            obj.add("rightKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.rightKeycodeList()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
+            obj.add("upKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getUpKeycodes()), TypeToken.getParameterized(ArrayList.class, Integer.class).getType()).getAsJsonArray());
+            obj.add("downKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getDownKeycodes()), TypeToken.getParameterized(ArrayList.class, Integer.class).getType()).getAsJsonArray());
+            obj.add("leftKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getLeftKeycodes()), TypeToken.getParameterized(ArrayList.class, Integer.class).getType()).getAsJsonArray());
+            obj.add("rightKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.getRightKeycodes()), TypeToken.getParameterized(ArrayList.class, Integer.class).getType()).getAsJsonArray());
             obj.addProperty("followOption", src.getFollowOption().toString());
             obj.addProperty("sneak", src.isSneak());
             obj.addProperty("sneakKeycode", src.getSneakKeycode());
@@ -235,15 +237,14 @@ public class DirectionEventData implements Cloneable, Observable {
         /**
          * 通用的方向键反序列化方法
          */
-        private void deserializeKeycodeList(JsonObject obj, String keyName, java.util.function.Consumer<ObservableList<Integer>> setter, int defaultKeycode) {
+        private void deserializeKeycodeList(JsonObject obj, String keyName, java.util.function.Consumer<List<Integer>> setter, int defaultKeycode) {
             if (obj.get(keyName).isJsonArray()) {
-                setter.accept(FXCollections.observableList(JsonUtils.GSON_SIMPLE.fromJson(
+                setter.accept(JsonUtils.GSON_SIMPLE.fromJson(
                         Optional.ofNullable(obj.get(keyName)).map(JsonElement::getAsJsonArray).orElse(new JsonArray()),
-                        new TypeToken<ArrayList<Integer>>() {
-                        }.getType()
-                )));
+                        TypeToken.getParameterized(ArrayList.class, Integer.class).getType()
+                ));
             } else {
-                setter.accept(FXCollections.observableArrayList(
+                setter.accept(Collections.singletonList(
                         Optional.ofNullable(obj.get(keyName)).map(JsonElement::getAsInt).orElse(defaultKeycode)
                 ));
             }

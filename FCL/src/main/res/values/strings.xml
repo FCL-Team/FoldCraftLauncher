@@ -99,6 +99,7 @@
     <string name="account_skin_type_default">Default</string>
     <string name="account_skin_type_steve" translatable="false">Steve</string>
     <string name="account_skin_type_alex" translatable="false">Alex</string>
+    <string name="account_skin_type_local_file">Local Skin File</string>
     <string name="account_skin_upload">Select skin file</string>
     <string name="account_skin_model_classic" translatable="false">Classic (Steve)</string>
     <string name="account_skin_model_slim" translatable="false">Slim (Alex)</string>
@@ -484,7 +485,6 @@
     <string name="help_website">Website</string>
 
     <string name="input_hint_not_empty">Required</string>
-    <string name="input_hint_optional">Optional</string>
     <string name="input_not_empty">Fill the required input box first.</string>
     <string name="input_number">The input must be a number.</string>
     <string name="input_url">The input must be a valid URL.</string>
@@ -877,9 +877,7 @@
     <string name="settings_advanced_jvm_args">Java VM arguments</string>
     <string name="settings_advanced_env">Environment Variables</string>
     <string name="settings_advanced_minecraft_arguments">Launch Arguments</string>
-    <string name="settings_advanced_minecraft_arguments_prompt">Default</string>
     <string name="settings_advanced_server_ip">Server Address</string>
-    <string name="settings_advanced_server_ip_prompt">Join automatically after launching the game.</string>
     <string name="settings_advanced_custom_uuid">Custom UUID</string>
     <string name="settings_advanced_force_resolution">Force set resolution (experimental option, use with caution)</string>
 
@@ -960,13 +958,11 @@
     <string name="settings_launcher_allow_screenshot">Allow screenshot/recording in crash activity</string>
 
     <string name="settings_memory">Memory</string>
-    <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB Minimum / %2$.1f GB Allocated (%3$.1f GB Available)</string>
     <string name="settings_memory_allocate_manual">%1$.1f GB Allocated</string>
     <string name="settings_memory_allocate_manual_exceeded">%1$.1f GB Allocated (%3$.1f GB Available)</string>
     <string name="settings_memory_auto_allocate">Automatically allocate</string>
     <string name="settings_memory_lower_bound">Minimum Memory</string>
-    <string name="settings_memory_used_per_total">%1$.1f GB Used / %2$.1f GB Total</string>
     <string name="settings_physical_memory">Physical Memory Size</string>
     <string name="settings_tabs_installers">Modloaders</string>
     <string name="settings_type_global_manage">Global Game Settings</string>
@@ -1185,7 +1181,6 @@
     <string name="world_info_time_format">%s days</string>
     <string name="world_manage">Worlds / Datapacks</string>
     <string name="world_name">World Name</string>
-    <string name="world_name_enter">Enter the world name</string>
     <string name="world_reveal">Reveal in Explorer</string>
     <string name="world_show_all">Show All</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
@@ -1261,4 +1256,6 @@
     <string name="slide_selection">Slide Selection</string>
     <string name="swap_hands">Double Tap Swap Hands</string>
     <string name="jar_executor_warn">Note! This feature is not for installing mods. If you are installing mods, please use the launcher\'s download function or add them in "Manage Mods".</string>
+    <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>
+    <string name="settings_memory_used_per_total">%1$.1f GB Used / %2$.1f GB Total</string>
 </resources>

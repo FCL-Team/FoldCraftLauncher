@@ -2,6 +2,7 @@
 compileSdk = "35"
 datastore = "1.2.1"
 kotlinxSerializationJson = "1.10.0"
+kotlinxCoroutines = "1.9.0"
 minSdk = "26"
 targetSdk = "34"
 agp = "8.13.2"
@@ -17,6 +18,7 @@ coreSplashscreen = "1.0.1"
 material = "1.12.0"
 constraintlayout = "2.2.0"
 glide = "4.16.0"
+glideCompose = "1.0.0-alpha.6"
 touchcontroller = "0.0.5"
 paletteKtx = "1.0.0"
 gamepadRemapper = "2.0.3"
@@ -30,10 +32,15 @@ jelf = "0.9.0"
 bytehook = "1.0.10"
 chardet = "2.5.0"
 junrar = "7.5.5"
+miuix = "0.9.3"
+composeBom = "2026.06.01"
+activityCompose = "1.13.0"
+lifecycleCompose = "2.10.0"
 
 [libraries]
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 taptargetview = { group = "com.getkeepsafe.taptargetview", name = "taptargetview", version.ref = "taptargetview" }
 nanohttpd = { group = "org.nanohttpd", name = "nanohttpd", version.ref = "nanohttpd" }
 commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "commonsCompress" }
@@ -45,6 +52,9 @@ core-splashscreen = { group = "androidx.core", name = "core-splashscreen", versi
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+# Glide 官方 Compose 集成。固定 alpha.6：该版本 compile 依赖 glide:4.16.0，与项目现有 Glide 精确对齐；
+# beta01~beta10 全部依赖 glide:5.0.x，引入会把全应用 Glide 抬升一个大版本（影响 View 侧既有加载逻辑）。
+glide-compose = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glideCompose" }
 touchcontroller = { group = "top.fifthlight.touchcontroller", name = "proxy-client-android", version.ref = "touchcontroller" }
 palette-ktx = { group = "androidx.palette", name = "palette-ktx", version.ref = "paletteKtx" }
 gamepad-remapper = { group = "com.github.Mathias-Boulay", name = "android_gamepad_remapper", version.ref = "gamepadRemapper" }
@@ -58,8 +68,21 @@ jelf = { group = "net.fornwall", name = "jelf", version.ref = "jelf" }
 bytehook = { group = "com.bytedance", name = "bytehook", version.ref = "bytehook" }
 chardet = { module = "org.glavo:chardet", version.ref = "chardet" }
 junrar = { group = "com.github.junrar", name = "junrar", version.ref = "junrar" }
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleCompose" }
+lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleCompose" }
+miuix-ui = { group = "top.yukonga.miuix.kmp", name = "miuix-ui", version.ref = "miuix" }
+miuix-icons = { group = "top.yukonga.miuix.kmp", name = "miuix-icons", version.ref = "miuix" }
+miuix-preference = { group = "top.yukonga.miuix.kmp", name = "miuix-preference", version.ref = "miuix" }
+miuix-blur = { group = "top.yukonga.miuix.kmp", name = "miuix-blur", version.ref = "miuix" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

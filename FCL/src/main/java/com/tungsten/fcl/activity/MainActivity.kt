@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
@@ -30,7 +31,7 @@ import androidx.core.view.forEach
 import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
 import com.mio.manager.RendererManager
-import com.mio.ui.dialog.RendererSelectDialog
+import com.tungsten.fcl.ui.compose.dialog.MiuixRendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
@@ -50,12 +51,14 @@ import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
-import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
+import com.tungsten.fcl.ui.bridge.LegacyBridge
+import com.tungsten.fcl.ui.download.modpack.compose.ComposeLocalModpackPage
+import com.tungsten.fcl.ui.main.compose.MainRightMenu
+import com.tungsten.fcl.ui.main.compose.MainRightMenuBridge
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.FXUtils
-import com.tungsten.fcl.util.WeakListenerHolder
+import com.tungsten.fcl.util.NavigationBus
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -64,17 +67,10 @@ import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
-import com.tungsten.fclcore.fakefx.beans.value.ObservableValue
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteMod.IMod
 import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.util.Logging.LOG
-import com.tungsten.fclcore.util.fakefx.BindingMapping
 import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
@@ -83,7 +79,11 @@ import com.tungsten.fcllibrary.component.view.FCLMenuView
 import com.tungsten.fcllibrary.component.view.FCLMenuView.OnSelectListener
 import com.tungsten.fcllibrary.util.ConvertUtils
 import kotlinx.coroutines.Dispatchers
+import com.tungsten.fclcore.util.flow.FlowSubscriptions
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
@@ -105,12 +105,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     lateinit var binding: ActivityMainBinding
     private var _uiManager: UIManager? = null
     lateinit var uiManager: UIManager
-    private lateinit var currentAccount: ObjectProperty<Account?>
-    private val holder = WeakListenerHolder()
+    private lateinit var currentAccount: MutableStateFlow<Account?>
     private lateinit var profile: Profile
-    private lateinit var theme: IntegerProperty
-    private lateinit var theme2: IntegerProperty
-    private lateinit var theme2Dark: IntegerProperty
+    private val themeSubscriptions = ArrayList<FlowSubscriptions.Subscription>()
     var isVersionLoading = false
     private var modpackHandled = false
     lateinit var permissionResultLauncher: ActivityResultLauncher<String>
@@ -187,7 +184,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 goSetting.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
-                    RendererSelectDialog(this@MainActivity, false) {
+                    MiuixRendererSelectDialog(this@MainActivity, false) {
                         onClick(view)
                     }.show()
                     true
@@ -210,6 +207,25 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     true
                 }
 
+                NavigationBus.selectedMenu
+                    .onEach { menu ->
+                        val selectedView = when (menu) {
+                            NavigationBus.Menu.HOME -> home
+                            NavigationBus.Menu.MANAGE -> manage
+                            NavigationBus.Menu.DOWNLOAD -> download
+                            NavigationBus.Menu.CONTROLLER -> controller
+                            NavigationBus.Menu.MULTIPLAYER -> multiplayer
+                            NavigationBus.Menu.SETTING -> setting
+                            null -> null
+                        }
+                        if (selectedView != null) {
+                            refreshMenuView(selectedView)
+                            selectedView.isSelected = true
+                        } else {
+                            refreshMenuView(null)
+                        }
+                    }
+                    .launchIn(lifecycleScope)
                 uiManager = UIManager(this@MainActivity, uiLayout)
                 _uiManager = uiManager
                 uiManager.registerDefaultBackEvent {
@@ -224,6 +240,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     }
                 }
                 uiManager.init {
+                    // 启动等待遮罩：主 UI 加载完成（onLoad，主线程回调）后淡出移除
+                    dismissSplashOverlay()
                     home.setOnSelectListener(this@MainActivity)
                     manage.setOnSelectListener(this@MainActivity)
                     download.setOnSelectListener(this@MainActivity)
@@ -278,14 +296,58 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             }
         setupLiveBackground()
+        setupComposeRightMenu()
+    }
+
+    /**
+     * Compose 右侧栏接线（迁移开关已固化，批 3：旧 account/start/version/jar View 常置 GONE）。
+     * 全部交互经回调转回本 Activity 的既有方法（启动游戏/切 UI/JAR 执行逻辑零改动）。
+     */
+    private fun setupComposeRightMenu() {
+        binding.apply {
+            account.visibility = View.GONE
+            start.visibility = View.GONE
+            version.visibility = View.GONE
+            jar.visibility = View.GONE
+            rightMenuCompose.visibility = View.VISIBLE
+            rightMenuCompose.addView(
+                LegacyBridge.createComposeView(this@MainActivity) {
+                    MainRightMenu(
+                        onAccountClick = ::onAccountAreaClicked,
+                        onVersionClick = ::onVersionAreaClicked,
+                        onStartClick = ::onLaunchClicked,
+                        onStartLongClick = ::onStartAreaLongClicked,
+                        onJarClick = ::onJarAreaClicked,
+                        onJarLongClick = ::onJarAreaLongClicked,
+                        onGoSettingClick = ::onGoSettingClicked,
+                    )
+                },
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+            )
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            // 启动等待遮罩显示期间直接消费返回键，不传给 UIManager
+            if (binding.splashOverlay.visibility == View.VISIBLE) return true
             _uiManager?.onBackPressed()
             return true
         }
         return super.onKeyDown(keyCode, event)
+    }
+
+    /** 移除启动等待遮罩：短淡出后 GONE，动画时长对齐 ThemeEngine.animationSpeed 既有约定（speed*100ms）。 */
+    private fun dismissSplashOverlay() {
+        val overlay = binding.splashOverlay
+        if (overlay.visibility != View.VISIBLE) return
+        val duration = ThemeEngine.getInstance().theme.animationSpeed * 100L
+        overlay.animate()
+            .alpha(0f)
+            .setDuration(duration)
+            .withEndAction { overlay.visibility = View.GONE }
+            .start()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -313,6 +375,18 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        selectedAccountSubscription?.cancel()
+        selectedAccountSubscription = null
+        accountDisplaySubscription?.cancel()
+        accountDisplaySubscription = null
+        accountNameSubscription?.cancel()
+        accountNameSubscription = null
+        accountHintSubscription?.cancel()
+        accountHintSubscription = null
+        avatarSubscription?.cancel()
+        avatarSubscription = null
+        themeSubscriptions.forEach { it.cancel() }
+        themeSubscriptions.clear()
         if (shouldPlayVideo()) {
             mediaPlayer = null
             binding.videoView.stopPlayback()
@@ -381,117 +455,204 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun onClick(view: View) {
         binding.apply {
-            if (view === account && uiManager.currentUI !== uiManager.accountUI) {
+            when (view) {
+                account -> onAccountAreaClicked()
+                version -> onVersionAreaClicked()
+                back -> uiManager.onBackPressed()
+                jar -> onJarAreaClicked()
+                start -> onLaunchClicked()
+                goSetting -> onGoSettingClicked()
+            }
+        }
+    }
+
+    /** 账户区点击（3.6 抽取：旧 account View 与 Compose 右侧栏共用）。 */
+    internal fun onAccountAreaClicked() {
+        binding.apply {
+            if (uiManager.currentUI !== uiManager.accountUI) {
                 refreshMenuView(null)
                 title.setTextWithAnim(getString(R.string.account))
                 uiManager.switchUI(uiManager.accountUI)
             }
-            if (view === version && uiManager.currentUI !== uiManager.versionUI) {
+        }
+    }
+
+    /** 版本管理按钮点击（3.6 抽取：旧 version View 与 Compose 右侧栏共用）。 */
+    internal fun onVersionAreaClicked() {
+        binding.apply {
+            if (uiManager.currentUI !== uiManager.versionUI) {
                 refreshMenuView(null)
                 title.setTextWithAnim(getString(R.string.version))
                 uiManager.switchUI(uiManager.versionUI)
             }
-            if (view === back) {
-                uiManager.onBackPressed()
+        }
+    }
+
+    /** 启动按钮点击（3.6 抽取：旧 start View 与 Compose 右侧栏共用；启动链路零改动）。 */
+    internal fun onLaunchClicked() {
+        binding.apply {
+            if (!Controllers.isInitialized()) {
+                title.setTextWithAnim(getString(R.string.message_loading_controllers))
+                // Compose 右侧栏：经桥接节拍触发抖动（对齐旧 AnimUtil 抖动）
+                MainRightMenuBridge.startShakeTick.value =
+                    MainRightMenuBridge.startShakeTick.value + 1
+                return
             }
-            if (view === jar) {
-                if (sharedPreferences.getBoolean("showJarExecutorWarnDialog", true)) {
-                    showWarningDialog(this@MainActivity, getString(R.string.jar_executor_warn)) {
-                        sharedPreferences.edit {
-                            putBoolean("showJarExecutorWarnDialog", false)
-                        }
-                    }
-                    return
+            val selectedProfile = Profiles.getSelectedProfile()
+            DriverPlugin.selected = runCatching {
+                DriverPlugin.driverList.find {
+                    it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
                 }
-                jar.isSelected = false
-                JarExecutorHelper.start(this@MainActivity)
-            }
-            if (view === start) {
-                if (!Controllers.isInitialized()) {
-                    title.setTextWithAnim(getString(R.string.message_loading_controllers))
-                    AnimUtil.playTranslationX(start, 700, 0f, 50f, -50f, 50f, -50f, 0f)
-                        .interpolator(OvershootInterpolator()).start()
-                    return
+            }.getOrNull() ?: DriverPlugin.driverList[0]
+            refreshScreenSize()
+            DisplayUtil.refreshDisplayMetrics(this@MainActivity)
+            Versions.launch(this@MainActivity, selectedProfile)
+        }
+    }
+
+    /** 启动按钮长按：选择渲染器后启动（3.6 抽取，逻辑对齐原 setOnLongClickListener）。 */
+    internal fun onStartAreaLongClicked() {
+        MiuixRendererSelectDialog(this@MainActivity, false) {
+            onLaunchClicked()
+        }.show()
+    }
+
+    /** JAR 执行按钮点击（3.6 抽取：旧 jar View 与 Compose 右侧栏共用）。 */
+    internal fun onJarAreaClicked() {
+        binding.apply {
+            if (sharedPreferences.getBoolean("showJarExecutorWarnDialog", true)) {
+                showWarningDialog(this@MainActivity, getString(R.string.jar_executor_warn)) {
+                    sharedPreferences.edit {
+                        putBoolean("showJarExecutorWarnDialog", false)
+                    }
                 }
-                val selectedProfile = Profiles.getSelectedProfile()
-                DriverPlugin.selected = runCatching {
-                    DriverPlugin.driverList.find {
-                        it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
-                    }
-                }.getOrNull() ?: DriverPlugin.driverList[0]
-                refreshScreenSize()
-                DisplayUtil.refreshDisplayMetrics(this@MainActivity)
-                Versions.launch(this@MainActivity, selectedProfile)
+                return
             }
-            if (view === goSetting) {
-                val profile = Profiles.getSelectedProfile()
-                if (profile.versionSetting.isGlobal) {
-                    setting.isSelected = true
-                    uiManager.settingUI.runAfterInit {
-                        val tab = uiManager.settingUI.tabLayout.getTabAt(0)
-                        uiManager.settingUI.tabLayout.selectTab(tab)
-                    }
-                } else {
-                    manage.isSelected = true
-                    uiManager.manageUI.runAfterInit {
-                        val tab = uiManager.manageUI.tabLayout.getTabAt(0)
-                        uiManager.manageUI.tabLayout.selectTab(tab)
-                    }
+            jar.isSelected = false
+            JarExecutorHelper.start(this@MainActivity)
+        }
+    }
+
+    /** JAR 执行按钮长按：自定义参数执行（3.6 抽取，逻辑对齐原 setOnLongClickListener）。 */
+    internal fun onJarAreaLongClicked() {
+        EditDialog(this@MainActivity) {
+            JarExecutorHelper.exec(
+                this@MainActivity,
+                null,
+                JarExecutorHelper.getJava(null),
+                it
+            )
+        }.apply {
+            setTitle(R.string.jar_execute_custom_args)
+            binding.editText.hint = "-jar xxx"
+            binding.editText.setLines(1)
+            binding.editText.maxLines = 1
+        }.show()
+    }
+
+    /** 启动区设置入口点击（3.6 抽取：旧 goSetting View 与 Compose 右侧栏共用）。 */
+    internal fun onGoSettingClicked() {
+        binding.apply {
+            val profile = Profiles.getSelectedProfile()
+            if (profile.versionSetting.isGlobal) {
+                setting.isSelected = true
+                uiManager.settingUI.runAfterInit {
+                    val tab = uiManager.settingUI.tabLayout.getTabAt(0)
+                    uiManager.settingUI.tabLayout.selectTab(tab)
+                }
+            } else {
+                manage.isSelected = true
+                uiManager.manageUI.runAfterInit {
+                    val tab = uiManager.manageUI.tabLayout.getTabAt(0)
+                    uiManager.manageUI.tabLayout.selectTab(tab)
                 }
             }
         }
     }
+
+    private var accountDisplaySubscription: FlowSubscriptions.Subscription? = null
+    private var accountNameSubscription: FlowSubscriptions.Subscription? = null
+    private var accountHintSubscription: FlowSubscriptions.Subscription? = null
+    private var avatarSubscription: FlowSubscriptions.Subscription? = null
 
     private fun setupAccountDisplay() {
         binding.apply {
-            currentAccount = object : SimpleObjectProperty<Account?>() {
-                override fun invalidated() {
-                    val account = get()
-                    if (account == null) {
-                        accountName.stringProperty().unbind()
-                        accountHint.stringProperty().unbind()
-                        avatar.imageProperty().unbind()
-                        accountName.text = getString(R.string.account_state_no_account)
-                        accountHint.text = getString(R.string.account_state_add)
-                        avatar.setBackgroundDrawable(
-                            TexturesLoader.toAvatar(
-                                TexturesLoader.getDefaultSkin(TextureModel.ALEX).image(),
-                                ConvertUtils.dip2px(
-                                    this@MainActivity, 52f
-                                )
-                            ).toDrawable(resources)
-                        )
+            currentAccount = MutableStateFlow(null)
+            // 阶段 4c：原匿名 SimpleObjectProperty 的 invalidated() 改为订阅 currentAccount。
+            accountDisplaySubscription?.cancel()
+            accountDisplaySubscription = FlowSubscriptions.subscribe(currentAccount) { account ->
+                if (account == null) {
+                    accountNameSubscription?.cancel()
+                    accountNameSubscription = null
+                    accountHintSubscription?.cancel()
+                    accountHintSubscription = null
+                    avatarSubscription?.cancel()
+                    avatarSubscription = null
+                    accountName.text = getString(R.string.account_state_no_account)
+                    accountHint.text = getString(R.string.account_state_add)
+                    avatar.setBackgroundDrawable(
+                        TexturesLoader.toAvatar(
+                            TexturesLoader.getDefaultSkin(TextureModel.ALEX).image,
+                            ConvertUtils.dip2px(
+                                this@MainActivity, 52f
+                            )
+                        ).toDrawable(resources)
+                    )
+                } else {
+                    // 对齐原 bind(createObjectBinding)：先同步当前值，再跟随 revisionFlow 重算
+                    accountNameSubscription?.cancel()
+                    accountName.stringFlow().value = account.character
+                    accountNameSubscription = FlowSubscriptions.subscribe(account.revisionFlow()) {
+                        accountName.stringFlow().value = account.character
+                    }
+                    accountHintSubscription?.cancel()
+                    accountHint.stringFlow().value = accountSubtitle(this@MainActivity, account)
+                    accountHintSubscription = if (account is AuthlibInjectorAccount) {
+                        FlowSubscriptions.subscribe(account.server.revisionFlow()) {
+                            accountHint.stringFlow().value = account.server.name
+                        }
                     } else {
-                        accountName.stringProperty()
-                            .bind(BindingMapping.of(account) { obj: Account -> obj.character })
-                        accountHint.stringProperty()
-                            .bind(accountSubtitle(this@MainActivity, account))
-                        avatar.imageProperty().unbind()
-                        avatar.imageProperty().bind(
-                            TexturesLoader.avatarBinding(
-                                account, ConvertUtils.dip2px(
-                                    this@MainActivity, 52f
-                                )
+                        null
+                    }
+                    avatarSubscription?.cancel()
+                    avatarSubscription = FlowSubscriptions.subscribeWithCurrent(
+                        TexturesLoader.avatarFlow(
+                            account, ConvertUtils.dip2px(
+                                this@MainActivity, 52f
                             )
                         )
+                    ) {
+                        avatar.imageFlow().value = it
                     }
                 }
             }
-            (currentAccount as SimpleObjectProperty<Account?>).bind(Accounts.selectedAccountProperty())
+            // 阶段 4a：Accounts.selectedAccount 已 StateFlow 化；subscribeWithCurrent 等价
+            // 原 bind（先同步当前值再跟随），onDestroy 取消订阅（对齐 bind 弱引用自动摘除）。
+            selectedAccountSubscription?.cancel()
+            selectedAccountSubscription = FlowSubscriptions.subscribeWithCurrent(Accounts.selectedAccountFlow()) {
+                currentAccount.value = it
+            }
         }
     }
 
+    private var selectedAccountSubscription: FlowSubscriptions.Subscription? = null
+
     fun refreshAvatar(account: Account) {
         lifecycleScope.launch {
-            if (currentAccount.get() === account) {
-                binding.avatar.imageProperty().unbind()
-                binding.avatar.imageProperty().bind(
-                    TexturesLoader.avatarBinding(
-                        currentAccount.get(), ConvertUtils.dip2px(
+            if (currentAccount.value === account) {
+                avatarSubscription?.cancel()
+                avatarSubscription = FlowSubscriptions.subscribeWithCurrent(
+                    TexturesLoader.avatarFlow(
+                        currentAccount.value, ConvertUtils.dip2px(
                             this@MainActivity, 52f
                         )
                     )
-                )
+                ) {
+                    binding.avatar.imageFlow().value = it
+                }
+                // 3.6：通知 Compose 右侧栏重建头像绑定（旧 View 重绑逻辑保留，开关回滚可用）
+                MainRightMenuBridge.avatarRefreshTick.value =
+                    MainRightMenuBridge.avatarRefreshTick.value + 1
             }
         }
     }
@@ -499,6 +660,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private fun loadVersion(version: String?) {
         isVersionLoading = true
         binding.versionProgress.visibility = View.VISIBLE
+        // 3.6：镜像到 Compose 右侧栏（旧 View 更新逻辑保留，开关回滚可用）
+        MainRightMenuBridge.versionDisplay.value =
+            MainRightMenuBridge.versionDisplay.value.copy(loading = true)
         profile = Profiles.getSelectedProfile()
         if (version != null && profile.repository.hasVersion(version)) {
             lifecycleScope.launch(Dispatchers.IO) {
@@ -545,37 +709,46 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     binding.versionName.isSelected = true
 //                    binding.versionHint.text = libraries.toString()
                     binding.icon.setBackgroundDrawable(drawable)
+                    MainRightMenuBridge.versionDisplay.value = MainRightMenuBridge.VersionDisplay(
+                        loading = false,
+                        name = version,
+                        icon = drawable,
+                    )
                 }
             }
         } else {
             isVersionLoading = false
             binding.versionProgress.visibility = View.GONE
             binding.versionName.text = getString(R.string.version_no_version)
-            binding.icon.setBackgroundDrawable(
-                AppCompatResources.getDrawable(
-                    this,
-                    R.drawable.img_grass
-                )
+            val fallbackIcon = AppCompatResources.getDrawable(
+                this,
+                R.drawable.img_grass
+            )
+            binding.icon.setBackgroundDrawable(fallbackIcon)
+            MainRightMenuBridge.versionDisplay.value = MainRightMenuBridge.VersionDisplay(
+                loading = false,
+                name = getString(R.string.version_no_version),
+                icon = fallbackIcon,
             )
         }
     }
 
     private fun setupVersionDisplay() {
-        holder.add(FXUtils.onWeakChangeAndOperate(Profiles.selectedVersionProperty()) { s: String? ->
-            lifecycleScope.launch { loadVersion(s) }
-        })
+        // 阶段 4a：Profiles.selectedVersion 已 StateFlow 化；launchIn(lifecycleScope)
+        // 等价原弱引用监听（Activity 销毁自动退订），collect 含当前值对齐 onChangeAndOperate。
+        Profiles.selectedVersionFlow()
+            .onEach { s -> lifecycleScope.launch { loadVersion(s) } }
+            .launchIn(lifecycleScope)
     }
 
-    private fun accountSubtitle(context: Context, account: Account): ObservableValue<String> {
+    private fun accountSubtitle(context: Context, account: Account): String {
         return if (account is AuthlibInjectorAccount) {
-            BindingMapping.of(account.server) { obj: AuthlibInjectorServer -> obj.name }
+            account.server.name
         } else {
-            Bindings.createStringBinding({
-                Accounts.getLocalizedLoginTypeName(
-                    context,
-                    Accounts.getAccountFactory(account)
-                )
-            })
+            Accounts.getLocalizedLoginTypeName(
+                context,
+                Accounts.getAccountFactory(account)
+            )
         }
     }
 
@@ -598,51 +771,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun initBackground() {
-        theme = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme"
-            }
-        }
-        theme2 = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme2"
-            }
-        }
-        theme2Dark = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme2Dark"
-            }
-        }
-        theme.bind(ThemeEngine.getInstance().theme.colorProperty())
-        theme2.bind(ThemeEngine.getInstance().theme.color2Property())
-        theme2Dark.bind(ThemeEngine.getInstance().theme.color2DarkProperty())
+        // 阶段 4c：原三个匿名 IntegerPropertyBase（invalidated → updateColor）+
+        // bind(colorProperty/color2Property/color2DarkProperty) 改为直接订阅主题 Flow；
+        // subscribeWithCurrent 对齐 bind 的"先同步当前值再跟随"（初始化即各触发一次）。
+        themeSubscriptions.add(FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().theme.colorFlow()) { updateColor() })
+        themeSubscriptions.add(FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().theme.color2Flow()) { updateColor() })
+        themeSubscriptions.add(FlowSubscriptions.subscribeWithCurrent(ThemeEngine.getInstance().theme.color2DarkFlow()) { updateColor() })
     }
 
     private fun createBackground(): GradientDrawable {
@@ -808,14 +942,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             getString(R.string.modpack_external_detected, file.name),
             Toast.LENGTH_SHORT
         ).show()
-        binding.download.isSelected = true
+        NavigationBus.select(NavigationBus.Menu.DOWNLOAD)
         val downloadUI = uiManager.downloadUI
         downloadUI.runAfterInit {
-            val page = LocalModpackPage(
+            val page = ComposeLocalModpackPage(
                 this,
                 PageManager.PAGE_ID_TEMP,
                 downloadUI.container,
-                R.layout.page_modpack,
                 profile,
                 null,
                 file
@@ -825,7 +958,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun refreshScreenSize() {
-        DisplayUtil.screenWidth = binding.root.width
+        DisplayUtil.screenWidth =  binding.root.width
         DisplayUtil.screenHeight = binding.root.height
     }
 }

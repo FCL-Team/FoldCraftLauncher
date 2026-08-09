@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.ui.compose.dialog.MiuixUpdateDialog;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
@@ -56,7 +57,7 @@ public class UpdateChecker {
                 Schedulers.androidUIThread().execute(() -> Toast.makeText(context, context.getString(R.string.update_checking), Toast.LENGTH_SHORT).show());
             }
             String res = NetworkUtils.doGet(NetworkUtils.toURL(LocaleUtils.isChinese(context) ? UPDATE_CHECK_URL_CN : UPDATE_CHECK_URL));
-            ArrayList<RemoteVersion> versions = JsonUtils.GSON.fromJson(res, new TypeToken<ArrayList<RemoteVersion>>(){}.getType());
+            ArrayList<RemoteVersion> versions = JsonUtils.GSON.fromJson(res, TypeToken.getParameterized(ArrayList.class, RemoteVersion.class).getType());
             for (RemoteVersion version : versions) {
                 if (version.getVersionCode() > getCurrentVersionCode(context)) {
                     if (showBeta || !version.isBeta()) {
@@ -87,10 +88,7 @@ public class UpdateChecker {
     }
 
     private void showUpdateDialog(Context context, RemoteVersion version) {
-        Schedulers.androidUIThread().execute(() -> {
-            UpdateDialog dialog = new UpdateDialog(context, version);
-            dialog.show();
-        });
+        Schedulers.androidUIThread().execute(() -> new MiuixUpdateDialog(context, version).show());
     }
 
     public static boolean isIgnore(Context context, int code) {
