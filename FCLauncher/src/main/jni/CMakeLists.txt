@@ -43,44 +43,11 @@ target_link_libraries(
     android
 )
 
-# 模块：driver_helper
-add_library(
-    driver_helper
-    SHARED
-    driver_helper/driver_helper.c
-    driver_helper/nsbypass.c
-)
-
-target_compile_options(
-    driver_helper
-    PRIVATE
-    -rdynamic
-)
-
-target_link_libraries(
-    driver_helper
-    PRIVATE
-    log
-    dl
-    android
-)
-
-# 仅在arm64-v8a架构下链接EGL和GLESv2
-if(${ANDROID_ABI} STREQUAL "arm64-v8a")
-    target_link_libraries(
-        driver_helper
-        PRIVATE
-        EGL
-        GLESv2
-    )
-endif()
-
-# 模块：linkerhook
+# 模块：linkerhook - 与 Amethyst-Android 布局一致，hook.c 位于 driver_helper/
 add_library(
     linkerhook
     SHARED
-    linkerhook/linkerhook.cpp
-    linkerhook/linkerns.c
+    driver_helper/hook.c
 )
 
 target_link_options(
@@ -155,6 +122,7 @@ add_library(
     jvm_hooks/java_exec_hooks.c
     jvm_hooks/emui_iterator_fix_hook.c
     jvm_hooks/lwjgl_dlopen_hook.c
+    driver_helper/nsbypass.c
 )
 
 target_include_directories(
@@ -170,7 +138,6 @@ target_link_libraries(
     pojavexec
     PRIVATE
     fcl
-    driver_helper
     log
     dl
     android
