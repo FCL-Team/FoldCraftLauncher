@@ -143,7 +143,7 @@ static jint launchJVM(int margc, char **margv) {
         FCL_INTERNAL_LOG("JLI lib = NULL: %s", dlerror());
         return -1;
     }
-    FCL_INTERNAL_LOG("Found JLI lib");
+    FCL_LOG("Found JLI lib");
 
     JLI_Launch_func *pJLI_Launch =
             (JLI_Launch_func *) dlsym(libjli, "JLI_Launch");
@@ -155,7 +155,7 @@ static jint launchJVM(int margc, char **margv) {
         return -1;
     }
 
-    FCL_INTERNAL_LOG("Calling JLI_Launch");
+    FCL_LOG("Calling JLI_Launch");
 
     return pJLI_Launch(margc, margv,
                        0, NULL, // sizeof(const_jargs) / sizeof(char *), const_jargs,
