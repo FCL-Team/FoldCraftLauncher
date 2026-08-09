@@ -379,6 +379,9 @@ fun fclButtonColors(): ButtonColors = ButtonDefaults.buttonColorsPrimary()
  * [minWidth] 直通 Miuix [Button] 的 minWidth：默认保持 Miuix 现状；
  * 旧 XML 按行宽比例定宽的窄按钮（如主题色三行 0.13/0.25/0.11）传 0.dp，
  * 否则默认 minWidth 会把按比例计算的宽度撑回去、挤掉后续按钮文字。
+ * [insideMargin] 直通 Miuix [Button] 的 insideMargin（默认 16×13dp）；
+ * 旧 XML 用 auto_padding=false + padding=10dp 的紧凑按钮（如下载页分页按钮）
+ * 传 PaddingValues(10.dp)，否则默认内边距会把按钮撑大、窄屏溢出。
  * 其余参数直通 Miuix [Button]，业务行为零改动。
  */
 @Composable
@@ -387,6 +390,7 @@ fun FCLButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     minWidth: Dp = ButtonDefaults.MinWidth,
+    insideMargin: PaddingValues = ButtonDefaults.InsideMargin,
     colors: ButtonColors = fclButtonColors(),
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -396,6 +400,7 @@ fun FCLButton(
         enabled = enabled,
         cornerRadius = FCLCornerRadius.Card,
         minWidth = minWidth,
+        insideMargin = insideMargin,
         colors = colors,
         content = content,
     )
