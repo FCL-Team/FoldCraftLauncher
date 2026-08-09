@@ -32,6 +32,9 @@
 #include "driver_helper/driver_helper.h"
 #include <stdatomic.h>
 
+// 由 input_bridge_v3.c 提供，上报 monitor size 到 Java 侧 GLFW
+extern void updateMonitorSize(int width, int height);
+
 #define GLFW_CLIENT_API 0x22001
 /* Consider GLFW_NO_API as Vulkan API */
 #define GLFW_NO_API 0
@@ -58,7 +61,8 @@ EXTERNAL_API void pojavTerminate() {
 
     switch (pojav_environ->config_renderer) {
         case RENDERER_GL4ES: {
-            eglMakeCurrent_p(potatoBridge.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+            eglMakeCurrent_p(potatoBridge.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE,
+                             EGL_NO_CONTEXT);
             eglDestroySurface_p(potatoBridge.eglDisplay, potatoBridge.eglSurface);
             eglDestroyContext_p(potatoBridge.eglDisplay, potatoBridge.eglContext);
             eglTerminate_p(potatoBridge.eglDisplay);
@@ -67,28 +71,32 @@ EXTERNAL_API void pojavTerminate() {
             potatoBridge.eglContext = EGL_NO_CONTEXT;
             potatoBridge.eglDisplay = EGL_NO_DISPLAY;
             potatoBridge.eglSurface = EGL_NO_SURFACE;
-        } break;
+        }
+            break;
 
             //case RENDERER_VIRGL:
         case RENDERER_VK_ZINK: {
             // Nothing to do here
-        } break;
+        }
+            break;
     }
 }
 
 JNIEXPORT void JNICALL
-Java_org_lwjgl_glfw_CallbackBridge_setupBridgeWindow(JNIEnv *env, ABI_COMPAT jclass clazz, jobject surface) {
+Java_org_lwjgl_glfw_CallbackBridge_setupBridgeWindow(JNIEnv *env, ABI_COMPAT jclass clazz,
+                                                     jobject surface) {
     pojav_environ->pojavWindow = ANativeWindow_fromSurface(env, surface);
-    if(br_setup_window != NULL) br_setup_window();
+    if (br_setup_window != NULL) br_setup_window();
 }
 
 
 JNIEXPORT void JNICALL
-Java_net_kdt_pojavlaunch_utils_JREUtils_releaseBridgeWindow(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass clazz) {
+Java_net_kdt_pojavlaunch_utils_JREUtils_releaseBridgeWindow(ABI_COMPAT JNIEnv *env,
+                                                            ABI_COMPAT jclass clazz) {
     ANativeWindow_release(pojav_environ->pojavWindow);
 }
 
-EXTERNAL_API void* pojavGetCurrentContext() {
+EXTERNAL_API void *pojavGetCurrentContext() {
     if (pojav_environ->config_renderer == RENDERER_VIRGL) {
         return virglGetCurrentContext();
     }
@@ -147,11 +155,33 @@ int pojavInitOpenGL() {
     return 0;
 }
 
+// 获取当前线程的 JNIEnv（未附着则先 Attach，不 Detach，保留渲染线程的附着状态）
+static JNIEnv *get_attached_env(JavaVM *jvm) {
+    JNIEnv *jvm_env = NULL;
+    jint env_result = (*jvm)->GetEnv(jvm, (void **) &jvm_env, JNI_VERSION_1_4);
+    if (env_result == JNI_EDETACHED) {
+        env_result = (*jvm)->AttachCurrentThread(jvm, &jvm_env, NULL);
+    }
+    if (env_result != JNI_OK) {
+        printf("get_attached_env failed: %i\n", env_result);
+        return NULL;
+    }
+    return jvm_env;
+}
+
 EXTERNAL_API int pojavInit() {
+    pojav_environ->glfwThreadVmEnv = get_attached_env(pojav_environ->runtimeJavaVMPtr);
+    if (pojav_environ->glfwThreadVmEnv == NULL) {
+        printf("Failed to attach Java-side JNIEnv to GLFW thread\n");
+        return 0;
+    }
     ANativeWindow_acquire(pojav_environ->pojavWindow);
     pojav_environ->savedWidth = ANativeWindow_getWidth(pojav_environ->pojavWindow);
     pojav_environ->savedHeight = ANativeWindow_getHeight(pojav_environ->pojavWindow);
-    ANativeWindow_setBuffersGeometry(pojav_environ->pojavWindow,pojav_environ->savedWidth,pojav_environ->savedHeight,AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM);
+    ANativeWindow_setBuffersGeometry(pojav_environ->pojavWindow, pojav_environ->savedWidth,
+                                     pojav_environ->savedHeight,
+                                     AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM);
+    updateMonitorSize(pojav_environ->savedWidth, pojav_environ->savedHeight);
     pojavInitOpenGL();
     return 1;
 }
@@ -188,30 +218,31 @@ EXTERNAL_API void pojavSwapBuffers() {
 }
 
 
-EXTERNAL_API void pojavMakeCurrent(void* window) {
+EXTERNAL_API void pojavMakeCurrent(void *window) {
     if (getenv("POJAV_BIG_CORE_AFFINITY") != NULL) bigcore_set_affinity();
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         virglMakeCurrent(window);
-    else br_make_current((basic_render_window_t*)window);
+    else br_make_current((basic_render_window_t *) window);
 }
 
-EXTERNAL_API void* pojavCreateContext(void* contextSrc) {
+EXTERNAL_API void *pojavCreateContext(void *contextSrc) {
     if (pojav_environ->config_renderer == RENDERER_VULKAN)
         return (void *) pojav_environ->pojavWindow;
 
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         return virglCreateContext(contextSrc);
 
-    return br_init_context((basic_render_window_t*)contextSrc);
+    return br_init_context((basic_render_window_t *) contextSrc);
 }
 
-void* maybe_load_vulkan() {
+void *maybe_load_vulkan() {
     // We use the env var because
     // 1. it's easier to do that
     // 2. it won't break if something will try to load vulkan and osmesa simultaneously
-    if(getenv("VULKAN_PTR") == NULL) load_vulkan();
-    return (void*) strtoul(getenv("VULKAN_PTR"), NULL, 0x10);
+    if (getenv("VULKAN_PTR") == NULL) load_vulkan();
+    return (void *) strtoul(getenv("VULKAN_PTR"), NULL, 0x10);
 }
+
 EXTERNAL_API JNIEXPORT jlong JNICALL
 Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass thiz) {
     printf("EGLBridge: LWJGL-side Vulkan loader requested the Vulkan handle\n");
@@ -229,7 +260,7 @@ Java_org_lwjgl_glfw_CallbackBridge_getFps(JNIEnv *env, jclass clazz) {
     return atomic_exchange(&fps, 0);
 }
 
-EXTERNAL_API JNIEXPORT jlong JNICALL
-Java_org_lwjgl_vulkan_VK_getFpsAddress(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass thiz) {
-    return (jlong) &fps;
+EXTERNAL_API JNIEXPORT void JNICALL
+Java_org_lwjgl_vulkan_VK_updateFps(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass thiz) {
+    atomic_fetch_add(&fps, 1);
 }
