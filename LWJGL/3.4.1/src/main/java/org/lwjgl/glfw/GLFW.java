@@ -296,7 +296,8 @@ public class GLFW
     GLFW_NO_WINDOW_CONTEXT     = 0x1000A,
     GLFW_CURSOR_UNAVAILABLE    = 0x1000B,
     GLFW_FEATURE_UNAVAILABLE   = 0x1000C,
-    GLFW_FEATURE_UNIMPLEMENTED = 0x1000D;
+    GLFW_FEATURE_UNIMPLEMENTED = 0x1000D,
+    GLFW_PLATFORM_UNAVAILABLE  = 0x1000E;
 
     public static final int
     GLFW_FOCUSED                 = 0x20001,
@@ -310,7 +311,11 @@ public class GLFW
     GLFW_CENTER_CURSOR           = 0x20009,
     GLFW_TRANSPARENT_FRAMEBUFFER = 0x2000A,
     GLFW_HOVERED                 = 0x2000B,
-    GLFW_FOCUS_ON_SHOW           = 0x2000C;
+    GLFW_FOCUS_ON_SHOW           = 0x2000C,
+    GLFW_MOUSE_PASSTHROUGH       = 0x2000D,
+    GLFW_POSITION_X              = 0x2000E,
+    GLFW_POSITION_Y              = 0x2000F,
+    GLFW_SOFT_FULLSCREEN         = 0x20010;
 
     /** Input options. */
     public static final int
@@ -372,8 +377,15 @@ public class GLFW
     /** Init hints. */
     public static final int
     GLFW_JOYSTICK_HAT_BUTTONS  = 0x50001,
+    GLFW_ANGLE_PLATFORM_TYPE   = 0x50002,
+    GLFW_ANY_POSITION          = 0x80000000,
+    GLFW_PLATFORM              = 0x50003,
+    GLFW_MANAGE_PREEDIT_CANDIDATE = 0x50004,
     GLFW_COCOA_CHDIR_RESOURCES = 0x51001,
-    GLFW_COCOA_MENUBAR         = 0x51002;
+    GLFW_COCOA_MENUBAR         = 0x51002,
+    GLFW_X11_XCB_VULKAN_SURFACE = 0x52001,
+    GLFW_X11_ONTHESPOT          = 0x52002,
+    GLFW_WAYLAND_LIBDECOR      = 0x53001;
 
     /** Hint value for {@link #GLFW_PLATFORM PLATFORM} that enables automatic platform selection. */
     public static final int
@@ -414,11 +426,13 @@ public class GLFW
     GLFW_CONTEXT_ROBUSTNESS       = 0x22005,
     GLFW_OPENGL_FORWARD_COMPAT    = 0x22006,
     GLFW_OPENGL_DEBUG_CONTEXT     = 0x22007,
+    GLFW_CONTEXT_DEBUG            = GLFW_OPENGL_DEBUG_CONTEXT,
     GLFW_OPENGL_PROFILE           = 0x22008,
     GLFW_CONTEXT_RELEASE_BEHAVIOR = 0x22009,
     GLFW_CONTEXT_NO_ERROR         = 0x2200A,
     GLFW_CONTEXT_CREATION_API     = 0x2200B,
-    GLFW_SCALE_TO_MONITOR         = 0x2200C;
+    GLFW_SCALE_TO_MONITOR         = 0x2200C,
+    GLFW_SCALE_FRAMEBUFFER        = 0x2200D;
 
     /** Specifies whether to use full resolution framebuffers on Retina displays. This is ignored on other platforms. */
     public static final int GLFW_COCOA_RETINA_FRAMEBUFFER = 0x23001;
@@ -447,6 +461,15 @@ public class GLFW
      * <p>This is ignored on other platforms.</p>
      */
     public static final int GLFW_WIN32_KEYBOARD_MENU = 0x25001;
+
+    public static final int GLFW_WIN32_SHOWDEFAULT = 0x25002;
+
+    /**
+     * Allows specification of the Wayland {@code app_id}.
+     *
+     * <p>This is ignored on other platforms.</p>
+     */
+    public static final int GLFW_WAYLAND_APP_ID = 0x26001;
 
     /** Values for the {@link #GLFW_CLIENT_API CLIENT_API} hint. */
     public static final int
@@ -477,6 +500,19 @@ public class GLFW
     GLFW_NATIVE_CONTEXT_API = 0x36001,
     GLFW_EGL_CONTEXT_API    = 0x36002,
     GLFW_OSMESA_CONTEXT_API = 0x36003;
+
+    public static final int
+    GLFW_ANGLE_PLATFORM_TYPE_NONE     = 0x37001,
+    GLFW_ANGLE_PLATFORM_TYPE_OPENGL   = 0x37002,
+    GLFW_ANGLE_PLATFORM_TYPE_OPENGLES = 0x37003,
+    GLFW_ANGLE_PLATFORM_TYPE_D3D9     = 0x37004,
+    GLFW_ANGLE_PLATFORM_TYPE_D3D11    = 0x37005,
+    GLFW_ANGLE_PLATFORM_TYPE_VULKAN   = 0x37007,
+    GLFW_ANGLE_PLATFORM_TYPE_METAL    = 0x37008;
+
+    public static final int
+    GLFW_WAYLAND_PREFER_LIBDECOR  = 0x38001,
+    GLFW_WAYLAND_DISABLE_LIBDECOR = 0x38002;
 
     // GLFW Callbacks
     /* volatile */ public static GLFWCharCallback mGLFWCharCallback;
@@ -513,6 +549,7 @@ public class GLFW
     private static Map<Integer, String> mGLFWKeyCodes;
     private static GLFWVidMode mGLFWVideoMode;
     private static long mGLFWWindowMonitor;
+    private static long mUserPointer;
 
     private static double mGLFWInitialTime;
 
@@ -525,9 +562,13 @@ public class GLFW
 
     public static long mainContext = 0;
 
+    private static native void nativeInitializeGLFWNativeBridge();
+
     static {
         try {
+            // pojavexec 被 dlopen 的时机远早于 GLFW 类加载，GLFW 相关 JNI 初始化延迟到此处执行
             System.loadLibrary("pojavexec");
+            nativeInitializeGLFWNativeBridge();
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
         }
@@ -858,6 +899,8 @@ public class GLFW
         return platform == GLFW_PLATFORM_X11;
     }
 
+    public static void glfwInitAllocator(@Nullable @NativeType("GLFWallocator const *") GLFWAllocator allocator) { }
+
     @NativeType("GLFWwindow *")
     public static long glfwGetCurrentContext() {
         long __functionAddress = Functions.GetCurrentContext;
@@ -871,6 +914,24 @@ public class GLFW
         }
         width.put(internalGetWindow(window).width);
         height.put(internalGetWindow(window).height);
+    }
+
+    public static void glfwGetWindowFrameSize(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("int *") IntBuffer left, @Nullable @NativeType("int *") IntBuffer top, @Nullable @NativeType("int *") IntBuffer right, @Nullable @NativeType("int *") IntBuffer bottom) {
+        if (CHECKS) {
+            checkSafe(left, 1);
+            checkSafe(top, 1);
+            checkSafe(right, 1);
+            checkSafe(bottom, 1);
+        }
+        if (left != null) left.put(0);
+        if (top != null) top.put(0);
+        if (right != null) right.put(internalGetWindow(window).width);
+        if (bottom != null) bottom.put(internalGetWindow(window).height);
+    }
+
+    public static void glfwGetWindowContentScale(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("float *") FloatBuffer xscale, @Nullable @NativeType("float *") FloatBuffer yscale) {
+        if (xscale != null) xscale.put(1f);
+        if (yscale != null) yscale.put(1f);
     }
 
     @Nullable
@@ -915,6 +976,19 @@ public class GLFW
         return mGLFWWindowMonitor;
     }
 
+    @Nullable // The normal implementation is nullable.
+    @NativeType("char const *")
+    public static String glfwGetMonitorName(@NativeType("GLFWmonitor *") long monitor) {
+        return String.format(Locale.US, "Android Display (%dx%d)", mGLFWWindowWidth, mGLFWWindowHeight);
+    }
+
+    public static void glfwSetMonitorUserPointer(@NativeType("GLFWmonitor *") long monitor, @NativeType("void *") long pointer) {
+    }
+
+    public static long glfwGetMonitorUserPointer(@NativeType("GLFWmonitor *") long monitor) {
+        return 0L;
+    }
+
     public static void glfwSetWindowMonitor(@NativeType("GLFWwindow *") long window, @NativeType("GLFWmonitor *") long monitor, int xpos, int ypos, int width, int height, int refreshRate) {
         // weird calculation to fake pointer
         mGLFWWindowMonitor = window * monitor;
@@ -926,6 +1000,14 @@ public class GLFW
 
     public static void glfwSetWindowAttrib(@NativeType("GLFWwindow *") long window, int attrib, int value) {
         internalGetWindow(window).windowAttribs.put(attrib, value);
+    }
+
+    public static void glfwSetWindowUserPointer(@NativeType("GLFWwindow *") long window, @NativeType("void *") long pointer) {
+        mUserPointer = pointer;
+    }
+
+    public static long glfwGetWindowUserPointer(@NativeType("GLFWwindow *") long window) {
+        return mUserPointer;
     }
 
     public static void glfwGetVersion(IntBuffer major, IntBuffer minor, IntBuffer rev) {
@@ -969,6 +1051,9 @@ public class GLFW
     public static GLFWGammaRamp glfwGetGammaRamp(@NativeType("GLFWmonitor *") long monitor) {
         return mGLFWGammaRamp;
     }
+    public static void glfwSetGamma(@NativeType("GLFWmonitor *") long monitor, float gamma) {
+    }
+
     public static void glfwSetGammaRamp(@NativeType("GLFWmonitor *") long monitor, @NativeType("const GLFWgammaramp *") GLFWGammaRamp ramp) {
         mGLFWGammaRamp = ramp;
     }
@@ -1135,6 +1220,9 @@ public class GLFW
     public static void glfwSetWindowSizeLimits(@NativeType("GLFWwindow *") long window, int minwidth, int minheight, int maxwidth, int maxheight) {
     }
 
+    public static void glfwSetWindowAspectRatio(@NativeType("GLFWwindow *") long window, int numer, int denom) {
+    }
+
     public static void glfwSetWindowPos(long window, int x, int y) {
         internalGetWindow(window).x = x;
         internalGetWindow(window).y = y;
@@ -1161,6 +1249,16 @@ public class GLFW
     }
 
     public static void glfwFocusWindow(@NativeType("GLFWwindow *") long window) {
+    }
+
+    public static float glfwGetWindowOpacity(@NativeType("GLFWwindow *") long window) {
+        return 1.0f;
+    }
+
+    public static void glfwSetWindowOpacity(@NativeType("GLFWwindow *") long window, float opacity) {
+    }
+
+    public static void glfwIconifyWindow(@NativeType("GLFWwindow *") long window) {
     }
 
     public static void glfwWindowHint(int hint, int value) {
@@ -1559,5 +1657,18 @@ public class GLFW
     public static void glfwRestoreWindow(@NativeType("GLFWwindow *") long window) {
     }
 
+    public static long glfwGetProcAddress(@NativeType("char const *") ByteBuffer procname) {
+        throw new UnsupportedOperationException("Unimplemented!");
+    }
+
+    public static long glfwGetProcAddress(@NativeType("char const *") CharSequence procname) {
+        throw new UnsupportedOperationException("Unimplemented!");
+    }
+
+    public static void glfwGetPreeditCursorRectangle(@NativeType("GLFWwindow *") long window, @NativeType("int *") @Nullable IntBuffer x, @NativeType("int *") @Nullable IntBuffer y, @NativeType("int *") @Nullable IntBuffer w, @NativeType("int *") @Nullable IntBuffer h) { }
+    public static void glfwGetPreeditCursorRectangle(@NativeType("GLFWwindow *") long window, @NativeType("int *") int @Nullable [] x, @NativeType("int *") int @Nullable [] y, @NativeType("int *") int @Nullable [] w, @NativeType("int *") int @Nullable [] h) { }
+    public static void glfwSetPreeditCursorRectangle(@NativeType("GLFWwindow *") long window, int x, int y, int w, int h) { }
+    public static void glfwResetPreeditText(@NativeType("GLFWwindow *") long window) { }
+    @Nullable public static IntBuffer glfwGetPreeditCandidate(@NativeType("GLFWwindow *") long window, int index) { return null; }
 
 }

@@ -518,9 +518,13 @@ public class GLFW
 
     public static long mainContext = 0;
 
+    private static native void nativeInitializeGLFWNativeBridge();
+
     static {
         try {
+            // pojavexec 被 dlopen 的时机远早于 GLFW 类加载，GLFW 相关 JNI 初始化延迟到此处执行
             System.loadLibrary("pojavexec");
+            nativeInitializeGLFWNativeBridge();
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
         }
