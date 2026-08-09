@@ -127,7 +127,7 @@ target_link_libraries(
 add_library(
     pojavexec_awt
     SHARED
-    awt/awt_bridge.c
+    awt_bridge.c
 )
 
 target_link_libraries(
