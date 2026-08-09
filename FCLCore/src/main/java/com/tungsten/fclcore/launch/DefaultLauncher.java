@@ -24,7 +24,6 @@ import static com.tungsten.fclcore.util.Pair.pair;
 import android.content.Context;
 import android.os.Build;
 
-import com.google.gson.GsonBuilder;
 import com.mio.JavaManager;
 import com.mio.data.Renderer;
 import com.tungsten.fclauncher.FCLConfig;
@@ -48,6 +47,7 @@ import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fclcore.util.platform.CommandBuilder;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
 import com.tungsten.fclcore.util.versioning.GameVersionNumber;
+import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import org.jackhuang.hmcl.util.ServerAddress;
 
@@ -59,6 +59,7 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -74,6 +75,8 @@ import java.util.stream.Collectors;
 
 public class DefaultLauncher extends Launcher {
     private String jnaVersion;
+    private String lwjglVersion = "3.3.3";
+    private boolean useLwjglX = false;
 
     public DefaultLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
         super(context, repository, version, authInfo, options);
@@ -167,8 +170,6 @@ public class DefaultLauncher extends Launcher {
         res.addDefault("-Dorg.lwjgl.freetype.libname=", context.getApplicationInfo().nativeLibraryDir + "/libfreetype.so");
         res.addDefault("-Dorg.lwjgl.system.allocator=", "system");
         res.addDefault("-Dfml.earlyprogresswindow=", "false");
-        res.addDefault("-Dglfwstub.windowWidth=", options.getWidth() + "");
-        res.addDefault("-Dglfwstub.windowHeight=", options.getHeight() + "");
         res.addDefault("-Dglfwstub.initEgl=", "false");
         res.addDefault("-Dloader.disable_forked_guis=", "true");
         res.addDefault("-Duser.home=", options.getGameDir().getAbsolutePath());
@@ -275,7 +276,24 @@ public class DefaultLauncher extends Launcher {
 
     private void addLWJGLClassPath(Set<String> classpath) {
         Set<String> temp = new LinkedHashSet<>();
-        temp.add(FCLPath.LWJGL_DIR + "/lwjgl.jar");
+        File dir = new File(FCLPath.LWJGL_DIR, lwjglVersion);
+        temp.add(dir.getAbsolutePath() + "/lwjgl.jar");
+        if (useLwjglX) {
+            temp.add(dir.getAbsolutePath() + "/lwjgl-lwjglx.jar");
+        }
+        File[] files = dir.listFiles();
+        if (files != null) {
+            Set<String> list = Arrays.stream(files)
+                    .filter(file -> file.getName().endsWith(".jar")
+                            && !file.getName().equals("lwjgl.jar")
+                            && !file.getName().equals("lwjgl-lwjglx.jar")
+                    )
+                    .map(File::getAbsolutePath)
+                    .collect(Collectors.toSet());
+            temp.addAll(list);
+        } else {
+            LOG.warning("LWJGL directory(" + dir + ") not found!");
+        }
         temp.addAll(classpath);
         classpath.clear();
         classpath.addAll(temp);
@@ -465,10 +483,26 @@ public class DefaultLauncher extends Launcher {
                 analyzer.has(LibraryAnalyzer.LibraryType.FABRIC),
                 analyzer.has(LibraryAnalyzer.LibraryType.QUILT)
         ));
+        config.setLwjglVersion(lwjglVersion);
         return FCLauncher.launchMinecraft(config);
     }
 
     public void setJnaVersion(String jnaVersion) {
         this.jnaVersion = jnaVersion;
+    }
+
+    public void setLwjglVersion(String lwjglVersion) {
+        try {
+            VersionNumber v1 = VersionNumber.asVersion(lwjglVersion);
+            if (v1.compareTo("3.0") < 0) {
+                useLwjglX = true;
+            }
+            if (v1.compareTo("3.4.1") >= 0) {
+                this.lwjglVersion = "3.4.1";
+                return;
+            }
+        } catch (Throwable ignore) {
+        }
+        this.lwjglVersion = "3.3.3";
     }
 }
