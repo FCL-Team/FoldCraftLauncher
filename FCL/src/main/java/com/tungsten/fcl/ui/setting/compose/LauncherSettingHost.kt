@@ -23,6 +23,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.LocaleUtils
 import java.io.File
 import java.io.IOException
+import java.util.function.Consumer
 
 /**
  * 启动器设置页宿主事件处理器（小步骤 3.1）：承接 [LauncherSettingEvent] 中需要
@@ -53,11 +54,14 @@ object LauncherSettingHost {
             is LauncherSettingEvent.ShowAlert ->
                 showAlert(context, event.message, event.isError)
 
-            // 对齐 LauncherSettingPage.java:524-537：先用页面 Activity 上下文 setLanguage
-            // （当前 Activity 资源配置即时切到新语言），再以新语言弹"重启生效"提示。
+            // 先以当前语言弹"重启生效"提示，用户点确认后再 setLanguage 应用新资源配置：
+            // 应用配置引发的闪黑因此发生在提示之后（修复"先变黑再提示"的顺序问题）。
+            // 弹窗文案随之保持当前语言，用户能读懂提示内容（遗留 :524-537 是先切语言再弹，
+            // 文案变新语言但顺序相反）。
             LauncherSettingEvent.ShowRestartHint -> {
-                LocaleUtils.setLanguage(context)
-                showAlert(context, context.getString(R.string.message_warn_restart_after_change))
+                showAlert(context, context.getString(R.string.message_warn_restart_after_change)) {
+                    LocaleUtils.setLanguage(context)
+                }
             }
         }
     }
@@ -200,10 +204,22 @@ object LauncherSettingHost {
     /**
      * 通用提示弹窗：优先 LegacyBridge.requestAlertDialog（Miuix WindowDialog），
      * 槽位占用时回退遗留 FCLAlertDialog（对齐各调用点的单按钮形态）。
+     * [onConfirm] 仅在点击确认按钮后回调（两条通道语义一致）。
      */
-    private fun showAlert(context: Context, message: String, isError: Boolean = false) {
+    private fun showAlert(
+        context: Context,
+        message: String,
+        isError: Boolean = false,
+        onConfirm: (() -> Unit)? = null,
+    ) {
         val positive = context.getString(com.tungsten.fcllibrary.R.string.dialog_positive)
-        val accepted = LegacyBridge.requestAlertDialog(null, message, positive, null, null)
+        val accepted = LegacyBridge.requestAlertDialog(
+            null,
+            message,
+            positive,
+            null,
+            onConfirm?.let { cb -> Consumer<Boolean> { if (it) cb() } },
+        )
         if (!accepted) {
             val builder = FCLAlertDialog.Builder(context)
             builder.setCancelable(false)
@@ -211,7 +227,7 @@ object LauncherSettingHost {
                 if (isError) FCLAlertDialog.AlertLevel.ALERT else FCLAlertDialog.AlertLevel.INFO,
             )
             builder.setMessage(message)
-            builder.setNegativeButton(positive, null)
+            builder.setNegativeButton(positive) { onConfirm?.invoke() }
             builder.create().show()
         }
     }
