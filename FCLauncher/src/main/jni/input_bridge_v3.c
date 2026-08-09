@@ -13,7 +13,6 @@
 #include <assert.h>
 #include <dlfcn.h>
 #include <jni.h>
-#include <libgen.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdatomic.h>
@@ -22,6 +21,7 @@
 
 #include "environ/environ.h"
 #include "fcl/include/fcl_internal.h"
+#include "jvm_hooks/jvm_hooks.h"
 
 #define EVENT_TYPE_CHAR 1000
 #define EVENT_TYPE_CHAR_MODS 1001
@@ -30,18 +30,7 @@
 #define EVENT_TYPE_MOUSE_BUTTON 1006
 #define EVENT_TYPE_SCROLL 1007
 
-jint (*orig_ProcessImpl_forkAndExec)(JNIEnv *env, jobject process, jint mode, jbyteArray helperpath,
-                                     jbyteArray prog, jbyteArray argBlock, jint argc,
-                                     jbyteArray envBlock, jint envc, jbyteArray dir,
-                                     jintArray std_fds, jboolean redirectErrorStream);
-
 static void registerFunctions(JNIEnv *env);
-
-void hookExec();
-
-extern void installLwjglDlopenHook();
-
-void installEMUIIteratorMititgation();
 
 JNIEXPORT jstring JNICALL
 Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNIEnv *env, jclass clazz, jint action,
@@ -68,9 +57,10 @@ jint JNI_OnLoad(JavaVM *vm, __attribute__((unused)) void *reserved) {
         __android_log_print(ANDROID_LOG_INFO, "Native", "Saving JVM environ...");
         pojav_environ->runtimeJavaVMPtr = vm;
         (*vm)->GetEnv(vm, (void **) &pojav_environ->runtimeJNIEnvPtr_JRE, JNI_VERSION_1_4);
-        hookExec();
-        installLwjglDlopenHook();
-        installEMUIIteratorMititgation();
+        JNIEnv *vmEnv = pojav_environ->runtimeJNIEnvPtr_JRE;
+        hookExec(vmEnv);
+        installLwjglDlopenHook(vmEnv);
+        installEMUIIteratorMititgation(vmEnv);
     }
 
     if (pojav_environ->dalvikJavaVMPtr == vm) {
@@ -301,129 +291,6 @@ void sendData(int type, int i1, int i2, int i3, int i4) {
         pojav_environ->inEventIndex -= EVENT_WINDOW_SIZE;
 
     atomic_fetch_add_explicit(&pojav_environ->eventCounter, 1, memory_order_acquire);
-}
-
-static jbyteArray stringToBytes(JNIEnv *env, const char *string) {
-    const jsize string_data_len = (jsize) (strlen(string) + 1);
-    jbyteArray result = (*env)->NewByteArray(env, (jsize) string_data_len);
-    (*env)->SetByteArrayRegion(env, result, 0, (jsize) string_data_len, (const jbyte *) string);
-    return result;
-}
-
-// Replace the env block with the one that has the desired LD_LIBRARY_PATH/PATH.
-// (Due to my laziness this ignores the current contents of the block)
-static void replaceLibPathInEnvBlock(JNIEnv *env, jbyteArray *envBlock, jint *envc,
-                                     const char *directory) {
-    static bool env_block_replacement_warning = false;
-    if (*envBlock != NULL && !env_block_replacement_warning) {
-        printf("exec_hooks WARN: replaceLibPathInEnvBlock does not preserve original env. Please notify PojavLauncherTeam if you need that feature\n");
-        env_block_replacement_warning = true;
-    }
-    char envStr[1024];
-    jsize new_envl = snprintf(envStr, sizeof(envStr) / sizeof(char), "LD_LIBRARY_PATH=%s%cPATH=%s",
-                              directory, 0, directory) + 1;
-    jbyteArray newBlock = (*env)->NewByteArray(env, new_envl);
-    (*env)->SetByteArrayRegion(env, newBlock, 0, new_envl, (jbyte *) envStr);
-    *envBlock = newBlock;
-    *envc = 2;
-}
-
-/**
- * Hooked version of java.lang.UNIXProcess.forkAndExec()
- * which is used to handle the "open" command and "ffmpeg" invocations
- */
-jint
-hooked_ProcessImpl_forkAndExec(JNIEnv *env, jobject process, jint mode, jbyteArray helperpath,
-                               jbyteArray prog, jbyteArray argBlock, jint argc, jbyteArray envBlock,
-                               jint envc, jbyteArray dir, jintArray std_fds,
-                               jboolean redirectErrorStream) {
-    char *pProg = (char *) ((*env)->GetByteArrayElements(env, prog, NULL));
-    const char *pProgBaseName = basename(pProg);
-    const size_t basename_len = strlen(pProgBaseName);
-    char prog_basename[basename_len + 1];
-    memcpy(prog_basename, pProgBaseName, basename_len + 1);
-    (*env)->ReleaseByteArrayElements(env, prog, (jbyte *) pProg, 0);
-
-    if (strcmp(prog_basename, "xdg-open") == 0) {
-        // When invoking xdg-open, send the open URL into Android
-        Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(env, NULL, /* CLIPBOARD_OPEN */ 2002,
-                                                           argBlock);
-        return 0;
-    } else if (strcmp(prog_basename, "ffmpeg") == 0) {
-        // When invoking ffmpeg, always replace the program path with the path to ffmpeg from the plugin.
-        // This allows us to replace the executable name, which is needed because android doesn't allow
-        // us to put files that don't start with "lib" and end with ".so" into folders that we can execute
-        // from
-
-        // Also add LD_LIBRARY_PATH and PATH for the lib in order to override the ones from the launcher, since
-        // they may interfere with ffmpeg dependencies.
-        const char *ffmpeg_path = getenv("FFMPEG_PATH");
-        if (ffmpeg_path != NULL) {
-            replaceLibPathInEnvBlock(env, &envBlock, &envc, dirname(ffmpeg_path));
-            prog = stringToBytes(env, ffmpeg_path);
-        }
-    }
-    return orig_ProcessImpl_forkAndExec(env, process, mode, helperpath, prog, argBlock, argc,
-                                        envBlock, envc, dir, std_fds, redirectErrorStream);
-}
-
-void hookExec() {
-    jclass cls;
-    orig_ProcessImpl_forkAndExec = dlsym(RTLD_DEFAULT, "Java_java_lang_UNIXProcess_forkAndExec");
-    if (!orig_ProcessImpl_forkAndExec) {
-        orig_ProcessImpl_forkAndExec = dlsym(RTLD_DEFAULT,
-                                             "Java_java_lang_ProcessImpl_forkAndExec");
-        cls = (*pojav_environ->runtimeJNIEnvPtr_JRE)->FindClass(pojav_environ->runtimeJNIEnvPtr_JRE,
-                                                                "java/lang/ProcessImpl");
-    } else {
-        cls = (*pojav_environ->runtimeJNIEnvPtr_JRE)->FindClass(pojav_environ->runtimeJNIEnvPtr_JRE,
-                                                                "java/lang/UNIXProcess");
-    }
-    JNINativeMethod methods[] = {
-            {"forkAndExec", "(I[B[B[BI[BI[B[IZ)I", (void *) &hooked_ProcessImpl_forkAndExec}
-    };
-    (*pojav_environ->runtimeJNIEnvPtr_JRE)->RegisterNatives(pojav_environ->runtimeJNIEnvPtr_JRE,
-                                                            cls, methods, 1);
-    printf("Registered forkAndExec\n");
-}
-
-/**
- * This function is meant as a substitute for SharedLibraryUtil.getLibraryPath() that just returns 0
- * (thus making the parent Java function return null). This is done to avoid using the LWJGL's default function,
- * which will hang the crappy EMUI linker by dlopen()ing inside of dl_iterate_phdr().
- * @return 0, to make the parent Java function return null immediately.
- * For reference: https://github.com/PojavLauncherTeam/lwjgl3/blob/fix_huawei_hang/modules/lwjgl/core/src/main/java/org/lwjgl/system/SharedLibraryUtil.java
- */
-jint getLibraryPath_fix(__attribute__((unused)) JNIEnv *env,
-                        __attribute__((unused)) jclass class,
-                        __attribute__((unused)) jlong pLibAddress,
-                        __attribute__((unused)) jlong sOutAddress,
-                        __attribute__((unused)) jint bufSize) {
-    return 0;
-}
-
-/**
- * Install the linker hang mitigation that is meant to prevent linker hangs on old EMUI firmware.
- */
-void installEMUIIteratorMititgation() {
-    if (getenv("POJAV_EMUI_ITERATOR_MITIGATE") == NULL) return;
-    __android_log_print(ANDROID_LOG_INFO, "EMUIIteratorFix", "Installing...");
-    JNIEnv *env = pojav_environ->runtimeJNIEnvPtr_JRE;
-    jclass sharedLibraryUtil = (*env)->FindClass(env, "org/lwjgl/system/SharedLibraryUtil");
-    if (sharedLibraryUtil == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "EMUIIteratorFix",
-                            "Failed to find the target class");
-        (*env)->ExceptionClear(env);
-        return;
-    }
-    JNINativeMethod getLibraryPathMethod[] = {
-            {"getLibraryPath", "(JJI)I", &getLibraryPath_fix}
-    };
-    if ((*env)->RegisterNatives(env, sharedLibraryUtil, getLibraryPathMethod, 1) != 0) {
-        __android_log_print(ANDROID_LOG_ERROR, "EMUIIteratorFix",
-                            "Failed to register the mitigation method");
-        (*env)->ExceptionClear(env);
-    }
 }
 
 void critical_set_stackqueue(jboolean use_input_stack_queue) {

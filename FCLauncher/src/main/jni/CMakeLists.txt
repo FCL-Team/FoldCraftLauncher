@@ -152,7 +152,9 @@ add_library(
     input_bridge_v3.c
     virgl/virgl.c
     jre_launcher.c
-    lwjgl_dlopen_hook.c
+    jvm_hooks/java_exec_hooks.c
+    jvm_hooks/emui_iterator_fix_hook.c
+    jvm_hooks/lwjgl_dlopen_hook.c
 )
 
 target_include_directories(

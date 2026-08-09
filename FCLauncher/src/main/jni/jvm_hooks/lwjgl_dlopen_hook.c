@@ -2,16 +2,14 @@
 // Created by maks on 06.01.2025.
 //
 
-#include <android/api-level.h>
-#include <android/log.h>
-#include <jni.h>
+#include "jvm_hooks.h"
 
 #include "environ/environ.h"
+#include "fcl/include/fcl_internal.h"
 
 #include <dlfcn.h>
 #include <string.h>
 #include <stdlib.h>
-#include "fcl/include/fcl_internal.h"
 
 extern void* maybe_load_vulkan();
 
@@ -21,9 +19,9 @@ extern void* maybe_load_vulkan();
  * but with our own additions for stuff like vulkanmod.
  */
 static jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
-                            __attribute__((unused)) jclass class,
-                            jlong filename_ptr,
-                            jint jmode) {
+                     __attribute__((unused)) jclass class,
+                     jlong filename_ptr,
+                     jint jmode) {
     const char* filename = (const char*) filename_ptr;
 
     // Oveeride vulkan loading to let us load vulkan ourselves
@@ -32,6 +30,7 @@ static jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
         return (jlong) maybe_load_vulkan();
     }
 
+    // FCL 特有：插件渲染器（如 VirGL）通过 RENDERER_HANDLE 环境变量直接返回已加载的库句柄
     if (getenv("RENDERER_HANDLE") != NULL && strstr(filename,"plugin")) {
         return (jlong) strtol(getenv("RENDERER_HANDLE"), NULL, 10);
     }
@@ -44,19 +43,17 @@ static jlong ndlopen_bugfix(__attribute__((unused)) JNIEnv *env,
     // This method fixes the issue by being in libpojavexec, and thus being in the classloader namespace
 
     int mode = (int)jmode;
-    jlong handle = (jlong) dlopen(filename, mode);
-    return handle;
+    return (jlong) dlopen(filename, mode);
 }
 
 /**
  * Install the LWJGL dlopen hook. This allows us to mitigate linker bugs and add custom library overrides.
  */
-void installLwjglDlopenHook() {
-    FCL_LOG("LwjglLinkerHook:%s", "Installing LWJGL dlopen() hook");
-    JNIEnv* env = pojav_environ->runtimeJNIEnvPtr_JRE;
+void installLwjglDlopenHook(JNIEnv *env) {
+    FCL_LOG("Installing LWJGL dlopen() hook");
     jclass dynamicLinkLoader = (*env)->FindClass(env, "org/lwjgl/system/linux/DynamicLinkLoader");
     if(dynamicLinkLoader == NULL) {
-        FCL_LOG( "LwjglLinkerHook:%s", "Failed to find the target class");
+        FCL_LOG("Failed to find the target class");
         (*env)->ExceptionClear(env);
         return;
     }
@@ -64,7 +61,7 @@ void installLwjglDlopenHook() {
             {"ndlopen", "(JI)J", &ndlopen_bugfix}
     };
     if((*env)->RegisterNatives(env, dynamicLinkLoader, ndlopenMethod, 1) != 0) {
-        FCL_LOG( "LwjglLinkerHook:%s", "Failed to register the hooked method");
+        FCL_LOG("Failed to register the hooked method");
         (*env)->ExceptionClear(env);
     }
 }
