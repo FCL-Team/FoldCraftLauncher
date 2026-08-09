@@ -183,9 +183,9 @@ object VersionSettingHost {
         dialog.show()
     }
 
-    /** 对齐 :210-215：FullEditDialog 全屏编辑（JVM/游戏参数）。 */
+    /** 对齐 :210-215：FullEditDialog 全屏编辑（JVM/游戏参数）；canBeEmpty=true 允许清空（对齐上游 #1728 修复）。 */
     fun fullEditText(context: Context, current: String, onConfirm: (String) -> Unit) {
-        val dialog = FullEditDialog(context) { str: String? ->
+        val dialog = FullEditDialog(context, true) { str: String? ->
             onConfirm(str ?: "")
         }
         dialog.getEditText().setText(current)
