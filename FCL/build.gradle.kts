@@ -53,6 +53,10 @@ android {
             isMinifyEnabled = false
             signingConfig = signingConfigs.getByName("FCLKey")
         }
+        getByName("debug") {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("FCLKey")
+        }
         create("fordebug") {
             initWith(getByName("debug"))
             applicationIdSuffix = ".debug"
