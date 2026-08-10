@@ -481,7 +481,7 @@ class VersionSettingPage(
                 AndroidUtils.openLink(
                     context, when (pos) {
                         0 -> "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java"
-                        1 -> "https://pan.quark.cn/s/c86012deb8c5"
+                        1 -> "https://pan.quark.cn/s/a5f230c3da03"
                         else -> return@showItemSelectionDialog
                     }
                 )
