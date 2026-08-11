@@ -394,6 +394,24 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     override fun onSelect(view: FCLMenuView) {
+        // 幂等守卫：目标 UI 已是当前页时直接返回，不重播按钮动画、不重复 switchUI。
+        // 正常路径下 FCLMenuView 选中态已拦截重复点击，但选中态可能被 NavigationBus
+        // 重放/refreshMenuView(null) 重置，导致 onSelect 再次触发（真机表现为
+        // "页面已打开，按钮还能反复点击重播动画"）。
+        val targetUI = binding.let {
+            when (view) {
+                it.home -> uiManager.mainUI
+                it.manage ->
+                    if (Profiles.getSelectedProfile().selectedVersion == null) uiManager.versionUI
+                    else uiManager.manageUI
+                it.download -> uiManager.downloadUI
+                it.controller -> uiManager.controllerUI
+                it.multiplayer -> uiManager.multiplayerUI
+                it.setting -> uiManager.settingUI
+                else -> null
+            }
+        }
+        if (targetUI != null && uiManager.currentUI === targetUI) return
         refreshMenuView(view)
         val speed = ThemeEngine.getInstance().getTheme().animationSpeed
         AnimUtil.playRotation(view, speed * 100L, 0f, 360f)

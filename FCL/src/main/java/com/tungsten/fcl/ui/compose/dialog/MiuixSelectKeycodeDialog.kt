@@ -4,14 +4,15 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
@@ -20,11 +21,11 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.tungsten.fcl.R
 import com.tungsten.fcl.control.view.KeycodeView
 import com.tungsten.fcl.ui.compose.FCLComposeDialog
-import com.tungsten.fcl.ui.compose.FCLDialogButton
-import com.tungsten.fcl.ui.compose.FCLDialogButtonsRow
+import com.tungsten.fcl.ui.compose.fclDialogTextButtonColors
 import kotlinx.coroutines.flow.MutableStateFlow
 import com.tungsten.fcl.ui.compose.FCLCard
 import com.tungsten.fcl.ui.compose.FCLCornerRadius
+import top.yukonga.miuix.kmp.basic.TextButton
 
 /**
  * Miuix 版键码选择弹窗（4.1，对应 control/SelectKeycodeDialog + dialog_select_keycode，
@@ -45,8 +46,9 @@ import com.tungsten.fcl.ui.compose.FCLCornerRadius
  *
  * 卡片宽度说明：view_keyboard 固定 600dp，超出 FCLDialogCard 的 560dp 上限，
  * 故此处自建 Card（wrapContentWidth），不用 FCLDialogCard。
- * 宽度上限取屏宽 - 48dp（两侧各 24dp 卡片外边距），避免窄屏右侧溢出；
- * 键盘区在卡片宽不足以容纳 600dp 时以 horizontalScroll 横向滚动兜底（宽屏视觉不变）。
+ * 宽度对齐原版语义（FCLDialog 默认 wrap_content 窗口）：弹窗迁就键盘自然宽度
+ * （620dp），不做缩放；上限屏宽 - 48dp（两侧各 24dp 卡片外边距）防窄屏右溢；
+ * 高度超限时由布局内 ScrollView（height=0dp+weight=1）自行滚动。
  *
  * 运行于游戏内（GameMenu/EditViewDialog → ControllerActivity），
  * AppCompatDialog + ComposeView 可用（同批 2/批 4 各 Miuix 游戏内弹窗）。
@@ -91,12 +93,12 @@ class MiuixSelectKeycodeDialog(
                 insideMargin = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
             ) {
                 Column {
-                    // 键盘区限高随屏幕收缩：游戏内横屏（屏高常仅 360~410dp）下固定 400dp
-                    // 会把确定按钮挤出屏幕；预留 ~150dp 给卡片边距与按钮区
+                    // 对齐原版 SelectKeycodeDialog（FCLDialog wrap_content 窗口）：
+                    // 弹窗宽度迁就键盘自然宽度（620dp），不缩放不横滚；
+                    // 高度超限由布局内 ScrollView 自己滚动（height=0dp+weight=1）
                     AndroidView(
                         modifier = Modifier
-                            // 卡片宽不足以容纳 600dp 键盘时横向滚动兜底（宽屏视觉不变）
-                            .horizontalScroll(rememberScrollState())
+                            .wrapContentSize()
                             .heightIn(
                                 max = minOf(
                                     400.dp,
@@ -120,17 +122,23 @@ class MiuixSelectKeycodeDialog(
                                 }
                         },
                     )
-                    FCLDialogButtonsRow(
-                        listOf(
-                            FCLDialogButton(
-                                text = stringResource(com.tungsten.fcllibrary.R.string.dialog_positive),
-                                onClick = {
-                                    onConfirm(this@MiuixSelectKeycodeDialog)
-                                    dismiss()
-                                },
-                            ),
-                        ),
-                    )
+                    // 确认按钮右对齐但自身 wrap 宽度：不能用 FCLDialogButtonsRow
+                    // （其 fillMaxWidth 会把 wrapContentWidth 卡片撑到最大约束，右侧留白）
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .padding(top = 12.dp)
+                            .wrapContentWidth(),
+                    ) {
+                        TextButton(
+                            text = stringResource(com.tungsten.fcllibrary.R.string.dialog_positive),
+                            onClick = {
+                                onConfirm(this@MiuixSelectKeycodeDialog)
+                                dismiss()
+                            },
+                            colors = fclDialogTextButtonColors(),
+                        )
+                    }
                 }
             }
         }

@@ -135,6 +135,11 @@ FCL/src/main/java/com/tungsten/fcl/ui/download/compose
 
 已迁移页面和弹窗通过 `USE_COMPOSE_*` 开关选择 Compose 或旧 View/XML 路径，默认通常为 `true`。旧实现暂时不能随意删除，涉及 UI 的改动应验证两条路径。联机菜单、游戏内菜单、控制器以及部分复杂页面仍保留原生 View 实现。游戏启动链路、JNI/NDK、`FCLCore`、文件系统路径、权限体系和游戏内控制 UI 属于高风险边界，迁移 UI 时不要改变其行为或生命周期假设。
 
+Compose 弹窗自适应的两个实测坑（2026-08 键码弹窗修复记录）：
+
+- `wrapContentWidth` 卡片内任何 `fillMaxWidth` 子组件（如 `FCLDialogButtonsRow`）会把卡片撑到最大约束宽度，内容不足时右侧留白；按钮行应 wrap 宽度 + `align(Alignment.End)`。
+- 不要把"等比缩放原生 View"当自适应首选：`graphicsLayer` 作用在 `AndroidView` 上 `transformOrigin` 不可靠；`FCLLinearLayout` 等主题 View 在 UNSPECIFIED 测量下固有尺寸会失真，运行时测量再缩放风险高。优先对齐旧版 wrap_content 语义（弹窗迁就内容自然尺寸），竖向溢出交给布局内 ScrollView。
+
 ## 构建命令
 
 优先使用项目自带 Gradle Wrapper。Windows 使用 `gradlew.bat`，Linux/macOS 或 Git Bash 使用 `./gradlew`。

@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -661,10 +662,14 @@ private fun PageButton(
     onClick: () -> Unit,
 ) {
     // 对齐 page_download.xml 分页 FCLButton（主色实心 = primary，文字 autoTint = onPrimary，
-    // marginStart=10dp）
+    // marginStart=10dp、padding=10dp、auto_padding=false、wrap_content）：
+    // minWidth=0 + 紧凑 insideMargin 还原旧版"按文字宽度自适应"，避免 Miuix 默认
+    // 58dp minWidth + 16×13dp 内边距把按钮撑大导致窄窗格溢出（自适应差）。
     FCLButton(
         onClick = onClick,
         enabled = enabled,
+        minWidth = 0.dp,
+        insideMargin = PaddingValues(horizontal = 10.dp, vertical = 10.dp),
         modifier = Modifier.padding(start = 10.dp),
         colors = ButtonDefaults.buttonColorsPrimary(),
     ) {
