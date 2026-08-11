@@ -58,7 +58,7 @@ class ProcessService : Service() {
                 "",
                 ""
             ),
-            command
+            command ?: emptyArray()
         )
         startProcess(config)
         return START_NOT_STICKY

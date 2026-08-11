@@ -1,4 +1,5 @@
 import com.android.build.api.variant.FilterConfiguration.FilterType.ABI
+import com.android.build.gradle.tasks.MergeSourceSetFolders
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -22,7 +23,12 @@ android {
     val pwd = System.getenv("FCL_KEYSTORE_PASSWORD") ?: localProperty?.getProperty("pwd")
     val curseApiKey = System.getenv("CURSE_API_KEY") ?: localProperty?.getProperty("curse.api.key")
     val oauthApiKey = System.getenv("OAUTH_API_KEY") ?: localProperty?.getProperty("oauth.api.key")
-    if (localProperty != null && localProperty.getProperty("arch", "all") == "arm64")
+    // 命令行 -Darch 优先；local.properties 仅在命令行未指定时生效
+    if (System.getProperty("arch") == null && localProperty != null && localProperty.getProperty(
+            "arch",
+            "all"
+        ) == "arm64"
+    )
         System.setProperty("arch", "arm64")
 
     signingConfigs {
@@ -144,6 +150,47 @@ androidComponents {
             variant.sources.assets?.addGeneratedSourceDirectory(filterJreAssets) { it.outputDir }
         } else {
             variant.sources.assets?.addStaticSourceDirectory("src/main/jreAssets")
+        }
+
+        // LWJGL natives 打包在 lwjgl-*-natives aar 的 assets/app_runtime/lwjgl/<版本>/natives/<abi> 下，
+        // 不走 AGP 的 abiFilters，需在 mergeAssets 后手动按架构删除其他 ABI 的 natives 目录。
+        val variantName = variant.name.replaceFirstChar { it.uppercaseChar() }
+        afterEvaluate {
+            val mergeAssets =
+                tasks.named("merge${variantName}Assets", MergeSourceSetFolders::class.java)
+            val arch = System.getProperty("arch", "all")
+            // 显式声明 arch 输入，arch 变化时任务重跑，避免产物残留上一架构的 natives
+            mergeAssets.configure { inputs.property("lwjglArch", arch) }
+            mergeAssets.configure {
+                doLast {
+                    if (arch == "all") return@doLast
+                    val abi = when (arch) {
+                        "arm" -> "armeabi-v7a"
+                        "arm64" -> "arm64-v8a"
+                        "x86" -> "x86"
+                        "x86_64" -> "x86_64"
+                        else -> return@doLast
+                    }
+                    val assetsDir = outputDir.get().asFile
+                    // 版本列表从 libs 下的 lwjgl-*-natives-release.aar 文件名推导，避免新增版本时忘记同步
+                    val lwjglVersions = project.file("libs").listFiles { f ->
+                        f.name.matches(Regex("lwjgl-\\d+\\.\\d+\\.\\d+-natives-release\\.aar"))
+                    }
+                        ?.map { Regex("lwjgl-(\\d+\\.\\d+\\.\\d+)-natives-release\\.aar").find(it.name)!!.groupValues[1] }
+                        ?: emptyList()
+                    lwjglVersions.forEach { version ->
+                        val nativesDir = File(assetsDir, "app_runtime/lwjgl/$version/natives")
+                        if (nativesDir.isDirectory) {
+                            nativesDir.listFiles()?.forEach { dir ->
+                                if (dir.isDirectory && dir.name != abi) {
+                                    logger.lifecycle("删除非目标架构 natives: $dir")
+                                    dir.deleteRecursively()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
