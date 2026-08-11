@@ -31,6 +31,8 @@ bytehook = "1.0.10"
 chardet = "2.5.0"
 junrar = "7.5.5"
 jspecify = "1.0.0"
+androidxTestExtJunit = "1.1.5"
+androidxTestRunner = "1.5.2"
 
 [libraries]
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
@@ -60,6 +62,8 @@ bytehook = { group = "com.bytedance", name = "bytehook", version.ref = "bytehook
 chardet = { module = "org.glavo:chardet", version.ref = "chardet" }
 junrar = { group = "com.github.junrar", name = "junrar", version.ref = "junrar" }
 jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

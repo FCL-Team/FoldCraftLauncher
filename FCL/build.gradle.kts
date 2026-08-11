@@ -52,7 +52,10 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1324
         versionName = "1.3.2.4"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    testBuildType = "fordebug"
 
     buildTypes {
         getByName("release") {
@@ -224,6 +227,9 @@ dependencies {
     implementation(libs.segmented.button)
     implementation(libs.datastore)
     implementation(libs.kotlinx.serialization.json)
+
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit)
 }
 
 tasks.register("updateMap") {

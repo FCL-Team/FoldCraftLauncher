@@ -1089,6 +1089,7 @@ public class ZipFileSystem extends FileSystem {
             if (pos + CENHDR + nlen > limit)
                 zerror("invalid CEN header (bad header size)");
             byte[] name = Arrays.copyOfRange(cen, pos + CENHDR, pos + CENHDR + nlen);
+            name = decodeCenName(name, CENFLG(cen, pos));
             IndexNode inode = new IndexNode(name, pos);
             inodes.put(inode, inode);
             // skip ext and comment
@@ -1099,6 +1100,18 @@ public class ZipFileSystem extends FileSystem {
         }
         buildNodeTree();
         return cen;
+    }
+
+    // 将 CEN 中读取的条目名统一规范化为配置编码的字节表示：
+    // 条目带 EFS（UTF-8）flag 时，名字的原始字节是 UTF-8，若直接保留原始字节，
+    // 在配置编码（如 GBK）下解码-重编码后字节会与原始字节不一致（非法序列被
+    // REPLACE），导致 inodes 按字节查找失败（NoSuchFileException）。
+    // 这里把 EFS 条目的名字先按 UTF-8 解码、再按配置编码重编码，使 inodes 的
+    // key 与 ZipPath 的字节表示保持一致，从而正确支持混合编码的 zip 文件。
+    private byte[] decodeCenName(byte[] name, int flag) {
+        if (zc.isUTF8() || (flag & FLAG_EFS) == 0)
+            return name;
+        return zc.getBytes(zc.toStringUTF8(name, name.length));
     }
 
     private void ensureOpen() throws IOException {
@@ -2065,7 +2078,7 @@ public class ZipFileSystem extends FileSystem {
             locoff      = CENOFF(cen, pos);
 
             pos += CENHDR;
-            name(Arrays.copyOfRange(cen, pos, pos + nlen));
+            name(zipfs.decodeCenName(Arrays.copyOfRange(cen, pos, pos + nlen), flag));
 
             pos += nlen;
             if (elen > 0) {
