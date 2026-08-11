@@ -114,6 +114,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         });
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        adapter.setRecyclerView(recyclerView);
         Bindings.bindContent(adapter.listProperty(), itemsProperty);
 
         adapter.selectedItemsProperty().addListener((InvalidationListener) observable -> switchLayout(adapter.selectedItemsProperty().getSize() > 0));
@@ -290,9 +291,9 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         loadMods(modManager);
     }
 
-    private CompletableFuture<?> loadMods(ModManager modManager) {
+    private void loadMods(ModManager modManager) {
         this.modManager = modManager;
-        return CompletableFuture.supplyAsync(() -> {
+        CompletableFuture.supplyAsync(() -> {
             try {
                 synchronized (ModListPage.this) {
                     setLoading(true);

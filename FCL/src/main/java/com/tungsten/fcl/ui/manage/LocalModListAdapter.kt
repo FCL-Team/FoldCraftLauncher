@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mio.ui.adapter.ViewHolder
@@ -30,11 +31,14 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Optional
 import java.util.logging.Level
+import kotlin.time.Duration.Companion.milliseconds
 
 class LocalModListAdapter(
     private val context: Context,
@@ -51,7 +55,12 @@ class LocalModListAdapter(
         )
 
     val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_cube)!!
-    private val jobs = HashMap<Int, Job>()
+    private val jobs = HashMap<String, Job>()
+    private var recyclerView: RecyclerView? = null
+
+    fun setRecyclerView(recyclerView: RecyclerView) {
+        this.recyclerView = recyclerView
+    }
 
     fun listProperty(): ListProperty<ModInfoObject> {
         return listProperty
@@ -81,6 +90,8 @@ class LocalModListAdapter(
 
     init {
         this.listProperty.addListener { _: Observable? ->
+            jobs.values.forEach { it.cancel() }
+            jobs.clear()
             fromSelf = true
             selectedItemsProperty.clear()
             fromSelf = false
@@ -128,15 +139,15 @@ class LocalModListAdapter(
         )
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int
     ) {
         val binding = ItemLocalModBinding.bind(holder.itemView)
-        jobs[position]?.cancel()
-        jobs.remove(position)
         val modInfoObject = listProperty[position]
+        val key = modInfoObject.modInfo.fileName
+        jobs[key]?.cancel()
+        jobs.remove(key)
         binding.parent.backgroundTintList = ColorStateList(
             arrayOf<IntArray?>(intArrayOf()),
             intArrayOf(
@@ -145,6 +156,7 @@ class LocalModListAdapter(
                     .ltColor
             )
         )
+        ThemeEngine.getInstance().unregisterEvent(binding.root)
         ThemeEngine.getInstance().registerEvent(binding.root) {
             binding.parent.backgroundTintList = ColorStateList(
                 arrayOf<IntArray?>(intArrayOf()),
@@ -225,54 +237,80 @@ class LocalModListAdapter(
 
         drawable.setTint(ThemeEngine.getInstance().getTheme().color)
         binding.icon.setImageDrawable(drawable)
-        val job = MainActivity.getInstance().lifecycleScope.launch {
-            val mod = withContext(Dispatchers.IO) {
-                if (modInfoObject.modInfo.file.toFile()
-                        .length() > 104857600
-                ) return@withContext null
-                for (type in RemoteMod.Type.entries.toTypedArray()) {
-                    try {
-                        if (modInfoObject.remoteMod == null) {
-                            val remoteVersion: Optional<RemoteMod.Version?> =
-                                type.remoteModRepository.getRemoteVersionByLocalFile(
-                                    modInfoObject.modInfo,
-                                    modInfoObject.modInfo.file
-                                )
-                            if (remoteVersion.isPresent) {
-                                val remoteMod: RemoteMod? = type.remoteModRepository
-                                    .getModById(remoteVersion.get().modid)
-                                modInfoObject.modInfo.remoteVersion = remoteVersion.get()
-                                modInfoObject.remoteMod = remoteMod
-                            } else {
-                                continue
+        val cachedRemoteMod = modInfoObject.remoteMod
+        if (cachedRemoteMod != null) {
+            applyRemoteMod(binding, cachedRemoteMod, modInfoObject)
+        } else {
+            val job = MainActivity.getInstance().lifecycleScope.launch {
+                delay(200L.milliseconds)
+                if (!isVisible(modInfoObject)) return@launch
+                val mod = withContext(Dispatchers.IO) {
+                    if (modInfoObject.modInfo.file.toFile()
+                            .length() > 104857600
+                    ) return@withContext null
+                    for (type in RemoteMod.Type.entries.toTypedArray()) {
+                        ensureActive()
+                        try {
+                            if (modInfoObject.remoteMod == null) {
+                                val remoteVersion: Optional<RemoteMod.Version?> =
+                                    type.remoteModRepository.getRemoteVersionByLocalFile(
+                                        modInfoObject.modInfo,
+                                        modInfoObject.modInfo.file
+                                    )
+                                if (remoteVersion.isPresent) {
+                                    val remoteMod: RemoteMod? = type.remoteModRepository
+                                        .getModById(remoteVersion.get().modid)
+                                    modInfoObject.modInfo.remoteVersion =
+                                        remoteVersion.get()
+                                    modInfoObject.remoteMod = remoteMod
+                                } else {
+                                    continue
+                                }
                             }
+                            return@withContext modInfoObject.remoteMod
+                        } catch (e: Throwable) {
+                            System.gc()
+                            Logging.LOG.log(Level.SEVERE, e.toString())
                         }
-                        return@withContext modInfoObject.remoteMod
-                    } catch (e: Throwable) {
-                        System.gc()
-                        Logging.LOG.log(Level.SEVERE, e.toString())
                     }
+                    null
                 }
-                null
-            }
-            mod?.let {
                 if (isActive && binding.icon.tag as Int == position) {
-                    binding.icon.visibility = View.VISIBLE
-                    Glide.with(binding.icon).load(mod.iconUrl).error(drawable)
-                        .into(binding.icon)
-                    binding.name.text = mod.title
-                    binding.jump.visibility = View.VISIBLE
-                    if (modInfoObject.mod != null && LocaleUtils.isChinese(context)) {
-                        val name = modInfoObject.mod.name
-                        if (name.isNotEmpty() && StringUtils.containsChinese(name)) {
-                            binding.name.text = "[${name}]${mod.title}"
-                        }
+                    mod?.let {
+                        applyRemoteMod(binding, it, modInfoObject)
                     }
-
                 }
+            }
+            jobs[key] = job
+        }
+    }
+
+    private fun isVisible(modInfoObject: ModInfoObject): Boolean {
+        val layoutManager = recyclerView?.layoutManager as? LinearLayoutManager ?: return true
+        val first = layoutManager.findFirstVisibleItemPosition()
+        val last = layoutManager.findLastVisibleItemPosition()
+        if (first == RecyclerView.NO_POSITION || last == RecyclerView.NO_POSITION) return true
+        val position = listProperty.indexOf(modInfoObject)
+        return position in first..last
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun applyRemoteMod(
+        binding: ItemLocalModBinding,
+        mod: RemoteMod,
+        modInfoObject: ModInfoObject
+    ) {
+        binding.icon.visibility = View.VISIBLE
+        Glide.with(binding.icon).load(mod.iconUrl).error(drawable)
+            .into(binding.icon)
+        binding.name.text = mod.title
+        binding.jump.visibility = View.VISIBLE
+        if (modInfoObject.mod != null && LocaleUtils.isChinese(context)) {
+            val name = modInfoObject.mod.name
+            if (name.isNotEmpty() && StringUtils.containsChinese(name)) {
+                binding.name.text = "[${name}]${mod.title}"
             }
         }
-        jobs[position] = job
     }
 
     override fun getItemCount(): Int {
