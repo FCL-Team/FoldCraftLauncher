@@ -151,6 +151,10 @@ public final class CompressingUtils {
         return new ZipFileTree(openZipFile(zipFile));
     }
 
+    public static ZipFileTree openZipTree(Path zipFile, Charset charset) throws IOException {
+        return new ZipFileTree(openZipFile(zipFile, charset));
+    }
+
     public static ZipFile openZipFile(Path zipFile) throws IOException {
         return openZipFileWithPossibleEncoding(zipFile, StandardCharsets.UTF_8);
     }

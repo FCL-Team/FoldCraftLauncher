@@ -30,12 +30,12 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.Validation;
 import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fclcore.util.tree.ZipFileTree;
-
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -183,11 +183,14 @@ public record PackMcMeta(@SerializedName("pack") PackInfo pack) implements Valid
         }
     }
 
-    public static LocalModFile fromFile(ModManager modManager, Path modFile, ZipFileTree tree) throws IOException, JsonParseException {
-        ZipArchiveEntry mcmod = tree.getEntry("pack.mcmeta");
-        if (mcmod == null)
+    public static LocalModFile fromFile(ModManager modManager, Path modFile, FileSystem fs) throws IOException, JsonParseException {
+        Path mcmod = fs.getPath("pack.mcmeta");
+        if (Files.notExists(mcmod))
             throw new IOException("File " + modFile + " is not a resource pack.");
-        PackMcMeta metadata = JsonUtils.fromNonNullJsonFully(tree.getInputStream(mcmod), PackMcMeta.class);
+        PackMcMeta metadata;
+        try (InputStream is = Files.newInputStream(mcmod)) {
+            metadata = JsonUtils.fromNonNullJsonFully(is, PackMcMeta.class);
+        }
         return new LocalModFile(
                 modManager,
                 modManager.getLocalMod(FileUtils.getNameWithoutExtension(modFile), ModLoaderType.PACK),

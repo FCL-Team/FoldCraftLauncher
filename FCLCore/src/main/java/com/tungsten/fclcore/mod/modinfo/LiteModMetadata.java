@@ -22,11 +22,11 @@ import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fclcore.util.tree.ZipFileTree;
-
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -108,11 +108,14 @@ public final class LiteModMetadata {
         return updateURI;
     }
 
-    public static LocalModFile fromFile(ModManager modManager, Path modFile, ZipFileTree tree) throws IOException, JsonParseException {
-        ZipArchiveEntry entry = tree.getEntry("litemod.json");
-        if (entry == null)
+    public static LocalModFile fromFile(ModManager modManager, Path modFile, FileSystem fs) throws IOException, JsonParseException {
+        Path path = fs.getPath("litemod.json");
+        if (Files.notExists(path))
             throw new IOException("File " + modFile + " is not a LiteLoader mod.");
-        LiteModMetadata metadata = JsonUtils.fromJsonFully(tree.getInputStream(entry), LiteModMetadata.class);
+        LiteModMetadata metadata;
+        try (InputStream is = Files.newInputStream(path)) {
+            metadata = JsonUtils.fromJsonFully(is, LiteModMetadata.class);
+        }
         if (metadata == null)
             throw new IOException("Mod " + modFile + " `litemod.json` is malformed.");
         return new LocalModFile(modManager, modManager.getLocalMod(metadata.getName(), ModLoaderType.LITE_LOADER), modFile, metadata.getName(), new LocalModFile.Description(metadata.getDescription()), metadata.getAuthor(),

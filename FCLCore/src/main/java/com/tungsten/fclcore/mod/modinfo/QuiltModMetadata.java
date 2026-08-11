@@ -6,11 +6,11 @@ import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fclcore.util.tree.ZipFileTree;
-
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,13 +31,16 @@ public final class QuiltModMetadata {
         this.quilt_loader = quiltLoader;
     }
 
-    public static LocalModFile fromFile(ModManager modManager, Path modFile, ZipFileTree tree) throws IOException, JsonParseException {
-        ZipArchiveEntry path = tree.getEntry("quilt.mod.json");
-        if (path == null) {
+    public static LocalModFile fromFile(ModManager modManager, Path modFile, FileSystem fs) throws IOException, JsonParseException {
+        Path path = fs.getPath("quilt.mod.json");
+        if (Files.notExists(path)) {
             throw new IOException("File " + modFile + " is not a Quilt mod.");
         }
 
-        QuiltModMetadata root = JsonUtils.fromNonNullJsonFully(tree.getInputStream(path), QuiltModMetadata.class);
+        QuiltModMetadata root;
+        try (InputStream is = Files.newInputStream(path)) {
+            root = JsonUtils.fromNonNullJsonFully(is, QuiltModMetadata.class);
+        }
         if (root.schema_version != 1) {
             throw new IOException("File " + modFile + " is not a supported Quilt mod.");
         }
