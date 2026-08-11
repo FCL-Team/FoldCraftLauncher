@@ -77,8 +77,6 @@
     <string name="account_select_character">Selecionar personagem</string>
     <string name="account_skin">Skin</string>
     <string name="account_skin_type_default">Padrão</string>
-    <string name="account_skin_type_csl_api_location_hint">CustomSkinAPI URL</string>
-    <string name="account_skin_type_csl_api_hint">Você deve criar um personagem com o mesmo nome que a sua conta offline na página do seu fornecedor de skin. Sua skin será então enviada para esse site.</string>
     <string name="account_skin_type_local_file">Arquivo de skin local</string>
     <string name="account_skin_upload">Selecione o arquivo de skin</string>
     <string name="account_state_no_account">Sem conta</string>

@@ -62,8 +62,12 @@ android {
         getByName("release") {
             // R8 全量优化：压缩+优化，不混淆；应用代码全 keep（见 proguard-rules.pro）
             // shrinkResources 关闭：AndroidUtils.getLocalizedText 经 getIdentifier 动态查字符串
+            //noinspection NotShrinkingResources
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("FCLKey")
         }
         getByName("debug") {
@@ -74,9 +78,6 @@ android {
             initWith(getByName("debug"))
             applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("FCLDebugKey")
-            // 与 release 同步：真机验证 R8 优化效果
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         configureEach {
             resValue("string", "app_version", defaultConfig.versionName.toString())
