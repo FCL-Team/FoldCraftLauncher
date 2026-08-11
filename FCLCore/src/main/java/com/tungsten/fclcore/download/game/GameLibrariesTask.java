@@ -72,7 +72,7 @@ public final class GameLibrariesTask extends Task<Void> {
         this.dependencyManager = dependencyManager;
         this.version = LibFilter.filter(version);
         this.integrityCheck = integrityCheck;
-        this.libraries = LibFilter.filterLibs(libraries);
+        this.libraries = LibFilter.filterLibs(libraries, true);
 
         setSignificance(TaskSignificance.MODERATE);
     }

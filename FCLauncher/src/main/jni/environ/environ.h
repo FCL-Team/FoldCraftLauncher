@@ -46,6 +46,7 @@ struct pojav_environ_s {
     jmethodID method_onGrabStateChanged;
     jmethodID method_glftSetWindowAttrib;
     jmethodID method_internalWindowSizeChanged;
+    jmethodID method_internalChangeMonitorSize;
     jclass bridgeClazz;
     jclass vmGlfwClass;
     jboolean isGrabbing;
@@ -55,8 +56,14 @@ struct pojav_environ_s {
     JNIEnv* runtimeJNIEnvPtr_JRE;
     JavaVM* dalvikJavaVMPtr;
     JNIEnv* dalvikJNIEnvPtr_ANDROID;
+    // 渲染线程持有的 JNIEnv，尺寸上报等 JNI 调用统一在此线程执行，避免跨线程使用 JNIEnv
+    JNIEnv* glfwThreadVmEnv;
     long showingWindow;
     bool isInputReady, isCursorEntered, isUseStackQueueCall, shouldUpdateMouse;
+    // monitor size 更新标志：screen size 变化时置位，由渲染线程上报后复位
+    bool shouldUpdateMonitorSize;
+    // 标记 monitor size 是否已被 pojavStartPumping 消费，防止 Start/Stop 之间更新丢失
+    bool monitorSizeConsumed;
     int savedWidth, savedHeight;
 #define ADD_CALLBACK_WWIN(NAME) \
     GLFW_invoke_##NAME##_func* GLFW_invoke_##NAME;

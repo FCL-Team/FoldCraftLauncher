@@ -36,6 +36,9 @@ miuix = "0.9.3"
 composeBom = "2026.06.01"
 activityCompose = "1.13.0"
 lifecycleCompose = "2.10.0"
+jspecify = "1.0.0"
+androidxTestExtJunit = "1.1.5"
+androidxTestRunner = "1.5.2"
 
 [libraries]
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
@@ -80,6 +83,9 @@ miuix-ui = { group = "top.yukonga.miuix.kmp", name = "miuix-ui", version.ref = "
 miuix-icons = { group = "top.yukonga.miuix.kmp", name = "miuix-icons", version.ref = "miuix" }
 miuix-preference = { group = "top.yukonga.miuix.kmp", name = "miuix-preference", version.ref = "miuix" }
 miuix-blur = { group = "top.yukonga.miuix.kmp", name = "miuix-blur", version.ref = "miuix" }
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

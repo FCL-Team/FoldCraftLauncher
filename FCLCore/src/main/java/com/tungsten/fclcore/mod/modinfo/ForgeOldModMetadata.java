@@ -26,15 +26,14 @@ import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fclcore.util.tree.ZipFileTree;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
 import static com.tungsten.fclcore.util.gson.JsonUtils.listTypeOf;
-
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
 /**
  *
@@ -122,14 +121,14 @@ public final class ForgeOldModMetadata {
         return authors;
     }
 
-    public static LocalModFile fromFile(ModManager modManager, Path modFile, ZipFileTree tree) throws IOException, JsonParseException {
-        ZipArchiveEntry mcmod = tree.getEntry("mcmod.info");
-        if (mcmod == null)
+    public static LocalModFile fromFile(ModManager modManager, Path modFile, FileSystem fs) throws IOException, JsonParseException {
+        Path mcmod = fs.getPath("mcmod.info");
+        if (Files.notExists(mcmod))
             throw new IOException("File " + modFile + " is not a Forge mod.");
 
         List<ForgeOldModMetadata> modList;
 
-        try (var reader = tree.getBufferedReader(mcmod);
+        try (var reader = Files.newBufferedReader(mcmod);
              var jsonReader = new JsonReader(reader)) {
             JsonToken firstToken = jsonReader.peek();
 

@@ -38,7 +38,7 @@ object VersionSettingHost {
             VersionSettingEvent.ShowInstallJava -> showInstallLink(
                 context,
                 github = "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java",
-                netdisk = "https://pan.quark.cn/s/c86012deb8c5",
+                netdisk = "https://pan.quark.cn/s/a5f230c3da03",
             )
 
             VersionSettingEvent.JumpToControllerRepo -> jumpToControllerRepo()

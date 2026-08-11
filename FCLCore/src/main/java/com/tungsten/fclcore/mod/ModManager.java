@@ -36,7 +36,6 @@ import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fclcore.util.tree.ZipFileTree;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import org.apache.commons.io.IOUtils;
@@ -61,7 +60,7 @@ import java.util.TreeSet;
 public final class ModManager {
     @FunctionalInterface
     private interface ModMetadataReader {
-        LocalModFile fromFile(ModManager modManager, Path modFile, ZipFileTree tree) throws IOException, JsonParseException;
+        LocalModFile fromFile(ModManager modManager, Path modFile, FileSystem fs) throws IOException, JsonParseException;
     }
 
     private static final Map<String, List<Pair<ModMetadataReader, ModLoaderType>>> READERS;
@@ -148,10 +147,10 @@ public final class ModManager {
         LocalModFile modInfo = null;
 
         List<Exception> exceptions = new ArrayList<>();
-        try (ZipFileTree tree = CompressingUtils.openZipTree(file)) {
+        try (FileSystem fs = CompressingUtils.createReadOnlyZipFileSystem(file)) {
             for (ModMetadataReader reader : supportedReaders) {
                 try {
-                    modInfo = reader.fromFile(this, file, tree);
+                    modInfo = reader.fromFile(this, file, fs);
                     break;
                 } catch (Exception e) {
                     exceptions.add(e);
@@ -161,7 +160,7 @@ public final class ModManager {
             if (modInfo == null) {
                 for (ModMetadataReader reader : unsupportedReaders) {
                     try {
-                        modInfo = reader.fromFile(this, file, tree);
+                        modInfo = reader.fromFile(this, file, fs);
                         break;
                     } catch (Exception ignored) {
                     }

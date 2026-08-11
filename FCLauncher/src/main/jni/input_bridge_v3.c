@@ -13,7 +13,6 @@
 #include <assert.h>
 #include <dlfcn.h>
 #include <jni.h>
-#include <libgen.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdatomic.h>
@@ -22,28 +21,16 @@
 
 #include "environ/environ.h"
 #include "fcl/include/fcl_internal.h"
+#include "jvm_hooks/jvm_hooks.h"
 
 #define EVENT_TYPE_CHAR 1000
 #define EVENT_TYPE_CHAR_MODS 1001
 #define EVENT_TYPE_CURSOR_ENTER 1002
-#define EVENT_TYPE_FRAMEBUFFER_SIZE 1004
 #define EVENT_TYPE_KEY 1005
 #define EVENT_TYPE_MOUSE_BUTTON 1006
 #define EVENT_TYPE_SCROLL 1007
-#define EVENT_TYPE_WINDOW_SIZE 1008
-
-jint (*orig_ProcessImpl_forkAndExec)(JNIEnv *env, jobject process, jint mode, jbyteArray helperpath,
-                                     jbyteArray prog, jbyteArray argBlock, jint argc,
-                                     jbyteArray envBlock, jint envc, jbyteArray dir,
-                                     jintArray std_fds, jboolean redirectErrorStream);
 
 static void registerFunctions(JNIEnv *env);
-
-void hookExec();
-
-extern void installLwjglDlopenHook();
-
-void installEMUIIteratorMititgation();
 
 JNIEXPORT jstring JNICALL
 Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNIEnv *env, jclass clazz, jint action,
@@ -70,35 +57,10 @@ jint JNI_OnLoad(JavaVM *vm, __attribute__((unused)) void *reserved) {
         __android_log_print(ANDROID_LOG_INFO, "Native", "Saving JVM environ...");
         pojav_environ->runtimeJavaVMPtr = vm;
         (*vm)->GetEnv(vm, (void **) &pojav_environ->runtimeJNIEnvPtr_JRE, JNI_VERSION_1_4);
-        pojav_environ->vmGlfwClass = (*pojav_environ->runtimeJNIEnvPtr_JRE)->NewGlobalRef(
-                pojav_environ->runtimeJNIEnvPtr_JRE,
-                (*pojav_environ->runtimeJNIEnvPtr_JRE)->FindClass(
-                        pojav_environ->runtimeJNIEnvPtr_JRE, "org/lwjgl/glfw/GLFW"));
-        pojav_environ->method_glftSetWindowAttrib = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetStaticMethodID(
-                pojav_environ->runtimeJNIEnvPtr_JRE, pojav_environ->vmGlfwClass,
-                "glfwSetWindowAttrib", "(JII)V");
-        pojav_environ->method_internalWindowSizeChanged = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetStaticMethodID(
-                pojav_environ->runtimeJNIEnvPtr_JRE, pojav_environ->vmGlfwClass,
-                "internalWindowSizeChanged", "(JII)V");
-        jfieldID field_keyDownBuffer = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetStaticFieldID(
-                pojav_environ->runtimeJNIEnvPtr_JRE, pojav_environ->vmGlfwClass, "keyDownBuffer",
-                "Ljava/nio/ByteBuffer;");
-        jobject keyDownBufferJ = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetStaticObjectField(
-                pojav_environ->runtimeJNIEnvPtr_JRE, pojav_environ->vmGlfwClass,
-                field_keyDownBuffer);
-        pojav_environ->keyDownBuffer = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetDirectBufferAddress(
-                pojav_environ->runtimeJNIEnvPtr_JRE, keyDownBufferJ);
-        jfieldID field_mouseDownBuffer = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetStaticFieldID(
-                pojav_environ->runtimeJNIEnvPtr_JRE, pojav_environ->vmGlfwClass, "mouseDownBuffer",
-                "Ljava/nio/ByteBuffer;");
-        jobject mouseDownBufferJ = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetStaticObjectField(
-                pojav_environ->runtimeJNIEnvPtr_JRE, pojav_environ->vmGlfwClass,
-                field_mouseDownBuffer);
-        pojav_environ->mouseDownBuffer = (*pojav_environ->runtimeJNIEnvPtr_JRE)->GetDirectBufferAddress(
-                pojav_environ->runtimeJNIEnvPtr_JRE, mouseDownBufferJ);
-        hookExec();
-        installLwjglDlopenHook();
-        installEMUIIteratorMititgation();
+        JNIEnv *vmEnv = pojav_environ->runtimeJNIEnvPtr_JRE;
+        hookExec(vmEnv);
+        installLwjglDlopenHook(vmEnv);
+        installEMUIIteratorMititgation(vmEnv);
     }
 
     if (pojav_environ->dalvikJavaVMPtr == vm) {
@@ -110,6 +72,38 @@ jint JNI_OnLoad(JavaVM *vm, __attribute__((unused)) void *reserved) {
     pojav_environ->isGrabbing = JNI_FALSE;
 
     return JNI_VERSION_1_4;
+}
+
+/**
+ * 初始化 GLFW/JVM 侧通信所需的方法 ID 与按键缓冲。
+ * 由 GLFW.java 静态块在类加载后调用——GLFW 的加载时机远晚于 pojavexec 被 dlopen，
+ * 此时才能保证 FindClass 成功。
+ */
+JNIEXPORT void JNICALL
+Java_org_lwjgl_glfw_GLFW_nativeInitializeGLFWNativeBridge(__attribute__((unused)) JNIEnv *env,
+                                                          __attribute__((unused)) jclass clazz) {
+    JNIEnv *vmEnv;
+    (*pojav_environ->runtimeJavaVMPtr)->GetEnv(pojav_environ->runtimeJavaVMPtr, (void **) &vmEnv,
+                                               JNI_VERSION_1_4);
+    pojav_environ->vmGlfwClass = (*vmEnv)->NewGlobalRef(vmEnv,
+                                                        (*vmEnv)->FindClass(vmEnv,
+                                                                            "org/lwjgl/glfw/GLFW"));
+    pojav_environ->method_glftSetWindowAttrib = (*vmEnv)->GetStaticMethodID(
+            vmEnv, pojav_environ->vmGlfwClass, "glfwSetWindowAttrib", "(JII)V");
+    pojav_environ->method_internalWindowSizeChanged = (*vmEnv)->GetStaticMethodID(
+            vmEnv, pojav_environ->vmGlfwClass, "internalWindowSizeChanged", "(J)V");
+    pojav_environ->method_internalChangeMonitorSize = (*vmEnv)->GetStaticMethodID(
+            vmEnv, pojav_environ->vmGlfwClass, "internalChangeMonitorSize", "(II)V");
+    jfieldID field_keyDownBuffer = (*vmEnv)->GetStaticFieldID(
+            vmEnv, pojav_environ->vmGlfwClass, "keyDownBuffer", "Ljava/nio/ByteBuffer;");
+    jobject keyDownBufferJ = (*vmEnv)->GetStaticObjectField(
+            vmEnv, pojav_environ->vmGlfwClass, field_keyDownBuffer);
+    pojav_environ->keyDownBuffer = (*vmEnv)->GetDirectBufferAddress(vmEnv, keyDownBufferJ);
+    jfieldID field_mouseDownBuffer = (*vmEnv)->GetStaticFieldID(
+            vmEnv, pojav_environ->vmGlfwClass, "mouseDownBuffer", "Ljava/nio/ByteBuffer;");
+    jobject mouseDownBufferJ = (*vmEnv)->GetStaticObjectField(
+            vmEnv, pojav_environ->vmGlfwClass, field_mouseDownBuffer);
+    pojav_environ->mouseDownBuffer = (*vmEnv)->GetDirectBufferAddress(vmEnv, mouseDownBufferJ);
 }
 
 #define ADD_CALLBACK_WWIN(NAME) \
@@ -139,16 +133,25 @@ ADD_CALLBACK_WWIN(WindowSize)
 
 #undef ADD_CALLBACK_WWIN
 
-void handleFramebufferSizeJava(long window, int w, int h) {
-    (*pojav_environ->runtimeJNIEnvPtr_JRE)->CallStaticVoidMethod(
-            pojav_environ->runtimeJNIEnvPtr_JRE, pojav_environ->vmGlfwClass,
-            pojav_environ->method_internalWindowSizeChanged, (long) window, w, h);
+void updateMonitorSize(int width, int height) {
+    (*pojav_environ->glfwThreadVmEnv)->CallStaticVoidMethod(
+            pojav_environ->glfwThreadVmEnv, pojav_environ->vmGlfwClass,
+            pojav_environ->method_internalChangeMonitorSize, width, height);
+}
+
+void updateWindowSize(void *window) {
+    (*pojav_environ->glfwThreadVmEnv)->CallStaticVoidMethod(
+            pojav_environ->glfwThreadVmEnv, pojav_environ->vmGlfwClass,
+            pojav_environ->method_internalWindowSizeChanged, (jlong) window);
 }
 
 void pojavPumpEvents(void *window) {
     if (pojav_environ->shouldUpdateMouse) {
         pojav_environ->GLFW_invoke_CursorPos(window, floor(pojav_environ->cursorX),
                                              floor(pojav_environ->cursorY));
+    }
+    if (pojav_environ->shouldUpdateMonitorSize) {
+        updateWindowSize(window);
     }
 
     size_t index = pojav_environ->outEventIndex;
@@ -176,19 +179,10 @@ void pojavPumpEvents(void *window) {
             case EVENT_TYPE_CURSOR_ENTER:
                 if (pojav_environ->GLFW_invoke_CursorEnter)
                     pojav_environ->GLFW_invoke_CursorEnter(window, event.i1);
+                break;
             case EVENT_TYPE_SCROLL:
                 if (pojav_environ->GLFW_invoke_Scroll)
                     pojav_environ->GLFW_invoke_Scroll(window, event.i1, event.i2);
-                break;
-            case EVENT_TYPE_FRAMEBUFFER_SIZE:
-                handleFramebufferSizeJava(pojav_environ->showingWindow, event.i1, event.i2);
-                if (pojav_environ->GLFW_invoke_FramebufferSize)
-                    pojav_environ->GLFW_invoke_FramebufferSize(window, event.i1, event.i2);
-                break;
-            case EVENT_TYPE_WINDOW_SIZE:
-                handleFramebufferSizeJava(pojav_environ->showingWindow, event.i1, event.i2);
-                if (pojav_environ->GLFW_invoke_WindowSize)
-                    pojav_environ->GLFW_invoke_WindowSize(window, event.i1, event.i2);
                 break;
         }
 
@@ -218,6 +212,12 @@ void pojavStartPumping() {
         pojav_environ->cLastY = pojav_environ->cursorY;
         pojav_environ->shouldUpdateMouse = true;
     }
+    if (pojav_environ->shouldUpdateMonitorSize) {
+        // Perform a monitor size update here to avoid doing it on every single window
+        updateMonitorSize(pojav_environ->savedWidth, pojav_environ->savedHeight);
+        // Mark the monitor size as consumed (since GLFW was made aware of it)
+        pojav_environ->monitorSizeConsumed = true;
+    }
 }
 
 /** Prepare the library for the next round of new events */
@@ -227,8 +227,15 @@ void pojavStopPumping() {
     // New events may have arrived while pumping, so remove only the difference before the start and end of execution
     atomic_fetch_sub_explicit(&pojav_environ->eventCounter, pojav_environ->inEventCount,
                               memory_order_acquire);
-    // Make sure the next frame won't send mouse updates if it's unnecessary
+    // Make sure the next frame won't send mouse or monitor updates if it's unnecessary
     pojav_environ->shouldUpdateMouse = false;
+    // Only reset the update flag if the monitor size was consumed by pojavStartPumping. This
+    // will delay the update to next frame if it had occured between pojavStartPumping and pojavStopPumping,
+    // but it's better than not having it apply at all
+    if (pojav_environ->shouldUpdateMonitorSize && pojav_environ->monitorSizeConsumed) {
+        pojav_environ->shouldUpdateMonitorSize = false;
+        pojav_environ->monitorSizeConsumed = false;
+    }
 }
 
 JNIEXPORT void JNICALL
@@ -284,102 +291,6 @@ void sendData(int type, int i1, int i2, int i3, int i4) {
         pojav_environ->inEventIndex -= EVENT_WINDOW_SIZE;
 
     atomic_fetch_add_explicit(&pojav_environ->eventCounter, 1, memory_order_acquire);
-}
-
-static jbyteArray stringToBytes(JNIEnv *env, const char *string) {
-    const jsize string_data_len = (jsize) (strlen(string) + 1);
-    jbyteArray result = (*env)->NewByteArray(env, (jsize) string_data_len);
-    (*env)->SetByteArrayRegion(env, result, 0, (jsize) string_data_len, (const jbyte *) string);
-    return result;
-}
-
-/**
- * Hooked version of java.lang.UNIXProcess.forkAndExec()
- * which is used to handle the "open" command.
- */
-jint
-hooked_ProcessImpl_forkAndExec(JNIEnv *env, jobject process, jint mode, jbyteArray helperpath,
-                               jbyteArray prog, jbyteArray argBlock, jint argc, jbyteArray envBlock,
-                               jint envc, jbyteArray dir, jintArray std_fds,
-                               jboolean redirectErrorStream) {
-    char *pProg = (char *) ((*env)->GetByteArrayElements(env, prog, NULL));
-
-    // Here we only handle the "xdg-open" command
-    if (strcmp(basename(pProg), "xdg-open") != 0) {
-        (*env)->ReleaseByteArrayElements(env, prog, (jbyte *) pProg, 0);
-        if (strcmp(basename(pProg), "ffmpeg") == 0) {
-            const char *ffmpeg_path = getenv("FFMPEG_PATH");
-            if (ffmpeg_path != NULL) {
-                prog = stringToBytes(env, ffmpeg_path);
-            }
-        }
-        return orig_ProcessImpl_forkAndExec(env, process, mode, helperpath, prog, argBlock, argc,
-                                            envBlock, envc, dir, std_fds, redirectErrorStream);
-    }
-    (*env)->ReleaseByteArrayElements(env, prog, (jbyte *) pProg, 0);
-
-    Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(env, NULL, /* CLIPBOARD_OPEN */ 2002,
-                                                       argBlock);
-    return 0;
-}
-
-void hookExec() {
-    jclass cls;
-    orig_ProcessImpl_forkAndExec = dlsym(RTLD_DEFAULT, "Java_java_lang_UNIXProcess_forkAndExec");
-    if (!orig_ProcessImpl_forkAndExec) {
-        orig_ProcessImpl_forkAndExec = dlsym(RTLD_DEFAULT,
-                                             "Java_java_lang_ProcessImpl_forkAndExec");
-        cls = (*pojav_environ->runtimeJNIEnvPtr_JRE)->FindClass(pojav_environ->runtimeJNIEnvPtr_JRE,
-                                                                "java/lang/ProcessImpl");
-    } else {
-        cls = (*pojav_environ->runtimeJNIEnvPtr_JRE)->FindClass(pojav_environ->runtimeJNIEnvPtr_JRE,
-                                                                "java/lang/UNIXProcess");
-    }
-    JNINativeMethod methods[] = {
-            {"forkAndExec", "(I[B[B[BI[BI[B[IZ)I", (void *) &hooked_ProcessImpl_forkAndExec}
-    };
-    (*pojav_environ->runtimeJNIEnvPtr_JRE)->RegisterNatives(pojav_environ->runtimeJNIEnvPtr_JRE,
-                                                            cls, methods, 1);
-    printf("Registered forkAndExec\n");
-}
-
-/**
- * This function is meant as a substitute for SharedLibraryUtil.getLibraryPath() that just returns 0
- * (thus making the parent Java function return null). This is done to avoid using the LWJGL's default function,
- * which will hang the crappy EMUI linker by dlopen()ing inside of dl_iterate_phdr().
- * @return 0, to make the parent Java function return null immediately.
- * For reference: https://github.com/PojavLauncherTeam/lwjgl3/blob/fix_huawei_hang/modules/lwjgl/core/src/main/java/org/lwjgl/system/SharedLibraryUtil.java
- */
-jint getLibraryPath_fix(__attribute__((unused)) JNIEnv *env,
-                        __attribute__((unused)) jclass class,
-                        __attribute__((unused)) jlong pLibAddress,
-                        __attribute__((unused)) jlong sOutAddress,
-                        __attribute__((unused)) jint bufSize) {
-    return 0;
-}
-
-/**
- * Install the linker hang mitigation that is meant to prevent linker hangs on old EMUI firmware.
- */
-void installEMUIIteratorMititgation() {
-    if (getenv("POJAV_EMUI_ITERATOR_MITIGATE") == NULL) return;
-    __android_log_print(ANDROID_LOG_INFO, "EMUIIteratorFix", "Installing...");
-    JNIEnv *env = pojav_environ->runtimeJNIEnvPtr_JRE;
-    jclass sharedLibraryUtil = (*env)->FindClass(env, "org/lwjgl/system/SharedLibraryUtil");
-    if (sharedLibraryUtil == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "EMUIIteratorFix",
-                            "Failed to find the target class");
-        (*env)->ExceptionClear(env);
-        return;
-    }
-    JNINativeMethod getLibraryPathMethod[] = {
-            {"getLibraryPath", "(JJI)I", &getLibraryPath_fix}
-    };
-    if ((*env)->RegisterNatives(env, sharedLibraryUtil, getLibraryPathMethod, 1) != 0) {
-        __android_log_print(ANDROID_LOG_ERROR, "EMUIIteratorFix",
-                            "Failed to register the mitigation method");
-        (*env)->ExceptionClear(env);
-    }
 }
 
 void critical_set_stackqueue(jboolean use_input_stack_queue) {
@@ -593,25 +504,15 @@ void noncritical_send_mouse_button(__attribute__((unused)) JNIEnv *env,
 void critical_send_screen_size(jint width, jint height) {
     pojav_environ->savedWidth = width;
     pojav_environ->savedHeight = height;
-    if (pojav_environ->isInputReady) {
-        if (pojav_environ->GLFW_invoke_FramebufferSize) {
-            if (pojav_environ->isUseStackQueueCall) {
-                sendData(EVENT_TYPE_FRAMEBUFFER_SIZE, width, height, 0, 0);
-            } else {
-                pojav_environ->GLFW_invoke_FramebufferSize((void *) pojav_environ->showingWindow,
-                                                           width, height);
-            }
-        }
-
-        if (pojav_environ->GLFW_invoke_WindowSize) {
-            if (pojav_environ->isUseStackQueueCall) {
-                sendData(EVENT_TYPE_WINDOW_SIZE, width, height, 0, 0);
-            } else {
-                pojav_environ->GLFW_invoke_WindowSize((void *) pojav_environ->showingWindow, width,
-                                                      height);
-            }
-        }
-    }
+    // Even if there was call to pojavStartPumping that consumed the size, this call
+    // might happen right after it (or right before pojavStopPumping)
+    // So unmark the size as "consumed"
+    pojav_environ->monitorSizeConsumed = false;
+    pojav_environ->shouldUpdateMonitorSize = true;
+    // Don't use the direct updates for screen dimensions.
+    // This is done to ensure that we have predictable conditions to correctly call
+    // updateMonitorSize() and updateWindowSize() while on the render thread with an attached
+    // JNIEnv.
 }
 
 void noncritical_send_screen_size(__attribute__((unused)) JNIEnv *env,

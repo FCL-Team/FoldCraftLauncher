@@ -11,7 +11,6 @@ static const char* g_LogTag = "GLBridge";
 static __thread osm_render_window_t* currentBundle;
 // a tiny buffer for rendering when there's nowhere t render
 static char no_render_buffer[4];
-static bool hasSetNoRendererBuffer = false;
 
 // Its not in a .h file because it is not supposed to be used outsife of this file.
 void setNativeWindowSwapInterval(struct ANativeWindow* nativeWindow, int swapInterval);
@@ -106,11 +105,8 @@ void osm_make_current(osm_render_window_t* bundle) {
         osm_swap_surfaces(bundle);
         if(hasSetMainWindow) pojav_environ->mainWindowBundle->state = STATE_RENDERER_ALIVE;
     }
-    if (!hasSetNoRendererBuffer)
-    {
-        osm_set_no_render_buffer(&bundle->buffer);
-        hasSetNoRendererBuffer = true;
-    }
+    // 每次 make current 都重新设置 no-render buffer，窗口重建后 buffer 才会被正确重置
+    osm_set_no_render_buffer(&bundle->buffer);
     osm_apply_current_ll();
     OSMesaPixelStore_p(OSMESA_Y_UP,0);
 }

@@ -23,12 +23,12 @@ import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fclcore.util.tree.ZipFileTree;
-
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
@@ -58,11 +58,14 @@ public final class FabricModMetadata {
         this.contact = contact;
     }
 
-    public static LocalModFile fromFile(ModManager modManager, Path modFile, ZipFileTree tree) throws IOException, JsonParseException {
-        ZipArchiveEntry mcmod = tree.getEntry("fabric.mod.json");
-        if (mcmod == null)
+    public static LocalModFile fromFile(ModManager modManager, Path modFile, FileSystem fs) throws IOException, JsonParseException {
+        Path mcmod = fs.getPath("fabric.mod.json");
+        if (Files.notExists(mcmod))
             throw new IOException("File " + modFile + " is not a Fabric mod.");
-        FabricModMetadata metadata = JsonUtils.fromNonNullJsonFully(tree.getInputStream(mcmod), FabricModMetadata.class);
+        FabricModMetadata metadata;
+        try (InputStream is = Files.newInputStream(mcmod)) {
+            metadata = JsonUtils.fromNonNullJsonFully(is, FabricModMetadata.class);
+        }
         String authors = metadata.authors == null ? "" : metadata.authors.stream().map(author -> author.name).collect(Collectors.joining(", "));
         return new LocalModFile(modManager, modManager.getLocalMod(metadata.id, ModLoaderType.FABRIC), modFile, metadata.name, new LocalModFile.Description(metadata.description),
                 authors, metadata.version, "", metadata.contact != null ? metadata.contact.getOrDefault("homepage", "") : "", metadata.icon);

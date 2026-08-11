@@ -111,7 +111,7 @@ public class FCLauncher {
         return jvmLibDir;
     }
 
-    private static String getLibraryPath(Context context, String javaPath, String pluginLibPath) throws IOException {
+    private static String getLibraryPath(Context context, String javaPath, String pluginLibPath, String lwjglVersion) throws IOException {
         StringBuilder sb = new StringBuilder();
         String split = ":";
 
@@ -133,14 +133,14 @@ public class FCLauncher {
             }
         }
 
-        return appendCommonPaths(sb, context, pluginLibPath);
+        return appendCommonPaths(sb, context, pluginLibPath, lwjglVersion);
     }
 
-    private static String getLibraryPath(Context context, String pluginLibPath) {
-        return appendCommonPaths(new StringBuilder(), context, pluginLibPath);
+    private static String getLibraryPath(Context context, String pluginLibPath, String lwjglVersion) {
+        return appendCommonPaths(new StringBuilder(), context, pluginLibPath, lwjglVersion);
     }
 
-    private static String appendCommonPaths(StringBuilder sb, Context context, String pluginLibPath) {
+    private static String appendCommonPaths(StringBuilder sb, Context context, String pluginLibPath, String lwjglVersion) {
         String nativeDir = context.getApplicationInfo().nativeLibraryDir;
         String libDirName = is64BitsDevice() ? "lib64" : "lib";
         String split = ":";
@@ -161,18 +161,19 @@ public class FCLauncher {
         sb.append("/vendor/").append(libDirName).append(split);
         sb.append("/vendor/").append(libDirName).append("/hw").append(split);
         sb.append("/system_ext/").append(libDirName).append(split);
+        String arch = Architecture.archAsStringAndroid(Architecture.getDeviceArchitecture());
+        sb.append(FCLPath.LWJGL_DIR).append("/").append(lwjglVersion).append("/natives/").append(arch).append(split);
         sb.append(nativeDir);
 
         return sb.toString();
     }
 
-    private static String[] rebaseArgs(FCLConfig config) throws IOException {
+    private static String[] rebaseArgs(FCLConfig config, String libraryPath) {
         ArrayList<String> argList = new ArrayList<>(Arrays.asList(config.getArgs()));
         argList.add(0, config.getJavaPath() + "/bin/java");
         String[] args = new String[argList.size()];
         for (int i = 0; i < argList.size(); i++) {
             String a = argList.get(i);
-            String libraryPath = getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath());
             if (argList.get(i).contains("-Djava.library.path")) {
                 a = "-Djava.library.path=${natives_directory}";
             }
@@ -193,7 +194,7 @@ public class FCLauncher {
         envMap.put("DRIVER_PATH", DriverPlugin.getSelected().getPath());
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
-        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath()));
+        envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath(), config.getLwjglVersion()));
         envMap.put("FORCE_VSYNC", "false");
         envMap.put("ALSOFT_DRIVERS", "opensl");
 
@@ -205,10 +206,10 @@ public class FCLauncher {
             envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
             envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("LD_LIBRARY_PATH"));
         }
-        if (config.isUseVKDriverSystem()) {
+        if (config.getUseVKDriverSystem()) {
             envMap.put("VULKAN_DRIVER_SYSTEM", "1");
         }
-        if (config.isPojavBigCore()) {
+        if (config.getPojavBigCore()) {
             envMap.put("POJAV_BIG_CORE_AFFINITY", "1");
         }
     }
@@ -217,25 +218,25 @@ public class FCLauncher {
         if (config.getInstalledModLoaders() == null)
             return;
 
-        if (config.getInstalledModLoaders().isInstallForge()) {
+        if (config.getInstalledModLoaders().getInstallForge()) {
             envMap.put("INST_FORGE", "1");
         }
-        if (config.getInstalledModLoaders().isInstallCleanroom()) {
+        if (config.getInstalledModLoaders().getInstallCleanroom()) {
             envMap.put("INST_CLEANROOM", "1");
         }
-        if (config.getInstalledModLoaders().isInstallNeoForge()) {
+        if (config.getInstalledModLoaders().getInstallNeoForge()) {
             envMap.put("INST_NEOFORGE", "1");
         }
-        if (config.getInstalledModLoaders().isInstallLiteLoader()) {
+        if (config.getInstalledModLoaders().getInstallLiteLoader()) {
             envMap.put("INST_LITELOADER", "1");
         }
-        if (config.getInstalledModLoaders().isInstallFabric()) {
+        if (config.getInstalledModLoaders().getInstallFabric()) {
             envMap.put("INST_FABRIC", "1");
         }
-        if (config.getInstalledModLoaders().isInstallOptiFine()) {
+        if (config.getInstalledModLoaders().getInstallOptiFine()) {
             envMap.put("INST_OPTIFINE", "1");
         }
-        if (config.getInstalledModLoaders().isInstallQuilt()) {
+        if (config.getInstalledModLoaders().getInstallQuilt()) {
             envMap.put("INST_QUILT", "1");
         }
     }
@@ -411,7 +412,8 @@ public class FCLauncher {
 
     private static void launch(FCLConfig config, FCLBridge bridge, String task) throws IOException {
         printTaskTitle(bridge, task + " Arguments");
-        String[] args = rebaseArgs(config);
+        String libraryPath = getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath(), config.getLwjglVersion());
+        String[] args = rebaseArgs(config, libraryPath);
         boolean javaArgs = true;
         int mainClass = 0;
         boolean isToken = false;
@@ -433,7 +435,7 @@ public class FCLauncher {
                 isToken = true;
             log(bridge, prefix + arg);
         }
-        bridge.setLdLibraryPath(getLibraryPath(config.getContext(), config.getJavaPath(), config.getRenderer().getPath()));
+        bridge.setLdLibraryPath(libraryPath);
         bridge.setupExitTrap(bridge);
         log(bridge, "Hook success");
         int exitCode = VMLauncher.launchJVM(args);
