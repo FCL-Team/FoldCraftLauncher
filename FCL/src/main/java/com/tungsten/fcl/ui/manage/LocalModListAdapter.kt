@@ -22,6 +22,7 @@ import com.tungsten.fclcore.fakefx.beans.Observable
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleListProperty
 import com.tungsten.fclcore.fakefx.collections.FXCollections
+import com.tungsten.fclcore.fakefx.collections.ListChangeListener
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.RemoteMod
@@ -89,14 +90,34 @@ class LocalModListAdapter(
     private var fromSelf = false
 
     init {
-        this.listProperty.addListener { _: Observable? ->
-            jobs.values.forEach { it.cancel() }
-            jobs.clear()
-            fromSelf = true
-            selectedItemsProperty.clear()
-            fromSelf = false
-            notifyDataSetChanged()
-        }
+        this.listProperty.addListener(ListChangeListener { c -> // 增量插入只通知新条目（notifyItemRangeInserted），已显示条目不会重绘，
+            // 避免其跑马灯文字在每次增量刷新时被重置
+            var replaced = false
+            while (c.next()) {
+                if (c.wasReplaced()) {
+                    // 全量替换（搜索 / 勾选筛选）：整体刷新，远程查询与选中状态全部重置
+                    replaced = true
+                } else if (c.wasRemoved()) {
+                    c.removed.forEach {
+                        jobs.remove(it.modInfo.fileName)?.cancel()
+                        fromSelf = true
+                        selectedItemsProperty.remove(it)
+                        fromSelf = false
+                    }
+                    notifyItemRangeRemoved(c.from, c.removedSize)
+                } else if (c.wasAdded()) {
+                    notifyItemRangeInserted(c.from, c.addedSize)
+                }
+            }
+            if (replaced) {
+                jobs.values.forEach { it.cancel() }
+                jobs.clear()
+                fromSelf = true
+                selectedItemsProperty.clear()
+                fromSelf = false
+                notifyDataSetChanged()
+            }
+        })
         selectedItemsProperty.addListener { _: Observable? ->
             if (!fromSelf) {
                 notifyDataSetChanged()

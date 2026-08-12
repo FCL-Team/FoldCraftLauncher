@@ -56,6 +56,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 
 public final class ModManager {
     @FunctionalInterface
@@ -121,14 +122,19 @@ public final class ModManager {
         return localMods.containsKey(pair(modId, modLoaderType));
     }
 
-    private void addModInfo(Path file) {
+    /**
+     * 解析并加入一个模组文件。
+     *
+     * @return 成功加入 localModFiles 的模组信息；非模组文件或旧版模组（isOld）返回 null
+     */
+    private LocalModFile addModInfo(Path file) {
         String fileName = StringUtils.removeSuffix(FileUtils.getName(file), DISABLED_EXTENSION, OLD_EXTENSION);
         String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
 
         List<Pair<ModMetadataReader, ModLoaderType>> readersMap = READERS.get(extension);
         if (readersMap == null) {
             // Is not a mod file.
-            return;
+            return null;
         }
 
         Set<ModLoaderType> modLoaderTypes = analyzer.getModLoaders();
@@ -189,10 +195,22 @@ public final class ModManager {
 
         if (!modInfo.isOld()) {
             localModFiles.add(modInfo);
+            return modInfo;
         }
+        return null;
     }
 
     public void refreshMods() throws IOException {
+        refreshMods(null);
+    }
+
+    /**
+     * 扫描模组目录。每解析成功一个模组（加入 localModFiles）都会同步调用 onScanned 回调，
+     * 供调用方实现增量展示；回调在扫描线程触发，线程安全由调用方保证。
+     *
+     * @param onScanned 每个模组解析成功后的回调，可为 null
+     */
+    public void refreshMods(Consumer<LocalModFile> onScanned) throws IOException {
         localModFiles.clear();
         localMods.clear();
 
@@ -205,11 +223,13 @@ public final class ModManager {
                         // If the folder name is game version, forge will search mod in this subdirectory
                         try (DirectoryStream<Path> subitemDirectoryStream = Files.newDirectoryStream(subitem)) {
                             for (Path subsubitem : subitemDirectoryStream) {
-                                addModInfo(subsubitem);
+                                LocalModFile mod = addModInfo(subsubitem);
+                                if (mod != null && onScanned != null) onScanned.accept(mod);
                             }
                         }
                     } else {
-                        addModInfo(subitem);
+                        LocalModFile mod = addModInfo(subitem);
+                        if (mod != null && onScanned != null) onScanned.accept(mod);
                     }
                 }
             }

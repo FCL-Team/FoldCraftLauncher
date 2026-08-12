@@ -180,6 +180,15 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <com.tungsten.fcllibrary.component.view.FCLProgressBar
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@drawable/bg_progress_indeterminate"
+                android:visibility="gone"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+
         </com.mio.ui.widget.FCLAppBarLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -190,15 +199,5 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <com.tungsten.fcllibrary.component.view.FCLProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/left"
-        app:layout_constraintTop_toBottomOf="@id/warning" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
