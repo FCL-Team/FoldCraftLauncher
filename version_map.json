@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1324,
-    "versionName": "1.3.2.4",
-    "date": "2026.08.07",
+    "versionCode": 1325,
+    "versionName": "1.3.2.5",
+    "date": "2026.08.12",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Implemented Microsoft account skin and cape management (upload/reset skin, manage capes).  \n2. Refactored offline account skin management; simplified model selection and removed CSL support.  \n3. Added -Dmiolibpatcher.alc10=true JVM arg support to fix missing audio on older versions.  \n4. Fixed game getting stuck when exiting on 26.2+ versions.  \n5. Fixed LWJGL error when attempting to load jemalloc.  \n6. Fixed placeholder errors in multilingual string resources and added missing translations.  \n7. OpenAL-Soft now uses OpenSL as the default audio backend.  \n8. Reworked JRE asset trimming to filter by architecture at build time (smaller APKs).  \n9. Optimized CI build pipeline; merged duplicate build jobs and reused workflows.  \n10. Moved auto cache cleanup to splash screen with an improved implementation.  \n11. Updated LWJGL runtime components and related libraries.  \n12. Updated MioLibPatcher, MioLaunchWrapper, FCLBridge runtime components.  \n13. Migrated AccountListItem to Kotlin with enhanced null-safety in file selection."
+        "text": "(Translated from Chinese by AI)\n1. Added support for LWJGL 3.3.3/3.4.1; removed the old LWJGL-Pojav module and aligned native code layout with Amethyst-Android.  \n2. Delayed GLFW bridge initialization and added missing 3.4.1 APIs.  \n3. Migrated FCLConfig to Kotlin and integrated LWJGL natives paths.  \n4. Removed bedrock-style touch control features.  \n5. Optimized mod list remote info loading (cache reuse, visible items prioritized).  \n6. Fixed NoSuchFileException caused by entry name decoding errors when extracting mixed-encoding zips.  \n7. Fixed inability to clear game and Java VM arguments via long-press on the game settings page.  \n8. Migrated mod metadata reading from ZipFileTree to zipfs.  \n9. Updated Java 25 and netdisk download links.  \n10. Updated MioLibPatcher and other runtime components."
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.实现微软账号皮肤与披风管理功能（支持上传、重置皮肤与披风管理）\n2.重构离线账户皮肤管理逻辑，简化模型选择并移除 CSL 支持\n3.支持 -Dmiolibpatcher.alc10=true 参数，修复低版本游戏无声音的问题\n4.修复 26.2+ 版本退出游戏卡住的问题\n5.修复 LWJGL 尝试加载 jemalloc 报错的问题\n6.修复多语言字符串资源中的占位符错误并补全漏译键\n7.OpenAL-Soft 默认改用 OpenSL 作为音频后端\n8.重构多架构 JRE 资产裁剪，按架构过滤生成资产源，显著减小安装包体积\n9.优化 CI 构建流程，合并重复的构建 job 并复用工作流\n10.自动清理缓存逻辑迁移至启动页\n11.更新 LWJGL 运行时组件与相关依赖库\n12.更新 MioLibPatcher / MioLaunchWrapper / FCLBridge 等运行时组件\n13.AccountListItem 迁移至 Kotlin 并增强文件选择逻辑的空安全性"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.支持 LWJGL 3.3.3 / 3.4.1 双版本，移除旧 LWJGL-Pojav 模块，原生代码向 Amethyst-Android 布局对齐\n2.GLFW 桥延迟初始化并补充 3.4.1 缺失 API\n3.FCLConfig 迁移 Kotlin 并接入 LWJGL natives 路径\n4.删除仿基岩触控相关功能\n5.模组列表远程信息加载优化（缓存复用 + 可见条目优先）\n6.修复混合编码 zip 解压时条目名解码错误导致的 NoSuchFileException\n7.修复游戏设置页面游戏和 Java 虚拟机参数无法通过长按设置为空的问题\n8.mod 元数据读取从 ZipFileTree 迁移到 zipfs\n9.更新 Java 25 及网盘下载链接\n10.更新 MioLibPatcher 等运行时组件"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/a614778d294b",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.4/FCL-release-1.3.2.4-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/f0863c199bfd",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.5/FCL-release-1.3.2.5-all.apk"
   }
 ]
