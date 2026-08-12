@@ -87,19 +87,16 @@ class AccountListAdapter(
         binding.skin.setOnClickListener {
             MainActivity.getInstance().lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    val uploadTask = item.uploadSkin()
-                    withContext(Dispatchers.Main) {
-                        if (uploadTask != null) {
+                    item.uploadSkin(
+                        onUploading = {
                             binding.skin.visibility = View.INVISIBLE
                             binding.skinProgress.visibility = View.VISIBLE
-                            uploadTask
-                                .whenComplete(Schedulers.androidUIThread()) {
-                                    binding.skin.visibility = View.VISIBLE
-                                    binding.skinProgress.visibility = View.INVISIBLE
-                                    item.refreshSkinBinding()
-                                }
-                                .start()
                         }
+                    )
+                    withContext(Dispatchers.Main) {
+                        binding.skin.visibility = View.VISIBLE
+                        binding.skinProgress.visibility = View.INVISIBLE
+                        item.refreshSkinBinding()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()

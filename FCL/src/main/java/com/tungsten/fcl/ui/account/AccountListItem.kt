@@ -38,6 +38,7 @@ import com.tungsten.fclcore.util.skin.NormalizedSkin
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -89,22 +90,26 @@ class AccountListItem(
 
     fun refreshAsync(): Task<*> {
         return Task.runAsync {
-            account.clearCache()
+            runBlocking { refresh() }
+        }
+    }
+
+    private suspend fun refresh() = withContext(Dispatchers.IO) {
+        account.clearCache()
+        try {
+            account.logIn()
+        } catch (_: CredentialExpiredException) {
             try {
-                account.logIn()
-            } catch (_: CredentialExpiredException) {
-                try {
-                    logIn(account)
-                } catch (_: CancellationException) {
-                    // ignore cancellation
-                } catch (e1: Exception) {
-                    LOG.log(Level.WARNING, "Failed to refresh $account with password", e1)
-                    throw e1
-                }
-            } catch (e: AuthenticationException) {
-                LOG.log(Level.WARNING, "Failed to refresh $account with token", e)
-                throw e
+                logIn(account)
+            } catch (_: CancellationException) {
+                // ignore cancellation
+            } catch (e1: Exception) {
+                LOG.log(Level.WARNING, "Failed to refresh $account with password", e1)
+                throw e1
             }
+        } catch (e: AuthenticationException) {
+            LOG.log(Level.WARNING, "Failed to refresh $account with token", e)
+            throw e
         }
     }
 
@@ -130,29 +135,30 @@ class AccountListItem(
     }
 
     /**
-     * @return the skin upload task, null if no file is selected
+     * 上传皮肤。确认选择皮肤文件后通过 [onUploading]（主线程）通知调用方显示进度，
+     * 整个上传流程结束（成功或失败）后返回。
      */
-    suspend fun uploadSkin(): Task<*>? {
-        return when (account) {
+    suspend fun uploadSkin(onUploading: () -> Unit) {
+        when (account) {
             is OfflineAccount -> {
                 withContext(Dispatchers.Main) {
                     OfflineAccountSkinDialog(context, this@AccountListItem).show()
                 }
-                null
             }
 
             is MicrosoftAccount -> {
                 withContext(Dispatchers.Main) {
                     MicrosoftAccountSkinDialog(context, this@AccountListItem).show()
                 }
-                null
             }
 
-            !is YggdrasilAccount -> null
+            !is YggdrasilAccount -> Unit
             else -> {
-                val selectedFile = withContext(Dispatchers.Main) { selectSkinFile() } ?: return null
-                refreshAsync()
-                    .thenRunAsync<Exception> {
+                val selectedFile = withContext(Dispatchers.Main) { selectSkinFile() } ?: return
+                try {
+                    withContext(Dispatchers.Main) { onUploading() }
+                    refresh()
+                    withContext(Dispatchers.IO) {
                         val skinImg: Bitmap = BitmapFactory.decodeFile(selectedFile)
                             ?: throw InvalidSkinException("Failed to read skin image")
                         val skin = NormalizedSkin(skinImg)
@@ -160,19 +166,19 @@ class AccountListItem(
                         LOG.info("Uploading skin [$selectedFile], model [$model]")
                         account.uploadSkin(model, File(selectedFile).toPath())
                     }
-                    .thenComposeAsync(refreshAsync())
-                    .whenComplete(Schedulers.androidUIThread()) { e: Exception? ->
-                        if (e != null) {
-                            val builder1 = FCLAlertDialog.Builder(context)
-                            builder1.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
-                            builder1.setMessage(Accounts.localizeErrorMessage(context, e))
-                            builder1.setNegativeButton(
-                                context.getString(com.tungsten.fcllibrary.R.string.dialog_positive),
-                                null
-                            )
-                            builder1.create().show()
-                        }
+                    refresh()
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        val builder1 = FCLAlertDialog.Builder(context)
+                        builder1.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+                        builder1.setMessage(Accounts.localizeErrorMessage(context, e))
+                        builder1.setNegativeButton(
+                            context.getString(com.tungsten.fcllibrary.R.string.dialog_positive),
+                            null
+                        )
+                        builder1.create().show()
                     }
+                }
             }
         }
     }
