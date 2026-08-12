@@ -1100,6 +1100,12 @@ public class GLFW
     public static long glfwCreateWindow(int width, int height, CharSequence title, long monitor, long share) {
         // Create an ACTUAL EGL context
         long ptr = nglfwCreateContext(share);
+        if (ptr == 0) {
+            // Context creation failed, aborting instead of calling into the GL driver
+            // without a current context (which may SIGSEGV inside the renderer)
+            System.out.println("GLFW: Failed to create window context!");
+            return 0;
+        }
         //nativeEglMakeCurrent(ptr);
         GLFWWindowProperties win = new GLFWWindowProperties();
         // win.width = width;
