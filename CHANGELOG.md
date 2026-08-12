@@ -1,0 +1,71 @@
+# Changelog
+
+## [1.3.2.5] - 2026-08-12
+
+### 中文
+
+#### ✨ 新功能
+
+1. **支持 LWJGL 3.3.3 / 3.4.1 双版本**：彻底移除旧 LWJGL-Pojav 模块，改为基于官方 LWJGL 合并 Android 源码的构建方式，两个版本按需切换；新增 3.4.1 Vulkan 模块支持
+2. **GLFW 桥延迟初始化**：GLFW 初始化推迟到真正需要时进行，并补充了 3.4.1 版本缺失的 API
+3. **删除仿基岩触控相关功能**：移除历史遗留的仿基岩触控支持，简化代码与界面
+
+#### ⚡ 优化
+
+1. **模组列表远程信息加载优化**：远程信息缓存复用 + 可见条目优先加载，浏览模组列表更流畅
+2. **FCLConfig 迁移 Kotlin**：配置类迁移至 Kotlin 并接入 LWJGL natives 路径管理
+3. **mod 元数据读取迁移**：从 ZipFileTree 迁移到 zipfs，统一走混合编码兼容的压缩文件系统
+4. **jre_launcher 日志改进**：改用 FCL_LOG 统一日志输出
+
+#### 🐛 修复
+
+1. 修复游戏设置页面中游戏参数与 Java 虚拟机参数无法通过长按设置为空的问题（#1728）
+2. 修复混合编码 zip 解压时条目名解码错误导致的 NoSuchFileException
+3. 修复 LWJGL 构建流程问题、IDE 中 LWJGL 模块类意外报错的问题
+4. 同步 GLCapabilities 与 Amethyst 实现，同步 JNI 与新版 LWJGL 接口
+5. LWJGL natives 按架构过滤支持命令行 `-Darch` 覆盖
+6. 完善 LWJGL 双版本类路径与库过滤逻辑
+7. ProcessService 对空 command 增加兜底处理
+8. 同步 Amethyst JNI 修复并重构窗口尺寸事件上报
+9. 修复 freetype 库名引用，改为相对名
+10. 更新 Java 25 网盘下载链接
+
+#### 🔧 其他
+
+1. 原生代码布局向 Amethyst-Android 对齐：JVM 钩子提取到 `jvm_hooks/` 目录、`awt_bridge.c` 移至 jni 根目录、linkerhook 重写为 C 并合并驱动加载到 egl_bridge
+2. 更新 MioLibPatcher、Java 25、vulkan 3.4.1 模块等运行时组件
+3. 更新多语言字符串资源
+
+### English
+
+#### ✨ New Features
+
+1. **Dual LWJGL support (3.3.3 / 3.4.1)**: Removed the old LWJGL-Pojav module entirely and switched to a build based on official LWJGL merged with Android sources; both versions can be used on demand, with new Vulkan module support for 3.4.1
+2. **Delayed GLFW bridge initialization**: GLFW is now initialized lazily when actually needed, with missing 3.4.1 APIs added
+3. **Removed bedrock-style touch controls**: Dropped the legacy bedrock-style touch control feature to simplify the codebase and UI
+
+#### ⚡ Improvements
+
+1. **Mod list remote info loading optimized**: Remote info is now cached and reused, with visible items loaded first for smoother browsing
+2. **FCLConfig migrated to Kotlin**: Configuration class migrated to Kotlin and integrated with LWJGL natives path management
+3. **Mod metadata reading migrated**: Moved from ZipFileTree to zipfs, unified on a mixed-encoding-compatible zip filesystem
+4. **jre_launcher logging improved**: Switched to unified FCL_LOG output
+
+#### 🐛 Bug Fixes
+
+1. Fixed game arguments and Java VM arguments being unable to be cleared via long-press on the game settings page (#1728)
+2. Fixed NoSuchFileException caused by entry name decoding errors when extracting mixed-encoding zips
+3. Fixed LWJGL build pipeline issues and unexpected IDE errors from LWJGL module classes
+4. Synced GLCapabilities with the Amethyst implementation and synced JNI with the new LWJGL interfaces
+5. LWJGL natives per-architecture filtering now honors the `-Darch` command-line override
+6. Improved dual-version LWJGL classpath and library filtering
+7. Added fallback handling for empty commands in ProcessService
+8. Synced Amethyst JNI fixes and reworked window size event reporting
+9. Fixed freetype library name reference to use a relative name
+10. Updated Java 25 netdisk download links
+
+#### 🔧 Other
+
+1. Native code layout aligned with Amethyst-Android: JVM hooks moved to `jvm_hooks/`, `awt_bridge.c` moved to the jni root, linkerhook rewritten in C with driver loading merged into egl_bridge
+2. Updated runtime components: MioLibPatcher, Java 25, Vulkan 3.4.1 module
+3. Updated multilingual string resources
