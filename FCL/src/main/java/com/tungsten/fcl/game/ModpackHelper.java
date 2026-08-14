@@ -120,8 +120,8 @@ public final class ModpackHelper {
         try (FileSystem fs = CompressingUtils.createReadOnlyZipFileSystem(file, charset)) {
             findMinecraftDirectoryInManuallyCreatedModpack(file.toString(), fs);
             throw new ManuallyCreatedModpackException(file);
-        } catch (IOException e) {
-            // ignore it
+        } catch (Throwable e) {
+            // 忽略：文件损坏（含 zipfs 抛 ZipError）或非整合包，统一走 UnsupportedModpackException
         }
 
         throw new UnsupportedModpackException(file.toString());

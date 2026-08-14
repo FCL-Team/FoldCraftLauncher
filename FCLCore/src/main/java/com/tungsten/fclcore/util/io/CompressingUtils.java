@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.zip.ZipError;
 import java.util.zip.ZipException;
 
 /**
@@ -265,6 +266,12 @@ public final class CompressingUtils {
             throw new ZipException("Not a zip file");
         } catch (FileSystemNotFoundException ex) {
             throw Lang.apply(new ZipException("Java Environment is broken"), it -> it.initCause(ex));
+        } catch (ZipError e) {
+            // 损坏的压缩文件（如中央目录损坏）zipfs 抛 ZipError（Error），
+            // 包装为 IOException 以便调用方按常规异常处理，避免穿透崩溃
+            ZipException exception = new ZipException("Corrupted zip file");
+            exception.initCause(e);
+            throw exception;
         }
     }
 
