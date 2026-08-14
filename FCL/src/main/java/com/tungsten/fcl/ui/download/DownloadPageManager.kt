@@ -29,7 +29,6 @@ class DownloadPageManager(
     }
 
     var profile: Profile? = null
-    var version: String? = null
     private lateinit var versionInstallPage: VersionInstallPage
     private val downloadModpackPage: ModpackDownloadPage by lazy {
         ModpackDownloadPage(context, PAGE_ID_DOWNLOAD_MODPACK, parent, R.layout.page_download)
@@ -93,17 +92,16 @@ class DownloadPageManager(
         }
         if (page != null) {
             allPages.add(page)
-            (page as VersionLoadable).loadVersion(profile, version)
+            (page as VersionLoadable).loadVersion(profile, null)
         }
         return page
     }
 
     fun loadVersion(profile: Profile?, version: String?) {
         this.profile = profile
-        this.version = version
         allPages.forEach {
             if (it is VersionLoadable) {
-                (it as VersionLoadable).loadVersion(profile, version)
+                (it as VersionLoadable).loadVersion(profile, null)
             }
         }
     }
