@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1325,
-    "versionName": "1.3.2.5",
-    "date": "2026.08.12",
+    "versionCode": 1326,
+    "versionName": "1.3.2.6",
+    "date": "2026.08.14",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Added support for LWJGL 3.3.3/3.4.1; removed the old LWJGL-Pojav module and aligned native code layout with Amethyst-Android.  \n2. Delayed GLFW bridge initialization and added missing 3.4.1 APIs.  \n3. Migrated FCLConfig to Kotlin and integrated LWJGL natives paths.  \n4. Removed bedrock-style touch control features.  \n5. Optimized mod list remote info loading (cache reuse, visible items prioritized).  \n6. Fixed NoSuchFileException caused by entry name decoding errors when extracting mixed-encoding zips.  \n7. Fixed inability to clear game and Java VM arguments via long-press on the game settings page.  \n8. Migrated mod metadata reading from ZipFileTree to zipfs.  \n9. Updated Java 25 and netdisk download links.  \n10. Updated MioLibPatcher and other runtime components."
+        "text": "(Translated from Chinese by AI)\n1. Incremental mod list loading optimization (scan and display in batches, filtering no longer rescans).  \n2. Corrupted mod files are now skipped with a prompt instead of failing the whole mod list; confirmation dialog added for deleting corrupted mods.  \n3. Fixed F3 page CPU showing \"Unknown\" on some devices.  \n4. Fixed some rendering errors.  \n5. Fixed crash when GLFW window context creation fails.  \n6. Fixed LWJGL freetype library loading from the packaged natives directory.  \n7. Account skin upload reimplemented with coroutines instead of Task.  \n8. Removed the NG-GL4ES submodule, using prebuilt artifacts from the standalone project."
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.支持 LWJGL 3.3.3 / 3.4.1 双版本，移除旧 LWJGL-Pojav 模块，原生代码向 Amethyst-Android 布局对齐\n2.GLFW 桥延迟初始化并补充 3.4.1 缺失 API\n3.FCLConfig 迁移 Kotlin 并接入 LWJGL natives 路径\n4.删除仿基岩触控相关功能\n5.模组列表远程信息加载优化（缓存复用 + 可见条目优先）\n6.修复混合编码 zip 解压时条目名解码错误导致的 NoSuchFileException\n7.修复游戏设置页面游戏和 Java 虚拟机参数无法通过长按设置为空的问题\n8.mod 元数据读取从 ZipFileTree 迁移到 zipfs\n9.更新 Java 25 及网盘下载链接\n10.更新 MioLibPatcher 等运行时组件"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.模组列表增量加载优化（边扫描边分批显示，筛选不再重新扫描）\n2.损坏的模组文件跳过并提示，避免整个模组列表加载失败，并支持确认删除\n3.修复部分设备 F3 页面 CPU 显示为 Unknown 的问题\n4.修复部分渲染错误\n5.修复 GLFW 窗口上下文创建失败时导致的崩溃\n6.修复 LWJGL freetype 库从打包 natives 目录加载的问题\n7.账号皮肤上传改为协程实现\n8.移除 NG-GL4ES 子模块，改用独立项目预构建产物"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/f0863c199bfd",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.5/FCL-release-1.3.2.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/98ea477e8ecc",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.6/FCL-release-1.3.2.6-all.apk"
   }
 ]
