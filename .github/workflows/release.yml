@@ -22,9 +22,17 @@ jobs:
         with:
           path: apks
 
+      - name: Extract changelog for current version
+        run: |
+          awk -v tag="$GITHUB_REF_NAME" '
+            $0 ~ "^## \\[" tag "\\]" { found = 1; next }
+            found && $0 ~ "^## \\[" { exit }
+            found { print }
+          ' CHANGELOG.md > RELEASE_BODY.md
+
       - name: Release
         uses: softprops/action-gh-release@v3
         with:
           token: ${{ secrets.TOKEN }}
           files: apks/**/*.apk
-          body_path: CHANGELOG.md
+          body_path: RELEASE_BODY.md

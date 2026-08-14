@@ -1,5 +1,46 @@
 # Changelog
 
+## [1.3.2.6] - 2026-08-14
+
+### 中文
+
+#### ✨ 新功能
+
+1. **损坏的模组文件支持确认删除**：模组文件损坏时弹窗提示，支持确认后删除，避免手动去文件管理器清理
+
+#### ⚡ 优化
+
+1. **模组列表增量加载优化**：扫描过程中边扫描边分批显示，筛选时不再重新扫描，模组多时列表响应更快
+2. **账号皮肤上传改为协程实现**：不再使用 Task 异步系统，逻辑更简洁清晰
+3. **移除 NG-GL4ES 子模块**：渲染器改用独立项目（NG-GL4ES）的预构建产物，不再以子模块形式依赖源码
+
+#### 🐛 修复
+
+1. 修复部分设备 F3 页面 CPU 显示为 Unknown 的问题
+2. 修复部分渲染错误（#1747）
+3. 修复 GLFW 窗口上下文创建失败时导致的崩溃
+4. 修复 LWJGL freetype 库从打包 natives 目录加载的问题
+5. 损坏的模组文件跳过并提示，避免整个模组列表加载失败
+
+### English
+
+#### ✨ New Features
+
+1. **Confirmation dialog for corrupted mod files**: Corrupted mods now show a prompt with the option to delete them, so users no longer need to clean up files manually
+
+#### ⚡ Improvements
+
+1. **Incremental mod list loading**: Mods are now scanned and displayed in batches, and filtering no longer rescans the whole list, making large mod lists much more responsive
+2. **Account skin upload reimplemented with coroutines**: Replaced the Task async system with coroutines for cleaner logic
+3. **Removed the NG-GL4ES submodule**: The renderer now uses prebuilt artifacts from the standalone NG-GL4ES project instead of vendoring its source
+
+#### 🐛 Bug Fixes
+
+1. Fixed F3 page CPU showing "Unknown" on some devices
+2. Fixed some rendering errors (#1747)
+3. Fixed a crash when GLFW window context creation fails
+4. Fixed LWJGL freetype library loading from the packaged natives directory
+5. Corrupted mod files are now skipped with a prompt instead of failing the entire mod list
 ## [1.3.2.5] - 2026-08-12
 
 ### 中文
@@ -69,3 +110,4 @@
 1. Native code layout aligned with Amethyst-Android: JVM hooks moved to `jvm_hooks/`, `awt_bridge.c` moved to the jni root, linkerhook rewritten in C with driver loading merged into egl_bridge
 2. Updated runtime components: MioLibPatcher, Java 25, Vulkan 3.4.1 module
 3. Updated multilingual string resources
+
