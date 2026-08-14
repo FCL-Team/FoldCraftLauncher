@@ -55,6 +55,16 @@ class UIManager(val context: Context, val pager: ViewPager2) {
         override fun onPageSelected(position: Int) {
             currentUI = getUI(position)
             pageSelectedListener?.invoke(position)
+            // 页面切换过渡动画：不创建中间页（瞬时跳转），直接对目标页做淡入 + 上滑进入。
+            // post 确保页面已挂载到 ViewPager2 容器后再运行动画
+            currentUI?.contentView?.apply {
+                post {
+                    animate().cancel()
+                    alpha = 0f
+                    translationY = resources.displayMetrics.density * 30f
+                    animate().alpha(1f).translationY(0f).setDuration(250).start()
+                }
+            }
         }
     }
 
@@ -70,7 +80,9 @@ class UIManager(val context: Context, val pager: ViewPager2) {
     fun init() {
         instance = this
         pager.adapter = UIAdapter()
-        pager.offscreenPageLimit = 1
+        // 不预加载相邻页面：进入某页时只创建当前页，避免相邻页提前创建带来的
+        // inflate/初始化开销（页面在切换时才创建）
+        pager.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
         // 主界面切换动画为上下过渡（垂直方向）
         pager.orientation = ViewPager2.ORIENTATION_VERTICAL
         // 禁用滑动手势：页面内垂直滚动内容与滑动切换冲突，仅通过菜单切换
@@ -150,8 +162,12 @@ class UIManager(val context: Context, val pager: ViewPager2) {
         override fun onBindViewHolder(holder: Holder, position: Int) {
             holder.boundPosition = position
             holder.container.removeAllViews()
+            val contentView = getUI(position).contentView
+            // 防御：GapWorker 预取可能将同一 UI 视图挂到其他容器（预取 bind 与正式 bind 竞争），
+            // 先解除旧 parent，避免 addView 抛 "child already has a parent"
+            (contentView.parent as? ViewGroup)?.removeView(contentView)
             holder.container.addView(
-                getUI(position).contentView,
+                contentView,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
