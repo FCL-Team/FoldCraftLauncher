@@ -31,7 +31,6 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     private ManagePageManager pageManager;
 
     private FCLUILayout container;
-    private Runnable runnable;
 
     private final ObjectProperty<Profile.ProfileVersion> version = new SimpleObjectProperty<>();
     private final WeakListenerHolder listenerHolder = new WeakListenerHolder();
@@ -100,9 +99,6 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     @Override
     public void initPages() {
         pageManager = new ManagePageManager(getContext(), container, ManagePageManager.PAGE_ID_MANAGE_SETTING);
-        if (runnable != null) {
-            runnable.run();
-        }
     }
 
     @Override
@@ -207,13 +203,5 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
 
     public ManagePageManager getPageManager() {
         return pageManager;
-    }
-
-    @Override
-    public void runAfterInit(Runnable runnable) {
-        this.runnable = runnable;
-        if (pageManager != null) {
-            runnable.run();
-        }
     }
 }

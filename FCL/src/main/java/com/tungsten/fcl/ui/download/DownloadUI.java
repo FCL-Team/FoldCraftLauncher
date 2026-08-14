@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedListener {
 
     private DownloadPageManager pageManager;
-    private Runnable runnable;
 
     public FCLTabLayout tabLayout;
     public FCLUILayout container;
@@ -78,9 +77,6 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
         pageManager = new DownloadPageManager(getContext(), container, DownloadPageManager.PAGE_ID_DOWNLOAD_GAME);
 
         Profiles.registerVersionsListener(versionsListener);
-        if (runnable != null) {
-            runnable.run();
-        }
     }
 
     @Override
@@ -150,13 +146,5 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
 
     public DownloadPageManager getPageManager() {
         return pageManager;
-    }
-
-    @Override
-    public void runAfterInit(Runnable runnable) {
-        this.runnable = runnable;
-        if (pageManager != null) {
-            runnable.run();
-        }
     }
 }

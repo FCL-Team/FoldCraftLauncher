@@ -19,7 +19,6 @@ public class ControllerUI extends FCLMultiPageUI {
     private ControllerPageManager pageManager;
 
     private FCLUILayout container;
-    private Runnable runnable;
 
     public ControllerUI(Context context, int id) {
         super(context, id);
@@ -67,9 +66,6 @@ public class ControllerUI extends FCLMultiPageUI {
     @Override
     public void initPages() {
         pageManager = new ControllerPageManager(getContext(), container, ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER);
-        if (runnable != null) {
-            runnable.run();
-        }
     }
 
     @Override
@@ -89,13 +85,5 @@ public class ControllerUI extends FCLMultiPageUI {
 
     public ControllerPageManager getPageManager() {
         return pageManager;
-    }
-
-    @Override
-    public void runAfterInit(Runnable runnable) {
-        this.runnable = runnable;
-        if (pageManager != null) {
-            runnable.run();
-        }
     }
 }
