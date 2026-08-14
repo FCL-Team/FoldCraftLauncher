@@ -26,6 +26,9 @@ import java.util.function.Consumer;
  */
 public abstract class FCLMultiPageUI extends FCLCommonUI {
 
+    /** 临时页切换动画时长（毫秒） */
+    private static final int TEMP_PAGE_ANIM_DURATION = 200;
+
     /** 页面位置 → 页面实例注册表，页面被回收时清出（不保留状态） */
     private final ArrayList<FCLPage> pageRegistry = new ArrayList<>();
 
@@ -135,27 +138,34 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
         if (pagePager != null) {
             pagePager.setVisibility(View.GONE);
         }
+        // 新临时页淡入
+        View view = page.getContentView();
+        view.setAlpha(0f);
         overlay.setVisibility(View.VISIBLE);
-        overlay.addView(page.getContentView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        overlay.addView(view, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        view.animate().alpha(1f).setDuration(TEMP_PAGE_ANIM_DURATION).start();
         tempPageStack.add(page);
     }
 
-    /** 弹栈顶临时页 */
+    /** 弹栈顶临时页（淡出后移除并恢复下层） */
     public void dismissCurrentTempPage() {
         if (tempPageStack.isEmpty()) return;
         FCLPage page = tempPageStack.remove(tempPageStack.size() - 1);
-        overlay.removeView(page.getContentView());
-        if (!tempPageStack.isEmpty()) {
-            // 恢复下层临时页显示
-            tempPageStack.get(tempPageStack.size() - 1).getContentView().setVisibility(View.VISIBLE);
-        }
-        if (tempPageStack.isEmpty()) {
-            overlay.setVisibility(View.GONE);
-            // 临时页全部关闭后恢复内层页面显示
-            if (pagePager != null) {
-                pagePager.setVisibility(View.VISIBLE);
+        View view = page.getContentView();
+        view.animate().alpha(0f).setDuration(TEMP_PAGE_ANIM_DURATION).withEndAction(() -> {
+            overlay.removeView(view);
+            if (!tempPageStack.isEmpty()) {
+                // 恢复下层临时页显示
+                tempPageStack.get(tempPageStack.size() - 1).getContentView().setVisibility(View.VISIBLE);
             }
-        }
+            if (tempPageStack.isEmpty()) {
+                overlay.setVisibility(View.GONE);
+                // 临时页全部关闭后恢复内层页面显示
+                if (pagePager != null) {
+                    pagePager.setVisibility(View.VISIBLE);
+                }
+            }
+        }).start();
     }
 
     /** 清空全部临时页 */
