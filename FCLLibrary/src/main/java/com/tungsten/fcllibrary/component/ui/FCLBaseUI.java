@@ -1,11 +1,11 @@
 package com.tungsten.fcllibrary.component.ui;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import androidx.asynclayoutinflater.view.AsyncLayoutInflater;
 
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -37,11 +37,8 @@ public abstract class FCLBaseUI implements FCLUILifecycleCallbacks {
         return activity;
     }
 
-    public void setContentView(@LayoutRes int id, OnInflateFinishedListener listener) {
-        new AsyncLayoutInflater(context).inflate(id, null, (view, resid, parent) -> {
-            contentView = view;
-            listener.onFinish();
-        });
+    public void setContentView(@LayoutRes int id) {
+        contentView = LayoutInflater.from(context).inflate(id, null);
     }
 
     public View getContentView() {

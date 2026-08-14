@@ -56,21 +56,19 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     @Override
     public void onStart() {
         super.onStart();
-        addLoadingCallback(() -> {
-            // If we jumped to game list page and deleted this version
-            // and back to this page, we should return to main page.
-            if (!getProfile().getRepository().isLoaded() ||
-                    !getProfile().getRepository().hasVersion(getVersion())) {
-                Schedulers.androidUIThread().execute(() -> {
-                    if (isShowing()) {
-                        MainActivity.getInstance().refreshMenuView(null);
-                        MainActivity.getInstance().binding.home.setSelected(true);
-                    }
-                });
-                return;
-            }
-            loadVersion(getVersion(), getProfile());
-        });
+        // If we jumped to game list page and deleted this version
+        // and back to this page, we should return to main page.
+        if (!getProfile().getRepository().isLoaded() ||
+                !getProfile().getRepository().hasVersion(getVersion())) {
+            Schedulers.androidUIThread().execute(() -> {
+                if (isShowing()) {
+                    MainActivity.getInstance().refreshMenuView(null);
+                    MainActivity.getInstance().binding.home.setSelected(true);
+                }
+            });
+            return;
+        }
+        loadVersion(getVersion(), getProfile());
     }
 
     @Override
@@ -100,7 +98,7 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
 
     @Override
     public void initPages() {
-        pageManager = new ManagePageManager(getContext(), container, ManagePageManager.PAGE_ID_MANAGE_SETTING, null);
+        pageManager = new ManagePageManager(getContext(), container, ManagePageManager.PAGE_ID_MANAGE_SETTING);
         if (runnable != null) {
             runnable.run();
         }

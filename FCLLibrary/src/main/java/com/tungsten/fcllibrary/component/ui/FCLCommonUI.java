@@ -15,20 +15,12 @@ public abstract class FCLCommonUI extends FCLBaseUI {
 
     private final FCLUILayout parent;
 
-    private UILoadingCallback callback;
-
     private boolean init = false;
 
     public FCLCommonUI(Context context, FCLUILayout parent, @LayoutRes int id) {
         super(context);
         this.parent = parent;
-        setContentView(id, () -> {
-            onCreate();
-            init = true;
-            if (callback != null) {
-                callback.onLoad();
-            }
-        });
+        setContentView(id);
     }
 
     @Override
@@ -51,9 +43,13 @@ public abstract class FCLCommonUI extends FCLBaseUI {
     @Override
     public void onStart() {
         super.onStart();
-        if (init) {
-            DisplayAnimUtils.showViewWithAnim(getContentView(), R.anim.ui_show);
+        // onCreate 延迟到首次 onStart 执行，确保子类字段已初始化完成
+        // （父类构造器中调用可重写方法时，子类字段尚未初始化，会触发 NPE）
+        if (!init) {
+            onCreate();
+            init = true;
         }
+        DisplayAnimUtils.showViewWithAnim(getContentView(), R.anim.ui_show);
     }
 
     @Override
@@ -83,12 +79,5 @@ public abstract class FCLCommonUI extends FCLBaseUI {
     public void onDestroy() {
         super.onDestroy();
         parent.removeView(getContentView());
-    }
-
-    public void addLoadingCallback(UILoadingCallback callback) {
-        this.callback = callback;
-        if (init) {
-            callback.onLoad();
-        }
     }
 }

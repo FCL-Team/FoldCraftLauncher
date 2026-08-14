@@ -51,7 +51,6 @@ dependencies {
     implementation(libs.commons.io)
     implementation(libs.appcompat)
     implementation(libs.material)
-    implementation(libs.async.layout.inflater)
     implementation(libs.jelf)
     implementation(libs.glide)
 }

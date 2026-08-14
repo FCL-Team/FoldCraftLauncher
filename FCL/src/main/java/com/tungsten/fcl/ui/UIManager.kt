@@ -35,7 +35,7 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
     private val allUIList = mutableListOf<FCLBaseUI>()
     var currentUI: FCLBaseUI? = null
 
-    fun init(listener: UIListener) {
+    fun init(onLoad: () -> Unit) {
         if (initialized) {
             Logging.LOG.log(Level.WARNING, "UIManager already initialized!")
             return
@@ -43,27 +43,17 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
         instance = this
         mainUI = MainUI(context, parent, R.layout.ui_main)
         allUIList.add(mainUI)
-        mainUI.addLoadingCallback {
-            listener.onLoad()
-        }
+        onLoad()
     }
 
     fun switchUI(ui: FCLCommonUI) {
-        var isFirstAdd = false
         if (!allUIList.contains(ui)) {
-            isFirstAdd = true
             allUIList.add(ui)
         }
         for (baseUI in allUIList) {
             if (ui === baseUI) {
                 currentUI?.onStop()
-                if (isFirstAdd) {
-                    ui.addLoadingCallback {
-                        ui.onStart()
-                    }
-                } else {
-                    ui.onStart()
-                }
+                ui.onStart()
                 currentUI = ui
                 break
             }

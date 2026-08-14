@@ -23,7 +23,7 @@ public abstract class FCLCommonPage extends FCLBasePage {
     public FCLCommonPage(Context context, int id, FCLUILayout parent, @LayoutRes int resId) {
         super(context, id);
         this.parent = parent;
-        setContentView(resId, null);
+        setContentView(resId);
         onCreate();
     }
 

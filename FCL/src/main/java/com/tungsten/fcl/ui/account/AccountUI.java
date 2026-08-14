@@ -51,22 +51,20 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onStart() {
         super.onStart();
-        addLoadingCallback(() -> refresh().start());
+        refresh().start();
     }
 
     @Override
     public Task<?> refresh(Object... param) {
-        addLoadingCallback(() -> {
-            ArrayList<AccountListItem> accountList = Accounts.getAccounts().stream()
-                    .map(account -> new AccountListItem(getContext(), account))
-                    .collect(Collectors.toCollection(ArrayList::new));
-            if (accountListAdapter == null) {
-                accountListAdapter = new AccountListAdapter(getContext(), accountList);
-                recyclerView.setAdapter(accountListAdapter);
-            } else {
-                accountListAdapter.refresh(accountList);
-            }
-        });
+        ArrayList<AccountListItem> accountList = Accounts.getAccounts().stream()
+                .map(account -> new AccountListItem(getContext(), account))
+                .collect(Collectors.toCollection(ArrayList::new));
+        if (accountListAdapter == null) {
+            accountListAdapter = new AccountListAdapter(getContext(), accountList);
+            recyclerView.setAdapter(accountListAdapter);
+        } else {
+            accountListAdapter.refresh(accountList);
+        }
         return Task.runAsync(() -> {
 
         });

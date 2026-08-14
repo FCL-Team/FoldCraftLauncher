@@ -25,7 +25,6 @@ commonsIo = "2.15.1"
 tomlj = "1.1.1"
 constantPoolScanner = "1.2"
 jsoup = "1.18.3"
-asyncLayoutInflater = "1.0.0"
 jelf = "0.9.0"
 bytehook = "1.0.10"
 chardet = "2.5.0"
@@ -56,7 +55,6 @@ commons-io = { group = "commons-io", name = "commons-io", version.ref = "commons
 tomlj = { group = "org.tomlj", name = "tomlj", version.ref = "tomlj" }
 constant-pool-scanner = { group = "org.jenkins-ci", name = "constant-pool-scanner", version.ref = "constantPoolScanner" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
-async-layout-inflater = { group = "androidx.asynclayoutinflater", name = "asynclayoutinflater", version.ref = "asyncLayoutInflater" }
 jelf = { group = "net.fornwall", name = "jelf", version.ref = "jelf" }
 bytehook = { group = "com.bytedance", name = "bytehook", version.ref = "bytehook" }
 chardet = { module = "org.glavo:chardet", version.ref = "chardet" }
