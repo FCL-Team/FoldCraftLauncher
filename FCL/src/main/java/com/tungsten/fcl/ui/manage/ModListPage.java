@@ -232,6 +232,14 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
     @Override
     public void loadVersion(Profile profile, String version) {
+        // 同一版本重复加载（如从其他页面返回时 ManageUI.onStart 触发）直接跳过，
+        // 避免每次显示都全量重扫模组 zip：上百个模组时解析耗时长，
+        // 且与上一次扫描交错时 calculateMod 在主线程触发 getMods 会 ANR。
+        // 模组增删/更新/回滚等数据变更路径内部已有显式 loadMods 刷新。
+        if (profile == this.profile && Objects.equals(version, this.versionId) && modManager != null) {
+            return;
+        }
+
         this.profile = profile;
         this.versionId = version;
 
@@ -349,6 +357,8 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 throw new UncheckedIOException(e);
             }
         }, Schedulers.defaultScheduler()).whenCompleteAsync((result, exception) -> {
+            // 已被更新的 loadMods 取代时跳过，避免旧扫描回调操作新状态（如主线程触发未加载实例的 getMods）
+            if (this.modManager != modManager) return;
             setLoading(false);
             if (exception == null)
                 try {
