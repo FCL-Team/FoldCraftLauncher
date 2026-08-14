@@ -91,6 +91,22 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         this.callback = callback;
 
         create();
+
+        // 原 onStart 逻辑：页面构造即填充内容并加载
+        icon.setImageDrawable(null);
+        Glide.with(getContext()).load(addon.getIconUrl()).into(icon);
+        ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
+        mcmod.setVisibility(mod == null ? View.GONE : View.VISIBLE);
+        name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : addon.getTitle());
+        description.setText(addon.getDescription());
+        List<String> categories = addon.getCategories().stream().map(page::getLocalizedCategory).collect(Collectors.toList());
+        StringBuilder stringBuilder = new StringBuilder();
+        categories.forEach(it -> stringBuilder.append(it).append("   "));
+        String tag = StringUtils.removeSuffix(stringBuilder.toString(), "   ");
+        this.tag.setText(tag);
+
+        loadModVersions();
+        loadScreenshots();
     }
 
     public void create() {
@@ -120,26 +136,6 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         search.stringProperty().addListener(observable -> {
             loadGameVersions();
         });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        icon.setImageDrawable(null);
-        Glide.with(getContext()).load(addon.getIconUrl()).into(icon);
-        ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
-        mcmod.setVisibility(mod == null ? View.GONE : View.VISIBLE);
-        name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : addon.getTitle());
-        description.setText(addon.getDescription());
-        List<String> categories = addon.getCategories().stream().map(page::getLocalizedCategory).collect(Collectors.toList());
-        StringBuilder stringBuilder = new StringBuilder();
-        categories.forEach(it -> stringBuilder.append(it).append("   "));
-        String tag = StringUtils.removeSuffix(stringBuilder.toString(), "   ");
-        this.tag.setText(tag);
-
-        loadModVersions();
-        loadScreenshots();
     }
 
     private void loadGameVersions() {
@@ -300,11 +296,6 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     @Override

@@ -41,18 +41,15 @@ public class RemoteModVersionPage extends FCLTempPage {
         this.version = version;
         this.callback = callback;
         this.downloadPage = downloadPage;
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+        // 原 onStart 逻辑：页面构造即初始化列表
         listView = findViewById(R.id.list);
-        ModVersionAdapter adapter = new ModVersionAdapter(getContext(), list, version -> {
+        ModVersionAdapter adapter = new ModVersionAdapter(getContext(), list, modVersion -> {
             if (downloadPage.getId() == DownloadPageManager.PAGE_ID_DOWNLOAD_MOD) {
-                RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon, this.version, version, callback, this, downloadPage);
+                RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon, this.version, modVersion, callback, this, downloadPage);
                 DownloadPageManager.getInstance().showTempPage(page);
             } else {
-                download(version);
+                download(modVersion);
             }
         });
         listView.setAdapter(adapter);
@@ -90,11 +87,6 @@ public class RemoteModVersionPage extends FCLTempPage {
     @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     public interface DownloadCallback {

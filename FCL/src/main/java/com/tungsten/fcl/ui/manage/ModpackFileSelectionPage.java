@@ -70,21 +70,15 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
         this.adviser = adviser;
         this.exportInfo = exportInfo;
         this.modpackFile = file;
-    }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+        // 原 onCreate 逻辑：绑定控件
         progressBar = findViewById(R.id.progress);
         listView = findViewById(R.id.list);
         ThemeEngine.getInstance().registerEvent(listView, () -> listView.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
         next = findViewById(R.id.next);
         next.setOnClickListener(this);
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+        // 原 onStart 逻辑：页面构造即加载文件树
         progressBar.setVisibility(View.VISIBLE);
         listView.setVisibility(View.GONE);
         next.setVisibility(View.GONE);
@@ -325,11 +319,6 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
     @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     @Override

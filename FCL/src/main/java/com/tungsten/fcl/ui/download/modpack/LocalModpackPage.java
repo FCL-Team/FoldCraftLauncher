@@ -45,12 +45,8 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
         super(context, id, parent, resId, profile);
         this.updateVersion = updateVersion;
         this.modpackFile = modpackFile;
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
+        // 原 onStart 逻辑：页面构造即读取模组包 manifest
         if (updateVersion != null) {
             editText.setText(updateVersion);
             editText.setEnabled(false);

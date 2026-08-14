@@ -30,12 +30,8 @@ public class RemoteModpackPage extends ModpackPage {
         super(context, id, parent, resId, profile);
         this.updateVersion = updateVersion;
         this.manifest = manifest;
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
+        // 原 onStart 逻辑：页面构造即解析服务端模组包
         progressBar.setVisibility(View.VISIBLE);
         layout.setVisibility(View.GONE);
 

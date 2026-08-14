@@ -53,6 +53,13 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
         this.worldDir = worldDir;
 
         datapack = new Datapack(worldDir.resolve("datapacks"));
+
+        // 原 onStart 逻辑：页面构造即初始化列表并刷新
+        adapter = new DatapackListAdapter(getContext());
+        listView.setAdapter(adapter);
+        Bindings.bindContent(adapter.listProperty(), itemsProperty);
+
+        refresh();
     }
 
     @Override
@@ -74,24 +81,8 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        adapter = new DatapackListAdapter(getContext());
-        listView.setAdapter(adapter);
-        Bindings.bindContent(adapter.listProperty(), itemsProperty);
-
-        refresh();
-    }
-
-    @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     @Override

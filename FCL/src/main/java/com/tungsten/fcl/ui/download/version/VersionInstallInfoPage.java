@@ -71,6 +71,9 @@ public class VersionInstallInfoPage extends FCLTempPage implements View.OnClickL
         super(context, id, parent, resId);
         this.gameVersion = gameVersion;
         onCreate(gameVersion);
+
+        // 原 onRestart 逻辑：页面构造即加载当前安装器版本
+        reload();
     }
 
     public void onCreate(String gameVersion) {
@@ -182,11 +185,6 @@ public class VersionInstallInfoPage extends FCLTempPage implements View.OnClickL
         return Task.runAsync(() -> {
 
         });
-    }
-
-    @Override
-    public void onRestart() {
-        reload();
     }
 
     @Override

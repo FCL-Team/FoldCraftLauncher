@@ -74,6 +74,13 @@ public class RemoteModDownloadPage extends FCLTempPage implements View.OnClickLi
         this.downloadPage = downloadPage;
 
         create();
+
+        // 原 onStart 逻辑：页面构造即填充内容并加载依赖
+        name.setText(modVersion.getName());
+        tag.setText(ModVersionAdapter.getTag(getContext(), modVersion));
+        date.setText(ModVersionAdapter.FORMATTER.format(modVersion.getDatePublished()));
+
+        loadDependencies(modVersion);
     }
 
     private void loadDependencies(RemoteMod.Version version) {
@@ -185,24 +192,8 @@ public class RemoteModDownloadPage extends FCLTempPage implements View.OnClickLi
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        name.setText(modVersion.getName());
-        tag.setText(ModVersionAdapter.getTag(getContext(), modVersion));
-        date.setText(ModVersionAdapter.FORMATTER.format(modVersion.getDatePublished()));
-
-        loadDependencies(modVersion);
-    }
-
-    @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     @Override

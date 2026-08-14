@@ -90,12 +90,8 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
         minMemory.set(Optional.ofNullable(versionSetting.getMinMemory()).orElse(0));
         launchArguments.set(versionSetting.getMinecraftArgs());
         javaArguments.set(versionSetting.getJavaArgs());
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
+        // 原 onStart 逻辑：页面构造即绑定控件（findViewById 在 super 构造中已完成）
         FCLLinearLayout fileApiLayout = findViewById(R.id.file_api_layout);
         FCLLinearLayout launchArgsLayout = findViewById(R.id.minecraft_args_layout);
         FCLLinearLayout jvmArgsLayout = findViewById(R.id.jvm_args_layout);
@@ -199,11 +195,6 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
     @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     private void selectPath() {

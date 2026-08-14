@@ -81,34 +81,6 @@ public class WorldInfoPage extends FCLTempPage {
         this.levelDat = world.readLevelDat();
         this.dataTag = levelDat.get("Data");
         this.worldGenSettings = dataTag.get("WorldGenSettings");
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-
-        name = findViewById(R.id.name);
-        gameVersion = findViewById(R.id.game_version);
-        seed = findViewById(R.id.seed);
-        lastPlayed = findViewById(R.id.last_played);
-        time = findViewById(R.id.time);
-        allowCheat = findViewById(R.id.allow_cheat);
-        generateStructure = findViewById(R.id.generate_structures);
-        difficulty = findViewById(R.id.difficulty);
-
-        playerInfo = findViewById(R.id.player_info);
-        location = findViewById(R.id.location);
-        lastDeath = findViewById(R.id.last_death);
-        spawn = findViewById(R.id.spawn);
-        gameType = findViewById(R.id.game_mode);
-        health = findViewById(R.id.health);
-        foodLevel = findViewById(R.id.food_level);
-        xpLevel = findViewById(R.id.xp_level);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
 
         name.setText(world.getWorldName());
         gameVersion.setText(world.getGameVersion());
@@ -292,6 +264,32 @@ public class WorldInfoPage extends FCLTempPage {
             playerInfo.setVisibility(View.GONE);
         }
     }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        name = findViewById(R.id.name);
+        gameVersion = findViewById(R.id.game_version);
+        seed = findViewById(R.id.seed);
+        lastPlayed = findViewById(R.id.last_played);
+        time = findViewById(R.id.time);
+        allowCheat = findViewById(R.id.allow_cheat);
+        generateStructure = findViewById(R.id.generate_structures);
+        difficulty = findViewById(R.id.difficulty);
+
+        playerInfo = findViewById(R.id.player_info);
+        location = findViewById(R.id.location);
+        lastDeath = findViewById(R.id.last_death);
+        spawn = findViewById(R.id.spawn);
+        gameType = findViewById(R.id.game_mode);
+        health = findViewById(R.id.health);
+        foodLevel = findViewById(R.id.food_level);
+        xpLevel = findViewById(R.id.xp_level);
+    }
+
+    @Override
 
     @Override
     public Task<?> refresh(Object... param) {
@@ -299,11 +297,6 @@ public class WorldInfoPage extends FCLTempPage {
     }
 
     @Override
-    public void onRestart() {
-
-    }
-
-    private void saveLevelDat() {
         LOG.info("Saving level.dat of world " + world.getWorldName());
         try {
             this.world.writeLevelDat(levelDat);

@@ -60,6 +60,9 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
         this.modListPage = modListPage;
         this.modManager = modManager;
         this.objects = FXCollections.observableList(list.stream().map(it -> new ModUpdateObject(getContext(), it)).collect(Collectors.toList()));
+
+        // 原 onStart 逻辑：页面构造即初始化列表
+        listView.setAdapter(new ModUpdateListAdapter(getContext(), objects));
     }
 
     @Override
@@ -79,19 +82,8 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        listView.setAdapter(new ModUpdateListAdapter(getContext(), objects));
-    }
-
-    @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     @Override
