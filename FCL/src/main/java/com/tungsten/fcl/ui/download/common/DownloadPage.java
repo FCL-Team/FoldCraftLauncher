@@ -19,6 +19,8 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.databinding.PageDownloadBinding;
 import com.tungsten.fcl.setting.DownloadProviders;
@@ -267,6 +269,35 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
         first = findViewById(R.id.first);
         last = findViewById(R.id.last);
         recyclerView = findViewById(R.id.list);
+        // 快速滑动时暂停图片加载保证流畅，减速/停止后恢复显示
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            private static final int SLOW_SCROLL_PX_PER_FRAME = 10;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    Glide.with(getContext()).pauseRequests();
+                } else {
+                    Glide.with(getContext()).resumeRequests();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                // 惯性滚动中按速度动态切换：减速到慢速时提前恢复加载，不必等完全停止
+                if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING) {
+                    RequestManager requestManager = Glide.with(getContext());
+                    if (Math.abs(dy) < SLOW_SCROLL_PX_PER_FRAME) {
+                        if (requestManager.isPaused()) {
+                            requestManager.resumeRequests();
+                        }
+                    } else if (!requestManager.isPaused()) {
+                        requestManager.pauseRequests();
+                    }
+                }
+            }
+        });
         progressBar = findViewById(R.id.progress);
         retry = findViewById(R.id.retry);
         next.setOnClickListener(this);

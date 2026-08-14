@@ -98,7 +98,7 @@ class RemoteModListAdapter(
         binding.title.text =
             if (mod != null && LocaleUtils.isChinese(context)) mod.getDisplayName() else remoteMod.title
         val categories = remoteMod.categories.stream()
-            .map<String> { downloadPage.getLocalizedCategory(it) }
+            .map { downloadPage.getLocalizedCategory(it) }
             .collect(
                 Collectors.toList()
             ).joinToString("   ")
