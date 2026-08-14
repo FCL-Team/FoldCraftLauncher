@@ -457,10 +457,8 @@ class VersionSettingPage(
         if (view === binding.buttonInstallController) {
             val uiManager = getInstance().uiManager
             getInstance().binding.controller.setSelected(true)
-            uiManager.controllerUI.runAfterInit {
-                uiManager.controllerUI.pageManager
-                    .switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO)
-            }
+            uiManager.controllerUI.pageManager
+                .switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO)
         }
         if (view === binding.buttonEditJava) {
             JavaManageDialog(context) {

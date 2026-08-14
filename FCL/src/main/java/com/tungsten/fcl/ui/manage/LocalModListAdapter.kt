@@ -246,14 +246,12 @@ class LocalModListAdapter(
         binding.jump.setOnClickListener {
             val uiManager = MainActivity.getInstance().uiManager
             MainActivity.getInstance().binding.download.isSelected = true
-            MainActivity.getInstance().uiManager.downloadUI.runAfterInit {
-                uiManager.downloadUI.tabLayout.selectTab(uiManager.downloadUI.tabLayout.getTabAt(2))
-                uiManager.downloadUI.pageManager
-                    .switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD)
-                val downloadPage =
-                    uiManager.downloadUI.pageManager.getPageById(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD) as ModDownloadPage
-                downloadPage.jumpToModPage(modInfoObject.remoteMod)
-            }
+            uiManager.downloadUI.tabLayout.selectTab(uiManager.downloadUI.tabLayout.getTabAt(2))
+            uiManager.downloadUI.pageManager
+                .switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD)
+            val downloadPage =
+                uiManager.downloadUI.pageManager.getPageById(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD) as ModDownloadPage
+            downloadPage.jumpToModPage(modInfoObject.remoteMod)
         }
 
         drawable.setTint(ThemeEngine.getInstance().getTheme().color)

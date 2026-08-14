@@ -470,16 +470,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 val profile = Profiles.getSelectedProfile()
                 if (profile.versionSetting.isGlobal) {
                     setting.isSelected = true
-                    uiManager.settingUI.runAfterInit {
-                        val tab = uiManager.settingUI.tabLayout.getTabAt(0)
-                        uiManager.settingUI.tabLayout.selectTab(tab)
-                    }
+                    val tab = uiManager.settingUI.tabLayout.getTabAt(0)
+                    uiManager.settingUI.tabLayout.selectTab(tab)
                 } else {
                     manage.isSelected = true
-                    uiManager.manageUI.runAfterInit {
-                        val tab = uiManager.manageUI.tabLayout.getTabAt(0)
-                        uiManager.manageUI.tabLayout.selectTab(tab)
-                    }
+                    val tab = uiManager.manageUI.tabLayout.getTabAt(0)
+                    uiManager.manageUI.tabLayout.selectTab(tab)
                 }
             }
         }
@@ -853,18 +849,16 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         ).show()
         binding.download.isSelected = true
         val downloadUI = uiManager.downloadUI
-        downloadUI.runAfterInit {
-            val page = LocalModpackPage(
-                this,
-                PageManager.PAGE_ID_TEMP,
-                downloadUI.container,
-                R.layout.page_modpack,
-                profile,
-                null,
-                file
-            )
-            downloadUI.pageManager.showTempPage(page)
-        }
+        val page = LocalModpackPage(
+            this,
+            PageManager.PAGE_ID_TEMP,
+            downloadUI.container,
+            R.layout.page_modpack,
+            profile,
+            null,
+            file
+        )
+        downloadUI.pageManager.showTempPage(page)
     }
 
     private fun refreshScreenSize() {
