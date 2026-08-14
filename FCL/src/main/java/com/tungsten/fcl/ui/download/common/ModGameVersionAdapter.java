@@ -61,12 +61,14 @@ public class ModGameVersionAdapter extends FCLAdapter {
             viewHolder.version.setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
             viewHolder.parent.setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), com.tungsten.fcl.R.xml.anim_scale));
             view.setTag(viewHolder);
+            // 仅首次创建时播放滑入动画：convertView 复用（滚动/布局变化重绑定）时不重播，
+            // 避免截图等异步加载完成触发布局变化导致列表动画重复
+            AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
         viewHolder.parent.setOnClickListener(v -> callback.onSelect(list.get(i)));
         viewHolder.version.setText((list.get(i).contains(getContext().getString(R.string.recommend_version)) ? "" : "Minecraft ") + list.get(i));
-        AnimUtil.playTranslationX(view, ThemeEngine.getInstance().getTheme().getAnimationSpeed() * 30L, -100f, 0f).start();
         return view;
     }
 
