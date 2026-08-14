@@ -166,6 +166,7 @@ object Profiles {
         selectedProfile.set(profile)
     }
 
+    @JvmStatic
     fun selectedProfileProperty(): ObjectProperty<Profile?> {
         return selectedProfile
     }

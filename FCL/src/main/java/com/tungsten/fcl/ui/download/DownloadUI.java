@@ -9,6 +9,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
@@ -28,6 +29,8 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     public FCLUILayout container;
 
     private final Consumer<Profile> versionsListener = this::loadVersions;
+    private Profile listenerProfile;
+    private InvalidationListener selectedVersionListener;
 
     public DownloadUI(Context context, int id) {
         super(context, id);
@@ -52,6 +55,9 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
             @Override
             public void onViewDetachedFromWindow(View v) {
                 Profiles.unregisterVersionsListener(versionsListener);
+                if (selectedVersionListener != null) {
+                    listenerProfile.selectedVersionProperty().removeListener(selectedVersionListener);
+                }
             }
         });
     }
@@ -90,7 +96,13 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     private void loadVersions(Profile profile) {
         if (profile == Profiles.getSelectedProfile()) {
             pageManager.loadVersion(profile, null);
-            profile.selectedVersionProperty().addListener(observable -> pageManager.loadVersion(profile, null));
+            // 先移除旧监听再添加，避免重复注册累积（引用旧 UI 实例导致泄漏）
+            if (selectedVersionListener != null) {
+                listenerProfile.selectedVersionProperty().removeListener(selectedVersionListener);
+            }
+            selectedVersionListener = observable -> pageManager.loadVersion(profile, null);
+            listenerProfile = profile;
+            profile.selectedVersionProperty().addListener(selectedVersionListener);
         }
     }
 

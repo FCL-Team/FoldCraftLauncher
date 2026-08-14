@@ -3,11 +3,13 @@ package com.tungsten.fcl.ui.setting;
 import static com.tungsten.fclcore.util.Lang.tryCast;
 
 import android.content.Context;
+import android.view.View;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.manage.VersionSettingPage;
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
@@ -25,6 +27,8 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
     private FCLUILayout container;
     public FCLTabLayout tabLayout;
 
+    private InvalidationListener profileListener;
+
     public SettingUI(Context context, int id) {
         super(context, id);
     }
@@ -37,6 +41,29 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
 
         tabLayout.addOnTabSelectedListener(this);
         initPages();
+
+        // 切换 Profile 时刷新全局版本设置页（原 onStart 生命周期移除后的兜底）
+        profileListener = observable -> {
+            if (pageManager != null) {
+                FCLBasePage page = pageManager.getPageById(SettingPageManager.PAGE_ID_SETTING_GAME);
+                if (page instanceof VersionSettingPage) {
+                    ((VersionSettingPage) page).loadVersion(Profiles.getSelectedProfile(), null);
+                }
+            }
+        };
+        Profiles.selectedProfileProperty().addListener(profileListener);
+        // UI 被 ViewPager 回收时注销监听（替代原 onDestroy 生命周期），防止泄漏
+        getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                Profiles.selectedProfileProperty().removeListener(profileListener);
+            }
+        });
     }
 
     @Override
