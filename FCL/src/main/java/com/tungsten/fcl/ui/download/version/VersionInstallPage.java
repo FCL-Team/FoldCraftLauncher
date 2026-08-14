@@ -70,7 +70,7 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
         failedRefresh.setOnClickListener(this);
 
         listener = remoteVersion -> {
-            VersionInstallInfoPage page = new VersionInstallInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_installer, remoteVersion.getGameVersion());
+            VersionInstallInfoPage page = new VersionInstallInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_installer, remoteVersion.getGameVersion());
             UIManager.getInstance().getDownloadUI().showTempPage(page);
         };
 

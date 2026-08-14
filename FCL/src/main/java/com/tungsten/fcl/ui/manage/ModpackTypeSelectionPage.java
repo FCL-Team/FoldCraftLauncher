@@ -63,7 +63,7 @@ public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickLis
             type = MODPACK_TYPE_SERVER;
             options = ServerModpackExportTask.OPTION;
         }
-        ModpackInfoPage page = new ModpackInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_modpack_info, profile, version, type, options);
+        ModpackInfoPage page = new ModpackInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_info, profile, version, type, options);
         UIManager.getInstance().getManageUI().showTempPage(page);
     }
 

@@ -523,7 +523,7 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
                             builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.create().show();
                         } else {
-                            ModUpdatesPage page = new ModUpdatesPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_mod_update, this, modManager, result);
+                            ModUpdatesPage page = new ModUpdatesPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_mod_update, this, modManager, result);
                             UIManager.getInstance().getManageUI().showTempPage(page);
                         }
                     })

@@ -23,7 +23,6 @@ import java.time.Instant;
 public class WorldListItem {
     private final Context context;
     private final Activity activity;
-    private final FCLUILayout parent;
     private final StringProperty title = new SimpleStringProperty();
     private final StringProperty subtitle = new SimpleStringProperty();
     private final World world;

@@ -9,12 +9,11 @@ import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 public class ResourcePackDownloadPage extends DownloadPage {
 
-    public ResourcePackDownloadPage(Context context, int id, FCLUILayout parent, int resId) {
-        super(context, id, parent, resId, null);
+    public ResourcePackDownloadPage(Context context, int id, int resId) {
+        super(context, id, resId, null);
 
         repository = new Repository();
 

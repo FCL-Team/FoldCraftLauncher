@@ -74,7 +74,7 @@ public class ModpackSelectionPage extends FCLPage implements View.OnClickListene
                 return;
             File selectedFile = new File(path);
             Schedulers.androidUIThread().execute(() -> {
-                LocalModpackPage page = new LocalModpackPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_modpack, profile, updateVersion, selectedFile);
+                LocalModpackPage page = new LocalModpackPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack, profile, updateVersion, selectedFile);
                 if (updateVersion == null) {
                     UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                     UIManager.getInstance().getDownloadUI().showTempPage(page);
@@ -99,7 +99,7 @@ public class ModpackSelectionPage extends FCLPage implements View.OnClickListene
                         if (manifest == null) {
                             Toast.makeText(getContext(), getContext().getString(R.string.modpack_type_server_malformed), Toast.LENGTH_SHORT).show();
                         } else if (e == null) {
-                            RemoteModpackPage page = new RemoteModpackPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_modpack, profile, updateVersion, manifest);
+                            RemoteModpackPage page = new RemoteModpackPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack, profile, updateVersion, manifest);
                             if (updateVersion == null) {
                                 UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                                 UIManager.getInstance().getDownloadUI().showTempPage(page);
@@ -124,7 +124,7 @@ public class ModpackSelectionPage extends FCLPage implements View.OnClickListene
                     TaskExecutor executor = new FileDownloadTask(url, modpack.toFile(), null)
                             .whenComplete(Schedulers.androidUIThread(), e -> {
                                 if (e == null) {
-                                    LocalModpackPage page = new LocalModpackPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_modpack, profile, updateVersion, modpack.toFile());
+                                    LocalModpackPage page = new LocalModpackPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack, profile, updateVersion, modpack.toFile());
                                     if (updateVersion == null) {
                                         UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                                         UIManager.getInstance().getDownloadUI().showTempPage(page);

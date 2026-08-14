@@ -109,7 +109,7 @@ public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadab
                 installerItem.upgradable.set(libraryConfigurable);
                 installerItem.installable.set(true);
                 installerItem.action.set(() -> {
-                    com.tungsten.fcl.ui.download.version.InstallerListPage page = new com.tungsten.fcl.ui.download.version.InstallerListPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
+                    com.tungsten.fcl.ui.download.version.InstallerListPage page = new com.tungsten.fcl.ui.download.version.InstallerListPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
                         if (libraryVersion == null) {
                             finish(profile, remoteVersion);
                         } else {

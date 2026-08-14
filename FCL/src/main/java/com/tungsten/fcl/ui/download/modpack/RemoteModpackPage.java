@@ -14,7 +14,6 @@ import com.tungsten.fclcore.mod.server.ServerModpackManifest;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.IOException;
 
@@ -25,8 +24,8 @@ public class RemoteModpackPage extends ModpackPage {
 
     private Modpack modpack;
 
-    public RemoteModpackPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String updateVersion, ServerModpackManifest manifest) {
-        super(context, id, parent, resId, profile);
+    public RemoteModpackPage(Context context, int id, int resId, Profile profile, String updateVersion, ServerModpackManifest manifest) {
+        super(context, id, resId, profile);
         this.updateVersion = updateVersion;
         this.manifest = manifest;
 

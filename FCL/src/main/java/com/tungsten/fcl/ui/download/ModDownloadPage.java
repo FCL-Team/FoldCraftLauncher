@@ -17,7 +17,6 @@ import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.util.ArrayList;
@@ -26,8 +25,8 @@ import java.util.List;
 public class ModDownloadPage extends DownloadPage {
     private ModManager modManager;
 
-    public ModDownloadPage(Context context, int id, FCLUILayout parent, int resId) {
-        super(context, id, parent, resId, null);
+    public ModDownloadPage(Context context, int id, int resId) {
+        super(context, id, resId, null);
 
         repository = new Repository();
 

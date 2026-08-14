@@ -229,7 +229,7 @@ public class ControllerManagePage extends FCLPage implements View.OnClickListene
             UIManager.getInstance().getControllerUI().showPage(1);
         }
         if (view == upload) {
-            ControllerUploadPage page = new ControllerUploadPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_controller_upload, selectedController.get());
+            ControllerUploadPage page = new ControllerUploadPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_controller_upload, selectedController.get());
             UIManager.getInstance().getControllerUI().showTempPage(page);
         }
         if (view == share) {

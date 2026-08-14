@@ -135,7 +135,7 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
             listView.setDivider(new ColorDrawable(getContext().getColor(android.R.color.darker_gray)));
             listView.setDividerHeight(ConvertUtils.dip2px(getContext(), 1));
             DependencyAdapter adapter = new DependencyAdapter(getContext(), downloadPage, dependencies.get(type), mod -> {
-                RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, downloadPage, mod, version, callback);
+                RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon_info, downloadPage, mod, version, callback);
                 UIManager.getInstance().getDownloadUI().showTempPage(page);
             });
             listView.setAdapter(adapter);

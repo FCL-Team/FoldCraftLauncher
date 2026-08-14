@@ -256,7 +256,7 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
                     )));
                 }
 
-                ModpackFileSelectionPage page = new ModpackFileSelectionPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_modpack_file, profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
+                ModpackFileSelectionPage page = new ModpackFileSelectionPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_file, profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
                 UIManager.getInstance().getManageUI().showTempPage(page);
             }
         }

@@ -852,7 +852,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         val page = LocalModpackPage(
             this,
             FCLPage.PAGE_ID_TEMP,
-            downloadUI.container,
             R.layout.page_modpack,
             profile,
             null,

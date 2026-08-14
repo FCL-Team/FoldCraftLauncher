@@ -125,7 +125,7 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
                 }
 
                 if (library.incompatibleLibraryName.get() == null) {
-                    InstallerListPage page = new InstallerListPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
+                    InstallerListPage page = new InstallerListPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
                         map.put(libraryId, remoteVersion);
                         refreshVersionName();
                         UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();

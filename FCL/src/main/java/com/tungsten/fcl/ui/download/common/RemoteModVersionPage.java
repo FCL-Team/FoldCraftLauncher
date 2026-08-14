@@ -10,6 +10,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.download.DownloadUI;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.FileDownloadTask;
@@ -45,7 +46,7 @@ public class RemoteModVersionPage extends FCLPage {
         listView = findViewById(R.id.list);
         ModVersionAdapter adapter = new ModVersionAdapter(getContext(), list, modVersion -> {
             if (downloadPage.getId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
-                RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon, this.version, modVersion, callback, this, downloadPage);
+                RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon, this.version, modVersion, callback, this, downloadPage);
                 UIManager.getInstance().getDownloadUI().showTempPage(page);
             } else {
                 download(modVersion);

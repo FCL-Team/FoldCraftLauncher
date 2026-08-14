@@ -144,7 +144,7 @@ public class ControllerRepoPage extends FCLPage implements View.OnClickListener,
             ArrayList<ControllerCategory> categories = (ArrayList<ControllerCategory>) s[1];
             refreshCategories(categories);
             ControllerListAdapter adapter = new ControllerListAdapter(getContext(), source, categories, indexes, mod -> {
-                ControllerDownloadPage page = new ControllerDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_controller_download, source, ControllerCategory.getLocaledCategories(getContext(), categories, mod.getCategories()), mod);
+                ControllerDownloadPage page = new ControllerDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_controller_download, source, ControllerCategory.getLocaledCategories(getContext(), categories, mod.getCategories()), mod);
                 UIManager.getInstance().getControllerUI().showTempPage(page);
             });
             recyclerView.setAdapter(adapter);

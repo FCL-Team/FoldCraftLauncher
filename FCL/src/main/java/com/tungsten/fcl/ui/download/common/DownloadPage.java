@@ -180,7 +180,7 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
                     setLoading(false);
                     if (exception == null) {
                         adapter = new RemoteModListAdapter(getContext(), this, list, mod -> {
-                            RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
+                            RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon_info, this, mod, version.get(), callback);
                             UIManager.getInstance().getDownloadUI().showTempPage(page);
                         });
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -224,7 +224,7 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
         this.downloadProvider = DownloadProviders.getDownloadProvider();
         switch (id) {
             case PAGE_ID_DOWNLOAD_MODPACK:
-                this.callback = ((profile, version, file) -> Versions.downloadModpackImpl(context, parent, profile, file));
+                this.callback = ((profile, version, file) -> Versions.downloadModpackImpl(context, profile, file));
                 break;
             case PAGE_ID_DOWNLOAD_MOD:
                 this.callback = (profile, version, file) -> download(context, profile, version, file, "mods");
@@ -482,7 +482,7 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
             sourceSpinner.setSelection(1);
             downloadSource.set(sourceSpinner.getItemAtPosition(1).toString());
         }
-        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
+        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon_info, this, mod, version.get(), callback);
         UIManager.getInstance().getDownloadUI().showTempPage(page);
     }
 }

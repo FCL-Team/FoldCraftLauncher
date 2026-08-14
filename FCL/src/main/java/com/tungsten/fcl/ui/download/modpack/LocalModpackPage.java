@@ -23,7 +23,6 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -40,8 +39,8 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
     private Modpack manifest = null;
     private Charset charset;
 
-    public LocalModpackPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String updateVersion, File modpackFile) {
-        super(context, id, parent, resId, profile);
+    public LocalModpackPage(Context context, int id, int resId, Profile profile, String updateVersion, File modpackFile) {
+        super(context, id, resId, profile);
         this.updateVersion = updateVersion;
         this.modpackFile = modpackFile;
 
