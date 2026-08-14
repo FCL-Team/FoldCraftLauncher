@@ -71,6 +71,8 @@ class UIManager(val context: Context, val pager: ViewPager2) {
         instance = this
         pager.adapter = UIAdapter()
         pager.offscreenPageLimit = 1
+        // 主界面切换动画改为上下过渡（垂直方向滑动）
+        pager.orientation = ViewPager2.ORIENTATION_VERTICAL
         // 不保留页面位置状态：Activity 重建后始终从主页开始，
         // 避免 ViewPager2 恢复上次位置时途经未初始化的页面（如未 setVersion 的 ManageUI）
         pager.isSaveEnabled = false
