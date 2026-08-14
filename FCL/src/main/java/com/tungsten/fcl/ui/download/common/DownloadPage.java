@@ -351,7 +351,7 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
         searchState.source = downloadSource.get();
         int searchPageId = pageId;
         executor = Task.supplyAsync(() -> {
-                    RemoteModRepository.SearchResult result = repository.search(downloadProvider, userGameVersion, category, pageOffset, 25, searchFilter, sort, RemoteModRepository.SortOrder.DESC);
+                    RemoteModRepository.SearchResult result = repository.search(downloadProvider, userGameVersion, category, pageOffset, 30, searchFilter, sort, RemoteModRepository.SortOrder.DESC);
                     ArrayList<RemoteMod> list = (ArrayList<RemoteMod>) result.getResults().collect(Collectors.toList());
                     if (pageId == PAGE_ID_DOWNLOAD_MOD && selectedModLoader != null) {
                         list = (ArrayList<RemoteMod>) list.parallelStream().filter(mod -> {
@@ -472,35 +472,6 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
         first = findViewById(R.id.first);
         last = findViewById(R.id.last);
         recyclerView = findViewById(R.id.list);
-        // 快速滑动时暂停图片加载保证流畅，减速/停止后恢复显示
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            private static final int SLOW_SCROLL_PX_PER_FRAME = 10;
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
-                    Glide.with(getContext()).pauseRequests();
-                } else {
-                    Glide.with(getContext()).resumeRequests();
-                }
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                // 惯性滚动中按速度动态切换：减速到慢速时提前恢复加载，不必等完全停止
-                if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING) {
-                    RequestManager requestManager = Glide.with(getContext());
-                    if (Math.abs(dy) < SLOW_SCROLL_PX_PER_FRAME) {
-                        if (requestManager.isPaused()) {
-                            requestManager.resumeRequests();
-                        }
-                    } else if (!requestManager.isPaused()) {
-                        requestManager.pauseRequests();
-                    }
-                }
-            }
-        });
         progressBar = findViewById(R.id.progress);
         retry = findViewById(R.id.retry);
         next.setOnClickListener(this);
