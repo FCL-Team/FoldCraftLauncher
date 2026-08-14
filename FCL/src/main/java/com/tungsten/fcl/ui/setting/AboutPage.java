@@ -8,11 +8,11 @@ import android.view.View;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
-public class AboutPage extends FCLCommonPage implements View.OnClickListener {
+public class AboutPage extends FCLPage implements View.OnClickListener {
 
     private FCLLinearLayout launcher;
     private FCLLinearLayout developer;
@@ -21,8 +21,8 @@ public class AboutPage extends FCLCommonPage implements View.OnClickListener {
     private FCLLinearLayout sponsor;
     private FCLLinearLayout source;
 
-    public AboutPage(Context context, int id, FCLUILayout parent, int resId) {
-        super(context, id, parent, resId);
+    public AboutPage(Context context, int id, int resId) {
+        super(context, id, resId);
     }
 
     @Override

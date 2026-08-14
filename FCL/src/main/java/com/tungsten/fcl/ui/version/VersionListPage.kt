@@ -21,7 +21,7 @@ import com.tungsten.fclcore.game.Version
 import com.tungsten.fclcore.mod.ModpackConfiguration
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage
+import com.tungsten.fcllibrary.component.ui.FCLPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -32,8 +32,7 @@ import java.util.Locale
 import java.util.logging.Level
 import java.util.stream.Collectors
 
-class VersionListPage(context: Context?, id: Int, parent: FCLUILayout?, resId: Int) :
-    FCLCommonPage(context, id, parent, resId), View.OnClickListener {
+class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId), View.OnClickListener {
     private lateinit var binding: PageVersionListBinding
     private var adapter: VersionListAdapter? = null
     private lateinit var children: MutableList<VersionListItem>

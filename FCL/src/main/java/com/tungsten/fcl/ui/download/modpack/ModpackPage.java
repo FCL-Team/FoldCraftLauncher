@@ -10,7 +10,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -18,7 +18,7 @@ import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
-public abstract class ModpackPage extends FCLTempPage implements View.OnClickListener {
+public abstract class ModpackPage extends FCLPage implements View.OnClickListener {
 
     protected final Profile profile;
 
@@ -34,8 +34,8 @@ public abstract class ModpackPage extends FCLTempPage implements View.OnClickLis
     protected FCLButton install;
     protected FCLButton describe;
 
-    public ModpackPage(Context context, int id, FCLUILayout parent, int resId, Profile profile) {
-        super(context, id, parent, resId);
+    public ModpackPage(Context context, int id, int resId, Profile profile) {
+        super(context, id, resId);
         this.profile = profile;
     }
 

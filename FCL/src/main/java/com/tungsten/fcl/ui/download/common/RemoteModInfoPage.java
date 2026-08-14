@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.download.common;
 
 import android.content.Context;
+import com.tungsten.fcl.ui.UIManager;
 import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -13,8 +14,6 @@ import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fcl.ui.PageManager;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.download.ModDownloadPage;
 import com.tungsten.fcl.ui.download.modpack.ModpackDownloadPage;
 import com.tungsten.fcl.util.AndroidUtils;
@@ -30,7 +29,7 @@ import com.tungsten.fclcore.util.SimpleMultimap;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
@@ -51,7 +50,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListener {
+public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
 
     private final RemoteModRepository repository;
     private final ModTranslations translations;
@@ -80,8 +79,8 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
 
     private String recommendedVersion;
 
-    public RemoteModInfoPage(Context context, int id, FCLUILayout parent, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
-        super(context, id, parent, resId);
+    public RemoteModInfoPage(Context context, int id, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
+        super(context, id, resId);
 
         this.page = page;
         this.repository = page.repository;
@@ -148,8 +147,8 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             list.add(0, recommendedVersion);
         }
         ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), list, v -> {
-            RemoteModVersionPage page = new RemoteModVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_version, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
-            DownloadPageManager.getInstance().showTempPage(page);
+            RemoteModVersionPage page = new RemoteModVersionPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_version, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
+            UIManager.getInstance().getDownloadUI().showTempPage(page);
         });
         versionListView.setAdapter(adapter);
     }

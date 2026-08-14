@@ -13,7 +13,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -22,7 +22,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-public class HelpPage extends FCLCommonPage implements View.OnClickListener {
+public class HelpPage extends FCLPage implements View.OnClickListener {
 
     public static final String DOC_INDEX_URL = "https://raw.githubusercontent.com/FCL-Team/FCL-Docs/main/index.json";
 
@@ -33,8 +33,8 @@ public class HelpPage extends FCLCommonPage implements View.OnClickListener {
     private FCLButton refresh;
     private FCLButton website;
 
-    public HelpPage(Context context, int id, FCLUILayout parent, int resId) {
-        super(context, id, parent, resId);
+    public HelpPage(Context context, int id, int resId) {
+        super(context, id, resId);
     }
 
     @Override

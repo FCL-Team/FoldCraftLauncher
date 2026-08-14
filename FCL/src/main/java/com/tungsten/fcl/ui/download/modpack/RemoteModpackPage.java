@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
+import com.tungsten.fcl.ui.UIManager;
 import android.text.Html;
 import android.view.View;
 import android.widget.Toast;
@@ -8,8 +9,6 @@ import android.widget.Toast;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
-import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fclcore.mod.Modpack;
 import com.tungsten.fclcore.mod.server.ServerModpackManifest;
 import com.tungsten.fclcore.task.Task;
@@ -45,9 +44,9 @@ public class RemoteModpackPage extends ModpackPage {
             builder.setMessage(getContext().getString(R.string.modpack_type_server_malformed));
             builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                 if (updateVersion == null) {
-                    DownloadPageManager.getInstance().dismissCurrentTempPage();
+                    UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                 } else {
-                    ManagePageManager.getInstance().dismissCurrentTempPage();
+                    UIManager.getInstance().getManageUI().dismissCurrentTempPage();
                 }
             });
             builder.create().show();

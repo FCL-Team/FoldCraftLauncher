@@ -20,7 +20,7 @@ import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.Zipper;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -32,7 +32,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-public class ControllerUploadPage extends FCLTempPage implements View.OnClickListener {
+public class ControllerUploadPage extends FCLPage implements View.OnClickListener {
 
     private final Controller controller;
 
@@ -43,8 +43,8 @@ public class ControllerUploadPage extends FCLTempPage implements View.OnClickLis
     private FCLButton qq;
     private FCLButton share;
 
-    public ControllerUploadPage(Context context, int id, FCLUILayout parent, int resId, Controller controller) {
-        super(context, id, parent, resId);
+    public ControllerUploadPage(Context context, int id, int resId, Controller controller) {
+        super(context, id, resId);
         this.controller = controller;
         create();
     }

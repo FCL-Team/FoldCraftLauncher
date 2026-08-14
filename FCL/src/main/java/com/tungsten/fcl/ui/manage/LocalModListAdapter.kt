@@ -15,7 +15,6 @@ import com.mio.ui.adapter.ViewHolder
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemLocalModBinding
-import com.tungsten.fcl.ui.download.DownloadPageManager
 import com.tungsten.fcl.ui.download.ModDownloadPage
 import com.tungsten.fcl.ui.manage.ModListPage.ModInfoObject
 import com.tungsten.fclcore.fakefx.beans.Observable
@@ -246,11 +245,9 @@ class LocalModListAdapter(
         binding.jump.setOnClickListener {
             val uiManager = MainActivity.getInstance().uiManager
             MainActivity.getInstance().binding.download.isSelected = true
-            uiManager.downloadUI.tabLayout.selectTab(uiManager.downloadUI.tabLayout.getTabAt(2))
-            uiManager.downloadUI.pageManager
-                .switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD)
+            uiManager.downloadUI.showPage(2)
             val downloadPage =
-                uiManager.downloadUI.pageManager.getPageById(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD) as ModDownloadPage
+                uiManager.downloadUI.getPage(2) as ModDownloadPage
             downloadPage.jumpToModPage(modInfoObject.remoteMod)
         }
 

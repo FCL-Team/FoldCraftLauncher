@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.manage
 
 import android.content.Context
+import com.tungsten.fcl.ui.UIManager;
 import android.content.Context.MODE_PRIVATE
 import android.view.View
 import android.view.View.OnLongClickListener
@@ -22,7 +23,6 @@ import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles.getSelectedProfile
 import com.tungsten.fcl.setting.VersionSetting
-import com.tungsten.fcl.ui.controller.ControllerPageManager
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.FXUtils
@@ -49,7 +49,7 @@ import com.tungsten.fclcore.util.platform.MemoryUtils
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FullEditDialog
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage
+import com.tungsten.fcllibrary.component.ui.FCLPage
 import com.tungsten.fcllibrary.component.view.FCLEditText
 import com.tungsten.fcllibrary.component.view.FCLProgressBar
 import com.tungsten.fcllibrary.component.view.FCLSwitch
@@ -63,10 +63,9 @@ import java.util.logging.Level
 class VersionSettingPage(
     context: Context?,
     id: Int,
-    parent: FCLUILayout?,
     resId: Int,
     private val globalSetting: Boolean
-) : FCLCommonPage(context, id, parent, resId), VersionLoadable, View.OnClickListener {
+) : FCLPage(context, id, resId), VersionLoadable, View.OnClickListener {
     private lateinit var lastVersionSetting: VersionSetting
     private lateinit var profile: Profile
     private lateinit var listenerHolder: WeakListenerHolder
@@ -272,7 +271,7 @@ class VersionSettingPage(
         usedMemory.set(MemoryUtils.getUsedDeviceMemory(context))
 
         val listener = InvalidationListener {
-            ManagePageManager.instance!!.onRunDirectoryChange(
+            UIManager.instance.manageUI.onRunDirectoryChange(
                 profile,
                 versionId
             )
@@ -321,7 +320,7 @@ class VersionSettingPage(
         }
 
         // bind new data fields
-        if (id == ManagePageManager.PAGE_ID_MANAGE_SETTING) {
+        if (id == ManageUI.PAGE_ID_MANAGE_SETTING) {
             versionSetting.isolateGameDirProperty.addListener(listener)
         }
         FXUtils.bindString(binding.editJvmArgs, versionSetting.javaArgsProperty)
@@ -452,8 +451,7 @@ class VersionSettingPage(
         if (view === binding.buttonInstallController) {
             val uiManager = getInstance().uiManager
             getInstance().binding.controller.setSelected(true)
-            uiManager.controllerUI.pageManager
-                .switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO)
+            uiManager.controllerUI.showPage(1)
         }
         if (view === binding.buttonEditJava) {
             JavaManageDialog(context) {

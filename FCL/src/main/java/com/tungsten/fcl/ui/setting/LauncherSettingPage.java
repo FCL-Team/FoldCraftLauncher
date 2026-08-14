@@ -45,7 +45,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog;
 import com.tungsten.fcllibrary.component.theme.Theme;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
@@ -59,14 +59,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-public class LauncherSettingPage extends FCLCommonPage implements View.OnClickListener, AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
+public class LauncherSettingPage extends FCLPage implements View.OnClickListener, AdapterView.OnItemSelectedListener, CompoundButton.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
 
     private PageSettingLauncherBinding binding;
     private boolean isFirst = true;
     private SharedPreferences sharedPreferences;
 
-    public LauncherSettingPage(Context context, int id, FCLUILayout parent, int resId) {
-        super(context, id, parent, resId);
+    public LauncherSettingPage(Context context, int id, int resId) {
+        super(context, id, resId);
     }
 
     @Override

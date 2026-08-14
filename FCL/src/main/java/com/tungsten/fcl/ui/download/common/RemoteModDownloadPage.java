@@ -11,9 +11,7 @@ import android.widget.Toast;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Schedulers;
@@ -21,7 +19,7 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -35,7 +33,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
 
-public class RemoteModDownloadPage extends FCLTempPage implements View.OnClickListener {
+public class RemoteModDownloadPage extends FCLPage implements View.OnClickListener {
 
     public static final EnumMap<RemoteMod.DependencyType, String> STRING_ID_KEY = new EnumMap<>(Lang.mapOf(
             Pair.pair(RemoteMod.DependencyType.EMBEDDED, "mods_dependency_embedded"),
@@ -65,8 +63,8 @@ public class RemoteModDownloadPage extends FCLTempPage implements View.OnClickLi
     private FCLButton cancel;
     private FCLButton back;
 
-    public RemoteModDownloadPage(Context context, int id, FCLUILayout parent, int resId, Profile.ProfileVersion version, RemoteMod.Version modVersion, RemoteModVersionPage.DownloadCallback callback, RemoteModVersionPage lastPage, DownloadPage downloadPage) {
-        super(context, id, parent, resId);
+    public RemoteModDownloadPage(Context context, int id, int resId, Profile.ProfileVersion version, RemoteMod.Version modVersion, RemoteModVersionPage.DownloadCallback callback, RemoteModVersionPage lastPage, DownloadPage downloadPage) {
+        super(context, id, resId);
         this.version = version;
         this.modVersion = modVersion;
         this.callback = callback;
@@ -137,8 +135,8 @@ public class RemoteModDownloadPage extends FCLTempPage implements View.OnClickLi
             listView.setDivider(new ColorDrawable(getContext().getColor(android.R.color.darker_gray)));
             listView.setDividerHeight(ConvertUtils.dip2px(getContext(), 1));
             DependencyAdapter adapter = new DependencyAdapter(getContext(), downloadPage, dependencies.get(type), mod -> {
-                RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, downloadPage, mod, version, callback);
-                DownloadPageManager.getInstance().showTempPage(page);
+                RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, downloadPage, mod, version, callback);
+                UIManager.getInstance().getDownloadUI().showTempPage(page);
             });
             listView.setAdapter(adapter);
             dependencyContainer.addView(listView, ViewGroup.LayoutParams.MATCH_PARENT, getListViewHeight(listView));

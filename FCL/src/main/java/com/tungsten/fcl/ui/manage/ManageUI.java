@@ -1,10 +1,7 @@
 package com.tungsten.fcl.ui.manage;
 
-import static com.tungsten.fclcore.util.Lang.tryCast;
-
 import android.content.Context;
 
-import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
@@ -17,18 +14,20 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
-import java.util.ArrayList;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedListener {
+public class ManageUI extends FCLMultiPageUI {
 
-    private ManagePageManager pageManager;
+    public static final int PAGE_ID_MANAGE_MANAGE = 15000;
+    public static final int PAGE_ID_MANAGE_SETTING = 15001;
+    public static final int PAGE_ID_MANAGE_INSTALL = 15002;
+    public static final int PAGE_ID_MANAGE_MOD = 15003;
+    public static final int PAGE_ID_MANAGE_WORLD = 15004;
 
     private FCLUILayout container;
 
@@ -46,72 +45,54 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
         super.onCreate();
         tabLayout = findViewById(R.id.tab_layout);
         container = findViewById(R.id.container);
+        setupPages(container, tabLayout);
 
-        tabLayout.addOnTabSelectedListener(this);
-        initPages();
         listenerHolder.add(EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).registerWeak(event -> checkSelectedVersion(), EventPriority.HIGHEST));
     }
 
     @Override
-    public void onBackPressed() {
-        if (pageManager != null && pageManager.canReturn()) {
-            pageManager.dismissCurrentTempPage();
-        } else {
-            super.onBackPressed();
+    public int getPageCount() {
+        return 5;
+    }
+
+    @Override
+    public FCLPage createPage(int position) {
+        switch (position) {
+            case 1:
+                return new ManagePage(getContext(), PAGE_ID_MANAGE_MANAGE, R.layout.page_manage_version);
+            case 2:
+                return new InstallerListPage(getContext(), PAGE_ID_MANAGE_INSTALL, R.layout.page_manage_auto_install);
+            case 3:
+                return new ModListPage(getContext(), PAGE_ID_MANAGE_MOD, R.layout.page_manage_mod);
+            case 4:
+                return new WorldListPage(getContext(), PAGE_ID_MANAGE_WORLD, R.layout.page_manage_world);
+            default:
+                return new VersionSettingPage(getContext(), PAGE_ID_MANAGE_SETTING, R.layout.page_version_setting, false);
         }
     }
 
     @Override
-    public void initPages() {
-        pageManager = new ManagePageManager(getContext(), container, ManagePageManager.PAGE_ID_MANAGE_SETTING);
+    public String[] getTabTitles() {
+        return new String[]{
+                getContext().getString(R.string.settings_game),
+                getContext().getString(R.string.manage),
+                getContext().getString(R.string.settings_tabs_installers),
+                getContext().getString(R.string.mods_manage),
+                getContext().getString(R.string.world_manage)
+        };
     }
 
     @Override
-    public ArrayList<FCLBasePage> getAllPages() {
-        return pageManager == null ? null : (ArrayList<FCLBasePage>) pageManager.getAllPages().stream().map(it -> tryCast(it, FCLBasePage.class)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
-    }
-
-    @Override
-    public FCLBasePage getPage(int id) {
-        return pageManager == null ? null : pageManager.getPageById(id);
+    protected void onPageCreated(FCLPage page) {
+        // 未 setVersion 时跳过（版本校验由 RefreshedVersionsEvent 事件兜底）
+        if (page instanceof VersionLoadable && getProfile() != null) {
+            ((VersionLoadable) page).loadVersion(getProfile(), getVersion());
+        }
     }
 
     @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        if (pageManager != null) {
-            switch (tab.getPosition()) {
-                case 1:
-                    pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_MANAGE);
-                    break;
-                case 2:
-                    pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_INSTALL);
-                    break;
-                case 3:
-                    pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_MOD);
-                    break;
-                case 4:
-                    pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_WORLD);
-                    break;
-                default:
-                    pageManager.switchPage(ManagePageManager.PAGE_ID_MANAGE_SETTING);
-                    break;
-            }
-        }
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
     }
 
     private void checkSelectedVersion() {
@@ -131,31 +112,36 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
 
     public void setVersion(String version, Profile profile) {
         this.version.set(new Profile.ProfileVersion(profile, version));
-        // 分发版本到已创建页面（原 onStart 中 loadVersion 的职责，版本校验由 RefreshedVersionsEvent 事件兜底）
-        if (pageManager != null) {
-            pageManager.loadVersion(profile, version);
-        }
+        // 分发版本到已创建页面
+        forEachCreatedPage(page -> {
+            if (page instanceof VersionLoadable) {
+                ((VersionLoadable) page).loadVersion(profile, version);
+            }
+        });
     }
 
     public void loadVersion(String version, Profile profile) {
-        // If we jumped to game list page and deleted this version
-        // and back to this page, we should return to main page.
-        if (this.version.get() != null && (!getProfile().getRepository().isLoaded() ||
-                !getProfile().getRepository().hasVersion(version))) {
-            Schedulers.androidUIThread().execute(() -> {
-                if (isShowing()) {
-                    MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().binding.home.setSelected(true);
-                }
-            });
-            return;
-        }
-
         setVersion(version, profile);
         preferredVersionName = version;
 
-        pageManager.dismissAllTempPages();
-        pageManager.loadVersion(profile, version);
+        dismissAllTempPages();
+        forEachCreatedPage(page -> {
+            if (page instanceof VersionLoadable) {
+                ((VersionLoadable) page).loadVersion(profile, version);
+            }
+        });
+    }
+
+    /** 游戏目录变更时刷新模组/世界列表（原 ManagePageManager.onRunDirectoryChange） */
+    public void onRunDirectoryChange(Profile profile, String version) {
+        FCLPage modPage = getPage(3);
+        if (modPage instanceof VersionLoadable) {
+            ((VersionLoadable) modPage).loadVersion(profile, version);
+        }
+        FCLPage worldPage = getPage(4);
+        if (worldPage instanceof VersionLoadable) {
+            ((VersionLoadable) worldPage).loadVersion(profile, version);
+        }
     }
 
     public Profile getProfile() {
@@ -168,9 +154,5 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
 
     public interface VersionLoadable {
         void loadVersion(Profile profile, String version);
-    }
-
-    public ManagePageManager getPageManager() {
-        return pageManager;
     }
 }

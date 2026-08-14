@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.controller;
 
 import android.content.Context;
+import com.tungsten.fcl.ui.UIManager;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -29,7 +30,7 @@ import com.tungsten.fclcore.util.gson.fakefx.factories.JavaFxPropertyTypeAdapter
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
@@ -43,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.concurrent.CancellationException;
 
-public class ControllerDownloadPage extends FCLTempPage implements View.OnClickListener {
+public class ControllerDownloadPage extends FCLPage implements View.OnClickListener {
 
     private final ArrayList<String> categories;
     private final ControllerIndex index;
@@ -68,8 +69,8 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
     private FCLButton history;
     private FCLButton latest;
 
-    public ControllerDownloadPage(Context context, int id, FCLUILayout parent, int resId, int source, ArrayList<String> categories, ControllerIndex index) {
-        super(context, id, parent, resId);
+    public ControllerDownloadPage(Context context, int id, int resId, int source, ArrayList<String> categories, ControllerIndex index) {
+        super(context, id, resId);
         this.categories = categories;
         this.index = index;
         this.url = (source == 0 ? ControllerRepoPage.CONTROLLER_GITHUB : ControllerRepoPage.CONTROLLER_GIT_CN) + "repo_json/" + index.getId() + "/";
@@ -199,7 +200,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
         TaskExecutor executor = Task.composeAsync(() -> {
             if (exist && old != null) {
                 FileUtils.copyFile(new File(destPath), new File(cache));
-                ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).removeController(old);
+                ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(0)).removeController(old);
             }
             FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(downloadUrl), new File(destPath));
             task.setName(index.getName());
@@ -208,7 +209,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
             if (exception != null) {
                 if (new File(cache).exists()) {
                     FileUtils.copyFile(new File(cache), new File(destPath));
-                    ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).addController(old);
+                    ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(0)).addController(old);
                 }
                 Schedulers.androidUIThread().execute(() -> {
                     if (exception instanceof CancellationException) {
@@ -229,7 +230,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
                         .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                         .setPrettyPrinting()
                         .create().fromJson(FileUtils.readText(new File(destPath)), Controller.class);
-                ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).addController(controller);
+                ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(0)).addController(controller);
                 Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.install_success), Toast.LENGTH_SHORT).show());
             }
         }).executor();

@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.download.common;
 
 import android.content.Context;
+import com.tungsten.fcl.ui.UIManager;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatDialog;
@@ -8,9 +9,7 @@ import androidx.appcompat.app.AppCompatDialog;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.FileDownloadTask;
@@ -18,7 +17,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.io.NetworkUtils;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import org.jetbrains.annotations.Nullable;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.List;
 
-public class RemoteModVersionPage extends FCLTempPage {
+public class RemoteModVersionPage extends FCLPage {
 
     private final List<RemoteMod.Version> list;
     private final Profile.ProfileVersion version;
@@ -35,8 +34,8 @@ public class RemoteModVersionPage extends FCLTempPage {
 
     private ListView listView;
 
-    public RemoteModVersionPage(Context context, int id, FCLUILayout parent, int resId, List<RemoteMod.Version> list, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback, DownloadPage downloadPage) {
-        super(context, id, parent, resId);
+    public RemoteModVersionPage(Context context, int id, int resId, List<RemoteMod.Version> list, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback, DownloadPage downloadPage) {
+        super(context, id, resId);
         this.list = list;
         this.version = version;
         this.callback = callback;
@@ -45,9 +44,9 @@ public class RemoteModVersionPage extends FCLTempPage {
         // 原 onStart 逻辑：页面构造即初始化列表
         listView = findViewById(R.id.list);
         ModVersionAdapter adapter = new ModVersionAdapter(getContext(), list, modVersion -> {
-            if (downloadPage.getId() == DownloadPageManager.PAGE_ID_DOWNLOAD_MOD) {
-                RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon, this.version, modVersion, callback, this, downloadPage);
-                DownloadPageManager.getInstance().showTempPage(page);
+            if (downloadPage.getId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
+                RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon, this.version, modVersion, callback, this, downloadPage);
+                UIManager.getInstance().getDownloadUI().showTempPage(page);
             } else {
                 download(modVersion);
             }

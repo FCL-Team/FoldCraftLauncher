@@ -20,7 +20,6 @@ import com.tungsten.fcl.activity.ControllerActivity;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.LayoutConverter;
@@ -35,7 +34,7 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.function.ExceptionalConsumer;
 import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -51,7 +50,7 @@ import java.util.logging.Level;
 
 import kotlin.Unit;
 
-public class ControllerManagePage extends FCLCommonPage implements View.OnClickListener {
+public class ControllerManagePage extends FCLPage implements View.OnClickListener {
 
     private final BooleanProperty refreshProperty;
 
@@ -76,8 +75,8 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
     private FCLButton editInfo;
     private FCLButton editController;
 
-    public ControllerManagePage(Context context, int id, FCLUILayout parent, int resId) {
-        super(context, id, parent, resId);
+    public ControllerManagePage(Context context, int id, int resId) {
+        super(context, id, resId);
         refreshProperty = new SimpleBooleanProperty(false);
         create();
     }
@@ -227,11 +226,11 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
             dialog.show();
         }
         if (view == downloadController) {
-            UIManager.getInstance().getControllerUI().getPageManager().switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_REPO);
+            UIManager.getInstance().getControllerUI().showPage(1);
         }
         if (view == upload) {
-            ControllerUploadPage page = new ControllerUploadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_controller_upload, selectedController.get());
-            ControllerPageManager.getInstance().showTempPage(page);
+            ControllerUploadPage page = new ControllerUploadPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_controller_upload, selectedController.get());
+            UIManager.getInstance().getControllerUI().showTempPage(page);
         }
         if (view == share) {
             DialogUtilKt.showItemSelectionDialog(

@@ -16,7 +16,7 @@ import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.download.VersionList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class InstallerListPage extends FCLTempPage implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class InstallerListPage extends FCLPage implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private final String gameVersion;
     private final String libraryId;
@@ -43,8 +43,8 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
     private FCLProgressBar progressBar;
     private RecyclerView recyclerView;
 
-    public InstallerListPage(Context context, int id, FCLUILayout parent, int resId, String gameVersion, String libraryId, Callback callback) {
-        super(context, id, parent, resId);
+    public InstallerListPage(Context context, int id, int resId, String gameVersion, String libraryId, Callback callback) {
+        super(context, id, resId);
         this.gameVersion = gameVersion;
         this.libraryId = libraryId;
         this.callback = callback;

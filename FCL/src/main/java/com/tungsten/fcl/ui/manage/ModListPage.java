@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
+import com.tungsten.fcl.ui.UIManager;
 import static com.tungsten.fclcore.util.StringUtils.isNotBlank;
 
 import android.annotation.SuppressLint;
@@ -22,9 +23,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fcl.util.TaskCancellationAction;
@@ -47,7 +46,7 @@ import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
@@ -76,7 +75,7 @@ import java.util.stream.Collectors;
 
 import kotlin.Unit;
 
-public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
+public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     /** 增量加载时每解析多少个模组刷新一次列表 */
     private static final int BATCH_SIZE = 16;
@@ -115,8 +114,8 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
     private final LocalModListAdapter adapter;
 
-    public ModListPage(Context context, int id, FCLUILayout parent, int resId) {
-        super(context, id, parent, resId);
+    public ModListPage(Context context, int id, int resId) {
+        super(context, id, resId);
         adapter = new LocalModListAdapter(getContext(), this, () -> {
             calculateMod();
             return Unit.INSTANCE;
@@ -524,8 +523,8 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                             builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.create().show();
                         } else {
-                            ModUpdatesPage page = new ModUpdatesPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_mod_update, this, modManager, result);
-                            ManagePageManager.getInstance().showTempPage(page);
+                            ModUpdatesPage page = new ModUpdatesPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_mod_update, this, modManager, result);
+                            UIManager.getInstance().getManageUI().showTempPage(page);
                         }
                     })
                     .withStagesHint(Collections.singletonList("mods.check_updates"));
@@ -551,7 +550,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
     public void download() {
         MainActivity.getInstance().refreshMenuView(null);
         MainActivity.getInstance().binding.download.setSelected(true);
-        DownloadPageManager.getInstance().switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD);
+        UIManager.getInstance().getDownloadUI().showPage(2);
     }
 
     public void rollback(LocalModFile from, LocalModFile to) {

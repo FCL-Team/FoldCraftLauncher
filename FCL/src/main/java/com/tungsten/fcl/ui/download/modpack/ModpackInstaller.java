@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
+import com.tungsten.fcl.ui.UIManager;
 
 import androidx.appcompat.app.AppCompatDialog;
 
@@ -9,9 +10,7 @@ import com.tungsten.fcl.game.ManuallyCreatedModpackException;
 import com.tungsten.fcl.game.ModpackHelper;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.download.version.VersionInstallInfoPage;
-import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.mod.MismatchedModpackTypeException;
 import com.tungsten.fclcore.mod.Modpack;
@@ -46,9 +45,9 @@ public class ModpackInstaller {
                             builder1.setMessage(context.getString(R.string.install_success));
                             builder1.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                                 if (update) {
-                                    ManagePageManager.getInstance().dismissCurrentTempPage();
+                                    UIManager.getInstance().getManageUI().dismissCurrentTempPage();
                                 } else {
-                                    DownloadPageManager.getInstance().dismissCurrentTempPage();
+                                    UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                                 }
                             });
                             builder1.create().show();
@@ -64,9 +63,9 @@ public class ModpackInstaller {
                                     builder1.setMessage(context.getString(R.string.modpack_type_curse_not_found));
                                     builder1.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                                         if (update) {
-                                            ManagePageManager.getInstance().dismissCurrentTempPage();
+                                            UIManager.getInstance().getManageUI().dismissCurrentTempPage();
                                         } else {
-                                            DownloadPageManager.getInstance().dismissCurrentTempPage();
+                                            UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                                         }
                                     });
                                     builder1.create().show();
@@ -77,9 +76,9 @@ public class ModpackInstaller {
                                     builder1.setMessage(context.getString(R.string.install_success));
                                     builder1.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                                         if (update) {
-                                            ManagePageManager.getInstance().dismissCurrentTempPage();
+                                            UIManager.getInstance().getManageUI().dismissCurrentTempPage();
                                         } else {
-                                            DownloadPageManager.getInstance().dismissCurrentTempPage();
+                                            UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                                         }
                                     });
                                     builder1.create().show();

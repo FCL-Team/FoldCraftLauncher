@@ -1,22 +1,16 @@
 package com.tungsten.fcl.ui.version;
 
-import static com.tungsten.fclcore.util.Lang.tryCast;
-
 import android.content.Context;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
-
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class VersionUI extends FCLMultiPageUI {
 
-    private VersionPageManager pageManager;
+    public static final int PAGE_ID_VERSION_LIST = 15020;
 
     private FCLUILayout container;
 
@@ -28,31 +22,17 @@ public class VersionUI extends FCLMultiPageUI {
     public void onCreate() {
         super.onCreate();
         container = findViewById(R.id.container);
-        initPages();
+        setupPages(container, null);
     }
 
     @Override
-    public void onBackPressed() {
-        if (pageManager != null && pageManager.canReturn()) {
-            pageManager.dismissCurrentTempPage();
-        } else {
-            super.onBackPressed();
-        }
+    public int getPageCount() {
+        return 1;
     }
 
     @Override
-    public void initPages() {
-        pageManager = new VersionPageManager(getContext(), container, VersionPageManager.PAGE_ID_VERSION_LIST);
-    }
-
-    @Override
-    public ArrayList<FCLBasePage> getAllPages() {
-        return pageManager == null ? null : (ArrayList<FCLBasePage>) pageManager.getAllPages().stream().map(it -> tryCast(it, FCLBasePage.class)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
-    }
-
-    @Override
-    public FCLBasePage getPage(int id) {
-        return pageManager == null ? null : pageManager.getPageById(id);
+    public FCLPage createPage(int position) {
+        return new VersionListPage(getContext(), PAGE_ID_VERSION_LIST, R.layout.page_version_list);
     }
 
     @Override

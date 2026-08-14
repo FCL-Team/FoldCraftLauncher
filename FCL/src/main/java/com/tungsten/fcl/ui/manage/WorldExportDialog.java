@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.manage;
 
 import android.annotation.SuppressLint;
+import com.tungsten.fcl.ui.UIManager;
 import android.content.Context;
 import android.view.View;
 
@@ -80,7 +81,11 @@ public class WorldExportDialog extends FCLDialog implements View.OnClickListener
                             builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                             builder1.setCancelable(false);
                             builder1.setMessage(getContext().getString(R.string.message_success));
+<<<<<<< HEAD
                             builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> ManagePageManager.getInstance().dismissAllTempPagesCreatedByPage(ManagePageManager.PAGE_ID_MANAGE_WORLD));
+=======
+                            builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> UIManager.getInstance().getManageUI().dismissAllTempPages());
+>>>>>>> 63bd550d (refactor: 页面内多页面切换重构为 ViewPager2，删除 PageManager 体系)
                             builder1.create().show();
                         } else {
                             if (executor.getException() == null)

@@ -25,7 +25,7 @@ import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage
+import com.tungsten.fcllibrary.component.ui.FCLPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -42,8 +42,7 @@ import java.util.stream.Collectors
 import kotlin.coroutines.resume
 import kotlin.io.path.pathString
 
-class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) :
-    FCLCommonPage(context, id, parent, resId), VersionLoadable, View.OnClickListener {
+class WorldListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId), VersionLoadable, View.OnClickListener {
     private val itemsProperty: ListProperty<WorldListItem> =
         SimpleListProperty(FXCollections.observableArrayList())
 
@@ -71,7 +70,6 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
                         WorldListItem(
                             context,
                             activity,
-                            parent,
                             it
                         )
                     }.collect(
@@ -144,7 +142,6 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
                         WorldListItem(
                             context,
                             activity,
-                            parent,
                             it
                         )
                     }.collect(
@@ -242,7 +239,6 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
                     WorldListItem(
                         context,
                         activity,
-                        parent,
                         World(savesDir.resolve(name))
                     )
                 )

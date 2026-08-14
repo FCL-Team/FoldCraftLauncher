@@ -1,6 +1,7 @@
 package com.tungsten.fcl.activity
 
 import android.Manifest
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -48,7 +49,6 @@ import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
-import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
 import com.tungsten.fcl.ui.version.Versions
@@ -851,14 +851,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         val downloadUI = uiManager.downloadUI
         val page = LocalModpackPage(
             this,
-            PageManager.PAGE_ID_TEMP,
+            FCLPage.PAGE_ID_TEMP,
             downloadUI.container,
             R.layout.page_modpack,
             profile,
             null,
             file
         )
-        downloadUI.pageManager.showTempPage(page)
+        downloadUI.showTempPage(page)
     }
 
     private fun refreshScreenSize() {

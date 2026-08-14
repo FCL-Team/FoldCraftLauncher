@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fclcore.util.Lang.mapOf;
+import com.tungsten.fcl.ui.UIManager;
 import static com.tungsten.fclcore.util.Pair.pair;
 
 import android.content.Context;
@@ -34,7 +35,7 @@ import com.tungsten.fcllibrary.component.FCLCheckBoxTreeAdapter;
 import com.tungsten.fcllibrary.component.FCLCheckBoxTreeItem;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -47,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClickListener {
+public class ModpackFileSelectionPage extends FCLPage implements View.OnClickListener {
 
     private final Profile profile;
     private final String version;
@@ -62,8 +63,8 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
     private ListView listView;
     private FCLButton next;
 
-    public ModpackFileSelectionPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String version, String type, ModAdviser adviser, ModpackExportInfo exportInfo, File file) {
-        super(context, id, parent, resId);
+    public ModpackFileSelectionPage(Context context, int id, int resId, Profile profile, String version, String type, ModAdviser adviser, ModpackExportInfo exportInfo, File file) {
+        super(context, id, resId);
         this.profile = profile;
         this.version = version;
         this.modpackType = type;
@@ -117,7 +118,11 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
                         builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                         builder1.setCancelable(false);
                         builder1.setMessage(getContext().getString(R.string.message_success));
+<<<<<<< HEAD
                         builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> ManagePageManager.getInstance().dismissAllTempPagesCreatedByPage(ManagePageManager.PAGE_ID_MANAGE_MANAGE));
+=======
+                        builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> UIManager.getInstance().getManageUI().dismissAllTempPages());
+>>>>>>> 63bd550d (refactor: 页面内多页面切换重构为 ViewPager2，删除 PageManager 体系)
                         builder1.create().show();
                     } else {
                         if (executor.getException() == null)

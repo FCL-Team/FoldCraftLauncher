@@ -1,29 +1,33 @@
 package com.tungsten.fcl.ui.download;
 
-import static com.tungsten.fclcore.util.Lang.tryCast;
-
 import android.content.Context;
 import android.view.View;
 
-import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
+import com.tungsten.fcl.ui.download.common.DownloadPage;
+import com.tungsten.fcl.ui.download.modpack.ModpackDownloadPage;
+import com.tungsten.fcl.ui.download.version.VersionInstallPage;
+import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
-import java.util.ArrayList;
-import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
-public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedListener {
+public class DownloadUI extends FCLMultiPageUI {
 
-    private DownloadPageManager pageManager;
+    public static final int PAGE_ID_DOWNLOAD_GAME = 15010;
+    public static final int PAGE_ID_DOWNLOAD_MODPACK = 15011;
+    public static final int PAGE_ID_DOWNLOAD_MOD = 15012;
+    public static final int PAGE_ID_DOWNLOAD_RESOURCE_PACK = 15013;
+    public static final int PAGE_ID_DOWNLOAD_WORLD = 15014;
+    public static final int PAGE_ID_DOWNLOAD_SHADER_PACK = 15015;
 
     public FCLTabLayout tabLayout;
     public FCLUILayout container;
@@ -41,11 +45,11 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
         super.onCreate();
         tabLayout = findViewById(R.id.tab_layout);
         container = findViewById(R.id.container);
+        setupPages(container, tabLayout);
 
-        tabLayout.addOnTabSelectedListener(this);
-        initPages();
+        Profiles.registerVersionsListener(versionsListener);
 
-        // UI 被 ViewPager 回收时注销版本监听（替代原 onDestroy 生命周期），防止静态列表累积泄漏
+        // UI 被 ViewPager 回收时注销监听（替代原 onDestroy 生命周期），防止静态列表累积泄漏
         getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(View v) {
@@ -63,29 +67,45 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     }
 
     @Override
-    public void onBackPressed() {
-        if (pageManager != null && pageManager.canReturn()) {
-            pageManager.dismissCurrentTempPage();
-        } else {
-            super.onBackPressed();
+    public int getPageCount() {
+        return 6;
+    }
+
+    @Override
+    public FCLPage createPage(int position) {
+        switch (position) {
+            case 1:
+                return new ModpackDownloadPage(getContext(), PAGE_ID_DOWNLOAD_MODPACK, R.layout.page_download);
+            case 2:
+                return new ModDownloadPage(getContext(), PAGE_ID_DOWNLOAD_MOD, R.layout.page_download);
+            case 3:
+                return new ResourcePackDownloadPage(getContext(), PAGE_ID_DOWNLOAD_RESOURCE_PACK, R.layout.page_download);
+            case 4:
+                return new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_WORLD, R.layout.page_download, CurseForgeRemoteModRepository.WORLDS);
+            case 5:
+                return new ShaderPackDownloadPage(getContext(), PAGE_ID_DOWNLOAD_SHADER_PACK, R.layout.page_download);
+            default:
+                return new VersionInstallPage(getContext(), PAGE_ID_DOWNLOAD_GAME, R.layout.page_install_version);
         }
     }
 
     @Override
-    public void initPages() {
-        pageManager = new DownloadPageManager(getContext(), container, DownloadPageManager.PAGE_ID_DOWNLOAD_GAME);
-
-        Profiles.registerVersionsListener(versionsListener);
+    public String[] getTabTitles() {
+        return new String[]{
+                getContext().getString(R.string.version_game),
+                getContext().getString(R.string.modpack),
+                getContext().getString(R.string.mods),
+                getContext().getString(R.string.resourcepack),
+                getContext().getString(R.string.world),
+                getContext().getString(R.string.shaderpack)
+        };
     }
 
     @Override
-    public ArrayList<FCLBasePage> getAllPages() {
-        return pageManager == null ? null : (ArrayList<FCLBasePage>) pageManager.getAllPages().stream().map(it -> tryCast(it, FCLBasePage.class)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
-    }
-
-    @Override
-    public FCLBasePage getPage(int id) {
-        return pageManager == null ? null : pageManager.getPageById(id);
+    protected void onPageCreated(FCLPage page) {
+        if (page instanceof VersionLoadable) {
+            ((VersionLoadable) page).loadVersion(Profiles.getSelectedProfile(), null);
+        }
     }
 
     @Override
@@ -95,54 +115,22 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
 
     private void loadVersions(Profile profile) {
         if (profile == Profiles.getSelectedProfile()) {
-            pageManager.loadVersion(profile, null);
+            forEachCreatedPage(page -> {
+                if (page instanceof VersionLoadable) {
+                    ((VersionLoadable) page).loadVersion(profile, null);
+                }
+            });
             // 先移除旧监听再添加，避免重复注册累积（引用旧 UI 实例导致泄漏）
             if (selectedVersionListener != null) {
                 listenerProfile.selectedVersionProperty().removeListener(selectedVersionListener);
             }
-            selectedVersionListener = observable -> pageManager.loadVersion(profile, null);
+            selectedVersionListener = observable -> forEachCreatedPage(page -> {
+                if (page instanceof VersionLoadable) {
+                    ((VersionLoadable) page).loadVersion(profile, null);
+                }
+            });
             listenerProfile = profile;
             profile.selectedVersionProperty().addListener(selectedVersionListener);
         }
-    }
-
-    @Override
-    public void onTabSelected(TabLayout.Tab tab) {
-        if (pageManager != null) {
-            switch (tab.getPosition()) {
-                case 1:
-                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MODPACK);
-                    break;
-                case 2:
-                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD);
-                    break;
-                case 3:
-                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_RESOURCE_PACK);
-                    break;
-                case 4:
-                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_WORLD);
-                    break;
-                case 5:
-                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_SHADER_PACK);
-                    break;
-                default:
-                    pageManager.switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_GAME);
-                    break;
-            }
-        }
-    }
-
-    @Override
-    public void onTabUnselected(TabLayout.Tab tab) {
-
-    }
-
-    @Override
-    public void onTabReselected(TabLayout.Tab tab) {
-
-    }
-
-    public DownloadPageManager getPageManager() {
-        return pageManager;
     }
 }

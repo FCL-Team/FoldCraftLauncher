@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.version;
 
 import android.animation.ObjectAnimator;
+import com.tungsten.fcl.ui.UIManager;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -80,7 +81,7 @@ public class ProfileListAdapter extends FCLAdapter {
                 return;
             }
             Profiles.getProfiles().remove(profile);
-            ((VersionListPage) VersionPageManager.getInstance().getAllPages().get(0)).refreshProfile();
+            ((VersionListPage) UIManager.getInstance().getVersionUI().getPage(0)).refreshProfile();
         });
         return view;
     }

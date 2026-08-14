@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.download.version;
 
 import android.content.Context;
+import com.tungsten.fcl.ui.UIManager;
 import android.content.res.ColorStateList;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,9 +18,7 @@ import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.InstallerItem;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
@@ -40,7 +39,7 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.ResponseCodeException;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
@@ -55,7 +54,7 @@ import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.zip.ZipException;
 
-public class VersionInstallInfoPage extends FCLTempPage implements View.OnClickListener {
+public class VersionInstallInfoPage extends FCLPage implements View.OnClickListener {
 
     private final String gameVersion;
     private InstallerItem.InstallerItemGroup group;
@@ -67,8 +66,8 @@ public class VersionInstallInfoPage extends FCLTempPage implements View.OnClickL
     private FCLImageButton install;
     private boolean nameManuallyModified = false;
 
-    public VersionInstallInfoPage(Context context, int id, FCLUILayout parent, int resId, final String gameVersion) {
-        super(context, id, parent, resId);
+    public VersionInstallInfoPage(Context context, int id, int resId, final String gameVersion) {
+        super(context, id, resId);
         this.gameVersion = gameVersion;
         onCreate(gameVersion);
 
@@ -126,12 +125,12 @@ public class VersionInstallInfoPage extends FCLTempPage implements View.OnClickL
                 }
 
                 if (library.incompatibleLibraryName.get() == null) {
-                    InstallerListPage page = new InstallerListPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
+                    InstallerListPage page = new InstallerListPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
                         map.put(libraryId, remoteVersion);
                         refreshVersionName();
-                        DownloadPageManager.getInstance().dismissCurrentTempPage();
+                        UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                     });
-                    DownloadPageManager.getInstance().showTempPage(page);
+                    UIManager.getInstance().getDownloadUI().showTempPage(page);
                 }
             });
             library.removeAction.set(() -> {
@@ -233,7 +232,11 @@ public class VersionInstallInfoPage extends FCLTempPage implements View.OnClickL
                                     builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                                     builder1.setCancelable(false);
                                     builder1.setMessage(getContext().getString(R.string.install_success));
+<<<<<<< HEAD
                                     builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> DownloadPageManager.getInstance().dismissCurrentTempPage());
+=======
+                                    builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> UIManager.getInstance().getDownloadUI().dismissCurrentTempPage());
+>>>>>>> 63bd550d (refactor: 页面内多页面切换重构为 ViewPager2，删除 PageManager 体系)
                                     builder1.create().show();
                                 } else {
                                     if (executor.getException() == null)

@@ -33,7 +33,7 @@ import com.tungsten.fclcore.game.World;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
@@ -50,7 +50,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class WorldInfoPage extends FCLTempPage {
+public class WorldInfoPage extends FCLPage {
 
     private final World world;
     private final CompoundTag levelDat;
@@ -75,8 +75,8 @@ public class WorldInfoPage extends FCLTempPage {
     private FCLEditText foodLevel;
     private FCLEditText xpLevel;
 
-    public WorldInfoPage(Context context, int id, FCLUILayout parent, int resId, World world) throws IOException {
-        super(context, id, parent, resId);
+    public WorldInfoPage(Context context, int id, int resId, World world) throws IOException {
+        super(context, id, resId);
         this.world = world;
         this.levelDat = world.readLevelDat();
         this.dataTag = levelDat.get("Data");

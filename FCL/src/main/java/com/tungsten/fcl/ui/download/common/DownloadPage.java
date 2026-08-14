@@ -1,9 +1,10 @@
 package com.tungsten.fcl.ui.download.common;
 
-import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MOD;
-import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MODPACK;
-import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_RESOURCE_PACK;
-import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_SHADER_PACK;
+import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_MOD;
+import com.tungsten.fcl.ui.UIManager;
+import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_MODPACK;
+import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_RESOURCE_PACK;
+import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_SHADER_PACK;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -22,9 +23,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.databinding.PageDownloadBinding;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.download.ModDownloadPage;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.manage.ManageUI;
@@ -59,7 +58,7 @@ import com.tungsten.fclcore.util.io.NetworkUtils;
 import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
@@ -80,7 +79,7 @@ import java.util.stream.Collectors;
 
 import kotlin.Unit;
 
-public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
+public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     protected RemoteModRepository repository;
     private final IntegerProperty pageOffset = new SimpleIntegerProperty(0);
@@ -181,8 +180,8 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                     setLoading(false);
                     if (exception == null) {
                         adapter = new RemoteModListAdapter(getContext(), this, list, mod -> {
-                            RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
-                            DownloadPageManager.getInstance().showTempPage(page);
+                            RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
+                            UIManager.getInstance().getDownloadUI().showTempPage(page);
                         });
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         recyclerView.setAdapter(adapter);
@@ -219,8 +218,8 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         return getContext().getString(R.string.mods_curseforge);
     }
 
-    public DownloadPage(Context context, int id, FCLUILayout parent, int resId, RemoteModRepository repository) {
-        super(context, id, parent, resId);
+    public DownloadPage(Context context, int id, int resId, RemoteModRepository repository) {
+        super(context, id, resId);
         this.repository = repository;
         this.downloadProvider = DownloadProviders.getDownloadProvider();
         switch (id) {
@@ -483,7 +482,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             sourceSpinner.setSelection(1);
             downloadSource.set(sourceSpinner.getItemAtPosition(1).toString());
         }
-        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
-        DownloadPageManager.getInstance().showTempPage(page);
+        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
+        UIManager.getInstance().getDownloadUI().showTempPage(page);
     }
 }

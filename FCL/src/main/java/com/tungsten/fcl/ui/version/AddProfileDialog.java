@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.version;
 
 import android.content.Context;
+import com.tungsten.fcl.ui.UIManager;
 import android.view.View;
 import android.widget.Toast;
 
@@ -56,7 +57,7 @@ public class AddProfileDialog extends FCLDialog implements View.OnClickListener 
                 Toast.makeText(getContext(), getContext().getString(R.string.profile_already_exist), Toast.LENGTH_SHORT).show();
             } else {
                 Profiles.getProfiles().add(new Profile(editText.getText().toString(), new File(pathText.getText().toString())));
-                ((VersionListPage) VersionPageManager.getInstance().getAllPages().get(0)).refreshProfile();
+                ((VersionListPage) UIManager.getInstance().getVersionUI().getPage(0)).refreshProfile();
                 dismiss();
             }
         }
