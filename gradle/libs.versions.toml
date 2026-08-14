@@ -13,6 +13,7 @@ xz = "1.9"
 opennbt = "1.5"
 gson = "2.10.1"
 appcompat = "1.7.0"
+viewpager2 = "1.1.0"
 coreSplashscreen = "1.0.1"
 material = "1.12.0"
 constraintlayout = "2.2.0"
@@ -43,6 +44,7 @@ xz = { group = "org.tukaani", name = "xz", version.ref = "xz" }
 opennbt = { group = "com.github.steveice10", name = "opennbt", version.ref = "opennbt" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
