@@ -13,6 +13,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
         android:background="@drawable/bg_container_white"
+        android:scrollbars="none"
         app:layout_constraintBottom_toTopOf="@id/install_modpack"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
