@@ -224,6 +224,50 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     }
                 }
                 uiManager.init()
+                // 滑动切换页面时同步左侧菜单高亮与标题（复用 setSelected 触发 onSelect 的机制）
+                uiManager.pageSelectedListener = { position ->
+                    when (position) {
+                        0 -> {
+                            refreshMenuView(home)
+                            home.setSelected(true)
+                        }
+
+                        1 -> {
+                            refreshMenuView(manage)
+                            manage.setSelected(true)
+                        }
+
+                        2 -> {
+                            refreshMenuView(download)
+                            download.setSelected(true)
+                        }
+
+                        3 -> {
+                            refreshMenuView(controller)
+                            controller.setSelected(true)
+                        }
+
+                        4 -> {
+                            refreshMenuView(multiplayer)
+                            multiplayer.setSelected(true)
+                        }
+
+                        5 -> {
+                            refreshMenuView(setting)
+                            setting.setSelected(true)
+                        }
+
+                        6 -> {
+                            refreshMenuView(null)
+                            title.setTextWithAnim(getString(R.string.account))
+                        }
+
+                        7 -> {
+                            refreshMenuView(null)
+                            title.setTextWithAnim(getString(R.string.version))
+                        }
+                    }
+                }
                 home.setOnSelectListener(this@MainActivity)
                 manage.setOnSelectListener(this@MainActivity)
                 download.setOnSelectListener(this@MainActivity)
