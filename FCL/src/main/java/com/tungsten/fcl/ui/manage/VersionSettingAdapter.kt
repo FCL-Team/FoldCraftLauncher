@@ -24,6 +24,7 @@ import com.tungsten.fcl.setting.VersionSetting
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.component.view.FCLTextView
 
 /** 设置行操作标签：按钮点击 / 特殊开关 / 编辑行长按按此分发 */
 enum class VersionSettingTag {
@@ -116,86 +117,100 @@ class VersionSettingAdapter(
                 value = { enableSpecific },
                 onToggle = { listener.onSpecialSwitch(VersionSettingTag.SPECIAL, it) },
                 disabled = modpack,
-                rowTag = VersionSettingTag.SPECIAL
+                rowTag = VersionSettingTag.SPECIAL,
+                descriptionRes = R.string.settings_type_special_enable_desc,
             )
-            result += Row.IconRow
+            result += Row.IconRow(R.string.settings_icon_desc)
         }
         if (globalSetting || enableSpecific) {
             result += Row.ValueRow(
                 R.string.settings_game_java_version,
                 { javaText() },
                 VersionSettingTag.EDIT_JAVA,
-                VersionSettingTag.INSTALL_JAVA
+                VersionSettingTag.INSTALL_JAVA,
+                descriptionRes = R.string.settings_game_java_version_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_game_working_directory,
                 { versionSetting.isolateGameDirProperty.get() },
                 { versionSetting.isolateGameDirProperty.set(it) },
-                disabled = modpack
+                disabled = modpack,
+                descriptionRes = R.string.settings_game_working_directory_desc,
             )
-            result += Row.MemoryRow
+            result += Row.MemoryRow(R.string.settings_memory_desc)
             result += Row.EditRow(
                 R.string.settings_advanced_server_ip,
                 { versionSetting.serverIpProperty.get() },
                 { versionSetting.serverIpProperty.set(it) },
-                hintRes = R.string.settings_advanced_server_ip_prompt
+                hintRes = R.string.settings_advanced_server_ip_prompt,
+                descriptionRes = R.string.settings_advanced_server_ip_desc,
             )
             result += Row.ValueRow(
                 R.string.settings_fcl_controller,
                 { controllerName() },
                 VersionSettingTag.EDIT_CONTROLLER,
-                VersionSettingTag.INSTALL_CONTROLLER
+                VersionSettingTag.INSTALL_CONTROLLER,
+                descriptionRes = R.string.settings_fcl_controller_desc,
             )
             result += Row.ValueRow(
                 R.string.settings_fcl_graphics_backend,
                 { versionSetting.graphicsBackend },
                 VersionSettingTag.EDIT_BACKEND,
-                null
+                null,
+                descriptionRes = R.string.settings_fcl_graphics_backend_desc,
             )
             result += Row.ValueRow(
                 R.string.settings_fcl_renderer,
                 { rendererText() },
                 VersionSettingTag.EDIT_RENDERER,
-                VersionSettingTag.INSTALL_RENDERER
+                VersionSettingTag.INSTALL_RENDERER,
+                descriptionRes = R.string.settings_fcl_renderer_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_fcl_pojav_bigcore,
                 { versionSetting.pojavBigCoreProperty.get() },
-                { versionSetting.pojavBigCoreProperty.set(it) }
+                { versionSetting.pojavBigCoreProperty.set(it) },
+                descriptionRes = R.string.settings_fcl_pojav_bigcore_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_fcl_vulkan_driver_system,
                 { versionSetting.vkDriverSystemProperty.get() },
                 { listener.onSpecialSwitch(VersionSettingTag.VULKAN, it) },
-                rowTag = VersionSettingTag.VULKAN
+                rowTag = VersionSettingTag.VULKAN,
+                descriptionRes = R.string.settings_fcl_vulkan_driver_system_desc,
             )
             if (!versionSetting.vkDriverSystemProperty.get()) {
                 result += Row.ValueRow(
                     R.string.settings_fcl_driver,
                     { versionSetting.driver },
                     VersionSettingTag.EDIT_DRIVER,
-                    VersionSettingTag.INSTALL_DRIVER
+                    VersionSettingTag.INSTALL_DRIVER,
+                    descriptionRes = R.string.settings_fcl_driver_desc,
                 )
             }
             result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_game_completeness,
                 { versionSetting.notCheckGameProperty.get() },
-                { versionSetting.notCheckGameProperty.set(it) }
+                { versionSetting.notCheckGameProperty.set(it) },
+                descriptionRes = R.string.settings_advanced_dont_check_game_completeness_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_jvm_validity,
                 { versionSetting.notCheckJVMProperty.get() },
-                { versionSetting.notCheckJVMProperty.set(it) }
+                { versionSetting.notCheckJVMProperty.set(it) },
+                descriptionRes = R.string.settings_advanced_dont_check_jvm_validity_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_mod,
                 { versionSetting.notCheckModProperty.get() },
-                { versionSetting.notCheckModProperty.set(it) }
+                { versionSetting.notCheckModProperty.set(it) },
+                descriptionRes = R.string.settings_advanced_dont_check_mod_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_debug_log,
                 { versionSetting.debugLogProperty.get() },
-                { versionSetting.debugLogProperty.set(it) }
+                { versionSetting.debugLogProperty.set(it) },
+                descriptionRes = R.string.settings_advanced_debug_log_desc,
             )
             result += Row.EditRow(
                 R.string.settings_advanced_minecraft_arguments,
@@ -203,27 +218,37 @@ class VersionSettingAdapter(
                 { versionSetting.minecraftArgsProperty.set(it) },
                 tag = VersionSettingTag.MC_ARGS,
                 hintRes = R.string.settings_advanced_minecraft_arguments_prompt,
-                longPressEdit = true
+                longPressEdit = true,
+                descriptionRes = R.string.settings_advanced_minecraft_arguments_desc,
             )
             result += Row.EditRow(
                 R.string.settings_advanced_jvm_args,
                 { versionSetting.javaArgsProperty.get() },
                 { versionSetting.javaArgsProperty.set(it) },
                 tag = VersionSettingTag.JVM_ARGS,
-                longPressEdit = true
+                longPressEdit = true,
+                descriptionRes = R.string.settings_advanced_jvm_args_desc,
             )
-            result += Row.ValueRow(R.string.settings_advanced_env, { "" }, VersionSettingTag.EDIT_ENV, null)
+            result += Row.ValueRow(
+                R.string.settings_advanced_env,
+                { "" },
+                VersionSettingTag.EDIT_ENV,
+                null,
+                descriptionRes = R.string.settings_advanced_env_desc,
+            )
             result += Row.EditRow(
                 R.string.settings_advanced_custom_uuid,
                 { versionSetting.uuidProperty.get() },
-                { versionSetting.uuidProperty.set(it) }
+                { versionSetting.uuidProperty.set(it) },
+                descriptionRes = R.string.settings_advanced_custom_uuid_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_force_resolution,
                 { versionSetting.forceResolutionProperty.get() },
                 { listener.onSpecialSwitch(VersionSettingTag.FORCE_RESOLUTION, it) },
                 longClick = true,
-                rowTag = VersionSettingTag.FORCE_RESOLUTION
+                rowTag = VersionSettingTag.FORCE_RESOLUTION,
+                descriptionRes = R.string.settings_advanced_force_resolution_desc,
             )
         }
         return result
@@ -231,6 +256,8 @@ class VersionSettingAdapter(
 
     private sealed class Row {
         open val rowTag: VersionSettingTag? = null
+        /** 行下方的作用描述文案资源，0 表示无描述 */
+        open val descriptionRes: Int = 0
 
         data class SwitchRow(
             val labelRes: Int,
@@ -238,14 +265,16 @@ class VersionSettingAdapter(
             val onToggle: (Boolean) -> Unit,
             val disabled: Boolean = false,
             val longClick: Boolean = false,
-            override val rowTag: VersionSettingTag? = null
+            override val rowTag: VersionSettingTag? = null,
+            override val descriptionRes: Int = 0
         ) : Row()
 
         data class ValueRow(
             val labelRes: Int,
             val value: () -> String,
             val editTag: VersionSettingTag?,
-            val installTag: VersionSettingTag?
+            val installTag: VersionSettingTag?,
+            override val descriptionRes: Int = 0
         ) : Row() {
             override val rowTag: VersionSettingTag? get() = editTag
         }
@@ -256,13 +285,15 @@ class VersionSettingAdapter(
             val write: (String) -> Unit,
             val tag: VersionSettingTag? = null,
             val hintRes: Int = 0,
-            val longPressEdit: Boolean = false
+            val longPressEdit: Boolean = false,
+            override val descriptionRes: Int = 0
         ) : Row() {
             override val rowTag: VersionSettingTag? get() = tag
         }
 
-        object MemoryRow : Row()
-        object IconRow : Row()
+        data class MemoryRow(override val descriptionRes: Int = 0) : Row()
+
+        data class IconRow(override val descriptionRes: Int = 0) : Row()
     }
 
     class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -300,7 +331,17 @@ class VersionSettingAdapter(
                 ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().ltColor)
             )
         }
-        when (val row = rows[position]) {
+        val row = rows[position]
+        // 行下方的作用描述
+        holder.itemView.findViewById<FCLTextView>(R.id.description)?.let { description ->
+            if (row.descriptionRes != 0) {
+                description.text = context.getString(row.descriptionRes)
+                description.visibility = View.VISIBLE
+            } else {
+                description.visibility = View.GONE
+            }
+        }
+        when (row) {
             is Row.SwitchRow -> bindSwitch(holder, row)
             is Row.ValueRow -> bindValue(holder, row)
             is Row.EditRow -> bindEdit(holder, row)
