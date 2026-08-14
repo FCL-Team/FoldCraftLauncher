@@ -232,11 +232,7 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
                                     builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                                     builder1.setCancelable(false);
                                     builder1.setMessage(getContext().getString(R.string.install_success));
-<<<<<<< HEAD
-                                    builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> DownloadPageManager.getInstance().dismissCurrentTempPage());
-=======
-                                    builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> UIManager.getInstance().getDownloadUI().dismissCurrentTempPage());
->>>>>>> 63bd550d (refactor: 页面内多页面切换重构为 ViewPager2，删除 PageManager 体系)
+                                    builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> UIManager.getInstance().getDownloadUI().dismissCurrentTempPage());
                                     builder1.create().show();
                                 } else {
                                     if (executor.getException() == null)

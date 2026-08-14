@@ -240,13 +240,8 @@ public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadab
                             builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                             builder1.setCancelable(false);
                             builder1.setMessage(getContext().getString(R.string.install_success));
-<<<<<<< HEAD
                             builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
-                                ManagePageManager.getInstance().dismissCurrentTempPage();
-=======
-                            builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
                                 UIManager.getInstance().getManageUI().dismissCurrentTempPage();
->>>>>>> 63bd550d (refactor: 页面内多页面切换重构为 ViewPager2，删除 PageManager 体系)
                                 profile.getRepository().onVersionIconChanged.fireEvent(new Event(this));
                             });
                             builder1.create().show();
