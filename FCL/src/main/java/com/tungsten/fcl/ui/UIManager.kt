@@ -53,9 +53,7 @@ class UIManager(val context: Context, val pager: ViewPager2) {
 
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
-            currentUI?.onStop()
             currentUI = getUI(position)
-            currentUI?.onStart()
             pageSelectedListener?.invoke(position)
         }
     }
@@ -84,9 +82,7 @@ class UIManager(val context: Context, val pager: ViewPager2) {
         if (position < 0) return
         if (ui === currentUI) return
         if (pager.currentItem == position) {
-            // 与当前页位置相同（如启动时的初始页）：直接执行 onStart
-            currentUI?.onStop()
-            ui.onStart()
+            // 与当前页位置相同（如启动时的初始页）：仅更新当前 UI
             currentUI = ui
         } else {
             // 相邻页平滑滑动，远距离瞬时跳转（避免中间页被逐个创建/销毁）
@@ -102,12 +98,9 @@ class UIManager(val context: Context, val pager: ViewPager2) {
         }
     }
 
-    /** 页面被 ViewPager 回收时销毁 UI 实例并清出注册表（不保留状态） */
+    /** 页面被 ViewPager 回收时清出注册表（不保留状态），UI 资源随视图树释放 */
     fun destroyUI(position: Int) {
-        uiRegistry[position]?.let {
-            it.onDestroy()
-            uiRegistry[position] = null
-        }
+        uiRegistry[position] = null
     }
 
     fun registerDefaultBackEvent(runnable: Runnable?) {

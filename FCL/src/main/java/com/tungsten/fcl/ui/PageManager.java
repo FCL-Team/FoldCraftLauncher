@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui;
 
 import android.content.Context;
+import android.view.View;
 
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
@@ -66,6 +67,21 @@ public abstract class PageManager {
         return null;
     }
 
+    /** 页面显示/隐藏直接操作视图（页面无生命周期方法） */
+    private void showPage(FCLCommonPage page) {
+        page.getContentView().setVisibility(View.VISIBLE);
+    }
+
+    private void hidePage(FCLCommonPage page) {
+        if (page.isShowing()) {
+            page.getContentView().setVisibility(View.GONE);
+        }
+    }
+
+    private void showTempPageView(FCLTempPage page) {
+        page.getContentView().setVisibility(View.VISIBLE);
+    }
+
     public void switchPage(int id) {
         if (allPages.size() > 0) {
             FCLCommonPage targetPage = getPageById(id);
@@ -76,18 +92,15 @@ public abstract class PageManager {
                 }
             }
             if (currentPage != null && currentPage != targetPage) {
-                if (currentPage.isShowing()) {
-                    currentPage.onStop();
-                }
-                if (currentPage.getCurrentTempPage() != null && currentPage.getCurrentTempPage().isShowing()) {
-                    currentPage.getCurrentTempPage().onStop();
+                hidePage(currentPage);
+                if (currentPage.getCurrentTempPage() != null) {
+                    currentPage.getCurrentTempPage().getContentView().setVisibility(View.GONE);
                 }
             }
             if (targetPage.getCurrentTempPage() != null) {
-                targetPage.getCurrentTempPage().restart();
-                targetPage.getCurrentTempPage().onRestart();
+                showTempPageView(targetPage.getCurrentTempPage());
             } else {
-                targetPage.onStart();
+                showPage(targetPage);
             }
             currentPage = targetPage;
         } else {
@@ -97,15 +110,12 @@ public abstract class PageManager {
 
     public void showTempPage(FCLTempPage fclTempPage) {
         if (currentPage != null) {
-            if (currentPage.isShowing()) {
-                currentPage.onStop();
-            }
+            hidePage(currentPage);
             if (currentPage.getAllTempPages().size() > 0 &&
-                    currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1) != null &&
-                    currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1).isShowing()) {
-                currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1).onStop();
+                    currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1) != null) {
+                currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1).getContentView().setVisibility(View.GONE);
             }
-            fclTempPage.onStart();
+            showTempPageView(fclTempPage);
             currentPage.getAllTempPages().add(fclTempPage);
             currentPage.setCurrentTempPage(fclTempPage);
         }
@@ -117,14 +127,13 @@ public abstract class PageManager {
 
     public void dismissCurrentTempPage() {
         if (currentPage != null && currentPage.getCurrentTempPage() != null) {
-            currentPage.getCurrentTempPage().dismiss();
+            parent.removeView(currentPage.getCurrentTempPage().getContentView());
             currentPage.getAllTempPages().remove(currentPage.getAllTempPages().size() - 1);
             if (currentPage.getAllTempPages().size() > 0) {
-                currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1).restart();
-                currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1).onRestart();
+                showTempPageView(currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1));
                 currentPage.setCurrentTempPage(currentPage.getAllTempPages().get(currentPage.getAllTempPages().size() - 1));
             } else {
-                currentPage.onStart();
+                showPage(currentPage);
                 currentPage.setCurrentTempPage(null);
             }
         }
@@ -133,36 +142,18 @@ public abstract class PageManager {
     public void dismissAllTempPagesCreatedByPage(int id) {
         FCLCommonPage commonPage = getPageById(id);
         if (commonPage.getCurrentTempPage() != null) {
-            commonPage.getCurrentTempPage().dismiss();
+            parent.removeView(commonPage.getCurrentTempPage().getContentView());
         }
         commonPage.getAllTempPages().clear();
         commonPage.setCurrentTempPage(null);
         if (currentPage == commonPage) {
-            commonPage.onStart();
+            showPage(commonPage);
         }
     }
 
     public void dismissAllTempPages() {
         for (FCLCommonPage page : allPages) {
             dismissAllTempPagesCreatedByPage(page.getId());
-        }
-    }
-
-    public void onPause() {
-        for (FCLCommonPage page : allPages) {
-            page.onPause();
-            for (FCLTempPage tempPage : page.getAllTempPages()) {
-                tempPage.onPause();
-            }
-        }
-    }
-
-    public void onResume() {
-        for (FCLCommonPage page : allPages) {
-            page.onResume();
-            for (FCLTempPage tempPage : page.getAllTempPages()) {
-                tempPage.onResume();
-            }
         }
     }
 
