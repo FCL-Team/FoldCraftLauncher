@@ -1,27 +1,153 @@
 package com.tungsten.fcllibrary.component.ui;
 
 import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.LayoutRes;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 import com.tungsten.fclcore.task.Task;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
-public abstract class FCLMultiPageUI extends FCLCommonUI implements FCLMultiPageUICallback {
+/**
+ * 多页面 UI 基类：内层 ViewPager2 承载普通页面（tab 点击平滑滑动切换），
+ * 覆盖层承载临时页（导航栈）。
+ *
+ * 页面无生命周期，随 ViewPager2 创建/销毁（不保留状态）：
+ * 子类实现 {@link #getPageCount()} / {@link #createPage(int)} 提供页面工厂，
+ * 在 onCreate 中调用 {@link #setupPages(ViewGroup, TabLayout)} 挂载页面容器。
+ */
+public abstract class FCLMultiPageUI extends FCLCommonUI {
 
-    private int defaultPageId;
+    /** 页面位置 → 页面实例注册表，页面被回收时清出（不保留状态） */
+    private final ArrayList<FCLPage> pageRegistry = new ArrayList<>();
+
+    private final ArrayList<FCLPage> tempPageStack = new ArrayList<>();
+
+    private ViewPager2 pagePager;
+    private FrameLayout overlay;
 
     public FCLMultiPageUI(Context context, @LayoutRes int id) {
         super(context, id);
     }
 
-    public void setDefaultPageId(int defaultPageId) {
-        this.defaultPageId = defaultPageId;
+    /**
+     * 子类在 onCreate 中调用：把内层 ViewPager2 与临时页覆盖层装入 container，
+     * 若提供 tabLayout 则用 TabLayoutMediator 联动（tab 点击平滑滑动切换）。
+     */
+    protected void setupPages(ViewGroup container, TabLayout tabLayout) {
+        pagePager = new ViewPager2(getContext());
+        pagePager.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        pagePager.setOffscreenPageLimit(1);
+        pagePager.setAdapter(new PageAdapter());
+        container.addView(pagePager);
+
+        overlay = new FrameLayout(getContext());
+        overlay.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        overlay.setVisibility(View.GONE);
+        container.addView(overlay);
+
+        if (tabLayout != null) {
+            new TabLayoutMediator(tabLayout, pagePager, (tab, position) -> {
+                String[] titles = getTabTitles();
+                if (titles != null && position < titles.length) {
+                    tab.setText(titles[position]);
+                }
+            }).attach();
+        }
+
+        // 切换页面时清空临时页（临时页属于当前页面上下文）
+        pagePager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                dismissAllTempPages();
+            }
+        });
     }
 
-    public int getDefaultPageId() {
-        return defaultPageId;
+    /** 页面数量（对应 tab 数或 ViewPager2 页数） */
+    public abstract int getPageCount();
+
+    /** 按位置创建页面（页面 id 由子类页面常量决定） */
+    public abstract FCLPage createPage(int position);
+
+    /** tab 标题，无 tab 的 UI 返回 null */
+    public String[] getTabTitles() {
+        return null;
+    }
+
+    /** 获取指定位置的页面，不存在则创建（页面创建即完成初始化） */
+    public FCLPage getPage(int position) {
+        while (pageRegistry.size() <= position) {
+            pageRegistry.add(null);
+        }
+        if (pageRegistry.get(position) == null) {
+            FCLPage page = createPage(position);
+            pageRegistry.set(position, page);
+            onPageCreated(page);
+        }
+        return pageRegistry.get(position);
+    }
+
+    /** 页面创建后回调，子类可分发版本等上下文数据 */
+    protected void onPageCreated(FCLPage page) {
+
+    }
+
+    /** 遍历已创建的页面（不触发创建） */
+    public void forEachCreatedPage(Consumer<FCLPage> action) {
+        for (FCLPage page : pageRegistry) {
+            if (page != null) {
+                action.accept(page);
+            }
+        }
+    }
+
+    /** 切换到指定位置页面（替代原 switchPage） */
+    public void showPage(int position) {
+        if (pagePager != null) {
+            pagePager.setCurrentItem(position, false);
+        }
+    }
+
+    public int getCurrentPagePosition() {
+        return pagePager == null ? 0 : pagePager.getCurrentItem();
+    }
+
+    public boolean canReturn() {
+        return !tempPageStack.isEmpty();
+    }
+
+    /** 在覆盖层上显示临时页并压入导航栈 */
+    public void showTempPage(FCLPage page) {
+        if (overlay == null) return;
+        overlay.setVisibility(View.VISIBLE);
+        overlay.addView(page.getContentView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        tempPageStack.add(page);
+    }
+
+    /** 弹栈顶临时页 */
+    public void dismissCurrentTempPage() {
+        if (tempPageStack.isEmpty()) return;
+        FCLPage page = tempPageStack.remove(tempPageStack.size() - 1);
+        overlay.removeView(page.getContentView());
+        if (tempPageStack.isEmpty()) {
+            overlay.setVisibility(View.GONE);
+        }
+    }
+
+    /** 清空全部临时页 */
+    public void dismissAllTempPages() {
+        while (!tempPageStack.isEmpty()) {
+            dismissCurrentTempPage();
+        }
     }
 
     @Override
@@ -33,34 +159,58 @@ public abstract class FCLMultiPageUI extends FCLCommonUI implements FCLMultiPage
     public abstract Task<?> refresh(Object... param);
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-    }
-
-
-
-    @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (canReturn()) {
+            dismissCurrentTempPage();
+        } else {
+            super.onBackPressed();
+        }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    /** 内层 ViewPager2 适配器：页面随创建/销毁（不保留状态） */
+    private class PageAdapter extends RecyclerView.Adapter<PageAdapter.Holder> {
+
+        private class Holder extends RecyclerView.ViewHolder {
+            final FrameLayout container;
+            int boundPosition = -1;
+
+            Holder(FrameLayout container) {
+                super(container);
+                this.container = container;
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return getPageCount();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position;
+        }
+
+        @Override
+        public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
+            // ViewPager2 要求页面直接子 View 必须 MATCH_PARENT
+            FrameLayout container = new FrameLayout(parent.getContext());
+            container.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            return new Holder(container);
+        }
+
+        @Override
+        public void onBindViewHolder(Holder holder, int position) {
+            holder.boundPosition = position;
+            holder.container.removeAllViews();
+            holder.container.addView(getPage(position).getContentView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        }
+
+        @Override
+        public void onViewRecycled(Holder holder) {
+            // 页面被回收即销毁（不保留状态），下次进入全新创建
+            if (holder.boundPosition >= 0 && holder.boundPosition < pageRegistry.size()) {
+                pageRegistry.set(holder.boundPosition, null);
+            }
+        }
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-
-    @Override
-    public abstract void initPages();
-
-    @Override
-    public abstract ArrayList<FCLBasePage> getAllPages();
-
-    @Override
-    public abstract FCLBasePage getPage(int id);
 }
