@@ -45,7 +45,7 @@ public class RemoteModVersionPage extends FCLPage {
         // 原 onStart 逻辑：页面构造即初始化列表
         listView = findViewById(R.id.list);
         ModVersionAdapter adapter = new ModVersionAdapter(getContext(), list, modVersion -> {
-            if (downloadPage.getId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
+            if (downloadPage.getPageId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
                 RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon, this.version, modVersion, callback, this, downloadPage);
                 UIManager.getInstance().getDownloadUI().showTempPage(page);
             } else {
