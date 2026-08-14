@@ -647,6 +647,7 @@
     <string name="mods_mcmod_search">Шукати в MCMOD</string>
     <string name="mods_name">Назва</string>
     <string name="mods_not_modded">Ви повинні спочатку встановити завантажувач модів (Fabric, Forge або LiteLoader), щоб керувати своїми модами!</string>
+    <string name="message_broken_mods">Наступні файли модів пошкоджені та були пропущені:\n%s</string>
     <string name="mods_restore">Відновити</string>
     <string name="mods_url">Офіційна сторінка</string>
     <string name="mods_update_modpack_mod_warning">Оновлення модів у модпаку може призвести до непоправних наслідків, можливо, до пошкодження модпака, через що він не зможе запуститися. Ви впевнені, що хочете оновити?</string>

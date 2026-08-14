@@ -88,6 +88,8 @@ public final class ModManager {
     private final String id;
     private final TreeSet<LocalModFile> localModFiles = new TreeSet<>();
     private final HashMap<Pair<String, ModLoaderType>, LocalMod> localMods = new HashMap<>();
+    /** 本次扫描中损坏（无法打开）的模组文件 */
+    private final List<Path> brokenFiles = new ArrayList<>();
     private LibraryAnalyzer analyzer;
 
     private boolean loaded = false;
@@ -172,8 +174,12 @@ public final class ModManager {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            // 损坏的压缩文件（如 zip 结构损坏时 zipfs 抛 ZipError）无法打开，
+            // 记录并跳过该文件，避免导致整个模组列表加载失败
             LOG.warning("Failed to open mod file " + file + e);
+            brokenFiles.add(file);
+            return null;
         }
 
         if (modInfo == null) {
@@ -213,6 +219,7 @@ public final class ModManager {
     public void refreshMods(Consumer<LocalModFile> onScanned) throws IOException {
         localModFiles.clear();
         localMods.clear();
+        brokenFiles.clear();
 
         analyzer = LibraryAnalyzer.analyze(getRepository().getResolvedPreservingPatchesVersion(id), null);
 
@@ -241,6 +248,11 @@ public final class ModManager {
         if (!loaded)
             refreshMods();
         return List.copyOf(localModFiles);
+    }
+
+    /** 本次扫描中损坏（无法打开）的模组文件 */
+    public List<Path> getBrokenFiles() {
+        return List.copyOf(brokenFiles);
     }
 
     public void addMod(Path file) throws IOException {

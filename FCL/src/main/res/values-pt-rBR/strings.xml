@@ -693,6 +693,7 @@
     <string name="mods_modrinth">Modrinth</string>
     <string name="mods_name">Nome</string>
     <string name="mods_not_modded">Você deve instalar um mod loader (Fabric, Forge ou LiteLoader) primeiro para gerenciar mods!</string>
+    <string name="message_broken_mods">Os seguintes arquivos de mod estão corrompidos e foram ignorados:\n%s</string>
     <string name="mods_restore">Reverter</string>
     <string name="mods_url">Página oficial</string>
     <string name="mods_update_modpack_mod_warning">Atualizar mods em um modpack pode levar à resultados irreparáveis, possivelmente corrompendo o modpack de forma que ele não possa ser iniciado. Tem certeza de que deseja atualizar?</string>

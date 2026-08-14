@@ -693,6 +693,7 @@
     <string name="mods_modrinth">Modrinth</string>
     <string name="mods_name">نام</string>
     <string name="mods_not_modded">برای مدیریت ماد های خود ابتدا باید یک ماد لودر (فابریک، فورج یا لایت لودر) نصب کنید!</string>
+    <string name="message_broken_mods">The following mod files are corrupted and have been skipped:\n%s</string>
     <string name="mods_restore">بازگرداندن</string>
     <string name="mods_url">صفحه رسمی</string>
     <string name="mods_update_modpack_mod_warning">بروزرسانی ماد ها در یک مادپک می تواند منجر به نتایج جبران ناپذیری شود و احتمالا مادپک را خراب کند به طوری که اجرا نشود. آیا از بروزرسانی مطمئن هستید؟</string>

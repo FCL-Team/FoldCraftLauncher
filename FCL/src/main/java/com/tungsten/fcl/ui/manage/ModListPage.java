@@ -45,6 +45,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -58,6 +59,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -351,6 +353,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 try {
                     // 增量阶段已把全部模组追加进列表，无需再整体刷新列表
                     calculateMod();
+                    showBrokenModsDialog();
                 } catch (Throwable e) {
                     LOG.log(Level.SEVERE, "Failed to load local mod list", e);
                 }
@@ -365,6 +368,23 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
             boolean active = modInfoObject.getModInfo().isActive();
             return (enabled.isChecked() && active) || (disabled.isChecked() && !active);
         }).collect(Collectors.toList());
+    }
+
+    /** 加载完成后若有损坏的模组文件，弹对话框列出（仅在 UI 线程调用） */
+    private void showBrokenModsDialog() {
+        List<Path> brokenFiles = modManager.getBrokenFiles();
+        if (brokenFiles.isEmpty()) return;
+        String names = brokenFiles.stream()
+                .map(FileUtils::getName)
+                .collect(Collectors.joining("\n"));
+        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+        builder.setCancelable(false);
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+        builder.setMessage(getContext().getString(R.string.message_broken_mods, names));
+        builder.setPositiveButton(() -> {
+        });
+        builder.setNegativeButton(null);
+        builder.create().show();
     }
 
     public void add() {

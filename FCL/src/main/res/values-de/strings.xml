@@ -630,6 +630,7 @@
     <string name="mods_mcmod_search">In MCMOD suchen</string>
     <string name="mods_name">Name</string>
     <string name="mods_not_modded">Sie müssen zuerst einen Mod-Loader (Fabric, Forge oder LiteLoader) installieren, um Ihre Mods zu verwalten!</string>
+    <string name="message_broken_mods">Die folgenden Mod-Dateien sind beschädigt und wurden übersprungen:\n%s</string>
     <string name="mods_restore">Wiederherstellen</string>
     <string name="mods_url">Offizielle Seite</string>
     <string name="mods_update_modpack_mod_warning">Das Aktualisieren von Mods in einem Modpack kann zu irreparablen Schäden führen, möglicherweise wird das Modpack beschädigt und kann nicht mehr gestartet werden. Sind Sie sicher, dass Sie aktualisieren möchten?</string>
