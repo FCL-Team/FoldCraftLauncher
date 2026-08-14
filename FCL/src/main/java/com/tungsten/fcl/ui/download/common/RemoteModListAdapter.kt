@@ -121,7 +121,9 @@ class RemoteModListAdapter(
         binding.icon.setImageDrawable(fixedIconPlaceholder())
         Glide.with(binding.icon)
             .load(remoteMod.iconUrl)
+            .placeholder(fixedIconPlaceholder())
             .override(90, 90)
+            .error(fixedIconPlaceholder())
             .into(binding.icon)
         val mod =
             ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType())
