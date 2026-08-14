@@ -175,6 +175,13 @@ public class DownloadUI extends FCLCommonUI {
         });
     }
 
+    /** 返回过渡：下层上滑进入（仅位移不做淡入，避免与临时页淡出叠加时 alpha 硬件层切换闪烁） */
+    private void slideIn(View view) {
+        view.animate().cancel();
+        view.setTranslationY(view.getResources().getDisplayMetrics().density * 30f);
+        view.animate().translationY(0f).setDuration(250).start();
+    }
+
     /** 供外部跳转（如模组管理页）：切换到指定下载模式并显示下载页 */
     public void showDownloadPage(int pageId) {
         TabLayout.Tab tab = tabLayout.getTabAt(pageIdToTabPosition(pageId));
@@ -217,16 +224,19 @@ public class DownloadUI extends FCLCommonUI {
         if (tempPageStack.isEmpty()) return;
         FCLPage page = tempPageStack.remove(tempPageStack.size() - 1);
         View view = page.getContentView();
+        // 恢复下层（与临时页淡出交叉进行，形成返回过渡动画）
+        if (!tempPageStack.isEmpty()) {
+            View lowerView = tempPageStack.get(tempPageStack.size() - 1).getContentView();
+            lowerView.setVisibility(View.VISIBLE);
+            slideIn(lowerView);
+        } else {
+            contentContainer.setVisibility(View.VISIBLE);
+            slideIn(contentContainer);
+        }
         view.animate().alpha(0f).setDuration(TEMP_PAGE_ANIM_DURATION).withEndAction(() -> {
             overlay.removeView(view);
-            if (!tempPageStack.isEmpty()) {
-                // 恢复下层临时页显示
-                tempPageStack.get(tempPageStack.size() - 1).getContentView().setVisibility(View.VISIBLE);
-            }
             if (tempPageStack.isEmpty()) {
                 overlay.setVisibility(View.GONE);
-                // 临时页全部关闭后恢复下层内容显示
-                contentContainer.setVisibility(View.VISIBLE);
             }
         }).start();
     }
