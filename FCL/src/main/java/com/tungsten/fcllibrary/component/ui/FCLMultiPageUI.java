@@ -5,7 +5,6 @@ import android.content.Context;
 import androidx.annotation.LayoutRes;
 
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.util.ArrayList;
 
@@ -13,8 +12,8 @@ public abstract class FCLMultiPageUI extends FCLCommonUI implements FCLMultiPage
 
     private int defaultPageId;
 
-    public FCLMultiPageUI(Context context, FCLUILayout parent, @LayoutRes int id) {
-        super(context, parent, id);
+    public FCLMultiPageUI(Context context, @LayoutRes int id) {
+        super(context, id);
     }
 
     public void setDefaultPageId(int defaultPageId) {
