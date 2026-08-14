@@ -59,6 +59,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -370,7 +371,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         }).collect(Collectors.toList());
     }
 
-    /** 加载完成后若有损坏的模组文件，弹对话框列出（仅在 UI 线程调用） */
+    /** 加载完成后若有损坏的模组文件，弹对话框列出并询问是否删除（仅在 UI 线程调用） */
     private void showBrokenModsDialog() {
         List<Path> brokenFiles = modManager.getBrokenFiles();
         if (brokenFiles.isEmpty()) return;
@@ -381,10 +382,21 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         builder.setCancelable(false);
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
         builder.setMessage(getContext().getString(R.string.message_broken_mods, names));
-        builder.setPositiveButton(() -> {
-        });
-        builder.setNegativeButton(null);
+        builder.setPositiveButton(getContext().getString(R.string.button_remove), () -> deleteBrokenMods(brokenFiles));
+        builder.setNegativeButton(getContext().getString(R.string.button_cancel), null);
         builder.create().show();
+    }
+
+    /** 删除损坏的模组文件（UI 线程） */
+    private void deleteBrokenMods(List<Path> brokenFiles) {
+        try {
+            for (Path file : brokenFiles) {
+                Files.deleteIfExists(file);
+            }
+        } catch (IOException e) {
+            LOG.log(Level.WARNING, "Failed to delete broken mod files", e);
+            Toast.makeText(getContext(), getContext().getString(R.string.message_failed), Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void add() {

@@ -790,7 +790,7 @@
     <string name="mods_modrinth">Modrinth</string>
     <string name="mods_name">名称</string>
     <string name="mods_not_modded">你必须先安装一个模组加载器（Fabric，Forge 或者 LiteLoader）以管理你的模组！</string>
-    <string name="message_broken_mods">检测到以下损坏的模组文件，已跳过：\n%s</string>
+    <string name="message_broken_mods">检测到以下损坏的模组文件，是否删除？\n%s</string>
     <string name="mods_restore">回滚</string>
     <string name="mods_url">官方页面</string>
     <string name="mods_update_modpack_mod_warning">更新整合包中的 Mod 可能导致整合包损坏，使整合包无法正常启动。该操作不可逆，确定要更新吗？</string>

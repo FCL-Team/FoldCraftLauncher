@@ -821,7 +821,7 @@
     <string name="mods_modrinth">Modrinth</string>
     <string name="mods_name">Tên</string>
     <string name="mods_not_modded">Bạn phải cài đặt trình tải mod (Fabric, Forge hoặc LiteLoader) trước để quản lý mods của mình!</string>
-    <string name="message_broken_mods">Các tệp mod sau bị hỏng và đã được bỏ qua:\n%s</string>
+    <string name="message_broken_mods">Các tệp mod sau bị hỏng. Bạn có muốn xóa chúng không?\n%s</string>
     <string name="mods_restore">Khôi phục</string>
     <string name="mods_url">Trang chính thức</string>
     <string name="mods_update_modpack_mod_warning">Việc cập nhật mods trong một modpack có thể dẫn đến kết quả không thể sửa chữa, có thể làm hỏng modpack khiến nó không thể khởi động. Bạn có chắc chắn muốn cập nhật không?</string>

@@ -836,7 +836,7 @@
     <string name="mods_modrinth">Modrinth</string>
     <string name="mods_name">Name</string>
     <string name="mods_not_modded">You must install a mod loader (Fabric, Forge or LiteLoader) first to manage your mods!</string>
-    <string name="message_broken_mods">The following mod files are corrupted and have been skipped:\n%s</string>
+    <string name="message_broken_mods">The following mod files are corrupted. Do you want to delete them?\n%s</string>
     <string name="mods_restore">Rollback</string>
     <string name="mods_url">Official Page</string>
     <string name="mods_update_modpack_mod_warning">Updating mods in a modpack can lead to irreparable results, possibly corrupting the modpack so that it cannot start. Are you sure you want to update?</string>
