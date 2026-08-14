@@ -35,7 +35,7 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
     private val allUIList = mutableListOf<FCLBaseUI>()
     var currentUI: FCLBaseUI? = null
 
-    fun init(onLoad: () -> Unit) {
+    fun init() {
         if (initialized) {
             Logging.LOG.log(Level.WARNING, "UIManager already initialized!")
             return
@@ -43,7 +43,6 @@ class UIManager(val context: Context, val parent: FCLUILayout) {
         instance = this
         mainUI = MainUI(context, parent, R.layout.ui_main)
         allUIList.add(mainUI)
-        onLoad()
     }
 
     fun switchUI(ui: FCLCommonUI) {

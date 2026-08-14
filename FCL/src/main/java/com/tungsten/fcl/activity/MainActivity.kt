@@ -223,44 +223,43 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         home.isSelected = true
                     }
                 }
-                uiManager.init {
-                    home.setOnSelectListener(this@MainActivity)
-                    manage.setOnSelectListener(this@MainActivity)
-                    download.setOnSelectListener(this@MainActivity)
-                    controller.setOnSelectListener(this@MainActivity)
-                    multiplayer.setOnSelectListener(this@MainActivity)
-                    setting.setOnSelectListener(this@MainActivity)
-                    home.setSelected(true)
-                    home.setOnLongClickListener {
-                        shareLog()
-                        true
+                uiManager.init()
+                home.setOnSelectListener(this@MainActivity)
+                manage.setOnSelectListener(this@MainActivity)
+                download.setOnSelectListener(this@MainActivity)
+                controller.setOnSelectListener(this@MainActivity)
+                multiplayer.setOnSelectListener(this@MainActivity)
+                setting.setOnSelectListener(this@MainActivity)
+                home.setSelected(true)
+                home.setOnLongClickListener {
+                    shareLog()
+                    true
+                }
+                back.setOnClickListener(this@MainActivity)
+                back.setOnLongClickListener {
+                    startActivity(Intent(this@MainActivity, ShellActivity::class.java))
+                    true
+                }
+                UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
+                if (!checkNotificationPermission() && getSharedPreferences(
+                        "launcher",
+                        MODE_PRIVATE
+                    ).getBoolean("check_notification_permission", true)
+                ) {
+                    getSharedPreferences("launcher", MODE_PRIVATE).edit {
+                        putBoolean("check_notification_permission", false)
                     }
-                    back.setOnClickListener(this@MainActivity)
-                    back.setOnLongClickListener {
-                        startActivity(Intent(this@MainActivity, ShellActivity::class.java))
-                        true
-                    }
-                    UpdateChecker.getInstance().checkAuto(this@MainActivity).start()
-                    if (!checkNotificationPermission() && getSharedPreferences(
-                            "launcher",
-                            MODE_PRIVATE
-                        ).getBoolean("check_notification_permission", true)
-                    ) {
-                        getSharedPreferences("launcher", MODE_PRIVATE).edit {
-                            putBoolean("check_notification_permission", false)
+                    FCLAlertDialog.Builder(this@MainActivity)
+                        .setMessage(getString(R.string.notification_permission))
+                        .setPositiveButton {
+                            requestNotificationPermission()
                         }
-                        FCLAlertDialog.Builder(this@MainActivity)
-                            .setMessage(getString(R.string.notification_permission))
-                            .setPositiveButton {
-                                requestNotificationPermission()
-                            }
-                            .setNegativeButton {}
-                            .create()
-                            .show()
-                    }
-                    if (!modpackHandled) {
-                        handleModpack(intent)
-                    }
+                        .setNegativeButton {}
+                        .create()
+                        .show()
+                }
+                if (!modpackHandled) {
+                    handleModpack(intent)
                 }
                 setupAccountDisplay()
                 setupVersionDisplay()
