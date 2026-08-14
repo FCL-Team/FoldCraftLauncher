@@ -21,12 +21,12 @@ public abstract class PageManager {
     public final ArrayList<FCLCommonPage> allPages;
     private FCLCommonPage currentPage;
 
-    public PageManager (Context context, FCLUILayout parent, int defaultPageId, UIListener listener) {
+    public PageManager (Context context, FCLUILayout parent, int defaultPageId) {
         this.context = context;
         this.parent = parent;
         this.defaultPageId = defaultPageId;
 
-        init(listener);
+        init();
         allPages = getAllPages();
         if (allPages.size() > 0) {
             switchPage(defaultPageId);
@@ -49,7 +49,7 @@ public abstract class PageManager {
         return currentPage;
     }
 
-    public abstract void init(UIListener listener);
+    public abstract void init();
 
     public abstract ArrayList<FCLCommonPage> getAllPages();
 

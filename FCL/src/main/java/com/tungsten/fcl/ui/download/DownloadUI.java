@@ -72,7 +72,7 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
 
     @Override
     public void initPages() {
-        pageManager = new DownloadPageManager(getContext(), container, DownloadPageManager.PAGE_ID_DOWNLOAD_GAME, null);
+        pageManager = new DownloadPageManager(getContext(), container, DownloadPageManager.PAGE_ID_DOWNLOAD_GAME);
 
         Profiles.registerVersionsListener(this::loadVersions);
         if (runnable != null) {

@@ -66,7 +66,7 @@ public class ControllerUI extends FCLMultiPageUI {
 
     @Override
     public void initPages() {
-        pageManager = new ControllerPageManager(getContext(), container, ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER, null);
+        pageManager = new ControllerPageManager(getContext(), container, ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER);
         if (runnable != null) {
             runnable.run();
         }

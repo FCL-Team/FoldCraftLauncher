@@ -4,7 +4,6 @@ import android.content.Context
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.PageManager
-import com.tungsten.fcl.ui.UIListener
 import com.tungsten.fcl.ui.manage.VersionSettingPage
 import com.tungsten.fcllibrary.component.ui.FCLCommonPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
@@ -12,9 +11,8 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout
 class SettingPageManager(
     context: Context,
     parent: FCLUILayout,
-    defaultPageId: Int,
-    val listener: UIListener?
-) : PageManager(context, parent, defaultPageId, listener) {
+    defaultPageId: Int
+) : PageManager(context, parent, defaultPageId) {
     companion object {
         @JvmStatic
         var instance: SettingPageManager? = null
@@ -45,7 +43,7 @@ class SettingPageManager(
     }
 
 
-    override fun init(listener: UIListener?) {
+    override fun init() {
         versionSettingPage = VersionSettingPage(
             context,
             PAGE_ID_SETTING_GAME,
@@ -54,7 +52,6 @@ class SettingPageManager(
             true
         )
         versionSettingPage.loadVersion(Profiles.getSelectedProfile(), null)
-        listener?.onLoad()
     }
 
     override fun getAllPages(): ArrayList<FCLCommonPage> {

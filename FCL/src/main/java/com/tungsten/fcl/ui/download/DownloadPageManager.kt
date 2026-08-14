@@ -4,7 +4,6 @@ import android.content.Context
 import com.tungsten.fcl.R
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.PageManager
-import com.tungsten.fcl.ui.UIListener
 import com.tungsten.fcl.ui.download.common.DownloadPage
 import com.tungsten.fcl.ui.download.modpack.ModpackDownloadPage
 import com.tungsten.fcl.ui.download.version.VersionInstallPage
@@ -16,9 +15,8 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout
 class DownloadPageManager(
     context: Context?,
     parent: FCLUILayout?,
-    defaultPageId: Int,
-    listener: UIListener?
-) : PageManager(context, parent, defaultPageId, listener) {
+    defaultPageId: Int
+) : PageManager(context, parent, defaultPageId) {
     companion object {
         @JvmStatic
         var instance: DownloadPageManager? = null
@@ -69,14 +67,13 @@ class DownloadPageManager(
         instance = this
     }
 
-    override fun init(listener: UIListener?) {
+    override fun init() {
         versionInstallPage = VersionInstallPage(
             context,
             PAGE_ID_DOWNLOAD_GAME,
             parent,
             R.layout.page_install_version
         )
-        listener?.onLoad()
     }
 
     override fun getAllPages(): ArrayList<FCLCommonPage> {

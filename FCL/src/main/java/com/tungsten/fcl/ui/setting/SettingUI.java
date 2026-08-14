@@ -74,7 +74,7 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
 
     @Override
     public void initPages() {
-        pageManager = new SettingPageManager(getContext(), container, SettingPageManager.PAGE_ID_SETTING_GAME, null);
+        pageManager = new SettingPageManager(getContext(), container, SettingPageManager.PAGE_ID_SETTING_GAME);
     }
 
     @Override

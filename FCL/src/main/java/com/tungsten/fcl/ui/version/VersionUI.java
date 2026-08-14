@@ -58,7 +58,7 @@ public class VersionUI extends FCLMultiPageUI {
 
     @Override
     public void initPages() {
-        pageManager = new VersionPageManager(getContext(), container, VersionPageManager.PAGE_ID_VERSION_LIST, null);
+        pageManager = new VersionPageManager(getContext(), container, VersionPageManager.PAGE_ID_VERSION_LIST);
     }
 
     @Override
