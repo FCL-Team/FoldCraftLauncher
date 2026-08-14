@@ -238,20 +238,12 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
         executor.start();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     @Override
     public Task<?> refresh(Object... param) {
         return null;
     }
 
-    @Override
-    public void onRestart() {
-
-    }
 
     @Override
     public void onClick(View view) {

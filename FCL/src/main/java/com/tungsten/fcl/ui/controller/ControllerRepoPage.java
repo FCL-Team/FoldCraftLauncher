@@ -354,10 +354,6 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
         Controllers.addCallback(() -> checkUpdate(LocaleUtils.isChinese(getContext()) ? 1 : 0, false));
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     @Override
     public Task<?> refresh(Object... param) {

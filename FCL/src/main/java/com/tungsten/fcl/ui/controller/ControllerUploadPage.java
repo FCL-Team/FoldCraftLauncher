@@ -69,10 +69,6 @@ public class ControllerUploadPage extends FCLTempPage implements View.OnClickLis
         return null;
     }
 
-    @Override
-    public void onRestart() {
-
-    }
 
     @Override
     public void onClick(View view) {

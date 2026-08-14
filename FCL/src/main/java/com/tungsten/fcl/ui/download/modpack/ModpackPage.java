@@ -61,10 +61,6 @@ public abstract class ModpackPage extends FCLTempPage implements View.OnClickLis
         return null;
     }
 
-    @Override
-    public void onRestart() {
-
-    }
 
     protected abstract void onInstall();
 

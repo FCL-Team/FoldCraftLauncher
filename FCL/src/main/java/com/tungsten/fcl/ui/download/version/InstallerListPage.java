@@ -155,10 +155,6 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
         });
     }
 
-    @Override
-    public void onRestart() {
-
-    }
 
     @Override
     public void onClick(View view) {

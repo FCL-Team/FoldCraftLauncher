@@ -154,10 +154,6 @@ public class ModpackSelectionPage extends FCLTempPage implements View.OnClickLis
         return null;
     }
 
-    @Override
-    public void onRestart() {
-
-    }
 
     @Override
     public void onClick(View v) {
