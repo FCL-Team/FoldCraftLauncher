@@ -125,9 +125,13 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
         return !tempPageStack.isEmpty();
     }
 
-    /** 在覆盖层上显示临时页并压入导航栈 */
+    /** 在覆盖层上显示临时页并压入导航栈（隐藏下层页面，临时页独占显示） */
     public void showTempPage(FCLPage page) {
         if (overlay == null) return;
+        // 隐藏内层页面，避免下层内容在透明临时页下透出（原 PageManager 机制隐藏当前页）
+        if (pagePager != null) {
+            pagePager.setVisibility(View.GONE);
+        }
         overlay.setVisibility(View.VISIBLE);
         overlay.addView(page.getContentView(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         tempPageStack.add(page);
@@ -140,6 +144,10 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
         overlay.removeView(page.getContentView());
         if (tempPageStack.isEmpty()) {
             overlay.setVisibility(View.GONE);
+            // 临时页全部关闭后恢复内层页面显示
+            if (pagePager != null) {
+                pagePager.setVisibility(View.VISIBLE);
+            }
         }
     }
 
