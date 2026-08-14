@@ -870,25 +870,40 @@
     <string name="search_page_n" translatable="false">%d / %s</string>
 
     <string name="settings_advanced_dont_check_game_completeness">Do not check game integrity</string>
+        <string name="settings_advanced_dont_check_game_completeness_desc">Skip the game file integrity check to speed up startup.</string>
     <string name="settings_advanced_dont_check_jvm_validity">Do not check JVM compatibility</string>
+        <string name="settings_advanced_dont_check_jvm_validity_desc">Skip the JVM validity check.</string>
     <string name="settings_advanced_dont_check_mod">Do not check Mod compatibility</string>
+        <string name="settings_advanced_dont_check_mod_desc">Skip the mod compatibility check.</string>
     <string name="settings_advanced_debug_log">Output debug log</string>
+        <string name="settings_advanced_debug_log_desc">Output detailed debug logs for troubleshooting.</string>
     <string name="settings_advanced_game_dir_default">Default (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Isolated (.minecraft/versions/&#60;instance name>/, except for assets and libraries)</string>
     <string name="settings_advanced_jvm_args">Java VM arguments</string>
+        <string name="settings_advanced_jvm_args_desc">Additional arguments passed to the JVM.</string>
     <string name="settings_advanced_env">Environment Variables</string>
+        <string name="settings_advanced_env_desc">Set environment variables for the game process (one KEY=VALUE per line).</string>
     <string name="settings_advanced_minecraft_arguments">Launch Arguments</string>
+        <string name="settings_advanced_minecraft_arguments_desc">Additional arguments passed to Minecraft.</string>
     <string name="settings_advanced_minecraft_arguments_prompt">Default</string>
     <string name="settings_advanced_server_ip">Server Address</string>
+        <string name="settings_advanced_server_ip_desc">Join the specified server automatically after the game starts (IP:port).</string>
     <string name="settings_advanced_server_ip_prompt">Join automatically after launching the game.</string>
     <string name="settings_advanced_custom_uuid">Custom UUID</string>
+        <string name="settings_advanced_custom_uuid_desc">Customize the game UUID (for offline mode).</string>
     <string name="settings_advanced_force_resolution">Force set resolution (experimental option, use with caution)</string>
+        <string name="settings_advanced_force_resolution_desc">Force the game to run at a specified resolution (WxH).</string>
 
     <string name="settings_fcl_controller">Controller</string>
+        <string name="settings_fcl_controller_desc">Choose the controller layout used by this version.</string>
     <string name="settings_fcl_vulkan_driver_system">Use System Vulkan driver</string>
+        <string name="settings_fcl_vulkan_driver_system_desc">Use the system Vulkan driver. Better performance but may cause compatibility issues.</string>
     <string name="settings_fcl_graphics_backend">Graphics Backend (only effective for 26.2+)</string>
+        <string name="settings_fcl_graphics_backend_desc">Choose the graphics rendering backend. Only effective for 26.2+.</string>
     <string name="settings_fcl_renderer">OpenGL Implementation (Renderer)</string>
+        <string name="settings_fcl_renderer_desc">Choose the OpenGL renderer implementation.</string>
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core</string>
+        <string name="settings_fcl_pojav_bigcore_desc">Force the renderer to run on performance big cores.</string>
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, only support 1.17-)</string>
@@ -897,6 +912,7 @@
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, built-in)</string>
 
     <string name="settings_fcl_driver">Vulkan Driver</string>
+        <string name="settings_fcl_driver_desc">Choose the Vulkan driver implementation.</string>
 
     <string name="settings_download_netdisk">Netdisk(Recommended for users in China)</string>
 
@@ -904,12 +920,15 @@
     <string name="settings_game_dimension">Resolution</string>
     <string name="settings_game_cursor_offset">Cursor Offset</string>
     <string name="settings_game_java_version">Java Version</string>
+        <string name="settings_game_java_version_desc">Choose the Java runtime used to launch this version.</string>
     <string name="settings_game_java_version_auto">Auto</string>
     <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
     <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
     <string name="settings_game_working_directory">Isolate Working Directory</string>
+        <string name="settings_game_working_directory_desc">Store game files in a separate directory for this version.</string>
 
     <string name="settings_icon">Icon</string>
+        <string name="settings_icon_desc">Customize the icon shown for this version in the version list.</string>
 
     <string name="settings_launcher">Launcher Settings</string>
     <string name="settings_launcher_request">Request</string>
@@ -961,6 +980,7 @@
     <string name="settings_launcher_allow_screenshot">Allow screenshot/recording in crash activity</string>
 
     <string name="settings_memory">Memory</string>
+        <string name="settings_memory_desc">Set the maximum memory (MB) available to the game.</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB Minimum / %2$.1f GB Allocated (%3$.1f GB Available)</string>
     <string name="settings_memory_allocate_manual">%1$.1f GB Allocated</string>
@@ -972,6 +992,7 @@
     <string name="settings_tabs_installers">Modloaders</string>
     <string name="settings_type_global_manage">Global Game Settings</string>
     <string name="settings_type_special_enable">Enable per-instance settings</string>
+        <string name="settings_type_special_enable_desc">Save settings for this version only, without affecting the global settings.</string>
 
     <string name="style_name">Name</string>
     <string name="style_warning_delete">Are you sure to delete this style?</string>
