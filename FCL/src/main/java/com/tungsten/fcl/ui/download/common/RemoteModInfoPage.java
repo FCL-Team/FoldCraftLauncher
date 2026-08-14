@@ -14,8 +14,7 @@ import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fcl.ui.download.ModDownloadPage;
-import com.tungsten.fcl.ui.download.modpack.ModpackDownloadPage;
+import com.tungsten.fcl.ui.download.DownloadUI;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
@@ -230,7 +229,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
             List<RemoteMod.Version> versionList = classifiedVersions.get(gameVersion);
             versionList.sort(Comparator.comparing(RemoteMod.Version::getDatePublished).reversed());
         }
-        if (!(page instanceof ModpackDownloadPage)) {
+        if (page.getPageId() != DownloadUI.PAGE_ID_DOWNLOAD_MODPACK) {
             Profile profile = Profiles.getSelectedProfile();
             if (profile.getSelectedVersion() != null) {
                 LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(profile.getSelectedVersion()), profile.getSelectedVersion());
@@ -239,7 +238,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
 
                 if (classifiedVersions.keys().contains(mcv)) {
                     classifiedVersions.get(mcv).stream().filter(v -> {
-                        if (page instanceof ModDownloadPage) {
+                        if (page.getPageId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
                             for (ModLoaderType loader : v.getLoaders()) {
                                 if (modLoaders.contains(loader)) {
                                     recommendedVersion = getContext().getString(R.string.recommend_version) + ": " + mcv + " " + loader.name();

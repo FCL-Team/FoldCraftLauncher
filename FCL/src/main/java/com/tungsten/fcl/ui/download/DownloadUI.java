@@ -2,25 +2,30 @@ package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
 import android.view.View;
+import android.widget.FrameLayout;
 
+import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.download.common.DownloadPage;
-import com.tungsten.fcl.ui.download.modpack.ModpackDownloadPage;
 import com.tungsten.fcl.ui.download.version.VersionInstallPage;
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
-import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
+import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
+import java.util.ArrayList;
 import java.util.function.Consumer;
 
-public class DownloadUI extends FCLMultiPageUI {
+/**
+ * 下载 UI：游戏安装页与 5 个下载模式（Mod/整合包/资源包/世界/光影）共享一个
+ * DownloadPage 实例，tab 切换只更新数据源与恢复状态，不重复创建页面。
+ */
+public class DownloadUI extends FCLCommonUI {
 
     public static final int PAGE_ID_DOWNLOAD_GAME = 15010;
     public static final int PAGE_ID_DOWNLOAD_MODPACK = 15011;
@@ -29,8 +34,19 @@ public class DownloadUI extends FCLMultiPageUI {
     public static final int PAGE_ID_DOWNLOAD_WORLD = 15014;
     public static final int PAGE_ID_DOWNLOAD_SHADER_PACK = 15015;
 
+    private static final int TEMP_PAGE_ANIM_DURATION = 200;
+
     public FCLTabLayout tabLayout;
     public FCLUILayout container;
+
+    private FrameLayout contentContainer;
+    private FrameLayout overlay;
+
+    private VersionInstallPage versionInstallPage;
+    private DownloadPage downloadPage;
+
+    private final ArrayList<FCLPage> tempPageStack = new ArrayList<>();
+    private int currentPageId = PAGE_ID_DOWNLOAD_GAME;
 
     private final Consumer<Profile> versionsListener = this::loadVersions;
     private Profile listenerProfile;
@@ -45,9 +61,45 @@ public class DownloadUI extends FCLMultiPageUI {
         super.onCreate();
         tabLayout = findViewById(R.id.tab_layout);
         container = findViewById(R.id.container);
-        setupPages(container, tabLayout);
+
+        // 内容层：游戏安装页 + 共享下载页
+        contentContainer = new FrameLayout(getContext());
+        container.addView(contentContainer, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        versionInstallPage = new VersionInstallPage(getContext(), PAGE_ID_DOWNLOAD_GAME, R.layout.page_install_version);
+        downloadPage = new DownloadPage(getContext(), R.layout.page_download);
+        contentContainer.addView(versionInstallPage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        contentContainer.addView(downloadPage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        downloadPage.getContentView().setVisibility(View.GONE);
+
+        // 临时页覆盖层
+        overlay = new FrameLayout(getContext());
+        overlay.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        overlay.setVisibility(View.GONE);
+        container.addView(overlay);
+
+        // tab 切换：游戏页独立，5 个下载模式共享 DownloadPage
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switchTab(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         Profiles.registerVersionsListener(versionsListener);
+        downloadPage.loadVersion(Profiles.getSelectedProfile(), null);
+        listenerProfile = Profiles.getSelectedProfile();
+        selectedVersionListener = observable -> loadVersions(Profiles.getSelectedProfile());
+        listenerProfile.selectedVersionProperty().addListener(selectedVersionListener);
 
         // UI 被 ViewPager 回收时注销监听（替代原 onDestroy 生命周期），防止静态列表累积泄漏
         getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
@@ -66,71 +118,152 @@ public class DownloadUI extends FCLMultiPageUI {
         });
     }
 
-    @Override
-    public int getPageCount() {
-        return 6;
+    private void switchTab(int position) {
+        if (position == 0) {
+            if (currentPageId == PAGE_ID_DOWNLOAD_GAME) return;
+            currentPageId = PAGE_ID_DOWNLOAD_GAME;
+            versionInstallPage.getContentView().setVisibility(View.VISIBLE);
+            downloadPage.getContentView().setVisibility(View.GONE);
+            playEnterAnimation(versionInstallPage.getContentView());
+        } else {
+            int pageId = tabPositionToPageId(position);
+            if (currentPageId == pageId) return;
+            currentPageId = pageId;
+            downloadPage.getContentView().setVisibility(View.VISIBLE);
+            versionInstallPage.getContentView().setVisibility(View.GONE);
+            downloadPage.switchType(pageId);
+        }
     }
 
-    @Override
-    public FCLPage createPage(int position) {
+    private static int tabPositionToPageId(int position) {
         switch (position) {
             case 1:
-                return new ModpackDownloadPage(getContext(), PAGE_ID_DOWNLOAD_MODPACK, R.layout.page_download);
+                return PAGE_ID_DOWNLOAD_MODPACK;
             case 2:
-                return new ModDownloadPage(getContext(), PAGE_ID_DOWNLOAD_MOD, R.layout.page_download);
+                return PAGE_ID_DOWNLOAD_MOD;
             case 3:
-                return new ResourcePackDownloadPage(getContext(), PAGE_ID_DOWNLOAD_RESOURCE_PACK, R.layout.page_download);
+                return PAGE_ID_DOWNLOAD_RESOURCE_PACK;
             case 4:
-                return new DownloadPage(getContext(), PAGE_ID_DOWNLOAD_WORLD, R.layout.page_download, CurseForgeRemoteModRepository.WORLDS);
-            case 5:
-                return new ShaderPackDownloadPage(getContext(), PAGE_ID_DOWNLOAD_SHADER_PACK, R.layout.page_download);
+                return PAGE_ID_DOWNLOAD_WORLD;
             default:
-                return new VersionInstallPage(getContext(), PAGE_ID_DOWNLOAD_GAME, R.layout.page_install_version);
+                return PAGE_ID_DOWNLOAD_SHADER_PACK;
+        }
+    }
+
+    private static int pageIdToTabPosition(int pageId) {
+        switch (pageId) {
+            case PAGE_ID_DOWNLOAD_MODPACK:
+                return 1;
+            case PAGE_ID_DOWNLOAD_MOD:
+                return 2;
+            case PAGE_ID_DOWNLOAD_RESOURCE_PACK:
+                return 3;
+            case PAGE_ID_DOWNLOAD_WORLD:
+                return 4;
+            default:
+                return 5;
+        }
+    }
+
+    /** 页面切换过渡动画：淡入 + 上滑进入（post 确保已挂载） */
+    private void playEnterAnimation(View view) {
+        view.post(() -> {
+            view.animate().cancel();
+            view.setAlpha(0f);
+            view.setTranslationY(view.getResources().getDisplayMetrics().density * 30f);
+            view.animate().alpha(1f).translationY(0f).setDuration(250).start();
+        });
+    }
+
+    /** 供外部跳转（如模组管理页）：切换到指定下载模式并显示下载页 */
+    public void showDownloadPage(int pageId) {
+        TabLayout.Tab tab = tabLayout.getTabAt(pageIdToTabPosition(pageId));
+        if (tab != null) {
+            tab.select();
+        }
+    }
+
+    public DownloadPage getDownloadPage() {
+        return downloadPage;
+    }
+
+    public boolean canReturn() {
+        return !tempPageStack.isEmpty();
+    }
+
+    /**
+     * 在覆盖层上显示临时页并压入导航栈（隐藏下层内容，临时页独占显示）
+     */
+    public void showTempPage(FCLPage page) {
+        if (overlay == null) return;
+        // 隐藏当前栈顶临时页与下层内容，避免透明背景下层内容透出
+        if (!tempPageStack.isEmpty()) {
+            tempPageStack.get(tempPageStack.size() - 1).getContentView().setVisibility(View.GONE);
+        }
+        contentContainer.setVisibility(View.GONE);
+        // 新临时页淡入
+        View view = page.getContentView();
+        view.setAlpha(0f);
+        overlay.setVisibility(View.VISIBLE);
+        overlay.addView(view, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        view.animate().alpha(1f).setDuration(TEMP_PAGE_ANIM_DURATION).start();
+        tempPageStack.add(page);
+    }
+
+    /**
+     * 弹栈顶临时页（淡出后移除并恢复下层）
+     */
+    public void dismissCurrentTempPage() {
+        if (tempPageStack.isEmpty()) return;
+        FCLPage page = tempPageStack.remove(tempPageStack.size() - 1);
+        View view = page.getContentView();
+        view.animate().alpha(0f).setDuration(TEMP_PAGE_ANIM_DURATION).withEndAction(() -> {
+            overlay.removeView(view);
+            if (!tempPageStack.isEmpty()) {
+                // 恢复下层临时页显示
+                tempPageStack.get(tempPageStack.size() - 1).getContentView().setVisibility(View.VISIBLE);
+            }
+            if (tempPageStack.isEmpty()) {
+                overlay.setVisibility(View.GONE);
+                // 临时页全部关闭后恢复下层内容显示
+                contentContainer.setVisibility(View.VISIBLE);
+            }
+        }).start();
+    }
+
+    /**
+     * 清空全部临时页
+     */
+    public void dismissAllTempPages() {
+        while (!tempPageStack.isEmpty()) {
+            dismissCurrentTempPage();
         }
     }
 
     @Override
-    public String[] getTabTitles() {
-        return new String[]{
-                getContext().getString(R.string.version_game),
-                getContext().getString(R.string.modpack),
-                getContext().getString(R.string.mods),
-                getContext().getString(R.string.resourcepack),
-                getContext().getString(R.string.world),
-                getContext().getString(R.string.shaderpack)
-        };
+    public void onBackPressed() {
+        if (canReturn()) {
+            dismissCurrentTempPage();
+        } else {
+            super.onBackPressed();
+        }
     }
 
-    @Override
-    protected void onPageCreated(FCLPage page) {
-        if (page instanceof VersionLoadable) {
-            ((VersionLoadable) page).loadVersion(Profiles.getSelectedProfile(), null);
+    private void loadVersions(Profile profile) {
+        if (profile == Profiles.getSelectedProfile()) {
+            downloadPage.loadVersion(profile, null);
+            // 先移除旧监听再添加，避免重复注册累积（引用旧 UI 实例导致泄漏）
+            if (selectedVersionListener != null) {
+                listenerProfile.selectedVersionProperty().removeListener(selectedVersionListener);
+            }
+            selectedVersionListener = observable -> loadVersions(Profiles.getSelectedProfile());
+            listenerProfile = profile;
+            profile.selectedVersionProperty().addListener(selectedVersionListener);
         }
     }
 
     @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    private void loadVersions(Profile profile) {
-        if (profile == Profiles.getSelectedProfile()) {
-            forEachCreatedPage(page -> {
-                if (page instanceof VersionLoadable) {
-                    ((VersionLoadable) page).loadVersion(profile, null);
-                }
-            });
-            // 先移除旧监听再添加，避免重复注册累积（引用旧 UI 实例导致泄漏）
-            if (selectedVersionListener != null) {
-                listenerProfile.selectedVersionProperty().removeListener(selectedVersionListener);
-            }
-            selectedVersionListener = observable -> forEachCreatedPage(page -> {
-                if (page instanceof VersionLoadable) {
-                    ((VersionLoadable) page).loadVersion(profile, null);
-                }
-            });
-            listenerProfile = profile;
-            profile.selectedVersionProperty().addListener(selectedVersionListener);
-        }
     }
 }

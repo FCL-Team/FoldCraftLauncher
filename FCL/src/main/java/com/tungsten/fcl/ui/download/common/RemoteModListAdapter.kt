@@ -12,7 +12,7 @@ import com.mio.util.format
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemRemoteModBinding
-import com.tungsten.fcl.ui.download.ModDownloadPage
+import com.tungsten.fcl.ui.download.DownloadUI
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.RemoteMod
@@ -34,7 +34,7 @@ class RemoteModListAdapter(
     private val modIdList: MutableList<String?> = ArrayList()
 
     init {
-        if (downloadPage is ModDownloadPage) {
+        if (downloadPage.pageId == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
             MainActivity.getInstance().lifecycleScope.launch(Dispatchers.Default) {
                 val modManager = downloadPage.modManager
                 val modFiles = runCatching {
@@ -93,7 +93,7 @@ class RemoteModListAdapter(
             .load(remoteMod.iconUrl)
             .placeholder(R.drawable.ic_cube)
             .error(R.drawable.ic_cube)
-            .override(30, 30)
+            .override(90, 90)
             .into(binding.icon)
         val mod =
             ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType())
@@ -117,7 +117,7 @@ class RemoteModListAdapter(
             -100f,
             0f
         ).start()
-        if (downloadPage is ModDownloadPage) {
+        if (downloadPage.pageId == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
             if (modIdList.isNotEmpty() && modIdList.contains(remoteMod.modID)) {
                 val text = binding.title.getText().toString()
                 if (!text.startsWith(context.getString(R.string.installed))) {

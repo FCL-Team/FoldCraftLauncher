@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.download.DownloadUI;
 import static com.tungsten.fclcore.util.StringUtils.isNotBlank;
 
 import android.annotation.SuppressLint;
@@ -550,7 +551,7 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
     public void download() {
         MainActivity.getInstance().refreshMenuView(null);
         MainActivity.getInstance().binding.download.setSelected(true);
-        UIManager.getInstance().getDownloadUI().showPage(2);
+        UIManager.getInstance().getDownloadUI().showDownloadPage(DownloadUI.PAGE_ID_DOWNLOAD_MOD);
     }
 
     public void rollback(LocalModFile from, LocalModFile to) {
