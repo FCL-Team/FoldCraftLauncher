@@ -1,8 +1,13 @@
 package com.tungsten.fcl.ui.download.common
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -24,6 +29,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.logging.Level
 import java.util.stream.Collectors
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
 
 class RemoteModListAdapter(
     private val context: Context,
@@ -65,6 +72,25 @@ class RemoteModListAdapter(
         fun onItemSelect(mod: RemoteMod?)
     }
 
+    companion object {
+        /** 缓存占位位图（内容只读，多视图共享安全），避免每次 bind 重新分配与绘制 */
+        private var placeholderBitmap: Bitmap? = null
+    }
+
+    /** 固定 90×90 内在尺寸的占位图（与 override 后图片尺寸一致，避免加载完成时
+     *  drawable 内在尺寸变化触发 requestLayout 导致列表重排） */
+    private fun fixedIconPlaceholder(): Drawable {
+        var bitmap = placeholderBitmap
+        if (bitmap == null) {
+            bitmap = createBitmap(90, 90)
+            val base = ContextCompat.getDrawable(context, R.drawable.ic_cube)!!.mutate()
+            base.setBounds(0, 0, 90, 90)
+            base.draw(Canvas(bitmap))
+            placeholderBitmap = bitmap
+        }
+        return bitmap.toDrawable(context.resources)
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -89,10 +115,12 @@ class RemoteModListAdapter(
                 remoteMod
             )
         }
+        // 固定 90×90 占位（与 override 后图片内在尺寸一致）：图片加载完成替换时
+        // drawable 内在尺寸不变，不触发 requestLayout，避免列表全局重排导致
+        // 其他 item 的 marquee 文本被重置
+        binding.icon.setImageDrawable(fixedIconPlaceholder())
         Glide.with(binding.icon)
             .load(remoteMod.iconUrl)
-            .placeholder(R.drawable.ic_cube)
-            .error(R.drawable.ic_cube)
             .override(90, 90)
             .into(binding.icon)
         val mod =
