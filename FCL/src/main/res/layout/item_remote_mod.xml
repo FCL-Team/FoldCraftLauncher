@@ -14,85 +14,96 @@
     android:stateListAnimator="@xml/anim_scale"
     app:auto_tint="true">
 
-    <com.tungsten.fcllibrary.component.view.FCLImageView
-        android:id="@+id/icon"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_gravity="center"
+    <!-- 内部线性排列：减少 ConstraintLayout 约束求解开销（列表高频 measure） -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_cube" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:singleLine="true"
-        android:textSize="14sp"
-        app:auto_text_tint="true"
-        app:layout_constraintBottom_toTopOf="@id/description"
-        app:layout_constraintStart_toEndOf="@id/icon"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Title" />
+        <com.tungsten.fcllibrary.component.view.FCLImageView
+            android:id="@+id/icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            tools:src="@drawable/ic_cube" />
 
-    <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:id="@+id/tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="10dp"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:paddingStart="4dp"
-        android:paddingTop="2dp"
-        android:paddingEnd="4dp"
-        android:paddingBottom="2dp"
-        android:singleLine="true"
-        android:textSize="11sp"
-        app:auto_text_tint="true"
-        app:layout_constraintBottom_toBottomOf="@id/title"
-        app:layout_constraintStart_toEndOf="@id/title"
-        app:layout_constraintTop_toTopOf="@id/title"
-        tools:text="Tag Tag Tag" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:orientation="vertical">
 
-    <com.tungsten.fcllibrary.component.view.FCLImageView
-        android:id="@+id/icon_download"
-        android:layout_width="12dp"
-        android:layout_height="12dp"
-        android:src="@drawable/ic_baseline_download_24"
-        app:auto_src_tint="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@id/title"
-        app:layout_constraintTop_toBottomOf="@id/title" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-    <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:id="@+id/download_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:textSize="12sp"
-        app:auto_text_tint="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/icon_download"
-        app:layout_constraintTop_toBottomOf="@id/title"
-        tools:text="114514" />
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textSize="14sp"
+                    app:auto_text_tint="true"
+                    tools:text="Title" />
 
-    <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:id="@+id/description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:singleLine="true"
-        android:textSize="12sp"
-        app:auto_text_tint="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/download_count"
-        app:layout_constraintTop_toBottomOf="@id/title"
-        tools:text="Description" />
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:ellipsize="end"
+                    android:paddingStart="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="2dp"
+                    android:singleLine="true"
+                    android:textSize="11sp"
+                    app:auto_text_tint="true"
+                    tools:text="Tag Tag Tag" />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.tungsten.fcllibrary.component.view.FCLImageView
+                    android:id="@+id/icon_download"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_baseline_download_24"
+                    app:auto_src_tint="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/download_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textSize="12sp"
+                    app:auto_text_tint="true"
+                    tools:text="114514" />
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textSize="12sp"
+                    app:auto_text_tint="true"
+                    tools:text="Description" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
 </com.tungsten.fcllibrary.component.view.FCLConstraintLayout>
