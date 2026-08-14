@@ -73,6 +73,13 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
         }
     };
 
+    /** 动态设置数值后缀（% / MS 等），触发 thumb 重建 */
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+        this.thumbDrawable = null;
+        invalidate();
+    }
+
     public void addProgressListener() {
         setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
