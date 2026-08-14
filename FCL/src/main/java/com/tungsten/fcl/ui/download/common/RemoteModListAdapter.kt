@@ -89,9 +89,12 @@ class RemoteModListAdapter(
                 remoteMod
             )
         }
-        binding.icon.setImageDrawable(null)
-        binding.icon.tag = position
-        Glide.with(context).load(remoteMod.iconUrl).into(binding.icon)
+        Glide.with(binding.icon)
+            .load(remoteMod.iconUrl)
+            .placeholder(R.drawable.ic_cube)
+            .error(R.drawable.ic_cube)
+            .override(30, 30)
+            .into(binding.icon)
         val mod =
             ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType())
                 .getModByCurseForgeId(remoteMod.slug)
