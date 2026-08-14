@@ -35,6 +35,9 @@ class DownloadSearchViewModel : ViewModel() {
         /** Mod 模式的加载器筛选位置 */
         @JvmField
         var modLoaderPosition: Int = 0
+        /** 该模式的列表 adapter（切换模式时复用，避免重建列表重播 item 动画） */
+        @JvmField
+        var adapter: RemoteModListAdapter? = null
     }
 
     private val states = HashMap<Int, State>()

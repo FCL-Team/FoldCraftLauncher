@@ -376,10 +376,11 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
                     }
                     setLoading(false);
                     if (exception == null) {
-                        // 保存搜索结果，切回该模式时直接恢复显示
+                        // 保存搜索结果与 adapter，切回该模式时直接恢复显示
                         searchState.result = list;
                         searchState.pageCount = pageCount.get();
                         adapter = createAdapter(list);
+                        searchState.adapter = adapter;
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         recyclerView.setAdapter(adapter);
                     } else {
@@ -387,6 +388,7 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
                         pageCount.set(-1);
                         searchState.result = null;
                         searchState.pageCount = -1;
+                        searchState.adapter = null;
                         retrySearch = () -> search(userGameVersion, category, pageOffset, searchFilter, sort);
                     }
                 }).executor(true);
@@ -399,14 +401,19 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
         });
     }
 
-    /** 恢复该模式上次的搜索结果（切换回时调用），不重新搜索 */
+    /** 恢复该模式上次的搜索结果（切换回时调用），不重新搜索；
+     *  复用该模式缓存的 adapter 时不重建列表，避免 item 滑入动画重播 */
     private void restoreResult() {
         setLoading(false);
         retry.setVisibility(View.GONE);
         pageOffset.set(searchState.pageOffset);
         pageCount.set(searchState.pageCount);
-        adapter = createAdapter(searchState.result);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = searchState.adapter;
+        if (adapter == null) {
+            adapter = createAdapter(searchState.result);
+            searchState.adapter = adapter;
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
         recyclerView.setAdapter(adapter);
     }
 
