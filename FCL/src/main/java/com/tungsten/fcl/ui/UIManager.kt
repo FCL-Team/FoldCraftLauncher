@@ -56,14 +56,12 @@ class UIManager(val context: Context, val pager: ViewPager2) {
             currentUI = getUI(position)
             pageSelectedListener?.invoke(position)
             // 页面切换过渡动画：不创建中间页（瞬时跳转），直接对目标页做淡入 + 上滑进入。
-            // post 确保页面已挂载到 ViewPager2 容器后再运行动画
+            // 同步执行（不 post）：onPageSelected 时页面已挂载，避免延迟一帧导致先显示后消失的闪烁
             currentUI?.contentView?.apply {
-                post {
-                    animate().cancel()
-                    alpha = 0f
-                    translationY = resources.displayMetrics.density * 30f
-                    animate().alpha(1f).translationY(0f).setDuration(250).start()
-                }
+                animate().cancel()
+                alpha = 0f
+                translationY = resources.displayMetrics.density * 30f
+                animate().alpha(1f).translationY(0f).setDuration(250).start()
             }
         }
     }
