@@ -67,21 +67,31 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
         skinViewer.setRenderer(renderer, 5f);
         checkAnnouncement();
         setupSkinDisplay();
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (skinViewer != null) {
-            if (!ThemeEngine.getInstance().theme.isCloseSkinModel()) {
-                skinViewer.setVisibility(View.VISIBLE);
-                skinViewer.onResume();
-                renderer.updateTexture(renderer.getTexture()[0], renderer.getTexture()[1]);
-            } else {
-                skinViewer.onPause();
-                skinViewer.setVisibility(View.GONE);
+        // 皮肤渲染随页面挂载/回收恢复与暂停（替代原 onStart/onStop 生命周期）
+        getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                if (skinViewer != null) {
+                    if (!ThemeEngine.getInstance().theme.isCloseSkinModel()) {
+                        skinViewer.setVisibility(View.VISIBLE);
+                        skinViewer.onResume();
+                        renderer.updateTexture(renderer.getTexture()[0], renderer.getTexture()[1]);
+                    } else {
+                        skinViewer.onPause();
+                        skinViewer.setVisibility(View.GONE);
+                    }
+                }
             }
-        }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                if (skinViewer != null) {
+                    skinViewer.onPause();
+                    skinViewer.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     @Override
@@ -99,15 +109,6 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
         if (skinViewer != null && isShowing() && !ThemeEngine.getInstance().theme.isCloseSkinModel()) {
             skinViewer.setVisibility(View.VISIBLE);
             skinViewer.onResume();
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (skinViewer != null) {
-            skinViewer.onPause();
-            skinViewer.setVisibility(View.GONE);
         }
     }
 

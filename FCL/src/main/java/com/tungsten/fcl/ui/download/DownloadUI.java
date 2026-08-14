@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.download;
 import static com.tungsten.fclcore.util.Lang.tryCast;
 
 import android.content.Context;
+import android.view.View;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
@@ -40,11 +41,19 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
 
         tabLayout.addOnTabSelectedListener(this);
         initPages();
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+        // UI 被 ViewPager 回收时注销版本监听（替代原 onDestroy 生命周期），防止静态列表累积泄漏
+        getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                Profiles.unregisterVersionsListener(versionsListener);
+            }
+        });
     }
 
     @Override
@@ -57,33 +66,10 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (pageManager != null) {
-            pageManager.onPause();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (pageManager != null) {
-            pageManager.onResume();
-        }
-    }
-
-    @Override
     public void initPages() {
         pageManager = new DownloadPageManager(getContext(), container, DownloadPageManager.PAGE_ID_DOWNLOAD_GAME);
 
         Profiles.registerVersionsListener(versionsListener);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        // UI 不保留状态、会被销毁重建，必须注销监听防止静态列表累积泄漏
-        Profiles.unregisterVersionsListener(versionsListener);
     }
 
     @Override

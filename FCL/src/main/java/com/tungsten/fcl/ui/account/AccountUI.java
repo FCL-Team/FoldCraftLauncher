@@ -45,11 +45,8 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
 
         ListView serverListView = findViewById(R.id.server_list);
         serverListView.setAdapter(new ServerListAdapter(getContext()));
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+        // 首次创建即刷新账户列表（原 onStart 生命周期，页面随重建重新初始化）
         refresh().start();
     }
 

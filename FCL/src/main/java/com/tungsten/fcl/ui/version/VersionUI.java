@@ -41,22 +41,6 @@ public class VersionUI extends FCLMultiPageUI {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (pageManager != null) {
-            pageManager.onPause();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (pageManager != null) {
-            pageManager.onResume();
-        }
-    }
-
-    @Override
     public void initPages() {
         pageManager = new VersionPageManager(getContext(), container, VersionPageManager.PAGE_ID_VERSION_LIST);
     }

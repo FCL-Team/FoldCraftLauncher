@@ -53,46 +53,11 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        // If we jumped to game list page and deleted this version
-        // and back to this page, we should return to main page.
-        // getProfile() 在未调用 setVersion 时为 null（如页面被预创建后直接显示），需防御
-        if (getProfile() == null || !getProfile().getRepository().isLoaded() ||
-                !getProfile().getRepository().hasVersion(getVersion())) {
-            Schedulers.androidUIThread().execute(() -> {
-                if (isShowing()) {
-                    MainActivity.getInstance().refreshMenuView(null);
-                    MainActivity.getInstance().binding.home.setSelected(true);
-                }
-            });
-            return;
-        }
-        loadVersion(getVersion(), getProfile());
-    }
-
-    @Override
     public void onBackPressed() {
         if (pageManager != null && pageManager.canReturn()) {
             pageManager.dismissCurrentTempPage();
         } else {
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (pageManager != null) {
-            pageManager.onPause();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (pageManager != null) {
-            pageManager.onResume();
         }
     }
 
@@ -166,6 +131,10 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
 
     public void setVersion(String version, Profile profile) {
         this.version.set(new Profile.ProfileVersion(profile, version));
+        // 分发版本到已创建页面（原 onStart 中 loadVersion 的职责，版本校验由 RefreshedVersionsEvent 事件兜底）
+        if (pageManager != null) {
+            pageManager.loadVersion(profile, version);
+        }
     }
 
     public void loadVersion(String version, Profile profile) {

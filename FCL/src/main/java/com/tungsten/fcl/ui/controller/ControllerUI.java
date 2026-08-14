@@ -32,11 +32,6 @@ public class ControllerUI extends FCLMultiPageUI {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onBackPressed() {
         if (pageManager != null && pageManager.canReturn()) {
             pageManager.dismissCurrentTempPage();
@@ -44,22 +39,6 @@ public class ControllerUI extends FCLMultiPageUI {
             pageManager.switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER);
         } else {
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (pageManager != null) {
-            pageManager.onPause();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (pageManager != null) {
-            pageManager.onResume();
         }
     }
 
