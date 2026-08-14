@@ -11,7 +11,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
-public abstract class FCLBaseUI implements FCLUILifecycleCallbacks {
+public abstract class FCLBaseUI {
 
     private static Runnable defaultBackEvent;
 
@@ -54,40 +54,24 @@ public abstract class FCLBaseUI implements FCLUILifecycleCallbacks {
 
     public abstract Task<?> refresh(Object... param);
 
-    @Override
     public void onCreate() {
 
     }
 
-    @Override
-    public void onStart() {
 
-    }
 
-    @Override
-    public void onStop() {
-
-    }
-
-    @Override
     public void onBackPressed() {
         if (defaultBackEvent != null && isShowing()) {
             Schedulers.androidUIThread().execute(defaultBackEvent);
         }
     }
 
-    @Override
     public void onPause() {
 
     }
 
-    @Override
     public void onResume() {
 
     }
 
-    @Override
-    public void onDestroy() {
-
-    }
 }

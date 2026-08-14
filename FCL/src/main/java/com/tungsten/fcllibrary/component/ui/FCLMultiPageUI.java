@@ -37,15 +37,7 @@ public abstract class FCLMultiPageUI extends FCLCommonUI implements FCLMultiPage
         super.onCreate();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
 
     @Override
     public void onBackPressed() {
@@ -62,10 +54,6 @@ public abstract class FCLMultiPageUI extends FCLCommonUI implements FCLMultiPage
         super.onResume();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
 
     @Override
     public abstract void initPages();

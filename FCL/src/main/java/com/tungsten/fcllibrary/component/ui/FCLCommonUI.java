@@ -30,15 +30,7 @@ public abstract class FCLCommonUI extends FCLBaseUI {
         super.onCreate();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
 
     @Override
     public void onBackPressed() {
@@ -55,8 +47,4 @@ public abstract class FCLCommonUI extends FCLBaseUI {
         super.onResume();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
 }

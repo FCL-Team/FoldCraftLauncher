@@ -251,11 +251,6 @@ class VersionSettingPage(
         return null
     }
 
-    override fun onResume() {
-        super.onResume()
-        usedMemory.set(MemoryUtils.getUsedDeviceMemory(context))
-    }
-
     override fun loadVersion(profile: Profile, versionId: String?) {
         this.profile = profile
         this.versionId = versionId

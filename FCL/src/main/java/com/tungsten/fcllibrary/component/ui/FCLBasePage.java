@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
-public abstract class FCLBasePage implements FCLUILifecycleCallbacks {
+public abstract class FCLBasePage {
 
     private final Context context;
     private final FCLActivity activity;
@@ -53,38 +53,8 @@ public abstract class FCLBasePage implements FCLUILifecycleCallbacks {
 
     public abstract Task<?> refresh(Object... param);
 
-    @Override
+    /** 页面创建时初始化（findViewById、绑定监听等），在构造器内执行 */
     public void onCreate() {
-
-    }
-
-    @Override
-    public void onStart() {
-
-    }
-
-    @Override
-    public void onStop() {
-
-    }
-
-    @Override
-    public void onBackPressed() {
-
-    }
-
-    @Override
-    public void onPause() {
-
-    }
-
-    @Override
-    public void onResume() {
-
-    }
-
-    @Override
-    public void onDestroy() {
 
     }
 }
