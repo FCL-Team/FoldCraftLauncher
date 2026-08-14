@@ -21,15 +21,15 @@ public class ControllerUI extends FCLMultiPageUI {
     private FCLUILayout container;
     private Runnable runnable;
 
-    public ControllerUI(Context context, FCLUILayout parent, int id) {
-        super(context, parent, id);
+    public ControllerUI(Context context, int id) {
+        super(context, id);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         container = findViewById(R.id.container);
-        container.post(this::initPages);
+        initPages();
     }
 
     @Override

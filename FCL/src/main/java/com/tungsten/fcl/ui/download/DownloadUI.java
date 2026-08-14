@@ -16,6 +16,7 @@ import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedListener {
@@ -26,8 +27,10 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     public FCLTabLayout tabLayout;
     public FCLUILayout container;
 
-    public DownloadUI(Context context, FCLUILayout parent, int id) {
-        super(context, parent, id);
+    private final Consumer<Profile> versionsListener = this::loadVersions;
+
+    public DownloadUI(Context context, int id) {
+        super(context, id);
     }
 
     @Override
@@ -37,7 +40,7 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
         container = findViewById(R.id.container);
 
         tabLayout.addOnTabSelectedListener(this);
-        container.post(this::initPages);
+        initPages();
     }
 
     @Override
@@ -74,10 +77,17 @@ public class DownloadUI extends FCLMultiPageUI implements TabLayout.OnTabSelecte
     public void initPages() {
         pageManager = new DownloadPageManager(getContext(), container, DownloadPageManager.PAGE_ID_DOWNLOAD_GAME);
 
-        Profiles.registerVersionsListener(this::loadVersions);
+        Profiles.registerVersionsListener(versionsListener);
         if (runnable != null) {
             runnable.run();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // UI 不保留状态、会被销毁重建，必须注销监听防止静态列表累积泄漏
+        Profiles.unregisterVersionsListener(versionsListener);
     }
 
     @Override

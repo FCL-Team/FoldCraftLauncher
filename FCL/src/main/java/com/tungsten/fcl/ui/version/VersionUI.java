@@ -20,15 +20,15 @@ public class VersionUI extends FCLMultiPageUI {
 
     private FCLUILayout container;
 
-    public VersionUI(Context context, FCLUILayout parent, int id) {
-        super(context, parent, id);
+    public VersionUI(Context context, int id) {
+        super(context, id);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         container = findViewById(R.id.container);
-        container.post(this::initPages);
+        initPages();
     }
 
     @Override

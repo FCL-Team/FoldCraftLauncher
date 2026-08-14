@@ -21,12 +21,13 @@ import java.util.stream.Collectors;
 public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedListener {
 
     private SettingPageManager pageManager;
+    private Runnable runnable;
 
     private FCLUILayout container;
     public FCLTabLayout tabLayout;
 
-    public SettingUI(Context context, FCLUILayout parent, int id) {
-        super(context, parent, id);
+    public SettingUI(Context context, int id) {
+        super(context, id);
     }
 
     @Override
@@ -36,7 +37,7 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
         container = findViewById(R.id.container);
 
         tabLayout.addOnTabSelectedListener(this);
-        container.post(this::initPages);
+        initPages();
     }
 
     @Override
@@ -75,6 +76,9 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
     @Override
     public void initPages() {
         pageManager = new SettingPageManager(getContext(), container, SettingPageManager.PAGE_ID_SETTING_GAME);
+        if (runnable != null) {
+            runnable.run();
+        }
     }
 
     @Override
@@ -121,5 +125,13 @@ public class SettingUI extends FCLMultiPageUI implements TabLayout.OnTabSelected
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    @Override
+    public void runAfterInit(Runnable runnable) {
+        this.runnable = runnable;
+        if (pageManager != null) {
+            runnable.run();
+        }
     }
 }

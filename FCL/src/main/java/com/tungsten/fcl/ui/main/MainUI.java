@@ -22,7 +22,6 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.skin.SkinRenderer;
 import com.tungsten.fcllibrary.skin.SkinViewer;
 import com.tungsten.fcllibrary.util.LocaleUtils;
@@ -47,8 +46,8 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
 
     private ObjectProperty<Account> currentAccount;
 
-    public MainUI(Context context, FCLUILayout parent, int id) {
-        super(context, parent, id);
+    public MainUI(Context context, int id) {
+        super(context, id);
     }
 
     @Override

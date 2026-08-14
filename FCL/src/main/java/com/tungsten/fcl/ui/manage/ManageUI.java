@@ -38,8 +38,8 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
     public String preferredVersionName = null;
     public FCLTabLayout tabLayout;
 
-    public ManageUI(Context context, FCLUILayout parent, int id) {
-        super(context, parent, id);
+    public ManageUI(Context context, int id) {
+        super(context, id);
     }
 
     @Override
@@ -58,7 +58,8 @@ public class ManageUI extends FCLMultiPageUI implements TabLayout.OnTabSelectedL
         super.onStart();
         // If we jumped to game list page and deleted this version
         // and back to this page, we should return to main page.
-        if (!getProfile().getRepository().isLoaded() ||
+        // getProfile() 在未调用 setVersion 时为 null（如页面被预创建后直接显示），需防御
+        if (getProfile() == null || !getProfile().getRepository().isLoaded() ||
                 !getProfile().getRepository().hasVersion(getVersion())) {
             Schedulers.androidUIThread().execute(() -> {
                 if (isShowing()) {
