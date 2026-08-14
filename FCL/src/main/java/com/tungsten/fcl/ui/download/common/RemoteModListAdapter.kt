@@ -41,8 +41,10 @@ class RemoteModListAdapter(
     private val modIdList: MutableList<String?> = ArrayList()
 
     init {
-        if (downloadPage.pageId == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
-            MainActivity.getInstance().lifecycleScope.launch(Dispatchers.Default) {
+        MainActivity.getInstance().lifecycleScope.launch(Dispatchers.Default) {
+            // 后台预热 Mod 翻译数据，避免首次 bind 时在主线程解析大文件造成卡顿
+            ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType()).preload()
+            if (downloadPage.pageId == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
                 val modManager = downloadPage.modManager
                 val modFiles = runCatching {
                     modManager.getMods().parallelStream().collect(Collectors.toList())
@@ -138,8 +140,6 @@ class RemoteModListAdapter(
         val tag = StringUtils.removeSuffix(categories, "   ")
         binding.tag.text = tag
         binding.description.text = remoteMod.description
-        binding.tag.setSelected(true)
-        binding.description.setSelected(true)
         binding.downloadCount.text = remoteMod.downloadCount.format(context)
         playTranslationX(
             binding.root,

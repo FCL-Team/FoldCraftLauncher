@@ -132,6 +132,14 @@ public enum ModTranslations {
         }
     }
 
+    /**
+     * 预加载全部解析数据（应在后台线程调用，避免首次使用时在主线程解析大文件造成卡顿）
+     */
+    public void preload() {
+        getMods();
+        getCurseForgeMap();
+    }
+
     private Map<String, Mod> getModIdMap() {
         Map<String, Mod> modIdMap = this.modIdMap;
         if (modIdMap != null)
