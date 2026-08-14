@@ -127,8 +127,8 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
         nameText.stringProperty().bindBidirectional(name);
         authorText.setText(author.get());
         authorText.stringProperty().bindBidirectional(author);
-        versionText.setText(version.get());
-        versionText.stringProperty().bindBidirectional(version);
+        versionText.setText(this.version.get());
+        versionText.stringProperty().bindBidirectional(this.version);
         if (options.isRequireFileApi()) {
             if (options.isValidateFileApi()) {
                 fileApiText.setHint(getContext().getString(R.string.input_hint_not_empty));

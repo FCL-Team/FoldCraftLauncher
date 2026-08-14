@@ -264,8 +264,6 @@ public class WorldInfoPage extends FCLTempPage {
             playerInfo.setVisibility(View.GONE);
         }
     }
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -290,13 +288,11 @@ public class WorldInfoPage extends FCLTempPage {
     }
 
     @Override
-
-    @Override
     public Task<?> refresh(Object... param) {
         return null;
     }
 
-    @Override
+    private void saveLevelDat() {
         LOG.info("Saving level.dat of world " + world.getWorldName());
         try {
             this.world.writeLevelDat(levelDat);
