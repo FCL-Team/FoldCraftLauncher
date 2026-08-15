@@ -24,15 +24,16 @@ import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.event.EventBus
 import com.tungsten.fclcore.event.RefreshedVersionsEvent
 import com.tungsten.fclcore.fakefx.beans.Observable
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringProperty
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringWrapper
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
 import com.tungsten.fclcore.fakefx.collections.FXCollections
 import java.io.File
 import java.util.Optional
 import java.util.TreeMap
 import java.util.function.Consumer
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 object Profiles {
     private var isFirstRefresh = true
@@ -41,39 +42,26 @@ object Profiles {
     val profiles =
         FXCollections.observableArrayList<Profile> { arrayOf<Observable>(it) }
 
-    private val selectedProfile =
-        object : SimpleObjectProperty<Profile>() {
-            init {
-                profiles.addListener(FXUtils.onInvalidating { this.invalidated() })
-            }
+    private val _selectedProfile = MutableStateFlow<Profile?>(null)
 
-            override fun invalidated() {
-                if (!initialized) return
-                val profile = get()
-                if (!profiles.contains(profile)) {
-                    set(profiles[0])
-                    return
-                }
-                ConfigHolder.config().selectedProfile = profile.name
-                ConfigHolder.config().selectedProfile = profile.name
-                profile.gameDir.resolve(".nomedia").let {
-                    if (!it.exists()) {
-                        runCatching {
-                            it.parentFile?.mkdirs()
-                            it.createNewFile()
-                        }
-                    }
-                }
-                if (profile.repository.isLoaded) {
-                    selectedVersion.bind(profile.selectedVersionProperty())
-                } else {
-                    selectedVersion.unbind()
-                    selectedVersion.set(null)
-                    // bind when repository was reloaded.
-//                    profile.repository.refreshVersionsAsync().start()
-                }
+    /** 当前选中的 Profile（Repository 单例状态，Java 侧访问 getSelectedProfileFlow()） */
+    @get:JvmName("getSelectedProfileFlow")
+    val selectedProfile: StateFlow<Profile?> = _selectedProfile.asStateFlow()
+
+    /** 选中 Profile 变化的监听者（setter 同步通知，调用线程即回调线程） */
+    private val selectedProfileListeners = mutableListOf<Runnable>()
+
+    init {
+        profiles.addListener(FXUtils.onInvalidating { updateProfileStorages() })
+        profiles.addListener(FXUtils.onInvalidating { checkProfiles() })
+        // 列表变化时校验选中项仍在列表中（原 fakefx property invalidated 逻辑）
+        profiles.addListener(FXUtils.onInvalidating {
+            val current = _selectedProfile.value
+            if (current != null && !profiles.contains(current)) {
+                setSelectedProfileInternal(profiles[0])
             }
-        }
+        })
+    }
 
     private fun checkProfiles() {
         if (profiles.isEmpty()) {
@@ -95,17 +83,6 @@ object Profiles {
      * True if [.init] hasn't been called.
      */
     private var initialized = false
-
-    init {
-        profiles.addListener(FXUtils.onInvalidating { updateProfileStorages() })
-        profiles.addListener(FXUtils.onInvalidating { checkProfiles() })
-
-        selectedProfile.addListener { _, _, newValue ->
-            if (!isFirstRefresh) {
-                newValue.repository.refreshVersionsAsync().start()
-            }
-        }
-    }
 
     private fun updateProfileStorages() {
         // don't update the underlying storage before data loading is completed
@@ -141,11 +118,11 @@ object Profiles {
         val profile =
             profiles.find { it.name == ConfigHolder.config().selectedProfile } ?: profiles[0]
         profile.repository.refreshVersions()
-        selectedProfile.set(profile)
+        setSelectedProfileInternal(profile)
         holder.add(
             EventBus.EVENT_BUS.channel<RefreshedVersionsEvent?>(RefreshedVersionsEvent::class.java)
                 .registerWeak { event ->
-                    val profile = selectedProfile.get()
+                    val profile = _selectedProfile.value ?: return@registerWeak
                     if (profile.repository === event!!.getSource()) {
                         selectedVersion.bind(profile.selectedVersionProperty())
                         for (listener in versionsListeners) listener.accept(profile)
@@ -155,20 +132,58 @@ object Profiles {
         isFirstRefresh = false
     }
 
+    /** 设置选中 Profile（统一走校验、保存与版本绑定逻辑，同步通知监听者） */
+    private fun setSelectedProfileInternal(profile: Profile) {
+        if (_selectedProfile.value === profile) return
+        _selectedProfile.value = profile
+        if (!initialized) return
+        if (!profiles.contains(profile)) {
+            _selectedProfile.value = profiles[0]
+        } else {
+            ConfigHolder.config().selectedProfile = profile.name
+            profile.gameDir.resolve(".nomedia").let {
+                if (!it.exists()) {
+                    runCatching {
+                        it.parentFile?.mkdirs()
+                        it.createNewFile()
+                    }
+                }
+            }
+            if (profile.repository.isLoaded) {
+                selectedVersion.bind(profile.selectedVersionProperty())
+            } else {
+                selectedVersion.unbind()
+                selectedVersion.set(null)
+                // bind when repository was reloaded.
+//                    profile.repository.refreshVersionsAsync().start()
+            }
+        }
+        selectedProfileListeners.forEach { listener -> listener.run() }
+        if (!isFirstRefresh) {
+            profile.repository.refreshVersionsAsync().start()
+        }
+    }
+
     @JvmStatic
     fun getSelectedProfile(): Profile {
         checkProfiles()
-        return selectedProfile.get() ?: profiles[0]
+        return _selectedProfile.value ?: profiles[0]
     }
 
     @JvmStatic
     fun setSelectedProfile(profile: Profile) {
-        selectedProfile.set(profile)
+        setSelectedProfileInternal(profile)
+    }
+
+    /** 注册选中 Profile 变化监听（Java 友好，内部基于 StateFlow collect） */
+    @JvmStatic
+    fun addSelectedProfileListener(listener: Runnable) {
+        selectedProfileListeners.add(listener)
     }
 
     @JvmStatic
-    fun selectedProfileProperty(): ObjectProperty<Profile?> {
-        return selectedProfile
+    fun removeSelectedProfileListener(listener: Runnable) {
+        selectedProfileListeners.remove(listener)
     }
 
     private val selectedVersion = ReadOnlyStringWrapper()
