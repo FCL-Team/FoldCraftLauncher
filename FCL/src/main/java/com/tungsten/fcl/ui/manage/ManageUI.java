@@ -1,14 +1,17 @@
 package com.tungsten.fcl.ui.manage;
 
 import android.content.Context;
+import android.view.View;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.event.EventBus;
 import com.tungsten.fclcore.event.EventPriority;
 import com.tungsten.fclcore.event.RefreshedVersionsEvent;
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.game.GameRepository;
@@ -36,6 +39,14 @@ public class ManageUI extends FCLMultiPageUI {
     public String preferredVersionName = null;
     public FCLTabLayout tabLayout;
 
+    /** 切换 Profile 时重新加载版本设置（页面保留时不经过 onSelect/setVersion 的兜底） */
+    private final Runnable profileListener = () -> {
+        Profile profile = Profiles.getSelectedProfile();
+        if (profile != null) {
+            setVersion(profile.getSelectedVersion(), profile);
+        }
+    };
+
     public ManageUI(Context context, int id) {
         super(context, id);
     }
@@ -48,6 +59,23 @@ public class ManageUI extends FCLMultiPageUI {
         setupPages(container, tabLayout);
 
         listenerHolder.add(EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).registerWeak(event -> checkSelectedVersion(), EventPriority.HIGHEST));
+
+        // 切换 Profile 时刷新版本设置页（基于 StateFlow），UI 被 ViewPager 回收时注销监听
+        Profiles.addSelectedProfileListener(profileListener);
+        getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                // 页面切走再切回时恢复监听并立即刷新（后台可能已切换 Profile）
+                Profiles.removeSelectedProfileListener(profileListener);
+                Profiles.addSelectedProfileListener(profileListener);
+                profileListener.run();
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                Profiles.removeSelectedProfileListener(profileListener);
+            }
+        });
     }
 
     @Override
