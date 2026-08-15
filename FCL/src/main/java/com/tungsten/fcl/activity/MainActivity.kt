@@ -14,14 +14,18 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.view.GestureDetector
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -51,6 +55,7 @@ import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
+import com.tungsten.fcl.ui.main.MainUI
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
@@ -90,6 +95,7 @@ import java.io.IOException
 import java.lang.ref.WeakReference
 import java.util.logging.Level
 import java.util.stream.Stream
+import kotlin.math.abs
 import kotlin.system.exitProcess
 
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
@@ -115,6 +121,38 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private var modpackHandled = false
     lateinit var permissionResultLauncher: ActivityResultLauncher<String>
     private lateinit var sharedPreferences: SharedPreferences
+    private var rightMenuWidth = 0
+    private var skinViewerWidth = 0
+
+    /** 右菜单显示/隐藏手势：水平滑动切换（左滑显示、右滑隐藏），不消费事件 */
+    private val rightMenuGestureDetector by lazy {
+        GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
+                if (e1 == null) return false
+                val minVelocity = ViewConfiguration.get(this@MainActivity).scaledMinimumFlingVelocity.toFloat()
+                if (abs(velocityX) < minVelocity || abs(velocityX) < abs(velocityY)) return false
+                // 皮肤预览区域内的滑动用于旋转皮肤，不触发菜单切换
+                val ui = UIManager.instance.currentUI
+                if (ui is MainUI) {
+                    val skin = ui.contentView.findViewById<View>(R.id.skin_viewer)
+                    val location = IntArray(2)
+                    skin.getLocationOnScreen(location)
+                    if (e1.x >= location[0] && e1.x <= location[0] + skin.width &&
+                        e1.y >= location[1] && e1.y <= location[1] + skin.height
+                    ) {
+                        return false
+                    }
+                }
+                if (velocityX < 0) {
+                    if (binding.rightMenu.visibility != View.VISIBLE) showRightMenu()
+                } else {
+                    if (binding.rightMenu.visibility == View.VISIBLE) hideRightMenu()
+                }
+                return false
+            }
+        })
+    }
+
     var mediaPlayer: MediaPlayer? = null
     private var videoPosition = 0
 
@@ -230,6 +268,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         0 -> {
                             refreshMenuView(home)
                             home.setSelected(true)
+                            // 主页重建/重新进入时应用皮肤位置状态（right_menu 隐藏则固定）
+                            fixSkinViewerPosition(binding.rightMenu.visibility != View.VISIBLE)
                         }
 
                         1 -> {
@@ -338,6 +378,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         return super.onKeyDown(keyCode, event)
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        // 仅分析手势（不消费事件），用于右菜单显示/隐藏
+        rightMenuGestureDetector.onTouchEvent(ev)
+        return super.dispatchTouchEvent(ev)
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("modpack_handled", modpackHandled)
@@ -423,6 +469,50 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             .interpolator(OvershootInterpolator()).start()
         AnimUtil.playScaleX(view, speed * 100L, 1f, 2f, 1f).start()
         AnimUtil.playScaleY(view, speed * 100L, 1f, 2f, 1f).start()
+    }
+
+    private fun showRightMenu() {
+        val menu = binding.rightMenu
+        menu.visibility = View.VISIBLE
+        menu.translationX = rightMenuWidth.toFloat()
+        menu.animate().translationX(0f).setDuration(200).start()
+        fixSkinViewerPosition(false)
+    }
+
+    private fun hideRightMenu() {
+        val menu = binding.rightMenu
+        rightMenuWidth = menu.width
+        // 记录皮肤当前宽度（隐藏后内容区扩展，用于固定皮肤位置）
+        val ui = UIManager.instance.currentUI
+        if (ui is MainUI) {
+            skinViewerWidth = ui.contentView.findViewById<View>(R.id.skin_viewer).width
+        }
+        menu.animate().translationX(rightMenuWidth.toFloat()).setDuration(200).withEndAction {
+            menu.visibility = View.GONE
+            menu.translationX = 0f
+            fixSkinViewerPosition(true)
+        }.start()
+    }
+
+    /**
+     * right_menu 隐藏时内容区扩展为全宽，但皮肤预览固定在原位置：
+     * 宽度保持原值，end 侧留出菜单宽度。
+     */
+    private fun fixSkinViewerPosition(fix: Boolean) {
+        val ui = UIManager.instance.currentUI
+        if (ui !is MainUI) return
+        val skin = ui.contentView.findViewById<View>(R.id.skin_viewer)
+        val params = skin.layoutParams as ConstraintLayout.LayoutParams
+        if (fix) {
+            params.width = skinViewerWidth
+            params.matchConstraintPercentWidth = -1f
+            params.marginEnd = rightMenuWidth
+        } else {
+            params.width = 0
+            params.matchConstraintPercentWidth = 0.5f
+            params.marginEnd = 0
+        }
+        skin.layoutParams = params
     }
 
     fun refreshMenuView(view: FCLMenuView?) {
