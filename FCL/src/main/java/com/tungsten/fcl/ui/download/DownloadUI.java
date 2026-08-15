@@ -119,6 +119,8 @@ public class DownloadUI extends FCLCommonUI {
     }
 
     private void switchTab(int position) {
+        // 切换 tab 时关闭临时页（临时页属于原页面上下文，避免覆盖层遮挡新页面）
+        dismissAllTempPages();
         if (position == 0) {
             if (currentPageId == PAGE_ID_DOWNLOAD_GAME) return;
             currentPageId = PAGE_ID_DOWNLOAD_GAME;
