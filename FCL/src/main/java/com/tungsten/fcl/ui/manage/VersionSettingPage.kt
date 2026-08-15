@@ -305,7 +305,7 @@ class VersionSettingPage(
                         builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
                         builder.setMessage(context.getString(R.string.message_warn_renderer_global_setting))
                         builder.setNegativeButton(
-                            context.getString(com.tungsten.fcllibrary.R.string.dialog_positive),
+                            context.getString(com.tungsten.fcl.R.string.dialog_positive),
                             null
                         )
                         builder.create().show()
