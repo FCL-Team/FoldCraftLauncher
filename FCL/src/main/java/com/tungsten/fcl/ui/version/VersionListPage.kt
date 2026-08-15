@@ -14,6 +14,7 @@ import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles.getSelectedProfile
 import com.tungsten.fcl.setting.Profiles.profiles
 import com.tungsten.fcl.setting.Profiles.registerVersionsListener
+import com.tungsten.fcl.setting.Profiles.unregisterVersionsListener
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings
@@ -25,11 +26,13 @@ import com.tungsten.fcllibrary.component.ui.FCLPage
 import com.tungsten.fcllibrary.component.view.FCLUILayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.util.Locale
 import java.util.logging.Level
+import java.util.function.Consumer
 import java.util.stream.Collectors
 
 class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId), View.OnClickListener {
@@ -39,13 +42,30 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
     private var textWatcher: TextWatcher? = null
     private var highlightedProfile: Profile? = null
     private var versionHighlightListener: Runnable? = null
+    private var loadJob: Job? = null
+    private var versionsListener: Consumer<Profile>? = null
 
     override fun onCreate() {
         super.onCreate()
         binding = PageVersionListBinding.bind(contentView)
         binding.refresh.setOnClickListener(this)
         binding.newProfile.setOnClickListener(this)
-        registerVersionsListener { loadVersions(it) }
+        // 版本刷新监听：attach 恢复、detach 注销，防止静态列表持有已销毁页面（与 DownloadUI 一致）
+        val listener = Consumer<Profile> { loadVersions(it) }
+        versionsListener = listener
+        registerVersionsListener(listener)
+        contentView.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) {
+                versionsListener?.let {
+                    unregisterVersionsListener(it)
+                    registerVersionsListener(it)
+                }
+            }
+
+            override fun onViewDetachedFromWindow(v: View) {
+                versionsListener?.let { unregisterVersionsListener(it) }
+            }
+        })
         refreshProfile()
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -123,21 +143,23 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
     }
 
     private fun loadVersions(profile: Profile) {
-        MainActivity.getInstance().lifecycleScope.launch {
+        // 终止上一个加载（切换 profile 时旧版本加载立即取消，避免过期结果覆盖）
+        loadJob?.cancel()
+        var job: Job? = null
+        job = MainActivity.getInstance().lifecycleScope.launch {
             binding.category.check(R.id.all)
             binding.search.removeTextChangedListener(textWatcher)
             binding.search.setText("")
             binding.refresh.isEnabled = false
             binding.layout.visibility = View.GONE
             binding.progress.visibility = View.VISIBLE
-        }
-        val repository = profile.repository
-        MainActivity.getInstance().lifecycleScope.launch {
             if (profile == getSelectedProfile()) {
-                children = withContext(Dispatchers.IO) {
+                val repository = profile.repository
+                val result = withContext(Dispatchers.IO) {
                     repository.displayVersions
                         .parallel()
                         .map { version: Version ->
+                            ensureActive()
                             val game = profile.repository.getGameVersion(version.id)
                             val libraries =
                                 StringBuilder(game.orElse(context.getString(R.string.message_unknown)))
@@ -147,6 +169,7 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                                 ), game.orElse(null)
                             )
                             for (mark in analyzer) {
+                                ensureActive()
                                 val libraryId = mark.libraryId
                                 val libraryVersion = mark.libraryVersion
                                 if (libraryId == LibraryAnalyzer.LibraryType.MINECRAFT.patchId) continue
@@ -199,6 +222,9 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                         }
                         .collect(Collectors.toList())
                 }
+                // 加载期间可能已切换 profile 或重新加载，放弃过期结果
+                if (loadJob !== job) return@launch
+                children = result
                 if (profile == getSelectedProfile()) {
                     if (adapter == null) {
                         adapter = VersionListAdapter(
@@ -232,6 +258,7 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                 children.forEach { item -> item.selectedProperty().set(profile.selectedVersion == item.version) }
             }
         }
+        loadJob = job
     }
 
     override fun onClick(view: View?) {
