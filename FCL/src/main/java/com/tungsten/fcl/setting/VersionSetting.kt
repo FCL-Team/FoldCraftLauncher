@@ -220,7 +220,8 @@ class VersionSetting : Cloneable {
     }
 
     private fun changed() {
-        changeListeners.forEach { it.run() }
+        // 复制后遍历：回调内可能增删监听，避免并发修改
+        changeListeners.toList().forEach { it.run() }
     }
 
     fun checkController() {

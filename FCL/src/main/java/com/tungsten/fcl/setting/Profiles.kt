@@ -174,7 +174,8 @@ object Profiles {
 //                    profile.repository.refreshVersionsAsync().start()
             }
         }
-        selectedProfileListeners.forEach { listener -> listener.run() }
+        // 复制后遍历：回调内可能增删监听，避免并发修改
+        selectedProfileListeners.toList().forEach { listener -> listener.run() }
         if (!isFirstRefresh) {
             profile.repository.refreshVersionsAsync().start()
         }

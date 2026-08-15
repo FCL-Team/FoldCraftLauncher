@@ -59,7 +59,8 @@ class Profile {
             if (field == value) return
             field = value
             checkSelectedVersion()
-            selectedVersionListeners.forEach { it.run() }
+            // 复制后遍历：回调内可能增删监听（如 DownloadUI 切换监听对象），避免并发修改
+            selectedVersionListeners.toList().forEach { it.run() }
         }
 
     /** 游戏目录（变化时切换仓库目录） */
