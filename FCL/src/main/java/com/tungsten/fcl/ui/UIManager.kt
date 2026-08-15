@@ -51,18 +51,26 @@ class UIManager(val context: Context, val pager: ViewPager2) {
     /** 页面切换回调，MainActivity 用于同步菜单高亮与标题 */
     var pageSelectedListener: ((Int) -> Unit)? = null
 
+    /** 本次切换是否为相邻页平滑滑动（平滑滑动自带过渡动画，不再叠加淡入） */
+    private var smoothSwitch = false
+
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             currentUI = getUI(position)
             pageSelectedListener?.invoke(position)
-            // 页面切换过渡动画：不创建中间页（瞬时跳转），直接对目标页做淡入 + 上滑进入。
-            // 同步执行（不 post）：onPageSelected 时页面已挂载，避免延迟一帧导致先显示后消失的闪烁
-            currentUI?.contentView?.apply {
-                animate().cancel()
-                alpha = 0f
-                translationY = resources.displayMetrics.density * 30f
-                animate().alpha(1f).translationY(0f).setDuration(250).start()
+            if (!smoothSwitch) {
+                // 瞬时跳转（远距）的过渡动画：对目标页做淡入 + 上滑进入。
+                // 同步执行（不 post）：onPageSelected 时页面已挂载但尚未绘制，此时置透明
+                // 不会出现先显示后消失的闪烁；相邻页平滑滑动时页面在滑动过程中已可见，
+                // 若再置透明淡入会导致闪烁，故平滑滑动不叠加淡入
+                currentUI?.contentView?.apply {
+                    animate().cancel()
+                    alpha = 0f
+                    translationY = resources.displayMetrics.density * 30f
+                    animate().alpha(1f).translationY(0f).setDuration(250).start()
+                }
             }
+            smoothSwitch = false
         }
     }
 
@@ -100,7 +108,8 @@ class UIManager(val context: Context, val pager: ViewPager2) {
             currentUI = ui
         } else {
             // 相邻页平滑滑动，远距离瞬时跳转（避免中间页被逐个创建/销毁）
-            pager.setCurrentItem(position, abs(position - pager.currentItem) <= 1)
+            smoothSwitch = abs(position - pager.currentItem) <= 1
+            pager.setCurrentItem(position, smoothSwitch)
         }
     }
 
