@@ -54,15 +54,20 @@ class UIManager(val context: Context, val pager: ViewPager2) {
     /** 本次切换是否为相邻页平滑滑动（平滑滑动自带过渡动画，不再叠加淡入） */
     private var smoothSwitch = false
 
+    /** 上次 onPageSelected 的页面位置，用于过滤 ViewPager2 重复 dispatch 当前页（如软键盘弹出等布局变化） */
+    private var lastSelectedPosition = -1
+
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             currentUI = getUI(position)
             pageSelectedListener?.invoke(position)
-            if (!smoothSwitch) {
+            if (position != lastSelectedPosition && !smoothSwitch) {
                 // 瞬时跳转（远距）的过渡动画：对目标页做淡入 + 上滑进入。
                 // 同步执行（不 post）：onPageSelected 时页面已挂载但尚未绘制，此时置透明
                 // 不会出现先显示后消失的闪烁；相邻页平滑滑动时页面在滑动过程中已可见，
-                // 若再置透明淡入会导致闪烁，故平滑滑动不叠加淡入
+                // 若再置透明淡入会导致闪烁，故平滑滑动不叠加淡入。
+                // 仅在页面位置真正变化时播放：ViewPager2 在布局变化（如软键盘弹出、页面
+                // 内容刷新）后会重新 dispatch 当前页，此时不播放动画避免页面闪烁
                 currentUI?.contentView?.apply {
                     animate().cancel()
                     alpha = 0f
@@ -70,6 +75,7 @@ class UIManager(val context: Context, val pager: ViewPager2) {
                     animate().alpha(1f).translationY(0f).setDuration(250).start()
                 }
             }
+            lastSelectedPosition = position
             smoothSwitch = false
         }
     }

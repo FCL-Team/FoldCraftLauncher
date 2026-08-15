@@ -31,6 +31,11 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
     private static final int TEMP_PAGE_ANIM_DURATION = 200;
 
     /**
+     * 上次 onPageSelected 的页面位置，用于过滤 ViewPager2 重复 dispatch 当前页（如软键盘弹出等布局变化）
+     */
+    private int lastSelectedPosition = -1;
+
+    /**
      * 页面位置 → 页面实例注册表，页面被回收时清出（不保留状态）
      */
     private final ArrayList<FCLPage> pageRegistry = new ArrayList<>();
@@ -97,15 +102,20 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
                 }
                 // 页面切换过渡动画：不创建中间页（瞬时跳转），直接对目标页做淡入 + 上滑进入。
                 // 同步执行（不 post）：onPageSelected 时页面已挂载但尚未绘制，置透明发生在首帧绘制前，
-                // 不会出现先显示后消失的闪烁
-                FCLPage page = getPage(position);
-                if (page != null) {
-                    View contentView = page.getContentView();
-                    contentView.animate().cancel();
-                    contentView.setAlpha(0f);
-                    contentView.setTranslationY(contentView.getResources().getDisplayMetrics().density * 30f);
-                    contentView.animate().alpha(1f).translationY(0f).setDuration(250).start();
+                // 不会出现先显示后消失的闪烁。
+                // 仅在页面位置真正变化时播放：ViewPager2 在布局变化（如软键盘弹出、页面内容刷新）
+                // 后会重新 dispatch 当前页，此时不播放动画避免页面闪烁
+                if (position != lastSelectedPosition) {
+                    FCLPage page = getPage(position);
+                    if (page != null) {
+                        View contentView = page.getContentView();
+                        contentView.animate().cancel();
+                        contentView.setAlpha(0f);
+                        contentView.setTranslationY(contentView.getResources().getDisplayMetrics().density * 30f);
+                        contentView.animate().alpha(1f).translationY(0f).setDuration(250).start();
+                    }
                 }
+                lastSelectedPosition = position;
             }
         });
     }
