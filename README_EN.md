@@ -6,9 +6,10 @@
 
 <div align="center">
 
-[![Android CI](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/main.yml/badge.svg)](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/main.yml)
+[![Android CI](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/build.yml/badge.svg)](https://github.com/FCL-Team/FoldCraftLauncher/actions/workflows/build.yml)
 ![Downloads](https://img.shields.io/github/downloads/FCL-Team/FoldCraftLauncher/total?style=flat-square&color=f18cb9)
 ![Release](https://img.shields.io/github/v/release/FCL-Team/FoldCraftLauncher?style=flat-square&color=f18cb9)
+[![Translation status](https://hosted.weblate.org/widgets/foldcraftlauncher/fcl/en/status-badge.svg)](https://hosted.weblate.org/projects/foldcraftlauncher/)
 
 [![Discord](https://img.shields.io/badge/Discord-red?logo=discord&logoColor=white)](https://discord.gg/ffhvuXTwyV)
 [![QQ](https://img.shields.io/badge/QQ-green)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=LwxydGEvBZJnn09sXOjkQo9tuuLcYwx5&authKey=seyY5pPUCIHMWS5FqVryq926T0G2GarSXetpxxV9DJxBVt%2FPcg1vxN%2F%2FXpsCowyk&noverify=0&group_code=762054349)
@@ -53,6 +54,12 @@
 ## 📜 License
 
 This project is licensed under **[GPL-3.0 License](https://www.gnu.org/licenses/gpl-3.0.html)**
+
+---
+
+## 🌍 Translation
+
+We'd love your help with translations! The project's localization is managed on [Weblate](https://hosted.weblate.org/projects/foldcraftlauncher/) — no tools needed, just translate in your browser.
 
 ---
 
