@@ -176,7 +176,9 @@ object Profiles {
         }
         // 复制后遍历：回调内可能增删监听，避免并发修改
         selectedProfileListeners.toList().forEach { listener -> listener.run() }
-        if (!isFirstRefresh) {
+        // 仅未加载版本的 Profile 切换时才刷新（refreshVersions 会清空解析/jar 缓存，
+        // 已加载的 Profile 保留缓存以加快切换；版本变化由刷新事件与手动刷新驱动）
+        if (!isFirstRefresh && !profile.repository.isLoaded()) {
             profile.repository.refreshVersionsAsync().start()
         }
     }

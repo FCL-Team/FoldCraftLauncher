@@ -11,6 +11,7 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.PageVersionListBinding
 import com.tungsten.fcl.setting.Profile
+import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.setting.Profiles.getSelectedProfile
 import com.tungsten.fcl.setting.Profiles.profiles
 import com.tungsten.fcl.setting.Profiles.registerVersionsListener
@@ -35,7 +36,8 @@ import java.util.logging.Level
 import java.util.function.Consumer
 import java.util.stream.Collectors
 
-class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId), View.OnClickListener {
+class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId),
+    View.OnClickListener {
     private lateinit var binding: PageVersionListBinding
     private var adapter: VersionListAdapter? = null
     private lateinit var children: MutableList<VersionListItem>
@@ -44,6 +46,7 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
     private var versionHighlightListener: Runnable? = null
     private var loadJob: Job? = null
     private var versionsListener: Consumer<Profile>? = null
+    private var profileCollectJob: Job? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -60,10 +63,17 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                     unregisterVersionsListener(it)
                     registerVersionsListener(it)
                 }
+                // 切换 Profile 时重载版本列表（不依赖刷新事件）
+                profileCollectJob = activity.lifecycleScope.launch {
+                    Profiles.selectedProfile.collect { profile ->
+                        if (profile != null) loadVersions(profile)
+                    }
+                }
             }
 
             override fun onViewDetachedFromWindow(v: View) {
                 versionsListener?.let { unregisterVersionsListener(it) }
+                profileCollectJob?.cancel()
             }
         })
         refreshProfile()
@@ -161,13 +171,11 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                         .map { version: Version ->
                             ensureActive()
                             val game = profile.repository.getGameVersion(version.id)
+                            // 一次解析，analyzer 与图标判断复用（getVersionIconImage 不再重复 resolve）
+                            val resolved = profile.repository.getResolvedPreservingPatchesVersion(version.id)
                             val libraries =
                                 StringBuilder(game.orElse(context.getString(R.string.message_unknown)))
-                            val analyzer = LibraryAnalyzer.analyze(
-                                profile.repository.getResolvedPreservingPatchesVersion(
-                                    version.id
-                                ), game.orElse(null)
-                            )
+                            val analyzer = LibraryAnalyzer.analyze(resolved, game.orElse(null))
                             for (mark in analyzer) {
                                 ensureActive()
                                 val libraryId = mark.libraryId
@@ -212,12 +220,13 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                                     e
                                 )
                             }
+                            val icon = repository.getVersionIconImage(analyzer, version.id)
                             return@map VersionListItem(
                                 profile,
                                 version.id,
                                 libraries.toString(),
                                 tag,
-                                repository.getVersionIconImage(version.id)
+                                icon
                             )
                         }
                         .collect(Collectors.toList())
@@ -250,12 +259,16 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                 // 版本选中高亮：监听 profile 版本变化时更新（替代 fakefx bind）
                 versionHighlightListener?.let { highlightedProfile?.removeSelectedVersionListener(it) }
                 val highlightListener = Runnable {
-                    children.forEach { item -> item.selectedProperty().set(profile.selectedVersion == item.version) }
+                    children.forEach { item ->
+                        item.selectedProperty().set(profile.selectedVersion == item.version)
+                    }
                 }
                 versionHighlightListener = highlightListener
                 highlightedProfile = profile
                 profile.addSelectedVersionListener(highlightListener)
-                children.forEach { item -> item.selectedProperty().set(profile.selectedVersion == item.version) }
+                children.forEach { item ->
+                    item.selectedProperty().set(profile.selectedVersion == item.version)
+                }
             }
         }
         loadJob = job
