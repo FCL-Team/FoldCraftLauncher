@@ -35,7 +35,7 @@ class ProfilesTest {
     }
 
     @Test
-    fun init后选中配置的profile() {
+    fun initSelectsConfiguredProfile() {
         val selected = Profiles.getSelectedProfile()
         assertNotNull(selected)
         // StateFlow 当前值与 getSelectedProfile 一致
@@ -45,7 +45,7 @@ class ProfilesTest {
     }
 
     @Test
-    fun setSelectedProfile更新StateFlow并通知监听器() {
+    fun setSelectedProfileUpdatesStateFlowAndNotifiesListeners() {
         // 选择不同于当前值的 profile（StateFlow 相同值不重新发射）
         val current = Profiles.selectedProfile.value
         val target = Profiles.profiles.first { it != current }
@@ -65,7 +65,7 @@ class ProfilesTest {
     }
 
     @Test
-    fun setSelectedProfile相同值不重复通知() {
+    fun setSelectedProfileSameValueDoesNotNotify() {
         val current = Profiles.getSelectedProfile()
         var notified = 0
         val listener = Runnable { notified++ }
@@ -80,7 +80,7 @@ class ProfilesTest {
     }
 
     @Test
-    fun 设置不存在的profile回退第一个() {
+    fun setSelectedProfileFallsBackToFirstWhenNotInList() {
         val ghost = Profile("ghost", File("/sdcard/ghost_dir"))
         Profiles.setSelectedProfile(ghost)
         // 不在列表中的 profile 被回退为第一个
@@ -89,9 +89,9 @@ class ProfilesTest {
     }
 
     @Test
-    fun 删除选中profile后回退() {
+    fun removingSelectedProfileFallsBack() {
         val first = Profiles.profiles[0]
-        Profiles.profiles.remove(first)
+        Profiles.removeProfile(first)
         try {
             // 列表变化校验：选中项不在列表时回退第一个
             assertEquals(Profiles.profiles[0], Profiles.getSelectedProfile())
@@ -101,7 +101,7 @@ class ProfilesTest {
     }
 
     @Test
-    fun selectedProfile可收集() {
+    fun selectedProfileCanBeCollected() {
         // 选择不同于当前值的 profile（StateFlow 相同值不重新发射）
         val current = Profiles.selectedProfile.value
         val target = Profiles.profiles.first { it != current }
@@ -119,5 +119,21 @@ class ProfilesTest {
         // 首次收集立即发出当前值，更新后再发一次
         assertEquals(2, values.size)
         assertEquals(target, values.last())
+    }
+
+    @Test
+    fun selectedVersionFollowsSelectedProfile() {
+        val current = Profiles.selectedProfile.value
+        val target = Profiles.profiles.first { it != current }
+        // bind 依赖 repository 已加载（isLoaded），先同步刷新
+        target.repository.refreshVersions()
+        assertTrue("repository 未加载", target.repository.isLoaded)
+        Profiles.setSelectedProfile(target)
+        // bind 后 selectedVersion 等于目标 profile 的选中版本
+        assertEquals(target.selectedVersion, Profiles.getSelectedVersion())
+        assertEquals(target.selectedVersion, Profiles.selectedVersion.value)
+        // 仓库刷新事件重新触发 bind，保持一致
+        target.repository.refreshVersions()
+        assertEquals(target.selectedVersion, Profiles.getSelectedVersion())
     }
 }
