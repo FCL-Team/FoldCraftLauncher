@@ -870,40 +870,40 @@
     <string name="search_page_n" translatable="false">%d / %s</string>
 
     <string name="settings_advanced_dont_check_game_completeness">Do not check game integrity</string>
-        <string name="settings_advanced_dont_check_game_completeness_desc">Skip the game file integrity check to speed up startup.</string>
+    <string name="settings_advanced_dont_check_game_completeness_desc">Skip the game file integrity check to speed up startup.</string>
     <string name="settings_advanced_dont_check_jvm_validity">Do not check JVM compatibility</string>
-        <string name="settings_advanced_dont_check_jvm_validity_desc">Skip the JVM validity check.</string>
+    <string name="settings_advanced_dont_check_jvm_validity_desc">Skip the JVM validity check.</string>
     <string name="settings_advanced_dont_check_mod">Do not check Mod compatibility</string>
-        <string name="settings_advanced_dont_check_mod_desc">Skip the mod compatibility check.</string>
+    <string name="settings_advanced_dont_check_mod_desc">Skip the mod compatibility check.</string>
     <string name="settings_advanced_debug_log">Output debug log</string>
-        <string name="settings_advanced_debug_log_desc">Output detailed debug logs for troubleshooting.</string>
+    <string name="settings_advanced_debug_log_desc">Output detailed debug logs for troubleshooting.</string>
     <string name="settings_advanced_game_dir_default">Default (.minecraft/)</string>
     <string name="settings_advanced_game_dir_independent">Isolated (.minecraft/versions/&#60;instance name>/, except for assets and libraries)</string>
     <string name="settings_advanced_jvm_args">Java VM arguments</string>
-        <string name="settings_advanced_jvm_args_desc">Additional arguments passed to the JVM.</string>
+    <string name="settings_advanced_jvm_args_desc">Additional arguments passed to the JVM.</string>
     <string name="settings_advanced_env">Environment Variables</string>
-        <string name="settings_advanced_env_desc">Set environment variables for the game process (one KEY=VALUE per line).</string>
+    <string name="settings_advanced_env_desc">Set environment variables for the game process (one KEY=VALUE per line).</string>
     <string name="settings_advanced_minecraft_arguments">Launch Arguments</string>
-        <string name="settings_advanced_minecraft_arguments_desc">Additional arguments passed to Minecraft.</string>
+    <string name="settings_advanced_minecraft_arguments_desc">Additional arguments passed to Minecraft.</string>
     <string name="settings_advanced_minecraft_arguments_prompt">Default</string>
     <string name="settings_advanced_server_ip">Server Address</string>
-        <string name="settings_advanced_server_ip_desc">Join the specified server automatically after the game starts (IP:port).</string>
+    <string name="settings_advanced_server_ip_desc">Join the specified server automatically after the game starts (IP:port).</string>
     <string name="settings_advanced_server_ip_prompt">Join automatically after launching the game.</string>
     <string name="settings_advanced_custom_uuid">Custom UUID</string>
-        <string name="settings_advanced_custom_uuid_desc">Customize the game UUID (for offline mode).</string>
-    <string name="settings_advanced_force_resolution">Force set resolution (experimental option, use with caution)</string>
-        <string name="settings_advanced_force_resolution_desc">Force the game to run at a specified resolution (WxH).</string>
+    <string name="settings_advanced_custom_uuid_desc">Customize the game UUID (for offline mode).</string>
+    <string name="settings_advanced_force_resolution">Force set resolution</string>
+    <string name="settings_advanced_force_resolution_desc">Force the game to run at a specified resolution (WxH). Experimental option, use with caution.</string>
 
     <string name="settings_fcl_controller">Controller</string>
-        <string name="settings_fcl_controller_desc">Choose the controller layout used by this version.</string>
+    <string name="settings_fcl_controller_desc">Choose the controller layout used by this version.</string>
     <string name="settings_fcl_vulkan_driver_system">Use System Vulkan driver</string>
-        <string name="settings_fcl_vulkan_driver_system_desc">Use the system Vulkan driver. Better performance but may cause compatibility issues.</string>
+    <string name="settings_fcl_vulkan_driver_system_desc">Use the system Vulkan driver. Better performance but may cause compatibility issues.</string>
     <string name="settings_fcl_graphics_backend">Graphics Backend</string>
-        <string name="settings_fcl_graphics_backend_desc">Choose the graphics rendering backend. Only effective for 26.2+.</string>
+    <string name="settings_fcl_graphics_backend_desc">Choose the graphics rendering backend. Only effective for 26.2+.</string>
     <string name="settings_fcl_renderer">OpenGL Implementation</string>
-        <string name="settings_fcl_renderer_desc">Choose the OpenGL renderer implementation.</string>
+    <string name="settings_fcl_renderer_desc">Choose the OpenGL renderer implementation.</string>
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core</string>
-        <string name="settings_fcl_pojav_bigcore_desc">Force the renderer to run on performance big cores.</string>
+    <string name="settings_fcl_pojav_bigcore_desc">Force the renderer to run on performance big cores.</string>
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, only support 1.17-)</string>
@@ -912,7 +912,7 @@
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, built-in)</string>
 
     <string name="settings_fcl_driver">Vulkan Driver</string>
-        <string name="settings_fcl_driver_desc">Choose the Vulkan driver implementation.</string>
+    <string name="settings_fcl_driver_desc">Choose the Vulkan driver implementation.</string>
 
     <string name="settings_download_netdisk">Netdisk(Recommended for users in China)</string>
 
@@ -920,37 +920,37 @@
     <string name="settings_game_dimension">Resolution</string>
     <string name="settings_game_cursor_offset">Cursor Offset</string>
     <string name="settings_game_java_version">Java Version</string>
-        <string name="settings_game_java_version_desc">Choose the Java runtime used to launch this version.</string>
+    <string name="settings_game_java_version_desc">Choose the Java runtime used to launch this version.</string>
     <string name="settings_game_java_version_auto">Auto</string>
     <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
     <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
     <string name="settings_game_working_directory">Isolate Working Directory</string>
-        <string name="settings_game_working_directory_desc">Store game files in a separate directory for this version.</string>
+    <string name="settings_game_working_directory_desc">Store game files in a separate directory for this version.</string>
 
     <string name="settings_icon">Icon</string>
-        <string name="settings_icon_desc">Customize the icon shown for this version in the version list.</string>
+    <string name="settings_icon_desc">Customize the icon shown for this version in the version list.</string>
 
     <string name="settings_launcher">Launcher Settings</string>
     <string name="settings_launcher_request">Request</string>
     <string name="settings_launcher_debug">Debug</string>
-        <string name="settings_launcher_debug_desc">Export log files for troubleshooting and feedback.</string>
+    <string name="settings_launcher_debug_desc">Export log files for troubleshooting and feedback.</string>
     <string name="settings_launcher_request_recording_permission">Request recording permission (for voice chat mod)</string>
-        <string name="settings_launcher_request_recording_permission_desc">Request the audio recording permission (needed for in-game voice).</string>
+    <string name="settings_launcher_request_recording_permission_desc">Request the audio recording permission (needed for in-game voice).</string>
     <string name="settings_launcher_upgrade">Update Launcher</string>
-        <string name="settings_launcher_upgrade_desc">Check whether a new version of the launcher is available.</string>
+    <string name="settings_launcher_upgrade_desc">Check whether a new version of the launcher is available.</string>
     <string name="settings_launcher_upgrade_check">Check</string>
     <string name="settings_launcher_cache">Cache Directory</string>
-        <string name="settings_launcher_cache_desc">Clear the launcher cache files.</string>
+    <string name="settings_launcher_cache_desc">Clear the launcher cache files.</string>
     <string name="settings_launcher_clear_cache">Clear cache</string>
     <string name="settings_launcher_download">Download</string>
     <string name="settings_launcher_download_threads">Threads</string>
-        <string name="settings_launcher_download_threads_desc">Set the number of concurrent download threads.</string>
+    <string name="settings_launcher_download_threads_desc">Set the number of concurrent download threads.</string>
     <string name="settings_launcher_download_threads_auto">Automatically Determine</string>
     <string name="settings_launcher_download_source">Download Source</string>
-        <string name="settings_launcher_download_source_desc">Choose the download source. Auto mode matches per version.</string>
+    <string name="settings_launcher_download_source_desc">Choose the download source. Auto mode matches per version.</string>
     <string name="settings_launcher_download_source_auto">Auto Choose Download Mirror</string>
     <string name="settings_launcher_language">Language</string>
-        <string name="settings_launcher_language_desc">Switch the launcher UI language. Some languages require a restart.</string>
+    <string name="settings_launcher_language_desc">Switch the launcher UI language. Some languages require a restart.</string>
     <string name="settings_launcher_language_system">Use System Language</string>
     <string name="settings_launcher_language_english" translatable="false">English</string>
     <string name="settings_launcher_language_simplified_chinese" translatable="false">简体中文</string>
@@ -964,48 +964,48 @@
     <string name="settings_launcher_launcher_log_export_failed">Unable to export logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs have been exported to %s</string>
     <string name="settings_launcher_theme_mode">Theme Mode</string>
-        <string name="settings_launcher_theme_mode_desc">Switch between light and dark theme modes.</string>
+    <string name="settings_launcher_theme_mode_desc">Switch between light and dark theme modes.</string>
     <string name="settings_launcher_theme_mode_follow">Follow the system</string>
     <string name="settings_launcher_theme_mode_light">Light Mode</string>
     <string name="settings_launcher_theme_mode_dark">Dark Mode</string>
     <string name="settings_launcher_theme">Main Theme Color</string>
-        <string name="settings_launcher_theme_desc">Customize the main color of the launcher theme.</string>
+    <string name="settings_launcher_theme_desc">Customize the main color of the launcher theme.</string>
     <string name="settings_launcher_theme2">Secondary Theme Color</string>
-        <string name="settings_launcher_theme2_desc">Customize the secondary color (light theme).</string>
+    <string name="settings_launcher_theme2_desc">Customize the secondary color (light theme).</string>
     <string name="settings_launcher_theme2_dark">Secondary Theme Color</string>
-        <string name="settings_launcher_theme2_dark_desc">Customize the secondary color (dark theme).</string>
+    <string name="settings_launcher_theme2_dark_desc">Customize the secondary color (dark theme).</string>
     <string name="settings_launcher_theme_fetch_background">Extract from background image</string>
-    <string name="settings_launcher_background_lt">Light Mode Launcher Background (Max 5120x5120)</string>
-        <string name="settings_launcher_background_lt_desc">Customize the background image of the light theme.</string>
-    <string name="settings_launcher_background_dk">Dark Mode Launcher Background (Max 5120x5120)</string>
-        <string name="settings_launcher_background_dk_desc">Customize the background image of the dark theme.</string>
-    <string name="settings_launcher_background_video">Launcher Background (Video .mp4)</string>
-        <string name="settings_launcher_background_video_desc">Use a video (mp4) as the live background.</string>
+    <string name="settings_launcher_background_lt">Light Mode Launcher Background</string>
+    <string name="settings_launcher_background_lt_desc">Customize the background image of the light theme. Maximum resolution: 5120x5120.</string>
+    <string name="settings_launcher_background_dk">Dark Mode Launcher Background</string>
+    <string name="settings_launcher_background_dk_desc">Customize the background image of the dark theme. Maximum resolution: 5120x5120.</string>
+    <string name="settings_launcher_background_video">Launcher Background</string>
+    <string name="settings_launcher_background_video_desc">Use an animated video background (MP4 only).</string>
     <string name="settings_launcher_background_video_volume">Video Background Volume</string>
-        <string name="settings_launcher_background_video_volume_desc">Adjust the volume of the live background video.</string>
+    <string name="settings_launcher_background_video_volume_desc">Adjust the volume of the live background video.</string>
     <string name="settings_launcher_cursor">Cursor Picture</string>
-        <string name="settings_launcher_cursor_desc">Customize the mouse cursor style.</string>
+    <string name="settings_launcher_cursor_desc">Customize the mouse cursor style.</string>
     <string name="settings_launcher_menu_icon">Menu View Icon</string>
-        <string name="settings_launcher_menu_icon_desc">Customize the icon of the left side menu.</string>
-    <string name="settings_launcher_ignore_notch">Ignore Notch</string>
-        <string name="settings_launcher_ignore_notch_desc">Ignore the screen notch area and display in fullscreen.</string>
+    <string name="settings_launcher_menu_icon_desc">Customize the in-game floating window menu icon (GIF supported).</string>
+    <string name="settings_launcher_ignore_notch">Fullscreen</string>
+    <string name="settings_launcher_ignore_notch_desc">Ignore the screen notch area and display in fullscreen.</string>
     <string name="settings_launcher_close_skin_view">Close Skin Model Viewing</string>
-        <string name="settings_launcher_close_skin_view_desc">Disable the skin model on the home page for better performance.</string>
+    <string name="settings_launcher_close_skin_view_desc">Disable the skin model on the home page.</string>
     <string name="settings_launcher_animation_speed">Animation Speed</string>
-        <string name="settings_launcher_animation_speed_desc">Adjust the UI animation speed.</string>
+    <string name="settings_launcher_animation_speed_desc">Adjust the UI animation speed.</string>
     <string name="settings_launcher_vibrate_duration">Vibration Duration</string>
-        <string name="settings_launcher_vibrate_duration_desc">Adjust the vibration duration of key presses (ms). For TouchController mod.</string>
+    <string name="settings_launcher_vibrate_duration_desc">Adjust the vibration duration of key presses (ms). For TouchController mod.</string>
     <string name="settings_disable_fullscreen_input">Disable fullscreen input</string>
-        <string name="settings_disable_fullscreen_input_desc">Disable fullscreen input on some devices. For TouchController mod.</string>
-    <string name="settings_launcher_exit_after_launching">Launcher exits after launching</string>
-        <string name="settings_launcher_exit_after_launching_desc">Exit the launcher automatically after the game starts.</string>
+    <string name="settings_disable_fullscreen_input_desc">Disable fullscreen input on some devices. For TouchController mod.</string>
+    <string name="settings_launcher_exit_after_launching">Auto close</string>
+    <string name="settings_launcher_exit_after_launching_desc">Exit the launcher automatically after the game starts. The crash screen will no longer be shown.</string>
     <string name="settings_launcher_custom_launcher_name">Custom launcher information</string>
-        <string name="settings_launcher_custom_launcher_name_desc">Customize the display name of the launcher.</string>
+    <string name="settings_launcher_custom_launcher_name_desc">Customize the launcher name displayed in-game.</string>
     <string name="settings_launcher_allow_screenshot">Allow screenshot/recording in crash activity</string>
-        <string name="settings_launcher_allow_screenshot_desc">Allow screenshots or screen recording on interfaces where they are currently prohibited.</string>
+    <string name="settings_launcher_allow_screenshot_desc">Allow screenshots or screen recording on interfaces where they are currently prohibited.</string>
 
     <string name="settings_memory">Memory</string>
-        <string name="settings_memory_desc">Set the maximum memory (MB) available to the game.</string>
+    <string name="settings_memory_desc">Set the maximum memory (MB) available to the game.</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB Allocated</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB Minimum / %2$.1f GB Allocated (%3$.1f GB Available)</string>
     <string name="settings_memory_allocate_manual">%1$.1f GB Allocated</string>
@@ -1017,7 +1017,7 @@
     <string name="settings_tabs_installers">Modloaders</string>
     <string name="settings_type_global_manage">Global Game Settings</string>
     <string name="settings_type_special_enable">Enable per-instance settings</string>
-        <string name="settings_type_special_enable_desc">Save settings for this version only, without affecting the global settings.</string>
+    <string name="settings_type_special_enable_desc">Save settings for this version only, without affecting the global settings.</string>
 
     <string name="style_name">Name</string>
     <string name="style_warning_delete">Are you sure to delete this style?</string>
