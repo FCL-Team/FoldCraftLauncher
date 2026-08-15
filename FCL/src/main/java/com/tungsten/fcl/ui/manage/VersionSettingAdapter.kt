@@ -132,16 +132,16 @@ class VersionSettingAdapter(
             )
             result += Row.SwitchRow(
                 R.string.settings_game_working_directory,
-                { versionSetting.isolateGameDirProperty.get() },
-                { versionSetting.isolateGameDirProperty.set(it) },
+                { versionSetting.isIsolateGameDir },
+                { versionSetting.isIsolateGameDir = it },
                 disabled = modpack,
                 descriptionRes = R.string.settings_game_working_directory_desc,
             )
             result += Row.MemoryRow(R.string.settings_memory_desc)
             result += Row.EditRow(
                 R.string.settings_advanced_server_ip,
-                { versionSetting.serverIpProperty.get() },
-                { versionSetting.serverIpProperty.set(it) },
+                { versionSetting.serverIp },
+                { versionSetting.serverIp = it },
                 hintRes = R.string.settings_advanced_server_ip_prompt,
                 descriptionRes = R.string.settings_advanced_server_ip_desc,
             )
@@ -168,18 +168,18 @@ class VersionSettingAdapter(
             )
             result += Row.SwitchRow(
                 R.string.settings_fcl_pojav_bigcore,
-                { versionSetting.pojavBigCoreProperty.get() },
-                { versionSetting.pojavBigCoreProperty.set(it) },
+                { versionSetting.isPojavBigCore },
+                { versionSetting.isPojavBigCore = it },
                 descriptionRes = R.string.settings_fcl_pojav_bigcore_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_fcl_vulkan_driver_system,
-                { versionSetting.vkDriverSystemProperty.get() },
+                { versionSetting.isVKDriverSystem },
                 { listener.onSpecialSwitch(VersionSettingTag.VULKAN, it) },
                 rowTag = VersionSettingTag.VULKAN,
                 descriptionRes = R.string.settings_fcl_vulkan_driver_system_desc,
             )
-            if (!versionSetting.vkDriverSystemProperty.get()) {
+            if (!versionSetting.isVKDriverSystem) {
                 result += Row.ValueRow(
                     R.string.settings_fcl_driver,
                     { versionSetting.driver },
@@ -190,32 +190,32 @@ class VersionSettingAdapter(
             }
             result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_game_completeness,
-                { versionSetting.notCheckGameProperty.get() },
-                { versionSetting.notCheckGameProperty.set(it) },
+                { versionSetting.isNotCheckGame },
+                { versionSetting.isNotCheckGame = it },
                 descriptionRes = R.string.settings_advanced_dont_check_game_completeness_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_jvm_validity,
-                { versionSetting.notCheckJVMProperty.get() },
-                { versionSetting.notCheckJVMProperty.set(it) },
+                { versionSetting.isNotCheckJVM },
+                { versionSetting.isNotCheckJVM = it },
                 descriptionRes = R.string.settings_advanced_dont_check_jvm_validity_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_mod,
-                { versionSetting.notCheckModProperty.get() },
-                { versionSetting.notCheckModProperty.set(it) },
+                { versionSetting.isNotCheckMod },
+                { versionSetting.isNotCheckMod = it },
                 descriptionRes = R.string.settings_advanced_dont_check_mod_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_debug_log,
-                { versionSetting.debugLogProperty.get() },
-                { versionSetting.debugLogProperty.set(it) },
+                { versionSetting.isDebugLog },
+                { versionSetting.isDebugLog = it },
                 descriptionRes = R.string.settings_advanced_debug_log_desc,
             )
             result += Row.EditRow(
                 R.string.settings_advanced_minecraft_arguments,
-                { versionSetting.minecraftArgsProperty.get() },
-                { versionSetting.minecraftArgsProperty.set(it) },
+                { versionSetting.minecraftArgs },
+                { versionSetting.minecraftArgs = it },
                 tag = VersionSettingTag.MC_ARGS,
                 hintRes = R.string.settings_advanced_minecraft_arguments_prompt,
                 longPressEdit = true,
@@ -223,8 +223,8 @@ class VersionSettingAdapter(
             )
             result += Row.EditRow(
                 R.string.settings_advanced_jvm_args,
-                { versionSetting.javaArgsProperty.get() },
-                { versionSetting.javaArgsProperty.set(it) },
+                { versionSetting.javaArgs },
+                { versionSetting.javaArgs = it },
                 tag = VersionSettingTag.JVM_ARGS,
                 longPressEdit = true,
                 descriptionRes = R.string.settings_advanced_jvm_args_desc,
@@ -238,13 +238,13 @@ class VersionSettingAdapter(
             )
             result += Row.EditRow(
                 R.string.settings_advanced_custom_uuid,
-                { versionSetting.uuidProperty.get() },
-                { versionSetting.uuidProperty.set(it) },
+                { versionSetting.uuid },
+                { versionSetting.uuid = it },
                 descriptionRes = R.string.settings_advanced_custom_uuid_desc,
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_force_resolution,
-                { versionSetting.forceResolutionProperty.get() },
+                { versionSetting.isForceResolution },
                 { listener.onSpecialSwitch(VersionSettingTag.FORCE_RESOLUTION, it) },
                 longClick = true,
                 rowTag = VersionSettingTag.FORCE_RESOLUTION,
@@ -442,16 +442,16 @@ class VersionSettingAdapter(
         }
 
         binding.checkAutoAllocate.setOnCheckedChangeListener(null)
-        binding.checkAutoAllocate.isChecked = versionSetting.autoMemoryProperty.get()
+        binding.checkAutoAllocate.isChecked = versionSetting.isAutoMemory
         binding.barMemory.setOnSeekBarChangeListener(null)
-        binding.barMemory.progress = versionSetting.maxMemoryProperty.get()
+        binding.barMemory.progress = versionSetting.maxMemory
         binding.checkAutoAllocate.setOnCheckedChangeListener { _, checked ->
-            versionSetting.autoMemoryProperty.set(checked)
+            versionSetting.isAutoMemory = checked
             updateDisplay()
         }
         binding.barMemory.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                versionSetting.maxMemoryProperty.set(progress)
+                versionSetting.maxMemory = progress
                 updateDisplay()
             }
 

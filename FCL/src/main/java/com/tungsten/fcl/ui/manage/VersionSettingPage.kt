@@ -2,9 +2,11 @@ package com.tungsten.fcl.ui.manage
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.view.View
 import android.widget.Toast
 import androidx.core.content.edit
 import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.ui.adapter.SpacingItemDecoration
 import com.mio.ui.dialog.DriverSelectDialog
@@ -18,6 +20,7 @@ import com.tungsten.fcl.control.SelectControllerDialog
 import com.tungsten.fcl.databinding.PageVersionSettingBinding
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.Profile
+import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.setting.Profiles.getSelectedProfile
 import com.tungsten.fcl.setting.VersionSetting
 import com.tungsten.fcl.ui.UIManager
@@ -29,7 +32,6 @@ import com.tungsten.fclauncher.plugins.DriverPlugin.driverList
 import com.tungsten.fclauncher.plugins.DriverPlugin.selected
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.event.Event
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
@@ -49,6 +51,8 @@ import java.io.File
 import java.io.IOException
 import java.util.Locale
 import java.util.logging.Level
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
  * 版本设置页。设置项由 [VersionSettingAdapter] 以 RecyclerView 行级复用渲染，
@@ -68,7 +72,10 @@ class VersionSettingPage(
     private lateinit var binding: PageVersionSettingBinding
     private lateinit var adapter: VersionSettingAdapter
 
-    private val specificSettingsListener: InvalidationListener
+    /** 当前版本设置的变更监听（loadVersion 时切换注册对象） */
+    private var settingsChangeListener: Runnable? = null
+    private var lastIsolateGameDir = true
+    private var profileCollectJob: Job? = null
     private val selectedVersion: StringProperty = SimpleStringProperty()
     private val enableSpecificSettings: BooleanProperty = SimpleBooleanProperty(false)
     private val usedMemory: IntegerProperty = SimpleIntegerProperty(0)
@@ -76,13 +83,6 @@ class VersionSettingPage(
 
     init {
         create()
-        specificSettingsListener =
-            InvalidationListener {
-                enableSpecificSettings.set(!lastVersionSetting.isUsesGlobal)
-                Schedulers.androidUIThread().execute {
-                    adapter.update(lastVersionSetting, modpack.get(), enableSpecificSettings.get(), usedMemory.get())
-                }
-            }
     }
 
     private fun create() {
@@ -94,10 +94,25 @@ class VersionSettingPage(
             SpacingItemDecoration((8 * context.resources.displayMetrics.density).toInt())
         )
         binding.settingList.adapter = adapter
+
+        // 切换 Profile 时刷新设置（Repository 单例 StateFlow，attach 时收集、detach 取消避免泄漏）
+        contentView.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+            override fun onViewAttachedToWindow(v: View) {
+                profileCollectJob = activity.lifecycleScope.launch {
+                    Profiles.selectedProfile.collect { profile ->
+                        if (profile != null) loadVersion(profile, versionId)
+                    }
+                }
+            }
+
+            override fun onViewDetachedFromWindow(v: View) {
+                profileCollectJob?.cancel()
+            }
+        })
     }
 
     private fun editForceResolution() {
-        if (lastVersionSetting.forceResolutionProperty.get()) {
+        if (lastVersionSetting.isForceResolution) {
             val preferences = context.getSharedPreferences("launcher", MODE_PRIVATE)
             val dialog = EditDialog(context) { str ->
                 try {
@@ -117,7 +132,7 @@ class VersionSettingPage(
             }
             dialog.getEditText().setText(preferences.getString("force_resolution", "1920x1080"))
             dialog.onCancelListener = {
-                lastVersionSetting.forceResolutionProperty.set(false)
+                lastVersionSetting.isForceResolution = false
                 adapter.refreshRow(VersionSettingTag.FORCE_RESOLUTION)
             }
             dialog.show()
@@ -165,19 +180,25 @@ class VersionSettingPage(
         modpack.set(versionId != null && profile.repository.isModpack(versionId))
         usedMemory.set(MemoryUtils.getUsedDeviceMemory(context))
 
-        val listener = InvalidationListener {
-            UIManager.instance.manageUI.onRunDirectoryChange(
-                profile,
-                versionId
-            )
+        // 切换监听对象：旧实例移除，新实例注册（属性变化时按需刷新）
+        settingsChangeListener?.let { lastVersionSetting.removeOnChangeListener(it) }
+        lastIsolateGameDir = versionSetting.isIsolateGameDir
+        val listener = Runnable {
+            // 隔离目录变化时刷新模组/世界列表（仅游戏设置页）
+            if (id == ManageUI.PAGE_ID_MANAGE_SETTING && lastIsolateGameDir != versionSetting.isIsolateGameDir) {
+                lastIsolateGameDir = versionSetting.isIsolateGameDir
+                UIManager.instance.manageUI.onRunDirectoryChange(profile, versionId)
+            }
+            // usesGlobal 变化时刷新设置项
+            if (enableSpecificSettings.get() != !versionSetting.isUsesGlobal) {
+                enableSpecificSettings.set(!versionSetting.isUsesGlobal)
+                Schedulers.androidUIThread().execute {
+                    adapter.update(versionSetting, modpack.get(), enableSpecificSettings.get(), usedMemory.get())
+                }
+            }
         }
-        if (::lastVersionSetting.isInitialized) {
-            lastVersionSetting.isolateGameDirProperty.removeListener(listener)
-            lastVersionSetting.usesGlobalProperty.removeListener(specificSettingsListener)
-        }
-        if (id == ManageUI.PAGE_ID_MANAGE_SETTING) {
-            versionSetting.isolateGameDirProperty.addListener(listener)
-        }
+        settingsChangeListener = listener
+        versionSetting.addOnChangeListener(listener)
 
         // 驱动校验：非法驱动回退为 Turnip
         if (versionSetting.driver != "Turnip") {
@@ -194,7 +215,6 @@ class VersionSettingPage(
             }
         }
 
-        versionSetting.usesGlobalProperty.addListener(specificSettingsListener)
         if (versionId != null) enableSpecificSettings.set(!versionSetting.isUsesGlobal)
 
         lastVersionSetting = versionSetting
@@ -355,7 +375,7 @@ class VersionSettingPage(
                 Schedulers.androidUIThread().execute { loadVersion(profile, versionId) }
             }
             VersionSettingTag.VULKAN -> {
-                lastVersionSetting.vkDriverSystemProperty.set(checked)
+                lastVersionSetting.isVKDriverSystem = checked
                 if (checked && AndroidUtils.isAdrenoGPU()) {
                     val builder = FCLAlertDialog.Builder(context)
                     builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
@@ -369,7 +389,7 @@ class VersionSettingPage(
                 adapter.update(lastVersionSetting, modpack.get(), enableSpecificSettings.get(), usedMemory.get())
             }
             VersionSettingTag.FORCE_RESOLUTION -> {
-                lastVersionSetting.forceResolutionProperty.set(checked)
+                lastVersionSetting.isForceResolution = checked
                 if (checked) editForceResolution()
             }
             else -> {}
@@ -377,7 +397,7 @@ class VersionSettingPage(
     }
 
     override fun onSwitchLongClick(tag: VersionSettingTag) {
-        if (tag == VersionSettingTag.FORCE_RESOLUTION && lastVersionSetting.forceResolutionProperty.get()) {
+        if (tag == VersionSettingTag.FORCE_RESOLUTION && lastVersionSetting.isForceResolution) {
             editForceResolution()
         }
     }
@@ -385,8 +405,8 @@ class VersionSettingPage(
     override fun onLongPressEdit(tag: VersionSettingTag) {
         val dialog = FullEditDialog(context, true) { text ->
             when (tag) {
-                VersionSettingTag.JVM_ARGS -> lastVersionSetting.javaArgsProperty.set(text)
-                VersionSettingTag.MC_ARGS -> lastVersionSetting.minecraftArgsProperty.set(text)
+                VersionSettingTag.JVM_ARGS -> lastVersionSetting.javaArgs = text
+                VersionSettingTag.MC_ARGS -> lastVersionSetting.minecraftArgs = text
                 else -> {}
             }
             adapter.refreshRow(tag)

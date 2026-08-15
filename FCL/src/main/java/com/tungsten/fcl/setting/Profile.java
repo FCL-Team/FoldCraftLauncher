@@ -173,7 +173,7 @@ public final class Profile implements Observable {
         name.addListener(listener);
         global.addListener(listener);
         gameDir.addListener(listener);
-        global.get().addPropertyChangedListener(listener);
+        global.get().addOnChangeListener(() -> listener.invalidated(null));
         selectedVersion.addListener(listener);
     }
 
