@@ -268,6 +268,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         }
                     }
                 }
+                // 点击左侧菜单项：始终播放选中动画（已选中时重复点击也能触发），选中与切换逻辑沿用 setSelected
+                listOf(home, manage, download, controller, multiplayer, setting).forEach { menu ->
+                    menu.setOnClickListener {
+                        playMenuAnim(menu)
+                        menu.setSelected(true)
+                    }
+                }
                 home.setOnSelectListener(this@MainActivity)
                 manage.setOnSelectListener(this@MainActivity)
                 download.setOnSelectListener(this@MainActivity)
@@ -364,13 +371,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun onSelect(view: FCLMenuView) {
         refreshMenuView(view)
-        val speed = ThemeEngine.getInstance().getTheme().animationSpeed
-        AnimUtil.playRotation(view, speed * 100L, 0f, 360f)
-            .interpolator(OvershootInterpolator()).start()
-        AnimUtil.playScaleX(view, speed * 100L, 1f, 2f, 1f)
-            .start()
-        AnimUtil.playScaleY(view, speed * 100L, 1f, 2f, 1f)
-            .start()
         binding.apply {
             when (view) {
                 home -> {
@@ -412,6 +412,17 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
             }
         }
+    }
+
+    /**
+     * 点击左侧菜单项时播放的选中动画（旋转 + 缩放），重复点击可无限触发
+     */
+    private fun playMenuAnim(view: FCLMenuView) {
+        val speed = ThemeEngine.getInstance().getTheme().animationSpeed
+        AnimUtil.playRotation(view, speed * 100L, 0f, 360f)
+            .interpolator(OvershootInterpolator()).start()
+        AnimUtil.playScaleX(view, speed * 100L, 1f, 2f, 1f).start()
+        AnimUtil.playScaleY(view, speed * 100L, 1f, 2f, 1f).start()
     }
 
     fun refreshMenuView(view: FCLMenuView?) {
