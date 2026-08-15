@@ -52,6 +52,8 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
         pagePager = new ViewPager2(getContext());
         pagePager.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         pagePager.setOffscreenPageLimit(ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT);
+        // 禁用滑动手势：页面内滚动内容与滑动切换冲突，仅通过 tab / showPage 切换
+        pagePager.setUserInputEnabled(false);
         pagePager.setAdapter(new PageAdapter());
         container.addView(pagePager);
 
@@ -86,7 +88,7 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
             @Override
             public void onPageSelected(int position) {
                 dismissAllTempPages();
-                // tab 高亮同步（页面可能被滑动切换）
+                // tab 高亮同步
                 if (tabLayout != null) {
                     TabLayout.Tab tab = tabLayout.getTabAt(position);
                     if (tab != null && tabLayout.getSelectedTabPosition() != position) {
@@ -94,16 +96,15 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
                     }
                 }
                 // 页面切换过渡动画：不创建中间页（瞬时跳转），直接对目标页做淡入 + 上滑进入。
-                // post 确保页面已挂载到 ViewPager2 容器后再运行动画
+                // 同步执行（不 post）：onPageSelected 时页面已挂载但尚未绘制，置透明发生在首帧绘制前，
+                // 不会出现先显示后消失的闪烁
                 FCLPage page = getPage(position);
                 if (page != null) {
                     View contentView = page.getContentView();
-                    contentView.post(() -> {
-                        contentView.animate().cancel();
-                        contentView.setAlpha(0f);
-                        contentView.setTranslationY(contentView.getResources().getDisplayMetrics().density * 30f);
-                        contentView.animate().alpha(1f).translationY(0f).setDuration(250).start();
-                    });
+                    contentView.animate().cancel();
+                    contentView.setAlpha(0f);
+                    contentView.setTranslationY(contentView.getResources().getDisplayMetrics().density * 30f);
+                    contentView.animate().alpha(1f).translationY(0f).setDuration(250).start();
                 }
             }
         });
