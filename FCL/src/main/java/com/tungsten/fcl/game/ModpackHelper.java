@@ -199,7 +199,7 @@ public final class ModpackHelper {
         return new ManuallyCreatedModpackInstallTask(profile, zipFile.toPath(), charset, name)
                 .thenAcceptAsync(Schedulers.androidUIThread(), location -> {
                     Profile newProfile = new Profile(name, location.toFile());
-                    Profiles.getProfiles().add(newProfile);
+                    Profiles.addProfile(newProfile);
                     Profiles.setSelectedProfile(newProfile);
                 });
     }

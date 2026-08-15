@@ -11,7 +11,6 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.download.common.DownloadPage;
 import com.tungsten.fcl.ui.download.version.VersionInstallPage;
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
@@ -50,7 +49,7 @@ public class DownloadUI extends FCLCommonUI {
 
     private final Consumer<Profile> versionsListener = this::loadVersions;
     private Profile listenerProfile;
-    private InvalidationListener selectedVersionListener;
+    private Runnable selectedVersionListener;
 
     public DownloadUI(Context context, int id) {
         super(context, id);
@@ -98,8 +97,8 @@ public class DownloadUI extends FCLCommonUI {
         Profiles.registerVersionsListener(versionsListener);
         downloadPage.loadVersion(Profiles.getSelectedProfile(), null);
         listenerProfile = Profiles.getSelectedProfile();
-        selectedVersionListener = observable -> loadVersions(Profiles.getSelectedProfile());
-        listenerProfile.selectedVersionProperty().addListener(selectedVersionListener);
+        selectedVersionListener = () -> loadVersions(Profiles.getSelectedProfile());
+        listenerProfile.addSelectedVersionListener(selectedVersionListener);
 
         // UI 被 ViewPager 回收时注销监听（替代原 onDestroy 生命周期），防止静态列表累积泄漏
         getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
@@ -112,7 +111,7 @@ public class DownloadUI extends FCLCommonUI {
             public void onViewDetachedFromWindow(View v) {
                 Profiles.unregisterVersionsListener(versionsListener);
                 if (selectedVersionListener != null) {
-                    listenerProfile.selectedVersionProperty().removeListener(selectedVersionListener);
+                    listenerProfile.removeSelectedVersionListener(selectedVersionListener);
                 }
             }
         });
@@ -256,11 +255,11 @@ public class DownloadUI extends FCLCommonUI {
             downloadPage.loadVersion(profile, null);
             // 先移除旧监听再添加，避免重复注册累积（引用旧 UI 实例导致泄漏）
             if (selectedVersionListener != null) {
-                listenerProfile.selectedVersionProperty().removeListener(selectedVersionListener);
+                listenerProfile.removeSelectedVersionListener(selectedVersionListener);
             }
-            selectedVersionListener = observable -> loadVersions(Profiles.getSelectedProfile());
+            selectedVersionListener = () -> loadVersions(Profiles.getSelectedProfile());
             listenerProfile = profile;
-            profile.selectedVersionProperty().addListener(selectedVersionListener);
+            profile.addSelectedVersionListener(selectedVersionListener);
         }
     }
 

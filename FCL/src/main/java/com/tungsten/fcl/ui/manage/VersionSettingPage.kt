@@ -15,7 +15,7 @@ import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.showErrorDialog
 import com.mio.util.showItemSelectionDialog
 import com.tungsten.fcl.R
-import com.tungsten.fcl.activity.MainActivity.Companion.getInstance
+import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.control.SelectControllerDialog
 import com.tungsten.fcl.databinding.PageVersionSettingBinding
 import com.tungsten.fcl.setting.Controllers
@@ -76,6 +76,7 @@ class VersionSettingPage(
     private var settingsChangeListener: Runnable? = null
     private var lastIsolateGameDir = true
     private var profileCollectJob: Job? = null
+    private var profileVersionListener: Runnable? = null
     private val selectedVersion: StringProperty = SimpleStringProperty()
     private val enableSpecificSettings: BooleanProperty = SimpleBooleanProperty(false)
     private val usedMemory: IntegerProperty = SimpleIntegerProperty(0)
@@ -167,11 +168,11 @@ class VersionSettingPage(
 
         if (versionId == null) {
             enableSpecificSettings.set(true)
-            listenerHolder.add(
-                FXUtils.onWeakChangeAndOperate(
-                    profile.selectedVersionProperty()
-                ) { v: String? -> this.selectedVersion.value = v }
-            )
+            // 监听 profile 版本变化（替代 fakefx property 监听）
+            profileVersionListener?.let { profile.removeSelectedVersionListener(it) }
+            val listener = Runnable { this.selectedVersion.value = profile.selectedVersion }
+            profileVersionListener = listener
+            profile.addSelectedVersionListener(listener)
         }
 
         val versionSetting = profile.getVersionSetting(versionId)
@@ -193,7 +194,12 @@ class VersionSettingPage(
             if (enableSpecificSettings.get() != !versionSetting.isUsesGlobal) {
                 enableSpecificSettings.set(!versionSetting.isUsesGlobal)
                 Schedulers.androidUIThread().execute {
-                    adapter.update(versionSetting, modpack.get(), enableSpecificSettings.get(), usedMemory.get())
+                    adapter.update(
+                        versionSetting,
+                        modpack.get(),
+                        enableSpecificSettings.get(),
+                        usedMemory.get()
+                    )
                 }
             }
         }
@@ -218,7 +224,12 @@ class VersionSettingPage(
         if (versionId != null) enableSpecificSettings.set(!versionSetting.isUsesGlobal)
 
         lastVersionSetting = versionSetting
-        adapter.update(versionSetting, modpack.get(), enableSpecificSettings.get(), usedMemory.get())
+        adapter.update(
+            versionSetting,
+            modpack.get(),
+            enableSpecificSettings.get(),
+            usedMemory.get()
+        )
         Controllers.addCallback {
             adapter.refreshRow(VersionSettingTag.EDIT_CONTROLLER)
         }
@@ -228,7 +239,7 @@ class VersionSettingPage(
     private fun onExploreIcon() {
         if (versionId == null) return
 
-        getInstance().fileLauncher.launchSingleSelection(null, listOf(".png")) {
+        MainActivity.getInstance().fileLauncher.launchSingleSelection(null, listOf(".png")) {
             var path = it?.get(0) ?: return@launchSingleSelection
             val uri = path.toUri()
             if (AndroidUtils.isDocUri(uri)) {
@@ -281,10 +292,12 @@ class VersionSettingPage(
                     adapter.refreshRow(VersionSettingTag.EDIT_JAVA)
                 }.show()
             }
+
             VersionSettingTag.INSTALL_JAVA -> installDialog(
                 "https://github.com/FCL-Team/FoldCraftLauncher/releases/tag/java",
                 "https://pan.quark.cn/s/a5f230c3da03"
             )
+
             VersionSettingTag.EDIT_CONTROLLER -> {
                 if (Controllers.isInitialized()) {
                     val dialog = SelectControllerDialog(
@@ -303,10 +316,12 @@ class VersionSettingPage(
                     ).show()
                 }
             }
+
             VersionSettingTag.INSTALL_CONTROLLER -> {
-                getInstance().binding.controller.setSelected(true)
-                getInstance().uiManager.controllerUI.showPage(1)
+                MainActivity.getInstance().binding.controller.setSelected(true)
+                MainActivity.getInstance().uiManager.controllerUI.showPage(1)
             }
+
             VersionSettingTag.EDIT_BACKEND -> {
                 showItemSelectionDialog(
                     context,
@@ -318,6 +333,7 @@ class VersionSettingPage(
                     adapter.refreshRow(VersionSettingTag.EDIT_BACKEND)
                 }
             }
+
             VersionSettingTag.EDIT_RENDERER -> {
                 RendererSelectDialog(context, globalSetting) {
                     if (globalSetting && getSelectedProfile().versionSetting != null && !getSelectedProfile().versionSetting.isGlobal) {
@@ -333,20 +349,24 @@ class VersionSettingPage(
                     adapter.refreshRow(VersionSettingTag.EDIT_RENDERER)
                 }.show()
             }
+
             VersionSettingTag.INSTALL_RENDERER -> installDialog(
                 "https://github.com/ShirosakiMio/FCLRendererPlugin/releases/tag/Renderer",
                 "https://pan.quark.cn/s/a9f6e9d860d9"
             )
+
             VersionSettingTag.EDIT_DRIVER -> {
                 DriverSelectDialog(
                     context,
                     globalSetting
                 ) { adapter.refreshRow(VersionSettingTag.EDIT_DRIVER) }.show()
             }
+
             VersionSettingTag.INSTALL_DRIVER -> installDialog(
                 "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip",
                 "https://pan.quark.cn/s/d87c59695250"
             )
+
             VersionSettingTag.EDIT_ENV -> {
                 val preferences = context.getSharedPreferences("launcher", MODE_PRIVATE)
                 val dialog = FullEditDialog(context, true) {
@@ -358,6 +378,7 @@ class VersionSettingPage(
                 dialog.binding.editText.setText(preferences.getString("env", ""))
                 dialog.show()
             }
+
             else -> {}
         }
     }
@@ -374,6 +395,7 @@ class VersionSettingPage(
                 else profile.repository.globalizeVersionSetting(versionId)
                 Schedulers.androidUIThread().execute { loadVersion(profile, versionId) }
             }
+
             VersionSettingTag.VULKAN -> {
                 lastVersionSetting.isVKDriverSystem = checked
                 if (checked && AndroidUtils.isAdrenoGPU()) {
@@ -386,12 +408,19 @@ class VersionSettingPage(
                     )
                     builder.create().show()
                 }
-                adapter.update(lastVersionSetting, modpack.get(), enableSpecificSettings.get(), usedMemory.get())
+                adapter.update(
+                    lastVersionSetting,
+                    modpack.get(),
+                    enableSpecificSettings.get(),
+                    usedMemory.get()
+                )
             }
+
             VersionSettingTag.FORCE_RESOLUTION -> {
                 lastVersionSetting.isForceResolution = checked
                 if (checked) editForceResolution()
             }
+
             else -> {}
         }
     }

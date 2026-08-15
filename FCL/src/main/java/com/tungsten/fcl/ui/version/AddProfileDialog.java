@@ -56,7 +56,7 @@ public class AddProfileDialog extends FCLDialog implements View.OnClickListener 
             } else if (Profiles.getProfiles().stream().anyMatch(profile -> profile.getName().equals(editText.getText().toString()))) {
                 Toast.makeText(getContext(), getContext().getString(R.string.profile_already_exist), Toast.LENGTH_SHORT).show();
             } else {
-                Profiles.getProfiles().add(new Profile(editText.getText().toString(), new File(pathText.getText().toString())));
+                Profiles.addProfile(new Profile(editText.getText().toString(), new File(pathText.getText().toString())));
                 ((VersionListPage) UIManager.getInstance().getVersionUI().getPage(0)).refreshProfile();
                 dismiss();
             }

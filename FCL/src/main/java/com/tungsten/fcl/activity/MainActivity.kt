@@ -701,9 +701,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun setupVersionDisplay() {
-        holder.add(FXUtils.onWeakChangeAndOperate(Profiles.selectedVersionProperty()) { s: String? ->
-            lifecycleScope.launch { loadVersion(s) }
-        })
+        // 选中版本变化时刷新主界面版本显示（Repository 单例 StateFlow，随 Activity 生命周期取消）
+        lifecycleScope.launch {
+            Profiles.selectedVersion.collect { s ->
+                loadVersion(s)
+            }
+        }
     }
 
     private fun accountSubtitle(context: Context, account: Account): ObservableValue<String> {

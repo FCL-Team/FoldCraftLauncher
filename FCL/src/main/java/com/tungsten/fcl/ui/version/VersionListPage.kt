@@ -37,6 +37,8 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
     private var adapter: VersionListAdapter? = null
     private lateinit var children: MutableList<VersionListItem>
     private var textWatcher: TextWatcher? = null
+    private var highlightedProfile: Profile? = null
+    private var versionHighlightListener: Runnable? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -219,13 +221,15 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                         binding.versionList.scrollToPosition(children.indexOf(selected))
                     }
                 }
-                children.forEach {
-                    it.selectedProperty().bind(
-                        Bindings.createBooleanBinding({
-                            profile.selectedVersionProperty().get() == it.version
-                        }, profile.selectedVersionProperty())
-                    )
+                // 版本选中高亮：监听 profile 版本变化时更新（替代 fakefx bind）
+                versionHighlightListener?.let { highlightedProfile?.removeSelectedVersionListener(it) }
+                val highlightListener = Runnable {
+                    children.forEach { item -> item.selectedProperty().set(profile.selectedVersion == item.version) }
                 }
+                versionHighlightListener = highlightListener
+                highlightedProfile = profile
+                profile.addSelectedVersionListener(highlightListener)
+                children.forEach { item -> item.selectedProperty().set(profile.selectedVersion == item.version) }
             }
         }
     }

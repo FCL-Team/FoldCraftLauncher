@@ -16,16 +16,16 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import java.util.List;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 public class ProfileListAdapter extends FCLAdapter {
 
-    private ObservableList<Profile> list;
+    private List<Profile> list;
 
-    public ProfileListAdapter(Context context, ObservableList<Profile> list) {
+    public ProfileListAdapter(Context context, List<Profile> list) {
         super(context);
         this.list = list;
     }
@@ -80,7 +80,7 @@ public class ProfileListAdapter extends FCLAdapter {
                 playAnim(viewHolder.parent);
                 return;
             }
-            Profiles.getProfiles().remove(profile);
+            Profiles.removeProfile(profile);
             ((VersionListPage) UIManager.getInstance().getVersionUI().getPage(0)).refreshProfile();
         });
         return view;

@@ -18,14 +18,10 @@
 package com.tungsten.fcl.setting
 
 import com.tungsten.fcl.R
-import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.event.EventBus
 import com.tungsten.fclcore.event.RefreshedVersionsEvent
-import com.tungsten.fclcore.fakefx.beans.Observable
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringProperty
-import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyStringWrapper
 import com.tungsten.fclcore.fakefx.collections.FXCollections
 import java.io.File
 import java.util.Optional
@@ -38,9 +34,9 @@ import kotlinx.coroutines.flow.asStateFlow
 object Profiles {
     private var isFirstRefresh = true
 
+    /** Profile 列表（Repository 单例，修改统一走 addProfile/removeProfile 以触发保存与选中项校验） */
     @JvmStatic
-    val profiles =
-        FXCollections.observableArrayList<Profile> { arrayOf<Observable>(it) }
+    val profiles = mutableListOf<Profile>()
 
     private val _selectedProfile = MutableStateFlow<Profile?>(null)
 
@@ -51,16 +47,29 @@ object Profiles {
     /** 选中 Profile 变化的监听者（setter 同步通知，调用线程即回调线程） */
     private val selectedProfileListeners = mutableListOf<Runnable>()
 
-    init {
-        profiles.addListener(FXUtils.onInvalidating { updateProfileStorages() })
-        profiles.addListener(FXUtils.onInvalidating { checkProfiles() })
-        // 列表变化时校验选中项仍在列表中（原 fakefx property invalidated 逻辑）
-        profiles.addListener(FXUtils.onInvalidating {
-            val current = _selectedProfile.value
-            if (current != null && !profiles.contains(current)) {
-                setSelectedProfileInternal(profiles[0])
-            }
-        })
+    /** 添加 Profile（触发配置保存、默认补全与选中项校验） */
+    @JvmStatic
+    fun addProfile(profile: Profile) {
+        registerProfileSave(profile)
+        profiles.add(profile)
+        onProfilesChanged()
+    }
+
+    /** 移除 Profile（触发配置保存、默认补全与选中项校验） */
+    @JvmStatic
+    fun removeProfile(profile: Profile) {
+        profiles.remove(profile)
+        onProfilesChanged()
+    }
+
+    private fun onProfilesChanged() {
+        updateProfileStorages()
+        checkProfiles()
+        // 列表变化时校验选中项仍在列表中（原 fakefx 列表监听逻辑）
+        val current = _selectedProfile.value
+        if (current != null && !profiles.contains(current)) {
+            setSelectedProfileInternal(profiles[0])
+        }
     }
 
     private fun checkProfiles() {
@@ -75,8 +84,15 @@ object Profiles {
                 FCLPath.CONTEXT.getString(R.string.profile_private),
                 File(FCLPath.PRIVATE_COMMON_DIR)
             )
-            profiles.addAll(current, home)
+            registerProfileSave(current)
+            registerProfileSave(home)
+            profiles.addAll(listOf(current, home))
         }
+    }
+
+    /** 全局设置变化时触发配置保存 */
+    private fun registerProfileSave(profile: Profile) {
+        profile.onGlobalChanged = { updateProfileStorages() }
     }
 
     /**
@@ -91,10 +107,10 @@ object Profiles {
         // update storage
         val newConfigurations = TreeMap<String, Profile>()
         for (profile in profiles) {
-            newConfigurations.put(profile.name, profile)
+            newConfigurations[profile.name] = profile
         }
         ConfigHolder.config().configurations.value =
-            FXCollections.observableMap<String, Profile>(newConfigurations)
+            FXCollections.observableMap(newConfigurations)
     }
 
     /**
@@ -110,6 +126,7 @@ object Profiles {
         ConfigHolder.config().configurations.forEach { (name, profile) ->
             if (!names.add(name)) return@forEach
             profile.name = name
+            registerProfileSave(profile)
             profiles.add(profile)
         }
         checkProfiles()
@@ -120,11 +137,11 @@ object Profiles {
         profile.repository.refreshVersions()
         setSelectedProfileInternal(profile)
         holder.add(
-            EventBus.EVENT_BUS.channel<RefreshedVersionsEvent?>(RefreshedVersionsEvent::class.java)
+            EventBus.EVENT_BUS.channel(RefreshedVersionsEvent::class.java)
                 .registerWeak { event ->
                     val profile = _selectedProfile.value ?: return@registerWeak
                     if (profile.repository === event!!.getSource()) {
-                        selectedVersion.bind(profile.selectedVersionProperty())
+                        bindSelectedVersion(profile)
                         for (listener in versionsListeners) listener.accept(profile)
                     }
                 }
@@ -150,10 +167,9 @@ object Profiles {
                 }
             }
             if (profile.repository.isLoaded) {
-                selectedVersion.bind(profile.selectedVersionProperty())
+                bindSelectedVersion(profile)
             } else {
-                selectedVersion.unbind()
-                selectedVersion.set(null)
+                unbindSelectedVersion()
                 // bind when repository was reloaded.
 //                    profile.repository.refreshVersionsAsync().start()
             }
@@ -186,16 +202,42 @@ object Profiles {
         selectedProfileListeners.remove(listener)
     }
 
-    private val selectedVersion = ReadOnlyStringWrapper()
+    private val _selectedVersion = MutableStateFlow<String?>(null)
 
-    fun selectedVersionProperty(): ReadOnlyStringProperty {
-        return selectedVersion.getReadOnlyProperty()
+    /** 当前选中 Profile 的选中版本（Repository 单例状态，Java 侧访问 getSelectedVersionFlow()） */
+    @get:JvmName("getSelectedVersionFlow")
+    val selectedVersion: StateFlow<String?> = _selectedVersion.asStateFlow()
+
+    private var selectedVersionProfile: Profile? = null
+    private var selectedVersionListener: Runnable? = null
+
+    /** 跟随指定 Profile 的版本属性（原 fakefx bind 语义） */
+    private fun bindSelectedVersion(profile: Profile) {
+        selectedVersionProfile?.let { old ->
+            selectedVersionListener?.let { old.removeSelectedVersionListener(it) }
+        }
+        val listener = Runnable {
+            _selectedVersion.value = profile.selectedVersion
+        }
+        selectedVersionListener = listener
+        selectedVersionProfile = profile
+        profile.addSelectedVersionListener(listener)
+        _selectedVersion.value = profile.selectedVersion
+    }
+
+    private fun unbindSelectedVersion() {
+        selectedVersionProfile?.let { old ->
+            selectedVersionListener?.let { old.removeSelectedVersionListener(it) }
+        }
+        selectedVersionProfile = null
+        selectedVersionListener = null
+        _selectedVersion.value = null
     }
 
     // Guaranteed that the repository is loaded.
     @JvmStatic
     fun getSelectedVersion(): String? {
-        return selectedVersion.get()
+        return _selectedVersion.value
     }
 
     private val versionsListeners: MutableList<Consumer<Profile>> =
