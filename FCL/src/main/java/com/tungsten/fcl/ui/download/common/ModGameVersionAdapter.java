@@ -59,7 +59,7 @@ public class ModGameVersionAdapter extends FCLAdapter {
             viewHolder.version.setSingleLine(true);
             viewHolder.version.setAutoTint(true);
             viewHolder.version.setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
-            viewHolder.parent.setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), com.tungsten.fcllibrary.R.xml.anim_scale));
+            viewHolder.parent.setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), com.tungsten.fcl.R.xml.anim_scale));
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();

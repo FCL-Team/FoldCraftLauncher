@@ -455,7 +455,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 builder1.setAlertLevel(failed.isEmpty() ? FCLAlertDialog.AlertLevel.INFO : FCLAlertDialog.AlertLevel.ALERT);
                 builder1.setTitle(getContext().getString(R.string.mods_add));
                 builder1.setMessage(String.join("\n", prompt));
-                builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                 builder1.create().show();
                 loadMods(modManager);
             }).start();
@@ -504,14 +504,14 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                             builder.setTitle(getContext().getString(R.string.message_failed));
                             builder.setMessage("Failed to check updates");
-                            builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.create().show();
                         } else if (result.isEmpty()) {
                             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
                             builder.setCancelable(false);
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                             builder.setMessage(getContext().getString(R.string.mods_check_updates_empty));
-                            builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.create().show();
                         } else {
                             ModUpdatesPage page = new ModUpdatesPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_mod_update, this, modManager, result);

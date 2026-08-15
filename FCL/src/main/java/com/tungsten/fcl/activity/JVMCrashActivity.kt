@@ -129,7 +129,7 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
                 startActivity(
                     Intent.createChooser(
                         intent,
-                        getString(com.tungsten.fcllibrary.R.string.crash_reporter_share)
+                        getString(com.tungsten.fcl.R.string.crash_reporter_share)
                     )
                 )
             } catch (e: Exception) {

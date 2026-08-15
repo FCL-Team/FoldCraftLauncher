@@ -336,7 +336,7 @@ public final class LauncherHelper {
                             builder.setCancelable(false);
                             builder.setTitle(context.getString(R.string.launch_failed));
                             builder.setMessage(message);
-                            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.create().show();
                         });
                     }

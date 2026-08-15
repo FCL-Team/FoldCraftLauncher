@@ -128,7 +128,7 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
                         if (exception == null) {
                             Intent intent = new Intent(Intent.ACTION_VIEW);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            Uri apkUri = FileProvider.getUriForFile(getContext(), getContext().getString(com.tungsten.fcllibrary.R.string.file_browser_provider), new File(FCLPath.CACHE_DIR, "FoldCraftLauncher.apk"));
+                            Uri apkUri = FileProvider.getUriForFile(getContext(), getContext().getString(com.tungsten.fcl.R.string.file_browser_provider), new File(FCLPath.CACHE_DIR, "FoldCraftLauncher.apk"));
                             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
                             getContext().startActivity(intent);
@@ -137,7 +137,7 @@ public class UpdateDialog extends FCLDialog implements View.OnClickListener {
                             builder.setCancelable(false);
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                             builder.setMessage(getContext().getString(R.string.update_failed) + "\n" + exception.getMessage());
-                            builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.setPositiveButton(getContext().getString(R.string.update_netdisk), ()->{
                                 AndroidUtils.openLink(getContext(), version.getNetdiskUrl());
                             });

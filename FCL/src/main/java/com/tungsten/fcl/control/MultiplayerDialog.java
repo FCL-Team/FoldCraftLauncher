@@ -493,8 +493,8 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
                         ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != TerracottaState.GuestStarting.Difficulty.UNKNOWN)
                     if (((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() == TerracottaState.GuestStarting.Difficulty.EASIEST ||
                             ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() == TerracottaState.GuestStarting.Difficulty.SIMPLE)
-                        return AppCompatResources.getDrawable(context, com.tungsten.fcllibrary.R.drawable.ic_baseline_info_24);
-                return AppCompatResources.getDrawable(context, com.tungsten.fcllibrary.R.drawable.ic_baseline_warning_24);
+                        return AppCompatResources.getDrawable(context, com.tungsten.fcl.R.drawable.ic_baseline_info_24);
+                return AppCompatResources.getDrawable(context, com.tungsten.fcl.R.drawable.ic_baseline_warning_24);
             }, Terracotta.stateProperty()));
             ((FCLTextView) findViewById(R.id.difficulty_text)).stringProperty().bind(Bindings.createStringBinding(() -> {
                 if (Terracotta.stateProperty().get() instanceof TerracottaState.GuestStarting &&

@@ -91,7 +91,7 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                             builder.setMessage(Accounts.localizeErrorMessage(getContext(), exception));
                             builder.setCancelable(false);
-                            builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.create().show();
                         }
                         positive.setEnabled(true);

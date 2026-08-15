@@ -206,7 +206,7 @@ class WorldListPage(context: Context, id: Int, parent: FCLUILayout, resId: Int) 
                 builder1.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
                 builder1.setMessage(context.getString(R.string.world_import_invalid))
                 builder1.setNegativeButton(
-                    context.getString(com.tungsten.fcllibrary.R.string.dialog_positive),
+                    context.getString(com.tungsten.fcl.R.string.dialog_positive),
                     null
                 )
                 builder1.create().show()

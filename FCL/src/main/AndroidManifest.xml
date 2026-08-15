@@ -165,6 +165,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+        <provider
+            android:name="com.tungsten.fcllibrary.crash.CrashReporterInitProvider"
+            android:authorities="${applicationId}.crashreporterinitprovider"
+            android:exported="false"
+            android:initOrder="101" />
     </application>
     <queries>
         <package android:name="net.kdt.pojavlaunch.ffmpeg" />

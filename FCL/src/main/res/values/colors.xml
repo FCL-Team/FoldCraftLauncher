@@ -7,4 +7,6 @@
     <color name="right_menu_color">#80F4F4F4</color>
     <color name="icon_background_color">#FFFFFF</color>
     <color name="primary_text">#0E0E0E</color>
+    <!-- 原 FCLLibrary 模块颜色（模块已并入 FCL） -->
+    <color name="dialog_background">#F4F4F4</color>
 </resources>

@@ -66,7 +66,7 @@ public class WorldListItem {
             builder.setCancelable(false);
             builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
             builder.setMessage(context.getString(R.string.world_datapack_1_13));
-            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+            builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
             builder.create().show();
             return;
         }

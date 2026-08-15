@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary_text">#FFFFFF</color>
+    <!-- 原 FCLLibrary 模块颜色（模块已并入 FCL） -->
+    <color name="dialog_background">#232323</color>
 </resources>

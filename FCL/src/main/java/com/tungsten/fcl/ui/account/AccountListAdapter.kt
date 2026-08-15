@@ -75,7 +75,7 @@ class AccountListAdapter(
                         builder1.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
                         builder1.setMessage(Accounts.localizeErrorMessage(context, ex))
                         builder1.setNegativeButton(
-                            context.getString(com.tungsten.fcllibrary.R.string.dialog_positive),
+                            context.getString(com.tungsten.fcl.R.string.dialog_positive),
                             null
                         )
                         builder1.create().show()

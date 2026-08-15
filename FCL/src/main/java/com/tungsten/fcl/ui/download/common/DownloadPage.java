@@ -361,7 +361,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                             builder.setCancelable(false);
                             builder.setTitle(context.getString(R.string.install_failed_downloading));
                             builder.setMessage(DownloadProviders.localizeErrorMessage(context, exception));
-                            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                            builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.create().show();
                         }
                     } else {

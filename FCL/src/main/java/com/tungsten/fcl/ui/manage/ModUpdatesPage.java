@@ -128,7 +128,7 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
                 builder.setCancelable(false);
                 builder.setTitle(getContext().getString(R.string.install_failed));
                 builder.setMessage(getContext().getString(R.string.mods_check_updates_failed) + "\n" + task.getFailedMods().stream().map(LocalModFile::getFileName).collect(Collectors.joining("\n")));
-                builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                 builder.create().show();
             }
 
@@ -137,7 +137,7 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
                 builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                 builder.setCancelable(false);
                 builder.setMessage(getContext().getString(R.string.install_success));
-                builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                 builder.create().show();
             }
         }).executor();
@@ -180,7 +180,7 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
                 builder.setTitle(getContext().getString(R.string.message_error));
                 builder.setMessage(exception.getMessage());
             }
-            builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+            builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
             builder.create().show();
         }).executor();
         taskDialog.setExecutor(executor);

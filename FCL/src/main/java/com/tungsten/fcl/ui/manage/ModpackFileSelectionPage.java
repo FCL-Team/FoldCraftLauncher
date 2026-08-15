@@ -123,7 +123,7 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
                         builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                         builder1.setCancelable(false);
                         builder1.setMessage(getContext().getString(R.string.message_success));
-                        builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> ManagePageManager.getInstance().dismissAllTempPagesCreatedByPage(ManagePageManager.PAGE_ID_MANAGE_MANAGE));
+                        builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> ManagePageManager.getInstance().dismissAllTempPagesCreatedByPage(ManagePageManager.PAGE_ID_MANAGE_MANAGE));
                         builder1.create().show();
                     } else {
                         if (executor.getException() == null)
@@ -134,7 +134,7 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
                         builder1.setCancelable(false);
                         builder1.setTitle(getContext().getString(R.string.message_failed));
                         builder1.setMessage(appendix);
-                        builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                        builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                         builder1.create().show();
                     }
 

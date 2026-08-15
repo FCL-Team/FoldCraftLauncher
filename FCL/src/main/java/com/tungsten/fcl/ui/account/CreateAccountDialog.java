@@ -200,7 +200,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
                                     .setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
                                     .setMessage(Accounts.localizeErrorMessage(getContext(), exception))
                                     .setCancelable(false)
-                                    .setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null)
+                                    .setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null)
                                     .useAutoLink()
                                     .create()
                                     .show();

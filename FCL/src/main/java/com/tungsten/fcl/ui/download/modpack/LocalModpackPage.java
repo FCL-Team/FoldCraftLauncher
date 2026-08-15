@@ -106,7 +106,7 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
                         builder.setCancelable(false);
                         builder.setTitle(getContext().getString(R.string.message_error));
                         builder.setMessage(getContext().getString(R.string.modpack_task_install_error));
-                        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+                        builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                             if (updateVersion == null) {
                                 DownloadPageManager.getInstance().dismissCurrentTempPage();
                             } else {
@@ -184,7 +184,7 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
             builder.setTitle(getContext().getString(R.string.modpack_description));
             CharSequence charSequence = Html.fromHtml(manifest.getDescription(), 0);
             builder.setMessage(charSequence);
-            builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+            builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
             builder.create().show();
         }
     }

@@ -76,7 +76,7 @@ class SplashActivity : FCLActivity() {
                     sharedPreferences.edit { putBoolean("isAgree", true) }
                     checkPermission()
                 }
-                setNegativeButton(getString(com.tungsten.fcllibrary.R.string.crash_reporter_close)) { finish() }
+                setNegativeButton(getString(com.tungsten.fcl.R.string.crash_reporter_close)) { finish() }
                 create().show()
             }
         }

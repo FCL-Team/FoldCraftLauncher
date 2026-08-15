@@ -20,7 +20,6 @@ rootProject.name = "Fold Craft Launcher"
 include(":FCL")
 include(":FCLCore")
 include(":FCLauncher")
-include(":FCLLibrary")
 include(":Terracotta")
 include(":ZipFileSystem")
 include(":LWJGL")

@@ -118,7 +118,7 @@ public class VersionInstallInfoPage extends FCLTempPage implements View.OnClickL
                     builder.setCancelable(false);
                     builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                     builder.setMessage(getContext().getString(R.string.install_installer_fabric_api_warning));
-                    builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                    builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                     builder.create().show();
                 }
 
@@ -235,7 +235,7 @@ public class VersionInstallInfoPage extends FCLTempPage implements View.OnClickL
                                     builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                                     builder1.setCancelable(false);
                                     builder1.setMessage(getContext().getString(R.string.install_success));
-                                    builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> DownloadPageManager.getInstance().dismissCurrentTempPage());
+                                    builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> DownloadPageManager.getInstance().dismissCurrentTempPage());
                                     builder1.create().show();
                                 } else {
                                     if (executor.getException() == null)
@@ -276,7 +276,7 @@ public class VersionInstallInfoPage extends FCLTempPage implements View.OnClickL
         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-        builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), next::run);
+        builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), next::run);
         String title;
         String msg;
         if (exception instanceof LibraryDownloadException) {

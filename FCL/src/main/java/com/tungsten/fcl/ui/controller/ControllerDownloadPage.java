@@ -219,7 +219,7 @@ public class ControllerDownloadPage extends FCLTempPage implements View.OnClickL
                         builder.setCancelable(false);
                         builder.setTitle(getContext().getString(R.string.install_failed_downloading));
                         builder.setMessage(DownloadProviders.localizeErrorMessage(getContext(), exception));
-                        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                        builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                         builder.create().show();
                     }
                 });

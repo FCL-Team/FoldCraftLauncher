@@ -224,7 +224,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                     builder.setCancelable(false);
                     builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                     builder.setMessage(getContext().getString(R.string.update_check_failed) + "\n" + e);
-                    builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                    builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                     builder.create().show();
                 }
             }).start();
@@ -244,7 +244,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                         builder.setCancelable(false);
                         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                         builder.setMessage(getContext().getString(R.string.settings_launcher_launcher_log_export_failed) + "\n" + e);
-                        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                        builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                         builder.create().show();
                     });
                     LOG.log(Level.WARNING, "Failed to export logs", e);
@@ -255,7 +255,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                     builder.setCancelable(false);
                     builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                     builder.setMessage(AndroidUtils.getLocalizedText(getContext(), "settings_launcher_launcher_log_export_success", logFile));
-                    builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                    builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                     builder.create().show();
                 });
             });
@@ -507,7 +507,7 @@ public class LauncherSettingPage extends FCLCommonPage implements View.OnClickLi
                 new FCLAlertDialog.Builder(getContext())
                         .setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
                         .setMessage(getContext().getString(R.string.message_warn_restart_after_change))
-                        .setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+                        .setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
 
                         })
                         .create()

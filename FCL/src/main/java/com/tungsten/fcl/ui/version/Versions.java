@@ -68,7 +68,7 @@ public class Versions {
             builder.setCancelable(false);
             builder.setTitle(context.getString(R.string.download_failed));
             builder.setMessage(AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
-            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+            builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
             builder.create().show();
             return;
         }
@@ -88,7 +88,7 @@ public class Versions {
                         builder.setCancelable(false);
                         builder.setTitle(context.getString(R.string.download_failed));
                         builder.setMessage(AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
-                        builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                        builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                         builder.create().show();
                     }
                 }).executor();
@@ -222,7 +222,7 @@ public class Versions {
             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
             builder.setTitle(context.getString(R.string.launch_failed));
             builder.setMessage(context.getString(R.string.version_empty_launch));
-            builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+            builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                 MainActivity.getInstance().refreshMenuView(null);
                 MainActivity.getInstance().binding.download.setSelected(true);
             });

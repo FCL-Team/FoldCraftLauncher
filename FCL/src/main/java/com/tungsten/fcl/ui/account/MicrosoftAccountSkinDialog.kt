@@ -339,7 +339,7 @@ class MicrosoftAccountSkinDialog(
             com.tungsten.fcl.setting.Accounts.localizeErrorMessage(context, e)
         )
         builder.setNegativeButton(
-            context.getString(com.tungsten.fcllibrary.R.string.dialog_positive),
+            context.getString(com.tungsten.fcl.R.string.dialog_positive),
             null
         )
         builder.create().show()

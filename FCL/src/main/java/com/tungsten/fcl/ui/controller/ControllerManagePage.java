@@ -309,7 +309,7 @@ public class ControllerManagePage extends FCLCommonPage implements View.OnClickL
      */
     private void shareFile(File file, int chooserTitleRes, String mimeType) {
         Intent intent = new Intent(Intent.ACTION_SEND);
-        Uri uri = FileProvider.getUriForFile(getContext(), getContext().getString(com.tungsten.fcllibrary.R.string.file_browser_provider), file);
+        Uri uri = FileProvider.getUriForFile(getContext(), getContext().getString(com.tungsten.fcl.R.string.file_browser_provider), file);
         intent.setType(mimeType);
         intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

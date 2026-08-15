@@ -44,7 +44,7 @@ public class ModpackInstaller {
                             builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                             builder1.setCancelable(false);
                             builder1.setMessage(context.getString(R.string.install_success));
-                            builder1.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+                            builder1.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                                 if (update) {
                                     ManagePageManager.getInstance().dismissCurrentTempPage();
                                 } else {
@@ -62,7 +62,7 @@ public class ModpackInstaller {
                                     builder1.setCancelable(false);
                                     builder1.setTitle(context.getString(R.string.install_failed));
                                     builder1.setMessage(context.getString(R.string.modpack_type_curse_not_found));
-                                    builder1.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+                                    builder1.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                                         if (update) {
                                             ManagePageManager.getInstance().dismissCurrentTempPage();
                                         } else {
@@ -75,7 +75,7 @@ public class ModpackInstaller {
                                     builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                                     builder1.setCancelable(false);
                                     builder1.setMessage(context.getString(R.string.install_success));
-                                    builder1.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+                                    builder1.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                                         if (update) {
                                             ManagePageManager.getInstance().dismissCurrentTempPage();
                                         } else {
@@ -132,7 +132,7 @@ public class ModpackInstaller {
                 builder.setCancelable(false);
                 builder.setTitle(context.getString(R.string.message_error));
                 builder.setMessage(context.getString(R.string.modpack_unsupported));
-                builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                 builder.create().show();
                 return null;
             }
@@ -148,7 +148,7 @@ public class ModpackInstaller {
                 builder.setCancelable(false);
                 builder.setTitle(context.getString(R.string.message_error));
                 builder.setMessage(context.getString(R.string.modpack_unsupported));
-                builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                 builder.create().show();
             } catch (MismatchedModpackTypeException e) {
                 FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
@@ -156,7 +156,7 @@ public class ModpackInstaller {
                 builder.setCancelable(false);
                 builder.setTitle(context.getString(R.string.message_error));
                 builder.setMessage(context.getString(R.string.modpack_mismatched_type));
-                builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                 builder.create().show();
             } catch (IOException e) {
                 FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
@@ -164,7 +164,7 @@ public class ModpackInstaller {
                 builder.setCancelable(false);
                 builder.setTitle(context.getString(R.string.message_error));
                 builder.setMessage(context.getString(R.string.modpack_invalid));
-                builder.setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive), null);
+                builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                 builder.create().show();
             }
             return null;

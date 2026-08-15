@@ -194,7 +194,7 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                 .setAlertLevel(
                     FCLAlertDialog.AlertLevel.ALERT
                 )
-                .setNegativeButton(context.getString(com.tungsten.fcllibrary.R.string.dialog_positive)) {
+                .setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive)) {
 
                 }
                 .create()

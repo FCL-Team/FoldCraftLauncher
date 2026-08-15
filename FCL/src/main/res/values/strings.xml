@@ -1262,4 +1262,47 @@
     <string name="slide_selection">Slide Selection</string>
     <string name="swap_hands">Double Tap Swap Hands</string>
     <string name="jar_executor_warn">Note! This feature is not for installing mods. If you are installing mods, please use the launcher\'s download function or add them in "Manage Mods".</string>
+
+    <!-- 原 FCLLibrary 模块字符串（模块已并入 FCL） -->
+    <string name="file_browser_provider" translatable="false">com.tungsten.fcl.provider</string>
+    <string name="file_browser_title">File Browser</string>
+    <string name="file_browser_back">Back</string>
+    <string name="file_browser_close">Exit</string>
+    <string name="file_browser_shared">Shared directory</string>
+    <string name="file_browser_private">Private directory</string>
+    <string name="file_browser_open_external">Open in external APP(Like MT)</string>
+    <string name="file_browser_select_external">Select with external APP</string>
+    <string name="file_browser_private_alert">Cannot access to private directory, please check the permission.</string>
+    <string name="file_browser_mode">Mode:</string>
+    <string name="file_browser_mode_browse">Browse File</string>
+    <string name="file_browser_mode_file">Pick File</string>
+    <string name="file_browser_mode_folder">Pick Folder</string>
+    <string name="file_browser_selection">Type:</string>
+    <string name="file_browser_selection_simple">Single Selection</string>
+    <string name="file_browser_selection_multiple">Multiple Selection</string>
+    <string name="file_browser_positive">Confirm</string>
+    <string name="file_browser_positive_alert">No file/directory selected!</string>
+    <string name="file_browser_share_title">Share the file</string>
+    <string name="file_browser_share_message">Are you sure to share this file?</string>
+    <string name="crash_reporter_title">Crash Report</string>
+    <string name="crash_reporter_hint">Fold Craft Launcher has encountered an unresolvable error, please seek help from the developer or others.</string>
+    <string name="crash_reporter_restart">Restart</string>
+    <string name="crash_reporter_close">Exit</string>
+    <string name="crash_reporter_copy">Copy</string>
+    <string name="crash_reporter_share">Share</string>
+    <string name="crash_reporter_upload">Upload Log</string>
+    <string name="crash_reporter_toast">Copy successfully!</string>
+    <string name="color_picker_title">Color Picker</string>
+    <string name="color_picker_arrow" translatable="false">→</string>
+    <string name="color_picker_toast">Unknown color!</string>
+    <string name="dialog_alert">Alert</string>
+    <string name="dialog_info">Info</string>
+    <string name="dialog_positive">OK</string>
+    <string name="dialog_negative">Cancel</string>
+    <string name="log_upload_success_title">Log upload successful</string>
+    <string name="log_upload_copy">Copy Link</string>
+    <string name="log_upload_open">Open Link</string>
+    <string name="log_upload_share">Share Link</string>
+    <string name="log_upload_share_template">I encountered a problem in the launcher, here is the log link:\n%s</string>
+    <string name="close">Close</string>
 </resources>

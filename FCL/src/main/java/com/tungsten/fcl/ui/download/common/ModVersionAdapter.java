@@ -60,7 +60,7 @@ public class ModVersionAdapter extends FCLAdapter {
             viewHolder.name = view.findViewById(R.id.name);
             viewHolder.tag = view.findViewById(R.id.tag);
             viewHolder.date = view.findViewById(R.id.date);
-            viewHolder.parent.setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), com.tungsten.fcllibrary.R.xml.anim_scale));
+            viewHolder.parent.setStateListAnimator(AnimatorInflater.loadStateListAnimator(getContext(), com.tungsten.fcl.R.xml.anim_scale));
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();

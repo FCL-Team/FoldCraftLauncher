@@ -8,7 +8,7 @@ import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
 import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import androidx.core.content.withStyledAttributes
-import com.tungsten.fcllibrary.R
+import com.tungsten.fcl.R
 
 class FCLAppBarLayout @JvmOverloads constructor(
     context: Context,

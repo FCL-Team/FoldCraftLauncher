@@ -70,6 +70,8 @@ android {
             initWith(getByName("debug"))
             applicationIdSuffix = ".debug"
             signingConfig = signingConfigs.getByName("FCLDebugKey")
+            // 与 FileProvider authority（${applicationId}.provider）保持一致（原 FCLLibrary 模块的 resValue）
+            resValue("string", "file_browser_provider", "com.tungsten.fcl.debug.provider")
         }
         configureEach {
             resValue("string", "app_version", defaultConfig.versionName.toString())
@@ -207,9 +209,10 @@ kotlin {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
     implementation(project(":FCLCore"))
-    implementation(project(":FCLLibrary"))
     implementation(project(":FCLauncher"))
     implementation(project(":Terracotta"))
+    implementation(libs.commons.io)
+    implementation(libs.jelf)
     implementation(libs.taptargetview)
     implementation(libs.nanohttpd)
     implementation(libs.commons.compress)

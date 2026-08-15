@@ -167,7 +167,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                         builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                         builder.setCancelable(false);
                         builder.setMessage(getContext().getString(R.string.install_success));
-                        builder.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> profile.getRepository().onVersionIconChanged.fireEvent(new Event(this)));
+                        builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> profile.getRepository().onVersionIconChanged.fireEvent(new Event(this)));
                         builder.create().show();
                     } else {
                         if (executor.getException() == null)
@@ -240,7 +240,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                             builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                             builder1.setCancelable(false);
                             builder1.setMessage(getContext().getString(R.string.install_success));
-                            builder1.setNegativeButton(getContext().getString(com.tungsten.fcllibrary.R.string.dialog_positive), () -> {
+                            builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                                 ManagePageManager.getInstance().dismissCurrentTempPage();
                                 profile.getRepository().onVersionIconChanged.fireEvent(new Event(this));
                             });
