@@ -14,7 +14,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.view.GestureDetector
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
@@ -124,34 +123,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private var rightMenuWidth = 0
     private var skinViewerWidth = 0
 
-    /** 右菜单显示/隐藏手势：水平滑动切换（左滑显示、右滑隐藏），不消费事件 */
-    private val rightMenuGestureDetector by lazy {
-        GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean {
-                if (e1 == null) return false
-                val minVelocity = ViewConfiguration.get(this@MainActivity).scaledMinimumFlingVelocity.toFloat()
-                if (abs(velocityX) < minVelocity || abs(velocityX) < abs(velocityY)) return false
-                // 皮肤预览区域内的滑动用于旋转皮肤，不触发菜单切换
-                val ui = UIManager.instance.currentUI
-                if (ui is MainUI) {
-                    val skin = ui.contentView.findViewById<View>(R.id.skin_viewer)
-                    val location = IntArray(2)
-                    skin.getLocationOnScreen(location)
-                    if (e1.x >= location[0] && e1.x <= location[0] + skin.width &&
-                        e1.y >= location[1] && e1.y <= location[1] + skin.height
-                    ) {
-                        return false
-                    }
-                }
-                if (velocityX < 0) {
-                    if (binding.rightMenu.visibility != View.VISIBLE) showRightMenu()
-                } else {
-                    if (binding.rightMenu.visibility == View.VISIBLE) hideRightMenu()
-                }
-                return false
-            }
-        })
-    }
+    /** 右菜单显示/隐藏手势：双指在 right_menu 区域内水平滑动切换（左滑显示、右滑隐藏），不消费事件 */
+    private var twoFingerStartX = 0f
+    private var twoFingerStartY = 0f
+    private var secondFingerStartX = 0f
+    private var secondFingerStartY = 0f
+    private var twoFingerTracking = false
 
     var mediaPlayer: MediaPlayer? = null
     private var videoPosition = 0
@@ -380,7 +357,53 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
         // 仅分析手势（不消费事件），用于右菜单显示/隐藏
-        rightMenuGestureDetector.onTouchEvent(ev)
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                // 恰好两根手指按下时记录两指起始位置
+                if (ev.pointerCount == 2) {
+                    twoFingerStartX = ev.getX(0)
+                    twoFingerStartY = ev.getY(0)
+                    secondFingerStartX = ev.getX(1)
+                    secondFingerStartY = ev.getY(1)
+                    twoFingerTracking = true
+                } else {
+                    twoFingerTracking = false
+                }
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                if (twoFingerTracking && ev.pointerCount >= 2) {
+                    val centerX = (ev.getX(0) + ev.getX(1)) / 2
+                    val centerY = (ev.getY(0) + ev.getY(1)) / 2
+                    val startCenterX = (twoFingerStartX + secondFingerStartX) / 2
+                    val startCenterY = (twoFingerStartY + secondFingerStartY) / 2
+                    val dx = centerX - startCenterX
+                    val dy = centerY - startCenterY
+                    // 水平位移超过阈值且为主导方向时触发，一次手势只触发一次
+                    if (abs(dx) > ViewConfiguration.get(this).scaledTouchSlop * 3f && abs(dx) > abs(dy)) {
+                        twoFingerTracking = false
+                        // 仅当两指起始位置都在 right_menu 区域内才触发
+                        // （菜单隐藏时无布局尺寸，按隐藏前记录的宽度推算右侧区域）
+                        val menu = binding.rightMenu
+                        val menuWidth = if (menu.width > 0) menu.width else rightMenuWidth
+                        val screenWidth = binding.root.width
+                        val inRightMenu = { x: Float ->
+                            x >= screenWidth - menuWidth && x <= screenWidth
+                        }
+                        if (inRightMenu(twoFingerStartX) && inRightMenu(secondFingerStartX)) {
+                            if (dx < 0) {
+                                if (binding.rightMenu.visibility != View.VISIBLE) showRightMenu()
+                            } else {
+                                if (binding.rightMenu.visibility == View.VISIBLE) hideRightMenu()
+                            }
+                        }
+                    }
+                }
+            }
+
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_UP,
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> twoFingerTracking = false
+        }
         return super.dispatchTouchEvent(ev)
     }
 
