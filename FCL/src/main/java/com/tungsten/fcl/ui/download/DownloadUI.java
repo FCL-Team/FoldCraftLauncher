@@ -132,47 +132,37 @@ public class DownloadUI extends FCLCommonUI {
             downloadPage.getContentView().setVisibility(View.VISIBLE);
             versionInstallPage.getContentView().setVisibility(View.GONE);
             downloadPage.switchType(pageId);
+            // 5 个下载模式页共用同一视图，内容更新后播放过渡动画（游戏页 ↔ 模式页、模式页之间均适用）
+            playEnterAnimation(downloadPage.getContentView());
         }
     }
 
     private static int tabPositionToPageId(int position) {
-        switch (position) {
-            case 1:
-                return PAGE_ID_DOWNLOAD_MODPACK;
-            case 2:
-                return PAGE_ID_DOWNLOAD_MOD;
-            case 3:
-                return PAGE_ID_DOWNLOAD_RESOURCE_PACK;
-            case 4:
-                return PAGE_ID_DOWNLOAD_WORLD;
-            default:
-                return PAGE_ID_DOWNLOAD_SHADER_PACK;
-        }
+        return switch (position) {
+            case 1 -> PAGE_ID_DOWNLOAD_MODPACK;
+            case 2 -> PAGE_ID_DOWNLOAD_MOD;
+            case 3 -> PAGE_ID_DOWNLOAD_RESOURCE_PACK;
+            case 4 -> PAGE_ID_DOWNLOAD_WORLD;
+            default -> PAGE_ID_DOWNLOAD_SHADER_PACK;
+        };
     }
 
     private static int pageIdToTabPosition(int pageId) {
-        switch (pageId) {
-            case PAGE_ID_DOWNLOAD_MODPACK:
-                return 1;
-            case PAGE_ID_DOWNLOAD_MOD:
-                return 2;
-            case PAGE_ID_DOWNLOAD_RESOURCE_PACK:
-                return 3;
-            case PAGE_ID_DOWNLOAD_WORLD:
-                return 4;
-            default:
-                return 5;
-        }
+        return switch (pageId) {
+            case PAGE_ID_DOWNLOAD_MODPACK -> 1;
+            case PAGE_ID_DOWNLOAD_MOD -> 2;
+            case PAGE_ID_DOWNLOAD_RESOURCE_PACK -> 3;
+            case PAGE_ID_DOWNLOAD_WORLD -> 4;
+            default -> 5;
+        };
     }
 
-    /** 页面切换过渡动画：淡入 + 上滑进入（post 确保已挂载） */
+    /** 页面切换过渡动画：淡入 + 上滑进入（同步执行，页面首次可见即为动画起点，避免先显示后置透明的闪烁） */
     private void playEnterAnimation(View view) {
-        view.post(() -> {
-            view.animate().cancel();
-            view.setAlpha(0f);
-            view.setTranslationY(view.getResources().getDisplayMetrics().density * 30f);
-            view.animate().alpha(1f).translationY(0f).setDuration(250).start();
-        });
+        view.animate().cancel();
+        view.setAlpha(0f);
+        view.setTranslationY(view.getResources().getDisplayMetrics().density * 30f);
+        view.animate().alpha(1f).translationY(0f).setDuration(250).start();
     }
 
     /** 返回过渡：下层上滑进入（仅位移不做淡入，避免与临时页淡出叠加时 alpha 硬件层切换闪烁） */
