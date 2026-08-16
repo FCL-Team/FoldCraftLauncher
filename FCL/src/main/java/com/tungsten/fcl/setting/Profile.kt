@@ -61,8 +61,7 @@ class Profile {
             checkSelectedVersion()
             // 复制后遍历：回调内可能增删监听（如 DownloadUI 切换监听对象），避免并发修改
             selectedVersionListeners.toList().forEach { it.run() }
-            // 触发配置保存（重构前由 fakefx 属性监听完成，普通字段需显式回调）
-            onSelectedVersionChanged?.invoke()
+            onChanged?.invoke()
         }
 
     /** 游戏目录（变化时切换仓库目录） */
@@ -70,19 +69,22 @@ class Profile {
         set(value) {
             field = value
             repository.changeDirectory(value)
+            onChanged?.invoke()
         }
 
-    /** 全局设置（变化时触发 [onGlobalChanged]） */
+    /** 全局设置（变化时触发 [onChanged]） */
     val global: VersionSetting
 
-    /** 全局设置变化回调（由 Profiles 设置，用于触发配置保存） */
-    var onGlobalChanged: (() -> Unit)? = null
-
-    /** 选中版本变化回调（由 Profiles 设置，用于触发配置保存） */
-    var onSelectedVersionChanged: (() -> Unit)? = null
-
     /** 名称 */
-    var name: String
+    var name: String = ""
+        set(value) {
+            if (field == value) return
+            field = value
+            onChanged?.invoke()
+        }
+
+    /** 字段变化回调（由 Profiles 设置，用于触发配置保存） */
+    var onChanged: (() -> Unit)? = null
 
     private val selectedVersionListeners = mutableListOf<Runnable>()
 
@@ -107,7 +109,7 @@ class Profile {
         this.repository = FCLGameRepository(this, initialGameDir)
         this.gameDir = initialGameDir
         this.global = global ?: VersionSetting()
-        this.global.addOnChangeListener { onGlobalChanged?.invoke() }
+        this.global.addOnChangeListener { onChanged?.invoke() }
         this.selectedVersion = selectedVersion
 
         listenerHolder.add(

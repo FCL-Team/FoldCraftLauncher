@@ -90,10 +90,9 @@ object Profiles {
         }
     }
 
-    /** 全局设置/选中版本变化时触发配置保存 */
+    /** 字段变化（全局设置/选中版本/目录/名称）时触发配置保存 */
     private fun registerProfileSave(profile: Profile) {
-        profile.onGlobalChanged = { updateProfileStorages() }
-        profile.onSelectedVersionChanged = { updateProfileStorages() }
+        profile.onChanged = { updateProfileStorages() }
     }
 
     /**

@@ -76,6 +76,11 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
             override fun onViewDetachedFromWindow(v: View) {
                 versionsListener?.let { unregisterVersionsListener(it) }
                 profileCollectJob?.cancel()
+                // 移除挂到 profile 单例上的高亮监听，避免页面销毁后仍被回调
+                // （attach 时 collect 立即发射当前值，会重新 loadVersions 注册）
+                versionHighlightListener?.let { highlightedProfile?.removeSelectedVersionListener(it) }
+                versionHighlightListener = null
+                highlightedProfile = null
             }
         })
         refreshProfile()

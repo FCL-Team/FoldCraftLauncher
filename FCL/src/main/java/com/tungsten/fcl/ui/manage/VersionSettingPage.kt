@@ -108,6 +108,16 @@ class VersionSettingPage(
 
             override fun onViewDetachedFromWindow(v: View) {
                 profileCollectJob?.cancel()
+                // 移除挂到单例上的监听，避免页面销毁后仍被回调
+                // （attach 时 collect 立即发射当前值，会重新 loadVersion 注册）
+                profileVersionListener?.let {
+                    if (::profile.isInitialized) profile.removeSelectedVersionListener(it)
+                }
+                profileVersionListener = null
+                settingsChangeListener?.let {
+                    if (::lastVersionSetting.isInitialized) lastVersionSetting.removeOnChangeListener(it)
+                }
+                settingsChangeListener = null
             }
         })
     }
