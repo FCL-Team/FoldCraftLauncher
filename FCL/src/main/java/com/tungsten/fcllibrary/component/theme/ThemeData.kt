@@ -7,6 +7,8 @@ import androidx.core.graphics.ColorUtils
 import com.mio.util.ImageUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcllibrary.util.ConvertUtils
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 /**
  * 主题数据（不可变 data class，替代原 fakefx 属性版 Theme）。
@@ -72,38 +74,58 @@ data class ThemeData(
     }
 
     companion object {
-        /** 从 SharedPreferences("theme") 加载主题（背景缺失时回退内置默认图） */
+        /** 从 DataStore 加载主题（背景缺失时回退内置默认图；首次迁移旧 SharedPreferences 配置） */
         @JvmStatic
         fun getTheme(context: Context): ThemeData {
-            val preferences = context.getSharedPreferences("theme", Context.MODE_PRIVATE)
-            val color = preferences.getInt("theme_color", Color.parseColor("#7797CF"))
-            val color2 = preferences.getInt("theme_color2", Color.parseColor("#000000"))
-            val color2Dark = preferences.getInt("theme_color2_dark", Color.parseColor("#FFFFFF"))
-            val fullscreen = preferences.getBoolean("fullscreen", false)
-            val closeSkinModel = preferences.getBoolean("close_skin_model", false)
-            val animationSpeed = preferences.getInt("animation_speed", 8)
+            val pref = runBlocking { context.themeDataStore.data.first() }
+            // 一次性迁移：DataStore 尚未写入过且旧 SharedPreferences 有主题配置时迁移并回写
+            val migrated = pref == ThemePreference() &&
+                    context.getSharedPreferences("theme", Context.MODE_PRIVATE).contains("theme_color")
+            val effective = if (migrated) migrateFromSharedPreferences(context) else pref
             val lt = ImageUtil.load(context.filesDir.absolutePath + "/background/lt.png")
                 .orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_light))
             val dk = ImageUtil.load(context.filesDir.absolutePath + "/background/dk.png")
                 .orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark))
             return ThemeData(
-                color, color2, color2Dark, fullscreen, closeSkinModel, animationSpeed,
+                effective.color, effective.color2, effective.color2Dark,
+                effective.fullscreen, effective.closeSkinModel, effective.animationSpeed,
                 BitmapDrawable(context.resources, lt),
                 BitmapDrawable(context.resources, dk)
             )
         }
 
+        /** 读取旧 SharedPreferences 配置并写入 DataStore（一次性迁移） */
+        private fun migrateFromSharedPreferences(context: Context): ThemePreference {
+            val old = context.getSharedPreferences("theme", Context.MODE_PRIVATE)
+            val migrated = ThemePreference(
+                color = old.getInt("theme_color", ThemePreference().color),
+                color2 = old.getInt("theme_color2", ThemePreference().color2),
+                color2Dark = old.getInt("theme_color2_dark", ThemePreference().color2Dark),
+                fullscreen = old.getBoolean("fullscreen", ThemePreference().fullscreen),
+                closeSkinModel = old.getBoolean("close_skin_model", ThemePreference().closeSkinModel),
+                animationSpeed = old.getInt("animation_speed", ThemePreference().animationSpeed)
+            )
+            runBlocking {
+                context.themeDataStore.updateData { migrated }
+            }
+            return migrated
+        }
+
         /** 持久化主题（仅持久化可配置字段，派生色与背景不保存） */
         @JvmStatic
         fun saveTheme(context: Context, theme: ThemeData) {
-            context.getSharedPreferences("theme", Context.MODE_PRIVATE).edit()
-                .putInt("theme_color", theme.color)
-                .putInt("theme_color2", theme.color2)
-                .putInt("theme_color2_dark", theme.color2Dark)
-                .putBoolean("fullscreen", theme.fullscreen)
-                .putInt("animation_speed", theme.animationSpeed)
-                .putBoolean("close_skin_model", theme.closeSkinModel)
-                .apply()
+            runBlocking {
+                context.themeDataStore.updateData {
+                    ThemePreference(
+                        color = theme.color,
+                        color2 = theme.color2,
+                        color2Dark = theme.color2Dark,
+                        fullscreen = theme.fullscreen,
+                        closeSkinModel = theme.closeSkinModel,
+                        animationSpeed = theme.animationSpeed
+                    )
+                }
+            }
         }
     }
 }
