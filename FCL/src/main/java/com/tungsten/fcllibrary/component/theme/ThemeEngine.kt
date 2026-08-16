@@ -42,7 +42,6 @@ object ThemeEngine {
     fun getInstance(): ThemeEngine = this
 
     /** 初始化主题（幂等，FCLActivity.onCreate 首行调用） */
-    @JvmStatic
     fun setupThemeEngine(context: Context) {
         if (_theme.value != null) return
         _theme.value = ThemeData.getTheme(context)
@@ -53,29 +52,24 @@ object ThemeEngine {
     fun getTheme(): ThemeData = _theme.value!!
 
     /** 注册控件/页面的主题刷新回调（注册后立即执行一次） */
-    @JvmStatic
     fun registerEvent(view: View, runnable: Runnable) {
         runnables[view] = runnable
         handler.post(runnable)
     }
 
-    @JvmStatic
     fun unregisterEvent(view: View) {
         runnables.remove(view)
     }
 
-    @JvmStatic
     fun addRefreshListener(runnable: Runnable) {
         refreshListeners.add(runnable)
     }
 
-    @JvmStatic
     fun removeRefreshListener(runnable: Runnable) {
         refreshListeners.remove(runnable)
     }
 
     /** 全量刷新：控件回调 + 全局刷新监听（主题未初始化时跳过，与原实现一致） */
-    @JvmStatic
     fun refreshTheme() {
         if (_theme.value == null) return
         notifyThemeChanged()
@@ -110,22 +104,18 @@ object ThemeEngine {
     fun getSystemAutoTint(context: Context): Int =
         if (isNightMode(context)) Color.WHITE else Color.BLACK
 
-    @JvmStatic
     fun applyColor(color: Int) {
         updateTheme { it.copy(color = color) }
     }
 
-    @JvmStatic
     fun applyColor2(color: Int) {
         updateTheme { it.copy(color2 = color) }
     }
 
-    @JvmStatic
     fun applyColor2Dark(color: Int) {
         updateTheme { it.copy(color2Dark = color) }
     }
 
-    @JvmStatic
     fun applyFullscreen(window: Window?, fullscreen: Boolean) {
         updateTheme { it.copy(fullscreen = fullscreen) }
         if (window != null) {
@@ -170,49 +160,41 @@ object ThemeEngine {
         }
     }
 
-    @JvmStatic
     fun applyAndSave(context: Context, color: Int) {
         applyColor(color)
         ThemeData.saveTheme(context, getTheme())
     }
 
-    @JvmStatic
     fun applyAndSave2(context: Context, color: Int) {
         applyColor2(color)
         ThemeData.saveTheme(context, getTheme())
     }
 
-    @JvmStatic
     fun applyAndSave2Dark(context: Context, color: Int) {
         applyColor2Dark(color)
         ThemeData.saveTheme(context, getTheme())
     }
 
-    @JvmStatic
     fun applyAndSave(context: Context, window: Window, fullscreen: Boolean) {
         applyFullscreen(window, fullscreen)
         ThemeData.saveTheme(context, getTheme())
     }
 
-    @JvmStatic
     fun applyAndSave(context: Context, view: View, lt: String?, dk: String?) {
         applyBackground(context, view, lt, dk)
         ThemeData.saveTheme(context, getTheme())
     }
 
     /** 关闭皮肤模型开关（替代原 Theme.setiIgnoreSkinContainer 字段直改） */
-    @JvmStatic
     fun setCloseSkinModel(closeSkinModel: Boolean) {
         updateTheme { it.copy(closeSkinModel = closeSkinModel) }
     }
 
     /** 动画速度（替代原 animationSpeedProperty().set 字段直改） */
-    @JvmStatic
     fun setAnimationSpeed(animationSpeed: Int) {
         updateTheme { it.copy(animationSpeed = animationSpeed) }
     }
 
-    @JvmStatic
     fun getWallpaperColor(context: Context): Int {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             val colors = WallpaperManager.getInstance(context).getWallpaperColors(WallpaperManager.FLAG_SYSTEM)

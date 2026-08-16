@@ -126,7 +126,7 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                 break;
             case THEME_COLOR_SET:
                 showColorPicker(ThemeEngine.getInstance().getTheme().getColor(),
-                        ThemeEngine::applyColor,
+                        color -> ThemeEngine.getInstance().applyColor(color),
                         color -> ThemeEngine.getInstance().applyAndSave(getContext(), color),
                         color -> ThemeEngine.getInstance().applyColor(color));
                 break;
