@@ -412,6 +412,10 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
         if (adapter == null) {
             adapter = createAdapter(searchState.result);
             searchState.adapter = adapter;
+        }
+        // DownloadUI 被 ViewPager2 回收重建后 RecyclerView 是全新视图（无 LayoutManager），
+        // 复用缓存的 adapter 时也要补上，否则列表不会渲染
+        if (recyclerView.getLayoutManager() == null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         }
         recyclerView.setAdapter(adapter);
