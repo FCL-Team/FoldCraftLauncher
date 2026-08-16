@@ -74,9 +74,10 @@ object ThemeEngine {
         refreshListeners.remove(runnable)
     }
 
-    /** 全量刷新：控件回调 + 全局刷新监听 */
+    /** 全量刷新：控件回调 + 全局刷新监听（主题未初始化时跳过，与原实现一致） */
     @JvmStatic
     fun refreshTheme() {
+        if (_theme.value == null) return
         notifyThemeChanged()
     }
 
@@ -172,31 +173,31 @@ object ThemeEngine {
     @JvmStatic
     fun applyAndSave(context: Context, color: Int) {
         applyColor(color)
-        getTheme()?.let { ThemeData.saveTheme(context, it) }
+        ThemeData.saveTheme(context, getTheme())
     }
 
     @JvmStatic
     fun applyAndSave2(context: Context, color: Int) {
         applyColor2(color)
-        getTheme()?.let { ThemeData.saveTheme(context, it) }
+        ThemeData.saveTheme(context, getTheme())
     }
 
     @JvmStatic
     fun applyAndSave2Dark(context: Context, color: Int) {
         applyColor2Dark(color)
-        getTheme()?.let { ThemeData.saveTheme(context, it) }
+        ThemeData.saveTheme(context, getTheme())
     }
 
     @JvmStatic
     fun applyAndSave(context: Context, window: Window, fullscreen: Boolean) {
         applyFullscreen(window, fullscreen)
-        getTheme()?.let { ThemeData.saveTheme(context, it) }
+        ThemeData.saveTheme(context, getTheme())
     }
 
     @JvmStatic
     fun applyAndSave(context: Context, view: View, lt: String?, dk: String?) {
         applyBackground(context, view, lt, dk)
-        getTheme()?.let { ThemeData.saveTheme(context, it) }
+        ThemeData.saveTheme(context, getTheme())
     }
 
     /** 关闭皮肤模型开关（替代原 Theme.setiIgnoreSkinContainer 字段直改） */

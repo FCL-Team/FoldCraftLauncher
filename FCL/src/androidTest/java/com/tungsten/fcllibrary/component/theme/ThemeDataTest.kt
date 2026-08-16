@@ -5,6 +5,8 @@ import android.graphics.Color
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.tungsten.fclauncher.utils.FCLPath
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
@@ -96,6 +98,8 @@ class ThemeDataTest {
             color2Dark = 0xAABBCC,
         ).copy(fullscreen = true, closeSkinModel = true, animationSpeed = 5)
         ThemeData.saveTheme(context, theme)
+        // saveTheme 异步写入，等待 DataStore 落盘完成
+        runBlocking { context.themeDataStore.data.first { it.color == 0x123456 } }
         val loaded = ThemeData.getTheme(context)
         assertEquals(0x123456, loaded.color)
         assertEquals(0x654321, loaded.color2)
@@ -113,6 +117,7 @@ class ThemeDataTest {
         // saveTheme 持久化原始 color2（而非按亮暗动态取值），加载后原始值不变
         val theme = themeData(color2 = 0x111111, color2Dark = 0x222222)
         ThemeData.saveTheme(context, theme)
+        runBlocking { context.themeDataStore.data.first { it.color2 == 0x111111 } }
         val loaded = ThemeData.getTheme(context)
         assertEquals(0x111111, loaded.color2)
         assertEquals(0x222222, loaded.color2Dark)

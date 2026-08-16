@@ -7,7 +7,10 @@ import androidx.core.graphics.ColorUtils
 import com.mio.util.ImageUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcllibrary.util.ConvertUtils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -111,19 +114,23 @@ data class ThemeData(
             return migrated
         }
 
-        /** 持久化主题（仅持久化可配置字段，派生色与背景不保存） */
+        /** 持久化主题（仅持久化可配置字段，派生色与背景不保存）。
+         *  异步写入不阻塞调用线程（设置页回调在 UI 线程，同步等待会导致卡顿）；
+         *  写入失败静默忽略（与原 SharedPreferences.apply 语义一致） */
         @JvmStatic
         fun saveTheme(context: Context, theme: ThemeData) {
-            runBlocking {
-                context.themeDataStore.updateData {
-                    ThemePreference(
-                        color = theme.color,
-                        color2 = theme.color2,
-                        color2Dark = theme.color2Dark,
-                        fullscreen = theme.fullscreen,
-                        closeSkinModel = theme.closeSkinModel,
-                        animationSpeed = theme.animationSpeed
-                    )
+            CoroutineScope(Dispatchers.IO).launch {
+                runCatching {
+                    context.themeDataStore.updateData {
+                        ThemePreference(
+                            color = theme.color,
+                            color2 = theme.color2,
+                            color2Dark = theme.color2Dark,
+                            fullscreen = theme.fullscreen,
+                            closeSkinModel = theme.closeSkinModel,
+                            animationSpeed = theme.animationSpeed
+                        )
+                    }
                 }
             }
         }
