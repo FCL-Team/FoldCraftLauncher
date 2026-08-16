@@ -136,4 +136,55 @@ class ProfilesTest {
         target.repository.refreshVersions()
         assertEquals(target.selectedVersion, Profiles.getSelectedVersion())
     }
+
+    @Test
+    fun addProfileAppendsToList() {
+        val before = Profiles.profiles.size
+        val newProfile = Profile("NewProfile_${System.nanoTime()}", File(Profiles.getSelectedProfile().gameDir, "new_dir"))
+        Profiles.addProfile(newProfile)
+        try {
+            assertTrue(Profiles.profiles.contains(newProfile))
+            assertEquals(before + 1, Profiles.profiles.size)
+        } finally {
+            Profiles.removeProfile(newProfile)
+        }
+    }
+
+    @Test
+    fun addProfileDoesNotChangeSelection() {
+        val selected = Profiles.getSelectedProfile()
+        val newProfile = Profile("NewProfile_${System.nanoTime()}", File(selected.gameDir, "new_dir"))
+        Profiles.addProfile(newProfile)
+        try {
+            // 新增 profile 不影响当前选中
+            assertEquals(selected, Profiles.getSelectedProfile())
+            assertEquals(selected, Profiles.selectedProfile.value)
+        } finally {
+            Profiles.removeProfile(newProfile)
+        }
+    }
+
+    @Test
+    fun removingSelectedProfileFallsBackInStateFlow() {
+        val first = Profiles.profiles[0]
+        Profiles.removeProfile(first)
+        try {
+            // 选中项被移除后 StateFlow 与读取 API 同步回退到第一个
+            assertEquals(Profiles.profiles[0], Profiles.getSelectedProfile())
+            assertEquals(Profiles.profiles[0], Profiles.selectedProfile.value)
+        } finally {
+            Profiles.profiles.add(0, first)
+            Profiles.setSelectedProfile(first)
+        }
+    }
+
+    @Test
+    fun versionSettingFallsBackToGlobalWhenNoSelectedVersion() {
+        val profile = Profiles.getSelectedProfile()
+        profile.selectedVersion = null
+        profile.repository.refreshVersions()
+        // 无选中版本时返回全局设置
+        assertEquals(profile.global, profile.versionSetting)
+        assertEquals(profile.global, profile.getVersionSetting(null))
+    }
 }
