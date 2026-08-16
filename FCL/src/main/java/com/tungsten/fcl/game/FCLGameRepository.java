@@ -354,11 +354,12 @@ public class FCLGameRepository extends DefaultGameRepository {
         }
     }
 
-    /** 图标资源缓存（版本列表加载时每版本取一次图标，避免重复加载资源） */
-    private static final Map<Integer, Drawable> DRAWABLE_CACHE = new ConcurrentHashMap<>();
+    /** 图标资源状态缓存：newDrawable 每次返回独立实例，避免共享 Drawable 的 bounds 被
+     *  其他控件（如版本列表 item 设置 background）修改后互相污染（主界面 icon 放大显示不完全） */
+    private static final Map<Integer, Drawable.ConstantState> DRAWABLE_CACHE = new ConcurrentHashMap<>();
 
     private Drawable getDrawable(int id) {
-        return DRAWABLE_CACHE.computeIfAbsent(id, k -> AppCompatResources.getDrawable(FCLPath.CONTEXT, k));
+        return DRAWABLE_CACHE.computeIfAbsent(id, k -> AppCompatResources.getDrawable(FCLPath.CONTEXT, k).getConstantState()).newDrawable();
     }
 
     public boolean saveVersionSetting(String id) {
