@@ -31,10 +31,12 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.nio.file.Files
 import java.util.Locale
 import java.util.logging.Level
 import java.util.function.Consumer
 import java.util.stream.Collectors
+import kotlin.io.path.isRegularFile
 
 class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId),
     View.OnClickListener {
@@ -221,12 +223,19 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                                 )
                             }
                             val icon = repository.getVersionIconImage(analyzer, version.id)
+                            // Mod 数统计在 IO 线程并行流里完成（避免滑动时主线程目录 IO）
+                            val modCount = runCatching {
+                                Files.list(repository.getModsDirectory(version.id))
+                                    .filter { it.isRegularFile() }
+                                    .count().toInt()
+                            }.getOrNull() ?: 0
                             return@map VersionListItem(
                                 profile,
                                 version.id,
                                 libraries.toString(),
                                 tag,
-                                icon
+                                icon,
+                                modCount
                             )
                         }
                         .collect(Collectors.toList())

@@ -11,8 +11,6 @@ import com.mio.util.AnimUtil.Companion.playTranslationX
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemVersionBinding
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
-import java.nio.file.Files
-import kotlin.io.path.isRegularFile
 
 class VersionListAdapter(val context: Context, initList: List<VersionListItem>) :
     RecyclerView.Adapter<ViewHolder>() {
@@ -76,18 +74,10 @@ class VersionListAdapter(val context: Context, initList: List<VersionListItem>) 
         } else {
             binding.setting.visibility = View.GONE
         }
-        val modCount =
-            runCatching {
-                val modDir =
-                    versionListItem.profile.repository.getModsDirectory(versionListItem.version)
-                Files.list(modDir).filter {
-                    it.isRegularFile()
-                }.count().toInt()
-            }.getOrNull() ?: 0
         binding.subtitle.text = String.format(
             "%s  Mods:%d",
-            binding.subtitle.getText(),
-            modCount
+            versionListItem.libraries,
+            versionListItem.modCount
         )
         playTranslationX(
             binding.root,
