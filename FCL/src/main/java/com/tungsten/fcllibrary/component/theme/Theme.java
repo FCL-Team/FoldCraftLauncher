@@ -15,6 +15,7 @@ import com.mio.util.ImageUtil;
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
@@ -25,8 +26,8 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 public class Theme {
 
     private final IntegerProperty color = new SimpleIntegerProperty();
-    private final IntegerProperty color2 = new SimpleIntegerProperty();
-    private final IntegerProperty color2Dark = new SimpleIntegerProperty();
+    private final RefreshableIntegerProperty color2 = new RefreshableIntegerProperty();
+    private final RefreshableIntegerProperty color2Dark = new RefreshableIntegerProperty();
     private final IntegerProperty ltColor = new SimpleIntegerProperty();
     private final IntegerProperty dkColor = new SimpleIntegerProperty();
     private final IntegerProperty autoTint = new SimpleIntegerProperty();
@@ -63,8 +64,8 @@ public class Theme {
     }
 
     public int getColor2() {
-        boolean isNightMode = (FCLApplication.getCurrentActivity().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        return isNightMode ? color2Dark.get() : color2.get();
+        // 亮暗判断走 ThemeEngine（按 FCL 自身主题模式设置，而非仅 uiMode）
+        return ThemeEngine.isNightMode(FCLApplication.getCurrentActivity()) ? color2Dark.get() : color2.get();
     }
 
     public int _getColor2() {
@@ -155,8 +156,7 @@ public class Theme {
     }
 
     public BitmapDrawable getBackground(Context context) {
-        boolean isNightMode = (context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        return isNightMode ? backgroundDk.get() : backgroundLt.get();
+        return ThemeEngine.isNightMode(context) ? backgroundDk.get() : backgroundLt.get();
     }
 
     public void setColor(int color) {
@@ -230,5 +230,32 @@ public class Theme {
         editor.putInt("animation_speed", theme.getAnimationSpeed());
         editor.putBoolean("close_skin_model", theme.isCloseSkinModel());
         editor.apply();
+    }
+
+    /**
+     * 亮暗模式切换后强制刷新绑定 color2/color2Dark 的控件。
+     * 属性值本身未变（亮暗由 [getColor2] 动态判断），需手动触发属性失效，
+     * 否则绑定控件（FCLTextView/FCLImageButton 等）不会重新取色。
+     */
+    public void refreshColorProperties() {
+        color2.forceRefresh();
+        color2Dark.forceRefresh();
+    }
+
+    /** 可手动触发失效的整型属性（同值 set 不触发，亮暗切换需强制通知） */
+    private static class RefreshableIntegerProperty extends IntegerPropertyBase {
+        void forceRefresh() {
+            fireValueChangedEvent();
+        }
+
+        @Override
+        public Object getBean() {
+            return null;
+        }
+
+        @Override
+        public String getName() {
+            return "";
+        }
     }
 }

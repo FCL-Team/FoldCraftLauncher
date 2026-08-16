@@ -332,7 +332,7 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
     }
 
     private void fetchBackgroundColor(LauncherSettingTag tag) {
-        boolean isDarkMode = (getContext().getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
+        boolean isDarkMode = ThemeEngine.isNightMode(getContext());
 
         Bitmap bitmap = (isDarkMode ?
                 ThemeEngine.getInstance().theme.getBackgroundDk() :
@@ -433,6 +433,9 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                     mode = position == 1 ? AppCompatDelegate.MODE_NIGHT_NO : AppCompatDelegate.MODE_NIGHT_YES;
                 }
                 AppCompatDelegate.setDefaultNightMode(mode);
+                // configChanges 含 uiMode 时 AppCompat 不重建 Activity 也不更新 Resources 配置，
+                // 亮暗切换需显式刷新主题控件与背景（ThemeEngine.isNightMode 读 themeMode 设置）
+                ThemeEngine.getInstance().refreshTheme();
                 break;
             case SPINNER_SOURCE_AUTO:
                 config().versionListSourceProperty().set(new ArrayList<>(DownloadProviders.providersById.keySet()).get(position));

@@ -18,7 +18,7 @@ class FCLView @JvmOverloads constructor(
         override fun invalidated() {
             get()
             if (useThemeColor) {
-                setBackgroundColor(ThemeEngine.getInstance().getTheme().color2)
+                setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor2())
             }
         }
 
@@ -35,7 +35,7 @@ class FCLView @JvmOverloads constructor(
         override fun invalidated() {
             get()
             if (useThemeColor) {
-                setBackgroundColor(ThemeEngine.getInstance().getTheme().color2)
+                setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor2())
             }
         }
 

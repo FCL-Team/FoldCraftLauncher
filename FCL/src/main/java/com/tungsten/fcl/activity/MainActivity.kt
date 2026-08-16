@@ -3,6 +3,7 @@ package com.tungsten.fcl.activity
 import android.Manifest
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 import android.content.Context
+import android.content.res.Configuration
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
@@ -140,10 +141,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE)
         setContentView(binding.root)
-        ImageUtil.loadInto(
-            binding.background,
-            ThemeEngine.getInstance().getTheme().getBackground(this)
-        )
+        loadBackground()
+        ThemeEngine.getInstance().addRefreshListener(themeRefreshListener)
 
         RemoteMod.registerEmptyRemoteMod(
             RemoteMod(
@@ -430,8 +429,30 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // 亮暗切换时 FCLActivity.onConfigurationChanged 会调 refreshTheme，
+        // 背景由 themeRefreshListener 统一刷新；强制亮/暗模式（AppCompat 不触发
+        // onConfigurationChanged）由 LauncherSettingPage 切换时显式 refreshTheme
+    }
+
+    /** 按当前亮暗模式加载主界面背景（Theme.getBackground 按亮暗动态返回） */
+    private fun loadBackground() {
+        ImageUtil.loadInto(
+            binding.background,
+            ThemeEngine.getInstance().getTheme().getBackground(this)
+        )
+    }
+
+    /** 主题刷新时重新加载背景与按钮配色（onDestroy 注销，防止持有已销毁实例） */
+    private val themeRefreshListener = Runnable {
+        loadBackground()
+        updateColor()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        ThemeEngine.getInstance().removeRefreshListener(themeRefreshListener)
         if (shouldPlayVideo()) {
             mediaPlayer = null
             binding.videoView.stopPlayback()
@@ -753,12 +774,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 jar.background = this
             }
             version.backgroundTintList =
-                ColorStateList.valueOf(ThemeEngine.getInstance().theme.color2).apply {
+                ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().getColor2()).apply {
                     version.backgroundTintList = this
                     jar.backgroundTintList = this
                 }
-            version.setTextColor(ThemeEngine.getInstance().theme.color2)
-            jar.setTextColor(ThemeEngine.getInstance().theme.color2)
+            version.setTextColor(ThemeEngine.getInstance().getTheme().getColor2())
+            jar.setTextColor(ThemeEngine.getInstance().getTheme().getColor2())
         }
 
     }
@@ -818,7 +839,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             cornerRadius = ConvertUtils.dip2px(this@MainActivity, 8f).toFloat()
             setStroke(
                 ConvertUtils.dip2px(this@MainActivity, 1f),
-                ThemeEngine.getInstance().theme.color2
+                ThemeEngine.getInstance().getTheme().getColor2()
             )
         }
     }
