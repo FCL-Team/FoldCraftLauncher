@@ -134,7 +134,7 @@ class AccountListAdapter(
             builder.setMessage(
                 String.format(
                     context.getString(R.string.version_manage_remove_confirm),
-                    item.title.get()
+                    item.title
                 )
             )
             builder.setPositiveButton {
