@@ -1,6 +1,5 @@
 package com.tungsten.fcllibrary.component.theme
 
-import android.app.WallpaperManager
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
@@ -195,13 +194,4 @@ object ThemeEngine {
         updateTheme { it.copy(animationSpeed = animationSpeed) }
     }
 
-    fun getWallpaperColor(context: Context): Int {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-            val colors = WallpaperManager.getInstance(context).getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
-            if (colors != null && colors.primaryColor != null) {
-                return colors.primaryColor!!.toArgb()
-            }
-        }
-        return Color.parseColor("#7797CF")
-    }
 }
