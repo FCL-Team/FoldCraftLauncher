@@ -73,7 +73,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,7 +86,7 @@ public class FCLGameRepository extends DefaultGameRepository {
     private final Profile profile;
 
     // local version settings
-    private final Map<String, VersionSetting> localVersionSettings = new HashMap<>();
+    private final Map<String, VersionSetting> localVersionSettings = new ConcurrentHashMap<>();
     private final Set<String> beingModpackVersions = new HashSet<>();
 
     public final EventManager<Event> onVersionIconChanged = new EventManager<>();
@@ -296,11 +295,16 @@ public class FCLGameRepository extends DefaultGameRepository {
     }
 
     public VersionSetting getVersionSetting(String id) {
-        VersionSetting vs = getLocalVersionSetting(id);
+        // null id 表示全局设置（ConcurrentHashMap 不接受 null key，需先行短路）
+        VersionSetting vs = id == null ? null : getLocalVersionSetting(id);
         if (vs == null || vs.isUsesGlobal()) {
-            profile.getGlobal().setGlobal(true); // always keep global.isGlobal = true
-            profile.getGlobal().setUsesGlobal(true);
-            return profile.getGlobal();
+            VersionSetting global = profile.getGlobal();
+            // 仅在不满足时修正（读取路径不写值，避免列表滑动逐项读取时重复触发配置保存）
+            if (!global.isGlobal())
+                global.setGlobal(true); // always keep global.isGlobal = true
+            if (!global.isUsesGlobal())
+                global.setUsesGlobal(true);
+            return global;
         } else
             return vs;
     }
@@ -351,7 +355,7 @@ public class FCLGameRepository extends DefaultGameRepository {
     }
 
     /** 图标资源缓存（版本列表加载时每版本取一次图标，避免重复加载资源） */
-    private static final Map<Integer, Drawable> DRAWABLE_CACHE = new HashMap<>();
+    private static final Map<Integer, Drawable> DRAWABLE_CACHE = new ConcurrentHashMap<>();
 
     private Drawable getDrawable(int id) {
         return DRAWABLE_CACHE.computeIfAbsent(id, k -> AppCompatResources.getDrawable(FCLPath.CONTEXT, k));

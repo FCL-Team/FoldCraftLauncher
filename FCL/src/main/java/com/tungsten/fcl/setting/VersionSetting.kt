@@ -54,6 +54,7 @@ class VersionSetting : Cloneable {
      */
     var isUsesGlobal: Boolean = true
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
@@ -61,12 +62,14 @@ class VersionSetting : Cloneable {
     // java
     var java: String = "Auto"
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var uuid: String = ""
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
@@ -76,6 +79,7 @@ class VersionSetting : Cloneable {
      */
     var maxMemory: Int = MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT)
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
@@ -85,12 +89,14 @@ class VersionSetting : Cloneable {
      */
     var minMemory: Int? = null
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var isAutoMemory: Boolean = true
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
@@ -101,6 +107,7 @@ class VersionSetting : Cloneable {
      */
     var javaArgs: String = ""
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
@@ -110,6 +117,7 @@ class VersionSetting : Cloneable {
      */
     var minecraftArgs: String = ""
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
@@ -119,6 +127,7 @@ class VersionSetting : Cloneable {
      */
     var isNotCheckJVM: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
@@ -128,6 +137,7 @@ class VersionSetting : Cloneable {
      */
     var isNotCheckGame: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
@@ -140,6 +150,7 @@ class VersionSetting : Cloneable {
      */
     var serverIp: String = ""
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
@@ -150,60 +161,70 @@ class VersionSetting : Cloneable {
      */
     var isIsolateGameDir: Boolean = true
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var graphicsBackend: String = "default"
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var isVKDriverSystem: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var controller: String = "00000000"
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var renderer: String = Renderer.ID_NGGL4ES
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var driver: String = "Turnip"
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var isPojavBigCore: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var isNotCheckMod: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var isDebugLog: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }
 
     var isForceResolution: Boolean = false
         set(value) {
+            if (field == value) return
             field = value
             changed()
         }

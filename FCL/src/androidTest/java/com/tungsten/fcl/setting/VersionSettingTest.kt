@@ -59,7 +59,7 @@ class VersionSettingTest {
         assertFalse(vs.isForceResolution)
     }
 
-    /** 所有可写字段的 setter 都触发一次监听通知（同值 set 也通知） */
+    /** 所有可写字段的 setter 都触发一次监听通知（值变化时） */
     @Test
     fun settersNotifyOnChangeListener() {
         val vs = VersionSetting()
@@ -69,7 +69,7 @@ class VersionSettingTest {
         try {
             vs.isUsesGlobal = false
             vs.java = "Java 17"
-            vs.maxMemory = 2048
+            vs.maxMemory = defaultMemory() + 1
             vs.minMemory = 1024
             vs.isAutoMemory = false
             vs.javaArgs = "-Xmx2G"
@@ -89,6 +89,27 @@ class VersionSettingTest {
             vs.isDebugLog = true
             vs.isForceResolution = true
             assertEquals(21, notified.get())
+        } finally {
+            vs.removeOnChangeListener(listener)
+        }
+    }
+
+    /** 同值写入不触发通知（避免读取路径的幂等赋值反复触发配置保存） */
+    @Test
+    fun sameValueSetDoesNotNotify() {
+        val vs = VersionSetting()
+        val notified = AtomicInteger(0)
+        val listener = Runnable { notified.incrementAndGet() }
+        vs.addOnChangeListener(listener)
+        try {
+            vs.isUsesGlobal = true
+            vs.java = "Auto"
+            vs.controller = "00000000"
+            vs.driver = "Turnip"
+            vs.maxMemory = vs.maxMemory
+            assertEquals(0, notified.get())
+            vs.maxMemory = vs.maxMemory + 1
+            assertEquals(1, notified.get())
         } finally {
             vs.removeOnChangeListener(listener)
         }
