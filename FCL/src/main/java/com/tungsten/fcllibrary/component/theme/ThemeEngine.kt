@@ -53,7 +53,14 @@ object ThemeEngine {
     /** 注册控件/页面的主题刷新回调（注册后立即执行一次） */
     fun registerEvent(view: View, runnable: Runnable) {
         runnables[view] = runnable
-        handler.post(runnable)
+        // 同步执行：新控件立即应用主题色。异步 post 会延迟到下一帧，
+        // 快速滑动/切换页面时新 inflate 的控件（如 bg_container_white + tint）首帧露出白色背景。
+        // 主题未初始化时退回异步（控件可能在 setupThemeEngine 前创建，如 Splash 布局）
+        if (_theme.value != null) {
+            runnable.run()
+        } else {
+            handler.post(runnable)
+        }
     }
 
     fun unregisterEvent(view: View) {
