@@ -106,12 +106,15 @@ class WorldListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, i
             binding.add -> add()
             binding.refresh -> refresh()
             binding.fixPrivate -> {
-                Files.walk(savesDir).forEach { path ->
-                    Files.setAttribute(
-                        path,
-                        "unix:mode",
-                        1535
-                    )
+                // use 关闭 Files.walk 的目录流，避免文件描述符泄漏
+                Files.walk(savesDir).use { stream ->
+                    stream.forEach { path ->
+                        Files.setAttribute(
+                            path,
+                            "unix:mode",
+                            1535
+                        )
+                    }
                 }
                 Toast.makeText(context, R.string.message_success, Toast.LENGTH_LONG).show()
             }

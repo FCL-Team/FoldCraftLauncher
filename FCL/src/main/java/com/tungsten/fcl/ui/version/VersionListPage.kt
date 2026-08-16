@@ -228,11 +228,12 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                                 )
                             }
                             val icon = repository.getVersionIconImage(analyzer, version.id)
-                            // Mod 数统计在 IO 线程并行流里完成（避免滑动时主线程目录 IO）
+                            // Mod 数统计在 IO 线程并行流里完成（避免滑动时主线程目录 IO）；
+                            // use 关闭 DirectoryStream，否则文件描述符泄漏（CloseGuard 报资源未关闭）
                             val modCount = runCatching {
-                                Files.list(repository.getModsDirectory(version.id))
-                                    .filter { it.isRegularFile() }
-                                    .count().toInt()
+                                Files.list(repository.getModsDirectory(version.id)).use { stream ->
+                                    stream.filter { it.isRegularFile() }.count().toInt()
+                                }
                             }.getOrNull() ?: 0
                             return@map VersionListItem(
                                 profile,
