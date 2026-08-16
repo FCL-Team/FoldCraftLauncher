@@ -15,7 +15,6 @@ public class SettingUI extends FCLMultiPageUI {
 
     public static final int PAGE_ID_SETTING_GAME = 15030;
     public static final int PAGE_ID_SETTING_LAUNCHER = 15031;
-    public static final int PAGE_ID_SETTING_HELP = 15032;
     public static final int PAGE_ID_SETTING_ABOUT = 15034;
 
     private FCLUILayout container;
@@ -36,7 +35,7 @@ public class SettingUI extends FCLMultiPageUI {
 
     @Override
     public int getPageCount() {
-        return 4;
+        return 3;
     }
 
     @Override
@@ -45,8 +44,6 @@ public class SettingUI extends FCLMultiPageUI {
             case 1:
                 return new LauncherSettingPage(getContext(), PAGE_ID_SETTING_LAUNCHER, R.layout.page_setting_launcher);
             case 2:
-                return new HelpPage(getContext(), PAGE_ID_SETTING_HELP, R.layout.page_setting_help);
-            case 3:
                 return new AboutPage(getContext(), PAGE_ID_SETTING_ABOUT, R.layout.page_setting_about);
             default:
                 return new VersionSettingPage(getContext(), PAGE_ID_SETTING_GAME, R.layout.page_version_setting, true);
@@ -58,7 +55,6 @@ public class SettingUI extends FCLMultiPageUI {
         return new String[]{
                 getContext().getString(R.string.settings_type_global_manage),
                 getContext().getString(R.string.settings_launcher),
-                getContext().getString(R.string.help),
                 getContext().getString(R.string.about)
         };
     }
