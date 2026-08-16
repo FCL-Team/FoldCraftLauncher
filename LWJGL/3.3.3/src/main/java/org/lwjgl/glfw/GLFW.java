@@ -1123,14 +1123,19 @@ public class GLFW
             long GetIntegerv = functionProvider.getFunctionAddress("glGetIntegerv");
 
             // Change the default to whatever GL_VERSION can be extracted to, only if higher ver
+            // Accumulate the detected version in local variables and compare against the default
+            // as a whole at the end: comparing major and minor independently could produce
+            // inconsistent combinations (e.g. default 4.0 + detected 3.3 would become 4.3).
+            int detectedGlMajor = glMajor;
+            int detectedGlMinor = glMinor;
             String versionString = memUTF8Safe(callP(GL_VERSION, GetString));
             if (versionString != null) {
                 try {
                     APIVersion apiVersion = apiParseVersion(versionString);
                     int parsedGlMajor = apiVersion.major;
                     int parsedGlMinor = apiVersion.minor;
-                    if (3 <= parsedGlMajor && parsedGlMajor <= 4) glMajor = parsedGlMajor;
-                    if (3 <= parsedGlMinor && parsedGlMinor <= 6) glMinor = parsedGlMinor;
+                    if (3 <= parsedGlMajor && parsedGlMajor <= 4) detectedGlMajor = parsedGlMajor;
+                    if (3 <= parsedGlMinor && parsedGlMinor <= 6) detectedGlMinor = parsedGlMinor;
                     System.out.println("Driver "+glDriver+" GL string returned "+ parsedGlMajor + parsedGlMinor);
                 } catch (Throwable ignored){} // In case the string is invalid/garbage
             }
@@ -1141,11 +1146,15 @@ public class GLFW
                 int parsedGlMajor = version.get(0);
                 int parsedGlMinor = version.get(1);
                 if (callI(GetError) == GL_NO_ERROR &&
-                        3 <= parsedGlMajor && parsedGlMajor <= 4) glMajor = parsedGlMajor;
+                        3 <= parsedGlMajor && parsedGlMajor <= 4) detectedGlMajor = parsedGlMajor;
                 callPV(GL_MINOR_VERSION, memAddress(version, 1), GetIntegerv);
                 if (callI(GetError) == GL_NO_ERROR &&
-                        3 <= parsedGlMinor && parsedGlMinor <= 4) glMinor = parsedGlMinor;
+                        3 <= parsedGlMinor && parsedGlMinor <= 4) detectedGlMinor = parsedGlMinor;
                 System.out.println("Driver "+glDriver+" GL version returned "+ parsedGlMajor + parsedGlMinor);
+            }
+            if (detectedGlMajor > glMajor || (detectedGlMajor == glMajor && detectedGlMinor > glMinor)) {
+                glMajor = detectedGlMajor;
+                glMinor = detectedGlMinor;
             }
             System.out.println("Using GL version "+glMajor+glMinor+" for GLFW window context!");
 
