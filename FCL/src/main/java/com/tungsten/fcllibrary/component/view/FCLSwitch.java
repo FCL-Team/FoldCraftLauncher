@@ -11,8 +11,6 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
@@ -23,11 +21,8 @@ public class FCLSwitch extends SwitchCompat {
     private BooleanProperty checkProperty;
     private BooleanProperty disableProperty;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
             int[][] state = {
                     {
                             android.R.attr.state_checked
@@ -47,18 +42,7 @@ public class FCLSwitch extends SwitchCompat {
             setThumbTintList(new ColorStateList(state, color));
             setTrackTintList(new ColorStateList(state, subColor));
             setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    }
 
     public void addCheckedChangeListener() {
         setOnCheckedChangeListener((compoundButton, b) -> {
@@ -69,17 +53,17 @@ public class FCLSwitch extends SwitchCompat {
 
     public FCLSwitch(@NonNull Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLSwitch(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLSwitch(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public final void setVisibilityValue(boolean visibility) {

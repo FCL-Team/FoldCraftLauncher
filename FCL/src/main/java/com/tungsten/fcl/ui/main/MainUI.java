@@ -73,7 +73,7 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
             @Override
             public void onViewAttachedToWindow(View v) {
                 if (skinViewer != null) {
-                    if (!ThemeEngine.getInstance().theme.isCloseSkinModel()) {
+                    if (!ThemeEngine.getInstance().getTheme().isCloseSkinModel()) {
                         skinViewer.setVisibility(View.VISIBLE);
                         skinViewer.onResume();
                         renderer.updateTexture(renderer.getTexture()[0], renderer.getTexture()[1]);
@@ -106,7 +106,7 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        if (skinViewer != null && isShowing() && !ThemeEngine.getInstance().theme.isCloseSkinModel()) {
+        if (skinViewer != null && isShowing() && !ThemeEngine.getInstance().getTheme().isCloseSkinModel()) {
             skinViewer.setVisibility(View.VISIBLE);
             skinViewer.onResume();
         }

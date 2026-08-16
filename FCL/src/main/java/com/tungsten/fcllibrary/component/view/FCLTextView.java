@@ -13,8 +13,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
@@ -29,85 +27,30 @@ public class FCLTextView extends AppCompatTextView {
     private StringProperty string;
     private BooleanProperty visibilityProperty;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            if (autoTint) {
-                setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
-                Drawable[] drawables = getCompoundDrawablesRelative();
-                for (Drawable drawable : drawables) {
-                    if (drawable != null) {
-                        drawable.setTint(ThemeEngine.getInstance().getTheme().getAutoTint());
-                    }
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
+        if (autoTint) {
+            setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
+            Drawable[] drawables = getCompoundDrawablesRelative();
+            for (Drawable drawable : drawables) {
+                if (drawable != null) {
+                    drawable.setTint(ThemeEngine.getInstance().getTheme().getAutoTint());
                 }
             }
-            if (autoBackgroundTint) {
-                setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getColor()}));
-            }
         }
-
-        @Override
-        public Object getBean() {
-            return this;
+        if (autoBackgroundTint) {
+            setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getColor()}));
         }
-
-        @Override
-        public String getName() {
-            return "theme";
+        if (useThemeColor) {
+            setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
         }
-    };
-
-    private final IntegerProperty theme2 = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            if (useThemeColor) {
-                setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
-            }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2";
-        }
-    };
-
-    private final IntegerProperty theme2Dark = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            if (useThemeColor) {
-                setTextColor(ThemeEngine.getInstance().getTheme().getColor2());
-            }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2Dark";
-        }
-    };
+    }
 
     public FCLTextView(@NonNull Context context) {
         super(context);
         autoTint = false;
         autoBackgroundTint = false;
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -117,9 +60,7 @@ public class FCLTextView extends AppCompatTextView {
         autoBackgroundTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_background_tint, false);
         useThemeColor = typedArray.getBoolean(R.styleable.FCLTextView_use_theme_color, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -129,9 +70,7 @@ public class FCLTextView extends AppCompatTextView {
         autoBackgroundTint = typedArray.getBoolean(R.styleable.FCLTextView_auto_text_background_tint, false);
         useThemeColor = typedArray.getBoolean(R.styleable.FCLTextView_use_theme_color, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public void alert() {

@@ -12,8 +12,6 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -28,11 +26,8 @@ public class FCLCheckBox extends AppCompatCheckBox {
     private BooleanProperty indeterminateProperty;
     private BooleanProperty disableProperty;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
             int[][] state = {
                     {
                             android.R.attr.state_checked
@@ -49,18 +44,7 @@ public class FCLCheckBox extends AppCompatCheckBox {
             if (autoTint) {
                 setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    }
 
     public void addCheckedChangeListener() {
         setOnCheckedChangeListener((compoundButton, b) -> {
@@ -75,7 +59,7 @@ public class FCLCheckBox extends AppCompatCheckBox {
 
     public FCLCheckBox(@NonNull Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLCheckBox(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -83,7 +67,7 @@ public class FCLCheckBox extends AppCompatCheckBox {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLCheckBox);
         autoTint = typedArray.getBoolean(R.styleable.FCLCheckBox_auto_hint_tint, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLCheckBox(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -91,7 +75,7 @@ public class FCLCheckBox extends AppCompatCheckBox {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLCheckBox);
         autoTint = typedArray.getBoolean(R.styleable.FCLCheckBox_auto_hint_tint, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public void setAutoTint(boolean autoTint) {

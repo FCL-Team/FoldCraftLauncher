@@ -17,8 +17,6 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -35,11 +33,8 @@ public class FCLButton extends AppCompatButton {
     private GradientDrawable drawableNormal;
     private GradientDrawable drawablePress;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
             drawableNormal.setColor(Color.TRANSPARENT);
             drawablePress.setColor(ThemeEngine.getInstance().getTheme().getLtColor());
             if (!ripple) {
@@ -54,18 +49,7 @@ public class FCLButton extends AppCompatButton {
             } else {
                 setRipple();
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    }
 
     private void init(int shape, boolean autoPadding) {
         setSingleLine(true);
@@ -99,7 +83,7 @@ public class FCLButton extends AppCompatButton {
         super(context);
         this.ripple = false;
         init(GradientDrawable.RECTANGLE, true);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -111,7 +95,7 @@ public class FCLButton extends AppCompatButton {
         this.ripple = ripple;
         init(shape, autoPadding);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -123,7 +107,7 @@ public class FCLButton extends AppCompatButton {
         this.ripple = ripple;
         init(shape, autoPadding);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     @Override

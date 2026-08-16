@@ -114,9 +114,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private lateinit var currentAccount: ObjectProperty<Account?>
     private val holder = WeakListenerHolder()
     private lateinit var profile: Profile
-    private lateinit var theme: IntegerProperty
-    private lateinit var theme2: IntegerProperty
-    private lateinit var theme2Dark: IntegerProperty
     var isVersionLoading = false
     private var modpackHandled = false
     lateinit var permissionResultLauncher: ActivityResultLauncher<String>
@@ -184,7 +181,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
 
         binding.apply {
-            initBackground()
             uiLayout.post {
                 ThemeEngine.getInstance().registerEvent(leftMenu) {
                     leftMenu.background = GradientDrawable().apply {
@@ -784,54 +780,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     }
 
-    private fun initBackground() {
-        theme = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme"
-            }
-        }
-        theme2 = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme2"
-            }
-        }
-        theme2Dark = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme2Dark"
-            }
-        }
-        theme.bind(ThemeEngine.getInstance().theme.colorProperty())
-        theme2.bind(ThemeEngine.getInstance().theme.color2Property())
-        theme2Dark.bind(ThemeEngine.getInstance().theme.color2DarkProperty())
-    }
-
     private fun createBackground(): GradientDrawable {
         return GradientDrawable().apply {
             setColor(Color.TRANSPARENT)
@@ -846,7 +794,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     private fun playAnim() {
         binding.apply {
-            val speed = ThemeEngine.getInstance().theme.animationSpeed
+            val speed = ThemeEngine.getInstance().getTheme().animationSpeed
             AnimUtil.playTranslationX(
                 listOf(leftMenu),
                 speed * 100L,

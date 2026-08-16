@@ -106,7 +106,6 @@ class LauncherSettingAdapter(
     }
 
     private fun buildRows(): List<Row> {
-        val theme = ThemeEngine.getInstance().theme
         val config = ConfigHolder.config()
         val languageList = listOf(
             context.getString(R.string.settings_launcher_language_system),
@@ -236,19 +235,19 @@ class LauncherSettingAdapter(
             ),
             Row.SwitchRow(
                 R.string.settings_launcher_ignore_notch,
-                { theme.isFullscreen() },
+                { ThemeEngine.getInstance().getTheme().fullscreen },
                 LauncherSettingTag.SWITCH_IGNORE_NOTCH,
                 R.string.settings_launcher_ignore_notch_desc
             ),
             Row.SwitchRow(
                 R.string.settings_launcher_close_skin_view,
-                { theme.isCloseSkinModel() },
+                { ThemeEngine.getInstance().getTheme().closeSkinModel },
                 LauncherSettingTag.SWITCH_CLOSE_SKIN_MODEL,
                 R.string.settings_launcher_close_skin_view_desc
             ),
             Row.SeekBarRow(
                 R.string.settings_launcher_animation_speed, 20, 1,
-                { theme.getAnimationSpeed() },
+                { ThemeEngine.getInstance().getTheme().animationSpeed },
                 LauncherSettingTag.SEEKBAR_ANIMATION_SPEED, "00",
                 R.string.settings_launcher_animation_speed_desc
             ),

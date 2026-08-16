@@ -39,7 +39,7 @@ import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLColorPickerDialog;
-import com.tungsten.fcllibrary.component.theme.Theme;
+import com.tungsten.fcllibrary.component.theme.ThemeData;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.util.LocaleUtils;
@@ -335,8 +335,8 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         boolean isDarkMode = ThemeEngine.isNightMode(getContext());
 
         Bitmap bitmap = (isDarkMode ?
-                ThemeEngine.getInstance().theme.getBackgroundDk() :
-                ThemeEngine.getInstance().theme.getBackgroundLt()
+                ThemeEngine.getInstance().getTheme().getBackgroundDk() :
+                ThemeEngine.getInstance().getTheme().getBackgroundLt()
         ).getBitmap();
 
         if (bitmap != null) {
@@ -395,8 +395,8 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                 getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
                 break;
             case SWITCH_CLOSE_SKIN_MODEL:
-                ThemeEngine.getInstance().getTheme().setiIgnoreSkinContainer(checked);
-                Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
+                ThemeEngine.getInstance().setCloseSkinModel(checked);
+                ThemeData.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
                 break;
             case SWITCH_DISABLE_FULLSCREEN_INPUT:
                 sharedPreferences.edit().putBoolean("disableFullscreenInput", checked).apply();
@@ -456,8 +456,8 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                 MainActivity.getInstance().setLiveBackgroundVolume();
                 break;
             case SEEKBAR_ANIMATION_SPEED:
-                ThemeEngine.getInstance().getTheme().animationSpeedProperty().set(progress);
-                Theme.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
+                ThemeEngine.getInstance().setAnimationSpeed(progress);
+                ThemeData.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
                 break;
             case SEEKBAR_VIBRATION:
                 sharedPreferences.edit().putInt("vibrationDuration", progress).apply();
