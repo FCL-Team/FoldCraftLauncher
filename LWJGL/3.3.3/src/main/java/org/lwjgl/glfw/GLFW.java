@@ -1135,7 +1135,7 @@ public class GLFW
                     int parsedGlMajor = apiVersion.major;
                     int parsedGlMinor = apiVersion.minor;
                     if (3 <= parsedGlMajor && parsedGlMajor <= 4) detectedGlMajor = parsedGlMajor;
-                    if (3 <= parsedGlMinor && parsedGlMinor <= 6) detectedGlMinor = parsedGlMinor;
+                    if (0 <= parsedGlMinor && parsedGlMinor <= 6) detectedGlMinor = parsedGlMinor;
                     System.out.println("Driver "+glDriver+" GL string returned "+ parsedGlMajor + parsedGlMinor);
                 } catch (Throwable ignored){} // In case the string is invalid/garbage
             }
@@ -1144,12 +1144,12 @@ public class GLFW
                 IntBuffer version = stack.ints(0, 0);
                 callPV(GL_MAJOR_VERSION, memAddress(version, 0), GetIntegerv);
                 int parsedGlMajor = version.get(0);
-                int parsedGlMinor = version.get(1);
                 if (callI(GetError) == GL_NO_ERROR &&
                         3 <= parsedGlMajor && parsedGlMajor <= 4) detectedGlMajor = parsedGlMajor;
                 callPV(GL_MINOR_VERSION, memAddress(version, 1), GetIntegerv);
+                int parsedGlMinor = version.get(1);
                 if (callI(GetError) == GL_NO_ERROR &&
-                        3 <= parsedGlMinor && parsedGlMinor <= 4) detectedGlMinor = parsedGlMinor;
+                        0 <= parsedGlMinor && parsedGlMinor <= 6) detectedGlMinor = parsedGlMinor;
                 System.out.println("Driver "+glDriver+" GL version returned "+ parsedGlMajor + parsedGlMinor);
             }
             if (detectedGlMajor > glMajor || (detectedGlMajor == glMajor && detectedGlMinor > glMinor)) {

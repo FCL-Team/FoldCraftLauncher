@@ -1175,7 +1175,7 @@ public class GLFW
                 try {
                     APIVersion apiVersion = apiParseVersion(versionString);
                     if (3 <= apiVersion.major && apiVersion.major <= 4) detectedGlMajor = apiVersion.major;
-                    if (3 <= apiVersion.minor && apiVersion.minor <= 6) detectedGlMinor = apiVersion.minor;
+                    if (0 <= apiVersion.minor && apiVersion.minor <= 6) detectedGlMinor = apiVersion.minor;
                     System.out.println("Driver "+glDriver+" GL string returned "+apiVersion.major+apiVersion.minor);
                 } catch (Throwable ignored){} // In case the string is invalid/garbage
             }
@@ -1187,7 +1187,7 @@ public class GLFW
                         3 <= version.get(0) && version.get(0) <= 4) detectedGlMajor = version.get(0);
                 callPV(GL_MINOR_VERSION, memAddress(version, 1), GetIntegerv);
                 if (callI(GetError) == GL_NO_ERROR &&
-                        3 <= version.get(1) && version.get(1) <= 4) detectedGlMinor = version.get(1);
+                        0 <= version.get(1) && version.get(1) <= 6) detectedGlMinor = version.get(1);
                 System.out.println("Driver "+glDriver+" GL version returned "+version.get(0)+version.get(1));
             }
             if (detectedGlMajor > glMajor || (detectedGlMajor == glMajor && detectedGlMinor > glMinor)) {
