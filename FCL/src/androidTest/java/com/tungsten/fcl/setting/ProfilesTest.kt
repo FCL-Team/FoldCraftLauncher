@@ -184,7 +184,7 @@ class ProfilesTest {
         profile.selectedVersion = null
         profile.repository.refreshVersions()
         // 无选中版本时返回全局设置
-        assertEquals(profile.global, profile.versionSetting)
-        assertEquals(profile.global, profile.getVersionSetting(null))
+        assertEquals(profile.globalVersionSetting, profile.versionSetting)
+        assertEquals(profile.globalVersionSetting, profile.getVersionSetting(null))
     }
 }

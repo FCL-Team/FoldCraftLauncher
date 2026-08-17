@@ -36,7 +36,7 @@ class RendererSelectDialog(
         binding.listView.adapter = getAdapter()
         binding.listView.setOnItemClickListener { _, _, position, _ ->
             val versionSetting =
-                if (isGlobal) Profiles.getSelectedProfile().global else Profiles.getSelectedProfile().versionSetting
+                if (isGlobal) Profiles.getSelectedProfile().globalVersionSetting else Profiles.getSelectedProfile().versionSetting
             versionSetting.renderer = RendererManager.rendererList[position].id
             dismiss()
             callback.accept(binding.listView.adapter.getItem(position).toString())

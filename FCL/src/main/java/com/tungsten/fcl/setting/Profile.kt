@@ -29,7 +29,6 @@ import com.google.gson.annotations.JsonAdapter
 import com.tungsten.fcl.game.FCLCacheRepository
 import com.tungsten.fcl.game.FCLGameRepository
 import com.tungsten.fcl.util.WeakListenerHolder
-import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.download.DefaultDependencyManager
 import com.tungsten.fclcore.download.DownloadProvider
 import com.tungsten.fclcore.event.EventBus
@@ -73,7 +72,7 @@ class Profile {
         }
 
     /** 全局设置（变化时触发 [onChanged]） */
-    val global: VersionSetting
+    val globalVersionSetting: VersionSetting
 
     /** 名称 */
     var name: String = ""
@@ -97,19 +96,14 @@ class Profile {
         selectedVersionListeners.remove(listener)
     }
 
-    constructor(name: String) : this(name, File(FCLPath.SHARED_COMMON_DIR))
-
-    constructor(name: String, initialGameDir: File) : this(name, initialGameDir, VersionSetting())
-
-    constructor(name: String, initialGameDir: File, global: VersionSetting) :
-        this(name, initialGameDir, global, null)
+    constructor(name: String, initialGameDir: File) : this(name, initialGameDir, VersionSetting(), null)
 
     constructor(name: String, initialGameDir: File, global: VersionSetting?, selectedVersion: String?) {
         this.name = name
         this.repository = FCLGameRepository(this, initialGameDir)
         this.gameDir = initialGameDir
-        this.global = global ?: VersionSetting()
-        this.global.addOnChangeListener { onChanged?.invoke() }
+        this.globalVersionSetting = global ?: VersionSetting()
+        this.globalVersionSetting.addOnChangeListener { onChanged?.invoke() }
         this.selectedVersion = selectedVersion
 
         listenerHolder.add(
@@ -157,7 +151,7 @@ class Profile {
         ): JsonElement {
             if (src == null) return JsonNull.INSTANCE
             return JsonObject().apply {
-                add("global", context.serialize(src.global))
+                add("global", context.serialize(src.globalVersionSetting))
                 addProperty("gameDir", src.gameDir.path)
                 addProperty("selectedMinecraftVersion", src.selectedVersion)
             }

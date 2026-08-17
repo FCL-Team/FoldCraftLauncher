@@ -60,9 +60,9 @@ class ProfileTest {
         val restored = JsonUtils.GSON.fromJson<Profile>(JsonUtils.GSON.toJson(profile), Profile::class.java)
         assertEquals(File(tempDir, "game"), restored.gameDir)
         assertEquals("1.0", restored.selectedVersion)
-        assertEquals(2048, restored.global.maxMemory)
-        assertEquals("1.2.3.4", restored.global.serverIp)
-        assertFalse(restored.global.isUsesGlobal)
+        assertEquals(2048, restored.globalVersionSetting.maxMemory)
+        assertEquals("1.2.3.4", restored.globalVersionSetting.serverIp)
+        assertFalse(restored.globalVersionSetting.isUsesGlobal)
         // 反序列化时名称固定为 "Default"（Serializer 不持久化 name）
         assertEquals("Default", restored.name)
     }

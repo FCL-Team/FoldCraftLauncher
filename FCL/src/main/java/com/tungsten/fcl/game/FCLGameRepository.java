@@ -21,7 +21,6 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -53,7 +52,6 @@ import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.game.VersionNotFoundException;
 import com.tungsten.fclcore.mod.ModAdviser;
 import com.tungsten.fclcore.mod.Modpack;
-import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.mod.ModpackProvider;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
@@ -298,10 +296,8 @@ public class FCLGameRepository extends DefaultGameRepository {
         // null id 表示全局设置（ConcurrentHashMap 不接受 null key，需先行短路）
         VersionSetting vs = id == null ? null : getLocalVersionSetting(id);
         if (vs == null || vs.isUsesGlobal()) {
-            VersionSetting global = profile.getGlobal();
+            VersionSetting global = profile.getGlobalVersionSetting();
             // 仅在不满足时修正（读取路径不写值，避免列表滑动逐项读取时重复触发配置保存）
-            if (!global.isGlobal())
-                global.setGlobal(true); // always keep global.isGlobal = true
             if (!global.isUsesGlobal())
                 global.setUsesGlobal(true);
             return global;
