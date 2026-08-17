@@ -609,7 +609,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             }
             if (view === goSetting) {
                 val profile = Profiles.getSelectedProfile()
-                if (profile.versionSetting.isGlobal) {
+                if (profile.versionSetting.isUsesGlobal) {
                     setting.isSelected = true
                     val tab = uiManager.settingUI.tabLayout.getTabAt(0)
                     uiManager.settingUI.tabLayout.selectTab(tab)

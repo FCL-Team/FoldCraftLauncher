@@ -35,7 +35,6 @@ class VersionSettingTest {
     @Test
     fun defaultValues() {
         val vs = VersionSetting()
-        assertFalse(vs.isGlobal)
         assertTrue(vs.isUsesGlobal)
         assertEquals("Auto", vs.java)
         assertEquals("", vs.uuid)

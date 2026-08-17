@@ -42,7 +42,6 @@ import java.lang.reflect.Type
  */
 @JsonAdapter(VersionSetting.Serializer::class)
 class VersionSetting : Cloneable {
-    var isGlobal: Boolean = false
 
     /**
      * FCL Version Settings have been divided into 2 parts.

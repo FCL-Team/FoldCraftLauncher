@@ -62,7 +62,7 @@ class VersionListAdapter(val context: Context, initList: List<VersionListItem>) 
         binding.root.setOnClickListener {
             versionListItem.profile.selectedVersion = versionListItem.version
         }
-        if (!versionListItem.profile.getVersionSetting(versionListItem.version).isGlobal) {
+        if (!versionListItem.profile.getVersionSetting(versionListItem.version).isUsesGlobal) {
             binding.setting.visibility = View.VISIBLE
             binding.setting.setOnClickListener {
                 versionListItem.profile.selectedVersion = versionListItem.version

@@ -346,7 +346,7 @@ class VersionSettingPage(
 
             VersionSettingTag.EDIT_RENDERER -> {
                 RendererSelectDialog(context, globalSetting) {
-                    if (globalSetting && getSelectedProfile().versionSetting != null && !getSelectedProfile().versionSetting.isGlobal) {
+                    if (globalSetting && getSelectedProfile().versionSetting != null && !getSelectedProfile().versionSetting.isUsesGlobal) {
                         val builder = FCLAlertDialog.Builder(context)
                         builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
                         builder.setMessage(context.getString(R.string.message_warn_renderer_global_setting))
