@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.download.common;
 
 import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_MOD;
-import com.tungsten.fcl.ui.UIManager;
 import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_MODPACK;
 import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_RESOURCE_PACK;
 import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_SHADER_PACK;
@@ -22,8 +21,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.databinding.PageDownloadBinding;
 import com.tungsten.fcl.game.LocalizedRemoteModRepository;
@@ -31,6 +28,7 @@ import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.manage.ManageUI;
 import com.tungsten.fcl.ui.version.Versions;
@@ -75,7 +73,6 @@ import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import org.jetbrains.annotations.Nullable;
@@ -141,9 +138,13 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
     protected ModLoaderType selectedModLoader;
     private ModManager modManager;
     private final DownloadProvider downloadProvider;
-    /** 搜索状态（挂 Activity 的 ViewModel，模式切换与页面重建后恢复） */
+    /**
+     * 搜索状态（挂 Activity 的 ViewModel，模式切换与页面重建后恢复）
+     */
     protected DownloadSearchViewModel.State searchState;
-    /** 下载源变化时刷新分类并重新搜索（用户手动切换源时触发） */
+    /**
+     * 下载源变化时刷新分类并重新搜索（用户手动切换源时触发）
+     */
     private final InvalidationListener sourceListener = observable -> refreshCategory(true);
 
     public DownloadPage(Context context, int resId) {
@@ -240,7 +241,7 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
         // 恢复该模式的搜索条件（搜索框/游戏版本/排序；分类在分类列表就绪后恢复）
         nameEditText.setText(searchState.searchFilter);
         int versionIndex = versionList.indexOf(searchState.userGameVersion);
-        gameVersionSpinner.setSelection(versionIndex < 0 ? 0 : versionIndex);
+        gameVersionSpinner.setSelection(Math.max(versionIndex, 0));
         sortSpinner.setSelection(searchState.sortType.ordinal());
 
         // 刷新分类并恢复搜索状态（有结果直接恢复，不重新搜索）
@@ -252,7 +253,9 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
         }
     }
 
-    /** 下载源 spinner 初始化/刷新（数据与显隐随模式变化） */
+    /**
+     * 下载源 spinner 初始化/刷新（数据与显隐随模式变化）
+     */
     private void initSourceSpinner() {
         sourceText.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
         sourceSpinner.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
@@ -266,7 +269,9 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
         }
     }
 
-    /** 本地化仓库（Modrinth/CurseForge 双源，按模式指定仓库与类型） */
+    /**
+     * 本地化仓库（Modrinth/CurseForge 双源，按模式指定仓库与类型）
+     */
     private class LocalizedRepository extends LocalizedRemoteModRepository {
         private final RemoteModRepository modrinthRepository;
         private final RemoteModRepository curseRepository;
@@ -401,8 +406,10 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
         });
     }
 
-    /** 恢复该模式上次的搜索结果（切换回时调用），不重新搜索；
-     *  复用该模式缓存的 adapter 时不重建列表，避免 item 滑入动画重播 */
+    /**
+     * 恢复该模式上次的搜索结果（切换回时调用），不重新搜索；
+     * 复用该模式缓存的 adapter 时不重建列表，避免 item 滑入动画重播
+     */
     private void restoreResult() {
         setLoading(false);
         retry.setVisibility(View.GONE);
@@ -440,13 +447,6 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
             result.append(modrinthCategory.name());
         }
         return result.toString();
-    }
-
-    protected String getLocalizedOfficialPage() {
-        if (pageId == PAGE_ID_DOWNLOAD_WORLD) {
-            return getContext().getString(R.string.mods_curseforge);
-        }
-        return downloadSource.get();
     }
 
     public void create() {
@@ -731,7 +731,7 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
     protected String getLocalizedCategory(String category) {
         if (pageId != PAGE_ID_DOWNLOAD_WORLD && downloadSource.get() != null
                 && downloadSource.get().equals(getContext().getString(R.string.mods_modrinth))) {
-            String key = "modrinth_category_" + category.replaceAll("-", "_");
+            String key = "modrinth_category_" + category.replace("-", "_");
             if (pageId == PAGE_ID_DOWNLOAD_RESOURCE_PACK) {
                 key = key.replaceAll("\\+", "");
             }

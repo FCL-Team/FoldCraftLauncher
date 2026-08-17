@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.controller;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
-import com.tungsten.fcl.ui.UIManager;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -26,6 +25,7 @@ import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -49,7 +49,6 @@ import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.io.File;

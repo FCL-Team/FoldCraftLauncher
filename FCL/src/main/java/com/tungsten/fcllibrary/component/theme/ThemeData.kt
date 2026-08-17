@@ -83,7 +83,8 @@ data class ThemeData(
             val pref = runBlocking { context.themeDataStore.data.first() }
             // 一次性迁移：DataStore 尚未写入过且旧 SharedPreferences 有主题配置时迁移并回写
             val migrated = pref == ThemePreference() &&
-                    context.getSharedPreferences("theme", Context.MODE_PRIVATE).contains("theme_color")
+                    context.getSharedPreferences("theme", Context.MODE_PRIVATE)
+                        .contains("theme_color")
             val effective = if (migrated) migrateFromSharedPreferences(context) else pref
             val lt = ImageUtil.load(context.filesDir.absolutePath + "/background/lt.png")
                 .orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_light))
@@ -105,7 +106,10 @@ data class ThemeData(
                 color2 = old.getInt("theme_color2", ThemePreference().color2),
                 color2Dark = old.getInt("theme_color2_dark", ThemePreference().color2Dark),
                 fullscreen = old.getBoolean("fullscreen", ThemePreference().fullscreen),
-                closeSkinModel = old.getBoolean("close_skin_model", ThemePreference().closeSkinModel),
+                closeSkinModel = old.getBoolean(
+                    "close_skin_model",
+                    ThemePreference().closeSkinModel
+                ),
                 animationSpeed = old.getInt("animation_speed", ThemePreference().animationSpeed)
             )
             runBlocking {

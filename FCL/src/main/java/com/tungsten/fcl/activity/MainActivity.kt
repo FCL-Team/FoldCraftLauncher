@@ -1,13 +1,12 @@
 package com.tungsten.fcl.activity
 
 import android.Manifest
-import com.tungsten.fcllibrary.component.ui.FCLPage;
 import android.content.Context
-import android.content.res.Configuration
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.media.MediaPlayer
@@ -32,6 +31,7 @@ import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.forEach
+import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
 import com.mio.manager.RendererManager
@@ -59,8 +59,6 @@ import com.tungsten.fcl.ui.main.MainUI
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.FXUtils
-import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -70,8 +68,6 @@ import com.tungsten.fclcore.auth.yggdrasil.TextureModel
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
 import com.tungsten.fclcore.fakefx.beans.value.ObservableValue
@@ -84,6 +80,7 @@ import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.component.ui.FCLPage
 import com.tungsten.fcllibrary.component.view.FCLMenuView
 import com.tungsten.fcllibrary.component.view.FCLMenuView.OnSelectListener
 import com.tungsten.fcllibrary.util.ConvertUtils
@@ -112,7 +109,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private var _uiManager: UIManager? = null
     lateinit var uiManager: UIManager
     private lateinit var currentAccount: ObjectProperty<Account?>
-    private val holder = WeakListenerHolder()
     private lateinit var profile: Profile
     var isVersionLoading = false
     private var modpackHandled = false
@@ -375,7 +371,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     val dx = centerX - startCenterX
                     val dy = centerY - startCenterY
                     // 水平位移超过阈值且为主导方向时触发，一次手势只触发一次
-                    if (abs(dx) > ViewConfiguration.get(this).scaledTouchSlop * 3f && abs(dx) > abs(dy)) {
+                    if (abs(dx) > ViewConfiguration.get(this).scaledTouchSlop * 3f && abs(dx) > abs(
+                            dy
+                        )
+                    ) {
                         twoFingerTracking = false
                         // 仅当两指起始位置都在 right_menu 区域内才触发
                         // （菜单隐藏时无布局尺寸，按隐藏前记录的宽度推算右侧区域）
@@ -389,7 +388,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                             if (dx < 0) {
                                 if (binding.rightMenu.visibility != View.VISIBLE) showRightMenu()
                             } else {
-                                if (binding.rightMenu.visibility == View.VISIBLE) hideRightMenu()
+                                if (binding.rightMenu.isVisible) hideRightMenu()
                             }
                         }
                     }
@@ -855,7 +854,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             startActivity(
                 Intent.createChooser(
                     intent,
-                    getString(com.tungsten.fcl.R.string.crash_reporter_share)
+                    getString(R.string.crash_reporter_share)
                 )
             )
         } catch (e: Exception) {

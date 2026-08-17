@@ -18,8 +18,8 @@ import java.util.List;
 
 public class ModGameVersionAdapter extends FCLAdapter {
 
-    private List<String> list;
-    private Callback callback;
+    private final List<String> list;
+    private final Callback callback;
 
     public ModGameVersionAdapter(Context context, List<String> list, Callback callback) {
         super(context);

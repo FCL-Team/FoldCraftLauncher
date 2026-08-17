@@ -3,6 +3,8 @@ package com.tungsten.fcl.ui.manage;
 import android.content.Context;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
@@ -11,7 +13,6 @@ import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.event.EventBus;
 import com.tungsten.fclcore.event.EventPriority;
 import com.tungsten.fclcore.event.RefreshedVersionsEvent;
-import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.game.GameRepository;
@@ -32,19 +33,17 @@ public class ManageUI extends FCLMultiPageUI {
     public static final int PAGE_ID_MANAGE_MOD = 15003;
     public static final int PAGE_ID_MANAGE_WORLD = 15004;
 
-    private FCLUILayout container;
-
     private final ObjectProperty<Profile.ProfileVersion> version = new SimpleObjectProperty<>();
     private final WeakListenerHolder listenerHolder = new WeakListenerHolder();
     public String preferredVersionName = null;
     public FCLTabLayout tabLayout;
 
-    /** 切换 Profile 时重新加载版本设置（页面保留时不经过 onSelect/setVersion 的兜底） */
+    /**
+     * 切换 Profile 时重新加载版本设置（页面保留时不经过 onSelect/setVersion 的兜底）
+     */
     private final Runnable profileListener = () -> {
         Profile profile = Profiles.getSelectedProfile();
-        if (profile != null) {
-            setVersion(profile.getSelectedVersion(), profile);
-        }
+        setVersion(profile.getSelectedVersion(), profile);
     };
 
     public ManageUI(Context context, int id) {
@@ -55,7 +54,7 @@ public class ManageUI extends FCLMultiPageUI {
     public void onCreate() {
         super.onCreate();
         tabLayout = findViewById(R.id.tab_layout);
-        container = findViewById(R.id.container);
+        FCLUILayout container = findViewById(R.id.container);
         setupPages(container, tabLayout);
 
         listenerHolder.add(EventBus.EVENT_BUS.channel(RefreshedVersionsEvent.class).registerWeak(event -> checkSelectedVersion(), EventPriority.HIGHEST));
@@ -64,7 +63,7 @@ public class ManageUI extends FCLMultiPageUI {
         Profiles.addSelectedProfileListener(profileListener);
         getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
-            public void onViewAttachedToWindow(View v) {
+            public void onViewAttachedToWindow(@NonNull View v) {
                 // 页面切走再切回时恢复监听并立即刷新（后台可能已切换 Profile）
                 Profiles.removeSelectedProfileListener(profileListener);
                 Profiles.addSelectedProfileListener(profileListener);
@@ -72,7 +71,7 @@ public class ManageUI extends FCLMultiPageUI {
             }
 
             @Override
-            public void onViewDetachedFromWindow(View v) {
+            public void onViewDetachedFromWindow(@NonNull View v) {
                 Profiles.removeSelectedProfileListener(profileListener);
             }
         });
@@ -85,18 +84,17 @@ public class ManageUI extends FCLMultiPageUI {
 
     @Override
     public FCLPage createPage(int position) {
-        switch (position) {
-            case 1:
-                return new ManagePage(getContext(), PAGE_ID_MANAGE_MANAGE, R.layout.page_manage_version);
-            case 2:
-                return new InstallerListPage(getContext(), PAGE_ID_MANAGE_INSTALL, R.layout.page_manage_auto_install);
-            case 3:
-                return new ModListPage(getContext(), PAGE_ID_MANAGE_MOD, R.layout.page_manage_mod);
-            case 4:
-                return new WorldListPage(getContext(), PAGE_ID_MANAGE_WORLD, R.layout.page_manage_world);
-            default:
-                return new VersionSettingPage(getContext(), PAGE_ID_MANAGE_SETTING, R.layout.page_version_setting, false);
-        }
+        return switch (position) {
+            case 1 ->
+                    new ManagePage(getContext(), PAGE_ID_MANAGE_MANAGE, R.layout.page_manage_version);
+            case 2 ->
+                    new InstallerListPage(getContext(), PAGE_ID_MANAGE_INSTALL, R.layout.page_manage_auto_install);
+            case 3 -> new ModListPage(getContext(), PAGE_ID_MANAGE_MOD, R.layout.page_manage_mod);
+            case 4 ->
+                    new WorldListPage(getContext(), PAGE_ID_MANAGE_WORLD, R.layout.page_manage_world);
+            default ->
+                    new VersionSettingPage(getContext(), PAGE_ID_MANAGE_SETTING, R.layout.page_version_setting, false);
+        };
     }
 
     @Override
@@ -160,7 +158,9 @@ public class ManageUI extends FCLMultiPageUI {
         });
     }
 
-    /** 游戏目录变更时刷新模组/世界列表（原 ManagePageManager.onRunDirectoryChange） */
+    /**
+     * 游戏目录变更时刷新模组/世界列表（原 ManagePageManager.onRunDirectoryChange）
+     */
     public void onRunDirectoryChange(Profile profile, String version) {
         FCLPage modPage = getPage(3);
         if (modPage instanceof VersionLoadable) {

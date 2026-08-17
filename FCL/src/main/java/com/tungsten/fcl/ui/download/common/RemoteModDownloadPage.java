@@ -25,7 +25,6 @@ import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.ArrayList;
@@ -99,9 +98,9 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
 
             return dependencies;
         }).whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
-            setLoading(false, result.keySet().size() > 0);
+            setLoading(false, !result.isEmpty());
             if (exception == null) {
-                if (result.keySet().size() > 0) {
+                if (!result.isEmpty()) {
                     loadDependencyList(result);
                 }
             } else {

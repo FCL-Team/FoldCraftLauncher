@@ -1,8 +1,6 @@
 package com.tungsten.fcl.ui.version;
 
 import android.content.Context;
-import com.tungsten.fcllibrary.component.ui.FCLPage;
-import com.tungsten.fcl.ui.UIManager;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialog;
@@ -14,8 +12,8 @@ import com.tungsten.fcl.game.LauncherHelper;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage;
 import com.tungsten.fcl.ui.download.modpack.ModpackSelectionPage;
@@ -34,6 +32,8 @@ import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
+import com.tungsten.fcllibrary.ui.ProgressDialog;
 
 import java.io.IOException;
 import java.net.URL;
@@ -104,11 +104,7 @@ public class Versions {
         builder.setMessage(message);
         builder.setPositiveButton(() -> {
             ProgressDialog progress = new ProgressDialog(context);
-            Task.runAsync(() -> {
-                profile.getRepository().removeVersionFromDisk(version);
-            }).whenComplete(Schedulers.androidUIThread(), (e) -> {
-                progress.dismiss();
-            }).start();
+            Task.runAsync(() -> profile.getRepository().removeVersionFromDisk(version)).whenComplete(Schedulers.androidUIThread(), (e) -> progress.dismiss()).start();
         });
         builder.setNegativeButton(null);
         builder.create().show();

@@ -3,11 +3,12 @@ package com.tungsten.fcl.ui.download.common
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -29,8 +30,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.logging.Level
 import java.util.stream.Collectors
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.drawable.toDrawable
 
 class RemoteModListAdapter(
     private val context: Context,
@@ -43,7 +42,8 @@ class RemoteModListAdapter(
     init {
         MainActivity.getInstance().lifecycleScope.launch(Dispatchers.Default) {
             // 后台预热 Mod 翻译数据，避免首次 bind 时在主线程解析大文件造成卡顿
-            ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType()).preload()
+            ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType())
+                .preload()
             if (downloadPage.pageId == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
                 val modManager = downloadPage.modManager
                 val modFiles = runCatching {

@@ -187,7 +187,7 @@ class LocalModListAdapter(
                 )
             )
         }
-        binding.parent.setOnClickListener { v: View? ->
+        binding.parent.setOnClickListener { _: View? ->
             if (selectedItemsProperty.contains(modInfoObject)) {
                 fromSelf = true
                 selectedItemsProperty.remove(modInfoObject)
@@ -246,7 +246,7 @@ class LocalModListAdapter(
             val uiManager = MainActivity.getInstance().uiManager
             MainActivity.getInstance().binding.download.isSelected = true
             uiManager.downloadUI.showDownloadPage(DownloadUI.PAGE_ID_DOWNLOAD_MOD)
-            uiManager.downloadUI.getDownloadPage().jumpToModPage(modInfoObject.remoteMod)
+            uiManager.downloadUI.downloadPage.jumpToModPage(modInfoObject.remoteMod)
         }
 
         drawable.setTint(ThemeEngine.getInstance().getTheme().color)

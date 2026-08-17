@@ -327,9 +327,7 @@ class VersionSettingAdapter(
         // 行背景为圆角形状（item 布局中定义），颜色 tint 取主题浅色；间隔空隙透出页面背景
         ThemeEngine.getInstance().unregisterEvent(holder.itemView)
         ThemeEngine.getInstance().registerEvent(holder.itemView) {
-            holder.itemView.setBackgroundTintList(
-                ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().ltColor)
-            )
+            holder.itemView.backgroundTintList = ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().ltColor)
         }
         val row = rows[position]
         // 行下方的作用描述

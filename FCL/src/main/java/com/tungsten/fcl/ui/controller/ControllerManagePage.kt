@@ -42,7 +42,8 @@ class ControllerManagePage(context: Context, id: Int, resId: Int) :
     var selectedController: Controller? = null
         private set
 
-    private var binding: PageControllerManagerBinding = PageControllerManagerBinding.bind(contentView)
+    private var binding: PageControllerManagerBinding =
+        PageControllerManagerBinding.bind(contentView)
     private lateinit var adapter: EditableControllerListAdapter
 
     init {

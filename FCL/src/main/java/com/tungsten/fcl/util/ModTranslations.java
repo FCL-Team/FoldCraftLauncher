@@ -23,15 +23,16 @@ import static com.tungsten.fclcore.util.Pair.pair;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fclcore.util.io.IOUtils;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.logging.Level;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -60,14 +61,11 @@ public enum ModTranslations {
     };
 
     public static ModTranslations getTranslationsByRepositoryType(RemoteModRepository.Type type) {
-        switch (type) {
-            case MOD:
-                return MOD;
-            case MODPACK:
-                return MODPACK;
-            default:
-                return EMPTY;
-        }
+        return switch (type) {
+            case MOD -> MOD;
+            case MODPACK -> MODPACK;
+            default -> EMPTY;
+        };
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

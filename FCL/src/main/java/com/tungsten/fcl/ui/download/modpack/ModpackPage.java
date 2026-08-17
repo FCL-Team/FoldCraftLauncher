@@ -16,7 +16,6 @@ import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 public abstract class ModpackPage extends FCLPage implements View.OnClickListener {
 
@@ -53,7 +52,7 @@ public abstract class ModpackPage extends FCLPage implements View.OnClickListene
         describe = findViewById(R.id.describe);
         install.setOnClickListener(this);
         describe.setOnClickListener(this);
-        ThemeEngine.getInstance().registerEvent(infoLayout, () -> infoLayout.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
+        ThemeEngine.getInstance().registerEvent(infoLayout, () -> infoLayout.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
     }
 
     @Override

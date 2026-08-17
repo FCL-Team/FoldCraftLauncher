@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
@@ -71,7 +72,7 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
         // 皮肤渲染随页面挂载/回收恢复与暂停（替代原 onStart/onStop 生命周期）
         getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
-            public void onViewAttachedToWindow(View v) {
+            public void onViewAttachedToWindow(@NonNull View v) {
                 if (skinViewer != null) {
                     if (!ThemeEngine.getInstance().getTheme().isCloseSkinModel()) {
                         skinViewer.setVisibility(View.VISIBLE);
@@ -85,7 +86,7 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
             }
 
             @Override
-            public void onViewDetachedFromWindow(View v) {
+            public void onViewDetachedFromWindow(@NonNull View v) {
                 if (skinViewer != null) {
                     skinViewer.onPause();
                     skinViewer.setVisibility(View.GONE);

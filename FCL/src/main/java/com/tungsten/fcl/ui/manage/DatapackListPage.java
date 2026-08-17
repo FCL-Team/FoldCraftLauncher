@@ -22,7 +22,6 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +45,7 @@ public class DatapackListPage extends FCLPage implements View.OnClickListener {
     private FCLButton refreshButton;
     private FCLProgressBar progressBar;
     private ListView listView;
-    private DatapackListAdapter adapter;
+    private final DatapackListAdapter adapter;
 
     public DatapackListPage(Context context, int id, int resId, String worldName, Path worldDir) {
         super(context, id, resId);

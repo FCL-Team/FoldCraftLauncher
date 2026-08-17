@@ -1,20 +1,3 @@
-/*
- * Hello Minecraft! Launcher
- * Copyright (C) 2020  huangyuhui <huanghongxun2008@126.com> and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package com.tungsten.fcl.setting
 
 import com.tungsten.fcl.R
@@ -24,7 +7,6 @@ import com.tungsten.fclcore.event.EventBus
 import com.tungsten.fclcore.event.RefreshedVersionsEvent
 import com.tungsten.fclcore.fakefx.collections.FXCollections
 import java.io.File
-import java.util.Optional
 import java.util.TreeMap
 import java.util.function.Consumer
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,20 +14,32 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 object Profiles {
+    /**
+     * True if [.init] hasn't been called.
+     */
+    private var initialized = false
     private var isFirstRefresh = true
-
+    /**
+     * Called when it's ready to load profiles from [ConfigHolder.config].
+     */
+    private val holder = WeakListenerHolder()
     /** Profile 列表（Repository 单例，修改统一走 addProfile/removeProfile 以触发保存与选中项校验） */
     @JvmStatic
     val profiles = mutableListOf<Profile>()
-
     private val _selectedProfile = MutableStateFlow<Profile?>(null)
-
     /** 当前选中的 Profile（Repository 单例状态，Java 侧访问 getSelectedProfileFlow()） */
     @get:JvmName("getSelectedProfileFlow")
     val selectedProfile: StateFlow<Profile?> = _selectedProfile.asStateFlow()
-
     /** 选中 Profile 变化的监听者（setter 同步通知，调用线程即回调线程） */
     private val selectedProfileListeners = mutableListOf<Runnable>()
+    private val _selectedVersion = MutableStateFlow<String?>(null)
+    /** 当前选中 Profile 的选中版本（Repository 单例状态，Java 侧访问 getSelectedVersionFlow()） */
+    @get:JvmName("getSelectedVersionFlow")
+    val selectedVersion: StateFlow<String?> = _selectedVersion.asStateFlow()
+    private var selectedVersionProfile: Profile? = null
+    private var selectedVersionListener: Runnable? = null
+    private val versionsListeners: MutableList<Consumer<Profile>> =
+        ArrayList(4)
 
     /** 添加 Profile（触发配置保存、默认补全与选中项校验） */
     @JvmStatic
@@ -95,11 +89,6 @@ object Profiles {
         profile.onChanged = { updateProfileStorages() }
     }
 
-    /**
-     * True if [.init] hasn't been called.
-     */
-    private var initialized = false
-
     private fun updateProfileStorages() {
         // don't update the underlying storage before data loading is completed
         // otherwise it might cause data loss
@@ -112,11 +101,6 @@ object Profiles {
         ConfigHolder.config().configurations.value =
             FXCollections.observableMap(newConfigurations)
     }
-
-    /**
-     * Called when it's ready to load profiles from [ConfigHolder.config].
-     */
-    private val holder = WeakListenerHolder()
 
     @JvmStatic
     fun init() {
@@ -178,7 +162,7 @@ object Profiles {
         selectedProfileListeners.toList().forEach { listener -> listener.run() }
         // 仅未加载版本的 Profile 切换时才刷新（refreshVersions 会清空解析/jar 缓存，
         // 已加载的 Profile 保留缓存以加快切换；版本变化由刷新事件与手动刷新驱动）
-        if (!isFirstRefresh && !profile.repository.isLoaded()) {
+        if (!isFirstRefresh && !profile.repository.isLoaded) {
             profile.repository.refreshVersionsAsync().start()
         }
     }
@@ -204,15 +188,6 @@ object Profiles {
     fun removeSelectedProfileListener(listener: Runnable) {
         selectedProfileListeners.remove(listener)
     }
-
-    private val _selectedVersion = MutableStateFlow<String?>(null)
-
-    /** 当前选中 Profile 的选中版本（Repository 单例状态，Java 侧访问 getSelectedVersionFlow()） */
-    @get:JvmName("getSelectedVersionFlow")
-    val selectedVersion: StateFlow<String?> = _selectedVersion.asStateFlow()
-
-    private var selectedVersionProfile: Profile? = null
-    private var selectedVersionListener: Runnable? = null
 
     /** 跟随指定 Profile 的版本属性（原 fakefx bind 语义） */
     private fun bindSelectedVersion(profile: Profile) {
@@ -243,9 +218,6 @@ object Profiles {
         return _selectedVersion.value
     }
 
-    private val versionsListeners: MutableList<Consumer<Profile>> =
-        ArrayList(4)
-
     @JvmStatic
     fun registerVersionsListener(listener: Consumer<Profile>) {
         val profile = getSelectedProfile()
@@ -258,9 +230,4 @@ object Profiles {
         versionsListeners.remove(listener)
     }
 
-    fun getSelectedGameVersion(): String {
-        val gameVersion: Optional<String> =
-            getSelectedProfile().repository.getGameVersion(getSelectedVersion())
-        return gameVersion.orElse("")
-    }
 }

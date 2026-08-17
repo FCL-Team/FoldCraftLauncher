@@ -82,8 +82,8 @@ object ThemeEngine {
     }
 
     private fun notifyThemeChanged() {
-        for ((view, runnable) in runnables) {
-            if (view != null) handler.post(runnable)
+        for ((_, runnable) in runnables) {
+            handler.post(runnable)
         }
         for (runnable in refreshListeners) {
             handler.post(runnable)

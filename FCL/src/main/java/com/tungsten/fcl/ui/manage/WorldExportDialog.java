@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.manage;
 
 import android.annotation.SuppressLint;
-import com.tungsten.fcl.ui.UIManager;
 import android.content.Context;
 import android.view.View;
 
@@ -10,6 +9,7 @@ import androidx.appcompat.app.AppCompatDialog;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;

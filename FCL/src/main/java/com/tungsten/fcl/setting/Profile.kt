@@ -1,20 +1,3 @@
-/*
- * Hello Minecraft! Launcher
- * Copyright (C) 2020  huangyuhui <huanghongxun2008@126.com> and contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
 package com.tungsten.fcl.setting
 
 import com.google.gson.JsonDeserializationContext
@@ -38,7 +21,6 @@ import com.tungsten.fclcore.game.Version
 import com.tungsten.fclcore.util.ToStringBuilder
 import java.io.File
 import java.lang.reflect.Type
-import java.util.Optional
 
 /**
  * 游戏目录配置。使用普通类型字段，不再依赖 fakefx property；
@@ -48,18 +30,11 @@ import java.util.Optional
 class Profile {
     private val listenerHolder = WeakListenerHolder()
 
-    /** 游戏仓库（构造时按初始目录创建，目录变化时切换） */
-    val repository: FCLGameRepository
-
-    /** 选中版本（变化时校验有效性并通知监听者） */
-    var selectedVersion: String? = null
-        get() = field
+    /** 名称 */
+    var name: String = ""
         set(value) {
             if (field == value) return
             field = value
-            checkSelectedVersion()
-            // 复制后遍历：回调内可能增删监听（如 DownloadUI 切换监听对象），避免并发修改
-            selectedVersionListeners.toList().forEach { it.run() }
             onChanged?.invoke()
         }
 
@@ -71,21 +46,58 @@ class Profile {
             onChanged?.invoke()
         }
 
-    /** 全局设置（变化时触发 [onChanged]） */
-    val globalVersionSetting: VersionSetting
+    /** 游戏仓库（构造时按初始目录创建，目录变化时切换） */
+    val repository: FCLGameRepository
 
-    /** 名称 */
-    var name: String = ""
+    /** 选中版本（变化时校验有效性并通知监听者） */
+    var selectedVersion: String? = null
         set(value) {
             if (field == value) return
             field = value
+            checkSelectedVersion()
+            // 复制后遍历：回调内可能增删监听（如 DownloadUI 切换监听对象），避免并发修改
+            selectedVersionListeners.toList().forEach { it.run() }
             onChanged?.invoke()
         }
+
+    /** 全局设置（变化时触发 [onChanged]） */
+    val globalVersionSetting: VersionSetting
 
     /** 字段变化回调（由 Profiles 设置，用于触发配置保存） */
     var onChanged: (() -> Unit)? = null
 
     private val selectedVersionListeners = mutableListOf<Runnable>()
+
+    /** 选中版本的设置（Java 侧访问 getVersionSetting()） */
+    val versionSetting: VersionSetting
+        get() = repository.getVersionSetting(selectedVersion)
+
+    constructor(name: String, gameDir: File) : this(
+        name,
+        gameDir,
+        VersionSetting(),
+        null
+    )
+
+    constructor(
+        name: String,
+        gameDir: File,
+        globalVersionSetting: VersionSetting?,
+        selectedVersion: String?
+    ) {
+        this.name = name
+        //必须放在gameDir前
+        this.repository = FCLGameRepository(this, gameDir)
+        this.gameDir = gameDir
+        this.globalVersionSetting = globalVersionSetting ?: VersionSetting()
+        this.globalVersionSetting.addOnChangeListener { onChanged?.invoke() }
+        this.selectedVersion = selectedVersion
+
+        listenerHolder.add(
+            EventBus.EVENT_BUS.channel(RefreshedVersionsEvent::class.java)
+                .registerWeak({ checkSelectedVersion() }, EventPriority.HIGHEST)
+        )
+    }
 
     /** 注册选中版本变化监听（setter 同步通知，调用线程即回调线程） */
     fun addSelectedVersionListener(listener: Runnable) {
@@ -96,24 +108,8 @@ class Profile {
         selectedVersionListeners.remove(listener)
     }
 
-    constructor(name: String, initialGameDir: File) : this(name, initialGameDir, VersionSetting(), null)
-
-    constructor(name: String, initialGameDir: File, global: VersionSetting?, selectedVersion: String?) {
-        this.name = name
-        this.repository = FCLGameRepository(this, initialGameDir)
-        this.gameDir = initialGameDir
-        this.globalVersionSetting = global ?: VersionSetting()
-        this.globalVersionSetting.addOnChangeListener { onChanged?.invoke() }
-        this.selectedVersion = selectedVersion
-
-        listenerHolder.add(
-            EventBus.EVENT_BUS.channel(RefreshedVersionsEvent::class.java)
-                .registerWeak({ checkSelectedVersion() }, EventPriority.HIGHEST)
-        )
-    }
-
     private fun checkSelectedVersion() {
-        if (!repository.isLoaded()) return
+        if (!repository.isLoaded) return
         val newValue = selectedVersion
         if (!repository.hasVersion(newValue)) {
             val version = repository.getVersions().stream().findFirst().map(Version::getId)
@@ -125,14 +121,11 @@ class Profile {
         }
     }
 
-    fun getDependency(): DefaultDependencyManager = getDependency(DownloadProviders.getDownloadProvider())
+    fun getDependency(): DefaultDependencyManager =
+        getDependency(DownloadProviders.getDownloadProvider())
 
     fun getDependency(downloadProvider: DownloadProvider): DefaultDependencyManager =
         DefaultDependencyManager(repository, downloadProvider, FCLCacheRepository.REPOSITORY)
-
-    /** 选中版本的设置（Java 侧访问 getVersionSetting()） */
-    val versionSetting: VersionSetting
-        get() = repository.getVersionSetting(selectedVersion)
 
     fun getVersionSetting(id: String?): VersionSetting = repository.getVersionSetting(id)
 
@@ -164,13 +157,11 @@ class Profile {
             context: JsonDeserializationContext
         ): Profile? {
             if (json === JsonNull.INSTANCE || json !is JsonObject) return null
-            val obj = json as JsonObject
-            val gameDir = Optional.ofNullable(obj.get("gameDir")).map { it.asString }.orElse("")
             return Profile(
                 "Default",
-                File(gameDir),
-                context.deserialize(obj.get("global"), VersionSetting::class.java),
-                Optional.ofNullable(obj.get("selectedMinecraftVersion")).map { it.asString }.orElse("")
+                File(json["gameDir"]?.asString ?: ""),
+                context.deserialize(json["global"], VersionSetting::class.java),
+                json["selectedMinecraftVersion"]?.asString ?: ""
             )
         }
     }

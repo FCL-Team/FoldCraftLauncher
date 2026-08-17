@@ -35,7 +35,7 @@ class EditableControllerListAdapter(
         val holder: ViewHolder
         if (convertView == null) {
             holder = ViewHolder()
-            view = LayoutInflater.from(context).inflate(R.layout.item_controller_editable, null)
+            view = LayoutInflater.from(context).inflate(R.layout.item_controller_editable, parent)
             holder.parent = view.findViewById(R.id.parent)
             holder.name = view.findViewById(R.id.name)
             holder.version = view.findViewById(R.id.version)
@@ -46,13 +46,11 @@ class EditableControllerListAdapter(
             holder = view.tag as ViewHolder
         }
         val controller = list[i]
-        holder.parent.setBackground(
-            if (controller == getSelected()) {
-                context.getDrawable(R.drawable.bg_container_transparent_selected)
-            } else {
-                context.getDrawable(R.drawable.bg_container_transparent_clickable)
-            }
-        )
+        holder.parent.background = if (controller == getSelected()) {
+            context.getDrawable(R.drawable.bg_container_transparent_selected)
+        } else {
+            context.getDrawable(R.drawable.bg_container_transparent_clickable)
+        }
         holder.name.text = controller.name
         holder.version.text = controller.version
         holder.parent.setOnClickListener { onSelect(controller) }

@@ -13,8 +13,6 @@ public class ControllerUI extends FCLMultiPageUI {
     public static final int PAGE_ID_CONTROLLER_MANAGER = 15040;
     public static final int PAGE_ID_CONTROLLER_REPO = 15041;
 
-    private FCLUILayout container;
-
     public ControllerUI(Context context, int id) {
         super(context, id);
     }
@@ -22,7 +20,7 @@ public class ControllerUI extends FCLMultiPageUI {
     @Override
     public void onCreate() {
         super.onCreate();
-        container = findViewById(R.id.container);
+        FCLUILayout container = findViewById(R.id.container);
         setupPages(container, null);
     }
 

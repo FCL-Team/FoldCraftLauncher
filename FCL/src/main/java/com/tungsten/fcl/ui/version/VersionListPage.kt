@@ -18,13 +18,11 @@ import com.tungsten.fcl.setting.Profiles.registerVersionsListener
 import com.tungsten.fcl.setting.Profiles.unregisterVersionsListener
 import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.download.LibraryAnalyzer
-import com.tungsten.fclcore.fakefx.beans.binding.Bindings
 import com.tungsten.fclcore.game.Version
 import com.tungsten.fclcore.mod.ModpackConfiguration
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fcllibrary.component.ui.FCLPage
-import com.tungsten.fcllibrary.component.view.FCLUILayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
@@ -33,8 +31,8 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.nio.file.Files
 import java.util.Locale
-import java.util.logging.Level
 import java.util.function.Consumer
+import java.util.logging.Level
 import java.util.stream.Collectors
 import kotlin.io.path.isRegularFile
 
@@ -179,7 +177,8 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                             ensureActive()
                             val game = profile.repository.getGameVersion(version.id)
                             // 一次解析，analyzer 与图标判断复用（getVersionIconImage 不再重复 resolve）
-                            val resolved = profile.repository.getResolvedPreservingPatchesVersion(version.id)
+                            val resolved =
+                                profile.repository.getResolvedPreservingPatchesVersion(version.id)
                             val libraries =
                                 StringBuilder(game.orElse(context.getString(R.string.message_unknown)))
                             val analyzer = LibraryAnalyzer.analyze(resolved, game.orElse(null))

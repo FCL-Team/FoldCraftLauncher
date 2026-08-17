@@ -4,13 +4,14 @@ import android.content.Context;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.download.common.DownloadPage;
 import com.tungsten.fcl.ui.download.version.VersionInstallPage;
-import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
@@ -103,12 +104,12 @@ public class DownloadUI extends FCLCommonUI {
         // UI 被 ViewPager 回收时注销监听（替代原 onDestroy 生命周期），防止静态列表累积泄漏
         getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
-            public void onViewAttachedToWindow(View v) {
+            public void onViewAttachedToWindow(@NonNull View v) {
 
             }
 
             @Override
-            public void onViewDetachedFromWindow(View v) {
+            public void onViewDetachedFromWindow(@NonNull View v) {
                 Profiles.unregisterVersionsListener(versionsListener);
                 if (selectedVersionListener != null) {
                     listenerProfile.removeSelectedVersionListener(selectedVersionListener);
@@ -158,7 +159,9 @@ public class DownloadUI extends FCLCommonUI {
         };
     }
 
-    /** 页面切换过渡动画：淡入 + 上滑进入（同步执行，页面首次可见即为动画起点，避免先显示后置透明的闪烁） */
+    /**
+     * 页面切换过渡动画：淡入 + 上滑进入（同步执行，页面首次可见即为动画起点，避免先显示后置透明的闪烁）
+     */
     private void playEnterAnimation(View view) {
         view.animate().cancel();
         view.setAlpha(0f);
@@ -166,14 +169,18 @@ public class DownloadUI extends FCLCommonUI {
         view.animate().alpha(1f).translationY(0f).setDuration(250).start();
     }
 
-    /** 返回过渡：下层上滑进入（仅位移不做淡入，避免与临时页淡出叠加时 alpha 硬件层切换闪烁） */
+    /**
+     * 返回过渡：下层上滑进入（仅位移不做淡入，避免与临时页淡出叠加时 alpha 硬件层切换闪烁）
+     */
     private void slideIn(View view) {
         view.animate().cancel();
         view.setTranslationY(view.getResources().getDisplayMetrics().density * 30f);
         view.animate().translationY(0f).setDuration(250).start();
     }
 
-    /** 供外部跳转（如模组管理页）：切换到指定下载模式并显示下载页 */
+    /**
+     * 供外部跳转（如模组管理页）：切换到指定下载模式并显示下载页
+     */
     public void showDownloadPage(int pageId) {
         TabLayout.Tab tab = tabLayout.getTabAt(pageIdToTabPosition(pageId));
         if (tab != null) {

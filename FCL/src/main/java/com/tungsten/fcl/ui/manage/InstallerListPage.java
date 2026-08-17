@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fcl.ui.download.version.VersionInstallInfoPage.alertFailureMessage;
-import com.tungsten.fcl.ui.UIManager;
 
 import android.content.Context;
 import android.net.Uri;
@@ -18,6 +17,7 @@ import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -32,7 +32,6 @@ import com.tungsten.fclcore.task.TaskListener;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.io.File;

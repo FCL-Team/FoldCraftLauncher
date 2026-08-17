@@ -11,7 +11,6 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.download.ControllerIndex;
 import com.tungsten.fcl.control.download.ControllerVersion;
 import com.tungsten.fcl.setting.Controller;
-import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -23,7 +22,7 @@ import com.tungsten.fclcore.util.io.Zipper;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
+import com.tungsten.fcllibrary.ui.ProgressDialog;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -92,7 +91,6 @@ public class ControllerUploadPage extends FCLPage implements View.OnClickListene
             Files.write(indexFile.toPath(), JsonUtils.GSON.toJson(index).getBytes(StandardCharsets.UTF_8));
             File versionFile = File.createTempFile("version", ".json");
             Files.write(versionFile.toPath(), JsonUtils.GSON.toJson(version).getBytes(StandardCharsets.UTF_8));
-
             FileUtils.copyFile(indexFile, new File(FCLPath.CACHE_DIR + "/control/upload/" + controller.getId() + "/index.json"));
             FileUtils.copyFile(versionFile, new File(FCLPath.CACHE_DIR + "/control/upload/" + controller.getId() + "/version.json"));
             for (int i = 1; i <= screenshots.size(); i++) {
@@ -108,7 +106,7 @@ public class ControllerUploadPage extends FCLPage implements View.OnClickListene
                 zipper.putDirectory(new File(FCLPath.CACHE_DIR + "/control/upload/" + controller.getId()).toPath(), controller.getId());
             }
             return FCLPath.CACHE_DIR + "/control/upload/" + controller.getId() + ".zip";
-        }).thenAcceptAsync(Schedulers.androidUIThread(), (ExceptionalConsumer<String, Exception>)s -> {
+        }).thenAcceptAsync(Schedulers.androidUIThread(), (ExceptionalConsumer<String, Exception>) s -> {
             Intent intent = new Intent(Intent.ACTION_SEND);
             Uri uri = FileProvider.getUriForFile(getContext(), getContext().getString(com.tungsten.fcl.R.string.file_browser_provider), new File(s));
             intent.setType("text/plain");
@@ -126,14 +124,12 @@ public class ControllerUploadPage extends FCLPage implements View.OnClickListene
 
     private final static String QQ_GROUP_KEY = "y9zEb5_DHSGdOYyigFdwsNHx9-9kALbX";
 
-    public boolean joinQQGroup(String key) {
+    public void joinQQGroup(String key) {
         Intent intent = new Intent();
         intent.setData(Uri.parse("mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D" + key));
         try {
             getContext().startActivity(intent);
-            return true;
-        } catch (Exception e) {
-            return false;
+        } catch (Exception ignored) {
         }
     }
 }

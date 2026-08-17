@@ -1,9 +1,7 @@
 package com.tungsten.fcl.ui.controller;
 
 import android.content.Context;
-import com.tungsten.fcl.ui.UIManager;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialog;
@@ -13,10 +11,12 @@ import com.google.gson.GsonBuilder;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.download.ControllerIndex;
 import com.tungsten.fcl.control.download.ControllerVersion;
+import com.tungsten.fcl.databinding.PageControllerDownloadBinding;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.FileDownloadTask;
@@ -31,13 +31,6 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
-import com.tungsten.fcllibrary.component.view.FCLButton;
-import com.tungsten.fcllibrary.component.view.FCLImageButton;
-import com.tungsten.fcllibrary.component.view.FCLImageView;
-import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,25 +42,8 @@ public class ControllerDownloadPage extends FCLPage implements View.OnClickListe
     private final ArrayList<String> categories;
     private final ControllerIndex index;
     private final String url;
-
     private ControllerVersion controllerVersion;
-
-    private FCLLinearLayout layout;
-    private FCLProgressBar progressBar;
-    private FCLImageButton retry;
-    private FCLImageView icon;
-    private FCLTextView name;
-    private FCLTextView tag;
-    private FCLTextView intro;
-
-    private ListView listView;
-    private FCLTextView author;
-    private FCLTextView version;
-    private FCLTextView device;
-    private FCLTextView description;
-
-    private FCLButton history;
-    private FCLButton latest;
+    private PageControllerDownloadBinding binding;
 
     public ControllerDownloadPage(Context context, int id, int resId, int source, ArrayList<String> categories, ControllerIndex index) {
         super(context, id, resId);
@@ -77,22 +53,22 @@ public class ControllerDownloadPage extends FCLPage implements View.OnClickListe
         create();
     }
 
-    public void setLoading(boolean loading) {
-        Schedulers.androidUIThread().execute(() -> {
-            progressBar.setVisibility(loading ? View.VISIBLE : View.GONE);
-            layout.setVisibility(loading ? View.GONE : View.VISIBLE);
-            if (loading) {
-                retry.setVisibility(View.GONE);
-            }
-        });
-    }
+    private void create() {
+        binding = PageControllerDownloadBinding.bind(getContentView());
 
-    public void setFailed() {
-        Schedulers.androidUIThread().execute(() -> {
-            retry.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.GONE);
-            layout.setVisibility(View.GONE);
-        });
+        Glide.with(getContext()).load(url + "icon.png").into(binding.icon);
+        binding.name.setText(index.getName());
+        StringBuilder stringBuilder = new StringBuilder();
+        categories.forEach(it -> stringBuilder.append(it).append("   "));
+        String tagText = StringUtils.removeSuffix(stringBuilder.toString(), "   ");
+        binding.tag.setText(tagText);
+        binding.intro.setText(index.getIntroduction());
+
+        binding.retry.setOnClickListener(this);
+        binding.history.setOnClickListener(this);
+        binding.latest.setOnClickListener(this);
+
+        refresh();
     }
 
     private void refresh() {
@@ -112,7 +88,7 @@ public class ControllerDownloadPage extends FCLPage implements View.OnClickListe
                     num = "0" + num;
                 screenshotUrls.add(screenshotUrl + num + ".png");
             }
-            String[] allDevices = new String[] {
+            String[] allDevices = new String[]{
                     getContext().getString(R.string.control_download_device_phone),
                     getContext().getString(R.string.control_download_device_pad),
                     getContext().getString(R.string.control_download_device_other)
@@ -125,14 +101,14 @@ public class ControllerDownloadPage extends FCLPage implements View.OnClickListe
             StringBuilder stringBuilder = new StringBuilder();
             devices.forEach(it -> stringBuilder.append(it).append("  "));
             String deviceText = StringUtils.removeSuffix(stringBuilder.toString(), "  ");
-            listView.post(() -> {
+            binding.list.post(() -> {
                 ControllerScreenshotAdapter adapter = new ControllerScreenshotAdapter(getContext(), screenshotUrls);
-                listView.setAdapter(adapter);
+                binding.list.setAdapter(adapter);
             });
-            author.setText(controllerVersion.getAuthor());
-            version.setText(controllerVersion.getLatest().getVersionName());
-            device.setText(deviceText);
-            description.setText(controllerVersion.getDescription());
+            binding.author.setText(controllerVersion.getAuthor());
+            binding.version.setText(controllerVersion.getLatest().getVersionName());
+            binding.device.setText(deviceText);
+            binding.description.setText(controllerVersion.getDescription());
         }).whenComplete(Schedulers.androidUIThread(), exception -> {
             setLoading(false);
             if (exception != null) {
@@ -141,37 +117,22 @@ public class ControllerDownloadPage extends FCLPage implements View.OnClickListe
         }).start();
     }
 
-    private void create() {
-        layout = findViewById(R.id.layout);
-        progressBar = findViewById(R.id.progress);
-        retry = findViewById(R.id.retry);
-        icon = findViewById(R.id.icon);
-        name = findViewById(R.id.name);
-        tag = findViewById(R.id.tag);
-        intro = findViewById(R.id.intro);
+    public void setLoading(boolean loading) {
+        Schedulers.androidUIThread().execute(() -> {
+            binding.progress.setVisibility(loading ? View.VISIBLE : View.GONE);
+            binding.layout.setVisibility(loading ? View.GONE : View.VISIBLE);
+            if (loading) {
+                binding.retry.setVisibility(View.GONE);
+            }
+        });
+    }
 
-        listView = findViewById(R.id.list);
-        author = findViewById(R.id.author);
-        version = findViewById(R.id.version);
-        device = findViewById(R.id.device);
-        description = findViewById(R.id.description);
-
-        history = findViewById(R.id.history);
-        latest = findViewById(R.id.latest);
-
-        Glide.with(getContext()).load(url + "icon.png").into(icon);
-        name.setText(index.getName());
-        StringBuilder stringBuilder = new StringBuilder();
-        categories.forEach(it -> stringBuilder.append(it).append("   "));
-        String tagText = StringUtils.removeSuffix(stringBuilder.toString(), "   ");
-        tag.setText(tagText);
-        intro.setText(index.getIntroduction());
-
-        retry.setOnClickListener(this);
-        history.setOnClickListener(this);
-        latest.setOnClickListener(this);
-
-        refresh();
+    public void setFailed() {
+        Schedulers.androidUIThread().execute(() -> {
+            binding.retry.setVisibility(View.VISIBLE);
+            binding.progress.setVisibility(View.GONE);
+            binding.layout.setVisibility(View.GONE);
+        });
     }
 
     private void download(int versionCode) {
@@ -248,10 +209,10 @@ public class ControllerDownloadPage extends FCLPage implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        if (view == retry) {
+        if (view == binding.retry) {
             refresh();
         }
-        if (view == history && controllerVersion != null) {
+        if (view == binding.history && controllerVersion != null) {
             if (controllerVersion.getHistory().isEmpty()) {
                 Toast.makeText(getContext(), getContext().getString(R.string.control_download_history_empty), Toast.LENGTH_SHORT).show();
             } else {
@@ -259,7 +220,7 @@ public class ControllerDownloadPage extends FCLPage implements View.OnClickListe
                 dialog.show();
             }
         }
-        if (view == latest && controllerVersion != null) {
+        if (view == binding.latest && controllerVersion != null) {
             download(controllerVersion.getLatest().getVersionCode());
         }
     }

@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.download.version;
 
 import android.content.Context;
-import com.tungsten.fcl.ui.UIManager;
 import android.content.res.ColorStateList;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,6 +18,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
@@ -42,7 +42,6 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.net.SocketTimeoutException;
@@ -159,24 +158,16 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
     }
 
     private String getLoaderName(LibraryAnalyzer.LibraryType libraryType) {
-        switch (libraryType) {
-            case FORGE:
-                return getContext().getString(R.string.install_installer_forge);
-            case NEO_FORGE:
-                return getContext().getString(R.string.install_installer_neoforge);
-            case CLEANROOM:
-                return getContext().getString(R.string.install_installer_cleanroom);
-            case FABRIC:
-                return getContext().getString(R.string.install_installer_fabric);
-            case LITELOADER:
-                return getContext().getString(R.string.install_installer_liteloader);
-            case QUILT:
-                return getContext().getString(R.string.install_installer_quilt);
-            case OPTIFINE:
-                return getContext().getString(R.string.install_installer_optifine);
-            default:
-                return null;
-        }
+        return switch (libraryType) {
+            case FORGE -> getContext().getString(R.string.install_installer_forge);
+            case NEO_FORGE -> getContext().getString(R.string.install_installer_neoforge);
+            case CLEANROOM -> getContext().getString(R.string.install_installer_cleanroom);
+            case FABRIC -> getContext().getString(R.string.install_installer_fabric);
+            case LITELOADER -> getContext().getString(R.string.install_installer_liteloader);
+            case QUILT -> getContext().getString(R.string.install_installer_quilt);
+            case OPTIFINE -> getContext().getString(R.string.install_installer_optifine);
+            default -> null;
+        };
     }
 
     @Override
@@ -278,8 +269,7 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
         String msg;
         if (exception instanceof LibraryDownloadException) {
             String message = AndroidUtils.getLocalizedText(context, "launch_failed_download_library", ((LibraryDownloadException) exception).getLibrary().getName()) + "\n";
-            if (exception.getCause() instanceof ResponseCodeException) {
-                ResponseCodeException rce = (ResponseCodeException) exception.getCause();
+            if (exception.getCause() instanceof ResponseCodeException rce) {
                 int responseCode = rce.getResponseCode();
                 URL url = rce.getUrl();
                 if (responseCode == 404)
@@ -296,8 +286,7 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
             if (exception.getCause() instanceof SocketTimeoutException) {
                 title = context.getString(R.string.install_failed_downloading);
                 msg = AndroidUtils.getLocalizedText(context, "install_failed_downloading_timeout", url);
-            } else if (exception.getCause() instanceof ResponseCodeException) {
-                ResponseCodeException responseCodeException = (ResponseCodeException) exception.getCause();
+            } else if (exception.getCause() instanceof ResponseCodeException responseCodeException) {
                 if (AndroidUtils.hasStringId(context, "download_code_" + responseCodeException.getResponseCode())) {
                     title = context.getString(R.string.install_failed_downloading);
                     msg = AndroidUtils.getLocalizedText(context, "download_code_" + responseCodeException.getResponseCode(), url);
@@ -326,8 +315,7 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
         } else if (exception instanceof GameAssetIndexDownloadTask.GameAssetIndexMalformedException) {
             title = context.getString(R.string.install_failed);
             msg = context.getString(R.string.assets_index_malformed);
-        } else if (exception instanceof VersionMismatchException) {
-            VersionMismatchException e = ((VersionMismatchException) exception);
+        } else if (exception instanceof VersionMismatchException e) {
             title = context.getString(R.string.install_failed);
             msg = AndroidUtils.getLocalizedText(context, "install_failed_version_mismatch", e.getExpect(), e.getActual());
         } else if (exception instanceof CancellationException) {

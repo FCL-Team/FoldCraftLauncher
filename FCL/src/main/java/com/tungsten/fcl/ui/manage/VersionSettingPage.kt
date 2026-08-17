@@ -26,7 +26,6 @@ import com.tungsten.fcl.setting.VersionSetting
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.FXUtils
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.plugins.DriverPlugin.driverList
 import com.tungsten.fclauncher.plugins.DriverPlugin.selected
@@ -47,12 +46,12 @@ import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FullEditDialog
 import com.tungsten.fcllibrary.component.ui.FCLPage
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
 import java.util.Locale
 import java.util.logging.Level
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 /**
  * 版本设置页。设置项由 [VersionSettingAdapter] 以 RecyclerView 行级复用渲染，
@@ -115,7 +114,9 @@ class VersionSettingPage(
                 }
                 profileVersionListener = null
                 settingsChangeListener?.let {
-                    if (::lastVersionSetting.isInitialized) lastVersionSetting.removeOnChangeListener(it)
+                    if (::lastVersionSetting.isInitialized) lastVersionSetting.removeOnChangeListener(
+                        it
+                    )
                 }
                 settingsChangeListener = null
             }
@@ -346,7 +347,7 @@ class VersionSettingPage(
 
             VersionSettingTag.EDIT_RENDERER -> {
                 RendererSelectDialog(context, globalSetting) {
-                    if (globalSetting && getSelectedProfile().versionSetting != null && !getSelectedProfile().versionSetting.isUsesGlobal) {
+                    if (globalSetting && !getSelectedProfile().versionSetting.isUsesGlobal) {
                         val builder = FCLAlertDialog.Builder(context)
                         builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
                         builder.setMessage(context.getString(R.string.message_warn_renderer_global_setting))

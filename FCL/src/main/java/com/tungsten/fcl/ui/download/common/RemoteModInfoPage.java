@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.download.common;
 
 import android.content.Context;
-import com.tungsten.fcl.ui.UIManager;
 import android.content.res.ColorStateList;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -14,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.DownloadUI;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
@@ -34,7 +34,6 @@ import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import org.jetbrains.annotations.Nullable;
@@ -131,9 +130,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
 
         ThemeEngine.getInstance().registerEvent(versionListView, () -> versionListView.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
 
-        search.stringProperty().addListener(observable -> {
-            loadGameVersions();
-        });
+        search.stringProperty().addListener(observable -> loadGameVersions());
     }
 
     private void loadGameVersions() {

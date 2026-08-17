@@ -21,7 +21,6 @@ import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,17 +80,11 @@ public class InstallerListPage extends FCLPage implements View.OnClickListener, 
 
     private List<RemoteVersion> loadVersions() {
         return DownloadProviders.getDownloadProvider().getVersionListById(libraryId).getVersions(gameVersion).stream()
-                .filter(it -> {
-                    switch (it.getVersionType()) {
-                        case RELEASE:
-                            return checkRelease.isChecked();
-                        case SNAPSHOT:
-                            return checkSnapShot.isChecked();
-                        case OLD:
-                            return checkOld.isChecked();
-                        default:
-                            return true;
-                    }
+                .filter(it -> switch (it.getVersionType()) {
+                    case RELEASE -> checkRelease.isChecked();
+                    case SNAPSHOT -> checkSnapShot.isChecked();
+                    case OLD -> checkOld.isChecked();
+                    default -> true;
                 })
                 .sorted().collect(Collectors.toList());
     }

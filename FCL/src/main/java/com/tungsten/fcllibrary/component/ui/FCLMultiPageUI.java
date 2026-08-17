@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -282,6 +283,7 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
             return position;
         }
 
+        @NonNull
         @Override
         public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
             // ViewPager2 要求页面直接子 View 必须 MATCH_PARENT

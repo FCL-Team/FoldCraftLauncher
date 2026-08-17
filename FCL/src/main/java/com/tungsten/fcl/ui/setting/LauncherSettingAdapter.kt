@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.content.edit
 import androidx.recyclerview.widget.RecyclerView
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemLauncherSettingButtonBinding
@@ -50,22 +51,26 @@ enum class LauncherSettingTag {
     CURSOR_SET,
     MENU_ICON_RESET,
     MENU_ICON_SET,
+
     // 开关行
     SWITCH_AUTO_EXIT,
     SWITCH_IGNORE_NOTCH,
     SWITCH_CLOSE_SKIN_MODEL,
     SWITCH_DISABLE_FULLSCREEN_INPUT,
     SWITCH_ALLOW_SCREENSHOTS,
+
     // Spinner 行
     SPINNER_LANGUAGE,
     SPINNER_THEME_MODE,
     SPINNER_SOURCE_AUTO,
     SPINNER_SOURCE,
+
     // SeekBar 行
     SEEKBAR_VIDEO_VOLUME,
     SEEKBAR_ANIMATION_SPEED,
     SEEKBAR_VIBRATION,
     SEEKBAR_THREADS,
+
     // 勾选行
     CHECK_AUTO_SOURCE,
     CHECK_AUTO_THREADS
@@ -265,9 +270,12 @@ class LauncherSettingAdapter(
             ),
             Row.EditRow(
                 R.string.settings_launcher_custom_launcher_name,
-                { prefs.getString("custom_launcher_name", context.getString(R.string.app_name)) ?: "" },
-                { text -> prefs.edit().putString("custom_launcher_name", text).apply() },
-                "Fold Craft Launcher/\${launcher_version}",
+                {
+                    prefs.getString("custom_launcher_name", context.getString(R.string.app_name))
+                        ?: ""
+                },
+                { text -> prefs.edit { putString("custom_launcher_name", text) } },
+                $$"Fold Craft Launcher/${launcher_version}",
                 R.string.settings_launcher_custom_launcher_name_desc
             ),
             Row.SwitchRow(
@@ -285,8 +293,8 @@ class LauncherSettingAdapter(
                 R.string.settings_launcher_download_source_desc
             ),
             Row.ThreadsRow(
-                { config.getAutoDownloadThreads() },
-                { config.getDownloadThreads() },
+                { config.autoDownloadThreads },
+                { config.downloadThreads },
                 R.string.settings_launcher_download_threads_desc
             )
         )
@@ -300,6 +308,7 @@ class LauncherSettingAdapter(
 
     private sealed class Row {
         open val rowTag: LauncherSettingTag? = null
+
         /** 行下方的作用描述文案资源，0 表示无描述 */
         open val descriptionRes: Int = 0
 
@@ -309,7 +318,7 @@ class LauncherSettingAdapter(
             val tag: LauncherSettingTag,
             override val descriptionRes: Int = 0
         ) : Row() {
-            override val rowTag: LauncherSettingTag? get() = tag
+            override val rowTag: LauncherSettingTag get() = tag
         }
 
         data class ButtonRow(
@@ -325,7 +334,7 @@ class LauncherSettingAdapter(
             val tag: LauncherSettingTag,
             override val descriptionRes: Int = 0
         ) : Row() {
-            override val rowTag: LauncherSettingTag? get() = tag
+            override val rowTag: LauncherSettingTag get() = tag
         }
 
         data class SeekBarRow(
@@ -337,7 +346,7 @@ class LauncherSettingAdapter(
             val suffix: String? = null,
             override val descriptionRes: Int = 0
         ) : Row() {
-            override val rowTag: LauncherSettingTag? get() = tag
+            override val rowTag: LauncherSettingTag get() = tag
         }
 
         data class EditRow(
@@ -399,9 +408,8 @@ class LauncherSettingAdapter(
         // 行背景为圆角形状（item 布局中定义），颜色 tint 取主题浅色；间隔空隙透出页面背景
         ThemeEngine.getInstance().unregisterEvent(holder.itemView)
         ThemeEngine.getInstance().registerEvent(holder.itemView) {
-            holder.itemView.setBackgroundTintList(
+            holder.itemView.backgroundTintList =
                 ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().ltColor)
-            )
         }
         val row = rows[position]
         // 行下方的作用描述
@@ -429,7 +437,12 @@ class LauncherSettingAdapter(
         binding.switchView.text = context.getString(row.labelRes)
         binding.switchView.setOnCheckedChangeListener(null)
         binding.switchView.isChecked = row.value()
-        binding.switchView.setOnCheckedChangeListener { _, checked -> listener.onSwitchToggle(row.tag, checked) }
+        binding.switchView.setOnCheckedChangeListener { _, checked ->
+            listener.onSwitchToggle(
+                row.tag,
+                checked
+            )
+        }
     }
 
     private fun bindButton(holder: Holder, row: Row.ButtonRow) {
@@ -462,13 +475,19 @@ class LauncherSettingAdapter(
         binding.spinner.onItemSelectedListener = null
         binding.spinner.adapter = adapter
         binding.spinner.setSelection(row.selection)
-        binding.spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
-                listener.onSpinnerSelect(row.tag, position)
-            }
+        binding.spinner.onItemSelectedListener =
+            object : android.widget.AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: android.widget.AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    listener.onSpinnerSelect(row.tag, position)
+                }
 
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
-        }
+                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+            }
     }
 
     private fun bindSeekBar(holder: Holder, row: Row.SeekBarRow) {
@@ -479,8 +498,13 @@ class LauncherSettingAdapter(
         row.suffix?.let { binding.seekBar.setSuffix(it) }
         binding.seekBar.setOnSeekBarChangeListener(null)
         binding.seekBar.progress = row.value()
-        binding.seekBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: android.widget.SeekBar, progress: Int, fromUser: Boolean) {
+        binding.seekBar.setOnSeekBarChangeListener(object :
+            android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: android.widget.SeekBar,
+                progress: Int,
+                fromUser: Boolean
+            ) {
                 listener.onSeekBarChange(row.tag, progress)
             }
 
@@ -523,8 +547,18 @@ class LauncherSettingAdapter(
             binding.sourceAuto.visibility = if (checked) View.VISIBLE else View.GONE
             binding.source.visibility = if (checked) View.GONE else View.VISIBLE
         }
-        bindSourceSpinner(binding.sourceAuto, row.autoData, row.autoSelection(), LauncherSettingTag.SPINNER_SOURCE_AUTO)
-        bindSourceSpinner(binding.source, row.manualData, row.manualSelection(), LauncherSettingTag.SPINNER_SOURCE)
+        bindSourceSpinner(
+            binding.sourceAuto,
+            row.autoData,
+            row.autoSelection(),
+            LauncherSettingTag.SPINNER_SOURCE_AUTO
+        )
+        bindSourceSpinner(
+            binding.source,
+            row.manualData,
+            row.manualSelection(),
+            LauncherSettingTag.SPINNER_SOURCE
+        )
     }
 
     private fun bindSourceSpinner(
@@ -539,13 +573,19 @@ class LauncherSettingAdapter(
         spinner.onItemSelectedListener = null
         spinner.adapter = adapter
         spinner.setSelection(selection)
-        spinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
-                listener.onSpinnerSelect(tag, position)
-            }
+        spinner.onItemSelectedListener =
+            object : android.widget.AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: android.widget.AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    listener.onSpinnerSelect(tag, position)
+                }
 
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
-        }
+                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+            }
     }
 
     private fun bindThreads(holder: Holder, row: Row.ThreadsRow) {
@@ -557,8 +597,13 @@ class LauncherSettingAdapter(
         }
         binding.threads.setOnSeekBarChangeListener(null)
         binding.threads.progress = row.threads()
-        binding.threads.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: android.widget.SeekBar, progress: Int, fromUser: Boolean) {
+        binding.threads.setOnSeekBarChangeListener(object :
+            android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                seekBar: android.widget.SeekBar,
+                progress: Int,
+                fromUser: Boolean
+            ) {
                 listener.onSeekBarChange(LauncherSettingTag.SEEKBAR_THREADS, progress)
             }
 

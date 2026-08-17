@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
-import com.tungsten.fcl.ui.UIManager;
 import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
@@ -12,6 +11,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -24,7 +24,6 @@ import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.io.IOException;

@@ -28,9 +28,9 @@ import android.graphics.drawable.Drawable;
 import androidx.appcompat.content.res.AppCompatResources;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
 import com.mio.manager.RendererManager;
 import com.mio.util.LauncherUtilKt;
 import com.tungsten.fcl.FCLApplication;
@@ -47,11 +47,11 @@ import com.tungsten.fclcore.game.DefaultGameRepository;
 import com.tungsten.fclcore.game.GameDirectoryType;
 import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.game.LaunchOptions;
-import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.game.VersionNotFoundException;
 import com.tungsten.fclcore.mod.ModAdviser;
 import com.tungsten.fclcore.mod.Modpack;
+import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.mod.ModpackProvider;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
@@ -73,10 +73,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
@@ -109,14 +109,10 @@ public class FCLGameRepository extends DefaultGameRepository {
 
     @Override
     public File getRunDirectory(String id) {
-        switch (getGameDirectoryType(id)) {
-            case VERSION_FOLDER:
-                return getVersionRoot(id);
-            case ROOT_FOLDER:
-                return super.getRunDirectory(id);
-            default:
-                throw new Error();
-        }
+        return switch (getGameDirectoryType(id)) {
+            case VERSION_FOLDER -> getVersionRoot(id);
+            case ROOT_FOLDER -> super.getRunDirectory(id);
+        };
     }
 
     public Stream<Version> getDisplayVersions() {
@@ -126,10 +122,14 @@ public class FCLGameRepository extends DefaultGameRepository {
                         .thenComparing(v -> VersionNumber.asVersion(v.getId())));
     }
 
-    /** 已解析版本缓存（版本刷新时清空；resolve 基于内存版本对象，与文件修改时机一致） */
+    /**
+     * 已解析版本缓存（版本刷新时清空；resolve 基于内存版本对象，与文件修改时机一致）
+     */
     private final ConcurrentHashMap<String, Version> resolvedVersionCache = new ConcurrentHashMap<>();
 
-    /** 整合包配置缓存（版本刷新时清空；仅缓存存在的 modpack.json，避免重复文件读取） */
+    /**
+     * 整合包配置缓存（版本刷新时清空；仅缓存存在的 modpack.json，避免重复文件读取）
+     */
     private final ConcurrentHashMap<String, ModpackConfiguration<?>> modpackConfigCache = new ConcurrentHashMap<>();
 
     @Override
@@ -137,8 +137,9 @@ public class FCLGameRepository extends DefaultGameRepository {
         return resolvedVersionCache.computeIfAbsent(id, k -> getVersion(k).resolvePreservingPatches(this));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <M> ModpackConfiguration<M> readModpackConfiguration(String version) throws IOException, VersionNotFoundException {
+    public <M> ModpackConfiguration<M> readModpackConfiguration(String version) throws VersionNotFoundException {
         if (!hasVersion(version)) throw new VersionNotFoundException(version);
         File file = getModpackConfiguration(version);
         if (!file.exists()) return null;
@@ -283,15 +284,6 @@ public class FCLGameRepository extends DefaultGameRepository {
         return setting;
     }
 
-    @Nullable
-    public VersionSetting getLocalVersionSettingOrCreate(String id) {
-        VersionSetting vs = getLocalVersionSetting(id);
-        if (vs == null) {
-            vs = createLocalVersionSetting(id);
-        }
-        return vs;
-    }
-
     public VersionSetting getVersionSetting(String id) {
         // null id 表示全局设置（ConcurrentHashMap 不接受 null key，需先行短路）
         VersionSetting vs = id == null ? null : getLocalVersionSetting(id);
@@ -324,7 +316,9 @@ public class FCLGameRepository extends DefaultGameRepository {
         return getVersionIconImage(LibraryAnalyzer.analyze(version, null), id);
     }
 
-    /** 使用已有的库分析结果判断图标（避免列表加载时重复 analyze） */
+    /**
+     * 使用已有的库分析结果判断图标（避免列表加载时重复 analyze）
+     */
     @SuppressLint("UseCompatLoadingForDrawables")
     public Drawable getVersionIconImage(LibraryAnalyzer analyze, String id) {
         File iconFile = getVersionIconFile(id);
@@ -350,27 +344,27 @@ public class FCLGameRepository extends DefaultGameRepository {
         }
     }
 
-    /** 图标资源状态缓存：newDrawable 每次返回独立实例，避免共享 Drawable 的 bounds 被
-     *  其他控件（如版本列表 item 设置 background）修改后互相污染（主界面 icon 放大显示不完全） */
+    /**
+     * 图标资源状态缓存：newDrawable 每次返回独立实例，避免共享 Drawable 的 bounds 被
+     * 其他控件（如版本列表 item 设置 background）修改后互相污染（主界面 icon 放大显示不完全）
+     */
     private static final Map<Integer, Drawable.ConstantState> DRAWABLE_CACHE = new ConcurrentHashMap<>();
 
     private Drawable getDrawable(int id) {
         return DRAWABLE_CACHE.computeIfAbsent(id, k -> AppCompatResources.getDrawable(FCLPath.CONTEXT, k).getConstantState()).newDrawable();
     }
 
-    public boolean saveVersionSetting(String id) {
+    public void saveVersionSetting(String id) {
         if (!localVersionSettings.containsKey(id))
-            return false;
+            return;
         File file = getLocalVersionSettingFile(id);
         if (!FileUtils.makeDirectory(file.getAbsoluteFile().getParentFile()))
-            return false;
+            return;
 
         try {
             FileUtils.writeText(file, GSON.toJson(localVersionSettings.get(id)));
-            return true;
         } catch (IOException e) {
             LOG.log(Level.SEVERE, "Unable to save version setting of " + id, e);
-            return false;
         }
     }
 
@@ -430,7 +424,7 @@ public class FCLGameRepository extends DefaultGameRepository {
                 ModpackProvider provider = ModpackHelper.getProviderByType(modpackConfiguration.getType());
                 if (provider != null) provider.injectLaunchOptions(jsonText, builder);
             } catch (IOException | JsonParseException e) {
-                e.printStackTrace();
+                LOG.log(Level.WARNING, e.toString());
             }
         }
 

@@ -140,13 +140,13 @@ public class AndroidUtils {
                 IOUtils.copyTo(inputStream, outputStream);
             }
             inputStream.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
         return dest.getAbsolutePath();
     }
 
-    public static String copyFile(Activity activity, Uri uri, File dest) {
+    public static void copyFile(Activity activity, Uri uri, File dest) {
         try {
             InputStream inputStream = activity.getContentResolver().openInputStream(uri);
             if (inputStream == null) {
@@ -156,10 +156,9 @@ public class AndroidUtils {
                 IOUtils.copyTo(inputStream, outputStream);
             }
             inputStream.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
-        return dest.getAbsolutePath();
     }
 
     public static boolean isDocUri(Uri uri) {

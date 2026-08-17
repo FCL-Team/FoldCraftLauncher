@@ -1,5 +1,6 @@
 package com.tungsten.fcllibrary.component.theme
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.Serializer
@@ -13,6 +14,7 @@ import java.io.InputStream
 import java.io.OutputStream
 
 /** 主题持久化数据（DataStore，替代原 SharedPreferences("theme")） */
+@OptIn(kotlinx.serialization.InternalSerializationApi::class)
 @Serializable
 data class ThemePreference(
     val color: Int = 0xFF7797CF.toInt(),
