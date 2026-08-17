@@ -1092,11 +1092,8 @@ public class GLFW
         int glMajor = 3;
         int glMinor = 3;
         // Custom defaults for specific renderers
-        boolean turnipLoad = System.getenv("POJAV_LOAD_TURNIP") != null &&
-                System.getenv("POJAV_LOAD_TURNIP").equals("1");
-        // These values can be found at headings_array.xml
         String glDriver = System.getenv("POJAV_RENDERER");
-        if (turnipLoad && glDriver.equals("vulkan_zink")) {
+        if (glDriver.equals("vulkan_zink")) {
             glMajor = 4;
             glMinor = 6;
         } else if (glDriver.equals("gallium_virgl")) {
@@ -1107,60 +1104,60 @@ public class GLFW
             glMinor = 0;
         }
         // Get the real values properly, but only if they're higher
-        FunctionProvider functionProvider = org.lwjgl.opengl.GL.getFunctionProvider();
-        if (functionProvider != null) {
-            // Save the old context so we can swap back to it later after getting driver info
-            // This is because sometimes there are early loading windows like forge that get context
-            // and not returning it causes some obvious issues
-            long oldPtr = glfwGetCurrentContext();
-            // Need to swap context to us so glFuncs work
-            glfwMakeContextCurrent(ptr);
-
-            // We don't assume createCapabilities has been called nor do we call it
-            // This was based from LWJGL GL.createCapabilities()
-            long GetError    = functionProvider.getFunctionAddress("glGetError");
-            long GetString   = functionProvider.getFunctionAddress("glGetString");
-            long GetIntegerv = functionProvider.getFunctionAddress("glGetIntegerv");
-
-            // Change the default to whatever GL_VERSION can be extracted to, only if higher ver
-            // Accumulate the detected version in local variables and compare against the default
-            // as a whole at the end: comparing major and minor independently could produce
-            // inconsistent combinations (e.g. default 4.0 + detected 3.3 would become 4.3).
-            int detectedGlMajor = glMajor;
-            int detectedGlMinor = glMinor;
-            String versionString = memUTF8Safe(callP(GL_VERSION, GetString));
-            if (versionString != null) {
-                try {
-                    APIVersion apiVersion = apiParseVersion(versionString);
-                    int parsedGlMajor = apiVersion.major;
-                    int parsedGlMinor = apiVersion.minor;
-                    if (3 <= parsedGlMajor && parsedGlMajor <= 4) detectedGlMajor = parsedGlMajor;
-                    if (0 <= parsedGlMinor && parsedGlMinor <= 6) detectedGlMinor = parsedGlMinor;
-                    System.out.println("Driver "+glDriver+" GL string returned "+ parsedGlMajor + parsedGlMinor);
-                } catch (Throwable ignored){} // In case the string is invalid/garbage
-            }
-            // Try to get values from GL30+ driver directly, only use if higher ver
-            try (MemoryStack stack = stackPush()) {
-                IntBuffer version = stack.ints(0, 0);
-                callPV(GL_MAJOR_VERSION, memAddress(version, 0), GetIntegerv);
-                int parsedGlMajor = version.get(0);
-                if (callI(GetError) == GL_NO_ERROR &&
-                        3 <= parsedGlMajor && parsedGlMajor <= 4) detectedGlMajor = parsedGlMajor;
-                callPV(GL_MINOR_VERSION, memAddress(version, 1), GetIntegerv);
-                int parsedGlMinor = version.get(1);
-                if (callI(GetError) == GL_NO_ERROR &&
-                        0 <= parsedGlMinor && parsedGlMinor <= 6) detectedGlMinor = parsedGlMinor;
-                System.out.println("Driver "+glDriver+" GL version returned "+ parsedGlMajor + parsedGlMinor);
-            }
-            if (detectedGlMajor > glMajor || (detectedGlMajor == glMajor && detectedGlMinor > glMinor)) {
-                glMajor = detectedGlMajor;
-                glMinor = detectedGlMinor;
-            }
-            System.out.println("Using GL version "+glMajor+glMinor+" for GLFW window context!");
-
-            // We finished getting the driver info, we can return it back to its original state now
-            glfwMakeContextCurrent(oldPtr);
-        }
+//        FunctionProvider functionProvider = org.lwjgl.opengl.GL.getFunctionProvider();
+//        if (functionProvider != null) {
+//            // Save the old context so we can swap back to it later after getting driver info
+//            // This is because sometimes there are early loading windows like forge that get context
+//            // and not returning it causes some obvious issues
+//            long oldPtr = glfwGetCurrentContext();
+//            // Need to swap context to us so glFuncs work
+//            glfwMakeContextCurrent(ptr);
+//
+//            // We don't assume createCapabilities has been called nor do we call it
+//            // This was based from LWJGL GL.createCapabilities()
+//            long GetError    = functionProvider.getFunctionAddress("glGetError");
+//            long GetString   = functionProvider.getFunctionAddress("glGetString");
+//            long GetIntegerv = functionProvider.getFunctionAddress("glGetIntegerv");
+//
+//            // Change the default to whatever GL_VERSION can be extracted to, only if higher ver
+//            // Accumulate the detected version in local variables and compare against the default
+//            // as a whole at the end: comparing major and minor independently could produce
+//            // inconsistent combinations (e.g. default 4.0 + detected 3.3 would become 4.3).
+//            int detectedGlMajor = glMajor;
+//            int detectedGlMinor = glMinor;
+//            String versionString = memUTF8Safe(callP(GL_VERSION, GetString));
+//            if (versionString != null) {
+//                try {
+//                    APIVersion apiVersion = apiParseVersion(versionString);
+//                    int parsedGlMajor = apiVersion.major;
+//                    int parsedGlMinor = apiVersion.minor;
+//                    if (3 <= parsedGlMajor && parsedGlMajor <= 4) detectedGlMajor = parsedGlMajor;
+//                    if (0 <= parsedGlMinor && parsedGlMinor <= 6) detectedGlMinor = parsedGlMinor;
+//                    System.out.println("Driver "+glDriver+" GL string returned "+ parsedGlMajor + parsedGlMinor);
+//                } catch (Throwable ignored){} // In case the string is invalid/garbage
+//            }
+//            // Try to get values from GL30+ driver directly, only use if higher ver
+//            try (MemoryStack stack = stackPush()) {
+//                IntBuffer version = stack.ints(0, 0);
+//                callPV(GL_MAJOR_VERSION, memAddress(version, 0), GetIntegerv);
+//                int parsedGlMajor = version.get(0);
+//                if (callI(GetError) == GL_NO_ERROR &&
+//                        3 <= parsedGlMajor && parsedGlMajor <= 4) detectedGlMajor = parsedGlMajor;
+//                callPV(GL_MINOR_VERSION, memAddress(version, 1), GetIntegerv);
+//                int parsedGlMinor = version.get(1);
+//                if (callI(GetError) == GL_NO_ERROR &&
+//                        0 <= parsedGlMinor && parsedGlMinor <= 6) detectedGlMinor = parsedGlMinor;
+//                System.out.println("Driver "+glDriver+" GL version returned "+ parsedGlMajor + parsedGlMinor);
+//            }
+//            if (detectedGlMajor > glMajor || (detectedGlMajor == glMajor && detectedGlMinor > glMinor)) {
+//                glMajor = detectedGlMajor;
+//                glMinor = detectedGlMinor;
+//            }
+//            System.out.println("Using GL version "+glMajor+glMinor+" for GLFW window context!");
+//
+//            // We finished getting the driver info, we can return it back to its original state now
+//            glfwMakeContextCurrent(oldPtr);
+//        }
         win.windowAttribs.put(GLFW_CONTEXT_VERSION_MAJOR, glMajor);
         win.windowAttribs.put(GLFW_CONTEXT_VERSION_MINOR, glMinor);
         mGLFWWindowMap.put(ptr, win);
