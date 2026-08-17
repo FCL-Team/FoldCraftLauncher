@@ -35,7 +35,8 @@ class EditableControllerListAdapter(
         val holder: ViewHolder
         if (convertView == null) {
             holder = ViewHolder()
-            view = LayoutInflater.from(context).inflate(R.layout.item_controller_editable, parent)
+            view = LayoutInflater.from(context)
+                .inflate(R.layout.item_controller_editable, parent, false)
             holder.parent = view.findViewById(R.id.parent)
             holder.name = view.findViewById(R.id.name)
             holder.version = view.findViewById(R.id.version)
