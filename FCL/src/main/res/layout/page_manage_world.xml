@@ -64,7 +64,6 @@
         android:layout_height="match_parent"
         android:layout_marginStart="10dp"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/guideline"/>
 
