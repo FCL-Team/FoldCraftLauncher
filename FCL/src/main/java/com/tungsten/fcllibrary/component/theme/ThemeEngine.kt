@@ -12,12 +12,14 @@ import android.view.Window
 import android.view.WindowManager
 import com.mio.util.ImageUtil
 import com.tungsten.fcl.R
-import com.tungsten.fcllibrary.util.ConvertUtils
 import com.tungsten.fclauncher.utils.FCLPath
+import com.tungsten.fcllibrary.component.theme.ThemeEngine.registerEvent
+import com.tungsten.fcllibrary.util.ConvertUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
+import java.util.WeakHashMap
 
 /**
  * 主题单例（Repository）：持有 [ThemeData] 的 StateFlow，
@@ -33,7 +35,10 @@ object ThemeEngine {
     val theme: StateFlow<ThemeData?> = _theme.asStateFlow()
 
     val handler = Handler(Looper.getMainLooper())
-    private val runnables = HashMap<View, Runnable>()
+
+    // 弱键：页面随 ViewPager2 回收销毁后（无 onDestroy 生命周期）视图不再被强引用，
+    // 未注销的 registerEvent 条目随 GC 自动清除，避免页面视图树累积泄漏
+    private val runnables = WeakHashMap<View, Runnable>()
     private val refreshListeners = ArrayList<Runnable>()
 
     /** Java 兼容：返回单例自身（替代原 getInstance()） */
@@ -100,7 +105,8 @@ object ThemeEngine {
     /** 亮暗判断：FCL 自身主题模式（0 跟随系统 / 1 强制亮 / 2 强制暗）优先于 uiMode */
     @JvmStatic
     fun isNightMode(context: Context): Boolean {
-        val themeMode = context.getSharedPreferences("launcher", Context.MODE_PRIVATE).getInt("themeMode", 0)
+        val themeMode =
+            context.getSharedPreferences("launcher", Context.MODE_PRIVATE).getInt("themeMode", 0)
         if (themeMode == 1) return false
         if (themeMode == 2) return true
         return (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
@@ -133,14 +139,17 @@ object ThemeEngine {
                     WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_NEVER
                 window.attributes = params
             }
-            window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN)
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+            )
             window.decorView.systemUiVisibility = (
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                    or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                    or View.SYSTEM_UI_FLAG_FULLSCREEN
-                    or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         }
     }
 
@@ -161,7 +170,8 @@ object ThemeEngine {
         val dk = BitmapDrawable(context.resources, dkBitmap)
         updateTheme { it.copy(backgroundLt = lt, backgroundDk = dk) }
         if (view != null) {
-            val isNight = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+            val isNight =
+                (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
             ImageUtil.loadInto(view, if (isNight) dk else lt)
         }
     }
