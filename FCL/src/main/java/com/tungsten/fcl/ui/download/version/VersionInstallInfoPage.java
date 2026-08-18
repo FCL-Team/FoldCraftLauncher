@@ -127,6 +127,7 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
                     InstallerListPage page = new InstallerListPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
                         map.put(libraryId, remoteVersion);
                         refreshVersionName();
+                        reload();
                         UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                     });
                     UIManager.getInstance().getDownloadUI().showTempPage(page);
