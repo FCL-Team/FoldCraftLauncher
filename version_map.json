@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1326,
-    "versionName": "1.3.2.6",
-    "date": "2026.08.14",
+    "versionCode": 1327,
+    "versionName": "1.3.2.7",
+    "date": "2026.08.19",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Incremental mod list loading optimization (scan and display in batches, filtering no longer rescans).  \n2. Corrupted mod files are now skipped with a prompt instead of failing the whole mod list; confirmation dialog added for deleting corrupted mods.  \n3. Fixed F3 page CPU showing \"Unknown\" on some devices.  \n4. Fixed some rendering errors.  \n5. Fixed crash when GLFW window context creation fails.  \n6. Fixed LWJGL freetype library loading from the packaged natives directory.  \n7. Account skin upload reimplemented with coroutines instead of Task.  \n8. Removed the NG-GL4ES submodule, using prebuilt artifacts from the standalone project."
+        "text": "(Translated from Chinese by AI)\n1. Integrated Weblate localization translation.  \n2. Merged the FCLLibrary module into the FCL module.  \n3. Fixed a crash caused by corrupted archives throwing ZipError, preventing modpack installation failures.  \n4. Fixed abnormal text in the account deletion dialog (#1752).  \n5. Fixed GLFW context version detection (only override when the driver version is higher, relaxed the minor lower bound).  \n6. Updated LWJGL 3.3.3/3.4.1 merged artifacts, fixed the game screen not displaying after using certain mods.  \n7. Fixed excessive vertical spacing between world list items.  \n8. Layout inflation changed to synchronous and removed obsolete interfaces such as UIListener."
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.模组列表增量加载优化（边扫描边分批显示，筛选不再重新扫描）\n2.损坏的模组文件跳过并提示，避免整个模组列表加载失败，并支持确认删除\n3.修复部分设备 F3 页面 CPU 显示为 Unknown 的问题\n4.修复部分渲染错误\n5.修复 GLFW 窗口上下文创建失败时导致的崩溃\n6.修复 LWJGL freetype 库从打包 natives 目录加载的问题\n7.账号皮肤上传改为协程实现\n8.移除 NG-GL4ES 子模块，改用独立项目预构建产物"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.接入 Weblate 本地化翻译\n2.FCLLibrary 模块整体并入 FCL 模块\n3.修复损坏的压缩文件抛 ZipError 导致的崩溃，避免整合包安装失败\n4.修复删除账户弹窗内容文字异常（#1752）\n5.修复 GLFW 上下文版本探测问题（仅当驱动版本更高时覆盖、放宽 minor 下界）\n6.更新 LWJGL 3.3.3/3.4.1 合并产物，修复使用部分模组后游戏画面无法显示的问题\n7.修复世界列表条目上下间距过大的问题\n8.布局加载改为同步，并移除 UIListener 等废弃接口"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/98ea477e8ecc",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.6/FCL-release-1.3.2.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/24a8297f483d",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.7/FCL-release-1.3.2.7-all.apk"
   }
 ]
