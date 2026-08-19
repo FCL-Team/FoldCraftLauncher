@@ -147,12 +147,12 @@ public class FCLauncher {
 
         sb.append(context.getDir("runtime", 0).getAbsolutePath()).append("/jna").append(split);
 
-        if (pluginLibPath != null && !pluginLibPath.isEmpty() && !pluginLibPath.equals("null")) {
+        if (isValidPathString(pluginLibPath)) {
             sb.append(pluginLibPath).append(split);
         }
 
         String nativeLibPaths = NativeLibPlugin.getPaths(split);
-        if (!nativeLibPaths.isEmpty() && !nativeLibPaths.equals("null")) {
+        if (isValidPathString(nativeLibPaths)) {
             sb.append(nativeLibPaths).append(split);
         }
 
@@ -161,11 +161,17 @@ public class FCLauncher {
         sb.append("/vendor/").append(libDirName).append(split);
         sb.append("/vendor/").append(libDirName).append("/hw").append(split);
         sb.append("/system_ext/").append(libDirName).append(split);
-        String arch = Architecture.archAsStringAndroid(Architecture.getDeviceArchitecture());
-        sb.append(FCLPath.LWJGL_DIR).append("/").append(lwjglVersion).append("/natives/").append(arch).append(split);
+        if (isValidPathString(lwjglVersion)) {
+            String arch = Architecture.archAsStringAndroid(Architecture.getDeviceArchitecture());
+            sb.append(FCLPath.LWJGL_DIR).append("/").append(lwjglVersion).append("/natives/").append(arch).append(split);
+        }
         sb.append(nativeDir);
 
         return sb.toString();
+    }
+
+    private static boolean isValidPathString(String path) {
+        return path != null && !path.isEmpty() && !path.equals("null");
     }
 
     private static String[] rebaseArgs(FCLConfig config, String libraryPath) {
