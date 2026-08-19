@@ -1,5 +1,47 @@
 # Changelog
 
+## [1.3.2.7] - 2026-08-19
+
+### 中文
+
+#### ✨ 新功能
+
+1. **接入 Weblate 本地化翻译**：接入 Weblate 平台，翻译协同更新更高效
+
+#### ⚡ 优化
+
+1. **FCLLibrary 模块整体并入 FCL 模块**：源码/资源/Manifest 合并，减少模块依赖与构建复杂度
+2. **布局加载改为同步**：移除 AsyncLayoutInflater，布局统一同步加载，避免异步加载带来的布局问题
+3. **移除 UIListener 回调接口与 UIManager.init 回调参数**：简化 UI 生命周期管理代码
+
+#### 🐛 修复
+
+1. 修复损坏的压缩文件抛 ZipError 导致的崩溃，避免整合包安装失败
+2. 修复删除账户弹窗内容文字异常（#1752）
+3. 修复 GLFW 上下文版本探测问题：仅当驱动版本更高时才覆盖上下文版本，放宽 minor 下界并统一上界
+4. 更新 LWJGL 3.3.3/3.4.1 合并产物，修复使用部分模组后启动游戏画面无法显示的问题
+5. 修复世界列表条目上下间距过大的问题
+
+### English
+
+#### ✨ New Features
+
+1. **Integrated Weblate localization**: Connected the project to Weblate for more efficient collaborative translation updates
+
+#### ⚡ Improvements
+
+1. **Merged the FCLLibrary module into FCL**: Sources, resources and manifest are unified to reduce module dependencies and build complexity
+2. **Synchronous layout inflation**: Removed AsyncLayoutInflater so layouts are always inflated synchronously, avoiding layout issues caused by async inflation
+3. **Removed the UIListener callback interface and UIManager.init callback parameter**: Simplified UI lifecycle management code
+
+#### 🐛 Bug Fixes
+
+1. Fixed a crash caused by corrupted archives throwing ZipError, preventing modpack installation failures
+2. Fixed abnormal text in the account deletion dialog (#1752)
+3. Fixed GLFW context version detection: only override the context version when the driver version is higher, relaxed the minor lower bound and unified the upper bound
+4. Updated LWJGL 3.3.3/3.4.1 merged artifacts, fixed the game screen not displaying after using certain mods
+5. Fixed excessive vertical spacing between world list items
+
 ## [1.3.2.6] - 2026-08-14
 
 ### 中文
