@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="splash_agreement">FCL требуется разрешение на доступ к хранилищу для управления игровыми файлами и их чтения. FCL имеет полностью открытый исходный код на GitHub, поэтому вы можете быть уверены в безопасности ваших данных. Это разрешение необходимо исключительно для корректной работы игры и не представляет никаких угроз безопасности.</string>
     <string name="splash_permission_msg">Нет доступа к хранилищу. Предоствьте разрешение Fold Craft Launcher в настройках.</string>
@@ -7,13 +8,11 @@
     <string name="splash_permission_settings">Настройки</string>
     <string name="splash_permission_settings_msg">Вы выбрали "Запретить". Разрешите доступ к хранилищу в настройках вручную.</string>
     <string name="notification_permission">FCL требуется разрешение на отправку уведомлений, чтобы избежать проблем с установкой и запуском игры.</string>
-
     <string name="splash_title">Добро пожаловать в Fold Craft Launcher</string>
     <string name="splash_eula_error">Не удалось подтвердить наличие лицензии из-за проблем с соединением.</string>
     <string name="splash_eula_next">Принять и продолжить</string>
     <string name="splash_runtime_title">Установить среду выполнения лаунчера</string>
     <string name="splash_runtime_install">Установить</string>
-
     <string name="account">Аккаунт</string>
     <string name="version">Версия</string>
     <string name="launch_mode">Запустить</string>
@@ -22,12 +21,10 @@
     <string name="controller">Контроллеры</string>
     <string name="multiplayer">Мультиплеер</string>
     <string name="setting">Настройки</string>
-    
     <string name="about">О лаунчере</string>
     <string name="about_sponsor">Спонсоры</string>
     <string name="about_source">Исходный код</string>
     <string name="about_desc">Fold Craft Launcher - это лаунчер который запускать Minecraft: Java Edition на Android устройствах.\n\nFold Craft Launcher разработан командой FCL-Team.\n\nБольшинство функций Fold Craft Launcher модифицированы на основе HMCLCore. Лаунчер использует и цитирует некоторые коды PojavLauncher и Boat, поэтому, если вы собираетесь распространять этот лаунчер, пожалуйста, следуйте лицензии GPL-v3.</string>
-
     <string name="account_add_server">Сервер аутентификации</string>
     <string name="account_add_server_url">URL адрес сервера</string>
     <string name="account_add_server_name">Название сервера</string>
@@ -84,25 +81,20 @@
     <string name="account_skin_upload">Выбрать скин на устройстве</string>
     <string name="account_state_no_account">Нет аккаунта</string>
     <string name="account_state_add">Нажмите, чтобы добавить</string>
-
     <string name="action_refresh">Обновить</string>
     <string name="action_retry">Повторить попытку</string>
     <string name="action_share">Поделиться</string>
     <string name="action_skip">Пропустить</string>
-
     <string name="announcement">Объявление: %s</string>
     <string name="announcement_significant">Это объявление является важным. Пожалуйста, подтвердите, что вы прочитали это объявление, прежде чем скрывать его.</string>
-
     <string name="archive_author">Авторы</string>
     <string name="archive_date">Дата публикации</string>
     <string name="archive_game_version">Версия игры</string>
     <string name="archive_name">Название файла</string>
     <string name="archive_version">Версия</string>
-
     <string name="assets_download">Загрузка ассетов</string>
     <string name="assets_download_all">Проверка целостности</string>
     <string name="assets_index_malformed">Загруженные файлы ресурсов были повреждены из-за ошибки сети!</string>
-
     <string name="button_back">Назад</string>
     <string name="button_cancel">Отменить</string>
     <string name="button_copy">Копировать</string>
@@ -121,11 +113,9 @@
     <string name="button_select_all">Выбрать всё</string>
     <string name="button_set">Выбрать</string>
     <string name="button_reset">Сбросить</string>
-
     <string name="community">Сообщество</string>
     <string name="community_hint">Присоединяйтесь к нашему сообществу, чтобы получать последние версии, сообщать об ошибках и т. д. Если вы присоединитесь, пожалуйста, следуйте правилам сообщества.</string>
     <string name="community_qq">QQ группа</string>
-
     <string name="control_create">Создать контроллер</string>
     <string name="control_delete">Вы уверены, что хотите удалить этот контроллер?</string>
     <string name="control_download">Загрузить контроллер</string>
@@ -162,9 +152,7 @@
     <string name="control_select">Выберите контроллер</string>
     <string name="control_share">Поделиться контроллером</string>
     <string name="control_upload">Опубликовать контроллер</string>
-
     <string name="curse_category_0">Все</string>
-
     <string name="curse_category_4474">Научная фантастика</string>
     <string name="curse_category_4481">Компактные / Легкие</string>
     <string name="curse_category_4483">Боевые</string>
@@ -178,7 +166,6 @@
     <string name="curse_category_4482">Очень большие</string>
     <string name="curse_category_4472">Технические</string>
     <string name="curse_category_4473">Магия</string>
-
     <string name="curse_category_5299">Образование</string>
     <string name="curse_category_5189">Утилиты и Улучшения игрового процесса</string>
     <string name="curse_category_6814">Производительность</string>
@@ -213,7 +200,6 @@
     <string name="curse_category_436">Еда</string>
     <string name="curse_category_4558">Редстоун</string>
     <string name="curse_category_4843">Автоматизация</string>
-
     <string name="curse_category_5244">Пакеты шрифтов</string>
     <string name="curse_category_5193">Пакеты данных</string>
     <string name="curse_category_399">Стимпанк</string>
@@ -225,7 +211,6 @@
     <string name="curse_category_4465">Поддержка модов</string>
     <string name="curse_category_402">Средневековье</string>
     <string name="curse_category_401">Современные</string>
-
     <string name="curse_category_4464">Миры с модами</string>
     <string name="curse_category_250">Игровые карты</string>
     <string name="curse_category_249">Постройки</string>
@@ -233,7 +218,6 @@
     <string name="curse_category_253">Выживание</string>
     <string name="curse_category_248">Приключения</string>
     <string name="curse_category_252">Головоломки</string>
-
     <string name="curse_category_4556">Прогрессия</string>
     <string name="curse_category_4554">Рецепты</string>
     <string name="curse_category_4549">Руководства</string>
@@ -243,34 +227,28 @@
     <string name="curse_category_4552">Скрипты</string>
     <string name="curse_category_6554">Фэнтези</string>
     <string name="curse_category_6553">Реализм</string>
-
     <string name="curse_sort_author">Автор</string>
     <string name="curse_sort_date_created">Дата создания</string>
     <string name="curse_sort_last_updated">Дата обновления</string>
     <string name="curse_sort_name">Название</string>
     <string name="curse_sort_popularity">Популярность</string>
     <string name="curse_sort_total_downloads">Всего загрузок</string>
-
     <string name="datapack_add">Установить датапак</string>
     <string name="datapack_choose_datapack">Выберите датапак для импорта</string>
-
     <string name="download_code_404">Файл не найден на сервере: %s</string>
     <string name="download_failed">Ошибка загрузки %1$s, код: %2$d</string>
     <string name="download_failed_empty">Нет доступных версий</string>
     <string name="download_failed_refresh">Не удалось получить список версий. Пожалуйста, повторите попытку.</string>
-
     <string name="download_provider_mojang">Mojang (OptiFine предоставляется BMCLAPI)</string>
     <string name="download_provider_official">Из официальных источников</string>
     <string name="download_provider_balanced">Из самых быстрых доступных</string>
     <string name="download_provider_mirror">Зеркало</string>
-
     <string name="edit_view_clone">Копировать</string>
     <string name="edit_view_delete">Удалить</string>
     <string name="edit_view_event">Расширенные настройки</string>
     <string name="edit_view_info">Стандартные настройки</string>
     <string name="edit_view_no_group">Сначала добавьте или выберите группу!</string>
     <string name="edit_view_style">Стиль</string>
-
     <string name="edit_button_title">Редактирование</string>
     <string name="edit_button_delete">Удалить кнопку?</string>
     <string name="edit_button_text">Текст на кнопке</string>
@@ -292,7 +270,6 @@
     <string name="edit_button_event_keycodes_keyboard">Клавиатура</string>
     <string name="edit_button_event_keycodes_mouse">Мышь</string>
     <string name="edit_button_event_bind_group">Переключить отображение группы</string>
-
     <string name="edit_direction_title">Редактировать стик</string>
     <string name="edit_direction_delete">Вы уверены что хотите удалить этот контроллер?</string>
     <string name="edit_direction_event_up">Верхняя кнопка</string>
@@ -305,11 +282,9 @@
     <string name="edit_direction_event_follow_always">Динамический</string>
     <string name="edit_direction_event_sneak">Двойное нажатие по центру для приседания</string>
     <string name="edit_direction_event_sneak_code">Кнопка по центру</string>
-
     <string name="exception_access_denied">Не удается получить доступ к файлу %s.</string>
     <string name="exception_artifact_malformed">Не удается проверить целостность загруженных файлов.</string>
     <string name="exception_ssl_handshake">Невозможно установить соединение SSL из-за отсутствия сертификатов SSL в текущей установке Java.</string>
-
     <string name="folder_config">Конфигурации</string>
     <string name="folder_game">Папка игры</string>
     <string name="folder_log">Логи</string>
@@ -319,7 +294,6 @@
     <string name="folder_saves">Миры</string>
     <string name="folder_screenshots">Скриншоты</string>
     <string name="folder_shaderpacks">Шейдеры</string>
-
     <string name="game_crash_info">Информация о сбое</string>
     <string name="game_crash_reason">Причина сбоя</string>
     <string name="game_crash_reason_multiple">Обнаружено несколько причин:\n\n</string>
@@ -378,17 +352,14 @@
     <string name="game_crash_reason_unsatisfied_link_error">Не удалось запустить Minecraft из-за отсутствующих системных библиотек: %1$s.</string>
     <string name="game_crash_title">Сбой игры</string>
     <string name="game_crash_title_add">Вместо скриншота отправляйте полный файл лога сбоя</string>
-
     <string name="help">Помощь</string>
     <string name="help_category">Категории</string>
     <string name="help_website">Сайт</string>
-
     <string name="input_hint_not_empty">Необходимо</string>
     <string name="input_hint_optional">Необязательно</string>
     <string name="input_not_empty">Заполните обязательные поля.</string>
     <string name="input_number">Введите число</string>
     <string name="input_url">Введите корректный URL-адрес.</string>
-
     <string name="install_change_version">Выберите версию</string>
     <string name="install_change_version_confirm">Вы уверены, что хотите сменить версию %s с %s на %s?</string>
     <string name="install_failed">Ошибка установки</string>
@@ -414,25 +385,21 @@
     <string name="install_new_game_already_exists">Этот профиль уже существует. Пожалуйста, используйте другое название.</string>
     <string name="install_new_game_malformed">Некорректное название</string>
     <string name="install_success">Установка завершена!</string>
-
     <string name="jar_execute">Выбрать Jar</string>
     <string name="jar_execute_custom_args">Выполнить с пользовательскими аргументами</string>
     <string name="jar_executor_crash_title">Ошибка выполнения JAR-файла</string>
     <string name="jar_executor_crash_reason">Анализ причин сбоя исполнителя Jar в настоящее время не поддерживается.</string>
-
     <string name="launch_error_java">Вы используете устаревшую версию Java. Вы уверены, что хотите продолжить?</string>
     <string name="launch_error_java_auto">Автовыбор</string>
     <string name="launch_error_java_continue">Продолжить</string>
     <string name="launch_failed">Ошибка запуска</string>
     <string name="launch_failed_download_library">Невозможно загрузить библиотеку %s.</string>
-
     <string name="launch_state_dependencies">Зависимости</string>
     <string name="launch_state_modpack">Загрузка зависимостей</string>
     <string name="launch_state_java">Проверка Java</string>
     <string name="launch_state_logging_in">Авторизация</string>
     <string name="launch_state_waiting_launching">Запуск</string>
     <string name="launch_state_done">Завершение запуска</string>
-
     <string name="menu_controls">Управление</string>
     <string name="menu_controls_current">Текущее управление</string>
     <string name="menu_controls_edit_mode">Режим редактирования</string>
@@ -449,7 +416,6 @@
     <string name="menu_controls_style">Стиль</string>
     <string name="menu_controls_button_style">Стиль кнопок</string>
     <string name="menu_controls_direction_style">Стиль стика</string>
-
     <string name="menu_control_base">Базовая настройка</string>
     <string name="menu_control_button">Кнопка</string>
     <string name="menu_control_button_text">Текст</string>
@@ -468,7 +434,6 @@
     <string name="menu_control_view_group_empty">Сначала ведите название группы</string>
     <string name="menu_control_view_group_visible">Видимый</string>
     <string name="menu_control_view_group_invisible">Невидимый</string>
-
     <string name="menu_settings">Настройки</string>
     <string name="menu_settings_debug">Лог</string>
     <string name="menu_settings_disable_gesture">Отключить жесты</string>
@@ -512,7 +477,6 @@
     <string name="menu_settings_show_log">Показать лог</string>
     <string name="menu_settings_show_log_auto">Автопоказ лога</string>
     <string name="menu_settings_performance_mode">Режим стабильной производительности</string>
-
     <string name="message_cancelled">Операция отменена</string>
     <string name="message_copy">Скопировано успешно!</string>
     <string name="message_doing">Подождите</string>
@@ -523,7 +487,6 @@
     <string name="message_success">Операция завершена успешно</string>
     <string name="message_unknown">Неизвестный</string>
     <string name="message_warning">Предупреждение</string>
-
     <string name="modpack">Модпаки</string>
     <string name="modpack_choose">Выберите модпак</string>
     <string name="modpack_choose_local">Установить из файла</string>
@@ -589,7 +552,6 @@
     <string name="modpack_wizard_step_initialization_include_launcher">Включить лаунчер</string>
     <string name="modpack_wizard_step_initialization_save">Экспортировать в</string>
     <string name="modpack_wizard_step_initialization_warning">"Перед созданием модпака, убедитесь, что игра запускается, и это релизная версия, а не снапшот.\nИмейте в виду, что вам не разрешено добавлять моды и ресурсные пакеты, которые явно указаны как недоступные для распространения или включения в модпак."</string>
-
     <string name="modrinth_category_adventure">Приключения</string>
     <string name="modrinth_category_challenging">Сложное</string>
     <string name="modrinth_category_combat">Бой</string>
@@ -648,7 +610,6 @@
     <string name="modrinth_category_simplistic">Упрощенные</string>
     <string name="modrinth_category_themed">Тематические</string>
     <string name="modrinth_category_tweaks">Твики</string>
-
     <string name="mods">Моды</string>
     <string name="mods_add">Добавить моды</string>
     <string name="mods_add_failed">Не удалось установить мод %s.</string>
@@ -688,23 +649,19 @@
     <string name="mods_url">Официальная страница</string>
     <string name="mods_update_modpack_mod_warning">Обновление модов в модпаке может привести к непоправимым результатам, возможно, к повреждению модпака, из-за которого он не сможет запуститься. Вы уверены, что хотите обновить?</string>
     <string name="mods_screenshot_no_result">Нет доступных скриншотов</string>
-
     <string name="profile_shared">"Поделиться с папкой \n(хранилище устройства)"</string>
     <string name="profile_private">"Приватная папка \n(хранилище игры)"</string>
     <string name="profile_name">Название</string>
     <string name="profile_path">Путь</string>
     <string name="profile_select">Выбрать папку</string>
     <string name="profile_already_exist">Это название уже существует, используйте другое название.</string>
-
     <string name="quick_input_title">Быстрый ввод</string>
     <string name="quick_input_add">Добавить текст</string>
     <string name="quick_input_text">Текст для быстрого ввода</string>
     <string name="quick_input_remarks">Примечания (необязательно)</string>
     <string name="quick_input_exist">Такой текст уже есть!</string>
     <string name="quick_input_empty">Введите текст!</string>
-
     <string name="resourcepack">Ресурспаки</string>
-
     <string name="search">Поиск</string>
     <string name="search_hint_chinese">Поиск</string>
     <string name="search_hint_english">Поиск</string>
@@ -712,7 +669,6 @@
     <string name="search_sort">Сортировать по</string>
     <string name="search_first_page">Начало</string>
     <string name="search_last_page">Конец</string>
-
     <string name="settings_advanced_dont_check_game_completeness">Не проверять целостность игры</string>
     <string name="settings_advanced_dont_check_jvm_validity">Не проверять совместимость с JVM</string>
     <string name="settings_advanced_game_dir_default">По умолчанию (.minecraft/)</string>
@@ -722,27 +678,21 @@
     <string name="settings_advanced_minecraft_arguments_prompt">По умолчанию</string>
     <string name="settings_advanced_server_ip">Адрес сервера</string>
     <string name="settings_advanced_server_ip_prompt">Автоприсоединение после запуска</string>
-
     <string name="settings_fcl_controller">Контроллер</string>
     <string name="settings_fcl_vulkan_driver_system">Использовать системные драйверы Vulkan</string>
     <string name="settings_fcl_renderer">Реализация OpenGL (рендерер)</string>
     <string name="settings_fcl_pojav_bigcore">Принудительно использовать производительные ядра для рендеринга</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, только 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, только для GPU a616-a660)</string>
-
     <string name="settings_fcl_driver">Драйвер Vulkan</string>
-
     <string name="settings_download_netdisk">NetDisk (рекомендуется для пользователей в Китае)</string>
-
     <string name="settings_game">Настройки игры</string>
     <string name="settings_game_dimension">Разрешение</string>
     <string name="settings_game_cursor_offset">Смещение курсора</string>
     <string name="settings_game_java_version">Версия Java</string>
     <string name="settings_game_java_version_auto">Авто</string>
     <string name="settings_game_working_directory">Отдельное расположение файлов игры</string>
-
     <string name="settings_icon">Иконка</string>
-
     <string name="settings_launcher">Настройки лаунчера</string>
     <string name="settings_launcher_debug">Лог лаунчера</string>
     <string name="settings_launcher_upgrade">Обновление лаунчера</string>
@@ -771,7 +721,6 @@
     <string name="settings_launcher_animation_speed">Скорость анимации переходов</string>
     <string name="settings_launcher_vibrate_duration">Длительность вибрации (для мода TouchController)</string>
     <string name="settings_disable_fullscreen_input">Отключить полноэкранный ввод (для мода TouchController)</string>
-
     <string name="settings_memory">Память</string>
     <string name="settings_memory_allocate_auto">%1$.1f ГБ минимум / %2$.1f ГБ выделенно</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f ГБ минимум / %2$.1f ГБ выделенно (%3$.1f ГБ свободно)</string>
@@ -784,7 +733,6 @@
     <string name="settings_tabs_installers">Загрузчики модов</string>
     <string name="settings_type_global_manage">Основные настройки игры</string>
     <string name="settings_type_special_enable">Отдельные настройки</string>
-
     <string name="style_name">Название</string>
     <string name="style_warning_delete">Вы уверены, что хотите удалить этот стиль?</string>
     <string name="style_warning_exist">Стиль уже существует!</string>
@@ -812,7 +760,6 @@
     <string name="style_rocker_stroke_color">Цвет обводки стика</string>
     <string name="style_rocker_corner_radius">Радиус углов стика</string>
     <string name="style_rocker_fill_color">Цвет заливки стика</string>
-
     <string name="update">Обновить</string>
     <string name="update_netdisk">Quark диск</string>
     <string name="update_check">Проверить обновление</string>
@@ -829,7 +776,6 @@
     <string name="update_version">Версия %s</string>
     <string name="update_version_release">Релиз</string>
     <string name="update_version_beta">Бета</string>
-
     <string name="version_game">Версии</string>
     <string name="version_game_old">Страрые бета/альфа</string>
     <string name="version_game_release">Релиз</string>
@@ -855,7 +801,6 @@
     <string name="version_manage_rename_fail">Не удалось переименовать</string>
     <string name="version_new_profile">Новая папка</string>
     <string name="version_update">Обновить модпак</string>
-
     <string name="view_info_visibility">Отображение</string>
     <string name="view_info_visibility_always">Всегда</string>
     <string name="view_info_visibility_game">В игре</string>
@@ -873,7 +818,6 @@
     <string name="view_info_reference">Размер по</string>
     <string name="view_info_reference_width">Ширине экрана</string>
     <string name="view_info_reference_height">Высоте экрана</string>
-
     <string name="world">Миры</string>
     <string name="world_add">Добавить мир (.zip)</string>
     <string name="world_datapack">Управление датапаками</string>
@@ -923,7 +867,6 @@
     <string name="world_name_enter">Введите название мира</string>
     <string name="world_reveal">Показать в проводнике</string>
     <string name="world_show_all">Показать все</string>
-
     <string name="install_apk">Установить лаунчер</string>
     <string name="modpack_download_warn_title">Предупреждение</string>
     <string name="modpack_download_warn_msg">Большинство модпаков разработаны для ПК, поэтому возможны сбои. Разработчик лаунчера не несет ответственности за совместимость модпаков.</string>
@@ -935,14 +878,11 @@
     <string name="joystick_r">Правый стик</string>
     <string name="message_vulkan_driver_system">Внимание: использование системного драйвера Vulkan может привести к повышению производительности, но также может вызвать сбои из-за проблем совместимости!</string>
     <string name="message_loading_controllers">Идет загрузка контроллеров...</string>
-
     <string name="installed">Установлено</string>
     <string name="message_install_plugin">Плагины можно получить следующими способами.</string>
     <string name="message_install_java">Java можно получить следующими способами.</string>
-
     <string name="shaderpack">Шейдеры</string>
     <string name="recommend_version">Рекомендуемая версия</string>
-
     <string name="mod_check_continue">Продолжить</string>
     <string name="mod_check_physics">Текущий мод Physics (%s) не пропатчен (нужно заменить libPhysXJniBindings_64.so от Linux x86_64 на версию для Android arm64/x86_64). Это приведёт к сбою игры.</string>
     <string name="mod_check_mcef">Мод MCEF (%s) не работает на Android. Обычно он нужен для работы WebDisplays или внутриигрового браузера.</string>
@@ -953,16 +893,13 @@
     <string name="mod_check_borderlesswindow">BorderlessWindow (%s) не предназначен для Android. Это приведёт к сбою игры.</string>
     <string name="mod_check_axiom">Текущий Axiom (%s) не пропатчен, это приведёт к сбою игры.</string>
     <string name="mod_check_sodium">Текущий рендерер GL4ES может быть несовместим с модами Sodium/Embeddium (%s). Запуск игры с этими модами может привести к сбою. Рекомендуется скачать и использовать рендерер MobileGlues (https://github.com/MobileGL-Dev/MobileGlues-release/releases).</string>
-
     <string name="internal">Встроенная</string>
     <string name="import_java">Импорт Java</string>
     <string name="import_java_wrong_file">Поддерживается импорт только файлов tar.xz.</string>
     <string name="import_java_error">Обнаружено, что импортированная вами среда Java, возможно, не предназначена для использования на текущем устройстве. Запуск с ней может привести к сбою лаунчера. Вы хотите продолжить импорт?</string>
-
     <string name="manage_version">Менеджер версий</string>
     <string name="select_renderer">Выбрать рендерер</string>
     <string name="open_link_failed">Не удалось автоматически перейти в браузер. Ссылка скопирована автоматически. Пожалуйста, откройте браузер вручную и вставьте её.</string>
-
     <string name="launch">Запустить</string>
     <string name="tip_hide_menu_view">Меню скрыто. Нажмите клавишу громкости, чтобы открыть меню.</string>
     <string name="modloader">Загрузчик модов</string>
@@ -970,7 +907,6 @@
     <string name="message_select_url">Пожалуйста, выберите ссылку для скачивания (она откроется в вашем браузере).</string>
     <string name="supported_mc_version">Поддерживаемая версия MC:</string>
     <string name="message_check_renderer">Текущий рендерер %s не поддерживает эту версию игры. Продолжение его использования может привести к ошибкам рендеринга или сбоям игры! Хотите продолжить?</string>
-
     <!-- 原 FCLLibrary 模块字符串（模块已并入 FCL） -->
     <string name="file_browser_title">Файловый менеджер</string>
     <string name="file_browser_back">Назад</string>
