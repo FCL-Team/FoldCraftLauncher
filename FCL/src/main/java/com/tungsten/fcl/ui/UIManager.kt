@@ -16,7 +16,6 @@ import com.tungsten.fcl.ui.setting.SettingUI
 import com.tungsten.fcl.ui.version.VersionUI
 import com.tungsten.fcllibrary.component.ui.FCLBaseUI
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI
-import kotlin.math.abs
 
 /**
  * 主界面 UI 管理器：用 ViewPager2 承载 8 个主 UI 页面。
@@ -51,9 +50,6 @@ class UIManager(val context: Context, val pager: ViewPager2) {
     /** 页面切换回调，MainActivity 用于同步菜单高亮与标题 */
     var pageSelectedListener: ((Int) -> Unit)? = null
 
-    /** 本次切换是否为相邻页平滑滑动（平滑滑动自带过渡动画，不再叠加淡入） */
-    private var smoothSwitch = false
-
     /** 上次 onPageSelected 的页面位置，用于过滤 ViewPager2 重复 dispatch 当前页（如软键盘弹出等布局变化） */
     private var lastSelectedPosition = -1
 
@@ -61,13 +57,12 @@ class UIManager(val context: Context, val pager: ViewPager2) {
         override fun onPageSelected(position: Int) {
             currentUI = getUI(position)
             pageSelectedListener?.invoke(position)
-            if (position != lastSelectedPosition && !smoothSwitch) {
-                // 瞬时跳转（远距）的过渡动画：对目标页做淡入 + 上滑进入。
-                // 同步执行（不 post）：onPageSelected 时页面已挂载但尚未绘制，此时置透明
-                // 不会出现先显示后消失的闪烁；相邻页平滑滑动时页面在滑动过程中已可见，
-                // 若再置透明淡入会导致闪烁，故平滑滑动不叠加淡入。
-                // 仅在页面位置真正变化时播放：ViewPager2 在布局变化（如软键盘弹出、页面
-                // 内容刷新）后会重新 dispatch 当前页，此时不播放动画避免页面闪烁
+            // 统一过渡动画：每次跨页切换都对目标页做淡入 + 上滑进入。
+            // 同步执行（不 post）：onPageSelected 时页面已挂载但尚未绘制，此时置透明
+            // 不会出现先显示后消失的闪烁。
+            // 仅在页面位置真正变化时播放：ViewPager2 在布局变化（如软键盘弹出、页面
+            // 内容刷新）后会重新 dispatch 当前页，此时不播放动画避免页面闪烁
+            if (position != lastSelectedPosition) {
                 currentUI?.contentView?.apply {
                     animate().cancel()
                     alpha = 0f
@@ -76,7 +71,6 @@ class UIManager(val context: Context, val pager: ViewPager2) {
                 }
             }
             lastSelectedPosition = position
-            smoothSwitch = false
         }
     }
 
@@ -113,9 +107,9 @@ class UIManager(val context: Context, val pager: ViewPager2) {
             // 与当前页位置相同（如启动时的初始页）：仅更新当前 UI
             currentUI = ui
         } else {
-            // 相邻页平滑滑动，远距离瞬时跳转（避免中间页被逐个创建/销毁）
-            smoothSwitch = abs(position - pager.currentItem) <= 1
-            pager.setCurrentItem(position, smoothSwitch)
+            // 跨页切换统一瞬时跳转，过渡动画统一由 onPageSelected 的淡入上滑处理。
+            // 不用平滑滑动：远距跳转时平滑滚动会途经中间页导致重 UI 被逐个创建/回收
+            pager.setCurrentItem(position, false)
         }
     }
 
