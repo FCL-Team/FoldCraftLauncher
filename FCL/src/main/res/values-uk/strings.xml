@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="splash_permission_msg">Немає доступу до сховища. Надайте дозвіл Fold Craft Launcher у налаштуваннях.</string>
     <string name="splash_permission_grant">Дозволити</string>
@@ -5,13 +6,11 @@
     <string name="splash_permission_close">Закрити лаунчер</string>
     <string name="splash_permission_settings">Налаштування</string>
     <string name="splash_permission_settings_msg">Ви обрали "Заборонити". Надайте доступ до сховища вручну в налаштуваннях.</string>
-
     <string name="splash_title">Ласкаво просимо до Fold Craft Launcher</string>
     <string name="splash_eula_error">Не вдалося підтвердити наявність ліцензії через проблеми з підключенням.</string>
     <string name="splash_eula_next">Прийняти та продовжити</string>
     <string name="splash_runtime_title">Встановити середовище виконання лаунчера</string>
     <string name="splash_runtime_install">Встановити</string>
-
     <string name="account">Обліковий запис</string>
     <string name="version">Версія</string>
     <string name="launch_mode">Запустити</string>
@@ -20,12 +19,10 @@
     <string name="controller">Контролери</string>
     <string name="multiplayer">Мультиплеєр</string>
     <string name="setting">Налаштування</string>
-    
     <string name="about">Про лаунчер</string>
     <string name="about_sponsor">Спонсори</string>
     <string name="about_source">Вихідний код</string>
     <string name="about_desc">Fold Craft Launcher — це лаунчер для запуску Minecraft: Java Edition на пристроях Android.\n\nFold Craft Launcher розроблений командою FCL-Team.\n\nБільшість функцій Fold Craft Launcher модифіковані на основі HMCLCore. Лаунчер використовує та цитує деякі коди PojavLauncher і Boat, тому, якщо ви плануєте поширювати цей лаунчер, будь ласка, дотримуйтесь ліцензії GPL-v3.</string>
-
     <string name="account_add_server">Сервер автентифікації</string>
     <string name="account_add_server_url">URL-адреса сервера</string>
     <string name="account_add_server_name">Назва сервера</string>
@@ -81,25 +78,20 @@
     <string name="account_skin_upload">Вибрати скін на пристрої</string>
     <string name="account_state_no_account">Немає облікового запису</string>
     <string name="account_state_add">Натисніть, щоб додати</string>
-
     <string name="action_refresh">Оновити</string>
     <string name="action_retry">Повторити спробу</string>
     <string name="action_share">Поділитися</string>
     <string name="action_skip">Пропустити</string>
-
     <string name="announcement">Оголошення: %s</string>
     <string name="announcement_significant">Це оголошення важливе. Підтвердіть, що ви прочитали його, перш ніж приховати.</string>
-
     <string name="archive_author">Автори</string>
     <string name="archive_date">Дата публікації</string>
     <string name="archive_game_version">Версія гри</string>
     <string name="archive_name">Назва файлу</string>
     <string name="archive_version">Версія</string>
-
     <string name="assets_download">Завантаження активів</string>
     <string name="assets_download_all">Перевірка цілісності</string>
     <string name="assets_index_malformed">Завантажені файли ресурсів були пошкоджені через помилку мережі!</string>
-
     <string name="button_back">Назад</string>
     <string name="button_cancel">Скасувати</string>
     <string name="button_copy">Копіювати</string>
@@ -118,11 +110,9 @@
     <string name="button_select_all">Вибрати все</string>
     <string name="button_set">Вибрати</string>
     <string name="button_reset">Скинути</string>
-
     <string name="community">Спільнота</string>
     <string name="community_hint">Приєднуйтесь до нашої спільноти, щоб отримувати останні версії, повідомляти про помилки тощо. Якщо ви приєднаєтеся, дотримуйтесь правил спільноти.</string>
     <string name="community_qq">Група QQ</string>
-
     <string name="control_create">Створити контролер</string>
     <string name="control_delete">Ви впевнені, що хочете видалити цей контролер?</string>
     <string name="control_download">Завантажити контролер</string>
@@ -159,9 +149,7 @@
     <string name="control_select">Вибрати контролер</string>
     <string name="control_share">Поділитися контролером</string>
     <string name="control_upload">Опублікувати контролер</string>
-
     <string name="curse_category_0">Усе</string>
-
     <string name="curse_category_4474">Наукова фантастика</string>
     <string name="curse_category_4481">Компактні / Легкі</string>
     <string name="curse_category_4483">Бойові</string>
@@ -175,7 +163,6 @@
     <string name="curse_category_4482">Дуже великі</string>
     <string name="curse_category_4472">Технічні</string>
     <string name="curse_category_4473">Магія</string>
-
     <string name="curse_category_5299">Освіта</string>
     <string name="curse_category_5189">Утиліти та покращення ігрового процесу</string>
     <string name="curse_category_6814">Продуктивність</string>
@@ -210,7 +197,6 @@
     <string name="curse_category_436">Їжа</string>
     <string name="curse_category_4558">Редстоун</string>
     <string name="curse_category_4843">Автоматизація</string>
-
     <string name="curse_category_5244">Пакети шрифтів</string>
     <string name="curse_category_5193">Пакети даних</string>
     <string name="curse_category_399">Стімпанк</string>
@@ -222,7 +208,6 @@
     <string name="curse_category_4465">Підтримка модів</string>
     <string name="curse_category_402">Середньовіччя</string>
     <string name="curse_category_401">Сучасні</string>
-
     <string name="curse_category_4464">Світи з модами</string>
     <string name="curse_category_250">Ігрові карти</string>
     <string name="curse_category_249">Будівлі</string>
@@ -230,7 +215,6 @@
     <string name="curse_category_253">Виживання</string>
     <string name="curse_category_248">Пригоди</string>
     <string name="curse_category_252">Головоломки</string>
-
     <string name="curse_category_4556">Прогресія</string>
     <string name="curse_category_4554">Рецепти</string>
     <string name="curse_category_4549">Посібники</string>
@@ -238,34 +222,28 @@
     <string name="curse_category_4550">Квести</string>
     <string name="curse_category_4555">Генерація світу</string>
     <string name="curse_category_4552">Скрипти</string>
-
     <string name="curse_sort_author">Автор</string>
     <string name="curse_sort_date_created">Дата створення</string>
     <string name="curse_sort_last_updated">Дата оновлення</string>
     <string name="curse_sort_name">Назва</string>
     <string name="curse_sort_popularity">Популярність</string>
     <string name="curse_sort_total_downloads">Всього завантажень</string>
-
     <string name="datapack_add">Встановити датапак</string>
     <string name="datapack_choose_datapack">Виберіть датапак для імпорту</string>
-
     <string name="download_code_404">Файл не знайдено на сервері: %s</string>
     <string name="download_failed">Помилка завантаження %1$s, код: %2$d</string>
     <string name="download_failed_empty">Немає доступних версій</string>
     <string name="download_failed_refresh">Не вдалося отримати список версій. Спробуйте ще раз.</string>
-
     <string name="download_provider_mojang">Mojang (OptiFine надається BMCLAPI)</string>
     <string name="download_provider_official">З офіційних джерел</string>
     <string name="download_provider_balanced">З найшвидших доступних</string>
     <string name="download_provider_mirror">Дзеркало</string>
-
     <string name="edit_view_clone">Копіювати</string>
     <string name="edit_view_delete">Видалити</string>
     <string name="edit_view_event">Розширені налаштування</string>
     <string name="edit_view_info">Стандартні налаштування</string>
     <string name="edit_view_no_group">Спочатку додайте або виберіть групу!</string>
     <string name="edit_view_style">Стиль</string>
-
     <string name="edit_button_title">Редагування</string>
     <string name="edit_button_delete">Видалити кнопку?</string>
     <string name="edit_button_text">Текст на кнопці</string>
@@ -287,7 +265,6 @@
     <string name="edit_button_event_keycodes_keyboard">Клавіатура</string>
     <string name="edit_button_event_keycodes_mouse">Миша</string>
     <string name="edit_button_event_bind_group">Переключити відображення групи</string>
-
     <string name="edit_direction_title">Редагувати стік</string>
     <string name="edit_direction_delete">Ви впевнені, що хочете видалити цей контролер?</string>
     <string name="edit_direction_event_up">Верхня кнопка</string>
@@ -300,11 +277,9 @@
     <string name="edit_direction_event_follow_always">Динамічний</string>
     <string name="edit_direction_event_sneak">Подвійне натискання по центру для присідання</string>
     <string name="edit_direction_event_sneak_code">Кнопка по центру</string>
-
     <string name="exception_access_denied">Не вдається отримати доступ до файлу %s.</string>
     <string name="exception_artifact_malformed">Не вдається перевірити цілісність завантажених файлів.</string>
     <string name="exception_ssl_handshake">Неможливо встановити з’єднання SSL через відсутність сертифікатів SSL у поточній установці Java.</string>
-
     <string name="folder_config">Конфігурації</string>
     <string name="folder_game">Папка гри</string>
     <string name="folder_log">Логи</string>
@@ -314,7 +289,6 @@
     <string name="folder_saves">Світи</string>
     <string name="folder_screenshots">Скріншоти</string>
     <string name="folder_shaderpacks">Шейдери</string>
-
     <string name="game_crash_info">Інформація про збій</string>
     <string name="game_crash_reason">Причина збою</string>
     <string name="game_crash_reason_multiple">Виявлено кілька причин:\n\n</string>
@@ -373,17 +347,14 @@
     <string name="game_crash_reason_unsatisfied_link_error">Не вдалося запустити Minecraft через відсутність системних бібліотек: %1$s.</string>
     <string name="game_crash_title">Збій гри</string>
     <string name="game_crash_title_add">Замість скріншота надсилайте повний файл логу збою</string>
-
     <string name="help">Допомога</string>
     <string name="help_category">Категорії</string>
     <string name="help_website">Вебсайт</string>
-
     <string name="input_hint_not_empty">Обов’язково</string>
     <string name="input_hint_optional">Необов’язково</string>
     <string name="input_not_empty">Заповніть обов’язкові поля.</string>
     <string name="input_number">Введіть число</string>
     <string name="input_url">Введіть коректну URL-адресу.</string>
-
     <string name="install_change_version">Виберіть версію</string>
     <string name="install_change_version_confirm">Ви впевнені, що хочете змінити версію %s з %s на %s?</string>
     <string name="install_failed">Помилка встановлення</string>
@@ -409,25 +380,21 @@
     <string name="install_new_game_already_exists">Цей профіль уже існує. Використовуйте іншу назву.</string>
     <string name="install_new_game_malformed">Некоректна назва</string>
     <string name="install_success">Встановлення завершено!</string>
-
     <string name="jar_execute">Вибрати Jar</string>
     <string name="jar_execute_custom_args">Виконати з власними аргументами</string>
     <string name="jar_executor_crash_title">Помилка виконання JAR-файлу</string>
     <string name="jar_executor_crash_reason">Аналіз причин збою виконавця Jar наразі не підтримується.</string>
-
     <string name="launch_error_java">Ви використовуєте застарілу версію Java. Ви впевнені, що хочете продовжити?</string>
     <string name="launch_error_java_auto">Автовибір</string>
     <string name="launch_error_java_continue">Продовжити</string>
     <string name="launch_failed">Помилка запуску</string>
     <string name="launch_failed_download_library">Неможливо завантажити бібліотеку %s.</string>
-
     <string name="launch_state_dependencies">Залежності</string>
     <string name="launch_state_modpack">Завантаження залежностей</string>
     <string name="launch_state_java">Перевірка Java</string>
     <string name="launch_state_logging_in">Авторизація</string>
     <string name="launch_state_waiting_launching">Запуск</string>
     <string name="launch_state_done">Завершення запуску</string>
-
     <string name="menu_controls">Керування</string>
     <string name="menu_controls_current">Поточне керування</string>
     <string name="menu_controls_edit_mode">Режим редагування</string>
@@ -444,7 +411,6 @@
     <string name="menu_controls_style">Стиль</string>
     <string name="menu_controls_button_style">Стиль кнопок</string>
     <string name="menu_controls_direction_style">Стиль стіка</string>
-
     <string name="menu_control_base">Базові налаштування</string>
     <string name="menu_control_button">Кнопка</string>
     <string name="menu_control_button_text">Текст</string>
@@ -463,7 +429,6 @@
     <string name="menu_control_view_group_empty">Спочатку введіть назву групи</string>
     <string name="menu_control_view_group_visible">Видимий</string>
     <string name="menu_control_view_group_invisible">Невидимий</string>
-
     <string name="menu_settings">Налаштування</string>
     <string name="menu_settings_debug">Лог</string>
     <string name="menu_settings_disable_gesture">Вимкнути жести</string>
@@ -507,7 +472,6 @@
     <string name="menu_settings_show_log">Показати лог</string>
     <string name="menu_settings_show_log_auto">Автопоказ логу</string>
     <string name="menu_settings_performance_mode">Режим стабільної продуктивності</string>
-
     <string name="message_cancelled">Операцію скасовано</string>
     <string name="message_copy">Успішно скопійовано!</string>
     <string name="message_doing">Зачекайте</string>
@@ -518,7 +482,6 @@
     <string name="message_success">Операція успішно завершена</string>
     <string name="message_unknown">Невідомо</string>
     <string name="message_warning">Попередження</string>
-
     <string name="modpack">Модпаки</string>
     <string name="modpack_choose">Виберіть модпак</string>
     <string name="modpack_choose_local">Встановити з файлу</string>
@@ -584,7 +547,6 @@
     <string name="modpack_wizard_step_initialization_include_launcher">Включити лаунчер</string>
     <string name="modpack_wizard_step_initialization_save">Експортувати в</string>
     <string name="modpack_wizard_step_initialization_warning">"Перед створенням модпака переконайтеся, що гра запускається, і це релізна версія, а не снапшот.\nМайте на увазі, що вам не дозволено додавати моди та ресурсні пакети, які явно позначені як недоступні для поширення або включення в модпак."</string>
-
     <string name="modrinth_category_adventure">Пригоди</string>
     <string name="modrinth_category_challenging">Складне</string>
     <string name="modrinth_category_combat">Бій</string>
@@ -612,7 +574,6 @@
     <string name="modrinth_category_utility">Утиліти</string>
     <string name="modrinth_category_worldgen">Генерація світу</string>
     <string name="modrinth_category_datapack">Датапак</string>
-
     <string name="mods">Моди</string>
     <string name="mods_add">Додати моди</string>
     <string name="mods_add_failed">Не вдалося встановити мод %s.</string>
@@ -652,22 +613,18 @@
     <string name="mods_url">Офіційна сторінка</string>
     <string name="mods_update_modpack_mod_warning">Оновлення модів у модпаку може призвести до непоправних наслідків, можливо, до пошкодження модпака, через що він не зможе запуститися. Ви впевнені, що хочете оновити?</string>
     <string name="mods_screenshot_no_result">Немає доступних скріншотів</string>
-
     <string name="profile_shared">"Поділитися з папкою \n(сховище пристрою)"</string>
     <string name="profile_private">"Приватна папка \n(сховище гри)"</string>
     <string name="profile_name">Назва</string>
     <string name="profile_path">Шлях</string>
     <string name="profile_select">Вибрати папку</string>
     <string name="profile_already_exist">Ця назва вже існує, використовуйте іншу назву.</string>
-
     <string name="quick_input_title">Швидкий ввід</string>
     <string name="quick_input_add">Додати текст</string>
     <string name="quick_input_text">Текст для швидкого вводу</string>
     <string name="quick_input_exist">Такий текст уже існує!</string>
     <string name="quick_input_empty">Введіть текст!</string>
-
     <string name="resourcepack">Ресурспаки</string>
-
     <string name="search">Пошук</string>
     <string name="search_hint_chinese">Пошук</string>
     <string name="search_hint_english">Пошук</string>
@@ -675,7 +632,6 @@
     <string name="search_sort">Сортувати за</string>
     <string name="search_first_page">Початок</string>
     <string name="search_last_page">Кінець</string>
-
     <string name="settings_advanced_dont_check_game_completeness">Не перевіряти цілісність гри</string>
     <string name="settings_advanced_dont_check_jvm_validity">Не перевіряти сумісність із JVM</string>
     <string name="settings_advanced_game_dir_default">За замовчуванням (.minecraft/)</string>
@@ -685,27 +641,21 @@
     <string name="settings_advanced_minecraft_arguments_prompt">За замовчуванням</string>
     <string name="settings_advanced_server_ip">Адреса сервера</string>
     <string name="settings_advanced_server_ip_prompt">Автоприєднання після запуску</string>
-
     <string name="settings_fcl_controller">Контролер</string>
     <string name="settings_fcl_vulkan_driver_system">Використання системних драйверів Vulkan</string>
     <string name="settings_fcl_renderer">Реалізація OpenGL (рендерер)</string>
     <string name="settings_fcl_pojav_bigcore">Примусово використовувати продуктивні ядра для рендерингу</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, тільки 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, тільки для GPU a616-a660)</string>
-
     <string name="settings_fcl_driver">Драйвер Vulkan</string>
-
     <string name="settings_download_netdisk">Netdisk (рекомендовано для користувачів у Китаї)</string>
-
     <string name="settings_game">Налаштування гри</string>
     <string name="settings_game_dimension">Роздільна здатність</string>
     <string name="settings_game_cursor_offset">Зміщення курсора</string>
     <string name="settings_game_java_version">Версія Java</string>
     <string name="settings_game_java_version_auto">Авто</string>
     <string name="settings_game_working_directory">Окреме розташування файлів гри</string>
-
     <string name="settings_icon">Іконка</string>
-
     <string name="settings_launcher">Налаштування лаунчера</string>
     <string name="settings_launcher_debug">Лог лаунчера</string>
     <string name="settings_launcher_upgrade">Оновлення лаунчера</string>
@@ -732,7 +682,6 @@
     <string name="settings_launcher_ignore_notch">Ігнорувати виріз фронтальної камери</string>
     <string name="settings_launcher_close_skin_view">Приховати модель скіна</string>
     <string name="settings_launcher_animation_speed">Швидкість анімації переходів</string>
-
     <string name="settings_memory">Пам\'ять</string>
     <string name="settings_memory_allocate_auto">%1$.1f ГБ мінімум / %2$.1f ГБ виділено</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f ГБ мінімум / %2$.1f ГБ виділено (%3$.1f ГБ вільно)</string>
@@ -745,7 +694,6 @@
     <string name="settings_tabs_installers">Завантажувачі модів</string>
     <string name="settings_type_global_manage">Основні налаштування гри</string>
     <string name="settings_type_special_enable">Окремі налаштування</string>
-
     <string name="style_name">Назва</string>
     <string name="style_warning_delete">Ви впевнені, що хочете видалити цей стиль?</string>
     <string name="style_warning_exist">Стиль уже існує!</string>
@@ -773,7 +721,6 @@
     <string name="style_rocker_stroke_color">Колір обводки стіка</string>
     <string name="style_rocker_corner_radius">Радіус кутів стіка</string>
     <string name="style_rocker_fill_color">Колір заливки стіка</string>
-
     <string name="update">Оновити</string>
     <string name="update_netdisk">Quark диск</string>
     <string name="update_check">Перевірити оновлення</string>
@@ -790,7 +737,6 @@
     <string name="update_version">Версія %s</string>
     <string name="update_version_release">Реліз</string>
     <string name="update_version_beta">Бета</string>
-
     <string name="version_game">Версії</string>
     <string name="version_game_old">Старі бета/альфа</string>
     <string name="version_game_release">Реліз</string>
@@ -816,7 +762,6 @@
     <string name="version_manage_rename_fail">Не вдалося перейменувати</string>
     <string name="version_new_profile">Нова папка</string>
     <string name="version_update">Оновити модпак</string>
-
     <string name="view_info_visibility">Відображення</string>
     <string name="view_info_visibility_always">Завжди</string>
     <string name="view_info_visibility_game">У грі</string>
@@ -834,7 +779,6 @@
     <string name="view_info_reference">Розмір за</string>
     <string name="view_info_reference_width">Шириною екрана</string>
     <string name="view_info_reference_height">Висотою екрана</string>
-
     <string name="world">Світи</string>
     <string name="world_add">Додати світ (.zip)</string>
     <string name="world_datapack">Керування датапаками</string>
@@ -884,7 +828,6 @@
     <string name="world_name_enter">Введіть назву світу</string>
     <string name="world_reveal">Показати в провіднику</string>
     <string name="world_show_all">Показати всі</string>
-
     <string name="install_apk">Встановити лаунчер</string>
     <string name="modpack_download_warn_title">Попередження</string>
     <string name="modpack_download_warn_msg">Більшість модпаків розроблені для ПК, тому можливі збої. Розробник лаунчера не несе відповідальності за сумісність модпаків.</string>
@@ -896,14 +839,11 @@
     <string name="joystick_r">Правий стік</string>
     <string name="message_vulkan_driver_system">Попередження: Використання системного драйвера Vulkan може призвести до кращої продуктивності, але також може спричинити збої через проблеми сумісності!</string>
     <string name="message_loading_controllers">Йде завантаження контролерів...</string>
-
     <string name="installed">Встановлено</string>
     <string name="message_install_plugin">Плагіни можна отримати наступними способами.</string>
     <string name="message_install_java">Java можна отримати наступними способами.</string>
-
     <string name="shaderpack">Шейдери</string>
     <string name="recommend_version">Рекомендована версія</string>
-
     <string name="mod_check_continue">Продовжити</string>
     <string name="mod_check_physics">Поточний мод Physics (%s) не пропатчений (потрібно замінити libPhysXJniBindings_64.so від Linux x86_64 на версію для Android arm64/x86_64). Це призведе до збою гри.</string>
     <string name="mod_check_mcef">Мод MCEF (%s) не працює на Android. Зазвичай він потрібен для роботи WebDisplays або внутрішньоігрового браузера.</string>
@@ -913,21 +853,17 @@
     <string name="mod_check_replay">Replay (%s) потребує плагін FFmpeg. Він не встановлений. Встановіть з Google Play Store або тут (%s або %s) (затисніть для копіювання).</string>
     <string name="mod_check_borderlesswindow">BorderlessWindow (%s) не призначений для Android. Це призведе до збою гри.</string>
     <string name="mod_check_axiom">Поточний Axiom (%s) не пропатчений, це призведе до збою гри.</string>
-
     <string name="internal">Вбудована</string>
     <string name="import_java">Імпорт Java</string>
     <string name="import_java_wrong_file">Підтримується імпорт тільки файлів tar.xz.</string>
     <string name="import_java_error">Виявлено, що імпортоване вами середовище Java, можливо, не призначене для використання на поточному пристрої. Запуск з нею може призвести до збою лаунчера. Ви хочете продовжити імпорт?</string>
-
     <string name="manage_version">Менеджер версій</string>
     <string name="select_renderer">Вибрати рендерер</string>
     <string name="open_link_failed">Не вдалося автоматично перейти в браузер. Посилання скопійовано автоматично. Будь ласка, відкрийте браузер вручну і вставте його.</string>
-
     <string name="launch">Запустити</string>
     <string name="tip_hide_menu_view">Меню приховано. Натисніть клавішу гучності, щоб відкрити меню.</string>
     <string name="modloader">Завантажувач модів</string>
     <string name="message_warn_renderer_global_setting">Вибрана вами версія має окремі налаштування для кожного профілю, тому вказаний тут рендерер не може бути застосований до поточної версії. Рекомендується тривале натискання кнопки "Запуск" для вибору рендерера.</string>
-
     <!-- 原 FCLLibrary 模块字符串（模块已并入 FCL） -->
     <string name="file_browser_title">Файловий менеджер</string>
     <string name="file_browser_back">Назад</string>
