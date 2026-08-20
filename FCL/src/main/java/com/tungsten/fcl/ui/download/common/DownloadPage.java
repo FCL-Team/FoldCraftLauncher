@@ -69,7 +69,6 @@ import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
-import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
@@ -122,8 +121,7 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
 
     private FCLButton search;
     private FCLButton installModpack;
-    private FCLImageView translate;
-
+    private FCLButton translate;
     private LinearLayoutCompat listLayout;
     private FCLTextView page;
     private FCLButton next;
