@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.media.MediaPlayer
@@ -14,19 +15,23 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.forEach
+import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
 import com.mio.manager.RendererManager
@@ -48,14 +53,12 @@ import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
-import com.tungsten.fcl.ui.PageManager
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
+import com.tungsten.fcl.ui.main.MainUI
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fcl.util.AndroidUtils
-import com.tungsten.fcl.util.FXUtils
-import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -65,8 +68,6 @@ import com.tungsten.fclcore.auth.yggdrasil.TextureModel
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty
 import com.tungsten.fclcore.fakefx.beans.value.ObservableValue
@@ -79,6 +80,7 @@ import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.component.ui.FCLPage
 import com.tungsten.fcllibrary.component.view.FCLMenuView
 import com.tungsten.fcllibrary.component.view.FCLMenuView.OnSelectListener
 import com.tungsten.fcllibrary.util.ConvertUtils
@@ -90,6 +92,7 @@ import java.io.IOException
 import java.lang.ref.WeakReference
 import java.util.logging.Level
 import java.util.stream.Stream
+import kotlin.math.abs
 import kotlin.system.exitProcess
 
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
@@ -106,15 +109,21 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private var _uiManager: UIManager? = null
     lateinit var uiManager: UIManager
     private lateinit var currentAccount: ObjectProperty<Account?>
-    private val holder = WeakListenerHolder()
     private lateinit var profile: Profile
-    private lateinit var theme: IntegerProperty
-    private lateinit var theme2: IntegerProperty
-    private lateinit var theme2Dark: IntegerProperty
     var isVersionLoading = false
     private var modpackHandled = false
     lateinit var permissionResultLauncher: ActivityResultLauncher<String>
     private lateinit var sharedPreferences: SharedPreferences
+    private var rightMenuWidth = 0
+    private var skinViewerWidth = 0
+
+    /** 右菜单显示/隐藏手势：双指在 right_menu 区域内水平滑动切换（左滑显示、右滑隐藏），不消费事件 */
+    private var twoFingerStartX = 0f
+    private var twoFingerStartY = 0f
+    private var secondFingerStartX = 0f
+    private var secondFingerStartY = 0f
+    private var twoFingerTracking = false
+
     var mediaPlayer: MediaPlayer? = null
     private var videoPosition = 0
 
@@ -125,10 +134,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE)
         setContentView(binding.root)
-        ImageUtil.loadInto(
-            binding.background,
-            ThemeEngine.getInstance().getTheme().getBackground(this)
-        )
+        loadBackground()
+        ThemeEngine.getInstance().addRefreshListener(themeRefreshListener)
 
         RemoteMod.registerEmptyRemoteMod(
             RemoteMod(
@@ -170,7 +177,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
 
         binding.apply {
-            initBackground()
             uiLayout.post {
                 ThemeEngine.getInstance().registerEvent(leftMenu) {
                     leftMenu.background = GradientDrawable().apply {
@@ -224,6 +230,59 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     }
                 }
                 uiManager.init()
+                // 滑动切换页面时同步左侧菜单高亮与标题（复用 setSelected 触发 onSelect 的机制）
+                uiManager.pageSelectedListener = { position ->
+                    when (position) {
+                        0 -> {
+                            refreshMenuView(home)
+                            home.setSelected(true)
+                            // 主页重建/重新进入时应用皮肤位置状态（right_menu 隐藏则固定）
+                            fixSkinViewerPosition(binding.rightMenu.visibility != View.VISIBLE)
+                        }
+
+                        1 -> {
+                            refreshMenuView(manage)
+                            manage.setSelected(true)
+                        }
+
+                        2 -> {
+                            refreshMenuView(download)
+                            download.setSelected(true)
+                        }
+
+                        3 -> {
+                            refreshMenuView(controller)
+                            controller.setSelected(true)
+                        }
+
+                        4 -> {
+                            refreshMenuView(multiplayer)
+                            multiplayer.setSelected(true)
+                        }
+
+                        5 -> {
+                            refreshMenuView(setting)
+                            setting.setSelected(true)
+                        }
+
+                        6 -> {
+                            refreshMenuView(null)
+                            title.setTextWithAnim(getString(R.string.account))
+                        }
+
+                        7 -> {
+                            refreshMenuView(null)
+                            title.setTextWithAnim(getString(R.string.version))
+                        }
+                    }
+                }
+                // 点击左侧菜单项：始终播放选中动画（已选中时重复点击也能触发），选中与切换逻辑沿用 setSelected
+                listOf(home, manage, download, controller, multiplayer, setting).forEach { menu ->
+                    menu.setOnClickListener {
+                        playMenuAnim(menu)
+                        menu.setSelected(true)
+                    }
+                }
                 home.setOnSelectListener(this@MainActivity)
                 manage.setOnSelectListener(this@MainActivity)
                 download.setOnSelectListener(this@MainActivity)
@@ -287,6 +346,61 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         return super.onKeyDown(keyCode, event)
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        // 仅分析手势（不消费事件），用于右菜单显示/隐藏
+        when (ev.actionMasked) {
+            MotionEvent.ACTION_POINTER_DOWN -> {
+                // 恰好两根手指按下时记录两指起始位置
+                if (ev.pointerCount == 2) {
+                    twoFingerStartX = ev.getX(0)
+                    twoFingerStartY = ev.getY(0)
+                    secondFingerStartX = ev.getX(1)
+                    secondFingerStartY = ev.getY(1)
+                    twoFingerTracking = true
+                } else {
+                    twoFingerTracking = false
+                }
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                if (twoFingerTracking && ev.pointerCount >= 2) {
+                    val centerX = (ev.getX(0) + ev.getX(1)) / 2
+                    val centerY = (ev.getY(0) + ev.getY(1)) / 2
+                    val startCenterX = (twoFingerStartX + secondFingerStartX) / 2
+                    val startCenterY = (twoFingerStartY + secondFingerStartY) / 2
+                    val dx = centerX - startCenterX
+                    val dy = centerY - startCenterY
+                    // 水平位移超过阈值且为主导方向时触发，一次手势只触发一次
+                    if (abs(dx) > ViewConfiguration.get(this).scaledTouchSlop * 3f && abs(dx) > abs(
+                            dy
+                        )
+                    ) {
+                        twoFingerTracking = false
+                        // 仅当两指起始位置都在 right_menu 区域内才触发
+                        // （菜单隐藏时无布局尺寸，按隐藏前记录的宽度推算右侧区域）
+                        val menu = binding.rightMenu
+                        val menuWidth = if (menu.width > 0) menu.width else rightMenuWidth
+                        val screenWidth = binding.root.width
+                        val inRightMenu = { x: Float ->
+                            x >= screenWidth - menuWidth && x <= screenWidth
+                        }
+                        if (inRightMenu(twoFingerStartX) && inRightMenu(secondFingerStartX)) {
+                            if (dx < 0) {
+                                if (binding.rightMenu.visibility != View.VISIBLE) showRightMenu()
+                            } else {
+                                if (binding.rightMenu.isVisible) hideRightMenu()
+                            }
+                        }
+                    }
+                }
+            }
+
+            MotionEvent.ACTION_DOWN, MotionEvent.ACTION_POINTER_UP,
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> twoFingerTracking = false
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putBoolean("modpack_handled", modpackHandled)
@@ -310,8 +424,33 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // 亮暗切换时 FCLActivity.onConfigurationChanged 会调 refreshTheme，
+        // 背景由 themeRefreshListener 统一刷新；强制亮/暗模式（AppCompat 不触发
+        // onConfigurationChanged）由 LauncherSettingPage 切换时显式 refreshTheme
+    }
+
+    /** 按当前亮暗模式加载主界面背景（Theme.getBackground 按亮暗动态返回）。
+     *  ThemeEngine 的刷新回调是全局 Handler 异步排队，Activity 销毁后仍未执行的
+     *  回调无法通过 onDestroy 注销取消，这里需防 Glide 对已销毁 Activity 加载崩溃 */
+    private fun loadBackground() {
+        if (isDestroyed || isFinishing) return
+        ImageUtil.loadInto(
+            binding.background,
+            ThemeEngine.getInstance().getTheme().getBackground(this)
+        )
+    }
+
+    /** 主题刷新时重新加载背景与按钮配色（onDestroy 注销，防止持有已销毁实例） */
+    private val themeRefreshListener = Runnable {
+        loadBackground()
+        updateColor()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        ThemeEngine.getInstance().removeRefreshListener(themeRefreshListener)
         if (shouldPlayVideo()) {
             mediaPlayer = null
             binding.videoView.stopPlayback()
@@ -320,13 +459,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     override fun onSelect(view: FCLMenuView) {
         refreshMenuView(view)
-        val speed = ThemeEngine.getInstance().getTheme().animationSpeed
-        AnimUtil.playRotation(view, speed * 100L, 0f, 360f)
-            .interpolator(OvershootInterpolator()).start()
-        AnimUtil.playScaleX(view, speed * 100L, 1f, 2f, 1f)
-            .start()
-        AnimUtil.playScaleY(view, speed * 100L, 1f, 2f, 1f)
-            .start()
         binding.apply {
             when (view) {
                 home -> {
@@ -368,6 +500,61 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
             }
         }
+    }
+
+    /**
+     * 点击左侧菜单项时播放的选中动画（旋转 + 缩放），重复点击可无限触发
+     */
+    private fun playMenuAnim(view: FCLMenuView) {
+        val speed = ThemeEngine.getInstance().getTheme().animationSpeed
+        AnimUtil.playRotation(view, speed * 100L, 0f, 360f)
+            .interpolator(OvershootInterpolator()).start()
+        AnimUtil.playScaleX(view, speed * 100L, 1f, 2f, 1f).start()
+        AnimUtil.playScaleY(view, speed * 100L, 1f, 2f, 1f).start()
+    }
+
+    private fun showRightMenu() {
+        val menu = binding.rightMenu
+        menu.visibility = View.VISIBLE
+        menu.translationX = rightMenuWidth.toFloat()
+        menu.animate().translationX(0f).setDuration(200).start()
+        fixSkinViewerPosition(false)
+    }
+
+    private fun hideRightMenu() {
+        val menu = binding.rightMenu
+        rightMenuWidth = menu.width
+        // 记录皮肤当前宽度（隐藏后内容区扩展，用于固定皮肤位置）
+        val ui = UIManager.instance.currentUI
+        if (ui is MainUI) {
+            skinViewerWidth = ui.contentView.findViewById<View>(R.id.skin_viewer).width
+        }
+        menu.animate().translationX(rightMenuWidth.toFloat()).setDuration(200).withEndAction {
+            menu.visibility = View.GONE
+            menu.translationX = 0f
+            fixSkinViewerPosition(true)
+        }.start()
+    }
+
+    /**
+     * right_menu 隐藏时内容区扩展为全宽，但皮肤预览固定在原位置：
+     * 宽度保持原值，end 侧留出菜单宽度。
+     */
+    private fun fixSkinViewerPosition(fix: Boolean) {
+        val ui = UIManager.instance.currentUI
+        if (ui !is MainUI) return
+        val skin = ui.contentView.findViewById<View>(R.id.skin_viewer)
+        val params = skin.layoutParams as ConstraintLayout.LayoutParams
+        if (fix) {
+            params.width = skinViewerWidth
+            params.matchConstraintPercentWidth = -1f
+            params.marginEnd = rightMenuWidth
+        } else {
+            params.width = 0
+            params.matchConstraintPercentWidth = 0.5f
+            params.marginEnd = 0
+        }
+        skin.layoutParams = params
     }
 
     fun refreshMenuView(view: FCLMenuView?) {
@@ -424,18 +611,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             }
             if (view === goSetting) {
                 val profile = Profiles.getSelectedProfile()
-                if (profile.versionSetting.isGlobal) {
+                if (profile.versionSetting.isUsesGlobal) {
                     setting.isSelected = true
-                    uiManager.settingUI.runAfterInit {
-                        val tab = uiManager.settingUI.tabLayout.getTabAt(0)
-                        uiManager.settingUI.tabLayout.selectTab(tab)
-                    }
+                    val tab = uiManager.settingUI.tabLayout.getTabAt(0)
+                    uiManager.settingUI.tabLayout.selectTab(tab)
                 } else {
                     manage.isSelected = true
-                    uiManager.manageUI.runAfterInit {
-                        val tab = uiManager.manageUI.tabLayout.getTabAt(0)
-                        uiManager.manageUI.tabLayout.selectTab(tab)
-                    }
+                    val tab = uiManager.manageUI.tabLayout.getTabAt(0)
+                    uiManager.manageUI.tabLayout.selectTab(tab)
                 }
             }
         }
@@ -560,9 +743,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun setupVersionDisplay() {
-        holder.add(FXUtils.onWeakChangeAndOperate(Profiles.selectedVersionProperty()) { s: String? ->
-            lifecycleScope.launch { loadVersion(s) }
-        })
+        // 选中版本变化时刷新主界面版本显示（Repository 单例 StateFlow，随 Activity 生命周期取消）
+        lifecycleScope.launch {
+            Profiles.selectedVersion.collect { s ->
+                loadVersion(s)
+            }
+        }
     }
 
     private fun accountSubtitle(context: Context, account: Account): ObservableValue<String> {
@@ -579,6 +765,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     }
 
     private fun updateColor() {
+        if (isDestroyed || isFinishing) return
         binding.apply {
             start.background = createBackground()
             createBackground().apply {
@@ -586,62 +773,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 jar.background = this
             }
             version.backgroundTintList =
-                ColorStateList.valueOf(ThemeEngine.getInstance().theme.color2).apply {
+                ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().getColor2()).apply {
                     version.backgroundTintList = this
                     jar.backgroundTintList = this
                 }
-            version.setTextColor(ThemeEngine.getInstance().theme.color2)
-            jar.setTextColor(ThemeEngine.getInstance().theme.color2)
+            version.setTextColor(ThemeEngine.getInstance().getTheme().getColor2())
+            jar.setTextColor(ThemeEngine.getInstance().getTheme().getColor2())
         }
 
-    }
-
-    private fun initBackground() {
-        theme = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme"
-            }
-        }
-        theme2 = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme2"
-            }
-        }
-        theme2Dark = object : IntegerPropertyBase() {
-            override fun invalidated() {
-                get()
-                updateColor()
-            }
-
-            override fun getBean(): Any {
-                return this
-            }
-
-            override fun getName(): String {
-                return "theme2Dark"
-            }
-        }
-        theme.bind(ThemeEngine.getInstance().theme.colorProperty())
-        theme2.bind(ThemeEngine.getInstance().theme.color2Property())
-        theme2Dark.bind(ThemeEngine.getInstance().theme.color2DarkProperty())
     }
 
     private fun createBackground(): GradientDrawable {
@@ -651,14 +790,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             cornerRadius = ConvertUtils.dip2px(this@MainActivity, 8f).toFloat()
             setStroke(
                 ConvertUtils.dip2px(this@MainActivity, 1f),
-                ThemeEngine.getInstance().theme.color2
+                ThemeEngine.getInstance().getTheme().getColor2()
             )
         }
     }
 
     private fun playAnim() {
         binding.apply {
-            val speed = ThemeEngine.getInstance().theme.animationSpeed
+            val speed = ThemeEngine.getInstance().getTheme().animationSpeed
             AnimUtil.playTranslationX(
                 listOf(leftMenu),
                 speed * 100L,
@@ -719,7 +858,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             startActivity(
                 Intent.createChooser(
                     intent,
-                    getString(com.tungsten.fcl.R.string.crash_reporter_share)
+                    getString(R.string.crash_reporter_share)
                 )
             )
         } catch (e: Exception) {
@@ -809,18 +948,15 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         ).show()
         binding.download.isSelected = true
         val downloadUI = uiManager.downloadUI
-        downloadUI.runAfterInit {
-            val page = LocalModpackPage(
-                this,
-                PageManager.PAGE_ID_TEMP,
-                downloadUI.container,
-                R.layout.page_modpack,
-                profile,
-                null,
-                file
-            )
-            downloadUI.pageManager.showTempPage(page)
-        }
+        val page = LocalModpackPage(
+            this,
+            FCLPage.PAGE_ID_TEMP,
+            R.layout.page_modpack,
+            profile,
+            null,
+            file
+        )
+        downloadUI.showTempPage(page)
     }
 
     private fun refreshScreenSize() {

@@ -10,10 +10,8 @@ import androidx.appcompat.app.AppCompatDialog;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
-import com.tungsten.fcl.ui.manage.ManagePageManager;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -24,9 +22,8 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class ModpackSelectionPage extends FCLTempPage implements View.OnClickListener {
+public class ModpackSelectionPage extends FCLPage implements View.OnClickListener {
 
     private final Profile profile;
     private final String updateVersion;
@@ -43,8 +40,8 @@ public class ModpackSelectionPage extends FCLTempPage implements View.OnClickLis
     private FCLLinearLayout local;
     private FCLLinearLayout remote;
 
-    public ModpackSelectionPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String updateVersion) {
-        super(context, id, parent, resId);
+    public ModpackSelectionPage(Context context, int id, int resId, Profile profile, String updateVersion) {
+        super(context, id, resId);
         this.profile = profile;
         this.updateVersion = updateVersion;
     }
@@ -76,13 +73,13 @@ public class ModpackSelectionPage extends FCLTempPage implements View.OnClickLis
                 return;
             File selectedFile = new File(path);
             Schedulers.androidUIThread().execute(() -> {
-                LocalModpackPage page = new LocalModpackPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack, profile, updateVersion, selectedFile);
+                LocalModpackPage page = new LocalModpackPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack, profile, updateVersion, selectedFile);
                 if (updateVersion == null) {
-                    DownloadPageManager.getInstance().dismissCurrentTempPage();
-                    DownloadPageManager.getInstance().showTempPage(page);
+                    UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
+                    UIManager.getInstance().getDownloadUI().showTempPage(page);
                 } else {
-                    ManagePageManager.getInstance().dismissCurrentTempPage();
-                    ManagePageManager.getInstance().showTempPage(page);
+                    UIManager.getInstance().getManageUI().dismissCurrentTempPage();
+                    UIManager.getInstance().getManageUI().showTempPage(page);
                 }
             });
         });
@@ -101,13 +98,13 @@ public class ModpackSelectionPage extends FCLTempPage implements View.OnClickLis
                         if (manifest == null) {
                             Toast.makeText(getContext(), getContext().getString(R.string.modpack_type_server_malformed), Toast.LENGTH_SHORT).show();
                         } else if (e == null) {
-                            RemoteModpackPage page = new RemoteModpackPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack, profile, updateVersion, manifest);
+                            RemoteModpackPage page = new RemoteModpackPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack, profile, updateVersion, manifest);
                             if (updateVersion == null) {
-                                DownloadPageManager.getInstance().dismissCurrentTempPage();
-                                DownloadPageManager.getInstance().showTempPage(page);
+                                UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
+                                UIManager.getInstance().getDownloadUI().showTempPage(page);
                             } else {
-                                ManagePageManager.getInstance().dismissCurrentTempPage();
-                                ManagePageManager.getInstance().showTempPage(page);
+                                UIManager.getInstance().getManageUI().dismissCurrentTempPage();
+                                UIManager.getInstance().getManageUI().showTempPage(page);
                             }
                         } else {
                             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -126,13 +123,13 @@ public class ModpackSelectionPage extends FCLTempPage implements View.OnClickLis
                     TaskExecutor executor = new FileDownloadTask(url, modpack.toFile(), null)
                             .whenComplete(Schedulers.androidUIThread(), e -> {
                                 if (e == null) {
-                                    LocalModpackPage page = new LocalModpackPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack, profile, updateVersion, modpack.toFile());
+                                    LocalModpackPage page = new LocalModpackPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack, profile, updateVersion, modpack.toFile());
                                     if (updateVersion == null) {
-                                        DownloadPageManager.getInstance().dismissCurrentTempPage();
-                                        DownloadPageManager.getInstance().showTempPage(page);
+                                        UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
+                                        UIManager.getInstance().getDownloadUI().showTempPage(page);
                                     } else {
-                                        ManagePageManager.getInstance().dismissCurrentTempPage();
-                                        ManagePageManager.getInstance().showTempPage(page);
+                                        UIManager.getInstance().getManageUI().dismissCurrentTempPage();
+                                        UIManager.getInstance().getManageUI().showTempPage(page);
                                     }
                                 } else {
                                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -154,10 +151,6 @@ public class ModpackSelectionPage extends FCLTempPage implements View.OnClickLis
         return null;
     }
 
-    @Override
-    public void onRestart() {
-
-    }
 
     @Override
     public void onClick(View v) {

@@ -20,11 +20,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatSeekBar;
 
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
+import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.DoubleProperty;
 import com.tungsten.fclcore.fakefx.beans.property.DoublePropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.dialog.EditDialog;
@@ -45,11 +45,8 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
     private ShapeDrawable thumbDrawable;
     private Rect textBounds;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
             int[][] state = {
                     {
 
@@ -60,18 +57,14 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
             };
             setThumbTintList(new ColorStateList(state, color));
             setProgressTintList(new ColorStateList(state, color));
-        }
+    }
 
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    /** 动态设置数值后缀（% / MS 等），触发 thumb 重建 */
+    public void setSuffix(String suffix) {
+        this.suffix = suffix;
+        this.thumbDrawable = null;
+        invalidate();
+    }
 
     public void addProgressListener() {
         setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -96,19 +89,19 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
 
     public FCLNumberSeekBar(@NonNull Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
         init(null);
     }
 
     public FCLNumberSeekBar(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
         init(attrs);
     }
 
     public FCLNumberSeekBar(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
         init(attrs);
     }
 

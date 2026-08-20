@@ -1,8 +1,14 @@
 package com.tungsten.fcl.ui.download.common
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -12,7 +18,7 @@ import com.mio.util.format
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemRemoteModBinding
-import com.tungsten.fcl.ui.download.ModDownloadPage
+import com.tungsten.fcl.ui.download.DownloadUI
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.RemoteMod
@@ -34,8 +40,11 @@ class RemoteModListAdapter(
     private val modIdList: MutableList<String?> = ArrayList()
 
     init {
-        if (downloadPage is ModDownloadPage) {
-            MainActivity.getInstance().lifecycleScope.launch(Dispatchers.Default) {
+        MainActivity.getInstance().lifecycleScope.launch(Dispatchers.Default) {
+            // 后台预热 Mod 翻译数据，避免首次 bind 时在主线程解析大文件造成卡顿
+            ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType())
+                .preload()
+            if (downloadPage.pageId == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
                 val modManager = downloadPage.modManager
                 val modFiles = runCatching {
                     modManager.getMods().parallelStream().collect(Collectors.toList())
@@ -65,6 +74,25 @@ class RemoteModListAdapter(
         fun onItemSelect(mod: RemoteMod?)
     }
 
+    companion object {
+        /** 缓存占位位图（内容只读，多视图共享安全），避免每次 bind 重新分配与绘制 */
+        private var placeholderBitmap: Bitmap? = null
+    }
+
+    /** 固定 90×90 内在尺寸的占位图（与 override 后图片尺寸一致，避免加载完成时
+     *  drawable 内在尺寸变化触发 requestLayout 导致列表重排） */
+    private fun fixedIconPlaceholder(): Drawable {
+        var bitmap = placeholderBitmap
+        if (bitmap == null) {
+            bitmap = createBitmap(90, 90)
+            val base = ContextCompat.getDrawable(context, R.drawable.ic_cube)!!.mutate()
+            base.setBounds(0, 0, 90, 90)
+            base.draw(Canvas(bitmap))
+            placeholderBitmap = bitmap
+        }
+        return bitmap.toDrawable(context.resources)
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -89,24 +117,29 @@ class RemoteModListAdapter(
                 remoteMod
             )
         }
-        binding.icon.setImageDrawable(null)
-        binding.icon.tag = position
-        Glide.with(context).load(remoteMod.iconUrl).into(binding.icon)
+        // 固定 90×90 占位（与 override 后图片内在尺寸一致）：图片加载完成替换时
+        // drawable 内在尺寸不变，不触发 requestLayout，避免列表全局重排导致
+        // 其他 item 的 marquee 文本被重置
+        binding.icon.setImageDrawable(fixedIconPlaceholder())
+        Glide.with(binding.icon)
+            .load(remoteMod.iconUrl)
+            .placeholder(fixedIconPlaceholder())
+            .override(90, 90)
+            .error(fixedIconPlaceholder())
+            .into(binding.icon)
         val mod =
             ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType())
                 .getModByCurseForgeId(remoteMod.slug)
         binding.title.text =
             if (mod != null && LocaleUtils.isChinese(context)) mod.getDisplayName() else remoteMod.title
         val categories = remoteMod.categories.stream()
-            .map<String> { downloadPage.getLocalizedCategory(it) }
+            .map { downloadPage.getLocalizedCategory(it) }
             .collect(
                 Collectors.toList()
             ).joinToString("   ")
         val tag = StringUtils.removeSuffix(categories, "   ")
         binding.tag.text = tag
         binding.description.text = remoteMod.description
-        binding.tag.setSelected(true)
-        binding.description.setSelected(true)
         binding.downloadCount.text = remoteMod.downloadCount.format(context)
         playTranslationX(
             binding.root,
@@ -114,7 +147,7 @@ class RemoteModListAdapter(
             -100f,
             0f
         ).start()
-        if (downloadPage is ModDownloadPage) {
+        if (downloadPage.pageId == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
             if (modIdList.isNotEmpty() && modIdList.contains(remoteMod.modID)) {
                 val text = binding.title.getText().toString()
                 if (!text.startsWith(context.getString(R.string.installed))) {

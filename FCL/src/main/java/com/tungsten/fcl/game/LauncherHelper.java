@@ -448,10 +448,8 @@ public final class LauncherHelper {
                                 future.completeExceptionally(new CancellationException());
                                 UIManager manager = UIManager.getInstance();
                                 MainActivity.getInstance().binding.manage.setSelected(true);
-                                manager.getManageUI().runAfterInit(() -> {
-                                    FCLTabLayout tabLayout = manager.getManageUI().tabLayout;
-                                    tabLayout.selectTab(tabLayout.getTabAt(2));
-                                });
+                                FCLTabLayout tabLayout = manager.getManageUI().tabLayout;
+                                tabLayout.selectTab(tabLayout.getTabAt(2));
                             })
                             .setNegativeButton(context.getString(R.string.mod_check_continue), () -> future.complete(Task.completed(bridge))).create().show());
                     return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);

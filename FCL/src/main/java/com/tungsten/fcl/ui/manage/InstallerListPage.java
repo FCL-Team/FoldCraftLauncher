@@ -16,8 +16,8 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.InstallerItem;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -30,9 +30,8 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.task.TaskListener;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.io.File;
@@ -41,7 +40,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class InstallerListPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
+public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
     private Profile profile;
     private String versionId;
@@ -53,8 +52,8 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
 
     private FCLButton installOfflineButton;
 
-    public InstallerListPage(Context context, int id, FCLUILayout parent, int resId) {
-        super(context, id, parent, resId);
+    public InstallerListPage(Context context, int id, int resId) {
+        super(context, id, resId);
         create();
     }
 
@@ -109,7 +108,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                 installerItem.upgradable.set(libraryConfigurable);
                 installerItem.installable.set(true);
                 installerItem.action.set(() -> {
-                    com.tungsten.fcl.ui.download.version.InstallerListPage page = new com.tungsten.fcl.ui.download.version.InstallerListPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
+                    com.tungsten.fcl.ui.download.version.InstallerListPage page = new com.tungsten.fcl.ui.download.version.InstallerListPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_install_version, gameVersion, libraryId, remoteVersion -> {
                         if (libraryVersion == null) {
                             finish(profile, remoteVersion);
                         } else {
@@ -123,7 +122,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                             builder.create().show();
                         }
                     });
-                    ManagePageManager.getInstance().showTempPage(page);
+                    UIManager.getInstance().getManageUI().showTempPage(page);
                 });
                 boolean removable = !LibraryAnalyzer.LibraryType.MINECRAFT.getPatchId().equals(libraryId) && libraryConfigurable;
                 installerItem.removable.set(removable);
@@ -241,7 +240,7 @@ public class InstallerListPage extends FCLCommonPage implements ManageUI.Version
                             builder1.setCancelable(false);
                             builder1.setMessage(getContext().getString(R.string.install_success));
                             builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
-                                ManagePageManager.getInstance().dismissCurrentTempPage();
+                                UIManager.getInstance().getManageUI().dismissCurrentTempPage();
                                 profile.getRepository().onVersionIconChanged.fireEvent(new Event(this));
                             });
                             builder1.create().show();

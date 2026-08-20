@@ -17,8 +17,6 @@ import androidx.appcompat.widget.AppCompatEditText;
 
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringPropertyBase;
@@ -66,11 +64,8 @@ public class FCLEditText extends AppCompatEditText {
         });
     }
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
             int[][] state = {
                     {
                             android.R.attr.state_focused
@@ -91,18 +86,7 @@ public class FCLEditText extends AppCompatEditText {
                 setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
                 setHintTextColor(ThemeEngine.getInstance().getTheme().getAutoHintTint());
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    }
 
     public void addTextWatcher() {
         addTextChangedListener(new TextWatcher() {
@@ -176,7 +160,7 @@ public class FCLEditText extends AppCompatEditText {
         super(context);
         autoTint = false;
         addTextWatcher();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLEditText(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -185,7 +169,7 @@ public class FCLEditText extends AppCompatEditText {
         autoTint = typedArray.getBoolean(R.styleable.FCLEditText_auto_edit_tint, false);
         typedArray.recycle();
         addTextWatcher();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLEditText(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -194,7 +178,7 @@ public class FCLEditText extends AppCompatEditText {
         autoTint = typedArray.getBoolean(R.styleable.FCLEditText_auto_edit_tint, false);
         typedArray.recycle();
         addTextWatcher();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public void setAutoTint(boolean autoTint) {

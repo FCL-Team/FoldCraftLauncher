@@ -1,101 +1,56 @@
 package com.tungsten.fcl.ui.controller;
 
-import static com.tungsten.fclcore.util.Lang.tryCast;
-
 import android.content.Context;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.ui.FCLBasePage;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
-
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class ControllerUI extends FCLMultiPageUI {
 
-    private ControllerPageManager pageManager;
+    public static final int PAGE_ID_CONTROLLER_MANAGER = 15040;
+    public static final int PAGE_ID_CONTROLLER_REPO = 15041;
 
-    private FCLUILayout container;
-    private Runnable runnable;
-
-    public ControllerUI(Context context, FCLUILayout parent, int id) {
-        super(context, parent, id);
+    public ControllerUI(Context context, int id) {
+        super(context, id);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        container = findViewById(R.id.container);
-        container.post(this::initPages);
+        FCLUILayout container = findViewById(R.id.container);
+        setupPages(container, null);
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public int getPageCount() {
+        return 2;
+    }
+
+    @Override
+    public FCLPage createPage(int position) {
+        if (position == 1) {
+            return new ControllerRepoPage(getContext(), PAGE_ID_CONTROLLER_REPO, R.layout.page_controller_repo);
+        }
+        return new ControllerManagePage(getContext(), PAGE_ID_CONTROLLER_MANAGER, R.layout.page_controller_manager);
     }
 
     @Override
     public void onBackPressed() {
-        if (pageManager != null && pageManager.canReturn()) {
-            pageManager.dismissCurrentTempPage();
-        } else if (pageManager != null && pageManager.getCurrentPage() instanceof ControllerRepoPage) {
-            pageManager.switchPage(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER);
+        if (canReturn()) {
+            dismissCurrentTempPage();
+        } else if (getCurrentPagePosition() == 1) {
+            // 仓库页返回管理页
+            showPage(0);
         } else {
             super.onBackPressed();
         }
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (pageManager != null) {
-            pageManager.onPause();
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (pageManager != null) {
-            pageManager.onResume();
-        }
-    }
-
-    @Override
-    public void initPages() {
-        pageManager = new ControllerPageManager(getContext(), container, ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER);
-        if (runnable != null) {
-            runnable.run();
-        }
-    }
-
-    @Override
-    public ArrayList<FCLBasePage> getAllPages() {
-        return pageManager == null ? null : (ArrayList<FCLBasePage>) pageManager.getAllPages().stream().map(it -> tryCast(it, FCLBasePage.class)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
-    }
-
-    @Override
-    public FCLBasePage getPage(int id) {
-        return pageManager == null ? null : pageManager.getPageById(id);
-    }
-
-    @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    public ControllerPageManager getPageManager() {
-        return pageManager;
-    }
-
-    @Override
-    public void runAfterInit(Runnable runnable) {
-        this.runnable = runnable;
-        if (pageManager != null) {
-            runnable.run();
-        }
     }
 }

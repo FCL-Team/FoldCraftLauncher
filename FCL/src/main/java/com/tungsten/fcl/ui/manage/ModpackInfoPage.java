@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fcl.setting.ConfigHolder.config;
+import com.tungsten.fcl.ui.UIManager;
 
 import android.content.Context;
 import android.view.View;
@@ -12,7 +13,6 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
@@ -26,7 +26,7 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
@@ -48,7 +48,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener {
+public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
 
     private final Profile profile;
     private final String versionName;
@@ -76,8 +76,8 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
     private FCLImageButton pathButton;
     private FCLButton next;
 
-    public ModpackInfoPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String version, String type, ModpackExportInfo.Options options) {
-        super(context, id, parent, resId);
+    public ModpackInfoPage(Context context, int id, int resId, Profile profile, String version, String type, ModpackExportInfo.Options options) {
+        super(context, id, resId);
         this.profile = profile;
         this.versionName = version;
         this.type = type;
@@ -90,12 +90,8 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
         minMemory.set(Optional.ofNullable(versionSetting.getMinMemory()).orElse(0));
         launchArguments.set(versionSetting.getMinecraftArgs());
         javaArguments.set(versionSetting.getJavaArgs());
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
+        // 原 onStart 逻辑：页面构造即绑定控件（findViewById 在 super 构造中已完成）
         FCLLinearLayout fileApiLayout = findViewById(R.id.file_api_layout);
         FCLLinearLayout launchArgsLayout = findViewById(R.id.minecraft_args_layout);
         FCLLinearLayout jvmArgsLayout = findViewById(R.id.jvm_args_layout);
@@ -131,8 +127,8 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
         nameText.stringProperty().bindBidirectional(name);
         authorText.setText(author.get());
         authorText.stringProperty().bindBidirectional(author);
-        versionText.setText(version.get());
-        versionText.stringProperty().bindBidirectional(version);
+        versionText.setText(this.version.get());
+        versionText.stringProperty().bindBidirectional(this.version);
         if (options.isRequireFileApi()) {
             if (options.isValidateFileApi()) {
                 fileApiText.setHint(getContext().getString(R.string.input_hint_not_empty));
@@ -201,11 +197,6 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
         return null;
     }
 
-    @Override
-    public void onRestart() {
-
-    }
-
     private void selectPath() {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
             if (files == null) return;
@@ -265,8 +256,8 @@ public class ModpackInfoPage extends FCLTempPage implements View.OnClickListener
                     )));
                 }
 
-                ModpackFileSelectionPage page = new ModpackFileSelectionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack_file, profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
-                ManagePageManager.getInstance().showTempPage(page);
+                ModpackFileSelectionPage page = new ModpackFileSelectionPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_file, profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
+                UIManager.getInstance().getManageUI().showTempPage(page);
             }
         }
     }

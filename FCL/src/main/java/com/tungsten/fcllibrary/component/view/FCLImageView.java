@@ -12,8 +12,6 @@ import androidx.appcompat.widget.AppCompatImageView;
 
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
@@ -27,86 +25,27 @@ public class FCLImageView extends AppCompatImageView {
     private boolean useThemeColor;
     private BooleanProperty visibilityProperty;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
+        if (autoTint) {
+            int[][] state = {
+                    {
 
-        @Override
-        protected void invalidated() {
-            get();
-            if (autoTint) {
-                int[][] state = {
-                        {
-
-                        }
-                };
-                int[] color = {
-                        ThemeEngine.getInstance().getTheme().getAutoTint()
-                };
-                setImageTintList(new ColorStateList(state, color));
-            }
-            if (useThemeColor && getBackground() != null) {
-                getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
-            }
+                    }
+            };
+            int[] color = {
+                    ThemeEngine.getInstance().getTheme().getAutoTint()
+            };
+            setImageTintList(new ColorStateList(state, color));
         }
-
-        @Override
-        public Object getBean() {
-            return this;
+        if (useThemeColor && getBackground() != null) {
+            getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
         }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
-
-    private final IntegerProperty theme2 = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            if (useThemeColor && getBackground() != null) {
-                getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
-            }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2";
-        }
-    };
-
-    private final IntegerProperty theme2Dark = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            if (useThemeColor && getBackground() != null) {
-                getBackground().setTint(ThemeEngine.getInstance().getTheme().getColor2());
-            }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2Dark";
-        }
-    };
-
+    }
 
     public FCLImageView(@NonNull Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLImageView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -115,9 +54,7 @@ public class FCLImageView extends AppCompatImageView {
         autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
         useThemeColor = typedArray.getBoolean(R.styleable.FCLImageView_use_theme_color, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLImageView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -126,9 +63,7 @@ public class FCLImageView extends AppCompatImageView {
         autoTint = typedArray.getBoolean(R.styleable.FCLImageView_auto_src_tint, false);
         useThemeColor = typedArray.getBoolean(R.styleable.FCLImageView_use_theme_color, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public void setAutoTint(boolean autoTint) {

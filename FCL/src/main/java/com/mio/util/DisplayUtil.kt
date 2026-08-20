@@ -29,7 +29,7 @@ object DisplayUtil {
             } else {
                 activity.windowManager.getDefaultDisplay().getRealMetrics(displayMetrics)
             }
-            if (!ThemeEngine.instance.theme.isFullscreen) {
+            if (!ThemeEngine.getInstance().getTheme().fullscreen) {
                 if (activity.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) displayMetrics.heightPixels -= notchSize
                 else displayMetrics.widthPixels -= notchSize
             }

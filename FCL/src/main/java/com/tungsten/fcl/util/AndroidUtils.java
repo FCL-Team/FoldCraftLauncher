@@ -34,7 +34,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 @SuppressLint("DiscouragedApi")
@@ -88,20 +90,25 @@ public class AndroidUtils {
         }
     }
 
+    /**
+     * 字符串资源 ID 存在性缓存（getIdentifier 查询开销大，key 集合有限）
+     */
+    private static final Map<String, Boolean> STRING_ID_CACHE = new ConcurrentHashMap<>();
+
     public static boolean hasStringId(Context context, String key) {
-        int resId = context.getResources().getIdentifier(key, "string", context.getPackageName());
-        return resId != 0;
+        return STRING_ID_CACHE.computeIfAbsent(key, k ->
+                context.getResources().getIdentifier(k, "string", context.getPackageName()) != 0);
     }
 
 
     public static int getScreenHeight() {
-        if(DisplayUtil.screenHeight != -1)
+        if (DisplayUtil.screenHeight != -1)
             return DisplayUtil.screenHeight;
         return DisplayUtil.currentDisplayMetrics.heightPixels;
     }
 
     public static int getScreenWidth() {
-        if(DisplayUtil.screenWidth != -1)
+        if (DisplayUtil.screenWidth != -1)
             return DisplayUtil.screenWidth;
         return DisplayUtil.currentDisplayMetrics.widthPixels;
     }
@@ -122,7 +129,7 @@ public class AndroidUtils {
     }
 
     public static String copyFileToDir(Activity activity, Uri uri, File destDir) {
-        String name = getFileName(activity,uri);
+        String name = getFileName(activity, uri);
         File dest = new File(destDir, name);
         try {
             InputStream inputStream = activity.getContentResolver().openInputStream(uri);
@@ -133,13 +140,13 @@ public class AndroidUtils {
                 IOUtils.copyTo(inputStream, outputStream);
             }
             inputStream.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
         return dest.getAbsolutePath();
     }
 
-    public static String copyFile(Activity activity, Uri uri, File dest) {
+    public static void copyFile(Activity activity, Uri uri, File dest) {
         try {
             InputStream inputStream = activity.getContentResolver().openInputStream(uri);
             if (inputStream == null) {
@@ -149,10 +156,9 @@ public class AndroidUtils {
                 IOUtils.copyTo(inputStream, outputStream);
             }
             inputStream.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
-        return dest.getAbsolutePath();
     }
 
     public static boolean isDocUri(Uri uri) {

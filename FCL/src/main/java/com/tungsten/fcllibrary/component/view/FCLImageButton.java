@@ -31,63 +31,6 @@ public class FCLImageButton extends AppCompatImageButton {
     private BooleanProperty visibilityProperty;
     private BooleanProperty disableProperty;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            refreshStyle();
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
-
-    private final IntegerProperty theme2 = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            refreshStyle();
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2";
-        }
-    };
-
-    private final IntegerProperty theme2Dark = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
-            refreshStyle();
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme2Dark";
-        }
-    };
-
     public void refreshStyle() {
         int[][] state = {
                 {
@@ -123,14 +66,13 @@ public class FCLImageButton extends AppCompatImageButton {
             setPadding(0, 0, 0, 0);
         }
         setScaleType(ScaleType.FIT_XY);
+        // 主题变化时刷新样式（registerEvent 立即执行一次，替代原 fakefx bind）
+        ThemeEngine.getInstance().registerEvent(this, this::refreshStyle);
     }
 
     public FCLImageButton(@NonNull Context context) {
         super(context);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -141,9 +83,6 @@ public class FCLImageButton extends AppCompatImageButton {
         useThemeColor = typedArray.getBoolean(R.styleable.FCLImageButton_use_theme_color, false);
         typedArray.recycle();
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public FCLImageButton(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -154,9 +93,6 @@ public class FCLImageButton extends AppCompatImageButton {
         useThemeColor = typedArray.getBoolean(R.styleable.FCLImageButton_use_theme_color, false);
         typedArray.recycle();
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
-        theme2.bind(ThemeEngine.getInstance().getTheme().color2Property());
-        theme2Dark.bind(ThemeEngine.getInstance().getTheme().color2DarkProperty());
     }
 
     public void setAutoTint(boolean autoTint) {

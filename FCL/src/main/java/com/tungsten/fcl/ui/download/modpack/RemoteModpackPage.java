@@ -8,14 +8,12 @@ import android.widget.Toast;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
-import com.tungsten.fcl.ui.manage.ManagePageManager;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fclcore.mod.Modpack;
 import com.tungsten.fclcore.mod.server.ServerModpackManifest;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.IOException;
 
@@ -26,16 +24,12 @@ public class RemoteModpackPage extends ModpackPage {
 
     private Modpack modpack;
 
-    public RemoteModpackPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String updateVersion, ServerModpackManifest manifest) {
-        super(context, id, parent, resId, profile);
+    public RemoteModpackPage(Context context, int id, int resId, Profile profile, String updateVersion, ServerModpackManifest manifest) {
+        super(context, id, resId, profile);
         this.updateVersion = updateVersion;
         this.manifest = manifest;
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
+        // 原 onStart 逻辑：页面构造即解析服务端模组包
         progressBar.setVisibility(View.VISIBLE);
         layout.setVisibility(View.GONE);
 
@@ -49,9 +43,9 @@ public class RemoteModpackPage extends ModpackPage {
             builder.setMessage(getContext().getString(R.string.modpack_type_server_malformed));
             builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                 if (updateVersion == null) {
-                    DownloadPageManager.getInstance().dismissCurrentTempPage();
+                    UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                 } else {
-                    ManagePageManager.getInstance().dismissCurrentTempPage();
+                    UIManager.getInstance().getManageUI().dismissCurrentTempPage();
                 }
             });
             builder.create().show();

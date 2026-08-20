@@ -220,6 +220,7 @@ dependencies {
     implementation(libs.opennbt)
     implementation(libs.gson)
     implementation(libs.appcompat)
+    implementation(libs.androidx.viewpager2)
     implementation(libs.core.splashscreen)
     implementation(libs.material)
     implementation(libs.constraintlayout)

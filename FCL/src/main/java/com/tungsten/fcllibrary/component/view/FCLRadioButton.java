@@ -11,8 +11,6 @@ import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -24,11 +22,8 @@ public class FCLRadioButton extends AppCompatRadioButton {
     private BooleanProperty disableProperty;
     private boolean textWithThemeColor = false;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
             int[][] state = {
                     {
                             android.R.attr.state_checked
@@ -45,22 +40,11 @@ public class FCLRadioButton extends AppCompatRadioButton {
             if (textWithThemeColor) {
                 setTextColor(ThemeEngine.getInstance().getTheme().getColor() | 0xFF000000);
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    }
 
     public FCLRadioButton(Context context) {
         super(context);
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs) {
@@ -68,7 +52,7 @@ public class FCLRadioButton extends AppCompatRadioButton {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLRadioButton);
         textWithThemeColor = typedArray.getBoolean(R.styleable.FCLRadioButton_text_use_theme_color, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLRadioButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -76,7 +60,7 @@ public class FCLRadioButton extends AppCompatRadioButton {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLRadioButton);
         textWithThemeColor = typedArray.getBoolean(R.styleable.FCLRadioButton_text_use_theme_color, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public final void setVisibilityValue(boolean visibility) {

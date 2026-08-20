@@ -13,8 +13,7 @@ import com.tungsten.fcl.game.ManuallyCreatedModpackException;
 import com.tungsten.fcl.game.ModpackHelper;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
-import com.tungsten.fcl.ui.manage.ManagePageManager;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.mod.Modpack;
@@ -24,7 +23,6 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -41,16 +39,12 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
     private Modpack manifest = null;
     private Charset charset;
 
-    public LocalModpackPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String updateVersion, File modpackFile) {
-        super(context, id, parent, resId, profile);
+    public LocalModpackPage(Context context, int id, int resId, Profile profile, String updateVersion, File modpackFile) {
+        super(context, id, resId, profile);
         this.updateVersion = updateVersion;
         this.modpackFile = modpackFile;
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
+        // 原 onStart 逻辑：页面构造即读取模组包 manifest
         if (updateVersion != null) {
             editText.setText(updateVersion);
             editText.setEnabled(false);
@@ -89,9 +83,9 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
                         builder.setPositiveButton(null);
                         builder.setNegativeButton(() -> {
                             if (updateVersion == null) {
-                                DownloadPageManager.getInstance().dismissCurrentTempPage();
+                                UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                             } else {
-                                ManagePageManager.getInstance().dismissCurrentTempPage();
+                                UIManager.getInstance().getManageUI().dismissCurrentTempPage();
                             }
                         });
                         builder.create().show();
@@ -108,9 +102,9 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
                         builder.setMessage(getContext().getString(R.string.modpack_task_install_error));
                         builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
                             if (updateVersion == null) {
-                                DownloadPageManager.getInstance().dismissCurrentTempPage();
+                                UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
                             } else {
-                                ManagePageManager.getInstance().dismissCurrentTempPage();
+                                UIManager.getInstance().getManageUI().dismissCurrentTempPage();
                             }
                         });
                         builder.create().show();

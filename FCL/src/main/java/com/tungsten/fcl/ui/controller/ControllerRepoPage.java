@@ -24,8 +24,8 @@ import com.tungsten.fcl.control.download.ControllerVersion;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.DownloadProviders;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -43,13 +43,12 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.io.File;
@@ -61,7 +60,7 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ControllerRepoPage extends FCLCommonPage implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class ControllerRepoPage extends FCLPage implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     public static final String CONTROLLER_GITHUB = "https://raw.githubusercontent.com/FCL-Team/FCL-Controllers/main/";
     public static final String CONTROLLER_GIT_CN = "https://repo.miawa.cn/fcl_controllers/";
@@ -84,8 +83,8 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
     private FCLProgressBar progressBar;
     private FCLImageButton retry;
 
-    public ControllerRepoPage(Context context, int id, FCLUILayout parent, int resId) {
-        super(context, id, parent, resId);
+    public ControllerRepoPage(Context context, int id, int resId) {
+        super(context, id, resId);
     }
 
     public void setLoading(boolean loading) {
@@ -144,8 +143,8 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
             ArrayList<ControllerCategory> categories = (ArrayList<ControllerCategory>) s[1];
             refreshCategories(categories);
             ControllerListAdapter adapter = new ControllerListAdapter(getContext(), source, categories, indexes, mod -> {
-                ControllerDownloadPage page = new ControllerDownloadPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_controller_download, source, ControllerCategory.getLocaledCategories(getContext(), categories, mod.getCategories()), mod);
-                ControllerPageManager.getInstance().showTempPage(page);
+                ControllerDownloadPage page = new ControllerDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_controller_download, source, ControllerCategory.getLocaledCategories(getContext(), categories, mod.getCategories()), mod);
+                UIManager.getInstance().getControllerUI().showTempPage(page);
             });
             recyclerView.setAdapter(adapter);
         }).whenComplete(Schedulers.androidUIThread(), exception -> {
@@ -263,7 +262,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
         TaskExecutor executor = Task.composeAsync(() -> {
             if (exist && old != null) {
                 FileUtils.copyFile(new File(destPath), new File(cache));
-                ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).removeController(old);
+                ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(0)).removeController(old);
             }
             FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(url), new File(destPath));
             task.setName(id);
@@ -272,7 +271,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
             if (exception != null) {
                 if (new File(cache).exists()) {
                     FileUtils.copyFile(new File(cache), new File(destPath));
-                    ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).addController(old);
+                    ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(0)).addController(old);
                 }
                 Schedulers.androidUIThread().execute(() -> {
                     if (exception instanceof CancellationException) {
@@ -293,7 +292,7 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
                         .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                         .setPrettyPrinting()
                         .create().fromJson(FileUtils.readText(new File(destPath)), Controller.class);
-                ((ControllerManagePage) ControllerPageManager.getInstance().getPageById(ControllerPageManager.PAGE_ID_CONTROLLER_MANAGER)).addController(controller);
+                ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(0)).addController(controller);
                 Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.install_success), Toast.LENGTH_SHORT).show());
             }
         }).executor();
@@ -354,10 +353,6 @@ public class ControllerRepoPage extends FCLCommonPage implements View.OnClickLis
         Controllers.addCallback(() -> checkUpdate(LocaleUtils.isChinese(getContext()) ? 1 : 0, false));
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
 
     @Override
     public Task<?> refresh(Object... param) {

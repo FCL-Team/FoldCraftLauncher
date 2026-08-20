@@ -10,8 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageButton;
 
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -21,11 +19,8 @@ public class FCLMenuView extends AppCompatImageButton {
     private boolean isSelected;
     private OnSelectListener onSelectListener;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
             int[][] state = {
                     {
 
@@ -44,18 +39,7 @@ public class FCLMenuView extends AppCompatImageButton {
             RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
             drawable.setRadius(ConvertUtils.dip2px(getContext(), 20));
             setBackgroundDrawable(drawable);
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    }
 
     private void init() {
         setPadding(
@@ -104,19 +88,19 @@ public class FCLMenuView extends AppCompatImageButton {
     public FCLMenuView(@NonNull Context context) {
         super(context);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLMenuView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLMenuView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public interface OnSelectListener {

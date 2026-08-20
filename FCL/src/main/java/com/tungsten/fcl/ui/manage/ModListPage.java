@@ -22,9 +22,9 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.game.FCLGameRepository;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
+import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.download.DownloadUI;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fcl.util.TaskCancellationAction;
@@ -47,14 +47,13 @@ import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,18 +75,21 @@ import java.util.stream.Collectors;
 
 import kotlin.Unit;
 
-public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
+public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
-    /** 增量加载时每解析多少个模组刷新一次列表 */
+    /**
+     * 增量加载时每解析多少个模组刷新一次列表
+     */
     private static final int BATCH_SIZE = 16;
 
     private final BooleanProperty modded = new SimpleBooleanProperty(this, "modded", false);
     private final ListProperty<ModInfoObject> itemsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
-    /** 已解析的全部模组（未过滤），勾选 enabled/disabled 时直接在其中筛选，仅在 UI 线程访问 */
+    /**
+     * 已解析的全部模组（未过滤），勾选 enabled/disabled 时直接在其中筛选，仅在 UI 线程访问
+     */
     private final List<ModInfoObject> allMods = new ArrayList<>();
 
     private ModManager modManager;
-    private LibraryAnalyzer libraryAnalyzer;
     private Profile profile;
     private String versionId;
 
@@ -115,8 +117,8 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
     private final LocalModListAdapter adapter;
 
-    public ModListPage(Context context, int id, FCLUILayout parent, int resId) {
-        super(context, id, parent, resId);
+    public ModListPage(Context context, int id, int resId) {
+        super(context, id, resId);
         adapter = new LocalModListAdapter(getContext(), this, () -> {
             calculateMod();
             return Unit.INSTANCE;
@@ -232,6 +234,14 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
     @Override
     public void loadVersion(Profile profile, String version) {
+        // 同一版本重复加载（如从其他页面返回时 ManageUI.onStart 触发）直接跳过，
+        // 避免每次显示都全量重扫模组 zip：上百个模组时解析耗时长，
+        // 且与上一次扫描交错时 calculateMod 在主线程触发 getMods 会 ANR。
+        // 模组增删/更新/回滚等数据变更路径内部已有显式 loadMods 刷新。
+        if (profile == this.profile && Objects.equals(version, this.versionId) && modManager != null) {
+            return;
+        }
+
         this.profile = profile;
         this.versionId = version;
 
@@ -241,7 +251,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
 
         FCLGameRepository repository = profile.getRepository();
         Version resolved = repository.getResolvedPreservingPatchesVersion(versionId);
-        libraryAnalyzer = LibraryAnalyzer.analyze(resolved, repository.getGameVersion(resolved).orElse(null));
+        LibraryAnalyzer libraryAnalyzer = LibraryAnalyzer.analyze(resolved, repository.getGameVersion(resolved).orElse(null));
         setModded(libraryAnalyzer.hasModLoader());
         loadMods(profile.getRepository().getModManager(version));
     }
@@ -349,6 +359,8 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                 throw new UncheckedIOException(e);
             }
         }, Schedulers.defaultScheduler()).whenCompleteAsync((result, exception) -> {
+            // 已被更新的 loadMods 取代时跳过，避免旧扫描回调操作新状态（如主线程触发未加载实例的 getMods）
+            if (this.modManager != modManager) return;
             setLoading(false);
             if (exception == null)
                 try {
@@ -363,7 +375,9 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         }, Schedulers.androidUIThread());
     }
 
-    /** 按 enabled/disabled 复选框过滤模组列表，仅在 UI 线程调用 */
+    /**
+     * 按 enabled/disabled 复选框过滤模组列表，仅在 UI 线程调用
+     */
     private List<ModInfoObject> filterMods(List<ModInfoObject> list) {
         return list.stream().filter(modInfoObject -> {
             boolean active = modInfoObject.getModInfo().isActive();
@@ -371,7 +385,9 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         }).collect(Collectors.toList());
     }
 
-    /** 加载完成后若有损坏的模组文件，弹对话框列出并询问是否删除（仅在 UI 线程调用） */
+    /**
+     * 加载完成后若有损坏的模组文件，弹对话框列出并询问是否删除（仅在 UI 线程调用）
+     */
     private void showBrokenModsDialog() {
         List<Path> brokenFiles = modManager.getBrokenFiles();
         if (brokenFiles.isEmpty()) return;
@@ -387,7 +403,9 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
         builder.create().show();
     }
 
-    /** 删除损坏的模组文件（UI 线程） */
+    /**
+     * 删除损坏的模组文件（UI 线程）
+     */
     private void deleteBrokenMods(List<Path> brokenFiles) {
         try {
             for (Path file : brokenFiles) {
@@ -514,8 +532,8 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
                             builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.create().show();
                         } else {
-                            ModUpdatesPage page = new ModUpdatesPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_mod_update, this, modManager, result);
-                            ManagePageManager.getInstance().showTempPage(page);
+                            ModUpdatesPage page = new ModUpdatesPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_mod_update, this, modManager, result);
+                            UIManager.getInstance().getManageUI().showTempPage(page);
                         }
                     })
                     .withStagesHint(Collections.singletonList("mods.check_updates"));
@@ -541,7 +559,7 @@ public class ModListPage extends FCLCommonPage implements ManageUI.VersionLoadab
     public void download() {
         MainActivity.getInstance().refreshMenuView(null);
         MainActivity.getInstance().binding.download.setSelected(true);
-        DownloadPageManager.getInstance().switchPage(DownloadPageManager.PAGE_ID_DOWNLOAD_MOD);
+        UIManager.getInstance().getDownloadUI().showDownloadPage(DownloadUI.PAGE_ID_DOWNLOAD_MOD);
     }
 
     public void rollback(LocalModFile from, LocalModFile to) {

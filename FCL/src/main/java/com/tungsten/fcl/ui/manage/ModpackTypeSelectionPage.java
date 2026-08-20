@@ -1,21 +1,21 @@
 package com.tungsten.fcl.ui.manage;
 
 import android.content.Context;
+import com.tungsten.fcl.ui.UIManager;
 import android.view.View;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fclcore.mod.ModpackExportInfo;
 import com.tungsten.fclcore.mod.mcbbs.McbbsModpackExportTask;
 import com.tungsten.fclcore.mod.multimc.MultiMCModpackExportTask;
 import com.tungsten.fclcore.mod.server.ServerModpackExportTask;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
-public class ModpackTypeSelectionPage extends FCLTempPage implements View.OnClickListener {
+public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickListener {
 
     private final Profile profile;
     private final String version;
@@ -24,8 +24,8 @@ public class ModpackTypeSelectionPage extends FCLTempPage implements View.OnClic
     private FCLLinearLayout multimc;
     private FCLLinearLayout server;
 
-    public ModpackTypeSelectionPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String version) {
-        super(context, id, parent, resId);
+    public ModpackTypeSelectionPage(Context context, int id, int resId, Profile profile, String version) {
+        super(context, id, resId);
         this.profile = profile;
         this.version = version;
     }
@@ -46,10 +46,6 @@ public class ModpackTypeSelectionPage extends FCLTempPage implements View.OnClic
         return null;
     }
 
-    @Override
-    public void onRestart() {
-
-    }
 
     @Override
     public void onClick(View v) {
@@ -67,8 +63,8 @@ public class ModpackTypeSelectionPage extends FCLTempPage implements View.OnClic
             type = MODPACK_TYPE_SERVER;
             options = ServerModpackExportTask.OPTION;
         }
-        ModpackInfoPage page = new ModpackInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_modpack_info, profile, version, type, options);
-        ManagePageManager.getInstance().showTempPage(page);
+        ModpackInfoPage page = new ModpackInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_info, profile, version, type, options);
+        UIManager.getInstance().getManageUI().showTempPage(page);
     }
 
     public static final String MODPACK_TYPE_MCBBS = "mcbbs";

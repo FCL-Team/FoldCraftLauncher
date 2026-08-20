@@ -19,10 +19,9 @@ import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.fakefx.MappedObservableList;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +31,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class DatapackListPage extends FCLTempPage implements View.OnClickListener {
+public class DatapackListPage extends FCLPage implements View.OnClickListener {
 
     private final ListProperty<DatapackInfoObject> itemsProperty = new SimpleListProperty<>(FXCollections.observableArrayList());
 
@@ -46,13 +45,20 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
     private FCLButton refreshButton;
     private FCLProgressBar progressBar;
     private ListView listView;
-    private DatapackListAdapter adapter;
+    private final DatapackListAdapter adapter;
 
-    public DatapackListPage(Context context, int id, FCLUILayout parent, int resId, String worldName, Path worldDir) {
-        super(context, id, parent, resId);
+    public DatapackListPage(Context context, int id, int resId, String worldName, Path worldDir) {
+        super(context, id, resId);
         this.worldDir = worldDir;
 
         datapack = new Datapack(worldDir.resolve("datapacks"));
+
+        // 原 onStart 逻辑：页面构造即初始化列表并刷新
+        adapter = new DatapackListAdapter(getContext());
+        listView.setAdapter(adapter);
+        Bindings.bindContent(adapter.listProperty(), itemsProperty);
+
+        refresh();
     }
 
     @Override
@@ -74,24 +80,8 @@ public class DatapackListPage extends FCLTempPage implements View.OnClickListene
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        adapter = new DatapackListAdapter(getContext());
-        listView.setAdapter(adapter);
-        Bindings.bindContent(adapter.listProperty(), itemsProperty);
-
-        refresh();
-    }
-
-    @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     @Override

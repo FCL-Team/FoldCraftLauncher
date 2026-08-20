@@ -12,14 +12,11 @@ import com.tungsten.fcl.game.LauncherHelper;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fcl.ui.PageManager;
-import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.account.CreateAccountDialog;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage;
 import com.tungsten.fcl.ui.download.modpack.ModpackSelectionPage;
-import com.tungsten.fcl.ui.manage.ManagePageManager;
 import com.tungsten.fcl.ui.manage.ModpackTypeSelectionPage;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
@@ -35,7 +32,8 @@ import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
+import com.tungsten.fcllibrary.ui.ProgressDialog;
 
 import java.io.IOException;
 import java.net.URL;
@@ -48,15 +46,15 @@ import java.util.logging.Level;
 
 public class Versions {
 
-    public static void importModpack(Context context, FCLUILayout parent) {
+    public static void importModpack(Context context) {
         Profile profile = Profiles.getSelectedProfile();
         if (profile.getRepository().isLoaded()) {
-            ModpackSelectionPage page = new ModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_selection, profile, null);
-            DownloadPageManager.getInstance().showTempPage(page);
+            ModpackSelectionPage page = new ModpackSelectionPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_selection, profile, null);
+            UIManager.getInstance().getDownloadUI().showTempPage(page);
         }
     }
 
-    public static void downloadModpackImpl(Context context, FCLUILayout parent, Profile profile, RemoteMod.Version file) {
+    public static void downloadModpackImpl(Context context, Profile profile, RemoteMod.Version file) {
         Path modpack;
         URL downloadURL;
         try {
@@ -78,8 +76,8 @@ public class Versions {
         TaskExecutor executor = new FileDownloadTask(downloadURL, modpack.toFile())
                 .whenComplete(Schedulers.androidUIThread(), e -> {
                     if (e == null) {
-                        LocalModpackPage page = new LocalModpackPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack, profile, null, modpack.toFile());
-                        DownloadPageManager.getInstance().showTempPage(page);
+                        LocalModpackPage page = new LocalModpackPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_modpack, profile, null, modpack.toFile());
+                        UIManager.getInstance().getDownloadUI().showTempPage(page);
                     } else if (e instanceof CancellationException) {
                         Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
                     } else {
@@ -106,11 +104,7 @@ public class Versions {
         builder.setMessage(message);
         builder.setPositiveButton(() -> {
             ProgressDialog progress = new ProgressDialog(context);
-            Task.runAsync(() -> {
-                profile.getRepository().removeVersionFromDisk(version);
-            }).whenComplete(Schedulers.androidUIThread(), (e) -> {
-                progress.dismiss();
-            }).start();
+            Task.runAsync(() -> profile.getRepository().removeVersionFromDisk(version)).whenComplete(Schedulers.androidUIThread(), (e) -> progress.dismiss()).start();
         });
         builder.setNegativeButton(null);
         builder.create().show();
@@ -144,9 +138,9 @@ public class Versions {
         return dialog.getFuture();
     }
 
-    public static void exportVersion(Context context, FCLUILayout parent, Profile profile, String version) {
-        ModpackTypeSelectionPage page = new ModpackTypeSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_type, profile, version);
-        ManagePageManager.getInstance().showTempPage(page);
+    public static void exportVersion(Context context, Profile profile, String version) {
+        ModpackTypeSelectionPage page = new ModpackTypeSelectionPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_type, profile, version);
+        UIManager.getInstance().getManageUI().showTempPage(page);
     }
 
     public static void duplicateVersion(Context context, Profile profile, String version) {
@@ -173,9 +167,9 @@ public class Versions {
         dialog.show();
     }
 
-    public static void updateVersion(Context context, FCLUILayout parent, Profile profile, String version) {
-        ModpackSelectionPage page = new ModpackSelectionPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_modpack_selection, profile, version);
-        ManagePageManager.getInstance().showTempPage(page);
+    public static void updateVersion(Context context, Profile profile, String version) {
+        ModpackSelectionPage page = new ModpackSelectionPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_selection, profile, version);
+        UIManager.getInstance().getManageUI().showTempPage(page);
     }
 
     public static void updateGameAssets(Context context, Profile profile, String version) {

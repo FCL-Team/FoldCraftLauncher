@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.version;
 
 import android.animation.ObjectAnimator;
+import com.tungsten.fcl.ui.UIManager;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,16 +16,16 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
+import java.util.List;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 public class ProfileListAdapter extends FCLAdapter {
 
-    private ObservableList<Profile> list;
+    private List<Profile> list;
 
-    public ProfileListAdapter(Context context, ObservableList<Profile> list) {
+    public ProfileListAdapter(Context context, List<Profile> list) {
         super(context);
         this.list = list;
     }
@@ -79,8 +80,8 @@ public class ProfileListAdapter extends FCLAdapter {
                 playAnim(viewHolder.parent);
                 return;
             }
-            Profiles.getProfiles().remove(profile);
-            ((VersionListPage) VersionPageManager.getInstance().getAllPages().get(0)).refreshProfile();
+            Profiles.removeProfile(profile);
+            ((VersionListPage) UIManager.getInstance().getVersionUI().getPage(0)).refreshProfile();
         });
         return view;
     }

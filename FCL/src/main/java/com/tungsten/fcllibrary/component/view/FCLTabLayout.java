@@ -12,8 +12,6 @@ import androidx.annotation.Nullable;
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanPropertyBase;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -23,11 +21,8 @@ public class FCLTabLayout extends TabLayout {
     private BooleanProperty visibilityProperty;
     private final boolean followTheme;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
             int[][] state = {
                     {
                             android.R.attr.state_selected
@@ -54,23 +49,12 @@ public class FCLTabLayout extends TabLayout {
             if (followTheme) {
                 setBackgroundTintList(new ColorStateList(bgState, bgColor));
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    }
 
     public FCLTabLayout(@NonNull Context context) {
         super(context);
         followTheme = false;
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLTabLayout(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -78,7 +62,7 @@ public class FCLTabLayout extends TabLayout {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTabLayout);
         followTheme = typedArray.getBoolean(R.styleable.FCLTabLayout_follow_theme, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLTabLayout(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -86,7 +70,7 @@ public class FCLTabLayout extends TabLayout {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.FCLTabLayout);
         followTheme = typedArray.getBoolean(R.styleable.FCLTabLayout_follow_theme, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public boolean isFollowTheme() {

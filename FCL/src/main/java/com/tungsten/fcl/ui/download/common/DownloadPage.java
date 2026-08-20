@@ -1,31 +1,34 @@
 package com.tungsten.fcl.ui.download.common;
 
-import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MOD;
-import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_MODPACK;
-import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_RESOURCE_PACK;
-import static com.tungsten.fcl.ui.download.DownloadPageManager.PAGE_ID_DOWNLOAD_SHADER_PACK;
+import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_MOD;
+import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_MODPACK;
+import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_RESOURCE_PACK;
+import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_SHADER_PACK;
+import static com.tungsten.fcl.ui.download.DownloadUI.PAGE_ID_DOWNLOAD_WORLD;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.databinding.PageDownloadBinding;
+import com.tungsten.fcl.game.LocalizedRemoteModRepository;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.ui.PageManager;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.TaskDialog;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
-import com.tungsten.fcl.ui.download.ModDownloadPage;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.manage.ManageUI;
 import com.tungsten.fcl.ui.version.Versions;
@@ -33,6 +36,7 @@ import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.DownloadProvider;
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty;
@@ -45,9 +49,11 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.mod.ModLoaderType;
+import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.mod.curse.CurseAddon;
+import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository;
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
@@ -59,14 +65,15 @@ import com.tungsten.fclcore.util.io.NetworkUtils;
 import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLCommonPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
+import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
+import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -80,12 +87,18 @@ import java.util.stream.Collectors;
 
 import kotlin.Unit;
 
-public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoadable, View.OnClickListener {
+/**
+ * 下载页：5 个下载模式（Mod/整合包/资源包/世界/光影）共享同一个页面实例，
+ * 通过 {@link #switchType(int)} 切换 repository、下载回调与特有控件，
+ * 各模式的搜索状态由 ViewModel 按页面 id 保存，切回时直接恢复。
+ */
+public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, View.OnClickListener {
 
+    private int pageId = PAGE_ID_DOWNLOAD_MOD;
     protected RemoteModRepository repository;
+    private RemoteModVersionPage.DownloadCallback callback;
     private final IntegerProperty pageOffset = new SimpleIntegerProperty(0);
     private final IntegerProperty pageCount = new SimpleIntegerProperty(-1);
-    private final RemoteModVersionPage.DownloadCallback callback;
     protected final BooleanProperty supportChinese = new SimpleBooleanProperty();
     private final ObjectProperty<Profile.ProfileVersion> version = new SimpleObjectProperty<>();
     protected final ListProperty<String> downloadSources = new SimpleListProperty<>(this, "downloadSources", FXCollections.observableArrayList());
@@ -105,8 +118,11 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     private FCLSpinner<String> gameVersionSpinner;
     private FCLSpinner<CategoryIndented> categorySpinner;
     private FCLSpinner<RemoteModRepository.SortType> sortSpinner;
+    private final ArrayList<String> versionList = new ArrayList<>();
 
     private FCLButton search;
+    private FCLButton installModpack;
+    private FCLImageView translate;
 
     private LinearLayoutCompat listLayout;
     private FCLTextView page;
@@ -120,7 +136,176 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
 
     protected PageDownloadBinding binding;
     protected ModLoaderType selectedModLoader;
+    private ModManager modManager;
     private final DownloadProvider downloadProvider;
+    /**
+     * 搜索状态（挂 Activity 的 ViewModel，模式切换与页面重建后恢复）
+     */
+    protected DownloadSearchViewModel.State searchState;
+    /**
+     * 下载源变化时刷新分类并重新搜索（用户手动切换源时触发）
+     */
+    private final InvalidationListener sourceListener = observable -> refreshCategory(true);
+
+    public DownloadPage(Context context, int resId) {
+        super(context, FCLPage.PAGE_ID_TEMP, resId);
+        this.downloadProvider = DownloadProviders.getDownloadProvider();
+        create();
+    }
+
+    public int getPageId() {
+        return pageId;
+    }
+
+    public ModManager getModManager() {
+        return modManager;
+    }
+
+    /**
+     * 切换到指定下载模式：更新数据源、下载回调与特有控件，
+     * 从 ViewModel 恢复该模式的搜索状态（有结果则不重新搜索）。
+     */
+    public void switchType(int pageId) {
+        this.pageId = pageId;
+        // 按模式获取搜索状态（各模式独立，避免恢复/写入到其他模式的状态）
+        searchState = new ViewModelProvider(getActivity()).get(DownloadSearchViewModel.class).getState(pageId);
+
+        // 数据源
+        switch (pageId) {
+            case PAGE_ID_DOWNLOAD_MODPACK:
+                repository = new LocalizedRepository(ModrinthRemoteModRepository.MODPACKS, CurseForgeRemoteModRepository.MODPACKS, RemoteModRepository.Type.MODPACK);
+                break;
+            case PAGE_ID_DOWNLOAD_MOD:
+                repository = new LocalizedRepository(ModrinthRemoteModRepository.MODS, CurseForgeRemoteModRepository.MODS, RemoteModRepository.Type.MOD);
+                break;
+            case PAGE_ID_DOWNLOAD_RESOURCE_PACK:
+                repository = new LocalizedRepository(ModrinthRemoteModRepository.RESOURCE_PACKS, CurseForgeRemoteModRepository.RESOURCE_PACKS, RemoteModRepository.Type.MOD);
+                break;
+            case PAGE_ID_DOWNLOAD_SHADER_PACK:
+                repository = new LocalizedRepository(ModrinthRemoteModRepository.SHADER_PACKS, CurseForgeRemoteModRepository.SHADER_PACKS, RemoteModRepository.Type.MOD);
+                break;
+            default:
+                repository = CurseForgeRemoteModRepository.WORLDS;
+                break;
+        }
+
+        // 下载回调（按模式决定安装目录）
+        switch (pageId) {
+            case PAGE_ID_DOWNLOAD_MODPACK:
+                callback = (profile, version, file) -> Versions.downloadModpackImpl(getContext(), profile, file);
+                break;
+            case PAGE_ID_DOWNLOAD_MOD:
+                callback = (profile, version, file) -> download(getContext(), profile, version, file, "mods");
+                break;
+            case PAGE_ID_DOWNLOAD_RESOURCE_PACK:
+                callback = (profile, version, file) -> download(getContext(), profile, version, file, "resourcepacks");
+                break;
+            case PAGE_ID_DOWNLOAD_SHADER_PACK:
+                callback = (profile, version, file) -> download(getContext(), profile, version, file, "shaderpacks");
+                break;
+            default:
+                callback = null;
+                break;
+        }
+
+        // 下载源（世界模式固定 CurseForge，无 Modrinth）。
+        // 恢复期间临时移除监听，避免 downloadSource 变化触发 refreshCategory 的重复搜索
+        downloadSource.removeListener(sourceListener);
+        boolean localized = pageId != PAGE_ID_DOWNLOAD_WORLD;
+        if (localized) {
+            downloadSources.get().setAll(getContext().getString(R.string.mods_curseforge), getContext().getString(R.string.mods_modrinth));
+            downloadSource.set(getContext().getString(R.string.mods_modrinth));
+        } else {
+            downloadSources.clear();
+            downloadSource.set(getContext().getString(R.string.mods_curseforge));
+        }
+        initSourceSpinner();
+        if (searchState.source != null) {
+            downloadSource.set(searchState.source);
+        }
+        downloadSource.addListener(sourceListener);
+
+        // 特有控件显隐
+        boolean mod = pageId == PAGE_ID_DOWNLOAD_MOD;
+        binding.modloader.setVisibility(mod ? View.VISIBLE : View.GONE);
+        binding.modloaderText.setVisibility(mod ? View.VISIBLE : View.GONE);
+        installModpack.setVisibility(pageId == PAGE_ID_DOWNLOAD_MODPACK ? View.VISIBLE : View.GONE);
+        supportChinese.set(mod || pageId == PAGE_ID_DOWNLOAD_MODPACK);
+        boolean chinese = LocaleUtils.isChinese(getContext());
+        translate.setVisibility((mod || pageId == PAGE_ID_DOWNLOAD_MODPACK) && chinese ? View.VISIBLE : View.GONE);
+        nameEditText.setHint(supportChinese.get() ? getContext().getString(R.string.search_hint_chinese) : getContext().getString(R.string.search_hint_english));
+        if (mod) {
+            binding.modloader.setSelection(searchState.modLoaderPosition);
+        }
+
+        // 恢复该模式的搜索条件（搜索框/游戏版本/排序；分类在分类列表就绪后恢复）
+        nameEditText.setText(searchState.searchFilter);
+        int versionIndex = versionList.indexOf(searchState.userGameVersion);
+        gameVersionSpinner.setSelection(Math.max(versionIndex, 0));
+        sortSpinner.setSelection(searchState.sortType.ordinal());
+
+        // 刷新分类并恢复搜索状态（有结果直接恢复，不重新搜索）
+        refreshCategory(false);
+        if (searchState.result != null) {
+            restoreResult();
+        } else {
+            search(searchState.userGameVersion, searchState.category, searchState.pageOffset, searchState.searchFilter, searchState.sortType);
+        }
+    }
+
+    /**
+     * 下载源 spinner 初始化/刷新（数据与显隐随模式变化）
+     */
+    private void initSourceSpinner() {
+        sourceText.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
+        sourceSpinner.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
+        if (downloadSources.getSize() > 1) {
+            sourceSpinner.setDataList(new ArrayList<>(downloadSources));
+            ArrayAdapter<String> sourceAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, new ArrayList<>(downloadSources));
+            sourceAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+            sourceSpinner.setAdapter(sourceAdapter);
+            sourceSpinner.setSelection(downloadSource.get().equals(getContext().getString(R.string.mods_modrinth)) ? 1 : 0);
+            FXUtils.bindSelection(sourceSpinner, downloadSource);
+        }
+    }
+
+    /**
+     * 本地化仓库（Modrinth/CurseForge 双源，按模式指定仓库与类型）
+     */
+    private class LocalizedRepository extends LocalizedRemoteModRepository {
+        private final RemoteModRepository modrinthRepository;
+        private final RemoteModRepository curseRepository;
+        private final Type type;
+
+        LocalizedRepository(RemoteModRepository modrinthRepository, RemoteModRepository curseRepository, Type type) {
+            this.modrinthRepository = modrinthRepository;
+            this.curseRepository = curseRepository;
+            this.type = type;
+        }
+
+        @Override
+        protected RemoteModRepository getBackedRemoteModRepository() {
+            if (getContext().getString(R.string.mods_modrinth).equals(downloadSource.get())) {
+                return modrinthRepository;
+            } else {
+                return curseRepository;
+            }
+        }
+
+        @Override
+        protected SortType getBackedRemoteModRepositorySortOrder() {
+            if (getContext().getString(R.string.mods_modrinth).equals(downloadSource.get())) {
+                return SortType.NAME;
+            } else {
+                return SortType.POPULARITY;
+            }
+        }
+
+        @Override
+        public Type getType() {
+            return type;
+        }
+    }
 
     public void setLoading(boolean loading) {
         Schedulers.androidUIThread().execute(() -> {
@@ -162,10 +347,18 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         if (executor != null && !executor.isCancelled()) {
             executor.cancel();
         }
+        // 保存搜索条件，模式切换后据此恢复
+        searchState.userGameVersion = userGameVersion;
+        searchState.category = category;
+        searchState.pageOffset = pageOffset;
+        searchState.searchFilter = searchFilter;
+        searchState.sortType = sort;
+        searchState.source = downloadSource.get();
+        int searchPageId = pageId;
         executor = Task.supplyAsync(() -> {
-                    RemoteModRepository.SearchResult result = repository.search(downloadProvider, userGameVersion, category, pageOffset, 50, searchFilter, sort, RemoteModRepository.SortOrder.DESC);
+                    RemoteModRepository.SearchResult result = repository.search(downloadProvider, userGameVersion, category, pageOffset, 30, searchFilter, sort, RemoteModRepository.SortOrder.DESC);
                     ArrayList<RemoteMod> list = (ArrayList<RemoteMod>) result.getResults().collect(Collectors.toList());
-                    if (DownloadPage.this instanceof ModDownloadPage && selectedModLoader != null) {
+                    if (pageId == PAGE_ID_DOWNLOAD_MOD && selectedModLoader != null) {
                         list = (ArrayList<RemoteMod>) list.parallelStream().filter(mod -> {
                             try {
                                 return mod.getData().loadVersions(repository).flatMap(v -> v.getLoaders().stream()).collect(Collectors.toCollection(ArrayList::new)).contains(selectedModLoader);
@@ -178,20 +371,61 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                     return list;
                 })
                 .whenComplete(Schedulers.androidUIThread(), (list, exception) -> {
+                    // 模式已切换时跳过过期回调，避免旧模式结果覆盖当前页面
+                    if (searchPageId != pageId) {
+                        return;
+                    }
+                    if (exception instanceof CancellationException) {
+                        // 任务被取消（重新搜索/切换模式发起了新任务）：不改变界面状态
+                        return;
+                    }
                     setLoading(false);
                     if (exception == null) {
-                        adapter = new RemoteModListAdapter(getContext(), this, list, mod -> {
-                            RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
-                            DownloadPageManager.getInstance().showTempPage(page);
-                        });
+                        // 保存搜索结果与 adapter，切回该模式时直接恢复显示
+                        searchState.result = list;
+                        searchState.pageCount = pageCount.get();
+                        adapter = createAdapter(list);
+                        searchState.adapter = adapter;
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         recyclerView.setAdapter(adapter);
                     } else {
                         setFailed();
                         pageCount.set(-1);
+                        searchState.result = null;
+                        searchState.pageCount = -1;
+                        searchState.adapter = null;
                         retrySearch = () -> search(userGameVersion, category, pageOffset, searchFilter, sort);
                     }
                 }).executor(true);
+    }
+
+    private RemoteModListAdapter createAdapter(ArrayList<RemoteMod> list) {
+        return new RemoteModListAdapter(getContext(), this, list, mod -> {
+            RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon_info, this, mod, version.get(), callback);
+            UIManager.getInstance().getDownloadUI().showTempPage(page);
+        });
+    }
+
+    /**
+     * 恢复该模式上次的搜索结果（切换回时调用），不重新搜索；
+     * 复用该模式缓存的 adapter 时不重建列表，避免 item 滑入动画重播
+     */
+    private void restoreResult() {
+        setLoading(false);
+        retry.setVisibility(View.GONE);
+        pageOffset.set(searchState.pageOffset);
+        pageCount.set(searchState.pageCount);
+        adapter = searchState.adapter;
+        if (adapter == null) {
+            adapter = createAdapter(searchState.result);
+            searchState.adapter = adapter;
+        }
+        // DownloadUI 被 ViewPager2 回收重建后 RecyclerView 是全新视图（无 LayoutManager），
+        // 复用缓存的 adapter 时也要补上，否则列表不会渲染
+        if (recyclerView.getLayoutManager() == null) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        }
+        recyclerView.setAdapter(adapter);
     }
 
     protected String getLocalizedCategoryIndent(CategoryIndented indented) {
@@ -215,44 +449,18 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         return result.toString();
     }
 
-    protected String getLocalizedOfficialPage() {
-        return getContext().getString(R.string.mods_curseforge);
-    }
-
-    public DownloadPage(Context context, int id, FCLUILayout parent, int resId, RemoteModRepository repository) {
-        super(context, id, parent, resId);
-        this.repository = repository;
-        this.downloadProvider = DownloadProviders.getDownloadProvider();
-        switch (id) {
-            case PAGE_ID_DOWNLOAD_MODPACK:
-                this.callback = ((profile, version, file) -> Versions.downloadModpackImpl(context, parent, profile, file));
-                break;
-            case PAGE_ID_DOWNLOAD_MOD:
-                this.callback = (profile, version, file) -> download(context, profile, version, file, "mods");
-                break;
-            case PAGE_ID_DOWNLOAD_RESOURCE_PACK:
-                this.callback = (profile, version, file) -> download(context, profile, version, file, "resourcepacks");
-                break;
-            case PAGE_ID_DOWNLOAD_SHADER_PACK:
-                this.callback = (profile, version, file) -> download(context, profile, version, file, "shaderpacks");
-                break;
-            default:
-                this.callback = null;
-                break;
-        }
-
-        if (repository != null) {
-            create();
-        }
-    }
-
     public void create() {
         binding = PageDownloadBinding.bind(getContentView());
+        searchState = new ViewModelProvider(getActivity()).get(DownloadSearchViewModel.class).getState(getPageId());
         searchLayout = findViewById(R.id.search_layout);
         ThemeEngine.getInstance().registerEvent(searchLayout, () -> searchLayout.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
 
         search = findViewById(R.id.search);
         search.setOnClickListener(this);
+        installModpack = findViewById(R.id.install_modpack);
+        installModpack.setOnClickListener(this);
+        translate = findViewById(R.id.translate);
+        translate.setOnClickListener(this);
 
         nameEditText = findViewById(R.id.name);
         sourceText = findViewById(R.id.download_source_text);
@@ -286,18 +494,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         });
         nameEditText.setHint(supportChinese.get() ? getContext().getString(R.string.search_hint_chinese) : getContext().getString(R.string.search_hint_english));
 
-        sourceText.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
-        sourceSpinner.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
-        if (downloadSources.getSize() > 1) {
-            sourceSpinner.setDataList(new ArrayList<>(downloadSources));
-            ArrayAdapter<String> sourceAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, new ArrayList<>(downloadSources));
-            sourceAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-            sourceSpinner.setAdapter(sourceAdapter);
-            sourceSpinner.setSelection(downloadSource.get().equals(getContext().getString(R.string.mods_modrinth)) ? 1 : 0);
-            FXUtils.bindSelection(sourceSpinner, downloadSource);
-        }
-
-        ArrayList<String> versionList = Arrays.stream(RemoteModRepository.DEFAULT_GAME_VERSIONS).collect(Collectors.toCollection(ArrayList::new));
+        versionList.addAll(Arrays.stream(RemoteModRepository.DEFAULT_GAME_VERSIONS).collect(Collectors.toList()));
         versionList.add(0, "");
         gameVersionSpinner.setDataList(versionList);
         ArrayAdapter<String> gameVersionAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, versionList);
@@ -315,7 +512,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         categorySpinner.setAdapter(categoryAdapter);
         categorySpinner.setSelection(0);
         FXUtils.bindSelection(categorySpinner, category);
-        downloadSource.addListener(observable -> refreshCategory(true));
+        downloadSource.addListener(sourceListener);
 
         sortSpinner.setDataList(new ArrayList<>(Arrays.stream(RemoteModRepository.SortType.values()).collect(Collectors.toList())));
         ArrayList<String> sorts = new ArrayList<>();
@@ -332,8 +529,44 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         FXUtils.bindSelection(sortSpinner, sortType);
         pageOffset.addListener(observable -> getActivity().runOnUiThread(() -> page.setText(getContext().getString(R.string.search_page_n, pageOffset.get() + 1, pageCount.get() == -1 ? "-" : pageCount.getValue().toString()))));
         pageCount.addListener(observable -> getActivity().runOnUiThread(() -> page.setText(getContext().getString(R.string.search_page_n, pageOffset.get() + 1, pageCount.get() == -1 ? "-" : pageCount.getValue().toString()))));
-        refreshCategory(false);
-        search("", null, 0, "", RemoteModRepository.SortType.POPULARITY);
+
+        // Mod 模式特有的加载器筛选
+        List<String> modLoaderList = new ArrayList<>();
+        modLoaderList.add(getContext().getString(R.string.curse_category_0));
+        modLoaderList.add("Forge");
+        modLoaderList.add("NeoForge");
+        modLoaderList.add("Fabric");
+        modLoaderList.add("Quilt");
+        ArrayAdapter<String> modLoaderAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, modLoaderList);
+        modLoaderAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        binding.modloader.setAdapter(modLoaderAdapter);
+        binding.modloader.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                searchState.modLoaderPosition = position;
+                switch (position) {
+                    case 0:
+                        selectedModLoader = null;
+                        break;
+                    case 1:
+                        selectedModLoader = ModLoaderType.FORGE;
+                        break;
+                    case 2:
+                        selectedModLoader = ModLoaderType.NEO_FORGED;
+                        break;
+                    case 3:
+                        selectedModLoader = ModLoaderType.FABRIC;
+                        break;
+                    case 4:
+                        selectedModLoader = ModLoaderType.QUILT;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedModLoader = null;
+            }
+        });
     }
 
     private static void download(Context context, Profile profile, @Nullable String version, RemoteMod.Version file, String subdirectoryName) {
@@ -379,6 +612,9 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     @Override
     public void loadVersion(Profile profile, String version) {
         this.version.set(new Profile.ProfileVersion(profile, version));
+        if (pageId == PAGE_ID_DOWNLOAD_MOD) {
+            modManager = Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion());
+        }
     }
 
     @Override
@@ -391,6 +627,12 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
         if (v == search) {
             pageOffset.set(0);
             search();
+        }
+        if (v == installModpack) {
+            Versions.importModpack(getContext());
+        }
+        if (v == translate) {
+            showTranslationDialog();
         }
         if (v == next && pageCount.get() > 1 && pageOffset.get() < pageCount.get() - 1) {
             pageOffset.set(pageOffset.get() + 1);
@@ -443,8 +685,13 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     }
 
     private void refreshCategory(boolean search) {
+        int refreshPageId = pageId;
         Task.supplyAsync(() -> repository.getCategories())
                 .thenAcceptAsync(Schedulers.androidUIThread(), categories -> {
+                    // 模式已切换时跳过过期回调，避免旧模式分类覆盖当前页面
+                    if (refreshPageId != pageId) {
+                        return;
+                    }
                     ArrayList<CategoryIndented> result = new ArrayList<>();
                     result.add(new CategoryIndented(0, null));
                     for (RemoteModRepository.Category category : Lang.toIterable(categories)) {
@@ -459,6 +706,16 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
                     categorySpinner.setSelection(0);
                     category.set(result.get(0));
                     FXUtils.bindSelection(categorySpinner, category);
+                    // 恢复该模式上次的分类筛选（分类列表就绪后）
+                    if (searchState.category != null) {
+                        for (int i = 1; i < result.size(); i++) {
+                            if (searchState.category.equals(result.get(i).category())) {
+                                categorySpinner.setSelection(i);
+                                category.set(result.get(i));
+                                break;
+                            }
+                        }
+                    }
                     if (search) search();
                 }).start();
     }
@@ -472,6 +729,14 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
     }
 
     protected String getLocalizedCategory(String category) {
+        if (pageId != PAGE_ID_DOWNLOAD_WORLD && downloadSource.get() != null
+                && downloadSource.get().equals(getContext().getString(R.string.mods_modrinth))) {
+            String key = "modrinth_category_" + category.replace("-", "_");
+            if (pageId == PAGE_ID_DOWNLOAD_RESOURCE_PACK) {
+                key = key.replaceAll("\\+", "");
+            }
+            return AndroidUtils.getLocalizedText(getContext(), key);
+        }
         return AndroidUtils.getLocalizedText(getContext(), "curse_category_" + category);
     }
 
@@ -483,7 +748,7 @@ public class DownloadPage extends FCLCommonPage implements ManageUI.VersionLoada
             sourceSpinner.setSelection(1);
             downloadSource.set(sourceSpinner.getItemAtPosition(1).toString());
         }
-        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_info, this, mod, version.get(), callback);
-        DownloadPageManager.getInstance().showTempPage(page);
+        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon_info, this, mod, version.get(), callback);
+        UIManager.getInstance().getDownloadUI().showTempPage(page);
     }
 }

@@ -1,6 +1,8 @@
 package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fclcore.util.StringUtils.parseColorEscapes;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
+import com.tungsten.fcl.ui.UIManager;
 import static com.tungsten.fcllibrary.util.LocaleUtils.formatDateTime;
 
 import android.app.Activity;
@@ -8,7 +10,6 @@ import android.content.Context;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
-import com.tungsten.fcl.ui.PageManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
@@ -16,24 +17,21 @@ import com.tungsten.fclcore.game.World;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.time.Instant;
 
 public class WorldListItem {
     private final Context context;
     private final Activity activity;
-    private final FCLUILayout parent;
     private final StringProperty title = new SimpleStringProperty();
     private final StringProperty subtitle = new SimpleStringProperty();
     private final World world;
 
-    public WorldListItem(Context context, Activity activity, FCLUILayout parent, World world) {
+    public WorldListItem(Context context, Activity activity, World world) {
         this.context = context;
 
         this.activity = activity;
 
-        this.parent = parent;
 
         this.world = world;
 
@@ -70,14 +68,14 @@ public class WorldListItem {
             builder.create().show();
             return;
         }
-        DatapackListPage page = new DatapackListPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_datapack_list, world.getWorldName(), world.getFile());
-        ManagePageManager.getInstance().showTempPage(page);
+        DatapackListPage page = new DatapackListPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_datapack_list, world.getWorldName(), world.getFile());
+        UIManager.getInstance().getManageUI().showTempPage(page);
     }
 
     public void showInfo() {
         try {
-            WorldInfoPage page = new WorldInfoPage(context, PageManager.PAGE_ID_TEMP, parent, R.layout.page_manage_world_info, world);
-            ManagePageManager.getInstance().showTempPage(page);
+            WorldInfoPage page = new WorldInfoPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_manage_world_info, world);
+            UIManager.getInstance().getManageUI().showTempPage(page);
         } catch (Exception e) {
             // TODO
         }
@@ -91,7 +89,7 @@ public class WorldListItem {
                         FileUtils.forceDelete(world.getFile().toFile());
                     } catch (Exception ignore) {
                     }
-                    WorldListPage page = (WorldListPage) ManagePageManager.getInstance().getPageById(ManagePageManager.PAGE_ID_MANAGE_WORLD);
+                    WorldListPage page = (WorldListPage) UIManager.getInstance().getManageUI().getPage(4);
                     page.refresh();
                 })
                 .setNegativeButton(null)

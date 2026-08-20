@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_item_rounded"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp">
+
+    <com.tungsten.fcllibrary.component.view.FCLSwitch
+        android:id="@+id/switchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:textSize="12sp"
+        app:auto_text_tint="true" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

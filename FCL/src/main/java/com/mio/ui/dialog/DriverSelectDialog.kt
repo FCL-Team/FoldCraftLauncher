@@ -2,15 +2,13 @@ package com.mio.ui.dialog
 
 import android.content.Context
 import android.graphics.Point
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogSelectRendererBinding
 import com.tungsten.fcl.setting.Profiles
-import com.tungsten.fclauncher.FCLConfig
+import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclauncher.plugins.DriverPlugin
-import com.tungsten.fclauncher.plugins.RendererPlugin
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.util.function.Consumer
@@ -44,7 +42,7 @@ class DriverSelectDialog(
             })
         binding.listView.setOnItemClickListener { _, _, position, _ ->
             val versionSetting =
-                if (isGlobal) Profiles.getSelectedProfile().global else Profiles.getSelectedProfile().versionSetting
+                if (isGlobal) Profiles.getSelectedProfile().globalVersionSetting else Profiles.getSelectedProfile().versionSetting
             versionSetting.driver = DriverPlugin.driverList[position].driver
             DriverPlugin.selected = DriverPlugin.driverList[position]
             dismiss()

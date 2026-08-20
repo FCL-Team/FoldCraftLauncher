@@ -14,6 +14,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
@@ -27,17 +28,15 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.task.TaskListener;
-import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLCheckBoxTreeAdapter;
 import com.tungsten.fcllibrary.component.FCLCheckBoxTreeItem;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClickListener {
+public class ModpackFileSelectionPage extends FCLPage implements View.OnClickListener {
 
     private final Profile profile;
     private final String version;
@@ -62,29 +61,23 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
     private ListView listView;
     private FCLButton next;
 
-    public ModpackFileSelectionPage(Context context, int id, FCLUILayout parent, int resId, Profile profile, String version, String type, ModAdviser adviser, ModpackExportInfo exportInfo, File file) {
-        super(context, id, parent, resId);
+    public ModpackFileSelectionPage(Context context, int id, int resId, Profile profile, String version, String type, ModAdviser adviser, ModpackExportInfo exportInfo, File file) {
+        super(context, id, resId);
         this.profile = profile;
         this.version = version;
         this.modpackType = type;
         this.adviser = adviser;
         this.exportInfo = exportInfo;
         this.modpackFile = file;
-    }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+        // 原 onCreate 逻辑：绑定控件
         progressBar = findViewById(R.id.progress);
         listView = findViewById(R.id.list);
-        ThemeEngine.getInstance().registerEvent(listView, () -> listView.setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[] { ThemeEngine.getInstance().getTheme().getLtColor() })));
+        ThemeEngine.getInstance().registerEvent(listView, () -> listView.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
         next = findViewById(R.id.next);
         next.setOnClickListener(this);
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
+        // 原 onStart 逻辑：页面构造即加载文件树
         progressBar.setVisibility(View.VISIBLE);
         listView.setVisibility(View.GONE);
         next.setVisibility(View.GONE);
@@ -123,7 +116,7 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
                         builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                         builder1.setCancelable(false);
                         builder1.setMessage(getContext().getString(R.string.message_success));
-                        builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> ManagePageManager.getInstance().dismissAllTempPagesCreatedByPage(ManagePageManager.PAGE_ID_MANAGE_MANAGE));
+                        builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> UIManager.getInstance().getManageUI().dismissAllTempPages());
                         builder1.create().show();
                     } else {
                         if (executor.getException() == null)
@@ -325,11 +318,6 @@ public class ModpackFileSelectionPage extends FCLTempPage implements View.OnClic
     @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     @Override

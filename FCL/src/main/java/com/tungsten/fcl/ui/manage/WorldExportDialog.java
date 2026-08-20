@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatDialog;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.TaskDialog;
+import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -80,7 +81,7 @@ public class WorldExportDialog extends FCLDialog implements View.OnClickListener
                             builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                             builder1.setCancelable(false);
                             builder1.setMessage(getContext().getString(R.string.message_success));
-                            builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> ManagePageManager.getInstance().dismissAllTempPagesCreatedByPage(ManagePageManager.PAGE_ID_MANAGE_WORLD));
+                            builder1.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> UIManager.getInstance().getManageUI().dismissAllTempPages());
                             builder1.create().show();
                         } else {
                             if (executor.getException() == null)

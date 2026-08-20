@@ -8,8 +8,6 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 
@@ -18,35 +16,21 @@ public class FCLCheckedTextView extends androidx.appcompat.widget.AppCompatCheck
     private boolean autoTint;
     private boolean autoBackgroundTint;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
             if (autoTint) {
                 setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
             }
             if (autoBackgroundTint) {
                 setBackgroundTintList(new ColorStateList(new int[][] { { } }, new int[]{ ThemeEngine.getInstance().getTheme().getColor() }));
             }
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    }
 
     public FCLCheckedTextView(@NonNull Context context) {
         super(context);
         autoTint = false;
         autoBackgroundTint = false;
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLCheckedTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -55,7 +39,7 @@ public class FCLCheckedTextView extends androidx.appcompat.widget.AppCompatCheck
         autoTint = typedArray.getBoolean(R.styleable.FCLCheckedTextView_auto_checked_text_tint, false);
         autoBackgroundTint = typedArray.getBoolean(R.styleable.FCLCheckedTextView_auto_checked_text_background_tint, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLCheckedTextView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
@@ -64,7 +48,7 @@ public class FCLCheckedTextView extends androidx.appcompat.widget.AppCompatCheck
         autoTint = typedArray.getBoolean(R.styleable.FCLCheckedTextView_auto_checked_text_tint, false);
         autoBackgroundTint = typedArray.getBoolean(R.styleable.FCLCheckedTextView_auto_checked_text_background_tint, false);
         typedArray.recycle();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public void setAutoTint(boolean autoTint) {

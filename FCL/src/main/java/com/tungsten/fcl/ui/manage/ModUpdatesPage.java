@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.manage;
 
 import static com.tungsten.fclcore.util.Pair.pair;
+import com.tungsten.fcl.ui.UIManager;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -28,7 +29,7 @@ import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.io.CSVTable;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
@@ -43,7 +44,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener {
+public class ModUpdatesPage extends FCLPage implements View.OnClickListener {
 
     private final ModListPage modListPage;
     private final ModManager modManager;
@@ -55,11 +56,14 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
     private FCLButton updateWithout;
     private FCLButton cancel;
 
-    public ModUpdatesPage(Context context, int id, FCLUILayout parent, int resId, ModListPage modListPage, ModManager modManager, List<LocalModFile.ModUpdate> list) {
-        super(context, id, parent, resId);
+    public ModUpdatesPage(Context context, int id, int resId, ModListPage modListPage, ModManager modManager, List<LocalModFile.ModUpdate> list) {
+        super(context, id, resId);
         this.modListPage = modListPage;
         this.modManager = modManager;
         this.objects = FXCollections.observableList(list.stream().map(it -> new ModUpdateObject(getContext(), it)).collect(Collectors.toList()));
+
+        // 原 onStart 逻辑：页面构造即初始化列表
+        listView.setAdapter(new ModUpdateListAdapter(getContext(), objects));
     }
 
     @Override
@@ -79,19 +83,8 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        listView.setAdapter(new ModUpdateListAdapter(getContext(), objects));
-    }
-
-    @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     @Override
@@ -106,7 +99,7 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
             updateMods(false);
         }
         if (v == cancel) {
-            ManagePageManager.getInstance().dismissCurrentTempPage();
+            UIManager.getInstance().getManageUI().dismissCurrentTempPage();
         }
     }
 
@@ -120,7 +113,7 @@ public class ModUpdatesPage extends FCLTempPage implements View.OnClickListener 
         TaskDialog taskDialog = new TaskDialog(getContext(), TaskCancellationAction.NORMAL);
         taskDialog.setTitle(getContext().getString(R.string.mods_check_updates_update));
         TaskExecutor executor = task.whenComplete(Schedulers.androidUIThread(), exception -> {
-            ManagePageManager.getInstance().dismissCurrentTempPage();
+            UIManager.getInstance().getManageUI().dismissCurrentTempPage();
             modListPage.refresh();
             if (!task.getFailedMods().isEmpty()) {
                 FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());

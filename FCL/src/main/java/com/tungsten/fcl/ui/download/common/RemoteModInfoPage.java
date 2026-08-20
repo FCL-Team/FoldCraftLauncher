@@ -13,10 +13,8 @@ import com.bumptech.glide.Glide;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fcl.ui.PageManager;
-import com.tungsten.fcl.ui.download.DownloadPageManager;
-import com.tungsten.fcl.ui.download.ModDownloadPage;
-import com.tungsten.fcl.ui.download.modpack.ModpackDownloadPage;
+import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.ui.download.DownloadUI;
 import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
@@ -30,13 +28,12 @@ import com.tungsten.fclcore.util.SimpleMultimap;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import org.jetbrains.annotations.Nullable;
@@ -51,7 +48,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListener {
+public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
 
     private final RemoteModRepository repository;
     private final ModTranslations translations;
@@ -80,8 +77,8 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
 
     private String recommendedVersion;
 
-    public RemoteModInfoPage(Context context, int id, FCLUILayout parent, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
-        super(context, id, parent, resId);
+    public RemoteModInfoPage(Context context, int id, int resId, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
+        super(context, id, resId);
 
         this.page = page;
         this.repository = page.repository;
@@ -91,6 +88,22 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
         this.callback = callback;
 
         create();
+
+        // 原 onStart 逻辑：页面构造即填充内容并加载
+        icon.setImageDrawable(null);
+        Glide.with(getContext()).load(addon.getIconUrl()).into(icon);
+        ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
+        mcmod.setVisibility(mod == null ? View.GONE : View.VISIBLE);
+        name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : addon.getTitle());
+        description.setText(addon.getDescription());
+        List<String> categories = addon.getCategories().stream().map(page::getLocalizedCategory).collect(Collectors.toList());
+        StringBuilder stringBuilder = new StringBuilder();
+        categories.forEach(it -> stringBuilder.append(it).append("   "));
+        String tag = StringUtils.removeSuffix(stringBuilder.toString(), "   ");
+        this.tag.setText(tag);
+
+        loadModVersions();
+        loadScreenshots();
     }
 
     public void create() {
@@ -117,29 +130,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
 
         ThemeEngine.getInstance().registerEvent(versionListView, () -> versionListView.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
 
-        search.stringProperty().addListener(observable -> {
-            loadGameVersions();
-        });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        icon.setImageDrawable(null);
-        Glide.with(getContext()).load(addon.getIconUrl()).into(icon);
-        ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
-        mcmod.setVisibility(mod == null ? View.GONE : View.VISIBLE);
-        name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : addon.getTitle());
-        description.setText(addon.getDescription());
-        List<String> categories = addon.getCategories().stream().map(page::getLocalizedCategory).collect(Collectors.toList());
-        StringBuilder stringBuilder = new StringBuilder();
-        categories.forEach(it -> stringBuilder.append(it).append("   "));
-        String tag = StringUtils.removeSuffix(stringBuilder.toString(), "   ");
-        this.tag.setText(tag);
-
-        loadModVersions();
-        loadScreenshots();
+        search.stringProperty().addListener(observable -> loadGameVersions());
     }
 
     private void loadGameVersions() {
@@ -152,8 +143,8 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             list.add(0, recommendedVersion);
         }
         ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), list, v -> {
-            RemoteModVersionPage page = new RemoteModVersionPage(getContext(), PageManager.PAGE_ID_TEMP, getParent(), R.layout.page_download_addon_version, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
-            DownloadPageManager.getInstance().showTempPage(page);
+            RemoteModVersionPage page = new RemoteModVersionPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon_version, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
+            UIManager.getInstance().getDownloadUI().showTempPage(page);
         });
         versionListView.setAdapter(adapter);
     }
@@ -235,7 +226,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
             List<RemoteMod.Version> versionList = classifiedVersions.get(gameVersion);
             versionList.sort(Comparator.comparing(RemoteMod.Version::getDatePublished).reversed());
         }
-        if (!(page instanceof ModpackDownloadPage)) {
+        if (page.getPageId() != DownloadUI.PAGE_ID_DOWNLOAD_MODPACK) {
             Profile profile = Profiles.getSelectedProfile();
             if (profile.getSelectedVersion() != null) {
                 LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(profile.getSelectedVersion()), profile.getSelectedVersion());
@@ -244,7 +235,7 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
 
                 if (classifiedVersions.keys().contains(mcv)) {
                     classifiedVersions.get(mcv).stream().filter(v -> {
-                        if (page instanceof ModDownloadPage) {
+                        if (page.getPageId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
                             for (ModLoaderType loader : v.getLoaders()) {
                                 if (modLoaders.contains(loader)) {
                                     recommendedVersion = getContext().getString(R.string.recommend_version) + ": " + mcv + " " + loader.name();
@@ -300,11 +291,6 @@ public class RemoteModInfoPage extends FCLTempPage implements View.OnClickListen
     @Override
     public Task<?> refresh(Object... param) {
         return null;
-    }
-
-    @Override
-    public void onRestart() {
-
     }
 
     @Override

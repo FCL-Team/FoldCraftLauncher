@@ -26,7 +26,7 @@ class DraggableTextView @JvmOverloads constructor(
         context.withStyledAttributes(attrs, R.styleable.DraggableTextView) {
             saveKey = getString(R.styleable.DraggableTextView_save_key) ?: "default"
         }
-        setTextColor(ThemeEngine.getInstance().theme.color2)
+        setTextColor(ThemeEngine.getInstance().getTheme().getColor2())
     }
 
     private var lastX = 0f

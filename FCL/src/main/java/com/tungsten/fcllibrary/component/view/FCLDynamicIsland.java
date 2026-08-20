@@ -14,8 +14,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatTextView;
 
-import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fcllibrary.anim.DynamicIslandAnim;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
@@ -31,11 +29,8 @@ public class FCLDynamicIsland extends AppCompatTextView {
     private Paint insidePaint;
     private Paint textPaint;
 
-    private final IntegerProperty theme = new IntegerPropertyBase() {
-
-        @Override
-        protected void invalidated() {
-            get();
+    /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
+    private void refreshTheme() {
             outlinePaint = new Paint();
             insidePaint = new Paint();
             textPaint = new Paint();
@@ -53,18 +48,7 @@ public class FCLDynamicIsland extends AppCompatTextView {
             textPaint.setTextAlign(Paint.Align.CENTER);
             invalidate();
             setTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
-        }
-
-        @Override
-        public Object getBean() {
-            return this;
-        }
-
-        @Override
-        public String getName() {
-            return "theme";
-        }
-    };
+    }
 
     private void init() {
         setTextSize(13);
@@ -94,19 +78,19 @@ public class FCLDynamicIsland extends AppCompatTextView {
     public FCLDynamicIsland(@NonNull Context context) {
         super(context);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLDynamicIsland(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     public FCLDynamicIsland(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
-        theme.bind(ThemeEngine.getInstance().getTheme().colorProperty());
+        ThemeEngine.getInstance().registerEvent(this, this::refreshTheme);
     }
 
     @SuppressLint("DrawAllocation")

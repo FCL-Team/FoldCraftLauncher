@@ -15,13 +15,15 @@ public class VersionListItem {
     private final String libraries;
     private final String tag;
     private final Drawable drawable;
+    private final int modCount;
 
-    public VersionListItem(Profile profile, String id, String libraries, String tag, Drawable drawable) {
+    public VersionListItem(Profile profile, String id, String libraries, String tag, Drawable drawable, int modCount) {
         this.profile = profile;
         this.version = id;
         this.libraries = libraries;
         this.drawable = drawable;
         this.tag = tag;
+        this.modCount = modCount;
         this.isModpack = profile.getRepository().isModpack(id);
 
         selected.set(id.equals(profile.getSelectedVersion()));
@@ -45,6 +47,10 @@ public class VersionListItem {
 
     public Drawable getDrawable() {
         return drawable;
+    }
+
+    public int getModCount() {
+        return modCount;
     }
 
     public BooleanProperty selectedProperty() {

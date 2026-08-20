@@ -278,7 +278,7 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.tungsten.fcllibrary.component.view.FCLUILayout
+    <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/ui_layout"
         android:layout_width="0dp"
         android:layout_height="match_parent"

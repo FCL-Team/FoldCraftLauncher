@@ -25,7 +25,6 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.util.Map;
@@ -46,8 +45,8 @@ public class MultiplayerUI extends FCLCommonUI implements View.OnClickListener, 
     private LinearLayoutCompat extraLayout;
     private FCLButton shareLog;
 
-    public MultiplayerUI(Context context, FCLUILayout parent, int id) {
-        super(context, parent, id);
+    public MultiplayerUI(Context context, int id) {
+        super(context, id);
     }
 
     @Override

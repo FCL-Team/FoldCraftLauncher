@@ -11,8 +11,6 @@ import com.mio.util.AnimUtil.Companion.playTranslationX
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemVersionBinding
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
-import java.nio.file.Files
-import kotlin.io.path.isRegularFile
 
 class VersionListAdapter(val context: Context, initList: List<VersionListItem>) :
     RecyclerView.Adapter<ViewHolder>() {
@@ -64,32 +62,22 @@ class VersionListAdapter(val context: Context, initList: List<VersionListItem>) 
         binding.root.setOnClickListener {
             versionListItem.profile.selectedVersion = versionListItem.version
         }
-        if (!versionListItem.profile.getVersionSetting(versionListItem.version).isGlobal) {
+        if (!versionListItem.profile.getVersionSetting(versionListItem.version).isUsesGlobal) {
             binding.setting.visibility = View.VISIBLE
             binding.setting.setOnClickListener {
                 versionListItem.profile.selectedVersion = versionListItem.version
                 val uiManager = MainActivity.getInstance().uiManager
                 MainActivity.getInstance().binding.manage.isSelected = true
-                uiManager.manageUI.runAfterInit {
-                    val tab = uiManager.manageUI.tabLayout.getTabAt(0)
-                    uiManager.manageUI.tabLayout.selectTab(tab)
-                }
+                val tab = uiManager.manageUI.tabLayout.getTabAt(0)
+                uiManager.manageUI.tabLayout.selectTab(tab)
             }
         } else {
             binding.setting.visibility = View.GONE
         }
-        val modCount =
-            runCatching {
-                val modDir =
-                    versionListItem.profile.repository.getModsDirectory(versionListItem.version)
-                Files.list(modDir).filter {
-                    it.isRegularFile()
-                }.count().toInt()
-            }.getOrNull() ?: 0
         binding.subtitle.text = String.format(
             "%s  Mods:%d",
-            binding.subtitle.getText(),
-            modCount
+            versionListItem.libraries,
+            versionListItem.modCount
         )
         playTranslationX(
             binding.root,

@@ -16,19 +16,18 @@ import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.download.VersionList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fcllibrary.component.ui.FCLTempPage;
+import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class InstallerListPage extends FCLTempPage implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class InstallerListPage extends FCLPage implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private final String gameVersion;
     private final String libraryId;
@@ -43,8 +42,8 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
     private FCLProgressBar progressBar;
     private RecyclerView recyclerView;
 
-    public InstallerListPage(Context context, int id, FCLUILayout parent, int resId, String gameVersion, String libraryId, Callback callback) {
-        super(context, id, parent, resId);
+    public InstallerListPage(Context context, int id, int resId, String gameVersion, String libraryId, Callback callback) {
+        super(context, id, resId);
         this.gameVersion = gameVersion;
         this.libraryId = libraryId;
         this.callback = callback;
@@ -81,17 +80,11 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
 
     private List<RemoteVersion> loadVersions() {
         return DownloadProviders.getDownloadProvider().getVersionListById(libraryId).getVersions(gameVersion).stream()
-                .filter(it -> {
-                    switch (it.getVersionType()) {
-                        case RELEASE:
-                            return checkRelease.isChecked();
-                        case SNAPSHOT:
-                            return checkSnapShot.isChecked();
-                        case OLD:
-                            return checkOld.isChecked();
-                        default:
-                            return true;
-                    }
+                .filter(it -> switch (it.getVersionType()) {
+                    case RELEASE -> checkRelease.isChecked();
+                    case SNAPSHOT -> checkSnapShot.isChecked();
+                    case OLD -> checkOld.isChecked();
+                    default -> true;
                 })
                 .sorted().collect(Collectors.toList());
     }
@@ -155,10 +148,6 @@ public class InstallerListPage extends FCLTempPage implements View.OnClickListen
         });
     }
 
-    @Override
-    public void onRestart() {
-
-    }
 
     @Override
     public void onClick(View view) {
