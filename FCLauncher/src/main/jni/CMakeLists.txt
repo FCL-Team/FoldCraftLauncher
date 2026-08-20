@@ -25,6 +25,7 @@ add_library(
     SHARED
     fcl/fcl_bridge.c
     fcl/fcl_loader.c
+    native_hooks/sdl_hook.c
 )
 
 target_include_directories(
@@ -32,6 +33,7 @@ target_include_directories(
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/fcl/include
     ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(
@@ -132,6 +134,7 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/ctxbridges
     ${CMAKE_CURRENT_SOURCE_DIR}/environ
     ${CMAKE_CURRENT_SOURCE_DIR}/virgl
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(

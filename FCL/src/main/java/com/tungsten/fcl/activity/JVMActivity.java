@@ -34,6 +34,8 @@ import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
+import org.libsdl.app.SDLActivity;
+import org.libsdl.app.SDLSurface;
 import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Objects;
@@ -42,6 +44,7 @@ import java.util.logging.Level;
 public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextureListener, OpenFolderCallback {
 
     private TextureView textureView;
+    private SDLSurface sdlSurface;
 
     private MenuCallback menu;
     private static MenuType menuType;
@@ -111,6 +114,10 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         if (isRunning) {
             fclBridge.setSurfaceTexture(surfaceTexture);
             CallbackBridge.setupBridgeWindow(new Surface(surfaceTexture));
+            if (CallbackBridge.sdlEnabled && sdlSurface != null) {
+                // SDL 模式：surface 重建时同步给 SDL，避免 sdlSurface 为空导致 NPE
+                SDLSurface.setNativeSurface(new Surface(surfaceTexture));
+            }
             menu.onGraphicOutput();
             return;
         }
@@ -132,7 +139,13 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             gameOption.save();
         }
         surfaceTexture.setDefaultBufferSize(width, height);
-        fclBridge.execute(new Surface(surfaceTexture), menu.getCallbackBridge());
+        Surface surface = new Surface(surfaceTexture);
+        // SDL 集成：初始化 SDL Java 侧，SDLSurface 绑定到渲染 surface
+        sdlSurface = new SDLSurface(this);
+        org.libsdl.app.SDL.initialize();
+        org.libsdl.app.SDL.setContext(this);
+        SDLActivity.externalInitialize(sdlSurface, (ViewGroup) textureView.getParent(), surface);
+        fclBridge.execute(surface, menu.getCallbackBridge());
         fclBridge.setSurfaceTexture(surfaceTexture);
         fclBridge.pushEventWindow(width, height);
     }
@@ -147,11 +160,18 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         }
         surfaceTexture.setDefaultBufferSize(width, height);
         fclBridge.pushEventWindow(width, height);
+        if (CallbackBridge.sdlEnabled && sdlSurface != null) {
+            // 前两个参数被忽略，SDL 尺寸使用真实屏幕分辨率（物理像素，非 UI 可用区）
+            SDLActivity.getSDLSurface().surfaceChanged(null, 0, AndroidUtils.getScreenWidth(), AndroidUtils.getScreenHeight());
+        }
     }
 
     @Override
     public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
         fclBridge.setSurfaceDestroyed(true);
+        if (CallbackBridge.sdlEnabled && sdlSurface != null) {
+            SDLActivity.getSDLSurface().surfaceDestroyed(null);
+        }
         return true;
     }
 

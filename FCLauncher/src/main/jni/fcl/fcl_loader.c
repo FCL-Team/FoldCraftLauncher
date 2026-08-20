@@ -13,6 +13,7 @@
 #include <fcl_internal.h>
 #include <sys/mman.h>
 #include <pthread.h>
+#include "../native_hooks/native_hooks.h"
 
 typedef void (*android_update_LD_LIBRARY_PATH_t)(const char*);
 static volatile jobject exitTrap_bridge;
@@ -264,6 +265,12 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTr
                           &custom_exit,
                           NULL,
                           NULL);
+        // SDL3 集成：拦截 SDL_InitSubSystem，通知启动器初始化 SDL JNI。
+        // 不安装 dlopen/dlsym hook：bytehook 的 GOT/PLT hook 会改写进程内所有
+        // dlopen/dlsym 引用，与 turnip Vulkan 加载器冲突（Amethyst 注释亦警告）。
+        // SDL3 库由 Java 侧 System.loadLibrary 加载，JNI_OnLoad 由 ART 在 dalvik
+        // VM 中调用，无需在 JNI 侧拦截。
+        create_sdl_hooks(bytehook_hook_all);
     }else {
         atexit(custom_atexit);
     }

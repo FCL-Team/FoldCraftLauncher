@@ -5,14 +5,21 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Choreographer;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.FCLApplication;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
+
+import org.libsdl.app.SDLActivity;
 
 import java.util.function.Consumer;
 
@@ -27,6 +34,16 @@ public class CallbackBridge {
     public static final int CLIPBOARD_COPY = 2000;
     public static final int CLIPBOARD_PASTE = 2001;
     public static final int CLIPBOARD_OPEN = 2002;
+
+    // SDL 通知类型与动作（与 JNI 侧 native_hooks 对应）
+    public static final int NOTIF_TYPE_SDL = 0;
+    public static final int ACTION_INIT_LAUNCHER_INTEGRATION = 0;
+    public static final int ACTION_SEND_TEXTBOX_RECT = 1;
+
+    // SDL 集成是否已启用（由 notifyLauncher 在 SDL 初始化时置位）
+    public static volatile boolean sdlEnabled = false;
+    // 手柄直通模式已启用
+    public static boolean sGamepadDirectInput = false;
 
     public static volatile int windowWidth, windowHeight;
     public static volatile int physicalWidth, physicalHeight;
@@ -49,6 +66,9 @@ public class CallbackBridge {
         mouseX = x;
         mouseY = y;
         nativeSendCursorPos(mouseX, mouseY);
+        // HOVER_MOVE 和 MOVE 在 SDL 中等价
+        if (!sdlEnabled) return;
+        SDLActivity.onNativeMouse(0, MotionEvent.ACTION_MOVE, x, y, false);
     }
 
     public static void sendKeycode(int keycode, char keychar, int scancode, int modifiers, boolean isDown) {
@@ -64,11 +84,31 @@ public class CallbackBridge {
             nativeSendCharMods(keychar, modifiers);
             nativeSendChar(keychar);
         }
+        if (!sdlEnabled) return;
+        int androidKeycode = AndroidKeycodeMap.getAndroidKeycode(keycode);
+        if (isDown) {
+            SDLActivity.onNativeKeyDown(androidKeycode);
+        } else {
+            SDLActivity.onNativeKeyUp(androidKeycode);
+        }
     }
 
     public static void sendChar(char keychar, int modifiers) {
         nativeSendCharMods(keychar, modifiers);
         nativeSendChar(keychar);
+        if (!sdlEnabled) return;
+        int androidKeycode = getAndroidKeycode(keychar);
+        SDLActivity.onNativeKeyDown(androidKeycode);
+        SDLActivity.onNativeKeyUp(androidKeycode);
+    }
+
+    private static final android.view.KeyCharacterMap KEY_CHARACTER_MAP = android.view.KeyCharacterMap.load(android.view.KeyCharacterMap.VIRTUAL_KEYBOARD);
+    private static final char[] KEY_BUFFER = new char[1];
+
+    private static int getAndroidKeycode(char c) {
+        KEY_BUFFER[0] = c;
+        android.view.KeyEvent[] events = KEY_CHARACTER_MAP.getEvents(KEY_BUFFER);
+        return events != null && events.length > 0 ? events[0].getKeyCode() : KeyEvent.KEYCODE_UNKNOWN;
     }
 
     public static void sendKeyPress(int keyCode, int modifiers, boolean status) {
@@ -95,6 +135,8 @@ public class CallbackBridge {
     public static void sendMouseKeycode(int button, int modifiers, boolean isDown) {
         // if (isGrabbing()) DEBUG_STRING.append("MouseGrabStrace: " + android.util.Log.getStackTraceString(new Throwable()) + "\n");
         nativeSendMouseButton(button, isDown ? 1 : 0, modifiers);
+        if (!sdlEnabled) return;
+        SDLActivity.onNativeMouse(button, isDown ? MotionEvent.ACTION_DOWN : MotionEvent.ACTION_UP, mouseX, mouseY, false);
     }
 
     public static void sendMouseKeycode(int keycode) {
@@ -104,10 +146,16 @@ public class CallbackBridge {
 
     public static void sendScroll(double xoffset, double yoffset) {
         nativeSendScroll(xoffset, yoffset);
+        if (!sdlEnabled) return;
+        SDLActivity.onNativeMouse(0, MotionEvent.ACTION_SCROLL, (float) xoffset, (float) yoffset, false);
     }
 
     public static void sendUpdateWindowSize(int w, int h) {
         nativeSendScreenSize(w, h);
+        if (sdlEnabled && SDLActivity.getSDLSurface() != null) {
+            // 通知 SDL 原生 surface 尺寸变化，保证输入处理正确
+            SDLActivity.getSDLSurface().nativeResize(w, h);
+        }
     }
 
     public static boolean isGrabbing() {
@@ -189,6 +237,57 @@ public class CallbackBridge {
         CallbackBridge.fclBridge = fclBridge;
     }
 
+    /**
+     * 由 JNI 侧（native_hooks）调用：SDL_InitSubSystem 被调用时通知启动器初始化 SDL 集成。
+     * @return 通知是否成功
+     */
+    @SuppressWarnings("unused")
+    public static boolean notifyLauncher(int type, int... action) {
+        switch (type) {
+            case NOTIF_TYPE_SDL:
+                if (action.length > 0 && action[0] == ACTION_INIT_LAUNCHER_INTEGRATION) {
+                    try {
+                        // SDL3 库已由 APK 打包（FCL/libs/SDL-release.aar），
+                        // 从 dalvik 加载并触发 ART 调用 JNI_OnLoad（应用 classloader 上下文）
+                        System.loadLibrary("SDL3");
+                        System.loadLibrary("SDL2");
+                        org.libsdl.app.SDL.setupJNI();
+                        onDirectInputEnable();
+                        sdlEnabled = true;
+                        if (SDLActivity.getSDLSurface() != null) {
+                            // 通知 SDL 原生 surface 尺寸，输入处理需要
+                            SDLActivity.getSDLSurface().nativeResize(windowWidth, windowHeight);
+                        }
+                        Log.i("CallbackBridge", "SDL support enabled!");
+                        return true;
+                    } catch (Exception e) {
+                        Log.e("CallbackBridge", "Failed to initialize SDL launcher-side integration!", e);
+                    }
+                }
+                if (action.length > 0 && action[0] == ACTION_SEND_TEXTBOX_RECT) {
+                    // 预留：文本输入框位置同步
+                }
+        }
+        return false;
+    }
+
+    // 由 JNI 侧调用：手柄直通模式启用
+    @SuppressWarnings("unused")
+    private static void onDirectInputEnable() {
+        Log.i("CallbackBridge", "onDirectInputEnable()");
+        sGamepadDirectInput = true;
+    }
+
+    // 由 JNI 侧调用：用于实现 glfwGetWindowContentScale（imgui-java 等需要）
+    @SuppressWarnings("unused")
+    private static float getAndroidDPI() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        metrics.setToDefaults();
+        // 分辨率被缩放，DPI 也要同步缩放
+        float scaleFactor = fclBridge != null ? (float) fclBridge.getScaleFactor() : 1f;
+        return metrics.density * scaleFactor;
+    }
+
     //Called from JRE side
     @SuppressWarnings("unused")
     private static void onGrabStateChanged(final boolean grabbing) {
@@ -207,6 +306,15 @@ public class CallbackBridge {
 
     @CriticalNative
     public static native void nativeSetUseInputStackQueue(boolean useInputStackQueue);
+
+    // SDL 相关 JNI
+    public static native boolean nativeEnableGamepadDirectInput();
+
+    public static native float nativeGetAndroidDPI();
+
+    public static native boolean nativeNotifyLauncher(int type, int[] action);
+
+    public static native void nativeInitializeSDLSubsystems();
 
     @CriticalNative
     private static native boolean nativeSendChar(char codepoint);

@@ -22,6 +22,7 @@
 #include "environ/environ.h"
 #include "fcl/include/fcl_internal.h"
 #include "jvm_hooks/jvm_hooks.h"
+#include "utils.h"
 
 #define EVENT_TYPE_CHAR 1000
 #define EVENT_TYPE_CHAR_MODS 1001
@@ -52,6 +53,15 @@ jint JNI_OnLoad(JavaVM *vm, __attribute__((unused)) void *reserved) {
         pojav_environ->method_onGrabStateChanged = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(
                 pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->bridgeClazz,
                 "onGrabStateChanged", "(Z)V");
+        pojav_environ->method_onDirectInputEnable = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(
+                pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->bridgeClazz,
+                "onDirectInputEnable", "()V");
+        pojav_environ->method_getAndroidDPI = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(
+                pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->bridgeClazz,
+                "getAndroidDPI", "()F");
+        pojav_environ->method_notifyLauncher = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(
+                pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->bridgeClazz,
+                "notifyLauncher", "(I[I)Z");
         pojav_environ->isUseStackQueueCall = JNI_FALSE;
     } else if (pojav_environ->dalvikJavaVMPtr != vm) {
         __android_log_print(ANDROID_LOG_INFO, "Native", "Saving JVM environ...");
@@ -652,4 +662,65 @@ static void registerFunctions(JNIEnv *env) {
                             bridge_class,
                             use_critical_cc ? critical_fcns : noncritical_fcns,
                             sizeof(critical_fcns) / sizeof(critical_fcns[0]));
+}
+
+// ------ SDL3 集成 JNI（参考 Amethyst-Android） ------
+
+// 将 srcEnv（JRE VM）中的 jintArray 复制一份到 dstEnv（dalvik VM）
+jintArray convertIntArrayJVM(JNIEnv *srcEnv, JNIEnv *dstEnv, jintArray srcIntArray) {
+    if (srcIntArray == NULL) {
+        return NULL;
+    }
+
+    jsize len = (*srcEnv)->GetArrayLength(srcEnv, srcIntArray);
+    jint *srcInts = (*srcEnv)->GetIntArrayElements(srcEnv, srcIntArray, NULL);
+    jintArray dstIntArray = (*dstEnv)->NewIntArray(dstEnv, len);
+    (*dstEnv)->SetIntArrayRegion(dstEnv, dstIntArray, 0, len, srcInts);
+    (*srcEnv)->ReleaseIntArrayElements(srcEnv, srcIntArray, srcInts, 0);
+    return dstIntArray;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_org_lwjgl_glfw_CallbackBridge_nativeEnableGamepadDirectInput(__attribute__((unused)) JNIEnv *env,
+                                                                  __attribute__((unused)) jclass clazz) {
+    TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "nativeEnableGamepadDirectInput failed!\n", return JNI_FALSE;);
+    (*dvm_env)->CallStaticVoidMethod(dvm_env, pojav_environ->bridgeClazz, pojav_environ->method_onDirectInputEnable);
+    return JNI_TRUE;
+}
+
+JNIEXPORT jfloat JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeGetAndroidDPI(JNIEnv *env,
+                                                                                __attribute__((unused)) jclass clazz) {
+    TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "getAndroidDPI failed!\n", return 0;);
+    jfloat result = (*dvm_env)->CallStaticFloatMethod(dvm_env, pojav_environ->bridgeClazz,
+                                                      pojav_environ->method_getAndroidDPI);
+    return result;
+}
+
+JNIEXPORT jboolean JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeNotifyLauncher(JNIEnv *env,
+                                                                                   __attribute__((unused)) jclass clazz,
+                                                                                   jint type, jintArray action) {
+    TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "nativeNotifyLauncher failed!\n", return JNI_FALSE;);
+    jintArray actionJVM = convertIntArrayJVM(env, dvm_env, action);
+    jboolean result = (*dvm_env)->CallStaticBooleanMethod(dvm_env, pojav_environ->bridgeClazz,
+                                                          pojav_environ->method_notifyLauncher, type, actionJVM);
+    (*dvm_env)->DeleteLocalRef(dvm_env, actionJVM);
+    return result;
+}
+
+// HACK: 部分 SDL 检测逻辑有缺陷，需要我们自己初始化 SDL 子系统。
+// 参考 Amethyst-Android 的做法。
+#include <SDL3/SDL.h>
+
+static inline void initSubsystem(void) {
+    typedef int (*SDL_Init_Func)(uint32_t flags);
+    void* handle = dlopen("libSDL3.so", RTLD_NOW);
+    SDL_Init_Func SDL_Init = (SDL_Init_Func)dlsym(handle, "SDL_Init");
+    SDL_Init(SDL_INIT_GAMEPAD | SDL_INIT_JOYSTICK | SDL_INIT_EVENTS);
+}
+
+JNIEXPORT void JNICALL
+Java_org_lwjgl_glfw_CallbackBridge_nativeInitializeSDLSubsystems(__attribute__((unused)) JNIEnv *env,
+                                                                 __attribute__((unused)) jclass clazz){
+    // 调用前请确保 SDL3 已被 dlopen
+    initSubsystem();
 }

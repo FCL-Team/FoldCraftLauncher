@@ -103,6 +103,8 @@ EXTERNAL_API void *pojavGetCurrentContext() {
     if (pojav_environ->config_renderer == RENDERER_VIRGL) {
         return virglGetCurrentContext();
     }
+    // SDL 模式下渲染桥未初始化，无 GLFW 上下文可返回
+    if (br_get_current == NULL) return NULL;
     return br_get_current();
 }
 
@@ -340,6 +342,8 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
 
 EXTERNAL_API void pojavSwapBuffers() {
     atomic_fetch_add(&fps, 1);
+    // SDL 模式下渲染桥未初始化（br_swap_buffers 为 NULL），上下文由 SDL 管理，跳过
+    if (br_swap_buffers == NULL) return;
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         virglSwapBuffers();
     else br_swap_buffers();
@@ -348,6 +352,10 @@ EXTERNAL_API void pojavSwapBuffers() {
 
 EXTERNAL_API void pojavMakeCurrent(void *window) {
     if (getenv("POJAV_BIG_CORE_AFFINITY") != NULL) bigcore_set_affinity();
+    // SDL 模式下渲染桥未初始化（br_make_current 为 NULL），
+    // 官方 LWJGL fixPojavGLContext 会以 window=NULL 调用来 detach，
+    // 此时无 GLFW 上下文可切，且 SDL 自身维护 GL 上下文，直接返回
+    if (br_make_current == NULL) return;
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         virglMakeCurrent(window);
     else br_make_current((basic_render_window_t *) window);
@@ -359,6 +367,9 @@ EXTERNAL_API void *pojavCreateContext(void *contextSrc) {
 
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         return virglCreateContext(contextSrc);
+
+    // SDL 模式下渲染桥未初始化，上下文由 SDL 创建，这里无 GLFW 上下文可建
+    if (br_init_context == NULL) return NULL;
 
     return br_init_context((basic_render_window_t *) contextSrc);
 }
@@ -380,7 +391,8 @@ Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPA
 EXTERNAL_API void pojavSwapInterval(int interval) {
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         virglSwapInterval(interval);
-    else br_swap_interval(interval);
+    // SDL 模式下渲染桥未初始化，跳过
+    else if (br_swap_interval != NULL) br_swap_interval(interval);
 }
 
 JNIEXPORT jint JNICALL

@@ -44,9 +44,12 @@ struct pojav_environ_s {
     double cursorX, cursorY, cLastX, cLastY;
     jmethodID method_accessAndroidClipboard;
     jmethodID method_onGrabStateChanged;
+    jmethodID method_onDirectInputEnable;
     jmethodID method_glftSetWindowAttrib;
     jmethodID method_internalWindowSizeChanged;
     jmethodID method_internalChangeMonitorSize;
+    jmethodID method_getAndroidDPI;
+    jmethodID method_notifyLauncher;
     jclass bridgeClazz;
     jclass vmGlfwClass;
     jboolean isGrabbing;

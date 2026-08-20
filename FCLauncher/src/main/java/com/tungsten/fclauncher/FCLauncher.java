@@ -256,6 +256,20 @@ public class FCLauncher {
             }
             List<String> envList;
             envMap.put("POJAVEXEC_EGL", eglName);
+            // SDL3 需要明确指定 EGL/GL 库，否则其内部 dlopen 的库与启动器
+            // 加载的渲染器不一致，会导致 eglChooseConfig 失败（EGL_BAD_ATTRIBUTE）
+            // 或 vkGetInstanceProcAddr mismatch
+            if (eglName.startsWith("/")) {
+                envMap.put("SDL_EGL_LIBRARY", eglName);
+            } else {
+                envMap.put("SDL_EGL_LIBRARY", renderer.getPath() + "/" + eglName);
+            }
+            String glPath = renderer.getGLPath();
+            if (glPath.startsWith("/")) {
+                envMap.put("SDL_OPENGL_LIBRARY", glPath);
+            } else {
+                envMap.put("SDL_OPENGL_LIBRARY", renderer.getPath() + "/" + glPath);
+            }
             envList = renderer.getPojavEnv();
             if (envList != null) {
                 envList.forEach(env -> {

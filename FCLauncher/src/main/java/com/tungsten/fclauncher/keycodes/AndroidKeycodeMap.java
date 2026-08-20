@@ -24,6 +24,18 @@ public class AndroidKeycodeMap {
         return FCLKeycodes.KEY_UNKNOWN;
     }
 
+    /**
+     * FCL 键码 -> Android 键码（供 SDL 事件转播使用）。
+     */
+    public static int getAndroidKeycode(int fclKeycode) {
+        for (int i = 0; i < count; i++) {
+            if (FCL_KEYCODES[i] == fclKeycode) {
+                return ANDROID_KEYCODES[i];
+            }
+        }
+        return KeyEvent.KEYCODE_UNKNOWN;
+    }
+
     static {
         add(KeyEvent.KEYCODE_HOME,                           FCLKeycodes.KEY_HOME);
         add(KeyEvent.KEYCODE_BACK,                           FCLKeycodes.KEY_ESC);

@@ -18,6 +18,7 @@ import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 
+import org.libsdl.app.SDLActivity;
 import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.HashMap;
@@ -257,6 +258,13 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
         //gamepad
         if (!menu.isGamepadDisabled() && Gamepad.isGamepadEvent(event)) {
+            if (CallbackBridge.sdlEnabled) {
+                // SDL 模式：手柄按键同步转给 SDL，保持事件顺序，不额外开线程
+                try {
+                    SDLActivity.handleKeyEvent(null, event.getKeyCode(), event, null);
+                } catch (Throwable ignored) {
+                }
+            }
             checkGamepad();
             return gamepad.handleKeyEvent(event);
         }
@@ -272,6 +280,14 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     public boolean handleGenericMotionEvent(MotionEvent event) {
         if (!menu.isGamepadDisabled() && Gamepad.isGamepadEvent(event)) {
+            if (CallbackBridge.sdlEnabled) {
+                // SDL 模式：手柄摇杆等事件同步转给 SDL，保持事件顺序
+                try {
+                    View.OnGenericMotionListener motionListener = SDLActivity.getMotionListener();
+                    motionListener.onGenericMotion(null, event);
+                } catch (Throwable ignored) {
+                }
+            }
             checkGamepad();
             if (choreographer == null) {
                 choreographer = Choreographer.getInstance();
