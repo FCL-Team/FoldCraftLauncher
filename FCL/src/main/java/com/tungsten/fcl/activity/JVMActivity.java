@@ -139,6 +139,8 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             gameOption.save();
         }
         surfaceTexture.setDefaultBufferSize(width, height);
+        CallbackBridge.windowWidth = width;
+        CallbackBridge.windowHeight = height;
         Surface surface = new Surface(surfaceTexture);
         // SDL 集成：初始化 SDL Java 侧，SDLSurface 绑定到渲染 surface
         sdlSurface = new SDLSurface(this);
@@ -159,6 +161,8 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             height = FCLBridge.FORCE_RESOLUTION_HEIGHT;
         }
         surfaceTexture.setDefaultBufferSize(width, height);
+        CallbackBridge.windowWidth = width;
+        CallbackBridge.windowHeight = height;
         fclBridge.pushEventWindow(width, height);
         if (CallbackBridge.sdlEnabled && sdlSurface != null) {
             // 前两个参数被忽略，SDL 尺寸使用真实屏幕分辨率（物理像素，非 UI 可用区）

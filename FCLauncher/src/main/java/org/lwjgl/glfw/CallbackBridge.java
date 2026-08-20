@@ -20,6 +20,7 @@ import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 
 import org.libsdl.app.SDLActivity;
+import org.libsdl.app.SDLSurface;
 
 import java.util.function.Consumer;
 
@@ -254,9 +255,30 @@ public class CallbackBridge {
                         org.libsdl.app.SDL.setupJNI();
                         onDirectInputEnable();
                         sdlEnabled = true;
-                        if (SDLActivity.getSDLSurface() != null) {
-                            // 通知 SDL 原生 surface 尺寸，输入处理需要
-                            SDLActivity.getSDLSurface().nativeResize(windowWidth, windowHeight);
+                        SDLSurface surface = SDLActivity.getSDLSurface();
+                        if (surface != null) {
+                            // 尺寸兜底：windowWidth/Height 可能尚未由 JVMActivity 赋值，
+                            // 用屏幕真实像素，避免 SDL 原生侧拿到 0x0 导致黑屏
+                            if (windowWidth <= 0 || windowHeight <= 0) {
+                                DisplayMetrics metrics = new DisplayMetrics();
+                                Activity activity = FCLApplication.getCurrentActivity();
+                                if (activity != null) {
+                                    activity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+                                    windowWidth = metrics.widthPixels;
+                                    windowHeight = metrics.heightPixels;
+                                }
+                            }
+                            // 补发 surface 就绪：externalInitialize 时 sdlEnabled 还是 false，
+                            // SDLSurface.surfaceCreated/surfaceChanged 被早退跳过，SDL 原生侧
+                            // 从未收到 onNativeSurfaceCreated/Changed，这里在 sdlEnabled 之后补发
+                            try {
+                                surface.surfaceChanged(null, 0, windowWidth > 0 ? windowWidth : 1, windowHeight > 0 ? windowHeight : 1);
+                            } catch (Throwable ignored) {
+                            }
+                            if (windowWidth > 0 && windowHeight > 0) {
+                                // 通知 SDL 原生 surface 尺寸，输入处理需要
+                                surface.nativeResize(windowWidth, windowHeight);
+                            }
                         }
                         Log.i("CallbackBridge", "SDL support enabled!");
                         return true;
