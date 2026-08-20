@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="splash_permission_msg">Kein Zugriff auf den Speicher. Bitte gewähren Sie Fold Craft Launcher die Berechtigung in den Einstellungen.</string>
     <string name="splash_permission_grant">Erlauben</string>
@@ -5,13 +6,11 @@
     <string name="splash_permission_close">Launcher schließen</string>
     <string name="splash_permission_settings">Einstellungen</string>
     <string name="splash_permission_settings_msg">Sie haben „Verweigern“ gewählt. Bitte gewähren Sie den Speicherzugriff manuell in den Einstellungen.</string>
-
     <string name="splash_title">Willkommen bei Fold Craft Launcher</string>
     <string name="splash_eula_error">Die Lizenz konnte aufgrund von Verbindungsproblemen nicht überprüft werden.</string>
     <string name="splash_eula_next">Akzeptieren und fortfahren</string>
     <string name="splash_runtime_title">Laufzeitumgebung des Launchers installieren</string>
     <string name="splash_runtime_install">Installieren</string>
-
     <string name="account">Konto</string>
     <string name="version">Version</string>
     <string name="launch_mode">Starten</string>
@@ -20,12 +19,10 @@
     <string name="controller">Controller</string>
     <string name="multiplayer">Multiplayer</string>
     <string name="setting">Einstellungen</string>
-
     <string name="about">Über den Launcher</string>
     <string name="about_sponsor">Sponsoren</string>
     <string name="about_source">Quellcode</string>
     <string name="about_desc">Fold Craft Launcher ist ein Launcher, um Minecraft: Java Edition auf Android-Geräten zu starten.\n\nFold Craft Launcher wurde vom FCL-Team entwickelt.\n\nDie meisten Funktionen von Fold Craft Launcher basieren auf HMCLCore. Der Launcher verwendet und zitiert Teile des Codes von PojavLauncher und Boat. Wenn Sie diesen Launcher verbreiten möchten, halten Sie sich bitte an die GPL-v3-Lizenz.</string>
-
     <string name="account_add_server">Authentifizierungsserver</string>
     <string name="account_add_server_url">Server-URL</string>
     <string name="account_add_server_name">Servername</string>
@@ -81,25 +78,20 @@
     <string name="account_skin_upload">Skin auf dem Gerät auswählen</string>
     <string name="account_state_no_account">Kein Konto</string>
     <string name="account_state_add">Zum Hinzufügen klicken</string>
-
     <string name="action_refresh">Aktualisieren</string>
     <string name="action_retry">Erneut versuchen</string>
     <string name="action_share">Teilen</string>
     <string name="action_skip">Überspringen</string>
-
     <string name="announcement">Ankündigung: %s</string>
     <string name="announcement_significant">Diese Ankündigung ist wichtig. Bitte bestätigen Sie, dass Sie sie gelesen haben, bevor Sie sie ausblenden.</string>
-
     <string name="archive_author">Autoren</string>
     <string name="archive_date">Veröffentlichungsdatum</string>
     <string name="archive_game_version">Spielversion</string>
     <string name="archive_name">Dateiname</string>
     <string name="archive_version">Version</string>
-
     <string name="assets_download">Assets herunterladen</string>
     <string name="assets_download_all">Integrität überprüfen</string>
     <string name="assets_index_malformed">Heruntergeladene Ressourcendateien wurden aufgrund eines Netzwerkfehlers beschädigt!</string>
-
     <string name="button_back">Zurück</string>
     <string name="button_cancel">Abbrechen</string>
     <string name="button_copy">Kopieren</string>
@@ -118,11 +110,9 @@
     <string name="button_select_all">Alles auswählen</string>
     <string name="button_set">Auswählen</string>
     <string name="button_reset">Zurücksetzen</string>
-
     <string name="community">Community</string>
     <string name="community_hint">Treten Sie unserer Community bei, um die neuesten Versionen zu erhalten, Fehler zu melden und mehr. Wenn Sie beitreten, halten Sie sich bitte an die Community-Regeln.</string>
     <string name="community_qq">QQ-Gruppe</string>
-
     <string name="control_create">Controller erstellen</string>
     <string name="control_delete">Sind Sie sicher, dass Sie diesen Controller löschen möchten?</string>
     <string name="control_download">Controller herunterladen</string>
@@ -159,9 +149,7 @@
     <string name="control_select">Controller auswählen</string>
     <string name="control_share">Controller teilen</string>
     <string name="control_upload">Controller veröffentlichen</string>
-
     <string name="curse_category_0">Alles</string>
-
     <string name="curse_category_4474">Science-Fiction</string>
     <string name="curse_category_4481">Kompakt / Leicht</string>
     <string name="curse_category_4483">Kampf</string>
@@ -175,7 +163,6 @@
     <string name="curse_category_4482">Sehr groß</string>
     <string name="curse_category_4472">Technisch</string>
     <string name="curse_category_4473">Magie</string>
-
     <string name="curse_category_5299">Bildung</string>
     <string name="curse_category_5189">Dienstprogramme &amp; Gameplay-Verbesserungen</string>
     <string name="curse_category_6814">Leistung</string>
@@ -210,7 +197,6 @@
     <string name="curse_category_436">Nahrung</string>
     <string name="curse_category_4558">Redstone</string>
     <string name="curse_category_4843">Automatisierung</string>
-
     <string name="curse_category_5244">Schriftarten-Pakete</string>
     <string name="curse_category_5193">Datenpakete</string>
     <string name="curse_category_399">Steampunk</string>
@@ -222,7 +208,6 @@
     <string name="curse_category_4465">Mod-Unterstützung</string>
     <string name="curse_category_402">Mittelalter</string>
     <string name="curse_category_401">Modern</string>
-
     <string name="curse_category_4464">Mod-Welten</string>
     <string name="curse_category_250">Spielkarten</string>
     <string name="curse_category_249">Bauwerke</string>
@@ -230,7 +215,6 @@
     <string name="curse_category_253">Überleben</string>
     <string name="curse_category_248">Abenteuer</string>
     <string name="curse_category_252">Puzzles</string>
-
     <string name="curse_category_4556">Fortschritt</string>
     <string name="curse_category_4554">Rezepte</string>
     <string name="curse_category_4549">Anleitungen</string>
@@ -238,34 +222,28 @@
     <string name="curse_category_4550">Quests</string>
     <string name="curse_category_4555">Weltgenerierung</string>
     <string name="curse_category_4552">Skripte</string>
-
     <string name="curse_sort_author">Autor</string>
     <string name="curse_sort_date_created">Erstellungsdatum</string>
     <string name="curse_sort_last_updated">Letzte Aktualisierung</string>
     <string name="curse_sort_name">Name</string>
     <string name="curse_sort_popularity">Beliebtheit</string>
     <string name="curse_sort_total_downloads">Gesamte Downloads</string>
-
     <string name="datapack_add">Datenpaket installieren</string>
     <string name="datapack_choose_datapack">Wählen Sie ein Datenpaket zum Importieren aus</string>
-
     <string name="download_code_404">Datei auf dem Server nicht gefunden: %s</string>
     <string name="download_failed">Downloadfehler %1$s, Code: %2$d</string>
     <string name="download_failed_empty">Keine Versionen verfügbar</string>
     <string name="download_failed_refresh">Versionsliste konnte nicht abgerufen werden. Bitte versuchen Sie es erneut.</string>
-
     <string name="download_provider_mojang">Mojang (OptiFine wird von BMCLAPI bereitgestellt)</string>
     <string name="download_provider_official">Von offiziellen Quellen</string>
     <string name="download_provider_balanced">Von den schnellsten verfügbaren Quellen</string>
     <string name="download_provider_mirror">Spiegel</string>
-
     <string name="edit_view_clone">Kopieren</string>
     <string name="edit_view_delete">Löschen</string>
     <string name="edit_view_event">Erweiterte Einstellungen</string>
     <string name="edit_view_info">Standardeinstellungen</string>
     <string name="edit_view_no_group">Fügen Sie zuerst eine Gruppe hinzu oder wählen Sie eine aus!</string>
     <string name="edit_view_style">Stil</string>
-
     <string name="edit_button_title">Bearbeiten</string>
     <string name="edit_button_delete">Schaltfläche löschen?</string>
     <string name="edit_button_text">Schaltflächentext</string>
@@ -287,7 +265,6 @@
     <string name="edit_button_event_keycodes_keyboard">Tastatur</string>
     <string name="edit_button_event_keycodes_mouse">Maus</string>
     <string name="edit_button_event_bind_group">Gruppenanzeige umschalten</string>
-
     <string name="edit_direction_title">Stick bearbeiten</string>
     <string name="edit_direction_delete">Sind Sie sicher, dass Sie diesen Controller löschen möchten?</string>
     <string name="edit_direction_event_up">Obere Schaltfläche</string>
@@ -300,11 +277,9 @@
     <string name="edit_direction_event_follow_always">Dynamisch</string>
     <string name="edit_direction_event_sneak">Doppelklick in der Mitte zum Schleichen</string>
     <string name="edit_direction_event_sneak_code">Mittlere Schaltfläche</string>
-
     <string name="exception_access_denied">Zugriff auf die Datei %s nicht möglich.</string>
     <string name="exception_artifact_malformed">Integrität der heruntergeladenen Dateien konnte nicht überprüft werden.</string>
     <string name="exception_ssl_handshake">SSL-Verbindung konnte nicht hergestellt werden, da in der aktuellen Java-Installation SSL-Zertifikate fehlen.</string>
-
     <string name="folder_config">Konfigurationen</string>
     <string name="folder_game">Spielordner</string>
     <string name="folder_log">Logs</string>
@@ -314,7 +289,6 @@
     <string name="folder_saves">Welten</string>
     <string name="folder_screenshots">Screenshots</string>
     <string name="folder_shaderpacks">Shader-Pakete</string>
-
     <string name="game_crash_info">Absturzinformationen</string>
     <string name="game_crash_reason">Absturzursache</string>
     <string name="game_crash_reason_multiple">Mehrere Ursachen erkannt:\n\n</string>
@@ -373,17 +347,14 @@
     <string name="game_crash_reason_unsatisfied_link_error">Minecraft konnte aufgrund fehlender Systembibliotheken nicht gestartet werden: %1$s.</string>
     <string name="game_crash_title">Spielabsturz</string>
     <string name="game_crash_title_add">Senden Sie anstelle eines Screenshots die vollständige Absturz-Log-Datei</string>
-
     <string name="help">Hilfe</string>
     <string name="help_category">Kategorien</string>
     <string name="help_website">Website</string>
-
     <string name="input_hint_not_empty">Pflichtfeld</string>
     <string name="input_hint_optional">Optional</string>
     <string name="input_not_empty">Füllen Sie die Pflichtfelder aus.</string>
     <string name="input_number">Geben Sie eine Zahl ein</string>
     <string name="input_url">Geben Sie eine gültige URL ein.</string>
-
     <string name="install_change_version">Version auswählen</string>
     <string name="install_change_version_confirm">Sind Sie sicher, dass Sie die Version %s von %s auf %s ändern möchten?</string>
     <string name="install_failed">Installationsfehler</string>
@@ -409,25 +380,21 @@
     <string name="install_new_game_already_exists">Dieses Profil existiert bereits. Verwenden Sie einen anderen Namen.</string>
     <string name="install_new_game_malformed">Ungültiger Name</string>
     <string name="install_success">Installation abgeschlossen!</string>
-
     <string name="jar_execute">Jar auswählen</string>
     <string name="jar_execute_custom_args">Mit eigenen Argumenten ausführen</string>
     <string name="jar_executor_crash_title">Fehler beim Ausführen der JAR-Datei</string>
     <string name="jar_executor_crash_reason">Die Analyse der Absturzursachen des JAR-Ausführers wird derzeit nicht unterstützt.</string>
-
     <string name="launch_error_java">Sie verwenden eine veraltete Java-Version. Sind Sie sicher, dass Sie fortfahren möchten?</string>
     <string name="launch_error_java_auto">Automatisch auswählen</string>
     <string name="launch_error_java_continue">Fortfahren</string>
     <string name="launch_failed">Startfehler</string>
     <string name="launch_failed_download_library">Die Bibliothek %s konnte nicht heruntergeladen werden.</string>
-
     <string name="launch_state_dependencies">Abhängigkeiten</string>
     <string name="launch_state_modpack">Abhängigkeiten herunterladen</string>
     <string name="launch_state_java">Java überprüfen</string>
     <string name="launch_state_logging_in">Anmeldung</string>
     <string name="launch_state_waiting_launching">Starten</string>
     <string name="launch_state_done">Start abgeschlossen</string>
-
     <string name="menu_controls">Steuerung</string>
     <string name="menu_controls_current">Aktuelle Steuerung</string>
     <string name="menu_controls_edit_mode">Bearbeitungsmodus</string>
@@ -443,7 +410,6 @@
     <string name="menu_controls_style">Name</string>
     <string name="menu_controls_button_style">Schaltflächenstil</string>
     <string name="menu_controls_direction_style">Stick-Stil</string>
-
     <string name="menu_control_base">Grundeinstellungen</string>
     <string name="menu_control_button">Schaltfläche</string>
     <string name="menu_control_button_text">Text</string>
@@ -462,7 +428,6 @@
     <string name="menu_control_view_group_empty">Geben Sie zuerst einen Gruppennamen ein</string>
     <string name="menu_control_view_group_visible">Sichtbar</string>
     <string name="menu_control_view_group_invisible">Unsichtbar</string>
-
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_settings_debug">Log</string>
     <string name="menu_settings_disable_gesture">Gesten deaktivieren</string>
@@ -501,7 +466,6 @@
     <string name="menu_settings_soft_keyboard_adjust">Automatische Tastaturanpassung deaktivieren</string>
     <string name="menu_settings_show_log">Log anzeigen</string>
     <string name="menu_settings_show_log_auto">Log automatisch anzeigen</string>
-
     <string name="message_cancelled">Operation abgebrochen</string>
     <string name="message_copy">Erfolgreich kopiert!</string>
     <string name="message_doing">Bitte warten</string>
@@ -512,7 +476,6 @@
     <string name="message_success">Operation erfolgreich abgeschlossen</string>
     <string name="message_unknown">Unbekannt</string>
     <string name="message_warning">Warnung</string>
-
     <string name="modpack">Modpacks</string>
     <string name="modpack_choose">Modpack auswählen</string>
     <string name="modpack_choose_local">Von Datei installieren</string>
@@ -567,7 +530,6 @@
     <string name="modpack_wizard_step_initialization_exported_version">Spielversion für den Export</string>
     <string name="modpack_wizard_step_initialization_force_update">Modpack auf die neueste Version zwingen (erfordert einen Filehoster)</string>
     <string name="modpack_wizard_step_initialization_warning">"Stellen Sie vor der Erstellung eines Modpacks sicher, dass das Spiel stabil läuft und es sich um eine stabile Version handelt, nicht um einen Snapshot.\n\nBitte beachten Sie, dass Sie keine Mods und Ressourcenpakete einbinden dürfen, die ausdrücklich als nicht für die Verbreitung oder Einbindung in Modpacks gekennzeichnet sind."</string>
-
     <string name="modrinth_category_adventure">Abenteuer</string>
     <string name="modrinth_category_challenging">Herausfordernd</string>
     <string name="modrinth_category_combat">Kampf</string>
@@ -595,7 +557,6 @@
     <string name="modrinth_category_utility">Dienstprogramme</string>
     <string name="modrinth_category_worldgen">Weltgenerierung</string>
     <string name="modrinth_category_datapack">Datenpaket</string>
-
     <string name="mods">Mods</string>
     <string name="mods_add">Mods hinzufügen</string>
     <string name="mods_add_failed">Der Mod %s konnte nicht installiert werden.</string>
@@ -635,22 +596,18 @@
     <string name="mods_url">Offizielle Seite</string>
     <string name="mods_update_modpack_mod_warning">Das Aktualisieren von Mods in einem Modpack kann zu irreparablen Schäden führen, möglicherweise wird das Modpack beschädigt und kann nicht mehr gestartet werden. Sind Sie sicher, dass Sie aktualisieren möchten?</string>
     <string name="mods_screenshot_no_result">Keine Screenshots verfügbar</string>
-
     <string name="profile_shared">"Mit Ordner teilen \n(Gerätespeicher)"</string>
     <string name="profile_private">"Privater Ordner \n(Spielspeicher)"</string>
     <string name="profile_name">Name</string>
     <string name="profile_path">Pfad</string>
     <string name="profile_select">Ordner auswählen</string>
     <string name="profile_already_exist">Dieser Name existiert bereits, verwenden Sie einen anderen Namen.</string>
-
     <string name="quick_input_title">Schnelleingabe</string>
     <string name="quick_input_add">Text hinzufügen</string>
     <string name="quick_input_text">Text für Schnelleingabe</string>
     <string name="quick_input_exist">Dieser Text existiert bereits!</string>
     <string name="quick_input_empty">Geben Sie Text ein!</string>
-
     <string name="resourcepack">Ressourcenpakete</string>
-
     <string name="search">Suche</string>
     <string name="search_hint_chinese">Suche</string>
     <string name="search_hint_english">Suche</string>
@@ -658,7 +615,6 @@
     <string name="search_sort">Sortieren nach</string>
     <string name="search_first_page">Anfang</string>
     <string name="search_last_page">Ende</string>
-
     <string name="settings_advanced_dont_check_game_completeness">Spielintegrität nicht überprüfen</string>
     <string name="settings_advanced_dont_check_jvm_validity">JVM-Kompatibilität nicht überprüfen</string>
     <string name="settings_advanced_game_dir_default">Standard (.minecraft/)</string>
@@ -668,27 +624,21 @@
     <string name="settings_advanced_minecraft_arguments_prompt">Standard</string>
     <string name="settings_advanced_server_ip">Serveradresse</string>
     <string name="settings_advanced_server_ip_prompt">Automatisch nach dem Start beitreten</string>
-
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_vulkan_driver_system">System-Vulkan-Treiber verwenden</string>
     <string name="settings_fcl_renderer">OpenGL-Implementierung (Renderer)</string>
     <string name="settings_fcl_pojav_bigcore">Leistungskerne für Rendering erzwingen</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, nur 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, nur für GPU a616-a660)</string>
-
     <string name="settings_fcl_driver">Vulkan-Treiber</string>
-
     <string name="settings_download_netdisk">Netdisk(Qıtayda qullanğanlar içün tevsiye etile)</string>
-
     <string name="settings_game">Spieleinstellungen</string>
     <string name="settings_game_dimension">Auflösung</string>
     <string name="settings_game_cursor_offset">Cursor-Versatz</string>
     <string name="settings_game_java_version">Java-Version</string>
     <string name="settings_game_java_version_auto">Auto</string>
     <string name="settings_game_working_directory">Separater Speicherort für Spieldateien</string>
-
     <string name="settings_icon">Symbol</string>
-
     <string name="settings_launcher">Launchereinstellungen</string>
     <string name="settings_launcher_debug">Launcher-Log</string>
     <string name="settings_launcher_upgrade">Launcher-Update</string>
@@ -715,7 +665,6 @@
     <string name="settings_launcher_ignore_notch">Frontkamera-Ausschnitt ignorieren</string>
     <string name="settings_launcher_close_skin_view">Skin-Modell ausblenden</string>
     <string name="settings_launcher_animation_speed">Geschwindigkeit der Übergangsanimationen</string>
-
     <string name="settings_memory">Speicher</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Minimum / %2$.1f GB zugewiesen</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB Minimum / %2$.1f GB zugewiesen (%3$.1f GB frei)</string>
@@ -728,7 +677,6 @@
     <string name="settings_tabs_installers">Mod-Loader</string>
     <string name="settings_type_global_manage">Hauptspiel-Einstellungen</string>
     <string name="settings_type_special_enable">Separate Einstellungen</string>
-
     <string name="style_name">Name</string>
     <string name="style_warning_delete">Sind Sie sicher, dass Sie diesen Stil löschen möchten?</string>
     <string name="style_warning_exist">Stil existiert bereits!</string>
@@ -756,7 +704,6 @@
     <string name="style_rocker_stroke_color">Stick-Umrandungsfarbe</string>
     <string name="style_rocker_corner_radius">Stick-Eckenradius</string>
     <string name="style_rocker_fill_color">Stick-Füllfarbe</string>
-
     <string name="update">Aktualisieren</string>
     <string name="update_netdisk">Quark-Disk</string>
     <string name="update_check">Update prüfen</string>
@@ -773,7 +720,6 @@
     <string name="update_version">Version %s</string>
     <string name="update_version_release">Release</string>
     <string name="update_version_beta">Beta</string>
-
     <string name="version_game">Versionen</string>
     <string name="version_game_old">Alte Beta/Alpha</string>
     <string name="version_game_release">Release</string>
@@ -799,7 +745,6 @@
     <string name="version_manage_rename_fail">Umbenennen fehlgeschlagen</string>
     <string name="version_new_profile">Neuer Ordner</string>
     <string name="version_update">Modpack aktualisieren</string>
-
     <string name="view_info_visibility">Anzeige</string>
     <string name="view_info_visibility_always">Immer</string>
     <string name="view_info_visibility_game">Im Spiel</string>
@@ -817,7 +762,6 @@
     <string name="view_info_reference">Größe bezogen auf</string>
     <string name="view_info_reference_width">Bildschirmbreite</string>
     <string name="view_info_reference_height">Bildschirmhöhe</string>
-
     <string name="world">Welten</string>
     <string name="world_add">Welt hinzufügen (.zip)</string>
     <string name="world_datapack">Datenpakete verwalten</string>
@@ -867,7 +811,6 @@
     <string name="world_name_enter">Weltname eingeben</string>
     <string name="world_reveal">Im Explorer anzeigen</string>
     <string name="world_show_all">Alle anzeigen</string>
-
     <string name="install_apk">Launcher installieren</string>
     <string name="modpack_download_warn_title">Warnung</string>
     <string name="modpack_download_warn_msg">Die meisten Modpacks sind für PC entwickelt, daher sind Abstürze möglich. Der Launcher-Entwickler übernimmt keine Verantwortung für die Modpack-Kompatibilität.</string>
@@ -879,14 +822,11 @@
     <string name="joystick_r">Rechter Stick</string>
     <string name="message_vulkan_driver_system">Warnung: Die Verwendung des System-Vulkan-Treibers kann zwar zu einer besseren Leistung führen, aber aufgrund von Kompatibilitätsproblemen auch Abstürze verursachen!</string>
     <string name="message_loading_controllers">Controller werden geladen...</string>
-
     <string name="installed">Installiert</string>
     <string name="message_install_plugin">Plugins können auf folgende Weise erhalten werden.</string>
     <string name="message_install_java">Java kann auf folgende Weise erhalten werden.</string>
-
     <string name="shaderpack">Shader</string>
     <string name="recommend_version">Empfohlene Version</string>
-
     <string name="mod_check_continue">Fortfahren</string>
     <string name="mod_check_physics">Die aktuelle Physics-Mod (%s) ist nicht gepatcht (libPhysXJniBindings_64.so von Linux x86_64 muss durch die Android arm64/x86_64-Version ersetzt werden). Dies führt zu einem Spielabsturz.</string>
     <string name="mod_check_mcef">Die MCEF-Mod (%s) funktioniert nicht auf Android. Sie wird normalerweise für WebDisplays oder In-Game-Browser benötigt.</string>
@@ -896,21 +836,17 @@
     <string name="mod_check_replay">Replay (%s) benötigt das FFmpeg-Plugin. Es ist nicht installiert. Installieren Sie es aus dem Google Play Store oder hier (%s oder %s) (lange drücken zum Kopieren).</string>
     <string name="mod_check_borderlesswindow">BorderlessWindow (%s) ist nicht für Android vorgesehen. Dies führt zu einem Spielabsturz.</string>
     <string name="mod_check_axiom">Die aktuelle Axiom-Mod (%s) ist nicht gepatcht, dies führt zu einem Spielabsturz.</string>
-
     <string name="internal">Eingebaut</string>
     <string name="import_java">Java importieren</string>
     <string name="import_java_wrong_file">Nur tar.xz-Dateien werden für den Import unterstützt.</string>
     <string name="import_java_error">Es wurde festgestellt, dass die von Ihnen importierte Java-Umgebung möglicherweise nicht für die Verwendung auf dem aktuellen Gerät vorgesehen ist. Die Ausführung könnte zu einem Launcher-Absturz führen. Möchten Sie den Import fortsetzen?</string>
-
     <string name="manage_version">Versions-Manager</string>
     <string name="select_renderer">Renderer auswählen</string>
     <string name="open_link_failed">Automatischer Browserstart fehlgeschlagen. Link wurde automatisch kopiert. Bitte öffnen Sie den Browser manuell und fügen Sie ihn ein.</string>
-
     <string name="launch">Starten</string>
     <string name="tip_hide_menu_view">Menü ist ausgeblendet. Drücken Sie die Lautstärketaste, um das Menü zu öffnen.</string>
     <string name="modloader">Mod-Loader</string>
     <string name="message_warn_renderer_global_setting">Die von Ihnen gewählte Version hat separate Einstellungen für jedes Profil, daher kann der hier angegebene Renderer nicht auf die aktuelle Version angewendet werden. Es wird empfohlen, die "Starten"-Taste lange zu drücken, um den Renderer auszuwählen.</string>
-
     <!-- 原 FCLLibrary 模块字符串（模块已并入 FCL） -->
     <string name="file_browser_title">Datei-Browser</string>
     <string name="file_browser_back">Zurück</string>
