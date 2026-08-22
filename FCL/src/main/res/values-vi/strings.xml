@@ -1,7 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Fold Craft Launcher</string>
     <string name="app_name_import">Cài đặt Modpack</string>
-
     <string name="splash_agreement">FCL yêu cầu quyền lưu trữ để quản lý và đọc các tệp trò chơi. FCL hoàn toàn mã nguồn mở trên GitHub, vì vậy bạn hãy yên tâm về an toàn dữ liệu của mình. Quyền này chỉ nhằm mục đích để trò chơi hoạt động bình thường và không gây ra rủi ro về bảo mật.</string>
     <string name="splash_permission_msg">Không có quyền lưu trữ, vui lòng cấp quyền cho Fold Craft Launcher.</string>
     <string name="splash_permission_grant">Cấp quyền</string>
@@ -10,7 +10,6 @@
     <string name="splash_permission_settings">Cài đặt</string>
     <string name="splash_permission_settings_msg">Bạn đã chọn "Không bao giờ cho phép". Vui lòng cấp quyền lưu trữ theo cách thủ công trong cài đặt.</string>
     <string name="notification_permission">FCL yêu cầu quyền gửi thông báo để tránh các sự cố khi cài đặt hoặc khởi động trò chơi.</string>
-
     <string name="splash_title">Chào mừng đến với Fold Craft Launcher</string>
     <string name="splash_eula_error">Không thể lấy EULA, vui lòng kiểm tra kết nối mạng.</string>
     <string name="splash_eula_next">Đồng ý và Tiếp tục</string>
@@ -26,7 +25,6 @@
     <string name="splash_runtime_jna" translatable="false">JNA</string>
     <string name="splash_runtime_install">Cài đặt / Cập nhật</string>
     <string name="missing_runtime_arch_files">Trình khởi chạy hiện đang cài đặt thiếu các tệp thời gian chạy cần thiết cho kiến trúc thiết bị của bạn (%s). Vui lòng tải xuống gói cài đặt cho kiến trúc tương ứng (%s) hoặc gói cài đặt đa năng (%s).</string>
-
     <string name="account">Tài khoản</string>
     <string name="version">Phiên bản</string>
     <string name="launch_mode">Chế độ khởi chạy</string>
@@ -35,14 +33,12 @@
     <string name="controller">Bộ điều khiển</string>
     <string name="multiplayer">Nhiều người chơi</string>
     <string name="setting">Cài đặt</string>
-
     <string name="about">Giới thiệu</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
     <string name="about_sponsor">Nhà tài trợ</string>
     <string name="about_source">Mã nguồn mở</string>
     <string name="about_desc">Fold Craft Launcher là trình khởi chạy Minecraft dành cho Android, cho phép người dùng chạy Minecraft: Java Edition trên thiết bị Android.\n\nFold Craft Launcher được phát triển bởi FCL-Team.\n\nHầu hết các tính năng của Fold Craft Launcher được sửa đổi dựa trên HMCLCore.\n\nỨng dụng này sử dụng và trích dẫn một số mã của PojavLauncher và Boat, vì vậy nếu bạn định phân phối ứng dụng này, vui lòng tuân theo Giấy phép GPL-v3.</string>
-
     <string name="account_add_server">Thêm máy chủ xác thực</string>
     <string name="account_add_server_url">URL máy chủ</string>
     <string name="account_add_server_name">Tên máy chủ</string>
@@ -102,26 +98,21 @@
     <string name="account_skin_upload">Chọn tệp skin</string>
     <string name="account_state_no_account">Không có tài khoản</string>
     <string name="account_state_add">Nhấp để thêm</string>
-
     <string name="action_refresh">Làm mới</string>
     <string name="action_retry">Thử lại</string>
     <string name="action_share">Chia sẻ</string>
     <string name="action_upload">Tải lên nhật ký</string>
     <string name="action_skip">Bỏ qua</string>
-
     <string name="announcement">Thông báo: %s</string>
     <string name="announcement_significant">Đây là thông báo quan trọng. Vui lòng xác nhận rằng bạn đã đọc thông báo này trước khi ẩn nó. Bạn có muốn tiếp tục ẩn nó không?</string>
-
     <string name="archive_author">Tác giả</string>
     <string name="archive_date">Ngày xuất bản</string>
     <string name="archive_game_version">Phiên bản trò chơi</string>
     <string name="archive_name">Tên tệp</string>
     <string name="archive_version">Phiên bản</string>
-
     <string name="assets_download">Đang tải xuống Assets</string>
     <string name="assets_download_all">Đang xác minh tính toàn vẹn của assets</string>
     <string name="assets_index_malformed">Các tệp index của assets đã tải xuống bị hỏng.</string>
-
     <string name="button_back">Quay lại</string>
     <string name="button_cancel">Hủy</string>
     <string name="button_copy">Sao chép</string>
@@ -146,12 +137,10 @@
     <string name="button_down" translatable="false">▼</string>
     <string name="button_left" translatable="false">◀</string>
     <string name="button_right" translatable="false">▶</string>
-
     <string name="community">Cộng đồng</string>
     <string name="community_hint">Tham gia cộng đồng của chúng tôi để nhận phiên bản mới nhất, báo cáo lỗi, v.v. Vui lòng tuân thủ các quy tắc cộng đồng nếu bạn tham gia.</string>
     <string name="community_discord" translatable="false">Discord</string>
     <string name="community_qq">Nhóm QQ</string>
-
     <string name="control_create">Tạo Bộ điều khiển</string>
     <string name="control_delete">Bạn có chắc chắn muốn xóa bộ điều khiển này không?</string>
     <string name="control_download">Tải xuống Bộ điều khiển</string>
@@ -197,9 +186,7 @@
     <string name="control_convert_failed">Chuyển đổi thất bại!</string>
     <string name="control_convert_unsupported">Không hỗ trợ chuyển đổi ZL2 trên thiết bị này (cần arm64)</string>
     <string name="control_upload">Tải lên Bộ điều khiển</string>
-
     <string name="curse_category_0">Tất cả</string>
-
     <string name="curse_category_4474">Khoa học viễn tưởng</string>
     <string name="curse_category_4481">Nhỏ / Nhẹ</string>
     <string name="curse_category_4483">Chiến đấu</string>
@@ -219,18 +206,17 @@
     <string name="curse_category_7418">Kinh dị</string>
     <string name="curse_category_9243">Chuyên gia</string>
     <string name="curse_category_10683" translatable="false">RLCraft</string>
-
     <string name="curse_category_5299">Giáo dục</string>
     <string name="curse_category_5232">Galacticraft</string>
     <string name="curse_category_5129">Vanilla+</string>
-    <string name="curse_category_5189">Tiện ích &#38; QOL</string>
+    <string name="curse_category_5189">Tiện ích &amp; QOL</string>
     <string name="curse_category_6814">Hiệu suất</string>
     <string name="curse_category_6954">Tích hợp Động lực học</string>
     <string name="curse_category_6484">Tạo</string>
     <string name="curse_category_6821">Sửa lỗi</string>
     <string name="curse_category_6145">Skyblock</string>
     <string name="curse_category_5190">QoL</string>
-    <string name="curse_category_5191">Tiện ích &#38; QoL</string>
+    <string name="curse_category_5191">Tiện ích &amp; QoL</string>
     <string name="curse_category_5192">FancyMenu</string>
     <string name="curse_category_423">Bản đồ và Thông tin</string>
     <string name="curse_category_426">Tiện ích mở rộng</string>
@@ -279,7 +265,6 @@
     <string name="curse_category_7669">Twilight Forest</string>
     <string name="curse_category_9049">Refined Storage</string>
     <string name="curse_category_10754">Farmer\'s Delight</string>
-
     <string name="curse_category_5244">Gói Phông chữ</string>
     <string name="curse_category_5193">Gói Dữ liệu</string>
     <string name="curse_category_399">Steampunk</string>
@@ -296,7 +281,6 @@
     <string name="curse_category_4465">Hỗ trợ Mod</string>
     <string name="curse_category_402">Thời trung cổ</string>
     <string name="curse_category_401">Hiện đại</string>
-
     <string name="curse_category_4464">Thế giới có Mod</string>
     <string name="curse_category_250">Bản đồ Trò chơi</string>
     <string name="curse_category_249">Sáng tạo</string>
@@ -304,7 +288,6 @@
     <string name="curse_category_253">Sinh tồn</string>
     <string name="curse_category_248">Phiêu lưu</string>
     <string name="curse_category_252">Câu đố</string>
-
     <string name="curse_category_4551">Chế độ Nhiệm vụ Khó nhằn</string>
     <string name="curse_category_4548">Lucky Blocks</string>
     <string name="curse_category_4556">Tiến triển</string>
@@ -319,36 +302,30 @@
     <string name="curse_category_6555">Vanilla</string>
     <string name="curse_category_6554">Kỳ ảo</string>
     <string name="curse_category_6553">Thực tế</string>
-
     <string name="curse_sort_author">Tác giả</string>
     <string name="curse_sort_date_created">Ngày tạo</string>
     <string name="curse_sort_last_updated">Cập nhật lần cuối</string>
     <string name="curse_sort_name">Tên</string>
     <string name="curse_sort_popularity">Phổ biến</string>
     <string name="curse_sort_total_downloads">Tổng số lượt tải xuống</string>
-
     <string name="datapack_add">Cài đặt gói dữ liệu</string>
     <string name="datapack_choose_datapack">Chọn gói dữ liệu để nhập</string>
-
     <string name="download_code_404">Không tìm thấy tệp trên máy chủ từ xa: %s</string>
     <string name="download_failed">Không thể tải xuống %1$s, mã phản hồi: %2$d</string>
     <string name="download_failed_empty">Không có phiên bản nào khả dụng</string>
     <string name="download_failed_refresh">Không thể tìm nạp danh sách phiên bản. Vui lòng thử lại.</string>
-
     <string name="download_provider_mcbbs">MCBBS (https://www.mcbbs.net/)</string>
     <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
     <string name="download_provider_mojang">Mojang (OptiFine được cung cấp bởi OF-302)</string>
     <string name="download_provider_official">Từ các nguồn chính thức</string>
     <string name="download_provider_balanced">Từ nguồn nhanh nhất có sẵn</string>
     <string name="download_provider_mirror">Từ máy nhân bản</string>
-
     <string name="edit_view_clone">Sao chép Chế độ xem</string>
     <string name="edit_view_delete">Xóa Chế độ xem</string>
     <string name="edit_view_event">Sự kiện Chế độ xem</string>
     <string name="edit_view_info">Thông tin Chế độ xem cơ bản</string>
     <string name="edit_view_no_group">Vui lòng thêm hoặc chọn một nhóm chế độ xem trước!</string>
     <string name="edit_view_style">Kiểu Chế độ xem</string>
-
     <string name="edit_button_title">Chỉnh sửa Nút</string>
     <string name="edit_button_delete">Bạn có chắc chắn muốn xóa nút này không?</string>
     <string name="edit_button_text">Văn bản hiển thị</string>
@@ -370,7 +347,6 @@
     <string name="edit_button_event_keycodes_keyboard">Bàn phím</string>
     <string name="edit_button_event_keycodes_mouse">Chuột</string>
     <string name="edit_button_event_bind_group">Chuyển đổi Khả năng hiển thị Nhóm Chế độ xem</string>
-
     <string name="edit_direction_title">Chỉnh sửa Bộ điều khiển hướng</string>
     <string name="edit_direction_delete">Bạn có chắc chắn muốn xóa bộ điều khiển hướng này không?</string>
     <string name="edit_direction_event_up">Mã phím Lên</string>
@@ -383,11 +359,9 @@
     <string name="edit_direction_event_follow_always">Tất cả các phần theo ngón tay</string>
     <string name="edit_direction_event_sneak">Nhấp đúp vào tâm để lén lút</string>
     <string name="edit_direction_event_sneak_code">Mã phím Lén lút</string>
-
     <string name="exception_access_denied">Không thể truy cập tệp %s.</string>
     <string name="exception_artifact_malformed">Không thể xác minh tính toàn vẹn của các tệp đã tải xuống.</string>
     <string name="exception_ssl_handshake">Không thể thiết lập kết nối SSL do thiếu chứng chỉ SSL trong bản cài đặt Java hiện tại.</string>
-
     <string name="folder_config">Duyệt cấu hình</string>
     <string name="folder_game">Duyệt thư mục trò chơi</string>
     <string name="folder_log">Duyệt thư mục nhật ký</string>
@@ -404,7 +378,6 @@
     <string name="folder_saves">Duyệt bản lưu</string>
     <string name="folder_screenshots">Duyệt ảnh chụp màn hình</string>
     <string name="folder_shaderpacks">Duyệt gói shader</string>
-
     <string name="game_crash_info">Thông tin sự cố</string>
     <string name="game_crash_reason">Nguyên nhân sự cố</string>
     <string name="game_crash_reason_multiple">Đã phát hiện nhiều nguyên nhân:\n\n</string>
@@ -463,17 +436,14 @@
     <string name="game_crash_reason_unsatisfied_link_error">Không thể khởi chạy Minecraft do thiếu thư viện: %1$s.</string>
     <string name="game_crash_title">Trò chơi bị sự cố</string>
     <string name="game_crash_title_add">Bạn nên gửi toàn bộ tệp nhật ký sự cố thay vì chụp ảnh màn hình</string>
-
     <string name="help">Trợ giúp</string>
     <string name="help_category">Danh mục</string>
     <string name="help_website">Trang web</string>
-
     <string name="input_hint_not_empty">Bắt buộc</string>
     <string name="input_hint_optional">Tùy chọn</string>
     <string name="input_not_empty">Điền vào ô nhập bắt buộc trước.</string>
     <string name="input_number">Đầu vào phải là một số.</string>
     <string name="input_url">Đầu vào phải là một URL hợp lệ.</string>
-
     <string name="install_change_version">Thay đổi Phiên bản</string>
     <string name="install_change_version_confirm">Bạn có chắc chắn muốn chuyển %s từ phiên bản %s sang %s không?</string>
     <string name="install_failed">Cài đặt thất bại</string>
@@ -509,12 +479,10 @@
     <string name="install_new_game_already_exists">Instance này đã tồn tại. Vui lòng sử dụng tên khác.</string>
     <string name="install_new_game_malformed">Tên không hợp lệ</string>
     <string name="install_success">Cài đặt thành công.</string>
-
     <string name="jar_execute">Thực thi Jar</string>
     <string name="jar_execute_custom_args">Thực thi với đối số tùy chỉnh</string>
     <string name="jar_executor_crash_title">Trình thực thi Jar bị sự cố</string>
     <string name="jar_executor_crash_reason">Hiện chưa hỗ trợ phân tích nguyên nhân sự cố Trình thực thi Jar.</string>
-
     <string name="launch_pojav">Pojav</string>
     <string name="launch_boat">Boat</string>
     <string name="launch_error_java">Bạn đang sử dụng phiên bản Java đã lỗi thời, bạn có chắc chắn muốn tiếp tục không?</string>
@@ -523,14 +491,12 @@
     <string name="launch_error_java_continue_disable">Tiếp tục (tắt kiểm tra)</string>
     <string name="launch_failed">Không thể khởi chạy</string>
     <string name="launch_failed_download_library">Không thể tải xuống thư viện %s.</string>
-
     <string name="launch_state_dependencies">Đang phân giải các phụ thuộc</string>
     <string name="launch_state_modpack">Đang tải xuống các phụ thuộc</string>
     <string name="launch_state_java">Đang kiểm tra phiên bản Java</string>
     <string name="launch_state_logging_in">Đang đăng nhập</string>
     <string name="launch_state_waiting_launching">Đang đợi trò chơi khởi chạy</string>
     <string name="launch_state_done">Hoàn tất khởi chạy</string>
-
     <string name="menu_controls">Bộ điều khiển</string>
     <string name="menu_controls_current">Bộ điều khiển hiện tại</string>
     <string name="menu_controls_edit_mode">Chế độ Chỉnh sửa</string>
@@ -547,7 +513,6 @@
     <string name="menu_controls_style">Kiểu</string>
     <string name="menu_controls_button_style">Kiểu Nút</string>
     <string name="menu_controls_direction_style">Kiểu Bộ điều khiển hướng</string>
-
     <string name="menu_control_base">Cài đặt Cơ bản</string>
     <string name="menu_control_button">Nút</string>
     <string name="menu_control_button_text">Văn bản</string>
@@ -566,7 +531,6 @@
     <string name="menu_control_view_group_empty">Vui lòng điền tên nhóm chế độ xem trước</string>
     <string name="menu_control_view_group_visible">Hiển thị</string>
     <string name="menu_control_view_group_invisible">Ẩn</string>
-
     <string name="menu_settings">Cài đặt</string>
     <string name="menu_settings_debug">Gỡ lỗi</string>
     <string name="menu_settings_disable_gesture">Tắt Cử chỉ</string>
@@ -615,7 +579,6 @@
     <string name="menu_settings_show_log_auto">Tự động Hiển thị Nhật ký</string>
     <string name="menu_settings_performance_mode">Chế độ Hiệu suất Duy trì</string>
     <string name="menu_settings_show_memory">Hiển thị Bộ nhớ</string>
-
     <string name="message_cancelled">Thao tác đã bị hủy</string>
     <string name="message_copy">Sao chép thành công!</string>
     <string name="message_doing">Vui lòng đợi</string>
@@ -626,7 +589,6 @@
     <string name="message_success">Thao tác hoàn thành thành công</string>
     <string name="message_unknown">Không xác định</string>
     <string name="message_warning">Cảnh báo</string>
-
     <string name="modpack">Modpack</string>
     <string name="modpack_choose">Chọn modpack</string>
     <string name="modpack_choose_local">Nhập từ tệp cục bộ</string>
@@ -696,7 +658,6 @@
     <string name="modpack_wizard_step_initialization_include_launcher">Bao gồm trình khởi chạy</string>
     <string name="modpack_wizard_step_initialization_save">Xuất đến…</string>
     <string name="modpack_wizard_step_initialization_warning">Trước khi tạo modpack, hãy đảm bảo trò chơi khởi chạy và đó là phiên bản phát hành thay vì phiên bản ảnh chụp nhanh.\n\nHãy nhớ rằng bạn không được phép thêm các mod và gói tài nguyên được nêu rõ là không được phân phối hoặc đưa vào modpack.</string>
-
     <string name="modrinth_category_adventure">Phiêu lưu</string>
     <string name="modrinth_category_bukkit">Bukkit</string>
     <string name="modrinth_category_bungeecord">BungeeCord</string>
@@ -781,7 +742,6 @@
     <string name="modrinth_category_simplistic">Đơn giản hóa</string>
     <string name="modrinth_category_themed">Chủ đề</string>
     <string name="modrinth_category_tweaks">Điều chỉnh</string>
-
     <string name="mods">Mods</string>
     <string name="mods_add">Thêm Mods</string>
     <string name="mods_add_failed">Không thể cài đặt mod %s.</string>
@@ -826,23 +786,19 @@
     <string name="mods_url">Trang chính thức</string>
     <string name="mods_update_modpack_mod_warning">Việc cập nhật mods trong một modpack có thể dẫn đến kết quả không thể sửa chữa, có thể làm hỏng modpack khiến nó không thể khởi động. Bạn có chắc chắn muốn cập nhật không?</string>
     <string name="mods_screenshot_no_result">Không có ảnh chụp màn hình nào để hiển thị</string>
-
     <string name="profile_shared">Thư mục dùng chung</string>
     <string name="profile_private">Thư mục riêng tư</string>
     <string name="profile_name">Tên</string>
     <string name="profile_path">Đường dẫn</string>
     <string name="profile_select">Chọn Thư mục</string>
     <string name="profile_already_exist">Tên này đã tồn tại, vui lòng sử dụng tên khác.</string>
-
     <string name="quick_input_title">Nhập nhanh</string>
     <string name="quick_input_add">Thêm Văn bản Mới</string>
     <string name="quick_input_text">Văn bản Nhập nhanh</string>
     <string name="quick_input_remarks">Ghi chú (tùy chọn)</string>
     <string name="quick_input_exist">Văn bản đã tồn tại!</string>
     <string name="quick_input_empty">Điền văn bản trước!</string>
-
     <string name="resourcepack">Gói Tài nguyên</string>
-
     <string name="search">Tìm kiếm</string>
     <string name="search_hint_chinese">Truy vấn tìm kiếm hỗ trợ cả tiếng Trung và tiếng Anh</string>
     <string name="search_hint_english">Chỉ hỗ trợ tiếng Anh</string>
@@ -853,13 +809,12 @@
     <string name="search_next_page" translatable="false">▶</string>
     <string name="search_last_page">Cuối</string>
     <string name="search_page_n" translatable="false">%d / %s</string>
-
     <string name="settings_advanced_dont_check_game_completeness">Không kiểm tra tính toàn vẹn của trò chơi</string>
     <string name="settings_advanced_dont_check_jvm_validity">Không kiểm tra tính tương thích của JVM</string>
     <string name="settings_advanced_dont_check_mod">Không kiểm tra tính tương thích của Mod</string>
     <string name="settings_advanced_debug_log">Xuất nhật ký gỡ lỗi</string>
     <string name="settings_advanced_game_dir_default">Mặc định (.minecraft/)</string>
-    <string name="settings_advanced_game_dir_independent">Cô lập (.minecraft/versions/&#60;tên instance>/, ngoại trừ assets và thư viện)</string>
+    <string name="settings_advanced_game_dir_independent">Cô lập (.minecraft/versions/&lt;tên instance&gt;/, ngoại trừ assets và thư viện)</string>
     <string name="settings_advanced_jvm_args">Đối số máy ảo Java</string>
     <string name="settings_advanced_env">Biến Môi trường</string>
     <string name="settings_advanced_minecraft_arguments">Đối số Khởi chạy</string>
@@ -868,7 +823,6 @@
     <string name="settings_advanced_server_ip_prompt">Tự động tham gia sau khi khởi chạy trò chơi.</string>
     <string name="settings_advanced_custom_uuid">UUID Tùy chỉnh</string>
     <string name="settings_advanced_force_resolution">Buộc đặt độ phân giải (tùy chọn thử nghiệm, sử dụng thận trọng)</string>
-
     <string name="settings_fcl_controller">Bộ điều khiển</string>
     <string name="settings_fcl_vulkan_driver_system">Sử dụng trình điều khiển Vulkan hệ thống</string>
     <string name="settings_fcl_graphics_backend">Backend Đồ họa (chỉ có hiệu lực cho 26.2+)</string>
@@ -880,11 +834,8 @@
     <string name="settings_fcl_renderer_zink" translatable="false">Kopper Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, chỉ hỗ trợ GPU a616-a660)</string>
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, tích hợp sẵn)</string>
-
     <string name="settings_fcl_driver">Trình điều khiển Vulkan</string>
-
     <string name="settings_download_netdisk">Netdisk (Được đề xuất cho người dùng ở Trung Quốc)</string>
-
     <string name="settings_game">Cài đặt Trò chơi</string>
     <string name="settings_game_dimension">Độ phân giải</string>
     <string name="settings_game_cursor_offset">Độ lệch Con trỏ</string>
@@ -893,9 +844,7 @@
     <string name="settings_game_java_version_8" translatable="false">JRE 8</string>
     <string name="settings_game_java_version_17" translatable="false">JRE 17</string>
     <string name="settings_game_working_directory">Cô lập Thư mục Làm việc</string>
-
     <string name="settings_icon">Biểu tượng</string>
-
     <string name="settings_launcher">Cài đặt Trình khởi chạy</string>
     <string name="settings_launcher_request">Yêu cầu</string>
     <string name="settings_launcher_debug">Gỡ lỗi</string>
@@ -944,7 +893,6 @@
     <string name="settings_launcher_exit_after_launching">Trình khởi chạy thoát sau khi khởi chạy</string>
     <string name="settings_launcher_custom_launcher_name">Thông tin trình khởi chạy tùy chỉnh</string>
     <string name="settings_launcher_allow_screenshot">Cho phép chụp màn hình/ghi hình trong hoạt động sự cố</string>
-
     <string name="settings_memory">Bộ nhớ</string>
     <string name="settings_memory_allocate_auto">%1$.1f GB Tối thiểu / %2$.1f GB Đã phân bổ</string>
     <string name="settings_memory_allocate_auto_exceeded">%1$.1f GB Tối thiểu / %2$.1f GB Đã phân bổ (%3$.1f GB Khả dụng)</string>
@@ -957,7 +905,6 @@
     <string name="settings_tabs_installers">Trình tải Mod</string>
     <string name="settings_type_global_manage">Cài đặt Trò chơi Toàn cục</string>
     <string name="settings_type_special_enable">Bật cài đặt theo instance</string>
-
     <string name="style_name">Tên</string>
     <string name="style_warning_delete">Bạn có chắc chắn muốn xóa kiểu này không?</string>
     <string name="style_warning_exist">Kiểu đã tồn tại!</string>
@@ -985,7 +932,6 @@
     <string name="style_rocker_stroke_color">Màu Nét Cần gạt</string>
     <string name="style_rocker_corner_radius">Bán kính Góc Cần gạt</string>
     <string name="style_rocker_fill_color">Màu Tô Cần gạt</string>
-
     <string name="terracotta">Nhiều người chơi</string>
     <string name="terracotta_metadata">Phiên bản Terracotta: %s\nPhiên bản EasyTier: %s</string>
     <string name="terracotta_code_hint" translatable="false">U/XXXX-XXXX-XXXX-XXXX</string>
@@ -1058,10 +1004,9 @@
     <string name="terracotta_player_kind_local">Bạn</string>
     <string name="terracotta_player_kind_guest">Khách</string>
     <string name="terracotta_tutorial_host_btn">Hướng dẫn Chủ phòng</string>
-    <string name="terracotta_tutorial_host">Hướng dẫn Chủ phòng:\n\n - Đọc thông báo người dùng trên trang chủ nhiều người chơi của trình khởi chạy, sau đó bật chức năng nhiều người chơi.\n - Khởi chạy trò chơi, tìm menu nhiều người chơi trong menu FCL trong trò chơi và mở nó.\n - Nhấp vào &quot;Tôi muốn tổ chức một phiên&quot;, để quét cổng trò chơi.\n - Mở trò chơi và bật tùy chọn &quot;Mở LAN&quot; trong cài đặt trò chơi.\n - Nếu cửa sổ bật lên yêu cầu quyền VPN, vui lòng cấp; nếu không, nó sẽ không hoạt động bình thường.\n - Đợi một chút và mã mời sẽ được tự động sao chép. Nếu không được tự động sao chép, bạn cũng có thể sao chép thủ công trong menu nhiều người chơi.\n - Gửi mã mời cho bạn bè của bạn\n\nLưu ý:\n\n - Phần mềm này hỗ trợ tài khoản ngoại tuyến.\n - Phần mềm này hỗ trợ kết nối với các phần mềm hỗ trợ giao thức Scaffolding, chẳng hạn như HMCL và PCL CE.</string>
+    <string name="terracotta_tutorial_host">Hướng dẫn Chủ phòng:\n\n - Đọc thông báo người dùng trên trang chủ nhiều người chơi của trình khởi chạy, sau đó bật chức năng nhiều người chơi.\n - Khởi chạy trò chơi, tìm menu nhiều người chơi trong menu FCL trong trò chơi và mở nó.\n - Nhấp vào "Tôi muốn tổ chức một phiên", để quét cổng trò chơi.\n - Mở trò chơi và bật tùy chọn "Mở LAN" trong cài đặt trò chơi.\n - Nếu cửa sổ bật lên yêu cầu quyền VPN, vui lòng cấp; nếu không, nó sẽ không hoạt động bình thường.\n - Đợi một chút và mã mời sẽ được tự động sao chép. Nếu không được tự động sao chép, bạn cũng có thể sao chép thủ công trong menu nhiều người chơi.\n - Gửi mã mời cho bạn bè của bạn\n\nLưu ý:\n\n - Phần mềm này hỗ trợ tài khoản ngoại tuyến.\n - Phần mềm này hỗ trợ kết nối với các phần mềm hỗ trợ giao thức Scaffolding, chẳng hạn như HMCL và PCL CE.</string>
     <string name="terracotta_tutorial_guest_btn">Hướng dẫn Khách</string>
-    <string name="terracotta_tutorial_guest">Hướng dẫn Khách:\n\n - Đọc thông báo người dùng trên trang chủ nhiều người chơi của trình khởi chạy, sau đó bật chức năng nhiều người chơi.\n - Khởi chạy trò chơi, tìm menu nhiều người chơi trong menu FCL trong trò chơi và mở nó.\n - Nhấp vào &quot;Tôi muốn tham gia một phiên&quot;, nhập mã mời do chủ phòng cung cấp vào ô nhập và kiên nhẫn chờ đợi.\n - Nếu cửa sổ bật lên yêu cầu quyền VPN, vui lòng cấp; nếu không, nó sẽ không hoạt động bình thường.\n - Sau khi hiển thị bạn đã tham gia phòng, hãy chọn Nhiều người chơi và nhấp đúp vào Terracotta Lobby.\n\nLưu ý:\n\n - Phần mềm này hỗ trợ tài khoản ngoại tuyến.\n - Phần mềm này hỗ trợ kết nối với các phần mềm hỗ trợ giao thức Scaffolding, chẳng hạn như HMCL và PCL CE.\n - Khi tham gia trò chơi bằng địa chỉ máy chủ dự phòng, tài khoản ngoại tuyến không được hỗ trợ. Vui lòng tự giải quyết vấn đề này.</string>
-
+    <string name="terracotta_tutorial_guest">Hướng dẫn Khách:\n\n - Đọc thông báo người dùng trên trang chủ nhiều người chơi của trình khởi chạy, sau đó bật chức năng nhiều người chơi.\n - Khởi chạy trò chơi, tìm menu nhiều người chơi trong menu FCL trong trò chơi và mở nó.\n - Nhấp vào "Tôi muốn tham gia một phiên", nhập mã mời do chủ phòng cung cấp vào ô nhập và kiên nhẫn chờ đợi.\n - Nếu cửa sổ bật lên yêu cầu quyền VPN, vui lòng cấp; nếu không, nó sẽ không hoạt động bình thường.\n - Sau khi hiển thị bạn đã tham gia phòng, hãy chọn Nhiều người chơi và nhấp đúp vào Terracotta Lobby.\n\nLưu ý:\n\n - Phần mềm này hỗ trợ tài khoản ngoại tuyến.\n - Phần mềm này hỗ trợ kết nối với các phần mềm hỗ trợ giao thức Scaffolding, chẳng hạn như HMCL và PCL CE.\n - Khi tham gia trò chơi bằng địa chỉ máy chủ dự phòng, tài khoản ngoại tuyến không được hỗ trợ. Vui lòng tự giải quyết vấn đề này.</string>
     <string name="update">Cập nhật</string>
     <string name="update_netdisk">Netdisk</string>
     <string name="update_check">Kiểm tra Cập nhật</string>
@@ -1078,7 +1023,6 @@
     <string name="update_version">Phiên bản: %s</string>
     <string name="update_version_release">Phát hành</string>
     <string name="update_version_beta">Beta</string>
-
     <string name="version_game">Trò chơi</string>
     <string name="version_game_old">Lịch sử</string>
     <string name="version_game_april_fools">Cá tháng Tư</string>
@@ -1105,7 +1049,6 @@
     <string name="version_manage_rename_fail">Đổi tên thất bại</string>
     <string name="version_new_profile">Thư mục Mới</string>
     <string name="version_update">Cập nhật Modpack</string>
-
     <string name="view_info_visibility">Tùy chọn Khả năng hiển thị</string>
     <string name="view_info_visibility_always">Luôn hiển thị</string>
     <string name="view_info_visibility_game">Hiển thị trong Trò chơi</string>
@@ -1123,7 +1066,6 @@
     <string name="view_info_reference">Tham chiếu Kích thước</string>
     <string name="view_info_reference_width">Chiều rộng Màn hình</string>
     <string name="view_info_reference_height">Chiều cao Màn hình</string>
-
     <string name="world">Thế giới</string>
     <string name="world_permission_fix">Sửa Quyền Tệp Thế giới</string>
     <string name="world_add">Thêm Thế giới (.zip)</string>
@@ -1175,7 +1117,6 @@
     <string name="world_reveal">Hiển thị trong Trình duyệt</string>
     <string name="world_show_all">Hiển thị Tất cả</string>
     <string name="world_time">EEE, d MMM yyyy HH:mm:ss</string>
-
     <string name="install_apk">Cài đặt .apk</string>
     <string name="edit">Chỉnh sửa</string>
     <string name="modpack_download_warn_title">Thông báo</string>
@@ -1188,7 +1129,6 @@
     <string name="joystick_r">Cần điều khiển phải</string>
     <string name="message_vulkan_driver_system">Cảnh báo: Sử dụng trình điều khiển Vulkan hệ thống có thể mang lại hiệu suất tốt hơn, nhưng cũng có thể gây ra sự cố do các vấn đề tương thích!</string>
     <string name="message_loading_controllers">Đang tải bộ điều khiển, vui lòng đợi...</string>
-
     <string name="mcmod" translatable="false">
         <u>MC百科</u>
     </string>
@@ -1197,10 +1137,8 @@
     <string name="installed">Đã cài đặt</string>
     <string name="message_install_plugin">Bạn có thể nhận plugin thông qua các cách sau.</string>
     <string name="message_install_java">Bạn có thể nhận Java thông qua các cách sau.</string>
-
     <string name="shaderpack">Gói Shader</string>
     <string name="recommend_version">Phiên bản được đề xuất</string>
-
     <string name="mod_check_continue">Tiếp tục</string>
     <string name="mod_check_physics">Mod Physics (%s) hiện đang sử dụng chưa được vá (thay thế libPhysXJniBindings_64.so từ Linux x86_64 sang Android arm64/x86_64), nó sẽ gây ra sự cố.</string>
     <string name="mod_check_mcef">Mod MCEF (%s) không thể hoạt động trên Android. Nó thường được sử dụng như một phụ thuộc của WebDisplays/In-game Browser.</string>
@@ -1213,22 +1151,18 @@
     <string name="mod_check_sodium">Trình kết xuất GL4ES hiện đang sử dụng có thể không hỗ trợ các mod Sodium/Embeddium (%s). Tiếp tục khởi chạy có thể gây ra sự cố trò chơi. Bạn nên tải xuống và sử dụng trình kết xuất MobileGlues thay thế (https://github.com/MobileGL-Dev/MobileGlues-release/releases).</string>
     <string name="mod_check_flashback">Mod Flashback (%s) không thể hoạt động trên Android.</string>
     <string name="mod_check_ixeris">Mod Ixeris (%s) không thể hoạt động đúng trên FCL.</string>
-
     <string name="internal">Nội bộ</string>
     <string name="import_java">Nhập Java</string>
     <string name="import_java_wrong_file">Chỉ hỗ trợ nhập tệp tar.xz.</string>
     <string name="import_java_error">Đã phát hiện Java bạn nhập có thể không dành cho thiết bị hiện tại. Khởi chạy với nó có thể khiến chương trình bị sự cố. Bạn có muốn tiếp tục nhập không?</string>
     <string name="import_java_error_not_valid">Đã phát hiện cấu trúc tệp Java hiện đang nhập không hợp lệ và không thể sử dụng!</string>
     <string name="import_java_overwrite_wrong">Phiên bản Java này đã được nhập. Ghi đè phiên bản hiện tại?</string>
-
     <string name="ingame_folder_browse">Duyệt Thư mục</string>
     <string name="ingame_folder_import">Nhập</string>
     <string name="ingame_folder_import_failed">Đã xảy ra lỗi khi nhập tệp %1$s!\n%2$s</string>
-
     <string name="manage_version">Quản lý Phiên bản</string>
     <string name="select_renderer">Chọn Trình kết xuất</string>
     <string name="open_link_failed">Không thể tự động chuyển hướng đến trình duyệt. Liên kết đã được tự động sao chép. Vui lòng mở trình duyệt theo cách thủ công và dán vào.</string>
-
     <string name="launch">Khởi chạy</string>
     <string name="tip_hide_menu_view">Chế độ xem menu đã bị ẩn. Nhấn phím âm lượng để mở menu.</string>
     <string name="modloader">Trình tải Mod</string>
