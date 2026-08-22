@@ -1529,6 +1529,15 @@ public class GLFW
         ypos[0] = 0;
     }
 
+    public static void glfwGetWindowPos(@NativeType("GLFWwindow *") long window, @NativeType("int *") @Nullable IntBuffer xpos, @NativeType("int *") @Nullable IntBuffer ypos) {
+        if (CHECKS) {
+            checkSafe(xpos, 1);
+            checkSafe(ypos, 1);
+        }
+        xpos.put(0);
+        ypos.put(0);
+    }
+
     /** Array version of: {@link #glfwGetWindowSize GetWindowSize} */
     public static void glfwGetWindowSize(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("int *") int[] width, @Nullable @NativeType("int *") int[] height) {
         if (CHECKS) {
