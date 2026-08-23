@@ -9,7 +9,7 @@ import android.view.Choreographer;
 
 import androidx.annotation.Nullable;
 
-import com.tungsten.fcl.FCLApplication;
+import com.tungsten.fcl.FCLApp;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
@@ -118,7 +118,7 @@ public class CallbackBridge {
     // Called from JRE side
     @SuppressWarnings("unused")
     public static @Nullable String accessAndroidClipboard(int type, String copy) {
-        Activity activity = FCLApplication.getCurrentActivity();
+        Activity activity = FCLApp.getActivity();
         ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
         String result = null;
         switch (type) {

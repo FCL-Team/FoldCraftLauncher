@@ -4,9 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.os.Bundle
 import com.mio.data.Renderer
-import com.tungsten.fclauncher.utils.FCLPath
+import com.tungsten.fcl.FCLApp
 
 object RendererPlugin {
     private var isInit = false;
@@ -17,7 +16,7 @@ object RendererPlugin {
     val rendererList: MutableList<Renderer> = mutableListOf()
         get() {
             if (!isInit) {
-                init(FCLPath.CONTEXT)
+                init(FCLApp.getAppContext())
             }
             return field
         }

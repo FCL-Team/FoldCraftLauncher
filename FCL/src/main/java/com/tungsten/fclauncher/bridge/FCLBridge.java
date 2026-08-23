@@ -19,8 +19,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
+import com.tungsten.fcl.FCLApp;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
-import com.tungsten.fclauncher.utils.FCLPath;
 
 import org.lwjgl.glfw.CallbackBridge;
 
@@ -207,13 +207,13 @@ public class FCLBridge implements Serializable {
     }
 
     public void setPrimaryClipString(String string) {
-        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) FCLApp.getAppContext().getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("FCL Clipboard", string);
         clipboard.setPrimaryClip(clip);
     }
 
     public String getPrimaryClipString() {
-        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipboardManager clipboard = (ClipboardManager) FCLApp.getAppContext().getSystemService(Context.CLIPBOARD_SERVICE);
         if (!clipboard.hasPrimaryClip()) {
             return null;
         }
@@ -228,8 +228,11 @@ public class FCLBridge implements Serializable {
     }
 
     public static void openLink(final String link) {
-        Context context = FCLPath.CONTEXT;
-        ((Activity) context).runOnUiThread(() -> {
+        Activity activity = FCLApp.getActivity();
+        if (activity == null) {
+            return;
+        }
+        activity.runOnUiThread(() -> {
             try {
                 String targetLink = link;
                 if (link.startsWith("file:")) {
@@ -246,10 +249,10 @@ public class FCLBridge implements Serializable {
                 if (targetLink.startsWith("http")) {
                     uri = Uri.parse(targetLink);
                 } else {
-                    uri = FileProvider.getUriForFile(context, ((Activity) context).getApplication().getPackageName() + ".provider", new File(targetLink));
+                    uri = FileProvider.getUriForFile(activity, activity.getApplication().getPackageName() + ".provider", new File(targetLink));
                 }
                 intent.setDataAndType(uri, "*/*");
-                context.startActivity(Intent.createChooser(intent, ""));
+                activity.startActivity(Intent.createChooser(intent, ""));
             } catch (Exception e) {
                 Log.e("openLink error", "link:" + link + " err:" + e.toString());
             }
@@ -257,9 +260,12 @@ public class FCLBridge implements Serializable {
     }
 
     public static void querySystemClipboard() {
-        Context context = FCLPath.CONTEXT;
-        ClipboardManager clipboard = (ClipboardManager) FCLPath.CONTEXT.getSystemService(Context.CLIPBOARD_SERVICE);
-        ((Activity) context).runOnUiThread(() -> {
+        Activity activity = FCLApp.getActivity();
+        if (activity == null) {
+            return;
+        }
+        ClipboardManager clipboard = (ClipboardManager) FCLApp.getAppContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        activity.runOnUiThread(() -> {
             ClipData clipData = clipboard.getPrimaryClip();
             if (clipData == null) {
                 nativeClipboardReceived(null, null);
@@ -277,9 +283,12 @@ public class FCLBridge implements Serializable {
     }
 
     public static void putClipboardData(String data, String mimeType) {
-        Context context = FCLPath.CONTEXT;
-        ((Activity) context).runOnUiThread(() -> {
-            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+        Activity activity = FCLApp.getActivity();
+        if (activity == null) {
+            return;
+        }
+        activity.runOnUiThread(() -> {
+            ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clipData = null;
             switch (mimeType) {
                 case "text/plain":

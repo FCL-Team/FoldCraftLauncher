@@ -33,13 +33,12 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.mio.manager.RendererManager;
 import com.mio.util.LauncherUtilKt;
-import com.tungsten.fcl.FCLApplication;
+import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
-import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.event.EventManager;
@@ -351,7 +350,7 @@ public class FCLGameRepository extends DefaultGameRepository {
     private static final Map<Integer, Drawable.ConstantState> DRAWABLE_CACHE = new ConcurrentHashMap<>();
 
     private Drawable getDrawable(int id) {
-        return DRAWABLE_CACHE.computeIfAbsent(id, k -> AppCompatResources.getDrawable(FCLPath.CONTEXT, k).getConstantState()).newDrawable();
+        return DRAWABLE_CACHE.computeIfAbsent(id, k -> AppCompatResources.getDrawable(FCLApp.getAppContext(), k).getConstantState()).newDrawable();
     }
 
     public void saveVersionSetting(String id) {
@@ -396,14 +395,14 @@ public class FCLGameRepository extends DefaultGameRepository {
         LaunchOptions.Builder builder = new LaunchOptions.Builder()
                 .setGameDir(gameDir)
                 .setJava(javaVersion)
-                .setVersionType(LauncherUtilKt.getLauncherName(FCLPath.CONTEXT))
+                .setVersionType(LauncherUtilKt.getLauncherName(FCLApp.getAppContext()))
                 .setVersionName(version)
-                .setProfileName(FCLPath.CONTEXT.getString(R.string.app_name))
+                .setProfileName(FCLApp.getAppContext().getString(R.string.app_name))
                 .setGameArguments(StringUtils.tokenize(vs.getMinecraftArgs()))
                 .setJavaArguments(StringUtils.tokenize(vs.getJavaArgs()))
                 .setMaxMemory((int) (getAllocatedMemory(
                         vs.getMaxMemory() * 1024L * 1024L,
-                        MemoryUtils.getFreeDeviceMemory(FCLPath.CONTEXT) * 1024L * 1024L,
+                        MemoryUtils.getFreeDeviceMemory(FCLApp.getAppContext()) * 1024L * 1024L,
                         vs.isAutoMemory()
                 ) / 1024 / 1024))
                 .setMinMemory(vs.getMaxMemory())
@@ -512,7 +511,7 @@ public class FCLGameRepository extends DefaultGameRepository {
         FCLBridge.FORCE_RESOLUTION = vs.isForceResolution();
         if (FCLBridge.FORCE_RESOLUTION) {
             try {
-                SharedPreferences preferences = Objects.requireNonNull(FCLApplication.getCurrentActivity()).getSharedPreferences("launcher", MODE_PRIVATE);
+                SharedPreferences preferences = Objects.requireNonNull(FCLApp.getActivity()).getSharedPreferences("launcher", MODE_PRIVATE);
                 String[] split = preferences.getString("force_resolution", "1920x1080").toLowerCase().split("x");
                 if (split.length == 2) {
                     int w = Integer.parseInt(split[0]);

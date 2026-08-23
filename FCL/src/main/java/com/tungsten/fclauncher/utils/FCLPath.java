@@ -7,8 +7,6 @@ import java.io.File;
 
 public class FCLPath {
 
-    public static Context CONTEXT;
-
     public static String NATIVE_LIB_DIR;
 
     public static String LOG_DIR;
@@ -43,8 +41,6 @@ public class FCLPath {
     public static String LIVE_BACKGROUND_PATH;
 
     public static void loadPaths(Context context) {
-        CONTEXT = context;
-
         NATIVE_LIB_DIR = context.getApplicationInfo().nativeLibraryDir;
 
         LOG_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/log";

@@ -5,7 +5,7 @@ import com.mio.data.Renderer
 import com.tungsten.fcl.R
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.plugins.RendererPlugin
-import com.tungsten.fclauncher.utils.FCLPath
+import com.tungsten.fcl.FCLApp
 
 object RendererManager {
     lateinit var RENDERER_GL4ES: Renderer
@@ -20,7 +20,7 @@ object RendererManager {
     val rendererList: MutableList<Renderer> = mutableListOf()
         get() {
             if (!isInit) {
-                init(FCLPath.CONTEXT)
+                init(FCLApp.getAppContext())
             }
             return field
         }

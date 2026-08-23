@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import androidx.core.graphics.ColorUtils
 import com.mio.util.ImageUtil
+import com.tungsten.fcl.FCLApp
 import com.tungsten.fcl.R
 import com.tungsten.fcllibrary.util.ConvertUtils
 import kotlinx.coroutines.CoroutineScope
@@ -53,7 +54,7 @@ data class ThemeData(
 
     /** 按当前亮暗模式取次要色（亮色用 [color2]，暗色用 [color2Dark]） */
     fun getColor2(): Int {
-        val activity = com.tungsten.fcl.FCLApplication.getCurrentActivity()
+        val activity = FCLApp.getActivity()
         return if (activity != null && ThemeEngine.isNightMode(activity)) color2Dark else color2
     }
 

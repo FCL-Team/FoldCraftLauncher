@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import com.tungsten.fclauncher.utils.FCLPath
+import com.tungsten.fcl.FCLApp
 
 object DriverPlugin {
     data class Driver(val driver: String, val path: String)
@@ -18,7 +18,7 @@ object DriverPlugin {
     val driverList: MutableList<Driver> = mutableListOf()
         get() {
             if (!isInit) {
-                init(FCLPath.CONTEXT)
+                init(FCLApp.getAppContext())
             }
             return field
         }

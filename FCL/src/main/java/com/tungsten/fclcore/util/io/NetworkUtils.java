@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
 import com.tungsten.fclcore.util.Pair;
 
@@ -115,7 +115,7 @@ public final class NetworkUtils {
             connection.setRequestProperty("User-Agent", "pan.baidu.com");
         } else {
             // Default
-            connection.setRequestProperty("User-Agent", "FCL/" + FCLPath.CONTEXT.getString(R.string.app_version));
+            connection.setRequestProperty("User-Agent", "FCL/" + FCLApp.getAppContext().getString(R.string.app_version));
         }
         connection.setUseCaches(false);
         connection.setConnectTimeout(TIME_OUT);

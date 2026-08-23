@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.gson.JsonParser
 import com.mio.data.Renderer
+import com.tungsten.fcl.FCLApp
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.util.gson.JsonUtils
 import com.tungsten.fclcore.util.platform.MemoryUtils
@@ -30,7 +31,7 @@ class VersionSettingTest {
         FCLPath.loadPaths(ApplicationProvider.getApplicationContext<Context>())
     }
 
-    private fun defaultMemory() = MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT)
+    private fun defaultMemory() = MemoryUtils.findBestRAMAllocation(FCLApp.getAppContext())
 
     @Test
     fun defaultValues() {

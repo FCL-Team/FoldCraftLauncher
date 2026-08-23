@@ -4,12 +4,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
+import com.tungsten.fcl.FCLApp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.ui.UIManager
-import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.AuthInfo
 import com.tungsten.fclcore.auth.AuthenticationException
@@ -213,8 +213,13 @@ class AccountListItem(
                 val latch = CountDownLatch(1)
                 val res = AtomicReference<AuthInfo>(null)
                 Schedulers.androidUIThread().execute {
+                    val activity = FCLApp.getActivity()
+                    if (activity == null) {
+                        latch.countDown()
+                        return@execute
+                    }
                     val dialog = ClassicAccountLoginDialog(
-                        FCLPath.CONTEXT, account,
+                        activity, account,
                         { authInfo ->
                             res.set(authInfo)
                             latch.countDown()
@@ -229,8 +234,13 @@ class AccountListItem(
                 val latch = CountDownLatch(1)
                 val res = AtomicReference<AuthInfo>(null)
                 Schedulers.androidUIThread().execute {
+                    val activity = FCLApp.getActivity()
+                    if (activity == null) {
+                        latch.countDown()
+                        return@execute
+                    }
                     val dialog = OAuthAccountLoginDialog(
-                        FCLPath.CONTEXT, account,
+                        activity, account,
                         { authInfo ->
                             res.set(authInfo)
                             latch.countDown()

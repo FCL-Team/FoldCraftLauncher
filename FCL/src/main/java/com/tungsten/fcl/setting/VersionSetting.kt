@@ -29,7 +29,7 @@ import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
 import com.mio.JavaManager
 import com.mio.data.Renderer
-import com.tungsten.fclauncher.utils.FCLPath
+import com.tungsten.fcl.FCLApp
 import com.tungsten.fclcore.util.Lang
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import java.lang.reflect.Type
@@ -76,7 +76,7 @@ class VersionSetting : Cloneable {
     /**
      * The maximum memory/MB that JVM can allocate for heap.
      */
-    var maxMemory: Int = MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT)
+    var maxMemory: Int = MemoryUtils.findBestRAMAllocation(FCLApp.getAppContext())
         set(value) {
             if (field == value) return
             field = value
@@ -294,7 +294,7 @@ class VersionSetting : Cloneable {
                 addProperty("minecraftArgs", src.minecraftArgs)
                 addProperty(
                     "maxMemory",
-                    if (src.maxMemory <= 0) MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT) else src.maxMemory
+                    if (src.maxMemory <= 0) MemoryUtils.findBestRAMAllocation(FCLApp.getAppContext()) else src.maxMemory
                 )
                 addProperty("minMemory", src.minMemory)
                 addProperty("autoMemory", src.isAutoMemory)
@@ -326,9 +326,9 @@ class VersionSetting : Cloneable {
 
             var maxMemoryN = parseJsonPrimitive(
                 json["maxMemory"]?.asJsonPrimitive,
-                MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT)
+                MemoryUtils.findBestRAMAllocation(FCLApp.getAppContext())
             )
-            if (maxMemoryN <= 0) maxMemoryN = MemoryUtils.findBestRAMAllocation(FCLPath.CONTEXT)
+            if (maxMemoryN <= 0) maxMemoryN = MemoryUtils.findBestRAMAllocation(FCLApp.getAppContext())
             return VersionSetting().also { vs ->
                 vs.isUsesGlobal = json["usesGlobal"]?.asBoolean ?: false
                 vs.javaArgs = json["javaArgs"]?.asString ?: ""

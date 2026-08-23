@@ -24,7 +24,7 @@ import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.tungsten.fcl.R;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.FXUtils;
-import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fcl.FCLApp;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
@@ -39,7 +39,6 @@ import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -303,8 +302,8 @@ public class WorldInfoPage extends FCLPage {
 
     private static final class Dimension {
         static final Dimension OVERWORLD = new Dimension(null);
-        static final Dimension THE_NETHER = new Dimension(FCLPath.CONTEXT.getString(R.string.world_info_dimension_the_nether));
-        static final Dimension THE_END = new Dimension(FCLPath.CONTEXT.getString(R.string.world_info_dimension_the_end));
+        static final Dimension THE_NETHER = new Dimension(FCLApp.getAppContext().getString(R.string.world_info_dimension_the_nether));
+        static final Dimension THE_END = new Dimension(FCLApp.getAppContext().getString(R.string.world_info_dimension_the_end));
 
         final String name;
 
@@ -420,7 +419,7 @@ public class WorldInfoPage extends FCLPage {
         @NonNull
         @Override
         public String toString() {
-            return AndroidUtilKt.getLocalizedText(FCLPath.CONTEXT, "world_info_difficulty_" + name().toLowerCase(Locale.ROOT));
+            return AndroidUtilKt.getLocalizedText(FCLApp.getAppContext(), "world_info_difficulty_" + name().toLowerCase(Locale.ROOT));
         }
     }
 
@@ -449,7 +448,7 @@ public class WorldInfoPage extends FCLPage {
         @NonNull
         @Override
         public String toString() {
-            return AndroidUtilKt.getLocalizedText(FCLPath.CONTEXT, "world_info_player_game_type_" + name().toLowerCase(Locale.ROOT));
+            return AndroidUtilKt.getLocalizedText(FCLApp.getAppContext(), "world_info_player_game_type_" + name().toLowerCase(Locale.ROOT));
         }
     }
 }

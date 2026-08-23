@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import com.tungsten.fclauncher.utils.FCLPath
+import com.tungsten.fcl.FCLApp
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -31,9 +31,7 @@ object NativeLibPlugin {
     val pluginList: MutableList<NativePlugin> = mutableListOf()
         get() {
             if (!isInit) {
-                FCLPath.CONTEXT?.let {
-                    init(it)
-                }
+                init(FCLApp.getAppContext())
             }
             return field
         }

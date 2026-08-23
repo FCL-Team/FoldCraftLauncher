@@ -2,7 +2,7 @@ package com.tungsten.fcl.setting;
 
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
-import android.content.Context;
+import android.app.Activity;
 
 import androidx.annotation.NonNull;
 
@@ -19,6 +19,7 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
@@ -328,24 +329,32 @@ public class Controller implements Cloneable, Observable {
         this.controllerVersion.set(Constants.CONTROLLER_VERSION);
     }
 
-    public static void showUpgradeDialog(Context context, String name, String id) {
+    public static void showUpgradeDialog(String name, String id) {
         Schedulers.androidUIThread().execute(() -> {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+            Activity activity = FCLApp.getActivity();
+            if (activity == null || activity.isDestroyed() || activity.isFinishing()) {
+                return;
+            }
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);
             builder.setCancelable(false);
             builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
-            builder.setMessage(String.format(context.getString(R.string.control_upgrade), name));
+            builder.setMessage(String.format(activity.getString(R.string.control_upgrade), name));
             builder.setPositiveButton(() -> Controllers.findControllerById(id).upgrade());
             builder.setNegativeButton(null);
             builder.create().show();
         });
     }
 
-    public static void showIncompatibleDialog(Context context, String name) {
+    public static void showIncompatibleDialog(String name) {
         Schedulers.androidUIThread().execute(() -> {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+            Activity activity = FCLApp.getActivity();
+            if (activity == null || activity.isDestroyed() || activity.isFinishing()) {
+                return;
+            }
+            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);
             builder.setCancelable(false);
             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-            builder.setMessage(String.format(context.getString(R.string.control_incompatible), name));
+            builder.setMessage(String.format(activity.getString(R.string.control_incompatible), name));
             builder.setNegativeButton(null);
             builder.create().show();
         });
@@ -395,7 +404,7 @@ public class Controller implements Cloneable, Observable {
 
                 int controllerVersion = Optional.ofNullable(obj.get("controllerVersion")).map(JsonElement::getAsInt).orElse(Constants.CONTROLLER_VERSION);
                 if (controllerVersion < Constants.MIN_CONTROLLER_VERSION || controllerVersion > Constants.CONTROLLER_VERSION) {
-                    showIncompatibleDialog(FCLPath.CONTEXT, name);
+                    showIncompatibleDialog(name);
                     return new Controller("Incompatible Controller - " + name);
                 }
 
@@ -411,7 +420,7 @@ public class Controller implements Cloneable, Observable {
                 }.getType()));
 
                 if (controllerVersion < Constants.CONTROLLER_VERSION) {
-                    showUpgradeDialog(FCLPath.CONTEXT, name, id);
+                    showUpgradeDialog(name, id);
                 }
                 return new Controller(id, name, version, versionCode, author, description, controllerVersion, viewGroups);
             } catch (Exception e) {

@@ -27,7 +27,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Process;
 
-import com.tungsten.fcl.FCLApplication;
+import com.tungsten.fcl.FCLApp;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
@@ -189,7 +189,7 @@ public class NeoForgeOldInstallTask extends Task<Version> {
 
     private void runJVMProcess(ForgeNewInstallProfile.Processor processor, List<String> command, int java) throws Exception {
         LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command));
-        Activity context = FCLApplication.getCurrentActivity();
+        Activity context = FCLApp.getActivity();
         int exitCode;
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         boolean listen = true;

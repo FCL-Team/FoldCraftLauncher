@@ -241,9 +241,9 @@ fun copyFileToDir(activity: Activity, uri: Uri, destDir: File): String {
     return dest.absolutePath
 }
 
-fun copyFile(activity: Activity, uri: Uri, dest: File) {
+fun copyFile(context: Context, uri: Uri, dest: File) {
     try {
-        activity.contentResolver.openInputStream(uri)?.use { input ->
+        context.contentResolver.openInputStream(uri)?.use { input ->
             FileOutputStream(dest).use { output ->
                 IOUtils.copyTo(input, output)
             }

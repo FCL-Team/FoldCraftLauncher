@@ -1,5 +1,6 @@
 package com.tungsten.fcl.setting
 
+import com.tungsten.fcl.FCLApp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclauncher.utils.FCLPath
@@ -69,13 +70,13 @@ object Profiles {
     private fun checkProfiles() {
         if (profiles.isEmpty()) {
             val current = Profile(
-                FCLPath.CONTEXT.getString(R.string.profile_shared),
+                FCLApp.getAppContext().getString(R.string.profile_shared),
                 File(FCLPath.SHARED_COMMON_DIR),
                 VersionSetting(),
                 null
             )
             val home = Profile(
-                FCLPath.CONTEXT.getString(R.string.profile_private),
+                FCLApp.getAppContext().getString(R.string.profile_private),
                 File(FCLPath.PRIVATE_COMMON_DIR)
             )
             registerProfileSave(current)
