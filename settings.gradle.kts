@@ -18,8 +18,6 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Fold Craft Launcher"
 include(":FCL")
-include(":FCLCore")
-include(":FCLauncher")
 include(":Terracotta")
 include(":ZipFileSystem")
 include(":LWJGL")

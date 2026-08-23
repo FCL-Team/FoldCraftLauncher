@@ -16,7 +16,7 @@ import com.mio.data.Renderer
 import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.FCLauncher
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback
-import com.tungsten.fclcore.R
+import com.tungsten.fcl.R
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.FileUtils
 import java.io.File

@@ -1012,6 +1012,7 @@
     <string name="terracotta_menu_open">打开</string>
     <string name="terracotta_notification_title">Terracotta | 陶瓦联机 正在运行</string>
     <string name="terracotta_notification_desc">身份：%s，状态：%s</string>
+    <string name="notification_title">FCL 进程服务正在运行！</string>
     <string name="terracotta_status_waiting_host_title">我想当房主</string>
     <string name="terracotta_status_waiting_host_desc">创建房间并生成邀请码，与好友一起畅玩</string>
     <string name="terracotta_status_waiting_guest_title">我想当房客</string>

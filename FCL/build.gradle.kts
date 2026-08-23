@@ -53,6 +53,11 @@ android {
         versionCode = 1327
         versionName = "1.3.2.7"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        externalNativeBuild {
+            cmake {
+                arguments("-DANDROID_STL=c++_shared")
+            }
+        }
     }
 
     testBuildType = "fordebug"
@@ -98,7 +103,16 @@ android {
         viewBinding = true
         buildConfig = true
         resValues = true
+        prefab = true
     }
+
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/jni/CMakeLists.txt")
+        }
+    }
+
+    ndkVersion = "27.0.12077973"
 
     splits {
         val arch = System.getProperty("arch", "all")
@@ -208,8 +222,7 @@ kotlin {
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
-    implementation(project(":FCLCore"))
-    implementation(project(":FCLauncher"))
+    implementation(project(":ZipFileSystem"))
     implementation(project(":Terracotta"))
     implementation(libs.commons.io)
     implementation(libs.jelf)
@@ -219,6 +232,12 @@ dependencies {
     implementation(libs.xz)
     implementation(libs.opennbt)
     implementation(libs.gson)
+    implementation(libs.tomlj)
+    implementation(libs.constant.pool.scanner)
+    implementation(libs.jsoup)
+    implementation(libs.chardet)
+    implementation(libs.junrar)
+    implementation(libs.bytehook)
     implementation(libs.appcompat)
     implementation(libs.androidx.viewpager2)
     implementation(libs.core.splashscreen)

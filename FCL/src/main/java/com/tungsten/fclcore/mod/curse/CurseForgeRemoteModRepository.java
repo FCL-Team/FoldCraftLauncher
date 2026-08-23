@@ -23,7 +23,7 @@ import static com.tungsten.fclcore.util.Pair.pair;
 
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.R;
+import com.tungsten.fcl.R;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.RemoteMod;

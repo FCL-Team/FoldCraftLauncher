@@ -1074,6 +1074,7 @@
     <string name="terracotta_menu">Multiplayer Menu</string>
     <string name="terracotta_menu_open">Open</string>
     <string name="terracotta_notification_title">Terracotta is running</string>
+    <string name="notification_title">FCL Process service is running!</string>
     <string name="terracotta_notification_desc">Identity: %s, State: %s</string>
     <string name="terracotta_status_waiting_host_title">I want to host a session</string>
     <string name="terracotta_status_waiting_host_desc">Create a room and generate an invite code to play with friends</string>
