@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -120,7 +120,7 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
                 preSplit.setBackgroundColor(getContext().getColor(android.R.color.darker_gray));
                 dependencyContainer.addView(preSplit, ViewGroup.LayoutParams.MATCH_PARENT, ConvertUtils.dip2px(getContext(), 1));
             }
-            String text = AndroidUtils.getLocalizedText(getContext(), STRING_ID_KEY.get(type));
+            String text = AndroidUtilKt.getLocalizedText(getContext(), STRING_ID_KEY.get(type));
             FCLTextView textView = new FCLTextView(getContext());
             int padding = ConvertUtils.dip2px(getContext(), 10);
             textView.setPadding(padding, padding, padding, padding);

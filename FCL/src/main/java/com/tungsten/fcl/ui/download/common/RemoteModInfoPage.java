@@ -15,7 +15,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.DownloadUI;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.mod.LocalModFile;
@@ -302,11 +302,11 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
             ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
             if (mod != null) {
                 String url = translations.getMcmodUrl(mod);
-                AndroidUtils.openLink(getContext(), url);
+                AndroidUtilKt.openLink(getContext(), url);
             }
         }
         if (v == website && StringUtils.isNotBlank(addon.getPageUrl())) {
-            AndroidUtils.openLink(getContext(), addon.getPageUrl());
+            AndroidUtilKt.openLink(getContext(), addon.getPageUrl());
         }
         if (v == screenshotRetry) {
             loadScreenshots();

@@ -17,7 +17,6 @@ import com.tungsten.fcl.databinding.PageControllerManagerBinding
 import com.tungsten.fcl.setting.Controller
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.ui.UIManager
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.LayoutConverter
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.task.Schedulers
@@ -30,6 +29,9 @@ import com.tungsten.fcllibrary.ui.ProgressDialog
 import java.io.File
 import java.io.IOException
 import java.util.logging.Level
+import com.mio.util.copyFileToDir
+import com.mio.util.getMimeType
+import com.mio.util.isDocUri
 
 /**
  * 控制布局管理页：左侧布局列表 + 右侧布局信息。
@@ -183,8 +185,8 @@ class ControllerManagePage(context: Context, id: Int, resId: Int) :
             if (files == null) return@launchSingleSelection
             var path = files[0]
             val uri = Uri.parse(path)
-            if (AndroidUtils.isDocUri(uri)) {
-                path = AndroidUtils.copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
+            if (isDocUri(uri)) {
+                path = copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
             }
             try {
                 val content = FileUtils.readText(File(path))
@@ -230,7 +232,7 @@ class ControllerManagePage(context: Context, id: Int, resId: Int) :
     /** 直接分享原始 FCL 控制布局 JSON 文件 */
     private fun shareDirect() {
         val file = File(FCLPath.CONTROLLER_DIR, selectedController!!.fileName)
-        shareFile(file, R.string.control_share, AndroidUtils.getMimeType(file.absolutePath))
+        shareFile(file, R.string.control_share, getMimeType(file.absolutePath))
     }
 
     /** 转换为 ZL2 格式后分享 */

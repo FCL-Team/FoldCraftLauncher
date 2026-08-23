@@ -12,7 +12,6 @@ import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.PageManageWorldBinding
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.beans.Observable
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
@@ -41,6 +40,9 @@ import java.util.logging.Level
 import java.util.stream.Collectors
 import kotlin.coroutines.resume
 import kotlin.io.path.pathString
+import com.mio.util.copyFileToDir
+import com.mio.util.getLocalizedText
+import com.mio.util.isDocUri
 
 class WorldListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId), VersionLoadable, View.OnClickListener {
     private val itemsProperty: ListProperty<WorldListItem> =
@@ -175,9 +177,9 @@ class WorldListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, i
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, listOf(".zip")) {
             var path = it?.get(0) ?: return@launchSingleSelection
             val uri = path.toUri()
-            if (AndroidUtils.isDocUri(uri)) {
+            if (isDocUri(uri)) {
                 path =
-                    AndroidUtils.copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
+                    copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
             }
             val file = File(path)
             installWorld(file)
@@ -225,12 +227,12 @@ class WorldListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, i
                         context.getString(R.string.world_import_already_exists)
                     )
 
-                    is IOException if it.cause is InvalidPathException -> AndroidUtils.getLocalizedText(
+                    is IOException if it.cause is InvalidPathException -> getLocalizedText(
                         context,
                         context.getString(R.string.install_new_game_malformed)
                     )
 
-                    else -> AndroidUtils.getLocalizedText(
+                    else -> getLocalizedText(
                         context,
                         it.javaClass.getName() + ": " + it.localizedMessage
                     )

@@ -22,7 +22,7 @@ import com.github.steveice10.opennbt.tag.builtin.LongTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
@@ -420,7 +420,7 @@ public class WorldInfoPage extends FCLPage {
         @NonNull
         @Override
         public String toString() {
-            return AndroidUtils.getLocalizedText(FCLPath.CONTEXT, "world_info_difficulty_" + name().toLowerCase(Locale.ROOT));
+            return AndroidUtilKt.getLocalizedText(FCLPath.CONTEXT, "world_info_difficulty_" + name().toLowerCase(Locale.ROOT));
         }
     }
 
@@ -449,7 +449,7 @@ public class WorldInfoPage extends FCLPage {
         @NonNull
         @Override
         public String toString() {
-            return AndroidUtils.getLocalizedText(FCLPath.CONTEXT, "world_info_player_game_type_" + name().toLowerCase(Locale.ROOT));
+            return AndroidUtilKt.getLocalizedText(FCLPath.CONTEXT, "world_info_player_game_type_" + name().toLowerCase(Locale.ROOT));
         }
     }
 }

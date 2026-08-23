@@ -26,7 +26,7 @@ import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -117,8 +117,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
-        screenWidth = AndroidUtils.getScreenWidth();
-        screenHeight = AndroidUtils.getScreenHeight();
+        screenWidth = AndroidUtilKt.getScreenWidth();
+        screenHeight = AndroidUtilKt.getScreenHeight();
 
         setWillNotDraw(false);
 
@@ -180,8 +180,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
-        screenWidth = AndroidUtils.getScreenWidth();
-        screenHeight = AndroidUtils.getScreenHeight();
+        screenWidth = AndroidUtilKt.getScreenWidth();
+        screenHeight = AndroidUtilKt.getScreenHeight();
 
         notifyListener = invalidate -> Schedulers.androidUIThread().execute(this::notifyData);
         dataChangeListener = invalidate -> Schedulers.androidUIThread().execute(() -> {

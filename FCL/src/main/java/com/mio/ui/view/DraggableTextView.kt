@@ -9,8 +9,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.edit
 import androidx.core.content.withStyledAttributes
 import com.tungsten.fcl.R
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.mio.util.getScreenHeight
+import com.mio.util.getScreenWidth
 
 class DraggableTextView @JvmOverloads constructor(
     context: Context,
@@ -69,8 +70,8 @@ class DraggableTextView @JvmOverloads constructor(
 
     fun resetPosition() {
         updateSavedPosition(-1f, -1f)
-        x = (AndroidUtils.getScreenWidth() - width) / 2f
-        y = (AndroidUtils.getScreenHeight() - height) / 2f
+        x = (getScreenWidth() - width) / 2f
+        y = (getScreenHeight() - height) / 2f
     }
 
     fun initPosition() {

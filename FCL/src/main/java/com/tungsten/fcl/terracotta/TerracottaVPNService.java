@@ -13,7 +13,7 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.RequestCodes;
 
 import net.burningtnt.terracotta.TerracottaAndroidAPI;
@@ -158,7 +158,7 @@ public class TerracottaVPNService extends VpnService {
         if (currentStateText == null) {
             TerracottaState.Ready state = Terracotta.stateProperty().get();
             if (state != null && !(state instanceof TerracottaState.Waiting)) {
-                currentStateText = AndroidUtils.getLocalizedText(getApplicationContext(), "terracotta_status_" + state);
+                currentStateText = AndroidUtilKt.getLocalizedText(getApplicationContext(), "terracotta_status_" + state);
             }
         }
         String contentText = String.format(getString(R.string.terracotta_notification_desc), modeText, currentStateText);

@@ -18,8 +18,8 @@
 package com.tungsten.fcl.game;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.tungsten.fcl.util.AndroidUtils.getLocalizedText;
-import static com.tungsten.fcl.util.AndroidUtils.hasStringId;
+import static com.mio.util.AndroidUtilKt.getLocalizedText;
+import static com.mio.util.AndroidUtilKt.hasStringId;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static java.util.stream.Collectors.toList;
 

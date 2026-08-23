@@ -25,7 +25,6 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.fragment.EulaFragment
 import com.tungsten.fcl.fragment.RuntimeFragment
 import com.tungsten.fcl.setting.ConfigHolder
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.util.Logging
@@ -43,6 +42,7 @@ import java.io.IOException
 import java.nio.file.Paths
 import java.util.Locale
 import java.util.logging.Level
+import com.mio.util.getFileName
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : FCLActivity() {
@@ -158,7 +158,7 @@ class SplashActivity : FCLActivity() {
 
         if (Intent.ACTION_VIEW == action && data != null) {
             try {
-                val fileName = AndroidUtils.getFileName(this, data) ?: "modpack"
+                val fileName = getFileName(this, data) ?: "modpack"
                 val cacheFile = File(cacheDir, fileName)
                 contentResolver.openInputStream(data)?.use { input ->
                     cacheFile.outputStream().use { output ->

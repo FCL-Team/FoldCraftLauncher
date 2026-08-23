@@ -13,7 +13,7 @@ import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.game.JavaVersion;
@@ -38,8 +38,8 @@ public class JarExecutorHelper {
             if (files == null) return;
             String path = files.get(0);
             Uri uri = Uri.parse(path);
-            if (AndroidUtils.isDocUri(uri)) {
-                path = AndroidUtils.copyFileToDir(activity, uri, new File(FCLPath.CACHE_DIR));
+            if (AndroidUtilKt.isDocUri(uri)) {
+                path = AndroidUtilKt.copyFileToDir(activity, uri, new File(FCLPath.CACHE_DIR));
             }
             if (new File(path).exists()) {
                 launchJarExecutor(activity, new File(path));

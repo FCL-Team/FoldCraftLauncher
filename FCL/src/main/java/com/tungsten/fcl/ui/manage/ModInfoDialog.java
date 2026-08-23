@@ -8,7 +8,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclcore.mod.ModLoaderType;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -88,7 +88,7 @@ public class ModInfoDialog extends FCLDialog implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v == website && StringUtils.isNotBlank(modInfoObject.getModInfo().getUrl())) {
-            AndroidUtils.openLink(getContext(), modInfoObject.getModInfo().getUrl());
+            AndroidUtilKt.openLink(getContext(), modInfoObject.getModInfo().getUrl());
         }
         if (v == positive) {
             dismiss();

@@ -12,7 +12,7 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.mod.server.ServerModpackManifest;
@@ -66,8 +66,8 @@ public class ModpackSelectionPage extends FCLPage implements View.OnClickListene
             if (files == null) return;
             String path = files.get(0);
             Uri uri = Uri.parse(path);
-            if (AndroidUtils.isDocUri(uri)) {
-                path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+            if (AndroidUtilKt.isDocUri(uri)) {
+                path = AndroidUtilKt.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
             }
             if (path == null)
                 return;

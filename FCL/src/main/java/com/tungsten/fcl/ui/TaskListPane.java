@@ -1,6 +1,6 @@
 package com.tungsten.fcl.ui;
 
-import static com.tungsten.fcl.util.AndroidUtils.getLocalizedText;
+import static com.mio.util.AndroidUtilKt.getLocalizedText;
 import static com.tungsten.fclcore.util.Lang.tryCast;
 
 import android.annotation.SuppressLint;

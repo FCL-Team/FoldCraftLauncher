@@ -25,7 +25,7 @@ import static com.tungsten.fclcore.util.Pair.pair;
 import android.content.Context;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.download.AdaptedDownloadProvider;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
@@ -148,8 +148,8 @@ public final class DownloadProviders {
                 return context.getString(R.string.install_failed_downloading_timeout, url);
             } else if (exception.getCause() instanceof ResponseCodeException) {
                 ResponseCodeException responseCodeException = (ResponseCodeException) exception.getCause();
-                if (AndroidUtils.hasStringId(context, "download_code_" + responseCodeException.getResponseCode())) {
-                    return AndroidUtils.getLocalizedText(context, "download_code_" + responseCodeException.getResponseCode(), url);
+                if (AndroidUtilKt.hasStringId(context, "download_code_" + responseCodeException.getResponseCode())) {
+                    return AndroidUtilKt.getLocalizedText(context, "download_code_" + responseCodeException.getResponseCode(), url);
                 } else {
                     return context.getString(R.string.install_failed_downloading_detail, url) + "\n" + StringUtils.getStackTrace(exception.getCause());
                 }

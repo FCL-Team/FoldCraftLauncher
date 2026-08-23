@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.OAuthServer;
 import com.tungsten.fcl.setting.Accounts;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.auth.AuthInfo;
@@ -50,15 +50,15 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
 
         FXUtils.onChangeAndOperate(deviceCode, deviceCode -> Schedulers.androidUIThread().execute(() -> {
             if (deviceCode != null) {
-                AndroidUtils.copyText(getContext(), deviceCode.getUserCode());
+                AndroidUtilKt.copyText(getContext(), deviceCode.getUserCode());
             }
         }));
         holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak(deviceCode::set));
         holder.add(Accounts.OAUTH_CALLBACK.onOpenBrowser.registerWeak(event -> {
             if (useExternalBrowser) {
-                AndroidUtils.openLink(context, event.getUrl());
+                AndroidUtilKt.openLink(context, event.getUrl());
             } else {
-                AndroidUtils.openLinkWithBuiltinWebView(context, event.getUrl());
+                AndroidUtilKt.openLinkWithBuiltinWebView(context, event.getUrl());
             }
         }));
 

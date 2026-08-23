@@ -16,7 +16,6 @@ import com.tungsten.fcl.setting.Profiles.getSelectedProfile
 import com.tungsten.fcl.setting.Profiles.profiles
 import com.tungsten.fcl.setting.Profiles.registerVersionsListener
 import com.tungsten.fcl.setting.Profiles.unregisterVersionsListener
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.game.Version
 import com.tungsten.fclcore.mod.ModpackConfiguration
@@ -35,6 +34,8 @@ import java.util.function.Consumer
 import java.util.logging.Level
 import java.util.stream.Collectors
 import kotlin.io.path.isRegularFile
+import com.mio.util.getLocalizedText
+import com.mio.util.hasStringId
 
 class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId),
     View.OnClickListener {
@@ -187,13 +188,13 @@ class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context,
                                 val libraryId = mark.libraryId
                                 val libraryVersion = mark.libraryVersion
                                 if (libraryId == LibraryAnalyzer.LibraryType.MINECRAFT.patchId) continue
-                                if (AndroidUtils.hasStringId(
+                                if (hasStringId(
                                         context,
                                         "install_installer_" + libraryId.replace("-", "_")
                                     )
                                 ) {
                                     libraries.append(", ").append(
-                                        AndroidUtils.getLocalizedText(
+                                        getLocalizedText(
                                             context,
                                             "install_installer_" + libraryId.replace("-", "_")
                                         )

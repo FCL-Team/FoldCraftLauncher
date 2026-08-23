@@ -24,7 +24,7 @@ import com.tungsten.fcl.game.OAuthServer;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.auth.AccountFactory;
@@ -333,15 +333,15 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
             Handler handler = new Handler();
             FXUtils.onChangeAndOperate(CreateAccountDialog.getInstance().deviceCode, deviceCode -> handler.post(() -> {
                 if (deviceCode != null) {
-                    AndroidUtils.copyText(context, deviceCode.getUserCode());
+                    AndroidUtilKt.copyText(context, deviceCode.getUserCode());
                 }
             }));
             holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak(value -> CreateAccountDialog.getInstance().deviceCode.set(value)));
             holder.add(Accounts.OAUTH_CALLBACK.onOpenBrowser.registerWeak(event -> {
                 if (useExternalBrowser) {
-                    AndroidUtils.openLink(context, event.getUrl());
+                    AndroidUtilKt.openLink(context, event.getUrl());
                 } else {
-                    AndroidUtils.openLinkWithBuiltinWebView(context, event.getUrl());
+                    AndroidUtilKt.openLinkWithBuiltinWebView(context, event.getUrl());
                 }
             }));
         }
@@ -416,7 +416,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
                 if (links.get("homepage") != null) {
                     home.setVisibility(View.VISIBLE);
                     home.setOnClickListener(view -> {
-                        AndroidUtils.openLink(context, links.get("homepage"));
+                        AndroidUtilKt.openLink(context, links.get("homepage"));
                     });
                 } else {
                     home.setVisibility(View.GONE);
@@ -424,7 +424,7 @@ public class CreateAccountDialog extends FCLDialog implements View.OnClickListen
                 if (links.get("register") != null) {
                     register.setVisibility(View.VISIBLE);
                     register.setOnClickListener(view -> {
-                        AndroidUtils.openLink(context, links.get("register"));
+                        AndroidUtilKt.openLink(context, links.get("register"));
                     });
                 } else {
                     register.setVisibility(View.GONE);

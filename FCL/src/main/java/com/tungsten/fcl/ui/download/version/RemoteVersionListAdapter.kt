@@ -15,7 +15,6 @@ import com.mio.ui.adapter.ViewHolder
 import com.mio.util.AnimUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemRemoteVersionBinding
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.download.RemoteVersion
 import com.tungsten.fclcore.download.fabric.FabricAPIRemoteVersion
 import com.tungsten.fclcore.download.fabric.FabricRemoteVersion
@@ -29,6 +28,7 @@ import com.tungsten.fclcore.download.quilt.QuiltRemoteVersion
 import com.tungsten.fclcore.util.versioning.GameVersionNumber
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.LocaleUtils
+import com.mio.util.openLink
 
 class RemoteVersionListAdapter(val context: Context, private val list: ArrayList<RemoteVersion>, private val listener: OnRemoteVersionSelectListener) :
     RecyclerView.Adapter<ViewHolder>() {
@@ -77,7 +77,7 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
             val wikiUrlSuffix: String =
                 getWikiUrlSuffix(context, remoteVersion.gameVersion)
             binding.wiki.setOnClickListener {
-                AndroidUtils.openLink(
+                openLink(
                     context,
                     context.getString(R.string.wiki_game, wikiUrlSuffix)
                 )
@@ -94,7 +94,7 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
                     .setItems(
                         urls.toTypedArray<String?>()
                     ) { _: DialogInterface?, w: Int ->
-                        AndroidUtils.openLink(
+                        openLink(
                             context,
                             urls[w]
                         )

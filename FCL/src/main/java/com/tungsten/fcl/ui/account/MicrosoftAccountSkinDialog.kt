@@ -10,7 +10,6 @@ import android.widget.Toast
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.DialogMicrosoftAccountSkinBinding
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.auth.AuthenticationException
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount
 import com.tungsten.fclcore.auth.microsoft.MicrosoftService.MinecraftProfileResponseCape
@@ -31,6 +30,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.URL
 import java.util.logging.Level
+import com.mio.util.getScreenHeight
+import com.mio.util.getScreenWidth
 
 class MicrosoftAccountSkinDialog(
     context: Context,
@@ -63,8 +64,8 @@ class MicrosoftAccountSkinDialog(
     }
 
     override fun show() {
-        val width = AndroidUtils.getScreenWidth()
-        var height = AndroidUtils.getScreenHeight()
+        val width = getScreenWidth()
+        var height = getScreenHeight()
         height = if (height * 2 < width) {
             WindowManager.LayoutParams.MATCH_PARENT
         } else {

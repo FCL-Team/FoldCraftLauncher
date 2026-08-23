@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 
@@ -101,22 +101,22 @@ public class AboutPage extends FCLPage {
     private void openLink(int position) {
         switch (position) {
             case 1:
-                AndroidUtils.openLink(getContext(), "https://fcl-team.github.io/");
+                AndroidUtilKt.openLink(getContext(), "https://fcl-team.github.io/");
                 break;
             case 2:
-                AndroidUtils.openLink(getContext(), "https://github.com/FCL-Team");
+                AndroidUtilKt.openLink(getContext(), "https://github.com/FCL-Team");
                 break;
             case 3:
-                AndroidUtils.openLink(getContext(), "https://discord.gg/ffhvuXTwyV");
+                AndroidUtilKt.openLink(getContext(), "https://discord.gg/ffhvuXTwyV");
                 break;
             case 4:
                 joinQQGroup(QQ_GROUP_KEY);
                 break;
             case 5:
-                AndroidUtils.openLink(getContext(), "https://afdian.com/@tungs");
+                AndroidUtilKt.openLink(getContext(), "https://afdian.com/@tungs");
                 break;
             case 6:
-                AndroidUtils.openLink(getContext(), "https://github.com/FCL-Team/FoldCraftLauncher");
+                AndroidUtilKt.openLink(getContext(), "https://github.com/FCL-Team/FoldCraftLauncher");
                 break;
         }
     }

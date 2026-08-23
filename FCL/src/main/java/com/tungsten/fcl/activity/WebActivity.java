@@ -12,7 +12,7 @@ import android.widget.ProgressBar;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
 public class WebActivity extends FCLActivity {
@@ -50,6 +50,6 @@ public class WebActivity extends FCLActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        AndroidUtils.clearWebViewCache(this);
+        AndroidUtilKt.clearWebViewCache(this);
     }
 }

@@ -32,7 +32,7 @@ import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.manage.ManageUI;
 import com.tungsten.fcl.ui.version.Versions;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.DownloadProvider;
@@ -733,9 +733,9 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
             if (pageId == PAGE_ID_DOWNLOAD_RESOURCE_PACK) {
                 key = key.replaceAll("\\+", "");
             }
-            return AndroidUtils.getLocalizedText(getContext(), key);
+            return AndroidUtilKt.getLocalizedText(getContext(), key);
         }
-        return AndroidUtils.getLocalizedText(getContext(), "curse_category_" + category);
+        return AndroidUtilKt.getLocalizedText(getContext(), "curse_category_" + category);
     }
 
     public void jumpToModPage(RemoteMod mod) {

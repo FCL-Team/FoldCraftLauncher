@@ -19,7 +19,7 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
@@ -288,9 +288,9 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
                 title = context.getString(R.string.install_failed_downloading);
                 msg = context.getString(R.string.install_failed_downloading_timeout, url);
             } else if (exception.getCause() instanceof ResponseCodeException responseCodeException) {
-                if (AndroidUtils.hasStringId(context, "download_code_" + responseCodeException.getResponseCode())) {
+                if (AndroidUtilKt.hasStringId(context, "download_code_" + responseCodeException.getResponseCode())) {
                     title = context.getString(R.string.install_failed_downloading);
-                    msg = AndroidUtils.getLocalizedText(context, "download_code_" + responseCodeException.getResponseCode(), url);
+                    msg = AndroidUtilKt.getLocalizedText(context, "download_code_" + responseCodeException.getResponseCode(), url);
                 } else {
                     title = context.getString(R.string.install_failed_downloading);
                     msg = context.getString(R.string.install_failed_downloading_detail, url);

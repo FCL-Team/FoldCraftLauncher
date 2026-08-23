@@ -6,7 +6,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogOpenFolderBinding
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcllibrary.browser.FileBrowser
 import com.tungsten.fcllibrary.browser.adapter.FileBrowserAdapter
 import com.tungsten.fcllibrary.browser.adapter.FileBrowserListener
@@ -23,6 +22,10 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import com.mio.util.getFileName
+import com.mio.util.getScreenHeight
+import com.mio.util.getScreenWidth
+import com.mio.util.isDocUri
 
 class OpenFolderDialog(
     val activity: FCLActivity,
@@ -33,8 +36,8 @@ class OpenFolderDialog(
     private var job: Job? = null
 
     init {
-        val width = (AndroidUtils.getScreenWidth() * 0.7).toInt()
-        val height = (AndroidUtils.getScreenHeight() * 0.9).toInt()
+        val width = (getScreenWidth() * 0.7).toInt()
+        val height = (getScreenHeight() * 0.9).toInt()
         window!!.setLayout(width, height)
         binding = DialogOpenFolderBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -124,8 +127,8 @@ class OpenFolderDialog(
                 paths.forEach { path ->
                     ensureActive()
                     val uri = path.toUri()
-                    val (inputStream, name) = if (AndroidUtils.isDocUri(uri)) {
-                        context.contentResolver.openInputStream(uri) to AndroidUtils.getFileName(
+                    val (inputStream, name) = if (isDocUri(uri)) {
+                        context.contentResolver.openInputStream(uri) to getFileName(
                             context,
                             uri
                         )

@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat;
 import com.google.gson.reflect.TypeToken;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.terracotta.profile.ProfileKind;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyObjectProperty;
@@ -74,7 +74,7 @@ public class Terracotta {
         notificationListener = observable -> {
             TerracottaState.Ready state = stateProperty().get();
             if (state != null && !(state instanceof TerracottaState.Waiting)) {
-                String stateText = AndroidUtils.getLocalizedText(context, "terracotta_status_" + state);
+                String stateText = AndroidUtilKt.getLocalizedText(context, "terracotta_status_" + state);
                 updateVpnNotificationState(context, stateText);
             }
         };
@@ -133,15 +133,15 @@ public class Terracotta {
     }
 
     public static String parseException(Context context, TerracottaState.Exception e) {
-        return AndroidUtils.getLocalizedText(context, "terracotta_status_exception_desc_" + e.getType().name().toLowerCase(Locale.ROOT));
+        return AndroidUtilKt.getLocalizedText(context, "terracotta_status_exception_desc_" + e.getType().name().toLowerCase(Locale.ROOT));
     }
 
     public static String parseProfileKind(Context context, ProfileKind kind) {
-        return AndroidUtils.getLocalizedText(context, "terracotta_player_kind_" + kind.name().toLowerCase(Locale.ROOT));
+        return AndroidUtilKt.getLocalizedText(context, "terracotta_player_kind_" + kind.name().toLowerCase(Locale.ROOT));
     }
 
     public static String parseDifficulty(Context context, TerracottaState.GuestStarting.Difficulty difficulty) {
-        return AndroidUtils.getLocalizedText(context, "terracotta_difficulty_" + difficulty.name().toLowerCase(Locale.ROOT));
+        return AndroidUtilKt.getLocalizedText(context, "terracotta_difficulty_" + difficulty.name().toLowerCase(Locale.ROOT));
     }
 
     @Nullable

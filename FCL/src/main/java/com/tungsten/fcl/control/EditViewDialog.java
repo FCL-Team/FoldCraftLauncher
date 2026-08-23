@@ -23,7 +23,7 @@ import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionEventData;
 import com.tungsten.fcl.control.data.DirectionStyles;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -258,8 +258,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                     data.getBaseInfo().getPercentageWidth().sizeProperty().bindBidirectional(width.progressProperty());
                     data.getBaseInfo().getPercentageHeight().sizeProperty().bindBidirectional(height.progressProperty());
                 } else {
-                    width.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenWidth()));
-                    height.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight()));
+                    width.setMax(ConvertUtils.px2dip(context, AndroidUtilKt.getScreenWidth()));
+                    height.setMax(ConvertUtils.px2dip(context, AndroidUtilKt.getScreenHeight()));
                     data.getBaseInfo().getPercentageWidth().sizeProperty().unbindBidirectional(width.progressProperty());
                     data.getBaseInfo().getPercentageHeight().sizeProperty().unbindBidirectional(height.progressProperty());
                     width.setProgress(data.getBaseInfo().getAbsoluteWidth());
@@ -279,8 +279,8 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                         data.getBaseInfo().getPercentageWidth().sizeProperty().bindBidirectional(width.progressProperty());
                         data.getBaseInfo().getPercentageHeight().sizeProperty().bindBidirectional(height.progressProperty());
                     } else {
-                        width.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenWidth()));
-                        height.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight()));
+                        width.setMax(ConvertUtils.px2dip(context, AndroidUtilKt.getScreenWidth()));
+                        height.setMax(ConvertUtils.px2dip(context, AndroidUtilKt.getScreenHeight()));
                         data.getBaseInfo().getPercentageWidth().sizeProperty().unbindBidirectional(width.progressProperty());
                         data.getBaseInfo().getPercentageHeight().sizeProperty().unbindBidirectional(height.progressProperty());
                         width.setProgress(data.getBaseInfo().getAbsoluteWidth());
@@ -542,7 +542,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                     size.setProgress(data.getBaseInfo().getPercentageWidth().getSize());
                     data.getBaseInfo().getPercentageWidth().sizeProperty().bindBidirectional(size.progressProperty());
                 } else {
-                    size.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight()));
+                    size.setMax(ConvertUtils.px2dip(context, AndroidUtilKt.getScreenHeight()));
                     data.getBaseInfo().getPercentageWidth().sizeProperty().unbindBidirectional(size.progressProperty());
                     size.setProgress(data.getBaseInfo().getAbsoluteWidth());
                     data.getBaseInfo().absoluteWidthProperty().bindBidirectional(size.progressProperty());
@@ -555,7 +555,7 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                         size.setProgress(data.getBaseInfo().getPercentageWidth().getSize());
                         data.getBaseInfo().getPercentageWidth().sizeProperty().bindBidirectional(size.progressProperty());
                     } else {
-                        size.setMax(ConvertUtils.px2dip(context, AndroidUtils.getScreenHeight()));
+                        size.setMax(ConvertUtils.px2dip(context, AndroidUtilKt.getScreenHeight()));
                         data.getBaseInfo().getPercentageWidth().sizeProperty().unbindBidirectional(size.progressProperty());
                         size.setProgress(data.getBaseInfo().getAbsoluteWidth());
                         data.getBaseInfo().absoluteWidthProperty().bindBidirectional(size.progressProperty());

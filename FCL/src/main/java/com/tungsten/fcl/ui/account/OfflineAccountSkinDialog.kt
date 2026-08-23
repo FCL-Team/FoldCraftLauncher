@@ -8,7 +8,6 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.DialogOfflineAccountSkinBinding
 import com.tungsten.fcl.game.TexturesLoader
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.auth.offline.OfflineAccount
 import com.tungsten.fclcore.auth.offline.Skin
 import com.tungsten.fclcore.auth.offline.Skin.LoadedSkin
@@ -19,6 +18,8 @@ import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.skin.SkinRenderer
 import java.util.logging.Level
+import com.mio.util.getScreenHeight
+import com.mio.util.getScreenWidth
 
 class OfflineAccountSkinDialog(context: Context, private val accountListItem: AccountListItem) :
     FCLDialog(context), View.OnClickListener {
@@ -60,8 +61,8 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
     }
 
     override fun show() {
-        val width = AndroidUtils.getScreenWidth()
-        var height = AndroidUtils.getScreenHeight()
+        val width = getScreenWidth()
+        var height = getScreenHeight()
         height = if (height * 2 < width) {
             WindowManager.LayoutParams.MATCH_PARENT
         } else {

@@ -59,7 +59,7 @@ import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.setting.MenuSetting;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
@@ -577,7 +577,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         FXUtils.bindSelection(gestureModeSpinner, menuSetting.getGestureModeProperty());
         FXUtils.bindSelection(mouseMoveModeSpinner, menuSetting.getMouseMoveModeProperty());
 
-        int screenWidth = AndroidUtils.getScreenWidth();
+        int screenWidth = AndroidUtilKt.getScreenWidth();
         initSeekbar(itemBarWidthSeekbar, (int) (menuSetting.getItemBarWidth() * 100f / screenWidth), observable -> {
             menuSetting.setItemBarWidth((int) (screenWidth / 100f * itemBarWidthSeekbar.progressProperty().get()));
             GameOption.GameOptionListener optionListener = gameItemBar.getOptionListener();
@@ -585,7 +585,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
                 optionListener.onOptionChanged(true);
             }
         });
-        int screenHeight = AndroidUtils.getScreenHeight();
+        int screenHeight = AndroidUtilKt.getScreenHeight();
         initSeekbar(itemBarHeightSeekbar, (int) (menuSetting.getItemBarHeight() * 100f / screenHeight), observable -> {
             menuSetting.setItemBarHeight((int) (screenHeight / 100f * itemBarHeightSeekbar.progressProperty().get()));
             GameOption.GameOptionListener optionListener = gameItemBar.getOptionListener();
@@ -742,11 +742,11 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
 
         if (getBridge() != null && getBridge().hasTouchController()) {
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
-            touchController = new TouchController(getActivity(), AndroidUtils.getScreenWidth(), AndroidUtils.getScreenHeight(), sharedPreferences.getInt("vibrationDuration", 100));
+            touchController = new TouchController(getActivity(), AndroidUtilKt.getScreenWidth(), AndroidUtilKt.getScreenHeight(), sharedPreferences.getInt("vibrationDuration", 100));
 
             touchControllerInputView.setClient(touchController.getClient());
             touchControllerInputView.setFclInput(fclInput);
-            touchControllerInputView.setSize(AndroidUtils.getScreenWidth(), AndroidUtils.getScreenHeight());
+            touchControllerInputView.setSize(AndroidUtilKt.getScreenWidth(), AndroidUtilKt.getScreenHeight());
             touchControllerInputView.setDisableFullScreenInput(sharedPreferences.getBoolean("disableFullscreenInput", true));
         }
 
@@ -843,7 +843,7 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
             if (mode == FCLBridge.CursorEnabled) {
                 getCursor().setVisibility(View.VISIBLE);
                 gameItemBar.setVisibility(View.GONE);
-                getInput().setPointer(AndroidUtils.getScreenWidth() / 2, AndroidUtils.getScreenHeight() / 2, "Gyro");
+                getInput().setPointer(AndroidUtilKt.getScreenWidth() / 2, AndroidUtilKt.getScreenHeight() / 2, "Gyro");
                 if (menuSetting.isPhysicalMouseMode()) {
                     getInput().getFocusableView().releasePointerCapture();
                     getInput().getFocusableView().clearFocus();
@@ -957,8 +957,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
         }
         if (v == openMultiplayerButton) {
             if (multiplayerDialog == null) {
-                int width = (int) (AndroidUtils.getScreenWidth() * 0.7);
-                int height = (int) (AndroidUtils.getScreenHeight() * 0.9);
+                int width = (int) (AndroidUtilKt.getScreenWidth() * 0.7);
+                int height = (int) (AndroidUtilKt.getScreenHeight() * 0.9);
                 multiplayerDialog = new MultiplayerDialog(getActivity(), getActivity(), width, height);
             }
             multiplayerDialog.show();
@@ -1002,8 +1002,8 @@ public class GameMenu implements MenuCallback, View.OnClickListener {
     }
 
     private void refreshWindowsSize(double factor) {
-        int screenWidth = AndroidUtils.getScreenWidth();
-        int screenHeight = AndroidUtils.getScreenHeight();
+        int screenWidth = AndroidUtilKt.getScreenWidth();
+        int screenHeight = AndroidUtilKt.getScreenHeight();
         if (fclBridge != null) {
             fclBridge.setScaleFactor(factor);
             int width = (int) ((screenWidth + menuSetting.getCursorOffset()) * factor);

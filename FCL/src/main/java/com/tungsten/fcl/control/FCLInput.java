@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.control.gamepad.Gamepad;
 import com.tungsten.fcl.setting.GameOption;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
@@ -76,8 +76,8 @@ public class FCLInput implements View.OnCapturedPointerListener {
     public FCLInput(@NonNull GameMenu menu) {
         this.menu = menu;
 
-        this.screenWidth = AndroidUtils.getScreenWidth();
-        this.screenHeight = AndroidUtils.getScreenHeight();
+        this.screenWidth = AndroidUtilKt.getScreenWidth();
+        this.screenHeight = AndroidUtilKt.getScreenHeight();
     }
 
     public void setPointer(int x, int y, String id) {

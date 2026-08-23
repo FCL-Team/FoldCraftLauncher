@@ -25,7 +25,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.DownloadUI;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
@@ -425,7 +425,7 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
         MainActivity.getInstance().fileLauncher.launchMultiSelection(null, suffix, files -> {
             if (files == null) return;
             List<Object> res = files.stream().map(Uri::parse).filter(Objects::nonNull).map(uri -> {
-                if (AndroidUtils.isDocUri(uri)) {
+                if (AndroidUtilKt.isDocUri(uri)) {
                     return uri;
                 } else {
                     return new File(uri.toString());
@@ -451,7 +451,7 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
                     } else {
                         try {
                             Uri uri = (Uri) obj;
-                            String name = AndroidUtils.getFileName(getActivity(), uri);
+                            String name = AndroidUtilKt.getFileName(getActivity(), uri);
                             modManager.addMod(getActivity(), uri, name);
                             succeeded.add(name);
                         } catch (Exception e) {

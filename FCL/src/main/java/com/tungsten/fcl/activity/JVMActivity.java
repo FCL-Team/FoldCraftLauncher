@@ -26,7 +26,7 @@ import com.tungsten.fcl.control.OpenFolderDialog;
 import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.terracotta.Terracotta;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.OpenFolderCallback;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
@@ -72,10 +72,10 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         textureView.setSurfaceTextureListener(this);
         if (FCLBridge.FORCE_RESOLUTION) {
             ViewGroup.LayoutParams params = textureView.getLayoutParams();
-            FCLBridge.FORCE_RESOLUTION_SCALE = (float) AndroidUtils.getScreenHeight() / FCLBridge.FORCE_RESOLUTION_HEIGHT;
+            FCLBridge.FORCE_RESOLUTION_SCALE = (float) AndroidUtilKt.getScreenHeight() / FCLBridge.FORCE_RESOLUTION_HEIGHT;
             params.width = (int) (FCLBridge.FORCE_RESOLUTION_WIDTH * FCLBridge.FORCE_RESOLUTION_SCALE);
             params.height = (int) (FCLBridge.FORCE_RESOLUTION_HEIGHT * FCLBridge.FORCE_RESOLUTION_SCALE);
-            FCLBridge.FORCE_RESOLUTION_START_SIZE = (AndroidUtils.getScreenWidth() - params.width) / 2;
+            FCLBridge.FORCE_RESOLUTION_START_SIZE = (AndroidUtilKt.getScreenWidth() - params.width) / 2;
             textureView.setLayoutParams(params);
             textureView.setX(FCLBridge.FORCE_RESOLUTION_START_SIZE);
         }

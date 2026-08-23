@@ -58,7 +58,6 @@ import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
 import com.tungsten.fcl.ui.main.MainUI
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -94,6 +93,8 @@ import java.util.logging.Level
 import java.util.stream.Stream
 import kotlin.math.abs
 import kotlin.system.exitProcess
+import com.mio.util.getLocalizedText
+import com.mio.util.hasStringId
 
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     companion object {
@@ -701,13 +702,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     val libraryId = mark.libraryId
                     val libraryVersion = mark.libraryVersion
                     if (libraryId == LibraryType.MINECRAFT.patchId) continue
-                    if (AndroidUtils.hasStringId(
+                    if (hasStringId(
                             this@MainActivity,
                             "install_installer_" + libraryId.replace("-", "_")
                         )
                     ) {
                         libraries.append(", ").append(
-                            AndroidUtils.getLocalizedText(
+                            getLocalizedText(
                                 this@MainActivity,
                                 "install_installer_" + libraryId.replace("-", "_")
                             )

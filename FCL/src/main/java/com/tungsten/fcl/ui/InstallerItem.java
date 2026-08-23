@@ -20,7 +20,7 @@ import android.view.View;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -62,7 +62,7 @@ public class InstallerItem {
     public InstallerItem(Context context, LibraryAnalyzer.LibraryType id) {
         this.context = context;
         this.id = id.getPatchId();
-        this.name = AndroidUtils.getLocalizedText(context, "install_installer_" + id.getPatchId().replace(".", "_").replace("-", "_"));
+        this.name = AndroidUtilKt.getLocalizedText(context, "install_installer_" + id.getPatchId().replace(".", "_").replace("-", "_"));
         this.icon = getDrawable(context, id);
     }
 
@@ -265,7 +265,7 @@ public class InstallerItem {
                 if (installerItem.incompatibleWithGame.get()) {
                     return context.getString(R.string.install_installer_change_version, version);
                 } else if (incompatibleWith != null) {
-                    return context.getString(R.string.install_installer_incompatible, AndroidUtils.getLocalizedText(context, "install_installer_" + incompatibleWith.replace("-", "_")));
+                    return context.getString(R.string.install_installer_incompatible, AndroidUtilKt.getLocalizedText(context, "install_installer_" + incompatibleWith.replace("-", "_")));
                 } else if (version == null) {
                     return context.getString(R.string.install_installer_not_installed);
                 } else {

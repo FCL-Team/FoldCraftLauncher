@@ -8,11 +8,9 @@ import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.JavaManager
 import com.mio.ui.adapter.ManageJavaItemAdapter
-import com.mio.util.checkElfIsAndroid
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.DialogManageJavaBinding
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.game.JavaVersion
@@ -26,6 +24,9 @@ import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
+import com.mio.util.checkElfIsAndroid
+import com.mio.util.getFileName
+import com.mio.util.isDocUri
 
 @SuppressLint("NotifyDataSetChanged")
 class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCLDialog(context) {
@@ -76,8 +77,8 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                 if (files == null) return@launchSingleSelection
                 val path = files[0]
                 val uri = path.toUri()
-                val fileName = if (AndroidUtils.isDocUri(uri)) {
-                    AndroidUtils.getFileName(context, uri)
+                val fileName = if (isDocUri(uri)) {
+                    getFileName(context, uri)
                 } else {
                     File(path).name
                 }
@@ -92,7 +93,7 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                         .show()
                     return@launchSingleSelection
                 }
-                val inputStream = if (AndroidUtils.isDocUri(uri)) {
+                val inputStream = if (isDocUri(uri)) {
                     context.contentResolver.openInputStream(uri)
                 } else {
                     Files.newInputStream(Paths.get(path))

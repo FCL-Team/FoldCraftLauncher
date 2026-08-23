@@ -18,7 +18,7 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
@@ -116,7 +116,7 @@ public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadab
                             builder.setCancelable(false);
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
                             builder.setTitle(getContext().getString(R.string.install_change_version));
-                            builder.setMessage(getContext().getString(R.string.install_change_version_confirm, AndroidUtils.getLocalizedText(getContext(), "install_installer_" + libraryId), libraryVersion, remoteVersion.getSelfVersion()));
+                            builder.setMessage(getContext().getString(R.string.install_change_version_confirm, AndroidUtilKt.getLocalizedText(getContext(), "install_installer_" + libraryId), libraryVersion, remoteVersion.getSelfVersion()));
                             builder.setPositiveButton(() -> finish(profile, remoteVersion));
                             builder.setNegativeButton(null);
                             builder.create().show();
@@ -142,8 +142,8 @@ public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadab
             if (files == null) return;
             String path = files.get(0);
             Uri uri = Uri.parse(path);
-            if (AndroidUtils.isDocUri(uri)) {
-                path = AndroidUtils.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
+            if (AndroidUtilKt.isDocUri(uri)) {
+                path = AndroidUtilKt.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
             }
             if (new File(path).exists()) {
                 doInstallOffline(new File(path));

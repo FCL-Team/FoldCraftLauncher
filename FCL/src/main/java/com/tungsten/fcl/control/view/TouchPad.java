@@ -18,7 +18,7 @@ import com.tungsten.fcl.control.FCLInput;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.GestureMode;
 import com.tungsten.fcl.control.MouseMoveMode;
-import com.tungsten.fcl.util.AndroidUtils;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 
 import java.util.Objects;
@@ -45,8 +45,8 @@ public class TouchPad extends View {
 
     public TouchPad(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        this.screenWidth = AndroidUtils.getScreenWidth();
-        this.screenHeight = AndroidUtils.getScreenHeight();
+        this.screenWidth = AndroidUtilKt.getScreenWidth();
+        this.screenHeight = AndroidUtilKt.getScreenHeight();
         init();
     }
 
