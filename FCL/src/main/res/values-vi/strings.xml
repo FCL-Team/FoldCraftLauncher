@@ -637,6 +637,7 @@
     <string name="modpack_type_curse_not_found">Một số phụ thuộc không còn khả dụng, vui lòng thử cài đặt phiên bản modpack mới hơn.</string>
     <string name="modpack_type_manual_warning">Modpack được nhà xuất bản đóng gói thủ công, có thể đã chứa trình khởi chạy. Bạn nên thử giải nén và chạy trò chơi bằng trình khởi chạy riêng của nó. FCL vẫn có thể nhập nó, nhưng không đảm bảo khả năng sử dụng, bạn vẫn muốn tiếp tục?</string>
     <string name="modpack_type_mcbbs">Loại MCBBS</string>
+    <string name="modpack_type_hmcl">Loại HMCL</string>
     <string name="modpack_type_mcbbs_export">Có thể được nhập bởi FCL, HMCL và MultiMC</string>
     <string name="modpack_type_modrinth">Modrinth</string>
     <string name="modpack_type_multimc">MultiMC</string>

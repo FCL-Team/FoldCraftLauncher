@@ -674,14 +674,14 @@ public class ControlButton extends AppCompatButton implements CustomView {
         }
         if (event.isSwitchTouchMode()) {
             menu.getMenuSetting().setGestureMode(menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ? GestureMode.FIGHT : GestureMode.BUILD);
-            Toast.makeText(getContext(), AndroidUtils.getLocalizedText(getContext(), "menu_settings_gesture_current",
+            Toast.makeText(getContext(), getContext().getString(R.string.menu_settings_gesture_current,
                     menu.getMenuSetting().getGestureMode() == GestureMode.BUILD ?
                             getContext().getString(R.string.menu_settings_gesture_mode_build) :
                             getContext().getString(R.string.menu_settings_gesture_mode_fight)), Toast.LENGTH_SHORT).show();
         }
         if (event.isSwitchMouseMode()) {
             menu.getMenuSetting().setMouseMoveMode(menu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK ? MouseMoveMode.SLIDE : MouseMoveMode.CLICK);
-            Toast.makeText(getContext(), AndroidUtils.getLocalizedText(getContext(), "menu_settings_gesture_current",
+            Toast.makeText(getContext(), getContext().getString(R.string.menu_settings_gesture_current,
                     menu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK ?
                             getContext().getString(R.string.menu_settings_mouse_mode_click) :
                             getContext().getString(R.string.menu_settings_mouse_mode_slide)), Toast.LENGTH_SHORT).show();

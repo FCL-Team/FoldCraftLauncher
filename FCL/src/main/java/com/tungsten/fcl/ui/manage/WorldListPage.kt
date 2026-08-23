@@ -220,9 +220,8 @@ class WorldListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, i
                 }
             }.onFailure {
                 val error = when (it) {
-                    is FileAlreadyExistsException -> AndroidUtils.getLocalizedText(
-                        context,
-                        "world_import_failed",
+                    is FileAlreadyExistsException -> context.getString(
+                        R.string.world_import_failed,
                         context.getString(R.string.world_import_already_exists)
                     )
 

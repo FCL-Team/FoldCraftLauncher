@@ -528,6 +528,7 @@
     <string name="modpack_type_curse_not_found">Деякі залежності більше не доступні, спробуйте встановити новішу версію модпака.</string>
     <string name="modpack_type_manual_warning">Цей модпак зібрано вручну автором і може містити власний лаунчер. Рекомендується розпакувати архів і спробувати запустити гру за допомогою нього. FCL може імпортувати цей модпак, але коректна робота не гарантується. Продовжити?</string>
     <string name="modpack_type_mcbbs">Тип MCBBS</string>
+    <string name="modpack_type_hmcl">Тип HMCL</string>
     <string name="modpack_type_mcbbs_export">Може бути імпортовано FCL, HMCL і MultiMC</string>
     <string name="modpack_type_multimc_export">Може бути імпортовано FCL, HMCL і MultiMC</string>
     <string name="modpack_type_server">Автоматичне оновлення модпака з сервера</string>

@@ -112,43 +112,43 @@ public final class TaskListPane extends FCLAdapter {
                     return;
 
                 if (task instanceof GameAssetDownloadTask) {
-                    task.setName(getLocalizedText(getContext(), "assets_download_all"));
+                    task.setName(getContext().getString(R.string.assets_download_all));
                 } else if (task instanceof GameInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_game")));
+                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_game)));
                 } else if (task instanceof CleanroomInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_cleanroom")));
+                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_cleanroom)));
                 } else if (task instanceof ForgeNewInstallTask || task instanceof ForgeOldInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_forge")));
+                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_forge)));
                 } else if (task instanceof NeoForgeInstallTask || task instanceof NeoForgeOldInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_neoforge")));
+                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_neoforge)));
                 } else if (task instanceof LiteLoaderInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_liteloader")));
+                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_liteloader)));
                 } else if (task instanceof OptiFineInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_optifine")));
+                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_optifine)));
                 } else if (task instanceof FabricInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_fabric")));
+                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_fabric)));
                 } else if (task instanceof FabricAPIInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "install_installer_install", getLocalizedText(getContext(), "install_installer_fabric_api")));
+                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_fabric_api)));
                 } else if (task instanceof CurseCompletionTask || task instanceof ModrinthCompletionTask || task instanceof ServerModpackCompletionTask || task instanceof McbbsModpackCompletionTask) {
-                    task.setName(getLocalizedText(getContext(), "modpack_completion"));
+                    task.setName(getContext().getString(R.string.modpack_completion));
                 } else if (task instanceof ModpackInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "modpack_installing"));
+                    task.setName(getContext().getString(R.string.modpack_installing));
                 } else if (task instanceof ModpackUpdateTask) {
-                    task.setName(getLocalizedText(getContext(), "modpack_update"));
+                    task.setName(getContext().getString(R.string.modpack_update));
                 } else if (task instanceof CurseInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "modpack_install", getLocalizedText(getContext(), "modpack_type_curse")));
+                    task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_curse)));
                 } else if (task instanceof MultiMCModpackInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "modpack_install", getLocalizedText(getContext(), "modpack_type_multimc")));
+                    task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_multimc)));
                 } else if (task instanceof ModrinthInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "modpack_install", getLocalizedText(getContext(), "modpack_type_modrinth")));
+                    task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_modrinth)));
                 } else if (task instanceof ServerModpackLocalInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "modpack_install", getLocalizedText(getContext(), "modpack_type_server")));
+                    task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_server)));
                 } else if (task instanceof HMCLModpackInstallTask) {
-                    task.setName(getLocalizedText(getContext(), "modpack_install", getLocalizedText(getContext(), "modpack_type_hmcl")));
+                    task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_hmcl)));
                 } else if (task instanceof McbbsModpackExportTask || task instanceof MultiMCModpackExportTask || task instanceof ServerModpackExportTask) {
-                    task.setName(getLocalizedText(getContext(), "modpack_export"));
+                    task.setName(getContext().getString(R.string.modpack_export));
                 } else if (task instanceof MinecraftInstanceTask) {
-                    task.setName(getLocalizedText(getContext(), "modpack_scan"));
+                    task.setName(getContext().getString(R.string.modpack_scan));
                 }
 
                 Schedulers.androidUIThread().execute(() -> {
@@ -247,18 +247,18 @@ public final class TaskListPane extends FCLAdapter {
 
             // @formatter:off
             switch (stageKey) {
-                case "fcl.modpack": message = getLocalizedText(context, "install_modpack"); break;
-                case "fcl.modpack.download": message = getLocalizedText(context, "launch_state_modpack"); break;
-                case "fcl.install.assets": message = getLocalizedText(context, "assets_download"); break;
-                case "fcl.install.game": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_game") + " " + stageValue); break;
-                case "fcl.install.forge": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_forge") + " " + stageValue); break;
-                case "fcl.install.cleanroom": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_cleanroom") + " " + stageValue); break;
-                case "fcl.install.neoforge": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_neoforge") + " " + stageValue); break;
-                case "fcl.install.liteloader": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_liteloader") + " " + stageValue); break;
-                case "fcl.install.optifine": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_optifine") + " " + stageValue); break;
-                case "fcl.install.fabric": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_fabric") + " " + stageValue); break;
-                case "fcl.install.fabric-api": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_fabric-api") + " " + stageValue); break;
-                case "fcl.install.quilt": message = getLocalizedText(context, "install_installer_install", getLocalizedText(context, "install_installer_quilt") + " " + stageValue); break;
+                case "fcl.modpack": message = context.getString(R.string.install_modpack); break;
+                case "fcl.modpack.download": message = context.getString(R.string.launch_state_modpack); break;
+                case "fcl.install.assets": message = context.getString(R.string.assets_download); break;
+                case "fcl.install.game": message = context.getString(R.string.install_installer_install, context.getString(R.string.install_installer_game) + " " + stageValue); break;
+                case "fcl.install.forge": message = context.getString(R.string.install_installer_install, context.getString(R.string.install_installer_forge) + " " + stageValue); break;
+                case "fcl.install.cleanroom": message = context.getString(R.string.install_installer_install, context.getString(R.string.install_installer_cleanroom) + " " + stageValue); break;
+                case "fcl.install.neoforge": message = context.getString(R.string.install_installer_install, context.getString(R.string.install_installer_neoforge) + " " + stageValue); break;
+                case "fcl.install.liteloader": message = context.getString(R.string.install_installer_install, context.getString(R.string.install_installer_liteloader) + " " + stageValue); break;
+                case "fcl.install.optifine": message = context.getString(R.string.install_installer_install, context.getString(R.string.install_installer_optifine) + " " + stageValue); break;
+                case "fcl.install.fabric": message = context.getString(R.string.install_installer_install, context.getString(R.string.install_installer_fabric) + " " + stageValue); break;
+                case "fcl.install.fabric-api": message = context.getString(R.string.install_installer_install, context.getString(R.string.install_installer_fabric_api) + " " + stageValue); break;
+                case "fcl.install.quilt": message = context.getString(R.string.install_installer_install, context.getString(R.string.install_installer_quilt) + " " + stageValue); break;
                 default: message = getLocalizedText(context, stageKey.replace(".", "_").replace("-", "_")); break;
             }
             // @formatter:on

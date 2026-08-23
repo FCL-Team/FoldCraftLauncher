@@ -21,7 +21,6 @@ import com.tungsten.fcl.databinding.ItemVersionSettingValueBinding
 import com.tungsten.fcl.game.FCLGameRepository
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.VersionSetting
-import com.tungsten.fcl.util.AndroidUtils
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLTextView
@@ -420,18 +419,15 @@ class VersionSettingAdapter(
             )
             binding.memoryBar.progress = usedMemory
             binding.memoryBar.secondaryProgress = usedMemory + if (auto) allocated else maxMemory
-            binding.memoryInfoText.text = AndroidUtils.getLocalizedText(
-                context,
-                "settings_memory_used_per_total",
+            binding.memoryInfoText.text = context.getString(R.string.settings_memory_used_per_total,
                 usedMemory / 1024.0,
                 totalMemory / 1024.0
             )
-            binding.memoryAllocateText.text = AndroidUtils.getLocalizedText(
-                context,
+            binding.memoryAllocateText.text = context.getString(
                 if (maxMemory * 1024L * 1024L > freeMemory * 1024L * 1024L) {
-                    if (auto) "settings_memory_allocate_auto_exceeded" else "settings_memory_allocate_manual_exceeded"
+                    if (auto) R.string.settings_memory_allocate_auto_exceeded else R.string.settings_memory_allocate_manual_exceeded
                 } else {
-                    if (auto) "settings_memory_allocate_auto" else "settings_memory_allocate_manual"
+                    if (auto) R.string.settings_memory_allocate_auto else R.string.settings_memory_allocate_manual
                 },
                 maxMemory / 1024.0,
                 allocated / 1024.0,

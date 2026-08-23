@@ -269,14 +269,14 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
         String title;
         String msg;
         if (exception instanceof LibraryDownloadException) {
-            String message = AndroidUtils.getLocalizedText(context, "launch_failed_download_library", ((LibraryDownloadException) exception).getLibrary().getName()) + "\n";
+            String message = context.getString(R.string.launch_failed_download_library, ((LibraryDownloadException) exception).getLibrary().getName()) + "\n";
             if (exception.getCause() instanceof ResponseCodeException rce) {
                 int responseCode = rce.getResponseCode();
                 URL url = rce.getUrl();
                 if (responseCode == 404)
-                    message += AndroidUtils.getLocalizedText(context, "download_code_404", url);
+                    message += context.getString(R.string.download_code_404, url);
                 else
-                    message += AndroidUtils.getLocalizedText(context, "download_failed", url, responseCode);
+                    message += context.getString(R.string.download_failed, url, responseCode);
             } else {
                 message += StringUtils.getStackTrace(exception.getCause());
             }
@@ -286,18 +286,18 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
             URL url = ((DownloadException) exception).getUrl();
             if (exception.getCause() instanceof SocketTimeoutException) {
                 title = context.getString(R.string.install_failed_downloading);
-                msg = AndroidUtils.getLocalizedText(context, "install_failed_downloading_timeout", url);
+                msg = context.getString(R.string.install_failed_downloading_timeout, url);
             } else if (exception.getCause() instanceof ResponseCodeException responseCodeException) {
                 if (AndroidUtils.hasStringId(context, "download_code_" + responseCodeException.getResponseCode())) {
                     title = context.getString(R.string.install_failed_downloading);
                     msg = AndroidUtils.getLocalizedText(context, "download_code_" + responseCodeException.getResponseCode(), url);
                 } else {
                     title = context.getString(R.string.install_failed_downloading);
-                    msg = AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", url);
+                    msg = context.getString(R.string.install_failed_downloading_detail, url);
                 }
             } else {
                 title = context.getString(R.string.install_failed_downloading);
-                msg = AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", url) + "\n" + StringUtils.getStackTrace(exception.getCause());
+                msg = context.getString(R.string.install_failed_downloading_detail, url) + "\n" + StringUtils.getStackTrace(exception.getCause());
             }
         } else if (exception instanceof UnsupportedInstallationException) {
             if (((UnsupportedInstallationException) exception).getReason() == UnsupportedInstallationException.FORGE_1_17_OPTIFINE_H1_PRE2) {
@@ -318,7 +318,7 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
             msg = context.getString(R.string.assets_index_malformed);
         } else if (exception instanceof VersionMismatchException e) {
             title = context.getString(R.string.install_failed);
-            msg = AndroidUtils.getLocalizedText(context, "install_failed_version_mismatch", e.getExpect(), e.getActual());
+            msg = context.getString(R.string.install_failed_version_mismatch, e.getExpect(), e.getActual());
         } else if (exception instanceof CancellationException) {
             // Ignore cancel
             title = "";

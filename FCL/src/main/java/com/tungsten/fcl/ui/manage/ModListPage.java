@@ -465,9 +465,9 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
             }).withRunAsync(Schedulers.androidUIThread(), () -> {
                 List<String> prompt = new ArrayList<>(1);
                 if (!succeeded.isEmpty())
-                    prompt.add(AndroidUtils.getLocalizedText(getContext(), "mods_add_success", String.join(", ", succeeded)));
+                    prompt.add(getContext().getString(R.string.mods_add_success, String.join(", ", succeeded)));
                 if (!failed.isEmpty())
-                    prompt.add(AndroidUtils.getLocalizedText(getContext(), "mods_add_failed", String.join(", ", failed)));
+                    prompt.add(getContext().getString(R.string.mods_add_failed, String.join(", ", failed)));
                 FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
                 builder1.setCancelable(false);
                 builder1.setAlertLevel(failed.isEmpty() ? FCLAlertDialog.AlertLevel.INFO : FCLAlertDialog.AlertLevel.ALERT);

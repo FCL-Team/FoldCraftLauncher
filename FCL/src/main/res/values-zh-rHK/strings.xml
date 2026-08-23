@@ -576,6 +576,7 @@
     <string name="modpack_type_curse_not_found">部分必需文件已經喺網絡中被刪除並且再也無法下載，請嘗試該整合包嘅最新版本或者安裝其他整合包。</string>
     <string name="modpack_type_manual_warning">該整合包由發佈者手動打包，其中可能已經包含啟動器，建議嘗試解壓後使用其自帶嘅啟動器運行遊戲。\nFCL 可以嘗試導入該整合包，但唔保證可用性，是否繼續？</string>
     <string name="modpack_type_mcbbs">我的世界中文論壇整合包標準</string>
+    <string name="modpack_type_hmcl">HMCL 整合包</string>
     <string name="modpack_type_mcbbs_export">可以被 FCL，HMCL 同 MultiMC 導入</string>
     <string name="modpack_type_modrinth">Modrinth</string>
     <string name="modpack_type_multimc">MultiMC</string>

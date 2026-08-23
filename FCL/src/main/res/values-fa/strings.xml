@@ -552,6 +552,7 @@
     <string name="modpack_type_curse_not_found">برخی از وابستگی ها دیگر در دسترس نیستند، لطفا سعی کنید نسخه جدیدتری از مادپک را نصب کنید.</string>
     <string name="modpack_type_manual_warning">این مادپک به صورت دستی توسط ناشر بسته بندی شده است، که ممکن است از قبل حاوی یک لانچر باشد. پیشنهاد می شود سعی کنید بازی را از حالت فشرده خارج کرده و با لانچر مخصوص خود اجرا کنید. فولد کرفت لانچر هنوز هم می تواند آن را وارد کند، اما بدون هیچ تضمینی برای قابلیت استفاده، آیا همچنان ادامه می دهید؟</string>
     <string name="modpack_type_mcbbs">نوع MCBBS</string>
+    <string name="modpack_type_hmcl">نوع HMCL</string>
     <string name="modpack_type_mcbbs_export">می تواند توسط FCL، HMCL و MultiMC وارد شود</string>
     <string name="modpack_type_modrinth">Modrinth</string>
     <string name="modpack_type_multimc">MultiMC</string>

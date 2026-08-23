@@ -92,7 +92,7 @@ public class WorldInfoPage extends FCLPage {
         Tag timeTag = dataTag.get("Time");
         if (timeTag instanceof LongTag) {
             long days = ((LongTag) timeTag).getValue() / 24000;
-            time.setText(AndroidUtils.getLocalizedText(getContext(), "world_info_time_format", days));
+            time.setText(getContext().getString(R.string.world_info_time_format, days));
         }
         Tag cheatTag = dataTag.get("allowCommands");
         if (cheatTag instanceof ByteTag) {

@@ -217,7 +217,7 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                 FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
                 builder.setCancelable(false);
                 builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
-                builder.setMessage(AndroidUtils.getLocalizedText(getContext(), "settings_launcher_launcher_log_export_success", logFile));
+                builder.setMessage(getContext().getString(R.string.settings_launcher_launcher_log_export_success, logFile));
                 builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                 builder.create().show();
             });

@@ -18,7 +18,6 @@ import com.tungsten.fcl.ui.account.CreateAccountDialog;
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage;
 import com.tungsten.fcl.ui.download.modpack.ModpackSelectionPage;
 import com.tungsten.fcl.ui.manage.ModpackTypeSelectionPage;
-import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.AccountFactory;
@@ -65,7 +64,7 @@ public class Versions {
             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
             builder.setCancelable(false);
             builder.setTitle(context.getString(R.string.download_failed));
-            builder.setMessage(AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
+            builder.setMessage(context.getString(R.string.install_failed_downloading_detail, file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
             builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
             builder.create().show();
             return;
@@ -85,7 +84,7 @@ public class Versions {
                         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                         builder.setCancelable(false);
                         builder.setTitle(context.getString(R.string.download_failed));
-                        builder.setMessage(AndroidUtils.getLocalizedText(context, "install_failed_downloading_detail", file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
+                        builder.setMessage(context.getString(R.string.install_failed_downloading_detail, file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
                         builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                         builder.create().show();
                     }

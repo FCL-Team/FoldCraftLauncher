@@ -552,6 +552,7 @@
     <string name="modpack_type_curse_not_found">Algumas dependências não estão mais disponíveis, tente instalar uma versão mais recente do modpack.</string>
     <string name="modpack_type_manual_warning">O modpack é feito manualmente pelo autor, que já pode conter um inicializador. Recomenda-se tentar descompactar e rodar o jogo com seu próprio launcher. O FCL ainda pode importá-lo, sem garantia de sua usabilidade, ainda assim continuar?</string>
     <string name="modpack_type_mcbbs">Tipo MCBBS</string>
+    <string name="modpack_type_hmcl">Tipo HMCL</string>
     <string name="modpack_type_mcbbs_export">Pode ser importado por FCL, HMCL e MultiMC</string>
     <string name="modpack_type_modrinth">Modrinth</string>
     <string name="modpack_type_multimc">MultiMC</string>

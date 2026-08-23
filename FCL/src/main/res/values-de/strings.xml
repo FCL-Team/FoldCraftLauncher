@@ -513,6 +513,7 @@
     <string name="modpack_type_curse_not_found">Einige Abhängigkeiten sind nicht mehr verfügbar. Versuchen Sie, eine neuere Version des Modpacks zu installieren.</string>
     <string name="modpack_type_manual_warning">Dieses Modpack wurde vom Autor manuell zusammengestellt und könnte einen eigenen Launcher enthalten. Es wird empfohlen, das Archiv zu entpacken und das Spiel mit diesem Launcher zu starten. FCL kann dieses Modpack importieren, aber eine korrekte Funktion ist nicht garantiert. Fortfahren?</string>
     <string name="modpack_type_mcbbs">MCBBS-Typ</string>
+    <string name="modpack_type_hmcl">HMCL-Typ</string>
     <string name="modpack_type_mcbbs_export">Kann von FCL, HMCL und MultiMC importiert werden</string>
     <string name="modpack_type_multimc_export">Kann von FCL, HMCL und MultiMC importiert werden</string>
     <string name="modpack_type_server">Automatisches Update des Modpacks vom Server</string>

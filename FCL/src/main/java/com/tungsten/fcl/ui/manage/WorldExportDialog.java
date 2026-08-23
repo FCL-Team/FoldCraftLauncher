@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatDialog;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.util.AndroidUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.game.World;
@@ -71,7 +70,7 @@ public class WorldExportDialog extends FCLDialog implements View.OnClickListener
             TaskDialog taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
             taskDialog.setTitle(getContext().getString(R.string.message_doing));
 
-            Task<?> task = Task.runAsync(AndroidUtils.getLocalizedText(getContext(), "world.export.wizard", editName.getStringValue()), () -> world.export(Paths.get(new File(parent, editFileName.getText().toString()).getAbsolutePath()), editName.getStringValue()));
+            Task<?> task = Task.runAsync(getContext().getString(R.string.world_export_wizard, editName.getStringValue()), () -> world.export(Paths.get(new File(parent, editFileName.getText().toString()).getAbsolutePath()), editName.getStringValue()));
             TaskExecutor executor = task.executor(new TaskListener() {
                 @Override
                 public void onStop(boolean success, TaskExecutor executor) {
