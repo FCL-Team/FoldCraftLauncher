@@ -74,8 +74,18 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         PageSettingLauncherBinding binding = PageSettingLauncherBinding.bind(getContentView());
         LauncherSettingAdapter adapter = new LauncherSettingAdapter(getContext(), this);
         binding.settingList.setLayoutManager(new LinearLayoutManager(getContext()));
-        // 行间用间距分隔（ItemDecoration），最后一行不加
-        binding.settingList.addItemDecoration(new SpacingItemDecoration((int) (8 * getContext().getResources().getDisplayMetrics().density)));
+        // 行间用间距分隔（ItemDecoration），最后一行不加；同组相邻行留 1dp 缝并绘制次要色分割线
+        int rowSpacing = (int) (8 * getContext().getResources().getDisplayMetrics().density);
+        int groupDivider = (int) (1 * getContext().getResources().getDisplayMetrics().density);
+        final int finalRowSpacing = rowSpacing;
+        final int finalGroupDivider = groupDivider;
+        binding.settingList.addItemDecoration(new SpacingItemDecoration(rowSpacing,
+                (parent, position) -> ((LauncherSettingAdapter) parent.getAdapter()).isNextInSameGroup(position)
+                        ? finalGroupDivider : finalRowSpacing,
+                () -> ThemeEngine.getInstance().getTheme().getColor()));
+        // 主题切换时重绘分割线颜色
+        ThemeEngine.getInstance().registerEvent(
+                binding.settingList, binding.settingList::invalidate);
         binding.settingList.setAdapter(adapter);
         adapter.rebuild();
     }
@@ -101,9 +111,6 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                         }
                     }).start();
                 }
-                break;
-            case CLEAR_CACHE:
-                FileUtils.cleanDirectoryQuietly(new File(FCLPath.CACHE_DIR).getParentFile());
                 break;
             case EXPORT_LOG:
                 exportLog();

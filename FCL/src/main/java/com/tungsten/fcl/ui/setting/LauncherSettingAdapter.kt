@@ -29,7 +29,6 @@ import com.tungsten.fcllibrary.util.LocaleUtils
 enum class LauncherSettingTag {
     // 按钮行
     CHECK_UPDATE,
-    CLEAR_CACHE,
     EXPORT_LOG,
     REQUEST_AUDIO,
     THEME_COLOR_RESET,
@@ -102,6 +101,16 @@ class LauncherSettingAdapter(
     private val TYPE_SOURCE = 5
     private val TYPE_THREADS = 6
 
+    /** 设置行分组：同组相邻行连成一块（行间无间距、去中间圆角） */
+    private sealed class SettingGroup {
+        object Theme : SettingGroup()
+        object Background: SettingGroup()
+        object InGame: SettingGroup()
+        object Launcher: SettingGroup()
+        object TouchController: SettingGroup()
+        object Download : SettingGroup()
+    }
+
     private val prefs = context.getSharedPreferences("launcher", MODE_PRIVATE)
     private var rows: List<Row> = emptyList()
 
@@ -132,38 +141,34 @@ class LauncherSettingAdapter(
             Row.SpinnerRow(
                 R.string.settings_launcher_language, languageList,
                 LocaleUtils.getLanguage(context), LauncherSettingTag.SPINNER_LANGUAGE,
-                R.string.settings_launcher_language_desc
+                R.string.settings_launcher_language_desc,
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_upgrade,
                 listOf(R.string.settings_launcher_upgrade_check to LauncherSettingTag.CHECK_UPDATE),
-                R.string.settings_launcher_upgrade_desc
-            ),
-            Row.ButtonRow(
-                R.string.settings_launcher_cache,
-                listOf(R.string.settings_launcher_clear_cache to LauncherSettingTag.CLEAR_CACHE),
-                R.string.settings_launcher_cache_desc
+                R.string.settings_launcher_upgrade_desc,
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_debug,
                 listOf(R.string.settings_launcher_launcher_log_export to LauncherSettingTag.EXPORT_LOG),
-                R.string.settings_launcher_debug_desc
+                R.string.settings_launcher_debug_desc,
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_request_recording_permission,
                 listOf(R.string.settings_launcher_request to LauncherSettingTag.REQUEST_AUDIO),
-                R.string.settings_launcher_request_recording_permission_desc
+                R.string.settings_launcher_request_recording_permission_desc,
             ),
             Row.SwitchRow(
                 R.string.settings_launcher_exit_after_launching,
                 { prefs.getBoolean("autoExitLauncher", false) },
                 LauncherSettingTag.SWITCH_AUTO_EXIT,
-                R.string.settings_launcher_exit_after_launching_desc
+                R.string.settings_launcher_exit_after_launching_desc,
             ),
             Row.SpinnerRow(
                 R.string.settings_launcher_theme_mode, themeModeList,
                 prefs.getInt("themeMode", 0), LauncherSettingTag.SPINNER_THEME_MODE,
-                R.string.settings_launcher_theme_mode_desc
+                R.string.settings_launcher_theme_mode_desc,
+                group = SettingGroup.Theme
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_theme,
@@ -172,7 +177,8 @@ class LauncherSettingAdapter(
                     R.string.settings_launcher_theme_fetch_background to LauncherSettingTag.THEME_COLOR_FETCH,
                     R.string.button_set to LauncherSettingTag.THEME_COLOR_SET
                 ),
-                R.string.settings_launcher_theme_desc
+                R.string.settings_launcher_theme_desc,
+                group = SettingGroup.Theme
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_theme2,
@@ -181,7 +187,8 @@ class LauncherSettingAdapter(
                     R.string.settings_launcher_theme_fetch_background to LauncherSettingTag.THEME_COLOR2_FETCH,
                     R.string.button_set to LauncherSettingTag.THEME_COLOR2_SET
                 ),
-                R.string.settings_launcher_theme2_desc
+                R.string.settings_launcher_theme2_desc,
+                group = SettingGroup.Theme
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_theme2_dark,
@@ -190,7 +197,8 @@ class LauncherSettingAdapter(
                     R.string.settings_launcher_theme_fetch_background to LauncherSettingTag.THEME_COLOR2_DARK_FETCH,
                     R.string.button_set to LauncherSettingTag.THEME_COLOR2_DARK_SET
                 ),
-                R.string.settings_launcher_theme2_dark_desc
+                R.string.settings_launcher_theme2_dark_desc,
+                group = SettingGroup.Background
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_background_lt,
@@ -198,7 +206,8 @@ class LauncherSettingAdapter(
                     R.string.button_reset to LauncherSettingTag.BACKGROUND_LT_RESET,
                     R.string.button_set to LauncherSettingTag.BACKGROUND_LT_SET
                 ),
-                R.string.settings_launcher_background_lt_desc
+                R.string.settings_launcher_background_lt_desc,
+                group = SettingGroup.Background
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_background_dk,
@@ -206,7 +215,8 @@ class LauncherSettingAdapter(
                     R.string.button_reset to LauncherSettingTag.BACKGROUND_DK_RESET,
                     R.string.button_set to LauncherSettingTag.BACKGROUND_DK_SET
                 ),
-                R.string.settings_launcher_background_dk_desc
+                R.string.settings_launcher_background_dk_desc,
+                group = SettingGroup.Background
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_background_video,
@@ -214,13 +224,15 @@ class LauncherSettingAdapter(
                     R.string.button_reset to LauncherSettingTag.BACKGROUND_LIVE_RESET,
                     R.string.button_set to LauncherSettingTag.BACKGROUND_LIVE_SET
                 ),
-                R.string.settings_launcher_background_video_desc
+                R.string.settings_launcher_background_video_desc,
+                group = SettingGroup.Background
             ),
             Row.SeekBarRow(
                 R.string.settings_launcher_background_video_volume, 100, 0,
                 { prefs.getInt("videoBackgroundVolume", 100) },
                 LauncherSettingTag.SEEKBAR_VIDEO_VOLUME, "%",
-                R.string.settings_launcher_background_video_volume_desc
+                R.string.settings_launcher_background_video_volume_desc,
+                group = SettingGroup.Background
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_cursor,
@@ -228,7 +240,8 @@ class LauncherSettingAdapter(
                     R.string.button_reset to LauncherSettingTag.CURSOR_RESET,
                     R.string.button_set to LauncherSettingTag.CURSOR_SET
                 ),
-                R.string.settings_launcher_cursor_desc
+                R.string.settings_launcher_cursor_desc,
+                group = SettingGroup.InGame
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_menu_icon,
@@ -236,37 +249,8 @@ class LauncherSettingAdapter(
                     R.string.button_reset to LauncherSettingTag.MENU_ICON_RESET,
                     R.string.button_set to LauncherSettingTag.MENU_ICON_SET
                 ),
-                R.string.settings_launcher_menu_icon_desc
-            ),
-            Row.SwitchRow(
-                R.string.settings_launcher_ignore_notch,
-                { ThemeEngine.getInstance().getTheme().fullscreen },
-                LauncherSettingTag.SWITCH_IGNORE_NOTCH,
-                R.string.settings_launcher_ignore_notch_desc
-            ),
-            Row.SwitchRow(
-                R.string.settings_launcher_close_skin_view,
-                { ThemeEngine.getInstance().getTheme().closeSkinModel },
-                LauncherSettingTag.SWITCH_CLOSE_SKIN_MODEL,
-                R.string.settings_launcher_close_skin_view_desc
-            ),
-            Row.SeekBarRow(
-                R.string.settings_launcher_animation_speed, 20, 1,
-                { ThemeEngine.getInstance().getTheme().animationSpeed },
-                LauncherSettingTag.SEEKBAR_ANIMATION_SPEED, "00",
-                R.string.settings_launcher_animation_speed_desc
-            ),
-            Row.SeekBarRow(
-                R.string.settings_launcher_vibrate_duration, 500, 20,
-                { prefs.getInt("vibrationDuration", 100) },
-                LauncherSettingTag.SEEKBAR_VIBRATION, "MS",
-                R.string.settings_launcher_vibrate_duration_desc
-            ),
-            Row.SwitchRow(
-                R.string.settings_disable_fullscreen_input,
-                { prefs.getBoolean("disableFullscreenInput", true) },
-                LauncherSettingTag.SWITCH_DISABLE_FULLSCREEN_INPUT,
-                R.string.settings_disable_fullscreen_input_desc
+                R.string.settings_launcher_menu_icon_desc,
+                group = SettingGroup.InGame
             ),
             Row.EditRow(
                 R.string.settings_launcher_custom_launcher_name,
@@ -276,13 +260,50 @@ class LauncherSettingAdapter(
                 },
                 { text -> prefs.edit { putString("custom_launcher_name", text) } },
                 $$"Fold Craft Launcher/${launcher_version}",
-                R.string.settings_launcher_custom_launcher_name_desc
+                R.string.settings_launcher_custom_launcher_name_desc,
+                group = SettingGroup.InGame
+            ),
+            Row.SwitchRow(
+                R.string.settings_launcher_ignore_notch,
+                { ThemeEngine.getInstance().getTheme().fullscreen },
+                LauncherSettingTag.SWITCH_IGNORE_NOTCH,
+                R.string.settings_launcher_ignore_notch_desc,
+                group = SettingGroup.Launcher
+            ),
+            Row.SwitchRow(
+                R.string.settings_launcher_close_skin_view,
+                { ThemeEngine.getInstance().getTheme().closeSkinModel },
+                LauncherSettingTag.SWITCH_CLOSE_SKIN_MODEL,
+                R.string.settings_launcher_close_skin_view_desc,
+                group = SettingGroup.Launcher
+            ),
+            Row.SeekBarRow(
+                R.string.settings_launcher_animation_speed, 20, 1,
+                { ThemeEngine.getInstance().getTheme().animationSpeed },
+                LauncherSettingTag.SEEKBAR_ANIMATION_SPEED, "00",
+                R.string.settings_launcher_animation_speed_desc,
+                group = SettingGroup.Launcher
             ),
             Row.SwitchRow(
                 R.string.settings_launcher_allow_screenshot,
                 { prefs.getBoolean("allowScreenshots", false) },
                 LauncherSettingTag.SWITCH_ALLOW_SCREENSHOTS,
-                R.string.settings_launcher_allow_screenshot_desc
+                R.string.settings_launcher_allow_screenshot_desc,
+                group = SettingGroup.Launcher
+            ),
+            Row.SeekBarRow(
+                R.string.settings_launcher_vibrate_duration, 500, 20,
+                { prefs.getInt("vibrationDuration", 100) },
+                LauncherSettingTag.SEEKBAR_VIBRATION, "MS",
+                R.string.settings_launcher_vibrate_duration_desc,
+                group = SettingGroup.TouchController
+            ),
+            Row.SwitchRow(
+                R.string.settings_disable_fullscreen_input,
+                { prefs.getBoolean("disableFullscreenInput", true) },
+                LauncherSettingTag.SWITCH_DISABLE_FULLSCREEN_INPUT,
+                R.string.settings_disable_fullscreen_input_desc,
+                group = SettingGroup.TouchController
             ),
             Row.SourceRow(
                 { config.autoChooseDownloadTypeProperty().get() },
@@ -290,12 +311,14 @@ class LauncherSettingAdapter(
                 { getSourcePosition(config.versionListSourceProperty().get()) },
                 ArrayList(DownloadProviders.rawProviders.keys),
                 { getSourcePosition(config.downloadTypeProperty().get()) },
-                R.string.settings_launcher_download_source_desc
+                R.string.settings_launcher_download_source_desc,
+                group = SettingGroup.Download
             ),
             Row.ThreadsRow(
                 { config.autoDownloadThreads },
                 { config.downloadThreads },
-                R.string.settings_launcher_download_threads_desc
+                R.string.settings_launcher_download_threads_desc,
+                group = SettingGroup.Download
             )
         )
     }
@@ -312,11 +335,15 @@ class LauncherSettingAdapter(
         /** 行下方的作用描述文案资源，0 表示无描述 */
         open val descriptionRes: Int = 0
 
+        /** 分组：相邻行同组则连成一块；null 表示不分组 */
+        open val group: SettingGroup? = null
+
         data class SwitchRow(
             val labelRes: Int,
             val value: () -> Boolean,
             val tag: LauncherSettingTag,
-            override val descriptionRes: Int = 0
+            override val descriptionRes: Int = 0,
+            override val group: SettingGroup? = null
         ) : Row() {
             override val rowTag: LauncherSettingTag get() = tag
         }
@@ -324,7 +351,8 @@ class LauncherSettingAdapter(
         data class ButtonRow(
             val labelRes: Int,
             val buttons: List<Pair<Int, LauncherSettingTag>>,
-            override val descriptionRes: Int = 0
+            override val descriptionRes: Int = 0,
+            override val group: SettingGroup? = null
         ) : Row()
 
         data class SpinnerRow(
@@ -332,7 +360,8 @@ class LauncherSettingAdapter(
             val data: List<String>,
             val selection: Int,
             val tag: LauncherSettingTag,
-            override val descriptionRes: Int = 0
+            override val descriptionRes: Int = 0,
+            override val group: SettingGroup? = null
         ) : Row() {
             override val rowTag: LauncherSettingTag get() = tag
         }
@@ -344,7 +373,8 @@ class LauncherSettingAdapter(
             val value: () -> Int,
             val tag: LauncherSettingTag,
             val suffix: String? = null,
-            override val descriptionRes: Int = 0
+            override val descriptionRes: Int = 0,
+            override val group: SettingGroup? = null
         ) : Row() {
             override val rowTag: LauncherSettingTag get() = tag
         }
@@ -354,7 +384,8 @@ class LauncherSettingAdapter(
             val value: () -> String,
             val write: (String) -> Unit,
             val hint: String? = null,
-            override val descriptionRes: Int = 0
+            override val descriptionRes: Int = 0,
+            override val group: SettingGroup? = null
         ) : Row()
 
         data class SourceRow(
@@ -363,13 +394,15 @@ class LauncherSettingAdapter(
             val autoSelection: () -> Int,
             val manualData: List<String>,
             val manualSelection: () -> Int,
-            override val descriptionRes: Int = 0
+            override val descriptionRes: Int = 0,
+            override val group: SettingGroup? = null
         ) : Row()
 
         data class ThreadsRow(
             val autoChecked: () -> Boolean,
             val threads: () -> Int,
-            override val descriptionRes: Int = 0
+            override val descriptionRes: Int = 0,
+            override val group: SettingGroup? = null
         ) : Row()
     }
 
@@ -404,14 +437,33 @@ class LauncherSettingAdapter(
         return Holder(view)
     }
 
+    /** 供间距装饰器判断：下一行与当前行同组时行间加 1dp 缝隙（绘制分割线） */
+    fun isNextInSameGroup(position: Int): Boolean {
+        val row = rows.getOrNull(position) ?: return false
+        val next = rows.getOrNull(position + 1) ?: return false
+        return row.group != null && row.group == next.group
+    }
+
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        // 行背景为圆角形状（item 布局中定义），颜色 tint 取主题浅色；间隔空隙透出页面背景
+        val row = rows[position]
+        // 行背景为圆角形状：按相邻行是否同组选择变体（组首上圆角/组尾下圆角/中间无圆角），
+        // 颜色 tint 取主题浅色；间隔空隙透出页面背景
+        val prevSame = position > 0 && rows[position - 1].group == row.group && row.group != null
+        val nextSame =
+            position < rows.size - 1 && rows[position + 1].group == row.group && row.group != null
+        holder.itemView.setBackgroundResource(
+            when {
+                prevSame && nextSame -> R.drawable.bg_item_rounded_middle
+                prevSame -> R.drawable.bg_item_rounded_bottom
+                nextSame -> R.drawable.bg_item_rounded_top
+                else -> R.drawable.bg_item_rounded
+            }
+        )
         ThemeEngine.getInstance().unregisterEvent(holder.itemView)
         ThemeEngine.getInstance().registerEvent(holder.itemView) {
             holder.itemView.backgroundTintList =
                 ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().ltColor)
         }
-        val row = rows[position]
         // 行下方的作用描述
         holder.itemView.findViewById<FCLTextView>(R.id.description)?.let { description ->
             if (row.descriptionRes != 0) {
