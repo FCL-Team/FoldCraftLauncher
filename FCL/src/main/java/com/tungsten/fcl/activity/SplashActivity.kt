@@ -23,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import com.mio.JavaManager
 import com.mio.manager.RendererManager
 import com.mio.util.ImageUtil
+import com.mio.util.getFileName
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivitySplashBinding
 import com.tungsten.fcl.fragment.EulaFragment
@@ -46,7 +47,6 @@ import java.io.IOException
 import java.nio.file.Paths
 import java.util.Locale
 import java.util.logging.Level
-import com.mio.util.getFileName
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : FCLActivity() {
@@ -90,7 +90,7 @@ class SplashActivity : FCLActivity() {
                     sharedPreferences.edit { putBoolean("isAgree", true) }
                     checkPermission()
                 }
-                setNegativeButton(getString(com.tungsten.fcl.R.string.crash_reporter_close)) { finish() }
+                setNegativeButton(getString(R.string.crash_reporter_close)) { finish() }
                 create().show()
             }
         }
@@ -164,7 +164,7 @@ class SplashActivity : FCLActivity() {
                     }
                 }
             }
-startActivity(
+            startActivity(
                 handleModpack(Intent(this@SplashActivity, MainActivity::class.java)),
                 ActivityOptionsCompat.makeCustomAnimation(this@SplashActivity, 0, 0).toBundle()
             )
@@ -173,6 +173,7 @@ startActivity(
     }
 
     /** 更新加载信息区：当前步骤文案、步骤计数与进度条（进度按步骤均匀划分，平滑动画过渡） */
+    @SuppressLint("SetTextI18n")
     private suspend fun updateLoading(@StringRes textRes: Int, step: Int) {
         withContext(Dispatchers.Main) {
             binding.loadingInfo.setText(textRes)
@@ -199,7 +200,7 @@ startActivity(
 
         if (Intent.ACTION_VIEW == action && data != null) {
             try {
-                val fileName = getFileName(this, data) ?: "modpack"
+                val fileName = getFileName(this, data)
                 val cacheFile = File(cacheDir, fileName)
                 contentResolver.openInputStream(data)?.use { input ->
                     cacheFile.outputStream().use { output ->
