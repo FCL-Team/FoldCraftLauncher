@@ -44,6 +44,7 @@ import com.tungsten.fclcore.util.platform.MemoryUtils
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FullEditDialog
+import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLPage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -92,10 +93,23 @@ class VersionSettingPage(
         binding = PageVersionSettingBinding.bind(contentView)
         adapter = VersionSettingAdapter(context, globalSetting, this)
         binding.settingList.layoutManager = LinearLayoutManager(context)
-        // 行间用间距分隔（ItemDecoration），最后一行不加
+        // 行间用间距分隔（ItemDecoration），最后一行不加；同组相邻行间留 1dp 缝并绘制次要色分割线
+        val rowSpacing = (8 * context.resources.displayMetrics.density).toInt()
+        val groupDivider = (1 * context.resources.displayMetrics.density).toInt()
         binding.settingList.addItemDecoration(
-            SpacingItemDecoration((8 * context.resources.displayMetrics.density).toInt())
+            SpacingItemDecoration(
+                rowSpacing,
+                { parent, position ->
+                    val adapter = parent.adapter as? VersionSettingAdapter
+                    if (adapter?.isNextInSameGroup(position) == true) groupDivider else rowSpacing
+                },
+                { ThemeEngine.getInstance().getTheme().color }
+            )
         )
+        // 主题切换时重绘分割线颜色
+        ThemeEngine.getInstance().registerEvent(binding.settingList) {
+            binding.settingList.invalidate()
+        }
         binding.settingList.adapter = adapter
 
         // 切换 Profile 时刷新设置（Repository 单例 StateFlow，attach 时收集、detach 取消避免泄漏）

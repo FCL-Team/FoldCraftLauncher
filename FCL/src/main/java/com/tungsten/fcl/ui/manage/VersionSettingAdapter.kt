@@ -31,6 +31,7 @@ enum class VersionSettingTag {
     SPECIAL,
     VULKAN,
     FORCE_RESOLUTION,
+
     // 按钮行
     EDIT_ICON,
     DELETE_ICON,
@@ -44,6 +45,7 @@ enum class VersionSettingTag {
     EDIT_DRIVER,
     INSTALL_DRIVER,
     EDIT_ENV,
+
     // 编辑行
     JVM_ARGS,
     MC_ARGS
@@ -74,6 +76,13 @@ class VersionSettingAdapter(
     private val TYPE_MEMORY = 3
     private val TYPE_ICON = 4
 
+    /** 设置行分组：同组相邻行连成一块（行间无间距、去中间圆角） */
+    private sealed class SettingGroup {
+        /** 渲染相关设置（图形后端/渲染器/大核/Vulkan 驱动等） */
+        object Render : SettingGroup()
+        object Check : SettingGroup()
+    }
+
     private lateinit var versionSetting: VersionSetting
     private var modpack = false
     private var enableSpecific = false
@@ -82,7 +91,12 @@ class VersionSettingAdapter(
     private var rows: List<Row> = emptyList()
 
     /** 版本/状态变化时全量重建行列表 */
-    fun update(versionSetting: VersionSetting, modpack: Boolean, enableSpecific: Boolean, usedMemory: Int) {
+    fun update(
+        versionSetting: VersionSetting,
+        modpack: Boolean,
+        enableSpecific: Boolean,
+        usedMemory: Int
+    ) {
         this.versionSetting = versionSetting
         this.modpack = modpack
         this.enableSpecific = enableSpecific
@@ -157,6 +171,7 @@ class VersionSettingAdapter(
                 VersionSettingTag.EDIT_BACKEND,
                 null,
                 descriptionRes = R.string.settings_fcl_graphics_backend_desc,
+                group = SettingGroup.Render,
             )
             result += Row.ValueRow(
                 R.string.settings_fcl_renderer,
@@ -164,12 +179,14 @@ class VersionSettingAdapter(
                 VersionSettingTag.EDIT_RENDERER,
                 VersionSettingTag.INSTALL_RENDERER,
                 descriptionRes = R.string.settings_fcl_renderer_desc,
+                group = SettingGroup.Render,
             )
             result += Row.SwitchRow(
                 R.string.settings_fcl_pojav_bigcore,
                 { versionSetting.isPojavBigCore },
                 { versionSetting.isPojavBigCore = it },
                 descriptionRes = R.string.settings_fcl_pojav_bigcore_desc,
+                group = SettingGroup.Render,
             )
             result += Row.SwitchRow(
                 R.string.settings_fcl_vulkan_driver_system,
@@ -177,6 +194,7 @@ class VersionSettingAdapter(
                 { listener.onSpecialSwitch(VersionSettingTag.VULKAN, it) },
                 rowTag = VersionSettingTag.VULKAN,
                 descriptionRes = R.string.settings_fcl_vulkan_driver_system_desc,
+                group = SettingGroup.Render,
             )
             if (!versionSetting.isVKDriverSystem) {
                 result += Row.ValueRow(
@@ -185,6 +203,7 @@ class VersionSettingAdapter(
                     VersionSettingTag.EDIT_DRIVER,
                     VersionSettingTag.INSTALL_DRIVER,
                     descriptionRes = R.string.settings_fcl_driver_desc,
+                    group = SettingGroup.Render,
                 )
             }
             result += Row.SwitchRow(
@@ -192,18 +211,21 @@ class VersionSettingAdapter(
                 { versionSetting.isNotCheckGame },
                 { versionSetting.isNotCheckGame = it },
                 descriptionRes = R.string.settings_advanced_dont_check_game_completeness_desc,
+                group = SettingGroup.Check
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_jvm_validity,
                 { versionSetting.isNotCheckJVM },
                 { versionSetting.isNotCheckJVM = it },
                 descriptionRes = R.string.settings_advanced_dont_check_jvm_validity_desc,
+                group = SettingGroup.Check
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_mod,
                 { versionSetting.isNotCheckMod },
                 { versionSetting.isNotCheckMod = it },
                 descriptionRes = R.string.settings_advanced_dont_check_mod_desc,
+                group = SettingGroup.Check
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_debug_log,
@@ -219,6 +241,7 @@ class VersionSettingAdapter(
                 hintRes = R.string.settings_advanced_minecraft_arguments_prompt,
                 longPressEdit = true,
                 descriptionRes = R.string.settings_advanced_minecraft_arguments_desc,
+                group = SettingGroup.Check
             )
             result += Row.EditRow(
                 R.string.settings_advanced_jvm_args,
@@ -227,6 +250,7 @@ class VersionSettingAdapter(
                 tag = VersionSettingTag.JVM_ARGS,
                 longPressEdit = true,
                 descriptionRes = R.string.settings_advanced_jvm_args_desc,
+                group = SettingGroup.Check
             )
             result += Row.ValueRow(
                 R.string.settings_advanced_env,
@@ -234,12 +258,7 @@ class VersionSettingAdapter(
                 VersionSettingTag.EDIT_ENV,
                 null,
                 descriptionRes = R.string.settings_advanced_env_desc,
-            )
-            result += Row.EditRow(
-                R.string.settings_advanced_custom_uuid,
-                { versionSetting.uuid },
-                { versionSetting.uuid = it },
-                descriptionRes = R.string.settings_advanced_custom_uuid_desc,
+                group = SettingGroup.Check
             )
             result += Row.SwitchRow(
                 R.string.settings_advanced_force_resolution,
@@ -255,8 +274,12 @@ class VersionSettingAdapter(
 
     private sealed class Row {
         open val rowTag: VersionSettingTag? = null
+
         /** 行下方的作用描述文案资源，0 表示无描述 */
         open val descriptionRes: Int = 0
+
+        /** 分组：相邻行同组则连成一块；null 表示不分组 */
+        open val group: SettingGroup? = null
 
         data class SwitchRow(
             val labelRes: Int,
@@ -265,7 +288,8 @@ class VersionSettingAdapter(
             val disabled: Boolean = false,
             val longClick: Boolean = false,
             override val rowTag: VersionSettingTag? = null,
-            override val descriptionRes: Int = 0
+            override val descriptionRes: Int = 0,
+            override val group: SettingGroup? = null
         ) : Row()
 
         data class ValueRow(
@@ -273,7 +297,8 @@ class VersionSettingAdapter(
             val value: () -> String,
             val editTag: VersionSettingTag?,
             val installTag: VersionSettingTag?,
-            override val descriptionRes: Int = 0
+            override val descriptionRes: Int = 0,
+            override val group: SettingGroup? = null
         ) : Row() {
             override val rowTag: VersionSettingTag? get() = editTag
         }
@@ -285,7 +310,8 @@ class VersionSettingAdapter(
             val tag: VersionSettingTag? = null,
             val hintRes: Int = 0,
             val longPressEdit: Boolean = false,
-            override val descriptionRes: Int = 0
+            override val descriptionRes: Int = 0,
+            override val group: SettingGroup? = null
         ) : Row() {
             override val rowTag: VersionSettingTag? get() = tag
         }
@@ -322,13 +348,33 @@ class VersionSettingAdapter(
         return Holder(view)
     }
 
+    /** 供间距装饰器判断：下一行与当前行同组时行间不加间距，组内连成一块 */
+    fun isNextInSameGroup(position: Int): Boolean {
+        val row = rows.getOrNull(position) ?: return false
+        val next = rows.getOrNull(position + 1) ?: return false
+        return row.group != null && row.group == next.group
+    }
+
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        // 行背景为圆角形状（item 布局中定义），颜色 tint 取主题浅色；间隔空隙透出页面背景
+        val row = rows[position]
+        // 行背景为圆角形状：按相邻行是否同组选择变体（组首上圆角/组尾下圆角/中间无圆角），
+        // 颜色 tint 取主题浅色；间隔空隙透出页面背景
+        val prevSame = position > 0 && rows[position - 1].group == row.group && row.group != null
+        val nextSame =
+            position < rows.size - 1 && rows[position + 1].group == row.group && row.group != null
+        holder.itemView.setBackgroundResource(
+            when {
+                prevSame && nextSame -> R.drawable.bg_item_rounded_middle
+                prevSame -> R.drawable.bg_item_rounded_bottom
+                nextSame -> R.drawable.bg_item_rounded_top
+                else -> R.drawable.bg_item_rounded
+            }
+        )
         ThemeEngine.getInstance().unregisterEvent(holder.itemView)
         ThemeEngine.getInstance().registerEvent(holder.itemView) {
-            holder.itemView.backgroundTintList = ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().ltColor)
+            holder.itemView.backgroundTintList =
+                ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().ltColor)
         }
-        val row = rows[position]
         // 行下方的作用描述
         holder.itemView.findViewById<FCLTextView>(R.id.description)?.let { description ->
             if (row.descriptionRes != 0) {
@@ -419,7 +465,8 @@ class VersionSettingAdapter(
             )
             binding.memoryBar.progress = usedMemory
             binding.memoryBar.secondaryProgress = usedMemory + if (auto) allocated else maxMemory
-            binding.memoryInfoText.text = context.getString(R.string.settings_memory_used_per_total,
+            binding.memoryInfoText.text = context.getString(
+                R.string.settings_memory_used_per_total,
                 usedMemory / 1024.0,
                 totalMemory / 1024.0
             )
@@ -458,7 +505,12 @@ class VersionSettingAdapter(
 
     private fun bindIcon(holder: Holder, row: Row.IconRow) {
         val binding = ItemVersionSettingIconBinding.bind(holder.itemView)
-        binding.icon.setImageDrawable(iconDrawable ?: ContextCompat.getDrawable(context, R.drawable.img_grass))
+        binding.icon.setImageDrawable(
+            iconDrawable ?: ContextCompat.getDrawable(
+                context,
+                R.drawable.img_grass
+            )
+        )
         binding.buttonEdit.setOnClickListener { listener.onButtonClick(VersionSettingTag.EDIT_ICON) }
         binding.buttonDelete.setOnClickListener { listener.onButtonClick(VersionSettingTag.DELETE_ICON) }
     }
@@ -466,7 +518,8 @@ class VersionSettingAdapter(
     private fun javaText(): String =
         if (versionSetting.java == "Auto") context.getString(R.string.settings_game_java_version_auto) else versionSetting.java
 
-    private fun controllerName(): String = Controllers.findControllerById(versionSetting.controller).name
+    private fun controllerName(): String =
+        Controllers.findControllerById(versionSetting.controller).name
 
     private fun rendererText(): String = getRenderer(versionSetting.renderer).des
 }
