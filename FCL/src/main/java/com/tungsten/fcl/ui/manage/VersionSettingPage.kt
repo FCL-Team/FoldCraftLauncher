@@ -74,6 +74,9 @@ class VersionSettingPage(
     private lateinit var binding: PageVersionSettingBinding
     private lateinit var adapter: VersionSettingAdapter
 
+    /** loadVersion 调用序号：异步加载回调返回时若已被更新的调用或页面销毁覆盖则丢弃 */
+    private var loadSeq = 0
+
     /** 当前版本设置的变更监听（loadVersion 时切换注册对象） */
     private var settingsChangeListener: Runnable? = null
     private var lastIsolateGameDir = true
@@ -109,6 +112,8 @@ class VersionSettingPage(
             }
 
             override fun onViewDetachedFromWindow(v: View) {
+                // 页面被回收/销毁时使在途的异步加载回调失效，避免触碰已销毁的 UI
+                loadSeq++
                 profileCollectJob?.cancel()
                 // 移除挂到单例上的监听，避免页面销毁后仍被回调
                 // （attach 时 collect 立即发射当前值，会重新 loadVersion 注册）
@@ -189,6 +194,24 @@ class VersionSettingPage(
             profile.addSelectedVersionListener(listener)
         }
 
+        // fclversion.cfg 的读取与 Gson 解析挪到后台线程：主线程同步读盘在慢存储/低端
+        // 设备上会阻塞页面创建与切换（点击后页面迟迟不出现、按压反馈滞留）
+        val seq = ++loadSeq
+        Task.supplyAsync(Schedulers.io(), {
+            try {
+                profile.repository.preloadVersionSetting(versionId)
+            } catch (e: Exception) {
+                Logging.LOG.log(Level.WARNING, "Failed to preload version setting of $versionId", e)
+            }
+        }).thenAcceptAsync<RuntimeException>(Schedulers.androidUIThread(), {
+            // 加载期间可能已被更新的 loadVersion 调用或页面销毁覆盖，丢弃过期结果
+            if (seq != loadSeq) return@thenAcceptAsync
+            bindVersionSetting(profile, versionId)
+        }).start()
+    }
+
+    /** 版本设置已预读进缓存，主线程只做内存操作、监听注册与 UI 装配 */
+    private fun bindVersionSetting(profile: Profile, versionId: String?) {
         val versionSetting = profile.getVersionSetting(versionId)
         versionSetting.checkController()
 
@@ -199,15 +222,16 @@ class VersionSettingPage(
         settingsChangeListener?.let { lastVersionSetting.removeOnChangeListener(it) }
         lastIsolateGameDir = versionSetting.isIsolateGameDir
         val listener = Runnable {
-            // 隔离目录变化时刷新模组/世界列表（仅游戏设置页）
-            if (id == ManageUI.PAGE_ID_MANAGE_SETTING && lastIsolateGameDir != versionSetting.isIsolateGameDir) {
-                lastIsolateGameDir = versionSetting.isIsolateGameDir
-                UIManager.instance.manageUI.onRunDirectoryChange(profile, versionId)
-            }
-            // usesGlobal 变化时刷新设置项
-            if (enableSpecificSettings.get() != !versionSetting.isUsesGlobal) {
-                enableSpecificSettings.set(!versionSetting.isUsesGlobal)
-                Schedulers.androidUIThread().execute {
+            // changed() 可能在后台线程触发（写盘已异步化），UI 更新统一回主线程
+            Schedulers.androidUIThread().execute {
+                // 隔离目录变化时刷新模组/世界列表（仅游戏设置页）
+                if (id == ManageUI.PAGE_ID_MANAGE_SETTING && lastIsolateGameDir != versionSetting.isIsolateGameDir) {
+                    lastIsolateGameDir = versionSetting.isIsolateGameDir
+                    UIManager.instance.manageUI.onRunDirectoryChange(profile, versionId)
+                }
+                // usesGlobal 变化时刷新设置项
+                if (enableSpecificSettings.get() != !versionSetting.isUsesGlobal) {
+                    enableSpecificSettings.set(!versionSetting.isUsesGlobal)
                     adapter.update(
                         versionSetting,
                         modpack.get(),
@@ -245,7 +269,9 @@ class VersionSettingPage(
             usedMemory.get()
         )
         Controllers.addCallback {
-            adapter.refreshRow(VersionSettingTag.EDIT_CONTROLLER)
+            Schedulers.androidUIThread().execute {
+                adapter.refreshRow(VersionSettingTag.EDIT_CONTROLLER)
+            }
         }
         loadIcon()
     }

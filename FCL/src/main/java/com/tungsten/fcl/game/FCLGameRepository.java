@@ -52,6 +52,7 @@ import com.tungsten.fclcore.mod.ModAdviser;
 import com.tungsten.fclcore.mod.Modpack;
 import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.mod.ModpackProvider;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
@@ -156,6 +157,7 @@ public class FCLGameRepository extends DefaultGameRepository {
     @Override
     protected void refreshVersionsImpl() {
         localVersionSettings.clear();
+        checkedNoLocalVersionSetting.clear();
         resolvedVersionCache.clear();
         modpackConfigCache.clear();
         super.refreshVersionsImpl();
@@ -244,6 +246,23 @@ public class FCLGameRepository extends DefaultGameRepository {
                 // If [JsonParseException], [IOException] or [NullPointerException] happens, the json file is malformed and needed to be recreated.
                 initLocalVersionSetting(id, new VersionSetting());
             }
+    }
+
+    /**
+     * 已确认“无本地设置文件”的版本 id 集合（避免每次进入设置页都重复 stat）。
+     */
+    private final Set<String> checkedNoLocalVersionSetting = ConcurrentHashMap.newKeySet();
+
+    /**
+     * 后台预读版本设置到缓存：读取文件与 Gson 解析是主线程卡顿的主要来源，
+     * 页面进入前先在 IO 线程完成，getVersionSetting 走缓存命中即纯内存操作。
+     * 幂等且无副作用（不触发 setter 监听），修正逻辑仍由主线程 getVersionSetting 完成。
+     */
+    public void preloadVersionSetting(String id) {
+        if (id == null || localVersionSettings.containsKey(id) || checkedNoLocalVersionSetting.contains(id))
+            return;
+        checkedNoLocalVersionSetting.add(id);
+        loadLocalVersionSetting(id);
     }
 
     /**
@@ -354,17 +373,21 @@ public class FCLGameRepository extends DefaultGameRepository {
     }
 
     public void saveVersionSetting(String id) {
-        if (!localVersionSettings.containsKey(id))
+        VersionSetting vs = localVersionSettings.get(id);
+        if (vs == null)
             return;
-        File file = getLocalVersionSettingFile(id);
-        if (!FileUtils.makeDirectory(file.getAbsoluteFile().getParentFile()))
-            return;
-
-        try {
-            FileUtils.writeText(file, GSON.toJson(localVersionSettings.get(id)));
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Unable to save version setting of " + id, e);
-        }
+        // 写盘挪到 IO 线程：属性变化（如控制器校验回写）在任意线程触发，主线程同步写
+        // 文件在慢存储设备上会阻塞 UI
+        Schedulers.io().execute(() -> {
+            File file = getLocalVersionSettingFile(id);
+            if (!FileUtils.makeDirectory(file.getAbsoluteFile().getParentFile()))
+                return;
+            try {
+                FileUtils.writeText(file, GSON.toJson(vs));
+            } catch (IOException e) {
+                LOG.log(Level.SEVERE, "Unable to save version setting of " + id, e);
+            }
+        });
     }
 
     /**
