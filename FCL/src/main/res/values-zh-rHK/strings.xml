@@ -8,6 +8,11 @@
     <string name="splash_permission_settings">去設定</string>
     <string name="splash_permission_settings_msg">你已選擇永不授權，請喺設定中手動授予儲存權限。</string>
     <string name="notification_permission">FCL需要發佈通知嘅權限，防止無法正常安裝/啟動遊戲。</string>
+    <string name="splash_loading_renderer">正在初始化渲染器…</string>
+    <string name="splash_loading_java">正在初始化 Java 執行環境…</string>
+    <string name="splash_loading_config">正在加載配置同版本列表…</string>
+    <string name="splash_loading_cache">正在清理快取…</string>
+
     <string name="splash_title">歡迎使用 Fold Craft Launcher</string>
     <string name="splash_eula_error">無法獲取用戶協議，請檢查網絡。</string>
     <string name="splash_eula_next">同意並繼續</string>

@@ -10,6 +10,11 @@
     <string name="splash_permission_settings">Cài đặt</string>
     <string name="splash_permission_settings_msg">Bạn đã chọn "Không bao giờ cho phép". Vui lòng cấp quyền lưu trữ theo cách thủ công trong cài đặt.</string>
     <string name="notification_permission">FCL yêu cầu quyền gửi thông báo để tránh các sự cố khi cài đặt hoặc khởi động trò chơi.</string>
+    <string name="splash_loading_renderer">Đang khởi tạo trình kết xuất...</string>
+    <string name="splash_loading_java">Đang khởi tạo Java...</string>
+    <string name="splash_loading_config">Đang tải cấu hình và phiên bản...</string>
+    <string name="splash_loading_cache">Đang dọn bộ nhớ đệm...</string>
+
     <string name="splash_title">Chào mừng đến với Fold Craft Launcher</string>
     <string name="splash_eula_error">Không thể lấy EULA, vui lòng kiểm tra kết nối mạng.</string>
     <string name="splash_eula_next">Đồng ý và Tiếp tục</string>

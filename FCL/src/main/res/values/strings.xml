@@ -11,6 +11,11 @@
     <string name="splash_permission_settings_msg">You have chosen "Never Allow" Please manually grant storage permissions in settings.</string>
     <string name="notification_permission">FCL requires permission to post notifications to prevent issues with normal game installation or startup.</string>
 
+    <string name="splash_loading_renderer">Initializing renderer...</string>
+    <string name="splash_loading_java">Initializing Java runtime...</string>
+    <string name="splash_loading_config">Loading configuration and versions...</string>
+    <string name="splash_loading_cache">Clearing cache...</string>
+
     <string name="splash_title">Welcome to Fold Craft Launcher</string>
     <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
     <string name="splash_eula_next">Agree and Continue</string>

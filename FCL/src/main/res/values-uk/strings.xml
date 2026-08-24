@@ -6,6 +6,11 @@
     <string name="splash_permission_close">Закрити лаунчер</string>
     <string name="splash_permission_settings">Налаштування</string>
     <string name="splash_permission_settings_msg">Ви обрали "Заборонити". Надайте доступ до сховища вручну в налаштуваннях.</string>
+    <string name="splash_loading_renderer">Ініціалізація рендерера...</string>
+    <string name="splash_loading_java">Ініціалізація Java...</string>
+    <string name="splash_loading_config">Завантаження конфігурації та версій...</string>
+    <string name="splash_loading_cache">Очищення кешу...</string>
+
     <string name="splash_title">Ласкаво просимо до Fold Craft Launcher</string>
     <string name="splash_eula_error">Не вдалося підтвердити наявність ліцензії через проблеми з підключенням.</string>
     <string name="splash_eula_next">Прийняти та продовжити</string>

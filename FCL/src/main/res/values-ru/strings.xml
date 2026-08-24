@@ -8,6 +8,11 @@
     <string name="splash_permission_settings">Настройки</string>
     <string name="splash_permission_settings_msg">Вы выбрали "Запретить". Разрешите доступ к хранилищу в настройках вручную.</string>
     <string name="notification_permission">FCL требуется разрешение на отправку уведомлений, чтобы избежать проблем с установкой и запуском игры.</string>
+    <string name="splash_loading_renderer">Инициализация рендерера...</string>
+    <string name="splash_loading_java">Инициализация Java...</string>
+    <string name="splash_loading_config">Загрузка конфигурации и версий...</string>
+    <string name="splash_loading_cache">Очистка кэша...</string>
+
     <string name="splash_title">Добро пожаловать в Fold Craft Launcher</string>
     <string name="splash_eula_error">Не удалось подтвердить наличие лицензии из-за проблем с соединением.</string>
     <string name="splash_eula_next">Принять и продолжить</string>

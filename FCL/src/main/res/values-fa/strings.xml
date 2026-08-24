@@ -6,6 +6,11 @@
     <string name="splash_permission_close">بستن</string>
     <string name="splash_permission_settings">تنظیمات</string>
     <string name="splash_permission_settings_msg">شما گزینه "هرگز اجازه داده نشود" را انتخاب کرده اید، لطفا به صورت دستی مجوز های دسترسی به حافظه را در تنظیمات فعال کنید.</string>
+    <string name="splash_loading_renderer">در حال راه‌اندازی رندرر...</string>
+    <string name="splash_loading_java">در حال راه‌اندازی جاوا...</string>
+    <string name="splash_loading_config">در حال بارگذاری پیکربندی و نسخه‌ها...</string>
+    <string name="splash_loading_cache">در حال پاک‌سازی حافظه پنهان...</string>
+
     <string name="splash_title">به فولد کرفت لانچر خوش آمدید</string>
     <string name="splash_eula_error">خطا در دریافت قرارداد مجوز کاربر نهایی، لطفا اتصال به اینترنت را بررسی کنید.</string>
     <string name="splash_eula_next">پذیرفتن و ادامه</string>

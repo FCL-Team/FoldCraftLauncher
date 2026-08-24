@@ -6,6 +6,11 @@
     <string name="splash_permission_close">Launcher schließen</string>
     <string name="splash_permission_settings">Einstellungen</string>
     <string name="splash_permission_settings_msg">Sie haben „Verweigern“ gewählt. Bitte gewähren Sie den Speicherzugriff manuell in den Einstellungen.</string>
+    <string name="splash_loading_renderer">Renderer wird initialisiert...</string>
+    <string name="splash_loading_java">Java-Laufzeit wird initialisiert...</string>
+    <string name="splash_loading_config">Konfiguration und Versionen werden geladen...</string>
+    <string name="splash_loading_cache">Cache wird bereinigt...</string>
+
     <string name="splash_title">Willkommen bei Fold Craft Launcher</string>
     <string name="splash_eula_error">Die Lizenz konnte aufgrund von Verbindungsproblemen nicht überprüft werden.</string>
     <string name="splash_eula_next">Akzeptieren und fortfahren</string>
