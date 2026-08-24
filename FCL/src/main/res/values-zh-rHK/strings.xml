@@ -18,6 +18,7 @@
     <string name="splash_eula_next">同意並繼續</string>
     <string name="splash_runtime_title">安裝或更新運行環境</string>
     <string name="splash_runtime_install">安裝 / 更新</string>
+    <string name="splash_runtime_patching">正在優化運行環境…</string>
     <string name="account">賬戶管理</string>
     <string name="version">版本列表</string>
     <string name="launch_mode">啟動方式</string>

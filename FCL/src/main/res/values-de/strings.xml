@@ -16,6 +16,7 @@
     <string name="splash_eula_next">Akzeptieren und fortfahren</string>
     <string name="splash_runtime_title">Laufzeitumgebung des Launchers installieren</string>
     <string name="splash_runtime_install">Installieren</string>
+    <string name="splash_runtime_patching">Laufzeitumgebung wird optimiert …</string>
     <string name="account">Konto</string>
     <string name="version">Version</string>
     <string name="launch_mode">Starten</string>

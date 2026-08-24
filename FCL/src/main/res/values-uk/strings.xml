@@ -16,6 +16,7 @@
     <string name="splash_eula_next">Прийняти та продовжити</string>
     <string name="splash_runtime_title">Встановити середовище виконання лаунчера</string>
     <string name="splash_runtime_install">Встановити</string>
+    <string name="splash_runtime_patching">Оптимізація середовища виконання…</string>
     <string name="account">Обліковий запис</string>
     <string name="version">Версія</string>
     <string name="launch_mode">Запустити</string>

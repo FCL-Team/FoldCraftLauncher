@@ -18,6 +18,7 @@
     <string name="splash_eula_next">Принять и продолжить</string>
     <string name="splash_runtime_title">Установить среду выполнения лаунчера</string>
     <string name="splash_runtime_install">Установить</string>
+    <string name="splash_runtime_patching">Оптимизация среды выполнения…</string>
     <string name="account">Аккаунт</string>
     <string name="version">Версия</string>
     <string name="launch_mode">Запустить</string>

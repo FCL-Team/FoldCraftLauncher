@@ -16,6 +16,7 @@
     <string name="splash_eula_next">پذیرفتن و ادامه</string>
     <string name="splash_runtime_title">ران تایم برنامه را نصب یا بروزرسانی کنید</string>
     <string name="splash_runtime_install">نصب/بروزرسانی</string>
+    <string name="splash_runtime_patching">بهینه‌سازی زمان اجرا…</string>
     <string name="account">حساب</string>
     <string name="version">نسخه</string>
     <string name="manage">مدیریت</string>

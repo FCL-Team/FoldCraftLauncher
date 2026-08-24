@@ -29,6 +29,7 @@
     <string name="splash_runtime_java25" translatable="false">JRE 25</string>
     <string name="splash_runtime_jna" translatable="false">JNA</string>
     <string name="splash_runtime_install">Cài đặt / Cập nhật</string>
+    <string name="splash_runtime_patching">Đang tối ưu thời gian chạy…</string>
     <string name="missing_runtime_arch_files">Trình khởi chạy hiện đang cài đặt thiếu các tệp thời gian chạy cần thiết cho kiến trúc thiết bị của bạn (%s). Vui lòng tải xuống gói cài đặt cho kiến trúc tương ứng (%s) hoặc gói cài đặt đa năng (%s).</string>
     <string name="account">Tài khoản</string>
     <string name="version">Phiên bản</string>

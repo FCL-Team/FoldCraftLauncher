@@ -16,6 +16,7 @@
     <string name="splash_eula_next">Concordar e continuar</string>
     <string name="splash_runtime_title">Instalar ou atualizar a runtime do aplicativo</string>
     <string name="splash_runtime_install">Instalar / Atualizar</string>
+    <string name="splash_runtime_patching">Otimizando a runtime…</string>
     <string name="account">Conta</string>
     <string name="version">Versão</string>
     <string name="manage">Gerenciar</string>
