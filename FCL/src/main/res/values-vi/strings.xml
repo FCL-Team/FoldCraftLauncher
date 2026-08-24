@@ -827,7 +827,6 @@
     <string name="settings_advanced_minecraft_arguments_prompt">Mặc định</string>
     <string name="settings_advanced_server_ip">Địa chỉ Máy chủ</string>
     <string name="settings_advanced_server_ip_prompt">Tự động tham gia sau khi khởi chạy trò chơi.</string>
-    <string name="settings_advanced_custom_uuid">UUID Tùy chỉnh</string>
     <string name="settings_advanced_force_resolution">Buộc đặt độ phân giải (tùy chọn thử nghiệm, sử dụng thận trọng)</string>
     <string name="settings_fcl_controller">Bộ điều khiển</string>
     <string name="settings_fcl_vulkan_driver_system">Sử dụng trình điều khiển Vulkan hệ thống</string>

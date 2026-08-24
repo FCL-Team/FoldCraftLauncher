@@ -846,8 +846,6 @@
     <string name="settings_advanced_server_ip">服务器地址</string>
     <string name="settings_advanced_server_ip_desc">启动游戏后自动加入指定服务器（IP:端口）</string>
     <string name="settings_advanced_server_ip_prompt">启动游戏后自动加入对应服务器</string>
-    <string name="settings_advanced_custom_uuid">自定义UUID</string>
-    <string name="settings_advanced_custom_uuid_desc">自定义游戏 UUID（离线模式）</string>
     <string name="settings_advanced_force_resolution">强制设置分辨率</string>
     <string name="settings_advanced_force_resolution_desc">强制游戏以指定分辨率运行（宽x高），实验性选项，谨慎使用</string>
 

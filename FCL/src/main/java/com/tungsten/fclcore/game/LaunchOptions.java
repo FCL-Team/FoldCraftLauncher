@@ -44,7 +44,6 @@ public class LaunchOptions implements Serializable {
     private boolean vulkanDriverSystem;
     private boolean pojavBigCore;
     private Renderer renderer;
-    private String uuid;
     private boolean debugLog;
 
     /**
@@ -153,10 +152,6 @@ public class LaunchOptions implements Serializable {
         return renderer;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
-
     public boolean isDebugLog() {
         return debugLog;
     }
@@ -258,11 +253,6 @@ public class LaunchOptions implements Serializable {
 
         public Builder setPojavBigCore(boolean pojavBigCore) {
             options.pojavBigCore = pojavBigCore;
-            return this;
-        }
-
-        public Builder setUUid(String uuid) {
-            options.uuid = uuid;
             return this;
         }
 

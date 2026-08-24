@@ -406,7 +406,6 @@ public class FCLGameRepository extends DefaultGameRepository {
                         vs.isAutoMemory()
                 ) / 1024 / 1024))
                 .setMinMemory(vs.getMaxMemory())
-                .setUUid(vs.getUuid())
                 .setWidth(vs.isForceResolution() ? FCLBridge.FORCE_RESOLUTION_WIDTH : (int) (AndroidUtilKt.getScreenWidth() * scaleFactor))
                 .setHeight(vs.isForceResolution() ? FCLBridge.FORCE_RESOLUTION_HEIGHT : (int) (AndroidUtilKt.getScreenHeight() * scaleFactor))
                 .setServerIp(vs.getServerIp())

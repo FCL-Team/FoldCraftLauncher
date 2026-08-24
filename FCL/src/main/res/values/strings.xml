@@ -895,8 +895,6 @@
     <string name="settings_advanced_server_ip">Server Address</string>
     <string name="settings_advanced_server_ip_desc">Join the specified server automatically after the game starts (IP:port).</string>
     <string name="settings_advanced_server_ip_prompt">Join automatically after launching the game.</string>
-    <string name="settings_advanced_custom_uuid">Custom UUID</string>
-    <string name="settings_advanced_custom_uuid_desc">Customize the game UUID (for offline mode).</string>
     <string name="settings_advanced_force_resolution">Force set resolution</string>
     <string name="settings_advanced_force_resolution_desc">Force the game to run at a specified resolution (WxH). Experimental option, use with caution.</string>
 
