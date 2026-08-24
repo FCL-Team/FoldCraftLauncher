@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:minHeight="48dp"
+    android:paddingStart="5dp"
+    android:paddingEnd="5dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:singleLine="true"
+        android:textSize="14sp"
+        app:auto_text_tint="true" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:singleLine="true"
+        android:text="›"
+        android:textSize="16sp"
+        app:auto_text_tint="true" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
