@@ -1,5 +1,107 @@
 # Changelog
 
+## [1.3.2.8] - 2026-08-24
+
+### 中文
+
+#### ✨ 新功能
+
+1. **启动页显示加载信息与进度条**：SplashActivity 改用 viewBinding，加载期间展示加载状态与进度反馈
+2. **设置页 tab 随内容滚动收起/展开**：AppBarLayout 效果，滚动页面时 tab 自动收起、上滑恢复
+3. **设置项行下方新增作用描述**：为设置项补充说明文字，方便了解设置作用
+4. **下载页 tab 切换添加过渡动画**：tab 与模式页内容更新均淡入过渡
+5. **右侧菜单手势交互**：支持双指滑动切换与手势显示/隐藏，隐藏时皮肤预览位置固定
+6. **LWJGL GLFW 补充 glfwGetWindowPos stub**：窗口位置恒为 0,0
+
+#### ⚡ 优化
+
+1. **主界面 UI 架构重构（ViewPager2）**：UIManager 改用 ViewPager2 承载 8 个 UI 页面，页面随回收销毁不保留状态；页面切换统一为淡入上滑过渡动画；主界面禁用滑动手势仅通过菜单切换，避免与页面内纵向滚动冲突
+2. **下载页全面优化**：5 个下载模式共享单个布局实例，tab 切换经 ViewModel 恢复状态；列表布局轻量化（线性排列、去 marquee）；图标限制 90x90 解码尺寸、快速滑动时暂停加载，消除全尺寸解码 GC 停顿；Mod 翻译数据后台预热，避免首次 bind 主线程解析
+3. **设置页/版本设置页重构为 RecyclerView 行级复用**
+4. **Profile/VersionSetting/Theme 完成 fakefx 迁移**：Profile 重构为 Kotlin 移除 fakefx，Profiles.selectedProfile 迁移 Repository 单例 + StateFlow，selectedVersion 迁移 StateFlow；VersionSetting 改用普通类型字段；Theme/ThemeEngine 重构为 Kotlin + StateFlow，主题存储从 SharedPreferences 迁移 DataStore
+5. **模块合并与代码清理**：FCLauncher 与 FCLCore 模块整体并入 FCL；移除 FCLPath.CONTEXT，全局 Context 改用 FCLApp.getAppContext()/getActivity()；AndroidUtils 迁移至 com.mio.util 顶层函数；getLocalizedText 静态 key 迁移至 R.string；删除 DisplayAnimUtils 等死代码
+6. **版本列表加载提速**：解析与资源缓存、切换 profile 保留缓存；Mod 数统计移入加载流程，避免滑动时主线程目录 IO
+7. **下载页搜索框优化**：imeOptions 组合 flagNoFullscreen，消除 AutofillManager 日志刷屏
+8. **界面细节优化**：圆角统一 8dp、页面 tab 背景改为顶部圆角、左侧菜单点击播放选中动画、临时页返回时下层内容上滑进入过渡
+9. **更新 libcc.so**：方向控件统一转 ZL2 摇杆并修正 sizeType
+10. **更新 LWJGL 3.3.3/3.4.1 合并产物**：含 glfwGetWindowPos stub；移除运行时 jsr305.jar，解决与 java.annotation 模块的包冲突
+
+#### 🐛 修复
+
+1. 修复切换版本后退出启动器版本回退（selectedVersion 变化未触发配置保存）
+2. 修复版本列表并发崩溃、配置保存刷屏与空版本设置 NPE
+3. 修复模组管理页往返切换时全量重扫模组导致的主线程 ANR
+4. 修复亮暗模式切换不生效，主题切换不再依赖 Activity 重建
+5. 修复主界面销毁后主题刷新回调加载崩溃，主题回调改弱引用修复页面回收后视图泄漏
+6. 修复快速滑动/切换页面时控件首帧闪白（registerEvent 改为同步执行）
+7. 修复离线账户披风加载 NPE
+8. 修复主界面版本图标放大显示不完全（共享 Drawable 实例 bounds 互相污染）
+9. 修复下载页重建后首次切换模式列表空白（复用缓存 adapter 时补设 LayoutManager）
+10. 修复下载列表图标全尺寸解码 GC 卡顿、图片加载完成触发布局重排、切换模式时滑入动画重播
+11. 修复下载页切换 tab 时临时页覆盖层遮挡新页面，多层临时页透明背景透出
+12. 修复页面切换/ViewPager 切换闪烁（重复 dispatch 当前页、平滑滑动后淡入闪烁）
+13. 修复监听回调内增删监听导致的并发修改崩溃（遍历前复制列表）
+14. 修复 Profile/版本监听累积泄漏（新增 Profiles.unregisterVersionsListener），切换 profile 时取消旧加载
+15. 修复控制器列表项 inflate 时提前 attachToRoot 的问题，控制器截图按原始分辨率加载避免预览模糊
+16. 修复 SmoothFont 选择字体后重启字体缩放错误
+17. 修复 VersionInstallInfoPage 选择安装器版本后条目未刷新
+18. 修复 Files 目录流未关闭导致的资源泄漏，LWJGL 版本路径补空值防护
+
+#### 🔧 其他
+
+1. 更新多语言翻译（德、波斯、葡、俄、乌、越、繁中等）
+2. 新增重构内容的 androidTest 仪器测试
+
+### English
+
+#### ✨ New Features
+
+1. **Loading info and progress bar on the Splash screen**: SplashActivity now uses viewBinding and shows loading status with progress feedback
+2. **Settings tab collapses/expands with content scroll**: AppBarLayout effect — the tab hides while scrolling and reappears when scrolling up
+3. **Usage descriptions below setting items**: Explanatory text added under settings for easier understanding
+4. **Transition animation for download page tab switching**: Tab and mode page content updates fade in
+5. **Right-side menu gesture interaction**: Two-finger swipe switching and gesture-based show/hide, with the skin preview position fixed when hidden
+6. **LWJGL GLFW glfwGetWindowPos stub added**: Window position is always 0,0
+
+#### ⚡ Improvements
+
+1. **Main UI architecture refactored (ViewPager2)**: UIManager now hosts the 8 UI pages with ViewPager2; pages are destroyed on recycle without keeping state; page transitions unified to fade-in & slide-up animations; swipe gesture disabled on the main UI (switching only via the menu) to avoid conflicts with in-page vertical scrolling
+2. **Download page fully optimized**: The 5 download modes share a single layout instance with tab switching state restored via ViewModel; lighter list layouts (linear arrangement, no marquee); icons decoded at a 90x90 limit and image loading paused while scrolling fast, eliminating GC hitches from full-size decoding; Mod translation data pre-warmed in the background to avoid main-thread parsing on first bind
+3. **Settings/version settings pages refactored to RecyclerView row-level reuse**
+4. **Profile/VersionSetting/Theme completed the fakefx migration**: Profile refactored to Kotlin without fakefx, Profiles.selectedProfile migrated to a Repository singleton + StateFlow, selectedVersion migrated to StateFlow; VersionSetting uses plain fields; Theme/ThemeEngine refactored to Kotlin + StateFlow with theme storage migrated from SharedPreferences to DataStore
+5. **Module merge and code cleanup**: FCLauncher and FCLCore modules merged into FCL; FCLPath.CONTEXT removed, global Context now uses FCLApp.getAppContext()/getActivity(); AndroidUtils moved to com.mio.util top-level functions; getLocalizedText static keys migrated to R.string; dead code like DisplayAnimUtils removed
+6. **Version list loading speedup**: Parsing and resource caching, cache kept when switching profiles; mod count statistics moved into the loading flow to avoid main-thread directory IO while scrolling
+7. **Download page search box optimization**: imeOptions combined with flagNoFullscreen to eliminate AutofillManager log spam
+8. **UI detail polish**: Unified 8dp corner radius, top-rounded page tab backgrounds, left menu click selection animation, lower content slides up when returning from a temp page
+9. **libcc.so updated**: Direction controls unified to the ZL2 joystick with sizeType fixed
+10. **LWJGL 3.3.3/3.4.1 merged artifacts updated**: Including the glfwGetWindowPos stub; removed the runtime jsr305.jar to resolve the package conflict with java.annotation
+
+#### 🐛 Bug Fixes
+
+1. Fixed the version reverting after exiting the launcher (selectedVersion change not triggering config save)
+2. Fixed concurrent crashes in the version list, config save spam and an NPE on empty version settings
+3. Fixed a main-thread ANR caused by a full mod rescan when navigating back and forth in the mod management page
+4. Fixed light/dark mode switching not taking effect; theme switching no longer depends on Activity recreation
+5. Fixed a crash when theme refresh callbacks load after the main UI is destroyed; theme callbacks now use weak references to fix view leaks after page recycle
+6. Fixed first-frame white flash on controls when swiping/switching pages quickly (registerEvent now runs synchronously)
+7. Fixed an offline account cape loading NPE
+8. Fixed version icons on the main UI being enlarged (shared Drawable instances polluting each other's bounds)
+9. Fixed the blank mode list on the first switch after the download page rebuilds (LayoutManager re-set when reusing the cached adapter)
+10. Fixed GC hitches from full-size icon decoding in the download list, layout reflow triggered by image load completion and slide-in animation replaying on mode switch
+11. Fixed temp pages covering the new page when switching tabs in the download page and transparent backgrounds showing through with nested temp pages
+12. Fixed page/viewpager transition flicker (duplicate dispatch of the current page, fade-in flicker after smooth sliding)
+13. Fixed a ConcurrentModificationException from adding/removing listeners inside callbacks (list copied before iteration)
+14. Fixed accumulating Profile/version listener leaks (Profiles.unregisterVersionsListener added) and cancelled stale loads when switching profiles
+15. Fixed controller list items being attachToRoot too early during inflation; controller screenshots now load at original resolution to avoid blurry previews
+16. Fixed SmoothFont font scaling errors after restarting when a font is selected
+17. Fixed VersionInstallInfoPage items not refreshing after selecting an installer version
+18. Fixed resource leaks from unclosed Files directory streams; added null protection for LWJGL version paths
+
+#### 🔧 Other
+
+1. Updated multilingual translations (German, Persian, Portuguese, Russian, Ukrainian, Vietnamese, Traditional Chinese, etc.)
+2. Added androidTest instrumentation tests for the refactoring
+
 ## [1.3.2.7] - 2026-08-19
 
 ### 中文
