@@ -474,6 +474,8 @@
     <string name="menu_settings_send_key_button">Вибрати</string>
     <string name="menu_settings_soft_keyboard_adjust">Вимкнути автонастройку клавіатури</string>
     <string name="menu_settings_item_bar_scale">Розмір панелі предметів</string>
+    <string name="menu_settings_item_bar_scale_width">Розмір панелі предметів (ширина)</string>
+    <string name="menu_settings_item_bar_scale_height">Розмір панелі предметів (висота)</string>
     <string name="menu_settings_show_log">Показати лог</string>
     <string name="menu_settings_show_log_auto">Автопоказ логу</string>
     <string name="menu_settings_performance_mode">Режим стабільної продуктивності</string>

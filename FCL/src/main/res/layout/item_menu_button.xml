@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dp">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:singleLine="true"
+        android:textSize="12sp"
+        app:auto_text_tint="true" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:singleLine="true"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp"
+        android:singleLine="true"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp"
+        android:singleLine="true"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
+</LinearLayout>

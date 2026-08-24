@@ -521,6 +521,8 @@
     <string name="menu_settings_send_key_button">發送</string>
     <string name="menu_settings_soft_keyboard_adjust">禁用軟鍵盤自適應</string>
     <string name="menu_settings_item_bar_scale">物品欄縮放</string>
+    <string name="menu_settings_item_bar_scale_width">物品欄縮放（寬度）</string>
+    <string name="menu_settings_item_bar_scale_height">物品欄縮放（高度）</string>
     <string name="menu_settings_show_log">顯示日誌</string>
     <string name="menu_settings_show_log_auto">自動顯示日誌</string>
     <string name="menu_settings_performance_mode">持續性能模式</string>

@@ -499,6 +499,8 @@
     <string name="menu_settings_send_key_button">Enviar</string>
     <string name="menu_settings_soft_keyboard_adjust">DisableSoftKeyboardAutoAdjust</string>
     <string name="menu_settings_item_bar_scale">Escala da hotbar</string>
+    <string name="menu_settings_item_bar_scale_width">Escala da hotbar (largura)</string>
+    <string name="menu_settings_item_bar_scale_height">Escala da hotbar (altura)</string>
     <string name="menu_settings_show_log">Mostrar log</string>
     <string name="message_cancelled">Operação foi cancelada</string>
     <string name="message_copy">Copiado com sucesso!</string>

@@ -580,6 +580,8 @@
     <string name="menu_settings_send_key_button">Gửi</string>
     <string name="menu_settings_soft_keyboard_adjust">Tắt Tự động điều chỉnh Bàn phím Mềm</string>
     <string name="menu_settings_item_bar_scale">Tỷ lệ Thanh Vật phẩm</string>
+    <string name="menu_settings_item_bar_scale_width">Tỷ lệ Thanh Vật phẩm (chiều rộng)</string>
+    <string name="menu_settings_item_bar_scale_height">Tỷ lệ Thanh Vật phẩm (chiều cao)</string>
     <string name="menu_settings_show_log">Hiển thị Nhật ký</string>
     <string name="menu_settings_show_log_auto">Tự động Hiển thị Nhật ký</string>
     <string name="menu_settings_performance_mode">Chế độ Hiệu suất Duy trì</string>

@@ -894,4 +894,7 @@
     <string name="log_upload_share">Link teilen</string>
     <string name="log_upload_share_template">Ich habe ein Problem mit dem Launcher, hier ist der Log-Link:\n%s</string>
     <string name="close">Schließen</string>
+
+    <string name="menu_settings_item_bar_scale_width">Hotbar-Skalierung (Breite)</string>
+    <string name="menu_settings_item_bar_scale_height">Hotbar-Skalierung (Höhe)</string>
 </resources>
