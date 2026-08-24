@@ -649,8 +649,6 @@
     <string name="settings_launcher_debug">Launcher-Log</string>
     <string name="settings_launcher_upgrade">Launcher-Update</string>
     <string name="settings_launcher_upgrade_check">Prüfen</string>
-    <string name="settings_launcher_cache">Launcher-Cache</string>
-    <string name="settings_launcher_clear_cache">Löschen</string>
     <string name="settings_launcher_download">Download</string>
     <string name="settings_launcher_download_threads">Threads</string>
     <string name="settings_launcher_download_threads_auto">Automatisch erkennen</string>

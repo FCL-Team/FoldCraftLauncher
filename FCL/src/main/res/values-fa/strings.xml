@@ -706,8 +706,6 @@
     <string name="settings_launcher_debug">اشکال زدایی</string>
     <string name="settings_launcher_upgrade">بروزرسانی لانچر</string>
     <string name="settings_launcher_upgrade_check">بررسی</string>
-    <string name="settings_launcher_cache">پوشه کش</string>
-    <string name="settings_launcher_clear_cache">پاک کردن حافظه پنهان</string>
     <string name="settings_launcher_download">دانلود</string>
     <string name="settings_launcher_download_threads">ترد ها</string>
     <string name="settings_launcher_download_threads_auto">تعیین خودکار</string>

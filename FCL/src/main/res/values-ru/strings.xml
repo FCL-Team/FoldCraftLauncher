@@ -703,8 +703,6 @@
     <string name="settings_launcher_debug">Лог лаунчера</string>
     <string name="settings_launcher_upgrade">Обновление лаунчера</string>
     <string name="settings_launcher_upgrade_check">Проверить</string>
-    <string name="settings_launcher_cache">Кэш лаунчера</string>
-    <string name="settings_launcher_clear_cache">Очистить</string>
     <string name="settings_launcher_download">Загрузка</string>
     <string name="settings_launcher_download_threads">Потоки</string>
     <string name="settings_launcher_download_threads_auto">Автоматически определять</string>

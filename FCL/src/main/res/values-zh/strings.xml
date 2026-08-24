@@ -889,9 +889,6 @@
     <string name="settings_launcher_upgrade">启动器更新</string>
     <string name="settings_launcher_upgrade_desc">检查启动器是否有新版本可用</string>
     <string name="settings_launcher_upgrade_check">检测</string>
-    <string name="settings_launcher_cache">缓存文件夹</string>
-    <string name="settings_launcher_cache_desc">清除启动器的缓存文件</string>
-    <string name="settings_launcher_clear_cache">清理缓存</string>
     <string name="settings_launcher_download">下载</string>
     <string name="settings_launcher_download_threads">并发数</string>
     <string name="settings_launcher_download_threads_desc">设置下载并发线程数</string>

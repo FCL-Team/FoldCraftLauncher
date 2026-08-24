@@ -769,8 +769,6 @@
     <string name="settings_launcher_debug">調試</string>
     <string name="settings_launcher_upgrade">啟動器更新</string>
     <string name="settings_launcher_upgrade_check">檢測</string>
-    <string name="settings_launcher_cache">緩存文件夾</string>
-    <string name="settings_launcher_clear_cache">清理緩存</string>
     <string name="settings_launcher_download">下載</string>
     <string name="settings_launcher_download_threads">併發數</string>
     <string name="settings_launcher_download_threads_auto">自動選擇併發數</string>

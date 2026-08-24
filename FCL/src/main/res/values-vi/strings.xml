@@ -856,8 +856,6 @@
     <string name="settings_launcher_request_recording_permission">Yêu cầu quyền ghi âm (cho mod trò chuyện thoại)</string>
     <string name="settings_launcher_upgrade">Cập nhật Trình khởi chạy</string>
     <string name="settings_launcher_upgrade_check">Kiểm tra</string>
-    <string name="settings_launcher_cache">Thư mục Bộ nhớ đệm</string>
-    <string name="settings_launcher_clear_cache">Xóa bộ nhớ đệm</string>
     <string name="settings_launcher_download">Tải xuống</string>
     <string name="settings_launcher_download_threads">Luồng</string>
     <string name="settings_launcher_download_threads_auto">Tự động Xác định</string>

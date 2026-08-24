@@ -706,8 +706,6 @@
     <string name="settings_launcher_debug">Depuração</string>
     <string name="settings_launcher_upgrade">Atualizar launcher</string>
     <string name="settings_launcher_upgrade_check">Verificar</string>
-    <string name="settings_launcher_cache">Diretório de cache</string>
-    <string name="settings_launcher_clear_cache">Limpar cache</string>
     <string name="settings_launcher_download">Baixar</string>
     <string name="settings_launcher_download_threads">Threads</string>
     <string name="settings_launcher_download_threads_auto">Automático</string>
