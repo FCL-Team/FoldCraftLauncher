@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1327,
-    "versionName": "1.3.2.7",
-    "date": "2026.08.19",
+    "versionCode": 1328,
+    "versionName": "1.3.2.8",
+    "date": "2026.08.24",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Integrated Weblate localization translation.  \n2. Merged the FCLLibrary module into the FCL module.  \n3. Fixed a crash caused by corrupted archives throwing ZipError, preventing modpack installation failures.  \n4. Fixed abnormal text in the account deletion dialog (#1752).  \n5. Fixed GLFW context version detection (only override when the driver version is higher, relaxed the minor lower bound).  \n6. Updated LWJGL 3.3.3/3.4.1 merged artifacts, fixed the game screen not displaying after using certain mods.  \n7. Fixed excessive vertical spacing between world list items.  \n8. Layout inflation changed to synchronous and removed obsolete interfaces such as UIListener."
+        "text": "(Translated from Chinese by AI)\n1. Main UI architecture refactored: the 8 UI pages are now hosted by ViewPager2, page transitions unified to fade-in & slide-up animations, swipe gesture disabled on the main UI (switching only via the menu).  \n2. Download page fully optimized: the 5 download modes share a single layout instance with tab switching state restored via ViewModel; lighter list layouts, icons decoded at a limited size, image loading paused while scrolling fast for smoother scrolling.  \n3. Settings page refactored to RecyclerView with row-level reuse; the tab collapses/expands as content scrolls; usage descriptions added below setting items.  \n4. Profile/VersionSetting/Theme completed the fakefx migration: refactored to Kotlin + StateFlow, theme storage migrated to DataStore, fixed light/dark mode switching not taking effect.  \n5. Merged the FCLauncher and FCLCore modules into the FCL module, removed FCLPath.CONTEXT; global Context now uses FCLApp.getAppContext()/getActivity().  \n6. The Splash screen now shows loading info and a progress bar.  \n7. Updated LWJGL 3.3.3/3.4.1 merged artifacts with a glfwGetWindowPos stub; removed the runtime jsr305.jar to resolve a package conflict.  \n8. Updated libcc.so, direction controls unified to the ZL2 joystick with sizeType fixed.  \n9. The right-side menu supports two-finger swipe switching and gesture-based show/hide.  \n10. Fixed a main-thread ANR caused by a full mod rescan when navigating back and forth in the mod management page.  \n11. Fixed the version reverting after exiting the launcher, concurrent crashes in the version list and config save spam.  \n12. Fixed offline account cape loading NPE, enlarged version icons on the main UI and SmoothFont font scaling errors after restart.  \n13. Fixed a crash when theme refresh callbacks load after the main UI is destroyed; theme callbacks now use weak references to fix view leaks.  \n14. Fixed the blank mode list on the first switch after the download page rebuilds and jank caused by full-size icon decoding.  \n15. Updated multilingual translations."
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.接入 Weblate 本地化翻译\n2.FCLLibrary 模块整体并入 FCL 模块\n3.修复损坏的压缩文件抛 ZipError 导致的崩溃，避免整合包安装失败\n4.修复删除账户弹窗内容文字异常（#1752）\n5.修复 GLFW 上下文版本探测问题（仅当驱动版本更高时覆盖、放宽 minor 下界）\n6.更新 LWJGL 3.3.3/3.4.1 合并产物，修复使用部分模组后游戏画面无法显示的问题\n7.修复世界列表条目上下间距过大的问题\n8.布局加载改为同步，并移除 UIListener 等废弃接口"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.主界面 UI 架构重构：改用 ViewPager2 承载 8 个页面，页面切换统一为淡入上滑过渡动画，主界面禁用滑动手势仅通过菜单切换\n2.下载页全面优化：多个下载模式共享单个布局实例，tab 切换经 ViewModel 恢复状态；列表布局轻量化、图标限制解码尺寸、快速滑动时暂停加载，滚动更流畅\n3.设置页重构为 RecyclerView 行级复用，tab 随内容滚动收起/展开，设置项下方新增作用描述\n4.Profile/VersionSetting/Theme 完成 fakefx 迁移：重构为 Kotlin + StateFlow，主题存储迁移 DataStore，修复亮暗模式切换不生效\n5.合并 FCLauncher 与 FCLCore 模块入 FCL，移除 FCLPath.CONTEXT，全局 Context 改用 FCLApp.getAppContext()/getActivity()\n6.Splash 启动页显示加载信息与进度条\n7.更新 LWJGL 3.3.3/3.4.1 合并产物并补充 glfwGetWindowPos stub，移除运行时 jsr305.jar 解决包冲突\n8.更新 libcc.so，方向控件统一转 ZL2 摇杆并修正 sizeType\n9.右侧菜单支持双指滑动与手势显示/隐藏\n10.修复模组管理页往返切换时全量重扫模组导致的主线程 ANR\n11.修复切换版本后退出启动器版本回退、版本列表并发崩溃与配置保存刷屏\n12.修复离线账户披风加载 NPE、主界面版本图标放大显示不完全、SmoothFont 字体缩放错误\n13.修复主界面销毁后主题刷新回调加载崩溃，主题回调改弱引用修复视图泄漏\n14.修复下载页重建后首次切换模式列表空白、图标全尺寸解码导致的卡顿\n15.更新多语言翻译"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/24a8297f483d",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.7/FCL-release-1.3.2.7-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/37069d0a7a3c",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.8/FCL-release-1.3.2.8-all.apk"
   }
 ]
