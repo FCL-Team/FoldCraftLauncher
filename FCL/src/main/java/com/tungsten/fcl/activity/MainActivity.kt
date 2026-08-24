@@ -953,7 +953,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             this,
             FCLPage.PAGE_ID_TEMP,
             R.layout.page_modpack,
-            profile,
+            if(::profile.isInitialized) profile else Profiles.getSelectedProfile(),
             null,
             file
         )
