@@ -13,6 +13,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Process
 import android.provider.Settings
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -95,6 +96,12 @@ import kotlin.math.abs
 import kotlin.system.exitProcess
 import com.mio.util.getLocalizedText
 import com.mio.util.hasStringId
+import com.tungsten.fcl.util.ShellUtil
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+import kotlin.io.path.createFile
+import kotlin.io.path.writeText
 
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     companion object {
@@ -337,6 +344,17 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             }
         setupLiveBackground()
+        Thread {
+            val path = Paths.get(FCLPath.LOG_DIR, "logcat.log")
+            Files.deleteIfExists(path)
+            path.createFile()
+            val pid = Process.myPid()
+            val shell = ShellUtil(FCLPath.LOG_DIR) {
+                path.writeText("$it\n", options = arrayOf(StandardOpenOption.APPEND))
+            }
+            shell.start()
+            shell.append("logcat --pid=$pid")
+        }.start()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
