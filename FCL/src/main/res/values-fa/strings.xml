@@ -499,6 +499,8 @@
     <string name="menu_settings_send_key_button">ارسال</string>
     <string name="menu_settings_soft_keyboard_adjust">غیرفعال کردن تنظیم خودکار کیبورد</string>
     <string name="menu_settings_item_bar_scale">اندازه نوار آیتم</string>
+    <string name="menu_settings_item_bar_scale_width">اندازه نوار آیتم (عرض)</string>
+    <string name="menu_settings_item_bar_scale_height">اندازه نوار آیتم (ارتفاع)</string>
     <string name="menu_settings_show_log">نمایش لاگ</string>
     <string name="message_cancelled">عملیات لغو شد</string>
     <string name="message_copy">با موفقیت کپی شد!</string>

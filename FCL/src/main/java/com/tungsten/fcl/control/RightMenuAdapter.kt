@@ -36,15 +36,20 @@ enum class RightMenuTag {
     // 功能
     LOCK_VIEW, HIDE_VIEW, SHOW_FPS, OPEN_MULTIPLAYER, OPEN_QUICK_INPUT, OPEN_SEND_KEY,
     SOFT_KEYBOARD_ADJUST, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, WINDOW_SCALE, CURSOR_OFFSET,
+
     // 手势
     DISABLE_GESTURE, GESTURE_MODE, DISABLE_LEFT_TOUCH,
+
     // 鼠标
     MOUSE_MODE, MOUSE_SENSITIVITY, MOUSE_CURSOR_SENSITIVITY, MOUSE_SIZE,
     MOUSE_OFFSET_X, MOUSE_OFFSET_Y, PHYSICAL_MOUSE,
+
     // 手柄
     DISABLE_GAMEPAD_MAPPING, GAMEPAD_RESET_MAPPER, GAMEPAD_BUTTON_BINDING, GAMEPAD_DEADZONE,
+
     // 陀螺仪
     GYRO, GYRO_INVERT, GYRO_SENSITIVITY,
+
     // 调试
     SHOW_MEMORY, PERFORMANCE_MODE, SHOW_LOG, AUTO_SHOW_LOG, FORCE_EXIT
 }
@@ -109,6 +114,7 @@ class RightMenuAdapter(
                 listOf(R.string.menu_settings_force_exit_button to RightMenuTag.FORCE_EXIT)
             )
         ) + RightMenuCategory.entries.map { Row.CategoryRow(it) }
+
         RightMenuCategory.FUNCTION -> listOfNotNull(
             Row.SwitchRow(
                 R.string.menu_settings_lock_view,
@@ -148,11 +154,11 @@ class RightMenuAdapter(
                 RightMenuTag.SOFT_KEYBOARD_ADJUST
             ),
             Row.SeekBarRow(
-                R.string.menu_settings_item_bar_scale, 100, 0,
+                R.string.menu_settings_item_bar_scale_width, 100, 0,
                 { menuSetting.itemBarWidth * 100 / screenWidth }, RightMenuTag.ITEM_BAR_WIDTH, "%"
             ),
             Row.SeekBarRow(
-                R.string.menu_settings_item_bar_scale,
+                R.string.menu_settings_item_bar_scale_height,
                 100,
                 0,
                 { menuSetting.itemBarHeight * 100 / screenHeight },
@@ -162,53 +168,137 @@ class RightMenuAdapter(
             Row.SeekBarRow(
                 R.string.settings_game_dimension, 300, 1,
                 { (menuSetting.windowScale * 100).toInt() }, RightMenuTag.WINDOW_SCALE, "%"
+            )
+        )
+
+        RightMenuCategory.GESTURE -> listOf(
+            Row.SwitchRow(
+                R.string.menu_settings_disable_gesture,
+                { menuSetting.isDisableGesture },
+                RightMenuTag.DISABLE_GESTURE
+            ),
+            Row.SpinnerRow(
+                R.string.menu_settings_gesture_mode,
+                listOf(
+                    context.getString(R.string.menu_settings_gesture_mode_build),
+                    context.getString(R.string.menu_settings_gesture_mode_fight)
+                ),
+                menuSetting.gestureMode.id, RightMenuTag.GESTURE_MODE
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_disable_left_touch,
+                { menuSetting.isDisableLeftTouch },
+                RightMenuTag.DISABLE_LEFT_TOUCH
+            )
+        )
+
+        RightMenuCategory.MOUSE -> listOf(
+            Row.SpinnerRow(
+                R.string.menu_settings_mouse_mode,
+                listOf(
+                    context.getString(R.string.menu_settings_mouse_mode_click),
+                    context.getString(R.string.menu_settings_mouse_mode_slide)
+                ),
+                menuSetting.mouseMoveMode.id, RightMenuTag.MOUSE_MODE
             ),
             Row.SeekBarRow(
                 R.string.settings_game_cursor_offset, 150, -150,
                 { menuSetting.cursorOffset.toInt() }, RightMenuTag.CURSOR_OFFSET
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_mouse_sensitivity,
+                1000,
+                1,
+                { (menuSetting.mouseSensitivity * 100).toInt() },
+                RightMenuTag.MOUSE_SENSITIVITY,
+                "%"
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_mouse_cursor_sensitivity,
+                1000,
+                1,
+                { (menuSetting.mouseSensitivityCursor * 100).toInt() },
+                RightMenuTag.MOUSE_CURSOR_SENSITIVITY,
+                "%"
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_mouse_size, 30, 0,
+                { menuSetting.mouseSize }, RightMenuTag.MOUSE_SIZE, "dp"
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_mouse_offset_x, 30, -30,
+                { menuSetting.mouseOffsetX }, RightMenuTag.MOUSE_OFFSET_X, "dp"
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_mouse_offset_y, 30, -30,
+                { menuSetting.mouseOffsetY }, RightMenuTag.MOUSE_OFFSET_Y, "dp"
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_physical_mouse_mode,
+                { menuSetting.isPhysicalMouseMode },
+                RightMenuTag.PHYSICAL_MOUSE
             )
         )
-        RightMenuCategory.GESTURE -> listOf(
-            Row.SwitchRow(R.string.menu_settings_disable_gesture, { menuSetting.isDisableGesture }, RightMenuTag.DISABLE_GESTURE),
-            Row.SpinnerRow(R.string.menu_settings_gesture_mode,
-                listOf(context.getString(R.string.menu_settings_gesture_mode_build), context.getString(R.string.menu_settings_gesture_mode_fight)),
-                menuSetting.gestureMode.id, RightMenuTag.GESTURE_MODE),
-            Row.SwitchRow(R.string.menu_settings_disable_left_touch, { menuSetting.isDisableLeftTouch }, RightMenuTag.DISABLE_LEFT_TOUCH)
-        )
-        RightMenuCategory.MOUSE -> listOf(
-            Row.SpinnerRow(R.string.menu_settings_mouse_mode,
-                listOf(context.getString(R.string.menu_settings_mouse_mode_click), context.getString(R.string.menu_settings_mouse_mode_slide)),
-                menuSetting.mouseMoveMode.id, RightMenuTag.MOUSE_MODE),
-            Row.SeekBarRow(R.string.menu_settings_mouse_sensitivity, 1000, 1,
-                { (menuSetting.mouseSensitivity * 100).toInt() }, RightMenuTag.MOUSE_SENSITIVITY, "%"),
-            Row.SeekBarRow(R.string.menu_settings_mouse_cursor_sensitivity, 1000, 1,
-                { (menuSetting.mouseSensitivityCursor * 100).toInt() }, RightMenuTag.MOUSE_CURSOR_SENSITIVITY, "%"),
-            Row.SeekBarRow(R.string.menu_settings_mouse_size, 30, 0,
-                { menuSetting.mouseSize }, RightMenuTag.MOUSE_SIZE, "dp"),
-            Row.SeekBarRow(R.string.menu_settings_mouse_offset_x, 30, -30,
-                { menuSetting.mouseOffsetX }, RightMenuTag.MOUSE_OFFSET_X, "dp"),
-            Row.SeekBarRow(R.string.menu_settings_mouse_offset_y, 30, -30,
-                { menuSetting.mouseOffsetY }, RightMenuTag.MOUSE_OFFSET_Y, "dp"),
-            Row.SwitchRow(R.string.menu_settings_physical_mouse_mode, { menuSetting.isPhysicalMouseMode }, RightMenuTag.PHYSICAL_MOUSE)
-        )
+
         RightMenuCategory.GAMEPAD -> listOf(
-            Row.SwitchRow(R.string.menu_settings_gamepad_disable_mapping, { gameMenu.isGamepadDisabled }, RightMenuTag.DISABLE_GAMEPAD_MAPPING),
-            Row.ButtonRow(R.string.menu_settings_gamepad_reset_mapper, listOf(R.string.menu_settings_gamepad_reset to RightMenuTag.GAMEPAD_RESET_MAPPER)),
-            Row.ButtonRow(R.string.menu_settings_gamepad_button_binding, listOf(R.string.menu_settings_gamepad_open_button to RightMenuTag.GAMEPAD_BUTTON_BINDING)),
-            Row.SeekBarRow(R.string.menu_settings_gamepad_deadzone, 100, 0,
-                { (menuSetting.gamepadDeadzone * 100).toInt() }, RightMenuTag.GAMEPAD_DEADZONE, "%")
+            Row.SwitchRow(
+                R.string.menu_settings_gamepad_disable_mapping,
+                { gameMenu.isGamepadDisabled },
+                RightMenuTag.DISABLE_GAMEPAD_MAPPING
+            ),
+            Row.ButtonRow(
+                R.string.menu_settings_gamepad_reset_mapper,
+                listOf(R.string.menu_settings_gamepad_reset to RightMenuTag.GAMEPAD_RESET_MAPPER)
+            ),
+            Row.ButtonRow(
+                R.string.menu_settings_gamepad_button_binding,
+                listOf(R.string.menu_settings_gamepad_open_button to RightMenuTag.GAMEPAD_BUTTON_BINDING)
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_gamepad_deadzone, 100, 0,
+                { (menuSetting.gamepadDeadzone * 100).toInt() }, RightMenuTag.GAMEPAD_DEADZONE, "%"
+            )
         )
+
         RightMenuCategory.GYRO -> listOf(
-            Row.SwitchRow(R.string.menu_settings_gyro, { menuSetting.isEnableGyroscope }, RightMenuTag.GYRO),
-            Row.SwitchRow(R.string.menu_settings_gyro_invert, { menuSetting.isInvertGyroscope }, RightMenuTag.GYRO_INVERT),
-            Row.SeekBarRow(R.string.menu_settings_gyro_sensitivity, 1000, 0,
-                { menuSetting.gyroscopeSensitivity }, RightMenuTag.GYRO_SENSITIVITY)
+            Row.SwitchRow(
+                R.string.menu_settings_gyro,
+                { menuSetting.isEnableGyroscope },
+                RightMenuTag.GYRO
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_gyro_invert,
+                { menuSetting.isInvertGyroscope },
+                RightMenuTag.GYRO_INVERT
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_gyro_sensitivity, 1000, 0,
+                { menuSetting.gyroscopeSensitivity }, RightMenuTag.GYRO_SENSITIVITY
+            )
         )
+
         RightMenuCategory.DEBUG -> listOf(
-            Row.SwitchRow(R.string.menu_settings_show_memory, { menuSetting.isShowMemory }, RightMenuTag.SHOW_MEMORY, longClick = true),
-            Row.SwitchRow(R.string.menu_settings_performance_mode, { menuSetting.isPerformanceMode }, RightMenuTag.PERFORMANCE_MODE),
-            Row.SwitchRow(R.string.menu_settings_show_log, { menuSetting.isShowLog }, RightMenuTag.SHOW_LOG),
-            Row.SwitchRow(R.string.menu_settings_show_log_auto, { menuSetting.isAutoShowLog }, RightMenuTag.AUTO_SHOW_LOG)
+            Row.SwitchRow(
+                R.string.menu_settings_show_memory,
+                { menuSetting.isShowMemory },
+                RightMenuTag.SHOW_MEMORY,
+                longClick = true
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_performance_mode,
+                { menuSetting.isPerformanceMode },
+                RightMenuTag.PERFORMANCE_MODE
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_show_log,
+                { menuSetting.isShowLog },
+                RightMenuTag.SHOW_LOG
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_show_log_auto,
+                { menuSetting.isAutoShowLog },
+                RightMenuTag.AUTO_SHOW_LOG
+            )
         )
     }
 
@@ -341,7 +431,12 @@ class RightMenuAdapter(
         binding.spinner.adapter = adapter
         binding.spinner.setSelection(row.selection)
         binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 listener.onSpinnerSelect(row.tag, position)
             }
 
