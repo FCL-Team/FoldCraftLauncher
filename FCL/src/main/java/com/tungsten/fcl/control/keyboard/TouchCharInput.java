@@ -134,6 +134,7 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         setFocusable(true);
         setVisibility(VISIBLE);
         requestFocus();
+        sActiveInput = this;
     }
 
     /**
@@ -144,6 +145,18 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
         setVisibility(GONE);
         clearFocus();
         setEnabled(false);
+        if (sActiveInput == this) {
+            sActiveInput = null;
+        }
+    }
+
+    // 当前激活的字符输入控件，供 SDL 输入法接管时统一关闭（见 SDLActivity）
+    private static TouchCharInput sActiveInput;
+
+    public static void disableActiveInput() {
+        if (sActiveInput != null) {
+            sActiveInput.disable();
+        }
     }
 
     /**

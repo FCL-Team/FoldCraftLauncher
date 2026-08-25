@@ -385,6 +385,11 @@ Java_org_lwjgl_glfw_CallbackBridge_getFps(JNIEnv *env, jclass clazz) {
     return atomic_exchange(&fps, 0);
 }
 
+// SDL 路径下由 eglSwapBuffers 代理调用来计帧（sdl_hook.c）
+EXTERNAL_API void calculateFPS(void) {
+    atomic_fetch_add(&fps, 1);
+}
+
 EXTERNAL_API JNIEXPORT void JNICALL
 Java_org_lwjgl_vulkan_VK_updateFps(ABI_COMPAT JNIEnv *env, ABI_COMPAT jclass thiz) {
     atomic_fetch_add(&fps, 1);

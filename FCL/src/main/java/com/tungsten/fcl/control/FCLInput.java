@@ -11,6 +11,9 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.control.gamepad.Gamepad;
+import com.tungsten.fcl.game.sdl.GamepadInputMode;
+import com.tungsten.fcl.game.sdl.SdlBridge;
+import com.tungsten.fcl.game.sdl.SdlSettings;
 import com.tungsten.fcl.setting.GameOption;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -18,6 +21,7 @@ import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 
+import org.libsdl.app.SDLActivity;
 import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.HashMap;
@@ -258,6 +262,10 @@ public class FCLInput implements View.OnCapturedPointerListener {
         //gamepad
         if (!menu.isGamepadDisabled() && Gamepad.isGamepadEvent(event)) {
             checkGamepad();
+            // SDL 直通模式：原始事件交给 SDL 手柄子系统处理
+            if (SdlBridge.getSdlEnabled() && SdlSettings.getGamepadInputMode().getValue() == GamepadInputMode.SDL_DIRECT) {
+                return SDLActivity.handleKeyEvent(null, event.getKeyCode(), event, null);
+            }
             return gamepad.handleKeyEvent(event);
         }
         //keyboard
@@ -273,6 +281,13 @@ public class FCLInput implements View.OnCapturedPointerListener {
     public boolean handleGenericMotionEvent(MotionEvent event) {
         if (!menu.isGamepadDisabled() && Gamepad.isGamepadEvent(event)) {
             checkGamepad();
+            // SDL 直通模式：原始摇杆事件交给 SDL
+            if (SdlBridge.getSdlEnabled() && SdlSettings.getGamepadInputMode().getValue() == GamepadInputMode.SDL_DIRECT) {
+                try {
+                    return SDLActivity.forwardGenericMotionToSDL(null, event);
+                } catch (Throwable ignored) {
+                }
+            }
             if (choreographer == null) {
                 choreographer = Choreographer.getInstance();
                 Choreographer.FrameCallback frameCallback = new Choreographer.FrameCallback() {

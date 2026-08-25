@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <android/log.h>
 
+#include "environ/environ.h"
 #include "utils.h"
 
 typedef int (*Main_Function_t)(int, char**);
@@ -90,6 +91,13 @@ JNIEnv* get_attached_env(JavaVM* jvm) {
         return NULL;
     }
     return jvm_env;
+}
+
+bool notifyLauncher(JNIEnv *dvm_env, int type, int actions[], int len) {
+    jintArray actionArray = (*dvm_env)->NewIntArray(dvm_env, len);
+    (*dvm_env)->SetIntArrayRegion(dvm_env, actionArray, 0, len, actions);
+    return (*dvm_env)->CallStaticBooleanMethod(dvm_env, pojav_environ->bridgeClazz,
+            pojav_environ->method_notifyLauncher, type, actionArray);
 }
 
 JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupBridgeSurfaceAWT(JNIEnv *env, jclass clazz, jlong surface) {

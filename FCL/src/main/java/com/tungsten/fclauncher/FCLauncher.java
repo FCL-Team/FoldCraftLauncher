@@ -316,6 +316,15 @@ public class FCLauncher {
                 envMap.put("POJAV_RENDERER", "gallium_freedreno");
             }
         }
+        // SDL 需要独立的 GL/EGL 库名：GL 用渲染器 id，EGL 用库绝对路径
+        String rendererId = envMap.get("POJAV_RENDERER");
+        if (rendererId != null) {
+            envMap.put("SDL_OPENGL_LIBRARY", rendererId);
+        }
+        String egl = envMap.get("POJAVEXEC_EGL");
+        if (egl != null) {
+            envMap.put("SDL_EGL_LIBRARY", egl.startsWith("/") ? egl : FCLPath.NATIVE_LIB_DIR + "/" + egl);
+        }
     }
 
     private static void setEnv(FCLConfig config, FCLBridge bridge, boolean render) {

@@ -1,5 +1,6 @@
 package com.tungsten.fcl.activity;
 
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
@@ -23,6 +24,7 @@ import com.tungsten.fcl.control.JarExecutorMenu;
 import com.tungsten.fcl.control.MenuCallback;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.view.MenuView;
+import com.tungsten.fcl.game.sdl.SdlBridge;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.terracotta.Terracotta;
 import com.mio.util.AndroidUtilKt;
@@ -32,6 +34,8 @@ import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
+import org.libsdl.app.SDLActivity;
+import org.libsdl.app.SDLSurface;
 import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Objects;
@@ -102,6 +106,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         if (isRunning) {
             fclBridge.setSurfaceTexture(surfaceTexture);
             CallbackBridge.setupBridgeWindow(new Surface(surfaceTexture));
+            SdlBridge.prepareSurface(this, new Surface(surfaceTexture), (ViewGroup) textureView.getParent(), this);
             menu.onGraphicOutput();
             return;
         }
@@ -123,6 +128,10 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             gameOption.save();
         }
         surfaceTexture.setDefaultBufferSize(width, height);
+        // SDL 集成：初始化 SDL 运行时并绑定 Surface（游戏 JVM 侧 SDL_Init 时再完成加载）
+        CallbackBridge.windowWidth = width;
+        CallbackBridge.windowHeight = height;
+        SdlBridge.prepareSurface(this, new Surface(surfaceTexture), (ViewGroup) textureView.getParent(), this);
         fclBridge.execute(new Surface(surfaceTexture), menu.getCallbackBridge());
         fclBridge.setSurfaceTexture(surfaceTexture);
         fclBridge.pushEventWindow(width, height);
@@ -137,12 +146,25 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             height = FCLBridge.FORCE_RESOLUTION_HEIGHT;
         }
         surfaceTexture.setDefaultBufferSize(width, height);
+        CallbackBridge.windowWidth = width;
+        CallbackBridge.windowHeight = height;
+        // SDL 侧同步分辨率
+        if (SdlBridge.getSdlEnabled()) {
+            SDLSurface sdlSurface = SDLActivity.getSDLSurface();
+            if (sdlSurface != null) {
+                sdlSurface.surfaceChanged();
+                sdlSurface.nativeResize(width, height);
+            }
+        }
         fclBridge.pushEventWindow(width, height);
     }
 
     @Override
     public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
         fclBridge.setSurfaceDestroyed(true);
+        if (SdlBridge.getSdlEnabled() && SDLActivity.getSDLSurface() != null) {
+            SDLActivity.getSDLSurface().surfaceDestroyed();
+        }
         return true;
     }
 
@@ -259,6 +281,8 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     protected void onDestroy() {
         Terracotta.setWaiting(this, true);
+        CallbackBridge.resetInputState();
+        SdlBridge.reset();
         super.onDestroy();
     }
 
@@ -266,5 +290,17 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, hasFocus ? 1 : 0);
+        if (!hasFocus) {
+            CallbackBridge.resetInputState();
+        }
+    }
+
+    /**
+     * SDL 会在窗口创建时按窗口宽高动态请求方向，可能切到 sensorPortrait，
+     * 此处强制锁定横向（跟随传感器），保证游戏画面方向一致
+     */
+    @Override
+    public void setRequestedOrientation(int requestedOrientation) {
+        super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
     }
 }
