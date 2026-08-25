@@ -198,7 +198,7 @@ class LauncherSettingAdapter(
                     R.string.button_set to LauncherSettingTag.THEME_COLOR2_DARK_SET
                 ),
                 R.string.settings_launcher_theme2_dark_desc,
-                group = SettingGroup.Background
+                group = SettingGroup.Theme
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_background_lt,
