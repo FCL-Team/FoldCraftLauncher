@@ -45,6 +45,7 @@ public class LaunchOptions implements Serializable {
     private boolean pojavBigCore;
     private Renderer renderer;
     private boolean debugLog;
+    private String graphicsBackend;
 
     /**
      * The game directory
@@ -156,6 +157,14 @@ public class LaunchOptions implements Serializable {
         return debugLog;
     }
 
+    /**
+     * Graphics backend passed to the game via "--graphicsBackend".
+     * "default" (or blank) means do not intervene.
+     */
+    public String getGraphicsBackend() {
+        return graphicsBackend;
+    }
+
     public static class Builder {
 
         private final LaunchOptions options = new LaunchOptions();
@@ -258,6 +267,11 @@ public class LaunchOptions implements Serializable {
 
         public Builder setDebugLog(boolean debugLog) {
             options.debugLog = debugLog;
+            return this;
+        }
+
+        public Builder setGraphicsBackend(String graphicsBackend) {
+            options.graphicsBackend = graphicsBackend;
             return this;
         }
 

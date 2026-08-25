@@ -264,6 +264,12 @@ public class DefaultLauncher {
         if (argumentsFromAuthInfo != null && argumentsFromAuthInfo.getGame() != null && !argumentsFromAuthInfo.getGame().isEmpty())
             res.addAll(Arguments.parseArguments(argumentsFromAuthInfo.getGame(), configuration, features));
 
+        String graphicsBackend = options.getGraphicsBackend();
+        if (StringUtils.isNotBlank(graphicsBackend) && !"default".equalsIgnoreCase(graphicsBackend)) {
+            res.add("--graphicsBackend");
+            res.add(graphicsBackend);
+        }
+
         String address = options.getServerIp();
         if (StringUtils.isNotBlank(address)) {
             try {

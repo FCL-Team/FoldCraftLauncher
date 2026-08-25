@@ -167,7 +167,7 @@ class VersionSettingAdapter(
             )
             result += Row.ValueRow(
                 R.string.settings_fcl_graphics_backend,
-                { versionSetting.graphicsBackend },
+                { graphicsBackendText() },
                 VersionSettingTag.EDIT_BACKEND,
                 null,
                 descriptionRes = R.string.settings_fcl_graphics_backend_desc,
@@ -525,4 +525,9 @@ class VersionSettingAdapter(
 
 
     private fun rendererText(): String = getRenderer(versionSetting.renderer).des
+
+    private fun graphicsBackendText(): String =
+        if (versionSetting.graphicsBackend == "default")
+            context.getString(R.string.settings_fcl_graphics_backend_no_intervention)
+        else versionSetting.graphicsBackend
 }

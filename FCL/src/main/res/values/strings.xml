@@ -906,7 +906,8 @@
     <string name="settings_fcl_vulkan_driver_system">Use System Vulkan driver</string>
     <string name="settings_fcl_vulkan_driver_system_desc">Use the system Vulkan driver. Better performance but may cause compatibility issues.</string>
     <string name="settings_fcl_graphics_backend">Graphics Backend</string>
-    <string name="settings_fcl_graphics_backend_desc">Choose the graphics rendering backend. Only effective for 26.2+.</string>
+    <string name="settings_fcl_graphics_backend_desc">Choose the graphics rendering backend. It will be passed to the game as a launch argument. Only effective for 26.2+.</string>
+    <string name="settings_fcl_graphics_backend_no_intervention">Do Not Intervene</string>
     <string name="settings_fcl_renderer">OpenGL Implementation</string>
     <string name="settings_fcl_renderer_desc">Choose the OpenGL renderer implementation.</string>
     <string name="settings_fcl_pojav_bigcore">Force the renderer to run on the big core</string>
