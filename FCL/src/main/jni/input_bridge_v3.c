@@ -20,8 +20,9 @@
 #include <android/log.h>
 
 #include "environ/environ.h"
-#include "fcl/include/fcl_internal.h"
+#include "fcl/fcl_internal.h"
 #include "jvm_hooks/jvm_hooks.h"
+#include "utils.h"
 
 #define EVENT_TYPE_CHAR 1000
 #define EVENT_TYPE_CHAR_MODS 1001
@@ -31,10 +32,6 @@
 #define EVENT_TYPE_SCROLL 1007
 
 static void registerFunctions(JNIEnv *env);
-
-JNIEXPORT jstring JNICALL
-Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNIEnv *env, jclass clazz, jint action,
-                                                   jbyteArray copySrc);
 
 jint JNI_OnLoad(JavaVM *vm, __attribute__((unused)) void *reserved) {
     if (pojav_environ->dalvikJavaVMPtr == NULL) {
@@ -301,17 +298,6 @@ void noncritical_set_stackqueue(__attribute__((unused)) JNIEnv *env,
                                 __attribute__((unused)) jclass clazz,
                                 jboolean use_input_stack_queue) {
     critical_set_stackqueue(use_input_stack_queue);
-}
-
-jstring convertStringJVM(JNIEnv *srcEnv, JNIEnv *dstEnv, jstring srcStr) {
-    if (srcStr == NULL) {
-        return NULL;
-    }
-
-    const char *srcStrC = (*srcEnv)->GetStringUTFChars(srcEnv, srcStr, 0);
-    jstring dstStr = (*dstEnv)->NewStringUTF(dstEnv, srcStrC);
-    (*srcEnv)->ReleaseStringUTFChars(srcEnv, srcStr, srcStrC);
-    return dstStr;
 }
 
 JNIEXPORT jstring JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNIEnv *env,

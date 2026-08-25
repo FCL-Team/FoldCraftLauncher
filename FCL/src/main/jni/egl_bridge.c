@@ -32,7 +32,7 @@
 #include "ctxbridges/bridge_tbl.h"
 #include "ctxbridges/osm_bridge.h"
 #include "driver_helper/nsbypass.h"
-#include "fcl/include/fcl_internal.h"
+#include "fcl/fcl_internal.h"
 #include <stdatomic.h>
 
 // 由 input_bridge_v3.c 提供，上报 monitor size 到 Java 侧 GLFW

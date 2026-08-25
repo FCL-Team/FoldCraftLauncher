@@ -23,7 +23,6 @@ endif()
 add_library(
     fcl
     SHARED
-    fcl/fcl_bridge.c
     fcl/fcl_loader.c
 )
 
@@ -97,12 +96,6 @@ add_library(
     awt_bridge.c
 )
 
-target_link_libraries(
-    pojavexec_awt
-    PRIVATE
-    fcl
-)
-
 # 模块：pojavexec
 add_library(
     pojavexec
@@ -118,6 +111,7 @@ add_library(
     input_bridge_v3.c
     virgl/virgl.c
     jre_launcher.c
+    utils.c
     jvm_hooks/java_exec_hooks.c
     jvm_hooks/emui_iterator_fix_hook.c
     jvm_hooks/lwjgl_dlopen_hook.c

@@ -5,16 +5,15 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <jni.h>
-#include <dlfcn.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <android/log.h>
 #include <bytehook.h>
 #include <string.h>
-#include <fcl_internal.h>
+#include "fcl/fcl_internal.h"
 #include <sys/mman.h>
 #include <pthread.h>
 
-typedef void (*android_update_LD_LIBRARY_PATH_t)(const char*);
 static volatile jobject exitTrap_bridge;
 static volatile jmethodID exitTrap_method;
 static JavaVM *exitTrap_jvm;
@@ -23,6 +22,7 @@ static JavaVM *log_pipe_jvm;
 static int fclFd[2];
 static pthread_t logger;
 static _Atomic bool exit_tripped = false;
+static jobject object_FCLBridge;
 
 void correctUtfBytes(char *bytes) {
     char three = 0;
@@ -79,7 +79,7 @@ void correctUtfBytes(char *bytes) {
 
 static void *logger_thread() {
     JNIEnv *env;
-    JavaVM *vm = fcl->android_jvm;
+    JavaVM *vm = log_pipe_jvm;
     (*vm)->AttachCurrentThread(vm, &env, NULL);
     char buffer[2048];
     ssize_t _s;
@@ -102,16 +102,19 @@ static void *logger_thread() {
             //fix "input is not valid Modified UTF-8" caused by NewStringUTF
             correctUtfBytes(buffer);
             str = (*env)->NewStringUTF(env, buffer);
-            (*env)->CallVoidMethod(env, fcl->object_FCLBridge, log_method, str);
+            (*env)->CallVoidMethod(env, object_FCLBridge, log_method, str);
             (*env)->DeleteLocalRef(env, str);
         }
     }
 }
 
-JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv* env, jobject jobject, jstring path) {
+JNIEXPORT jint JNICALL
+Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv *env, jobject jobject,
+                                                            jstring path) {
     setvbuf(stdout, 0, _IOLBF, 0);
     setvbuf(stderr, 0, _IONBF, 0);
-    if  (pipe(fclFd) < 0) {
+    object_FCLBridge = (*env)->NewGlobalRef(env, jobject);
+    if (pipe(fclFd) < 0) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to create log pipe!");
         return 1;
     }
@@ -121,8 +124,8 @@ JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
         return 2;
     }
     close(fclFd[1]);
-    jclass bridge = (*env) -> FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge");
-    log_method = (*env) -> GetMethodID(env, bridge, "receiveLog", "(Ljava/lang/String;)V");
+    jclass bridge = (*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge");
+    log_method = (*env)->GetMethodID(env, bridge, "receiveLog", "(Ljava/lang/String;)V");
     if (!log_method) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find receive method!");
         return 4;
@@ -130,25 +133,18 @@ JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStd
     FCL_LOG("Log pipe ready.");
     (*env)->GetJavaVM(env, &log_pipe_jvm);
     int result = pthread_create(&logger, 0, logger_thread, 0);
-    if (result != 0){
+    if (result != 0) {
         return 5;
     }
     pthread_detach(logger);
     return 0;
 }
 
-JNIEXPORT jint JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_chdir(JNIEnv* env, jobject jobject, jstring path) {
-    char const* dir = (*env)->GetStringUTFChars(env, path, 0);
-
-    int b = chdir(dir);
-
-    (*env)->ReleaseStringUTFChars(env, path, dir);
-    return b;
-}
-
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setenv(JNIEnv* env, jobject jobject, jstring str1, jstring str2) {
-    char const* name = (*env)->GetStringUTFChars(env, str1, 0);
-    char const* value = (*env)->GetStringUTFChars(env, str2, 0);
+JNIEXPORT void JNICALL
+Java_com_tungsten_fclauncher_bridge_FCLBridge_setenv(JNIEnv *env, jobject jobject, jstring str1,
+                                                     jstring str2) {
+    char const *name = (*env)->GetStringUTFChars(env, str1, 0);
+    char const *value = (*env)->GetStringUTFChars(env, str2, 0);
 
     setenv(name, value, 1);
 
@@ -156,56 +152,21 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setenv(JNIE
     (*env)->ReleaseStringUTFChars(env, str2, value);
 }
 
-JNIEXPORT jlong JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNIEnv* env, jobject jobject, jstring str) {
-    dlerror();
-
-    char const* lib_name = (*env)->GetStringUTFChars(env, str, 0);
-
-    void* handle;
-    dlerror();
-    handle = dlopen(lib_name, RTLD_GLOBAL | RTLD_LAZY);
-
-    char * error = dlerror();
-    if(error != NULL && handle == NULL) {
-        FCL_LOG("DLOPEN: loading %s (error = %s)", lib_name, error);
-    } else {
-        FCL_LOG("DLOPEN: loading %s", lib_name);
-    }
-
-    (*env)->ReleaseStringUTFChars(env, str, lib_name);
-    return (jlong) handle;
-}
-
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setLdLibraryPath(JNIEnv *env, jobject jobject, jstring ldLibraryPath) {
-    android_update_LD_LIBRARY_PATH_t android_update_LD_LIBRARY_PATH;
-    void *libdl_handle = dlopen("libdl.so", RTLD_LAZY);
-    void *updateLdLibPath = dlsym(libdl_handle, "android_update_LD_LIBRARY_PATH");
-    if (updateLdLibPath == NULL) {
-        updateLdLibPath = dlsym(libdl_handle, "__loader_android_update_LD_LIBRARY_PATH");
-        char * error = dlerror();
-        __android_log_print(error == NULL ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "loading %s (error = %s)", "libdl.so", error);
-    }
-    android_update_LD_LIBRARY_PATH = (android_update_LD_LIBRARY_PATH_t) updateLdLibPath;
-    const char* ldLibPathUtf = (*env)->GetStringUTFChars(env, ldLibraryPath, 0);
-    android_update_LD_LIBRARY_PATH(ldLibPathUtf);
-    (*env)->ReleaseStringUTFChars(env, ldLibraryPath, ldLibPathUtf);
-}
-
 typedef void (*exit_func)(int);
 
 _Noreturn void nominal_exit(int code) {
     JNIEnv *env;
-    jint errorCode = (*exitTrap_jvm)->GetEnv(exitTrap_jvm, (void**)&env, JNI_VERSION_1_6);
-    if(errorCode == JNI_EDETACHED) {
+    jint errorCode = (*exitTrap_jvm)->GetEnv(exitTrap_jvm, (void **) &env, JNI_VERSION_1_6);
+    if (errorCode == JNI_EDETACHED) {
         errorCode = (*exitTrap_jvm)->AttachCurrentThread(exitTrap_jvm, &env, NULL);
     }
-    if(errorCode != JNI_OK) {
+    if (errorCode != JNI_OK) {
         // Step on a landmine and die, since we can't invoke the Dalvik exit without attaching to
         // Dalvik.
         // I mean, if Zygote can do that, why can't I?
         killpg(getpgrp(), SIGTERM);
     }
-    if(code != 0) {
+    if (code != 0) {
         // Exit code 0 is pretty established as "eh it's fine"
         // so only open the GUI if the code is != 0
         (*env)->CallVoidMethod(env, exitTrap_bridge, exitTrap_method, code);
@@ -221,18 +182,19 @@ _Noreturn void nominal_exit(int code) {
     // and redirected back to the OS
     // 2. Zygote sends SIGTERM (no handling necessary, the process perishes)
     // 3. A different thread calls exit() and the hook will go through the exit_tripped path
-    jclass systemClass = (*env)->FindClass(env,"java/lang/System");
+    jclass systemClass = (*env)->FindClass(env, "java/lang/System");
     jmethodID exitMethod = (*env)->GetStaticMethodID(env, systemClass, "exit", "(I)V");
     (*env)->CallStaticVoidMethod(env, systemClass, exitMethod, 0);
     // System.exit() should not ever return, but the compiler doesn't know about that
     // so put a while loop here
-    while(1) {}
+    while (1) {}
 }
 
 static void custom_exit(int code) {
-    __android_log_print(code == 0 ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL", "JVM exit with code %d.", code);
+    __android_log_print(code == 0 ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL",
+                        "JVM exit with code %d.", code);
     // If the exit was already done (meaning it is recursive or from a different thread), pass the call through
-    if(exit_tripped) {
+    if (exit_tripped) {
         BYTEHOOK_CALL_PREV(custom_exit, exit_func, code);
         BYTEHOOK_POP_STACK();
         return;
@@ -245,26 +207,29 @@ static void custom_exit(int code) {
 
 static void custom_atexit() {
     // Same as custom_exit, but without the code or the exit passthrough.
-    if(exit_tripped) {
+    if (exit_tripped) {
         return;
     }
     exit_tripped = true;
     nominal_exit(0);
 }
 
-JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTrap(JNIEnv *env, jobject jobject1, jobject bridge) {
+JNIEXPORT void JNICALL
+Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTrap(JNIEnv *env, jobject jobject1,
+                                                            jobject bridge) {
     exitTrap_bridge = (*env)->NewGlobalRef(env, bridge);
     (*env)->GetJavaVM(env, &exitTrap_jvm);
-    jclass exitTrap_exitClass = (*env)->NewGlobalRef(env,(*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge"));
+    jclass exitTrap_exitClass = (*env)->NewGlobalRef(env, (*env)->FindClass(env,
+                                                                            "com/tungsten/fclauncher/bridge/FCLBridge"));
     exitTrap_method = (*env)->GetMethodID(env, exitTrap_exitClass, "onExit", "(I)V");
     (*env)->DeleteGlobalRef(env, exitTrap_exitClass);
-    if(bytehook_init(BYTEHOOK_MODE_AUTOMATIC, false) == BYTEHOOK_STATUS_CODE_OK) {
+    if (bytehook_init(BYTEHOOK_MODE_AUTOMATIC, false) == BYTEHOOK_STATUS_CODE_OK) {
         bytehook_hook_all(NULL,
                           "exit",
                           &custom_exit,
                           NULL,
                           NULL);
-    }else {
+    } else {
         atexit(custom_atexit);
     }
 }
