@@ -14,15 +14,15 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 
-import java.util.function.Consumer;
-
 import dalvik.annotation.optimization.CriticalNative;
 
 public class CallbackBridge {
     public static final Choreographer sChoreographer = Choreographer.getInstance();
     private static FCLBridge fclBridge = null;
-    private static boolean isGrabbing = false;
-    private static final Consumer<Boolean> grabListener = isGrabbing -> CallbackBridge.fclBridge.setCursorMode(isGrabbing ? FCLBridge.CursorDisabled : FCLBridge.CursorEnabled);
+    /** 游戏线程写、UI 线程读的抓取状态，公开访问器也可能被其它线程调用 */
+    private static volatile boolean isGrabbing = false;
+    /** 保护 isGrabbing 的写与「检查+应用」的组合操作，防止应用过期状态 */
+    private static final Object grabLock = new Object();
 
     public static final int CLIPBOARD_COPY = 2000;
     public static final int CLIPBOARD_PASTE = 2001;
@@ -192,17 +192,23 @@ public class CallbackBridge {
     //Called from JRE side
     @SuppressWarnings("unused")
     private static void onGrabStateChanged(final boolean grabbing) {
-        isGrabbing = grabbing;
+        synchronized (grabLock) {
+            isGrabbing = grabbing;
+        }
         sChoreographer.postFrameCallbackDelayed((time) -> {
-            // If the grab re-changed, skip notify process
-            if (isGrabbing != grabbing) {
-                return;
-            }
-            synchronized (grabListener) {
-                grabListener.accept(isGrabbing);
+            synchronized (grabLock) {
+                // 防抖：延迟期间状态再次变化则说明本次回调已过期，跳过，最终状态由最后一次调用应用
+                if (isGrabbing != grabbing || fclBridge == null) {
+                    return;
+                }
+                // 延迟回调不可取消，游戏退出/Activity 销毁后仍会执行，此时不再触碰 UI
+                Activity activity = FCLApp.getActivity();
+                if (activity == null || activity.isDestroyed() || activity.isFinishing()) {
+                    return;
+                }
+                fclBridge.setCursorMode(grabbing ? FCLBridge.CursorDisabled : FCLBridge.CursorEnabled);
             }
         }, 16);
-
     }
 
     @CriticalNative

@@ -371,13 +371,24 @@ JNIEXPORT void JNICALL
 Java_org_lwjgl_glfw_CallbackBridge_nativeSetGrabbing(__attribute__((unused)) JNIEnv *env,
                                                      __attribute__((unused)) jclass clazz,
                                                      jboolean grabbing) {
-    JNIEnv *dalvikEnv;
-    (*pojav_environ->dalvikJavaVMPtr)->AttachCurrentThread(pojav_environ->dalvikJavaVMPtr,
-                                                           &dalvikEnv, NULL);
+    JavaVM *jvm = pojav_environ->dalvikJavaVMPtr;
+    JNIEnv *dalvikEnv = NULL;
+    jboolean attached = JNI_FALSE;
+    jint env_result = (*jvm)->GetEnv(jvm, (void **) &dalvikEnv, JNI_VERSION_1_4);
+    if (env_result == JNI_EDETACHED) {
+        env_result = (*jvm)->AttachCurrentThread(jvm, &dalvikEnv, NULL);
+        attached = JNI_TRUE;
+    }
+    if (env_result != JNI_OK) {
+        return;
+    }
     (*dalvikEnv)->CallStaticVoidMethod(dalvikEnv, pojav_environ->bridgeClazz,
                                        pojav_environ->method_onGrabStateChanged, grabbing);
-    (*pojav_environ->dalvikJavaVMPtr)->DetachCurrentThread(pojav_environ->dalvikJavaVMPtr);
+    if (attached) {
+        (*jvm)->DetachCurrentThread(jvm);
+    }
     pojav_environ->isGrabbing = grabbing;
+    printf("cursor visibility: %s\n", grabbing == 0 ? "true" : "false");
 }
 
 jboolean critical_send_char(jchar codepoint) {
