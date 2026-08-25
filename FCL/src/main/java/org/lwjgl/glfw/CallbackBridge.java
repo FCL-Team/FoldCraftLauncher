@@ -148,13 +148,20 @@ public class CallbackBridge {
 
 
     public static void sendCursorPos(float x, float y) {
+        float dx = x - mouseX;
+        float dy = y - mouseY;
         mouseX = x;
         mouseY = y;
-        deltaX = 0f;
-        deltaY = 0f;
+        deltaX = dx;
+        deltaY = dy;
         nativeSendCursorPos(mouseX, mouseY);
         if (!SdlBridge.getSdlEnabled()) return;
-        SDLActivity.onNativeMouse(0, MotionEvent.ACTION_MOVE, x, y, false);
+        if (isGrabbing()) {
+            // 鼠标被游戏捕获（锁指针转视角）时下发相对增量
+            SDLActivity.onNativeMouse(0, MotionEvent.ACTION_MOVE, dx, dy, true);
+        } else {
+            SDLActivity.onNativeMouse(0, MotionEvent.ACTION_MOVE, x, y, false);
+        }
     }
 
     public static void sendCursorDelta(float x, float y) {
@@ -175,21 +182,22 @@ public class CallbackBridge {
                 return;
             }
             nativeSendKey(code, scancode, isDown ? 1 : 0, modifiers);
+            // SDL 输入双路：基于转换后的 GLFW 键码换算 Android 键码
+            if (!SdlBridge.getSdlEnabled()) return;
+            int androidKeycode = EfficientAndroidLWJGLKeycode.getSdlAndroidKeycode(code);
+            if (androidKeycode == KeyEvent.KEYCODE_UNKNOWN) return;
+            try {
+                if (isDown) {
+                    SDLActivity.onNativeKeyDown(androidKeycode);
+                } else {
+                    SDLActivity.onNativeKeyUp(androidKeycode);
+                }
+            } catch (Throwable ignored) {
+            }
         }
         if (isDown && !Character.isISOControl(keychar)) {
             nativeSendCharMods(keychar, modifiers);
             nativeSendChar(keychar);
-        }
-        if (!SdlBridge.getSdlEnabled()) return;
-        int androidKeycode = EfficientAndroidLWJGLKeycode.getSdlAndroidKeycode(keycode);
-        if (androidKeycode == KeyEvent.KEYCODE_UNKNOWN) return;
-        try {
-            if (isDown) {
-                SDLActivity.onNativeKeyDown(androidKeycode);
-            } else {
-                SDLActivity.onNativeKeyUp(androidKeycode);
-            }
-        } catch (Throwable ignored) {
         }
     }
 
