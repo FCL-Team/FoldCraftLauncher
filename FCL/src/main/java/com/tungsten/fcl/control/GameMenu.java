@@ -96,7 +96,7 @@ import java.util.logging.Level;
 import fr.spse.gamepad_remapper.Remapper;
 import kotlin.Unit;
 
-public class GameMenu implements MenuCallback {
+public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
     private boolean simulated;
     private FCLActivity activity;
@@ -618,7 +618,7 @@ public class GameMenu implements MenuCallback {
 
     @Override
     public FCLBridgeCallback getCallbackBridge() {
-        return new FCLProcessListener(this);
+        return this;
     }
 
     @Override
@@ -1106,29 +1106,5 @@ public class GameMenu implements MenuCallback {
     @Nullable
     public TouchController getTouchController() {
         return touchController;
-    }
-
-    static class FCLProcessListener implements FCLBridgeCallback {
-
-        private final GameMenu gameMenu;
-
-        public FCLProcessListener(GameMenu gameMenu) {
-            this.gameMenu = gameMenu;
-        }
-
-        @Override
-        public void onCursorModeChange(int mode) {
-            gameMenu.onCursorModeChange(mode);
-        }
-
-        @Override
-        public void onLog(String log) {
-            gameMenu.onLog(log);
-        }
-
-        @Override
-        public void onExit(int code) {
-            gameMenu.onExit(code);
-        }
     }
 }

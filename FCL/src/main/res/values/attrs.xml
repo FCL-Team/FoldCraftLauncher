@@ -79,11 +79,4 @@
         <attr name="cpv_sliderColor" format="color|reference" />
         <attr name="cpv_borderColor" format="color|reference" />
     </declare-styleable>
-
-    <declare-styleable name="HorizontalListView">
-        <attr name="dividerWidth" format="dimension" />
-        <attr name="android:divider" />
-        <attr name="android:requiresFadingEdge" />
-        <attr name="android:fadingEdgeLength" />
-    </declare-styleable>
 </resources>

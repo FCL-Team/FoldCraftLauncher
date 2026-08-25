@@ -449,104 +449,55 @@ public class FCLauncher {
     }
 
     public static FCLBridge launchMinecraft(FCLConfig config) {
-
-        // initialize FCLBridge
-        FCLBridge bridge = new FCLBridge();
-        bridge.setLogPath(config.getLogDir() + "/latest_game.log");
-        Thread gameThread = new Thread(() -> {
-            try {
-                logStartInfo(config, bridge, "Minecraft");
-                logModList(bridge);
-
-                // env
-                setEnv(config, bridge, true);
-
-                // setup java runtime
-                setUpJavaRuntime(config, bridge);
-
-                // setup graphic and sound engine
-                setupGraphicAndSoundEngine(config, bridge);
-
-                // set working directory
-                log(bridge, "Working directory: " + config.getWorkingDir());
-                bridge.chdir(config.getWorkingDir());
-
-                // launch game
-                launch(config, bridge, "Minecraft");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
-        gameThread.setPriority(Thread.MAX_PRIORITY);
-        bridge.setThread(gameThread);
-
-        return bridge;
+        return launchProcess(config, "latest_game.log", "Minecraft", true, true, true);
     }
 
     public static FCLBridge launchJarExecutor(FCLConfig config) {
-
-        // initialize FCLBridge
-        FCLBridge bridge = new FCLBridge();
-        bridge.setLogPath(config.getLogDir() + "/latest_jar_executor.log");
-        Thread javaGUIThread = new Thread(() -> {
-            try {
-
-                logStartInfo(config, bridge, "Jar Executor");
-
-                // env
-                setEnv(config, bridge, true);
-
-                // setup java runtime
-                setUpJavaRuntime(config, bridge);
-
-                // setup graphic and sound engine
-                setupGraphicAndSoundEngine(config, bridge);
-
-                // set working directory
-                log(bridge, "Working directory: " + config.getWorkingDir());
-                bridge.chdir(config.getWorkingDir());
-
-                // launch jar executor
-                launch(config, bridge, "Jar Executor");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-
-        bridge.setThread(javaGUIThread);
-
-        return bridge;
+        return launchProcess(config, "latest_jar_executor.log", "Jar Executor", true, false, false);
     }
 
     public static FCLBridge launchAPIInstaller(FCLConfig config) {
+        return launchProcess(config, "latest_api_installer.log", "API Installer", false, false, false);
+    }
+
+    private static FCLBridge launchProcess(FCLConfig config, String logName, String task, boolean render, boolean logModList, boolean highPriority) {
 
         // initialize FCLBridge
         FCLBridge bridge = new FCLBridge();
-        bridge.setLogPath(config.getLogDir() + "/latest_api_installer.log");
-        Thread apiInstallerThread = new Thread(() -> {
+        bridge.setLogPath(config.getLogDir() + "/" + logName);
+        Thread thread = new Thread(() -> {
             try {
-
-                logStartInfo(config, bridge, "API Installer");
+                logStartInfo(config, bridge, task);
+                if (logModList) {
+                    logModList(bridge);
+                }
 
                 // env
-                setEnv(config, bridge, false);
+                setEnv(config, bridge, render);
 
                 // setup java runtime
                 setUpJavaRuntime(config, bridge);
+
+                if (render) {
+                    // setup graphic and sound engine
+                    setupGraphicAndSoundEngine(config, bridge);
+                }
 
                 // set working directory
                 log(bridge, "Working directory: " + config.getWorkingDir());
                 bridge.chdir(config.getWorkingDir());
 
-                // launch api installer
-                launch(config, bridge, "API Installer");
+                // launch
+                launch(config, bridge, task);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
 
-        bridge.setThread(apiInstallerThread);
+        if (highPriority) {
+            thread.setPriority(Thread.MAX_PRIORITY);
+        }
+        bridge.setThread(thread);
 
         return bridge;
     }

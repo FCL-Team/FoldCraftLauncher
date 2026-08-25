@@ -180,9 +180,6 @@ public class DefaultGameRepository implements GameRepository {
 
     @Override
     public boolean renameVersion(String from, String to) {
-        if (EventBus.EVENT_BUS.fireEvent(new RenameVersionEvent(this, from, to)) == Event.Result.DENY)
-            return false;
-
         try {
             Version fromVersion = getVersion(from);
             Path fromDir = getVersionRoot(from).toPath();
@@ -227,8 +224,6 @@ public class DefaultGameRepository implements GameRepository {
     }
 
     public boolean removeVersionFromDisk(String id) {
-        if (EventBus.EVENT_BUS.fireEvent(new RemoveVersionEvent(this, id)) == Event.Result.DENY)
-            return false;
         if (!versions.containsKey(id))
             return FileUtils.deleteDirectoryQuietly(getVersionRoot(id));
         File file = getVersionRoot(id);
@@ -304,15 +299,7 @@ public class DefaultGameRepository implements GameRepository {
                 } catch (Exception e) {
                     LOG.log(Level.WARNING, "Malformed version json " + id, e);
                     // JsonSyntaxException or IOException or NullPointerException(!!)
-                    if (EventBus.EVENT_BUS.fireEvent(new GameJsonParseFailedEvent(this, json, id)) != Event.Result.ALLOW)
-                        return Stream.empty();
-
-                    try {
-                        version = readVersionJson(json);
-                    } catch (Exception e2) {
-                        LOG.log(Level.SEVERE, "User corrected version json is still malformed", e2);
-                        return Stream.empty();
-                    }
+                    return Stream.empty();
                 }
 
                 if (!id.equals(version.getId())) {

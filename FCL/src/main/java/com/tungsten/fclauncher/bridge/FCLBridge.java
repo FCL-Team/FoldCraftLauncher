@@ -20,17 +20,19 @@ import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.tungsten.fcl.FCLApp;
+import com.tungsten.fcl.control.OpenFolderDialog;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 
 import org.lwjgl.glfw.CallbackBridge;
 
+import com.tungsten.fcllibrary.component.FCLActivity;
+
 import java.io.File;
-import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class FCLBridge implements Serializable {
+public class FCLBridge {
     public static boolean FORCE_RESOLUTION = false;
     public static float FORCE_RESOLUTION_SCALE = -1;
     public static int FORCE_RESOLUTION_WIDTH = 1920;
@@ -221,12 +223,6 @@ public class FCLBridge implements Serializable {
         return item.getText().toString();
     }
 
-    private static OpenFolderCallback folderCallback = null;
-
-    public static void setOpenFolderCallback(OpenFolderCallback callback) {
-        folderCallback = callback;
-    }
-
     public static void openLink(final String link) {
         Activity activity = FCLApp.getActivity();
         if (activity == null) {
@@ -240,7 +236,7 @@ public class FCLBridge implements Serializable {
                     targetLink = Uri.decode(targetLink);
                     Path path = Paths.get(targetLink).normalize().toAbsolutePath();
                     if (Files.isDirectory(path)) {
-                        folderCallback.onBrowse(path.toString());
+                        new OpenFolderDialog((FCLActivity) activity, path.toString()).show();
                         return;
                     }
                 }

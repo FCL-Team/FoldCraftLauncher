@@ -73,13 +73,26 @@ import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public class DefaultLauncher extends Launcher {
+public class DefaultLauncher {
+    protected final Context context;
+    protected final GameRepository repository;
+    protected final Version version;
+    protected final AuthInfo authInfo;
+    protected final LaunchOptions options;
+
     private String jnaVersion;
     private String lwjglVersion = "3.3.3";
     private boolean useLwjglX = false;
 
     public DefaultLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
-        super(context, repository, version, authInfo, options);
+        this.context = context;
+        this.repository = repository;
+        this.version = version;
+        this.authInfo = authInfo;
+        this.options = options;
+        this.forbiddens = mapOf(
+                pair("-Xincgc", () -> options.getJava().getVersion() >= 9)
+        );
     }
 
     private CommandBuilder generateCommandLine() throws IOException {
@@ -307,50 +320,14 @@ public class DefaultLauncher extends Launcher {
         } else {
             javaVersion = options.getJava();
         }
-        boolean isJava8 = javaVersion.getVersion() == JavaVersion.JAVA_VERSION_8;
-
-        res.addDefault("-Djava.awt.headless=", "false");
-        res.addDefault("-Dcacio.managed.screensize=", options.getWidth() + "x" + options.getHeight());
-        res.addDefault("-Dcacio.font.fontmanager=", "sun.awt.X11FontManager");
-        res.addDefault("-Dcacio.font.fontscaler=", "sun.font.FreetypeFontScaler");
-        res.addDefault("-Dswing.defaultlaf=", "javax.swing.plaf.nimbus.NimbusLookAndFeel");
-        if (isJava8) {
-            res.addDefault("-Dawt.toolkit=", "net.java.openjdk.cacio.ctc.CTCToolkit");
-            res.addDefault("-Djava.awt.graphicsenv=", "net.java.openjdk.cacio.ctc.CTCGraphicsEnvironment");
-        } else {
-            res.addDefault("-Dawt.toolkit=", "com.github.caciocavallosilano.cacio.ctc.CTCToolkit");
-            res.addDefault("-Djava.awt.graphicsenv=", "com.github.caciocavallosilano.cacio.ctc.CTCGraphicsEnvironment");
-            res.addDefault("-javaagent:", FCLPath.CACIOCAVALLO_17_DIR + "/cacio-agent.jar");
-
-            res.add("--add-exports=java.desktop/java.awt=ALL-UNNAMED");
-            res.add("--add-exports=java.desktop/java.awt.peer=ALL-UNNAMED");
-            res.add("--add-exports=java.desktop/sun.awt.image=ALL-UNNAMED");
-            res.add("--add-exports=java.desktop/sun.java2d=ALL-UNNAMED");
-            res.add("--add-exports=java.desktop/java.awt.dnd.peer=ALL-UNNAMED");
-            res.add("--add-exports=java.desktop/sun.awt=ALL-UNNAMED");
-            res.add("--add-exports=java.desktop/sun.awt.event=ALL-UNNAMED");
-            res.add("--add-exports=java.desktop/sun.awt.datatransfer=ALL-UNNAMED");
-            res.add("--add-exports=java.desktop/sun.font=ALL-UNNAMED");
-            res.add("--add-exports=java.base/sun.security.action=ALL-UNNAMED");
-            res.add("--add-opens=java.base/java.util=ALL-UNNAMED");
-            res.add("--add-opens=java.desktop/java.awt=ALL-UNNAMED");
-            res.add("--add-opens=java.desktop/sun.font=ALL-UNNAMED");
-            res.add("--add-opens=java.desktop/sun.java2d=ALL-UNNAMED");
-            res.add("--add-opens=java.base/java.lang.reflect=ALL-UNNAMED");
-            res.add("--add-opens=java.base/java.net=ALL-UNNAMED");
-        }
-
-        StringBuilder cacioClasspath = new StringBuilder();
-        cacioClasspath.append("-Xbootclasspath/").append(isJava8 ? "p" : "a");
-        File cacioDir = new File(isJava8 ? FCLPath.CACIOCAVALLO_8_DIR : FCLPath.CACIOCAVALLO_17_DIR);
-        if (cacioDir.exists() && cacioDir.isDirectory()) {
-            for (File file : Objects.requireNonNull(cacioDir.listFiles())) {
-                if (file.getName().endsWith(".jar")) {
-                    cacioClasspath.append(":").append(file.getAbsolutePath());
-                }
-            }
-        }
-        res.add(cacioClasspath.toString());
+        CacioJavaArgs.addCacioArgs(
+                res,
+                options.getWidth() + "x" + options.getHeight(),
+                "javax.swing.plaf.nimbus.NimbusLookAndFeel",
+                FCLPath.CACIOCAVALLO_17_DIR + "/cacio-agent.jar",
+                false,
+                javaVersion.getVersion() == JavaVersion.JAVA_VERSION_8
+        );
     }
 
     public Map<String, Boolean> getFeatures() {
@@ -360,9 +337,7 @@ public class DefaultLauncher extends Launcher {
         );
     }
 
-    private final Map<String, Supplier<Boolean>> forbiddens = mapOf(
-            pair("-Xincgc", () -> options.getJava().getVersion() >= 9)
-    );
+    private final Map<String, Supplier<Boolean>> forbiddens;
 
     protected Map<String, Supplier<Boolean>> getForbiddens() {
         return forbiddens;
@@ -444,7 +419,6 @@ public class DefaultLauncher extends Launcher {
         );
     }
 
-    @Override
     public FCLBridge launch() throws IOException, InterruptedException {
         final CommandBuilder command = generateCommandLine();
 
