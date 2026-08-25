@@ -43,8 +43,6 @@ import com.mio.util.DisplayUtil
 import com.mio.util.GuideUtil
 import com.mio.util.GuideUtil.Companion.guideTarget
 import com.mio.util.ImageUtil
-import com.mio.util.getLocalizedText
-import com.mio.util.hasStringId
 import com.mio.util.showWarningDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
@@ -95,6 +93,8 @@ import java.util.logging.Level
 import java.util.stream.Stream
 import kotlin.math.abs
 import kotlin.system.exitProcess
+import com.mio.util.getLocalizedText
+import com.mio.util.hasStringId
 
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     companion object {
@@ -953,7 +953,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             this,
             FCLPage.PAGE_ID_TEMP,
             R.layout.page_modpack,
-            if (::profile.isInitialized) profile else Profiles.getSelectedProfile(),
+            if(::profile.isInitialized) profile else Profiles.getSelectedProfile(),
             null,
             file
         )

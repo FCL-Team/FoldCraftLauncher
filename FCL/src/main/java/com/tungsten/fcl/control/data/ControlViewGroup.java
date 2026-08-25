@@ -103,20 +103,6 @@ public class ControlViewGroup implements Cloneable, Observable {
         return viewDataProperty.get();
     }
 
-    /**
-     * 完整按键数据（viewData）是否已加载：轻量加载只解析布局元数据，
-     * 布局首次显示/编辑前通过 controllers 异步补全。
-     */
-    private transient boolean dataLoaded;
-
-    public boolean isDataLoaded() {
-        return dataLoaded;
-    }
-
-    public void setDataLoaded(boolean dataLoaded) {
-        this.dataLoaded = dataLoaded;
-    }
-
     public ControlViewGroup(String id) {
         this.id = id;
 
