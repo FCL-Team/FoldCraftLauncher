@@ -407,7 +407,11 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
     public static void disableSDLEditKeyboard(){
         if (mTextEdit == null) return;
-        mTextEdit.setLayoutParams(new FrameLayout.LayoutParams(0, 0));
+        // setLayoutParams 不做类型转换，直接用已转换过的父容器 params
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mTextEdit.getLayoutParams();
+        params.width = 0;
+        params.height = 0;
+        mTextEdit.setLayoutParams(params);
         mTextEdit.setVisibility(View.INVISIBLE);
         mTextEdit.clearFocus();
 
@@ -1502,15 +1506,21 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         public void run() {
             if (!SdlBridge.getSdlEnabled()) return;
             TouchCharInput.disableActiveInput();
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(w, h + HEIGHT_PADDING);
-            params.leftMargin = x;
-            params.topMargin = y;
-
             if (mTextEdit == null) {
                 mTextEdit = new SDLDummyEdit(getContext());
-
+                // addView 会把 LayoutParams 自动转换为父容器类型（RelativeLayout 等）
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(w, h + HEIGHT_PADDING);
+                params.leftMargin = x;
+                params.topMargin = y;
                 mLayout.addView(mTextEdit, params);
             } else {
+                // setLayoutParams 不做类型转换：直接改 addView 时已转换过的父容器 params，
+                // 否则 RelativeLayout 在 onMeasure 强转 FrameLayout$LayoutParams 崩溃
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mTextEdit.getLayoutParams();
+                params.width = w;
+                params.height = h + HEIGHT_PADDING;
+                params.leftMargin = x;
+                params.topMargin = y;
                 mTextEdit.setLayoutParams(params);
             }
             mTextEdit.setInputType(input_type);
