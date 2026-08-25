@@ -10,7 +10,7 @@
 #include <android/log.h>
 #include <bytehook.h>
 #include <string.h>
-#include "fcl/fcl_internal.h"
+#include "log.h"
 #include <sys/mman.h>
 #include <pthread.h>
 
@@ -21,7 +21,6 @@ static volatile jmethodID log_method;
 static JavaVM *log_pipe_jvm;
 static int fclFd[2];
 static pthread_t logger;
-static _Atomic bool exit_tripped = false;
 static jobject object_FCLBridge;
 
 void correctUtfBytes(char *bytes) {
@@ -152,8 +151,6 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_setenv(JNIEnv *env, jobject jobjec
     (*env)->ReleaseStringUTFChars(env, str2, value);
 }
 
-typedef void (*exit_func)(int);
-
 _Noreturn void nominal_exit(int code) {
     JNIEnv *env;
     jint errorCode = (*exitTrap_jvm)->GetEnv(exitTrap_jvm, (void **) &env, JNI_VERSION_1_6);
@@ -190,30 +187,6 @@ _Noreturn void nominal_exit(int code) {
     while (1) {}
 }
 
-static void custom_exit(int code) {
-    __android_log_print(code == 0 ? ANDROID_LOG_INFO : ANDROID_LOG_ERROR, "FCL",
-                        "JVM exit with code %d.", code);
-    // If the exit was already done (meaning it is recursive or from a different thread), pass the call through
-    if (exit_tripped) {
-        BYTEHOOK_CALL_PREV(custom_exit, exit_func, code);
-        BYTEHOOK_POP_STACK();
-        return;
-    }
-    exit_tripped = true;
-    // Perform a nominal exit, as we expect.
-    nominal_exit(code);
-    BYTEHOOK_POP_STACK();
-}
-
-static void custom_atexit() {
-    // Same as custom_exit, but without the code or the exit passthrough.
-    if (exit_tripped) {
-        return;
-    }
-    exit_tripped = true;
-    nominal_exit(0);
-}
-
 JNIEXPORT void JNICALL
 Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTrap(JNIEnv *env, jobject jobject1,
                                                             jobject bridge) {
@@ -223,13 +196,4 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTrap(JNIEnv *env, jobject
                                                                             "com/tungsten/fclauncher/bridge/FCLBridge"));
     exitTrap_method = (*env)->GetMethodID(env, exitTrap_exitClass, "onExit", "(I)V");
     (*env)->DeleteGlobalRef(env, exitTrap_exitClass);
-    if (bytehook_init(BYTEHOOK_MODE_AUTOMATIC, false) == BYTEHOOK_STATUS_CODE_OK) {
-        bytehook_hook_all(NULL,
-                          "exit",
-                          &custom_exit,
-                          NULL,
-                          NULL);
-    } else {
-        atexit(custom_atexit);
-    }
 }

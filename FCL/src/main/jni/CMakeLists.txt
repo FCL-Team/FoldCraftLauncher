@@ -11,89 +11,89 @@ find_package(bytehook REQUIRED CONFIG)
 
 # 设置全局包含目录
 include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 # 检查架构
-if(${ANDROID_ABI} STREQUAL "arm64-v8a")
+if (${ANDROID_ABI} STREQUAL "arm64-v8a")
     add_definitions(-DADRENO_POSSIBLE)
-endif()
+endif ()
 
 # 模块：fcl
 add_library(
-    fcl
-    SHARED
-    fcl/fcl_loader.c
+        fcl
+        SHARED
+        fcl/fcl_loader.c
 )
 
 target_include_directories(
-    fcl
-    PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/fcl/include
-    ${CMAKE_CURRENT_SOURCE_DIR}
+        fcl
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/fcl/include
+        ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_link_libraries(
-    fcl
-    PRIVATE
-    bytehook::bytehook
-    log
-    dl
-    android
+        fcl
+        PRIVATE
+        bytehook::bytehook
+        log
+        dl
+        android
 )
 
 # 模块：linkerhook - 与 Amethyst-Android 布局一致，hook.c 位于 driver_helper/
 add_library(
-    linkerhook
-    SHARED
-    driver_helper/hook.c
+        linkerhook
+        SHARED
+        driver_helper/hook.c
 )
 
 target_link_options(
-    linkerhook
-    PRIVATE
-    -z global
+        linkerhook
+        PRIVATE
+        -z global
 )
 
 # 模块：awt_headless - 占位库
 add_library(
-    awt_headless
-    SHARED
-    # 空库，仅作为占位
-    ${CMAKE_CURRENT_SOURCE_DIR}/awt_headless/placeholder.c
+        awt_headless
+        SHARED
+        # 空库，仅作为占位
+        ${CMAKE_CURRENT_SOURCE_DIR}/awt_headless/placeholder.c
 )
 
 # 为占位库添加必要的链接选项
 target_link_libraries(
-    awt_headless
-    PRIVATE
-    log
+        awt_headless
+        PRIVATE
+        log
 )
 
 # 模块：awt_xawt
 add_library(
-    awt_xawt
-    SHARED
-    awt_xawt/xawt_fake.c
+        awt_xawt
+        SHARED
+        awt_xawt/xawt_fake.c
 )
 
 target_include_directories(
-    awt_xawt
-    PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/awt_xawt
+        awt_xawt
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/awt_xawt
 )
 
 target_link_libraries(
-    awt_xawt
-    PRIVATE
-    awt_headless
+        awt_xawt
+        PRIVATE
+        awt_headless
 )
 
 # 模块：pojavexec_awt
 add_library(
-    pojavexec_awt
-    SHARED
-    awt_bridge.c
+        pojavexec_awt
+        SHARED
+        awt_bridge.c
 )
 
 # 模块：pojavexec
@@ -116,32 +116,35 @@ add_library(
     jvm_hooks/emui_iterator_fix_hook.c
     jvm_hooks/lwjgl_dlopen_hook.c
     driver_helper/nsbypass.c
+    native_hooks/exit_hook.c
+    native_hooks/chmod_hook.c
 )
 
 target_include_directories(
-    pojavexec
-    PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/ctxbridges
-    ${CMAKE_CURRENT_SOURCE_DIR}/environ
-    ${CMAKE_CURRENT_SOURCE_DIR}/virgl
+        pojavexec
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/ctxbridges
+        ${CMAKE_CURRENT_SOURCE_DIR}/environ
+        ${CMAKE_CURRENT_SOURCE_DIR}/virgl
 )
 
 target_link_libraries(
-    pojavexec
-    PRIVATE
-    fcl
-    log
-    dl
-    android
+        pojavexec
+        PRIVATE
+        fcl
+        log
+        dl
+        android
+        bytehook::bytehook
 )
 
 # 仅在arm64-v8a架构下链接EGL和GLESv2
-if(${ANDROID_ABI} STREQUAL "arm64-v8a")
+if (${ANDROID_ABI} STREQUAL "arm64-v8a")
     target_link_libraries(
-        pojavexec
-        PRIVATE
-        EGL
-        GLESv2
+            pojavexec
+            PRIVATE
+            EGL
+            GLESv2
     )
-endif()
+endif ()

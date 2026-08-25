@@ -20,7 +20,7 @@
 #include <android/log.h>
 
 #include "environ/environ.h"
-#include "fcl/fcl_internal.h"
+#include "log.h"
 #include "jvm_hooks/jvm_hooks.h"
 #include "utils.h"
 
