@@ -519,7 +519,10 @@ class VersionSettingAdapter(
         if (versionSetting.java == "Auto") context.getString(R.string.settings_game_java_version_auto) else versionSetting.java
 
     private fun controllerName(): String =
-        Controllers.findControllerById(versionSetting.controller).name
+        if (Controllers.isInitialized())
+            Controllers.findControllerById(versionSetting.controller).name
+        else "Default"
+
 
     private fun rendererText(): String = getRenderer(versionSetting.renderer).des
 }
