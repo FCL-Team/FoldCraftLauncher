@@ -41,8 +41,10 @@ static void create_hooks(bytehook_hook_all_t bytehook_hook_all_p) {
     if(android_get_device_api_level() < 29) {
         create_chmod_hooks(bytehook_hook_all_p);
     }
-//    create_dlopen_hooks(bytehook_hook_all_p);
-//    create_sdl_hooks(bytehook_hook_all_p);
+    // SDL3 集成：hook SDL_Init 通知启动器初始化、窗口复用、EGL 兼容等
+    create_sdl_hooks(bytehook_hook_all_p);
+    // 隔离游戏 JVM 加载 libSDL3.so 时的 JNI_OnLoad，避免双 VM 边界被破坏
+    create_sdl_dlopen_hooks(bytehook_hook_all_p);
 }
 
 static bool init_hooks() {

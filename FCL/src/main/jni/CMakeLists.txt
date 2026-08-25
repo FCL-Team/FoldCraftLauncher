@@ -118,6 +118,8 @@ add_library(
     driver_helper/nsbypass.c
     native_hooks/exit_hook.c
     native_hooks/chmod_hook.c
+    native_hooks/sdl_hook.c
+    native_hooks/sdl_dlopen_hook.c
 )
 
 target_include_directories(
