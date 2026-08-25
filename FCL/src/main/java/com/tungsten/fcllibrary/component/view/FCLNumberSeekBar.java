@@ -206,6 +206,13 @@ public class FCLNumberSeekBar extends AppCompatSeekBar {
         return disableProperty;
     }
 
+    @Override
+    public void setProgress(int progress) {
+        super.setProgress(progress);
+        // 程序性设置进度时同步属性，触发监听与保存（onProgressChanged 仅用户操作才同步）
+        progressProperty().set(progress);
+    }
+
     public final void setProgressValue(int progressValue) {
         progressProperty().set(progressValue);
     }
