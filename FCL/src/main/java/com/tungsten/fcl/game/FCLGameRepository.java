@@ -414,18 +414,6 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setRenderer(RendererManager.getRenderer(vs.getRenderer()))
                 .setDebugLog(vs.isDebugLog());
 
-        File json = getModpackConfiguration(version);
-        if (json.exists()) {
-            try {
-                String jsonText = FileUtils.readText(json);
-                ModpackConfiguration<?> modpackConfiguration = JsonUtils.GSON.fromJson(jsonText, ModpackConfiguration.class);
-                ModpackProvider provider = ModpackHelper.getProviderByType(modpackConfiguration.getType());
-                if (provider != null) provider.injectLaunchOptions(jsonText, builder);
-            } catch (IOException | JsonParseException e) {
-                LOG.log(Level.WARNING, e.toString());
-            }
-        }
-
         if (vs.isAutoMemory() && builder.getJavaArguments().stream().anyMatch(it -> it.startsWith("-Xmx"))) {
             builder.setMaxMemory(null);
             builder.setMinMemory(null);
