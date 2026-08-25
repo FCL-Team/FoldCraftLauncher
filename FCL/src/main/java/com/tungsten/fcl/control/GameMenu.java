@@ -539,6 +539,12 @@ public class GameMenu implements MenuCallback {
 
         viewManager.setup();
 
+        // 初始化时应用开关副作用（FPS/内存线程、持续性能模式），
+        // 使重启后已开启的设置保持生效（开关行绑定不触发副作用回调）
+        toggleFps(menuSetting.isShowFps());
+        toggleMemory(menuSetting.isShowMemory());
+        activity.getWindow().setSustainedPerformanceMode(menuSetting.isPerformanceMode());
+
         if (new File(FCLPath.FILES_DIR, "cursor.gif").exists()) {
             Glide.with(getCursor()).asGif().skipMemoryCache(true).load(new File(FCLPath.FILES_DIR, "cursor.gif")).into(new CustomViewTarget<CursorView, GifDrawable>(getCursor()) {
                 @Override
