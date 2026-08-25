@@ -15,8 +15,12 @@ import android.opengl.EGLConfig
 import android.opengl.GLES20
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.view.MotionEvent
 import android.webkit.CookieManager
 import android.widget.Toast
+import androidx.core.net.toUri
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.WebActivity
 import com.tungsten.fclcore.util.Logging
@@ -32,7 +36,6 @@ import java.nio.ByteOrder
 import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level
 import java.util.zip.ZipFile
-import androidx.core.net.toUri
 
 @SuppressLint("DiscouragedApi")
 fun getElfArchFromSo(filePath: String): String {
@@ -342,4 +345,22 @@ fun isAdrenoGPU(): Boolean {
     EGL14.eglTerminate(eglDisplay)
     Logging.LOG.log(Level.SEVERE, "CheckVendor: Running on Adreno GPU:$isAdreno")
     return isAdreno
+}
+
+/**
+ * 禁止鼠标滚轮翻页。
+ * ViewPager2 为 final 类无法继承，而滚轮事件由其内部 RecyclerView 处理，
+ * 因此给该子视图挂通用运动事件监听消费滚轮；
+ * 触摸滑动、tab 切换与程序化滚动不受影响，页面内列表的滚轮滚动也照常工作。
+ * 需在 ViewPager2 构造/inflate 之后调用（内部 RecyclerView 在构造时即已挂载）。
+ */
+fun ViewPager2.disableMouseWheelScroll() {
+    for (i in 0 until childCount) {
+        val child = getChildAt(i)
+        if (child is RecyclerView) {
+            child.setOnGenericMotionListener { _, event ->
+                event.action == MotionEvent.ACTION_SCROLL
+            }
+        }
+    }
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
+import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclcore.task.Task;
 
 import java.util.ArrayList;
@@ -56,6 +57,8 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
      */
     protected void setupPages(ViewGroup container, TabLayout tabLayout) {
         pagePager = new ViewPager2(getContext());
+        // 禁止鼠标滚轮翻页（触摸滑动已由 setUserInputEnabled(false) 禁用，但滚轮走另一条事件通道）
+        AndroidUtilKt.disableMouseWheelScroll(pagePager);
         pagePager.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         pagePager.setOffscreenPageLimit(ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT);
         // 禁用滑动手势：页面内滚动内容与滑动切换冲突，仅通过 tab / showPage 切换

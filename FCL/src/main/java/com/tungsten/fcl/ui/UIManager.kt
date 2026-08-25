@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.mio.util.disableMouseWheelScroll
 import com.tungsten.fcl.R
 import com.tungsten.fcl.ui.account.AccountUI
 import com.tungsten.fcl.ui.controller.ControllerUI
@@ -86,6 +87,8 @@ class UIManager(val context: Context, val pager: ViewPager2) {
     fun init() {
         instance = this
         pager.adapter = UIAdapter()
+        // 禁止鼠标滚轮翻页（触摸滑动已由 isUserInputEnabled 禁用，但滚轮走另一条事件通道）
+        pager.disableMouseWheelScroll()
         // 不预加载相邻页面：进入某页时只创建当前页，避免相邻页提前创建带来的
         // inflate/初始化开销（页面在切换时才创建）
         pager.offscreenPageLimit = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
