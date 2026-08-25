@@ -9,7 +9,7 @@
 #include <dlfcn.h>
 #include "environ.h"
 
-#include "fcl/fcl_internal.h"
+#include "log.h"
 #include "utils.h"
 
 static jint (*orig_ProcessImpl_forkAndExec)(JNIEnv *env, jobject process, jint mode, jbyteArray helperpath, jbyteArray prog, jbyteArray argBlock, jint argc, jbyteArray envBlock, jint envc, jbyteArray dir, jintArray std_fds, jboolean redirectErrorStream);

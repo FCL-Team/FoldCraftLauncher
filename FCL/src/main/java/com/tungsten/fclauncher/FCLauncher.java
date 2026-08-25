@@ -443,6 +443,7 @@ public class FCLauncher {
         }
         bridge.setLdLibraryPath(libraryPath);
         bridge.setupExitTrap(bridge);
+        FCLBridge.initializeHooks();
         log(bridge, "Hook success");
         int exitCode = VMLauncher.launchJVM(args);
         bridge.onExit(exitCode);
