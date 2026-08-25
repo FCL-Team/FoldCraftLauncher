@@ -15,6 +15,8 @@ import com.tungsten.fcl.databinding.ItemMenuCategoryBinding
 import com.tungsten.fcl.databinding.ItemMenuSeekbarBinding
 import com.tungsten.fcl.databinding.ItemMenuSpinnerBinding
 import com.tungsten.fcl.databinding.ItemMenuSwitchBinding
+import com.tungsten.fcl.game.sdl.GamepadInputMode
+import com.tungsten.fcl.game.sdl.SdlSettings
 import com.tungsten.fcl.setting.MenuSetting
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fcllibrary.component.view.FCLSpinner
@@ -45,12 +47,16 @@ enum class RightMenuTag {
 
     // 手柄
     DISABLE_GAMEPAD_MAPPING, GAMEPAD_RESET_MAPPER, GAMEPAD_BUTTON_BINDING, GAMEPAD_DEADZONE,
+    GAMEPAD_INPUT_MODE,
 
     // 陀螺仪
     GYRO, GYRO_INVERT, GYRO_SENSITIVITY,
 
     // 调试
-    SHOW_MEMORY, PERFORMANCE_MODE, SHOW_LOG, AUTO_SHOW_LOG, FORCE_EXIT
+    SHOW_MEMORY, PERFORMANCE_MODE, SHOW_LOG, AUTO_SHOW_LOG, FORCE_EXIT,
+
+    // SDL
+    SDL_AUTO_SHOW_IME
 }
 
 /**
@@ -152,6 +158,11 @@ class RightMenuAdapter(
                 { menuSetting.isDisableSoftKeyAdjust },
                 RightMenuTag.SOFT_KEYBOARD_ADJUST
             ),
+            Row.SwitchRow(
+                R.string.menu_settings_sdl_auto_show_ime,
+                { SdlSettings.sdlAutoShowIme.value },
+                RightMenuTag.SDL_AUTO_SHOW_IME
+            ),
             Row.SeekBarRow(
                 R.string.menu_settings_item_bar_scale_width, 100, 0,
                 { menuSetting.itemBarWidth * 100 / screenWidth }, RightMenuTag.ITEM_BAR_WIDTH, "%"
@@ -244,6 +255,15 @@ class RightMenuAdapter(
                 R.string.menu_settings_gamepad_disable_mapping,
                 { gameMenu.isGamepadDisabled },
                 RightMenuTag.DISABLE_GAMEPAD_MAPPING
+            ),
+            Row.SpinnerRow(
+                R.string.menu_settings_gamepad_input_mode,
+                listOf(
+                    context.getString(R.string.menu_settings_gamepad_input_mode_mapped),
+                    context.getString(R.string.menu_settings_gamepad_input_mode_sdl_direct)
+                ),
+                SdlSettings.gamepadInputMode.value.ordinal,
+                RightMenuTag.GAMEPAD_INPUT_MODE
             ),
             Row.ButtonRow(
                 R.string.menu_settings_gamepad_reset_mapper,
