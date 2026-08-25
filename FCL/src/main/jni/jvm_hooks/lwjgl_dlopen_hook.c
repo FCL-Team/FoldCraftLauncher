@@ -5,7 +5,7 @@
 #include "jvm_hooks.h"
 
 #include "environ/environ.h"
-#include "fcl/include/fcl_internal.h"
+#include "fcl/fcl_internal.h"
 
 #include <dlfcn.h>
 #include <string.h>
