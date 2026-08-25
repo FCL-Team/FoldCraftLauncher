@@ -581,6 +581,10 @@
     <string name="menu_settings_gamepad_reset_mapper">重置映射</string>
     <string name="menu_settings_gamepad_reset">重置</string>
     <string name="menu_settings_gamepad_deadzone">调整死区</string>
+    <string name="menu_settings_gamepad_input_mode">手柄输入模式</string>
+    <string name="menu_settings_gamepad_input_mode_mapped">映射（控制布局）</string>
+    <string name="menu_settings_gamepad_input_mode_sdl_direct">SDL 直通</string>
+    <string name="menu_settings_sdl_auto_show_ime">自动唤起输入法（SDL）</string>
     <string name="menu_settings_multiplayer">联机菜单</string>
     <string name="menu_settings_multiplayer_button">打开</string>
     <string name="menu_settings_quick_input">快捷输入</string>

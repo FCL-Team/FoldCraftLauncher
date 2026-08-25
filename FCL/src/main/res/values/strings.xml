@@ -656,6 +656,10 @@
     <string name="menu_settings_gamepad_open_button">Open</string>
     <string name="menu_settings_gamepad_reset">Reset</string>
     <string name="menu_settings_gamepad_deadzone">DeadZone</string>
+    <string name="menu_settings_gamepad_input_mode">Gamepad Input Mode</string>
+    <string name="menu_settings_gamepad_input_mode_mapped">Mapped</string>
+    <string name="menu_settings_gamepad_input_mode_sdl_direct">SDL Direct</string>
+    <string name="menu_settings_sdl_auto_show_ime">Auto Show IME (SDL)</string>
     <string name="menu_settings_multiplayer">Multiplayer Menu</string>
     <string name="menu_settings_multiplayer_button">Open</string>
     <string name="menu_settings_quick_input">Quick Input</string>
