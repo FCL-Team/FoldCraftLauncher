@@ -520,6 +520,13 @@
     <string name="install_installer_install">Install %s</string>
     <string name="install_installer_install_offline">Install/Update from Local File</string>
     <string name="install_installer_install_offline_extension">Forge/OptiFine installer</string>
+    <string name="installer_running_processor">Running installer (Java %s)…</string>
+    <string name="installer_recent_logs">Recent logs:</string>
+    <string name="installer_process_start_error">Failed to start installer process</string>
+    <string name="installer_process_no_exit_code">Installer process did not return an exit code, it may have exited abnormally</string>
+    <string name="installer_process_no_response">Installer process is not responding, forcibly terminated</string>
+    <string name="installer_process_failed_to_start">Installer process failed to start</string>
+    <string name="installer_exit_code_invalid">Invalid installer exit code: %1$s</string>
     <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
     <string name="install_installer_not_installed">Not Selected</string>
     <string name="install_installer_optifine" translatable="false">OptiFine</string>

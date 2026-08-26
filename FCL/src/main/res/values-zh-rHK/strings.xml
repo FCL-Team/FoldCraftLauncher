@@ -427,6 +427,13 @@
     <string name="install_installer_install">安裝 %s</string>
     <string name="install_installer_install_offline">從本地文件安裝/升級</string>
     <string name="install_installer_install_offline_extension">Forge/OptiFine 安裝器</string>
+    <string name="installer_running_processor">正在運行安裝器（Java %s）…</string>
+    <string name="installer_recent_logs">最近日誌：</string>
+    <string name="installer_process_start_error">無法啟動安裝器進程</string>
+    <string name="installer_process_no_exit_code">安裝器進程未返回退出碼，可能已經異常退出</string>
+    <string name="installer_process_no_response">安裝器進程無回應，已強制結束</string>
+    <string name="installer_process_failed_to_start">安裝器進程啟動失敗</string>
+    <string name="installer_exit_code_invalid">安裝器退出碼無效：%1$s</string>
     <string name="install_installer_not_installed">唔安裝</string>
     <string name="install_modpack">安裝整合包</string>
     <string name="install_new_game">安裝新遊戲版本</string>

@@ -4,14 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
+import com.tungsten.fclcore.fakefx.beans.value.ChangeListener;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.task.TaskListener;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
@@ -20,6 +23,8 @@ import com.tungsten.fcllibrary.component.view.FCLTextView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -28,6 +33,10 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
     private FCLTextView titleView;
     private FCLTextView speedView;
     private FCLButton cancelButton;
+    private ScrollView logScroll;
+    private FCLTextView logView;
+
+    private final Map<Task<?>, ChangeListener<String>> messageListeners = new HashMap<>();
 
     private TaskExecutor executor;
     private TaskCancellationAction onCancel;
@@ -46,10 +55,18 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
         taskListView = findViewById(R.id.list);
         speedView = findViewById(R.id.speed);
         cancelButton = findViewById(R.id.cancel);
+        logScroll = findViewById(R.id.logScroll);
+        logView = findViewById(R.id.logView);
 
         setCancel(cancel);
 
         cancelButton.setOnClickListener(this);
+
+        // 对话框关闭时移除任务消息监听，避免更新已销毁的视图
+        setOnDismissListener(dialog -> {
+            messageListeners.forEach((task, listener) -> task.messageProperty().removeListener(listener));
+            messageListeners.clear();
+        });
 
         speedEventHandler = speedEvent -> {
             String unit = "B/s";
@@ -88,8 +105,41 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
                 });
             }
 
+            // 监听任务消息，实时显示安装器日志
+            executor.addTaskListener(new TaskListener() {
+                @Override
+                public void onRunning(Task<?> task) {
+                    Schedulers.androidUIThread().execute(() -> {
+                        ChangeListener<String> listener = (observable, oldValue, newValue) -> onInstallerLog(newValue);
+                        task.messageProperty().addListener(listener);
+                        messageListeners.put(task, listener);
+                    });
+                }
+
+                @Override
+                public void onFinished(Task<?> task) {
+                    Schedulers.androidUIThread().execute(() -> removeMessageListener(task));
+                }
+            });
+
             taskListPane = new TaskListPane(getContext(), executor);
             taskListView.setAdapter(taskListPane);
+        }
+    }
+
+    /** 更新日志面板内容并滚动到底部 */
+    private void onInstallerLog(String message) {
+        if (message == null || message.isEmpty())
+            return;
+        logScroll.setVisibility(View.VISIBLE);
+        logView.setText(message);
+        logScroll.post(() -> logScroll.fullScroll(View.FOCUS_DOWN));
+    }
+
+    private void removeMessageListener(Task<?> task) {
+        ChangeListener<String> listener = messageListeners.remove(task);
+        if (listener != null) {
+            task.messageProperty().removeListener(listener);
         }
     }
 
