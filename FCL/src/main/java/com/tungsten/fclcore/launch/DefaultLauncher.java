@@ -265,7 +265,8 @@ public class DefaultLauncher {
             res.addAll(Arguments.parseArguments(argumentsFromAuthInfo.getGame(), configuration, features));
 
         String graphicsBackend = options.getGraphicsBackend();
-        if (StringUtils.isNotBlank(graphicsBackend) && !"default".equalsIgnoreCase(graphicsBackend)) {
+        if (StringUtils.isNotBlank(graphicsBackend) && !"default".equalsIgnoreCase(graphicsBackend)
+                && GameVersionNumber.compare(repository.getGameVersion(version).orElse("0.0"), "26.2-snapshot-2") >= 0) {
             res.add("--graphicsBackend");
             res.add(graphicsBackend);
         }
