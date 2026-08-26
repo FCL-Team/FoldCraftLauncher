@@ -39,6 +39,8 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
     private final Map<Task<?>, ChangeListener<String>> messageListeners = new HashMap<>();
 
     private TaskExecutor executor;
+    private TaskListener autoCloseListener;
+    private TaskListener messageUpdateListener;
     private TaskCancellationAction onCancel;
     private final Consumer<FileDownloadTask.SpeedEvent> speedEventHandler;
 
@@ -62,10 +64,16 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
 
         cancelButton.setOnClickListener(this);
 
-        // 对话框关闭时移除任务消息监听，避免更新已销毁的视图
+        // 对话框关闭时解除所有外部持有（executor 的任务监听、任务消息监听、任务列表 View 树），
+        // 避免任务完成后整棵 View 树随页面持有的 executor 泄漏
         setOnDismissListener(dialog -> {
             messageListeners.forEach((task, listener) -> task.messageProperty().removeListener(listener));
             messageListeners.clear();
+            if (executor != null) {
+                if (autoCloseListener != null) executor.removeTaskListener(autoCloseListener);
+                if (messageUpdateListener != null) executor.removeTaskListener(messageUpdateListener);
+            }
+            if (taskListPane != null) taskListPane.release();
         });
 
         speedEventHandler = speedEvent -> {
@@ -97,16 +105,17 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
 
         if (executor != null) {
             if (autoClose) {
-                executor.addTaskListener(new TaskListener() {
+                autoCloseListener = new TaskListener() {
                     @Override
                     public void onStop(boolean success, TaskExecutor executor) {
                         Schedulers.androidUIThread().execute(() -> dismiss());
                     }
-                });
+                };
+                executor.addTaskListener(autoCloseListener);
             }
 
             // 监听任务消息，实时显示安装器日志
-            executor.addTaskListener(new TaskListener() {
+            messageUpdateListener = new TaskListener() {
                 @Override
                 public void onRunning(Task<?> task) {
                     Schedulers.androidUIThread().execute(() -> {
@@ -120,7 +129,8 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
                 public void onFinished(Task<?> task) {
                     Schedulers.androidUIThread().execute(() -> removeMessageListener(task));
                 }
-            });
+            };
+            executor.addTaskListener(messageUpdateListener);
 
             taskListPane = new TaskListPane(getContext(), executor);
             taskListView.setAdapter(taskListPane);

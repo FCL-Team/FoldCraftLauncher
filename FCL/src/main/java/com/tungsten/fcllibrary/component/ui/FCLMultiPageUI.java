@@ -213,26 +213,25 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
     }
 
     /**
-     * 弹栈顶临时页（淡出后移除并恢复下层）
+     * 弹栈顶临时页（立即移除并恢复下层）
+     * 注意：不能依赖补间动画的 withEndAction 移除 View —— 动画一旦被取消，
+     * 回调不会执行，临时页整棵 View 树会残留在 overlay 上导致累积泄漏
      */
     public void dismissCurrentTempPage() {
         if (tempPageStack.isEmpty()) return;
         FCLPage page = tempPageStack.remove(tempPageStack.size() - 1);
-        View view = page.getContentView();
-        view.animate().alpha(0f).setDuration(TEMP_PAGE_ANIM_DURATION).withEndAction(() -> {
-            overlay.removeView(view);
-            if (!tempPageStack.isEmpty()) {
-                // 恢复下层临时页显示
-                tempPageStack.get(tempPageStack.size() - 1).getContentView().setVisibility(View.VISIBLE);
+        overlay.removeView(page.getContentView());
+        if (!tempPageStack.isEmpty()) {
+            // 恢复下层临时页显示
+            tempPageStack.get(tempPageStack.size() - 1).getContentView().setVisibility(View.VISIBLE);
+        }
+        if (tempPageStack.isEmpty()) {
+            overlay.setVisibility(View.GONE);
+            // 临时页全部关闭后恢复内层页面显示
+            if (pagePager != null) {
+                pagePager.setVisibility(View.VISIBLE);
             }
-            if (tempPageStack.isEmpty()) {
-                overlay.setVisibility(View.GONE);
-                // 临时页全部关闭后恢复内层页面显示
-                if (pagePager != null) {
-                    pagePager.setVisibility(View.VISIBLE);
-                }
-            }
-        }).start();
+        }
     }
 
     /**

@@ -59,6 +59,7 @@ import java.util.stream.Collectors;
 public final class TaskListPane extends FCLAdapter {
 
     private final TaskExecutor executor;
+    private final TaskListener taskListener;
     private final Map<Task<?>, ProgressListNode> nodes = new HashMap<>();
     private final List<StageNode> stageNodes = new ArrayList<>();
     private final ArrayList<View> listBox = new ArrayList<>();
@@ -66,7 +67,17 @@ public final class TaskListPane extends FCLAdapter {
     public TaskListPane(Context context, TaskExecutor taskExecutor) {
         super(context);
         this.executor = taskExecutor;
-        setExecutor(taskExecutor);
+        this.taskListener = createTaskListener();
+        executor.addTaskListener(taskListener);
+    }
+
+    /** 解除对 executor 的监听并释放全部行 View，对话框关闭时调用，避免 View 树随长命 executor 泄漏 */
+    public void release() {
+        executor.removeTaskListener(taskListener);
+        nodes.forEach((task, node) -> node.unbind());
+        nodes.clear();
+        stageNodes.clear();
+        listBox.clear();
     }
 
     @Override
@@ -84,9 +95,9 @@ public final class TaskListPane extends FCLAdapter {
         return listBox.get(i);
     }
 
-    private void setExecutor(TaskExecutor executor) {
+    private TaskListener createTaskListener() {
         List<String> stages = Lang.removingDuplicates(executor.getStages());
-        executor.addTaskListener(new TaskListener() {
+        return new TaskListener() {
             @Override
             public void onStart() {
                 Schedulers.androidUIThread().execute(() -> {
@@ -208,7 +219,7 @@ public final class TaskListPane extends FCLAdapter {
                     });
                 }
             }
-        });
+        };
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")

@@ -40,6 +40,10 @@ public abstract class TaskExecutor {
         taskListeners.add(taskListener);
     }
 
+    public void removeTaskListener(TaskListener taskListener) {
+        taskListeners.remove(taskListener);
+    }
+
     /**
      * Reason why the task execution failed.
      * If cancelled, null is returned.
