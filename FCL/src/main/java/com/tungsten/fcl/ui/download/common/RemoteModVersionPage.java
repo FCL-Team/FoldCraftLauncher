@@ -3,17 +3,14 @@ package com.tungsten.fcl.ui.download.common;
 import android.content.Context;
 import android.widget.ListView;
 
-import androidx.appcompat.app.AppCompatDialog;
+import com.mio.download.DownloadManager;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
-import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.DownloadUI;
-import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.FileDownloadTask;
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.io.NetworkUtils;
@@ -57,18 +54,12 @@ public class RemoteModVersionPage extends FCLPage {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
             if (files == null) return;
             String folder = files.get(0).getPath();
-            TaskDialog dialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
-            dialog.setTitle(getContext().getString(R.string.message_downloading));
-            Schedulers.androidUIThread().execute(() -> {
-                TaskExecutor executor = Task.composeAsync(() -> {
-                    FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(file.file().url()), new File(folder, file.file().filename()), file.file().getIntegrityCheck());
-                    task.setName(file.name());
-                    return task;
-                }).executor();
-                dialog.setExecutor(executor);
-                dialog.show();
-                executor.start();
-            });
+            FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(file.file().url()), new File(folder, file.file().filename()), file.file().getIntegrityCheck());
+            fileTask.setName(file.name());
+            Task<Void> downloadTask = Task.composeAsync(() -> fileTask);
+            TaskExecutor executor = downloadTask.executor();
+            DownloadManager.submit(file.file().filename(), fileTask, executor);
+            executor.start();
         });
     }
 

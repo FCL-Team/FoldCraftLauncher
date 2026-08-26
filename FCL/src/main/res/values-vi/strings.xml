@@ -597,6 +597,7 @@
     <string name="message_copy">Sao chép thành công!</string>
     <string name="message_doing">Vui lòng đợi</string>
     <string name="message_downloading">Đang tải xuống</string>
+    <string name="download_manager">Quản lý tải xuống</string>
     <string name="message_error">Lỗi</string>
     <string name="message_failed">Thao tác thất bại</string>
     <string name="message_file_exist">Tệp đã tồn tại</string>

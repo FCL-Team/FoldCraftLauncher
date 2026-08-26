@@ -482,6 +482,7 @@
     <string name="message_copy">Erfolgreich kopiert!</string>
     <string name="message_doing">Bitte warten</string>
     <string name="message_downloading">Download läuft</string>
+    <string name="download_manager">Download-Verwaltung</string>
     <string name="message_error">Fehler</string>
     <string name="message_failed">Operation fehlgeschlagen</string>
     <string name="message_file_exist">Datei existieren bereits</string>

@@ -513,6 +513,7 @@
     <string name="message_copy">Copiado com sucesso!</string>
     <string name="message_doing">Por favor aguarde</string>
     <string name="message_downloading">Baixando</string>
+    <string name="download_manager">Gerenciador de downloads</string>
     <string name="message_error">Erro</string>
     <string name="message_failed">Falha na operação</string>
     <string name="message_file_exist">Arquivo já existente</string>

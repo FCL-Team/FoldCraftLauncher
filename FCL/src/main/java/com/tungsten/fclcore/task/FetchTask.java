@@ -48,6 +48,18 @@ public abstract class FetchTask<T> extends Task<T> {
     protected boolean caching;
     protected CacheRepository repository = CacheRepository.getInstance();
 
+    /** 当前下载进度的字节信息（供 UI 显示"已下载/总量"） */
+    private long downloadedBytes = 0;
+    private long totalBytes = -1;
+
+    public long getDownloadedBytes() {
+        return downloadedBytes;
+    }
+
+    public long getTotalBytes() {
+        return totalBytes;
+    }
+
     public FetchTask(List<URL> urls, int retry) {
         Objects.requireNonNull(urls);
 
@@ -131,6 +143,7 @@ public abstract class FetchTask<T> extends Task<T> {
                     }
 
                     long contentLength = conn.getContentLength();
+                    totalBytes = contentLength;
                     try (Context context = getContext(conn, checkETag); InputStream stream = conn.getInputStream()) {
                         int lastDownloaded = 0, downloaded = 0;
                         byte[] buffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
@@ -143,6 +156,7 @@ public abstract class FetchTask<T> extends Task<T> {
                             context.write(buffer, 0, len);
 
                             downloaded += len;
+                            downloadedBytes = downloaded;
 
                             if (contentLength >= 0) {
                                 // Update progress information per second

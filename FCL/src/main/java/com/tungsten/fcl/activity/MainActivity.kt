@@ -20,6 +20,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,8 +35,10 @@ import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
+import com.mio.download.DownloadManager
 import com.mio.manager.RendererManager
 import com.mio.ui.dialog.RendererSelectDialog
+import com.mio.ui.view.DownloadSlidePanel
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
@@ -43,6 +46,8 @@ import com.mio.util.DisplayUtil
 import com.mio.util.GuideUtil
 import com.mio.util.GuideUtil.Companion.guideTarget
 import com.mio.util.ImageUtil
+import com.mio.util.getLocalizedText
+import com.mio.util.hasStringId
 import com.mio.util.showWarningDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
@@ -93,8 +98,6 @@ import java.util.logging.Level
 import java.util.stream.Stream
 import kotlin.math.abs
 import kotlin.system.exitProcess
-import com.mio.util.getLocalizedText
-import com.mio.util.hasStringId
 
 class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     companion object {
@@ -127,6 +130,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     var mediaPlayer: MediaPlayer? = null
     private var videoPosition = 0
+
+    /** 下载管理面板（左侧菜单开关按钮控制，有任务时自动显示） */
+    private lateinit var downloadPanel: DownloadSlidePanel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -336,6 +342,39 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         permissionResultLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             }
+        // 下载管理：有任务时左侧菜单出现开关按钮并自动显示面板
+        downloadPanel = DownloadSlidePanel(this)
+        binding.root.addView(
+            downloadPanel,
+            FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+        )
+        binding.downloadManagerToggle.setOnClickListener {
+            AnimUtil.playScaleX(it, 150L, 1f, 1.3f, 1f).start()
+            AnimUtil.playScaleY(it, 150L, 1f, 1.3f, 1f).start()
+            downloadPanel.toggle()
+        }
+        downloadPanel.onOpenChanged = { open ->
+            binding.downloadManagerToggle.setSelected(open)
+        }
+        lifecycleScope.launch {
+            var tasksEmpty = true
+            DownloadManager.tasks.collect { tasks ->
+                downloadPanel.updateTasks(tasks)
+                val empty = tasks.isEmpty()
+                binding.downloadManagerToggle.visibility =
+                    if (empty) View.GONE else View.VISIBLE
+                if (empty) {
+                    downloadPanel.close()
+                } else if (tasksEmpty) {
+                    // 从无任务变为有任务：直接显示面板
+                    downloadPanel.open()
+                }
+                tasksEmpty = empty
+            }
+        }
         setupLiveBackground()
     }
 

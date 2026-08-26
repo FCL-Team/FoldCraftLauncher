@@ -84,9 +84,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:src="@drawable/ic_baseline_settings_24"
-            app:layout_constraintBottom_toTopOf="@id/back"
+            app:layout_constraintBottom_toTopOf="@id/download_manager_toggle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/multiplayer" />
+
+        <com.tungsten.fcllibrary.component.view.FCLMenuView
+            android:id="@+id/download_manager_toggle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/ic_baseline_download_24"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/setting" />
 
         <com.tungsten.fcllibrary.component.view.FCLMenuView
             android:id="@+id/back"
@@ -96,7 +107,7 @@
             android:src="@drawable/ic_baseline_arrow_back_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/setting" />
+            app:layout_constraintTop_toBottomOf="@id/download_manager_toggle" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -545,6 +545,7 @@
     <string name="message_copy">複製成功！</string>
     <string name="message_doing">請耐心等待</string>
     <string name="message_downloading">正在下載</string>
+    <string name="download_manager">下載管理</string>
     <string name="message_error">錯誤</string>
     <string name="message_failed">操作失敗</string>
     <string name="message_file_exist">文件已存在</string>

@@ -495,6 +495,7 @@
     <string name="message_copy">Скопировано успешно!</string>
     <string name="message_doing">Подождите</string>
     <string name="message_downloading">Загрузка</string>
+    <string name="download_manager">Менеджер загрузок</string>
     <string name="message_error">Ошибка</string>
     <string name="message_failed">Операция не удалась</string>
     <string name="message_file_exist">Файл уже существует</string>

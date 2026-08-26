@@ -490,6 +490,7 @@
     <string name="message_copy">Успішно скопійовано!</string>
     <string name="message_doing">Зачекайте</string>
     <string name="message_downloading">Завантаження</string>
+    <string name="download_manager">Менеджер завантажень</string>
     <string name="message_error">Помилка</string>
     <string name="message_failed">Операція не вдалася</string>
     <string name="message_file_exist">Файл уже існує</string>

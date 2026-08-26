@@ -3,8 +3,7 @@ package com.tungsten.fcl.ui.version;
 import android.content.Context;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatDialog;
-
+import com.mio.download.DownloadManager;
 import com.mio.util.ParseUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
@@ -68,10 +67,8 @@ public class Versions {
             return;
         }
 
-        TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
-        taskDialog.setTitle(context.getString(R.string.message_downloading));
-        TaskExecutor executor = new FileDownloadTask(downloadURL, modpack.toFile())
-                .whenComplete(Schedulers.androidUIThread(), e -> {
+        FileDownloadTask downloadTask = new FileDownloadTask(downloadURL, modpack.toFile());
+        TaskExecutor executor = downloadTask.whenComplete(Schedulers.androidUIThread(), e -> {
                     if (e == null) {
                         LocalModpackPage page = new LocalModpackPage(context, FCLPage.PAGE_ID_TEMP, profile, null, modpack.toFile());
                         UIManager.getInstance().getDownloadUI().showTempPage(page);
@@ -87,8 +84,7 @@ public class Versions {
                         builder.create().show();
                     }
                 }).executor();
-        taskDialog.setExecutor(executor);
-        taskDialog.show();
+        DownloadManager.submit(file.getFile().getFilename(), downloadTask, executor);
         executor.start();
     }
 

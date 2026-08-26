@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatDialog;
+import com.mio.download.DownloadManager;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.GsonBuilder;
@@ -15,9 +15,7 @@ import com.tungsten.fcl.databinding.PageControllerDownloadBinding;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.DownloadProviders;
-import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Schedulers;
@@ -156,17 +154,16 @@ public class ControllerDownloadPage extends FCLPage implements View.OnClickListe
         String cache = FCLPath.CACHE_DIR + "/control/" + index.getId() + ".json";
         boolean exist = new File(destPath).exists();
         Controller old = exist ? Controllers.findControllerById(index.getId()) : null;
-        TaskDialog taskDialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
-        taskDialog.setTitle(getContext().getString(R.string.message_downloading));
-        TaskExecutor executor = Task.composeAsync(() -> {
+        FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(downloadUrl), new File(destPath));
+        fileTask.setName(index.getName());
+        Task<Void> downloadTask = Task.composeAsync(() -> {
             if (exist && old != null) {
                 FileUtils.copyFile(new File(destPath), new File(cache));
                 ((ControllerManagePage) UIManager.getInstance().getControllerUI().getPage(0)).removeController(old);
             }
-            FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(downloadUrl), new File(destPath));
-            task.setName(index.getName());
-            return task;
-        }).whenComplete(Schedulers.defaultScheduler(), exception -> {
+            return fileTask;
+        });
+        TaskExecutor executor = downloadTask.whenComplete(Schedulers.defaultScheduler(), exception -> {
             if (exception != null) {
                 if (new File(cache).exists()) {
                     FileUtils.copyFile(new File(cache), new File(destPath));
@@ -195,8 +192,7 @@ public class ControllerDownloadPage extends FCLPage implements View.OnClickListe
                 Schedulers.androidUIThread().execute(() -> Toast.makeText(getContext(), getContext().getString(R.string.install_success), Toast.LENGTH_SHORT).show());
             }
         }).executor();
-        taskDialog.setExecutor(executor);
-        taskDialog.show();
+        DownloadManager.submit(index.getName(), fileTask, executor);
         executor.start();
     }
 

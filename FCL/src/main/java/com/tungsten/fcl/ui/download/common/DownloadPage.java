@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,13 +26,12 @@ import com.tungsten.fcl.game.LocalizedRemoteModRepository;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.version.Versions;
+import com.mio.download.DownloadManager;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.FXUtils;
-import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -573,14 +571,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         DownloadAddonDialog dialog = new DownloadAddonDialog(context, file.file().filename(), name -> {
             Path dest = runDirectory.resolve(subdirectoryName).resolve(name);
 
-            TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
-            taskDialog.setTitle(context.getString(R.string.message_downloading));
-            Schedulers.androidUIThread().execute(() -> {
-                TaskExecutor executor = Task.composeAsync(() -> {
-                    FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(file.file().url()), dest.toFile());
-                    task.setName(file.name());
-                    return task;
-                }).whenComplete(Schedulers.androidUIThread(), exception -> {
+            FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(file.file().url()), dest.toFile());
+            fileTask.setName(file.name());
+            Task<Void> downloadTask = Task.composeAsync(() -> fileTask);
+            TaskExecutor executor = downloadTask.whenComplete(Schedulers.androidUIThread(), exception -> {
                     if (exception != null) {
                         if (exception instanceof CancellationException) {
                             Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
@@ -597,10 +591,8 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                         Toast.makeText(context, context.getString(R.string.install_success), Toast.LENGTH_SHORT).show();
                     }
                 }).executor();
-                taskDialog.setExecutor(executor);
-                taskDialog.show();
+                DownloadManager.submit(name, fileTask, executor);
                 executor.start();
-            });
         });
         dialog.show();
     }

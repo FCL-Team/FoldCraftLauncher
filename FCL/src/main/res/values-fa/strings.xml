@@ -513,6 +513,7 @@
     <string name="message_copy">با موفقیت کپی شد!</string>
     <string name="message_doing">لطفا صبر کنید</string>
     <string name="message_downloading">در حال دانلود</string>
+    <string name="download_manager">مدیریت دانلود</string>
     <string name="message_error">خطا</string>
     <string name="message_failed">عملیات ناموفق بود</string>
     <string name="message_file_exist">فایل از قبل وجود دارد</string>
