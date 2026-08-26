@@ -93,7 +93,7 @@ class ProcessService : Service() {
 
             override fun onLog(log: String?) {
                 if (BuildConfig.DEBUG) {
-                    Log.d("FCL Debug", log!!)
+                    Log.d("FCL Debug", log.toString())
                 }
                 try {
                     if (firstLog) {
@@ -138,6 +138,8 @@ class ProcessService : Service() {
                 if (!exitCodeWritten) {
                     Logging.LOG.warning("Installer JVM terminated unexpectedly, writing exit code -1")
                     writeExitCode(-1)
+                    // 随后自杀，避免 :jvm 残留被下一个 startForegroundService 复用
+                    Process.killProcess(Process.myPid())
                 }
             }
         }
