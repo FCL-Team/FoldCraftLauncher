@@ -19,17 +19,11 @@ package com.tungsten.fclcore.download.optifine;
 
 import static com.tungsten.fclcore.util.Lang.getOrDefault;
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Process;
-
 import com.tungsten.fcl.FCLApp;
+import com.tungsten.fcl.R;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
+import com.tungsten.fclcore.download.InstallerProcessRunner;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.download.ProcessService;
 import com.tungsten.fclcore.download.UnsupportedInstallationException;
 import com.tungsten.fclcore.download.VersionMismatchException;
 import com.tungsten.fclcore.game.Arguments;
@@ -41,7 +35,6 @@ import com.tungsten.fclcore.game.LibraryDownloadInfo;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Task;
-import com.tungsten.fclcore.util.SocketServer;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.platform.CommandBuilder;
@@ -63,7 +56,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * <b>Note</b>: OptiFine should be installed in the end.
@@ -237,45 +229,12 @@ public final class OptiFineInstallTask extends Task<Version> {
     }
 
     private void runJVMProcess(String[] command, int java) throws Exception {
-        Activity context = FCLApp.getActivity();
-        int exitCode;
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        boolean listen = true;
-        while (listen) {
-            if (activityManager.getRunningAppProcesses().size() == 1) {
-                listen = false;
-            }
-        }
-        CountDownLatch latch = new CountDownLatch(1);
-        SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
-            server1.setResult(msg);
-            server1.stop();
-            latch.countDown();
-        });
-        for (int i = 0; i < 5; i++) {
-            try {
-                Intent service = new Intent(context, ProcessService.class);
-                Bundle bundle = new Bundle();
-                bundle.putStringArray("command", command);
-                bundle.putInt("java", java);
-                service.putExtras(bundle);
-                context.startForegroundService(service);
-            } catch (Throwable e) {
-                activityManager.getRunningAppProcesses().forEach(info -> {
-                    if (info.pid != android.os.Process.myPid()) {
-                        Process.killProcess(info.pid);
-                    }
-                });
-                if (i == 4) {
-                    throw e;
-                }
-                continue;
-            }
-            break;
-        }
-        server.start();
-        latch.await();
-        exitCode = Integer.parseInt((String) server.getResult());
+        updateMessage(FCLApp.getAppContext().getString(R.string.installer_running_processor, String.valueOf(java)));
+        int exitCode = InstallerProcessRunner.run(
+                FCLApp.getAppContext(),
+                command,
+                java,
+                this::appendInstallerLog);
         if (exitCode != 0) {
             if (java == 8) {
                 runJVMProcess(command, 17);
@@ -287,6 +246,21 @@ public final class OptiFineInstallTask extends Task<Version> {
                 throw new IOException("OptiFine patcher failed, command: " + new CommandBuilder().addAll(Arrays.asList(command)));
             }
         }
+    }
+
+    private static final int MAX_INSTALL_LOG_LINES = 200;
+
+    private final List<String> installLogs = new ArrayList<>(MAX_INSTALL_LOG_LINES);
+
+    /** 追加安装器日志并同步到任务消息，供 UI 实时显示 */
+    private void appendInstallerLog(String lines) {
+        for (String line : lines.split("\n")) {
+            if (line.isEmpty()) continue;
+            installLogs.add(line);
+            if (installLogs.size() > MAX_INSTALL_LOG_LINES)
+                installLogs.remove(0);
+        }
+        updateMessage(String.join("\n", installLogs));
     }
 
     /**

@@ -520,6 +520,7 @@
     <string name="install_installer_install">Install %s</string>
     <string name="install_installer_install_offline">Install/Update from Local File</string>
     <string name="install_installer_install_offline_extension">Forge/OptiFine installer</string>
+    <string name="installer_running_processor">Running installer (Java %s)…</string>
     <string name="install_installer_liteloader" translatable="false">LiteLoader</string>
     <string name="install_installer_not_installed">Not Selected</string>
     <string name="install_installer_optifine" translatable="false">OptiFine</string>

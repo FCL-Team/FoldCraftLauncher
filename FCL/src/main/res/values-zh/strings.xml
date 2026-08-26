@@ -490,6 +490,7 @@
     <string name="install_installer_install">安装 %s</string>
     <string name="install_installer_install_offline">从本地文件安装/升级</string>
     <string name="install_installer_install_offline_extension">Forge/OptiFine 安装器</string>
+    <string name="installer_running_processor">正在运行安装器（Java %s）…</string>
     <string name="install_installer_not_installed">不安装</string>
     <string name="install_modpack">安装整合包</string>
     <string name="install_new_game">安装新游戏版本</string>

@@ -20,18 +20,12 @@ package com.tungsten.fclcore.download.forge;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.gson.JsonUtils.fromNonNullJson;
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Process;
-
 import com.tungsten.fcl.FCLApp;
+import com.tungsten.fcl.R;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
+import com.tungsten.fclcore.download.InstallerProcessRunner;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.download.ProcessService;
 import com.tungsten.fclcore.download.game.GameLibrariesTask;
 import com.tungsten.fclcore.download.game.VersionJsonDownloadTask;
 import com.tungsten.fclcore.game.Artifact;
@@ -43,7 +37,6 @@ import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.FileDownloadTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.DigestUtils;
-import com.tungsten.fclcore.util.SocketServer;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.function.ExceptionalFunction;
 import com.tungsten.fclcore.util.io.ChecksumMismatchException;
@@ -70,7 +63,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -188,45 +180,12 @@ public class ForgeNewInstallTask extends Task<Version> {
 
     private void runJVMProcess(ForgeNewInstallProfile.Processor processor, List<String> command, int java) throws Exception {
         LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command));
-        Activity context = FCLApp.getActivity();
-        int exitCode;
-        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        boolean listen = true;
-        while (listen) {
-            if (activityManager.getRunningAppProcesses().size() == 1) {
-                listen = false;
-            }
-        }
-        CountDownLatch latch = new CountDownLatch(1);
-        SocketServer server = new SocketServer("127.0.0.1", ProcessService.PROCESS_SERVICE_PORT, (server1, msg) -> {
-            server1.setResult(msg);
-            server1.stop();
-            latch.countDown();
-        });
-        for (int i = 0; i < 5; i++) {
-            try {
-                Intent service = new Intent(context, ProcessService.class);
-                Bundle bundle = new Bundle();
-                bundle.putStringArray("command", command.toArray(new String[0]));
-                bundle.putInt("java", java);
-                service.putExtras(bundle);
-                context.startForegroundService(service);
-            } catch (Throwable e) {
-                activityManager.getRunningAppProcesses().forEach(info -> {
-                    if (info.pid != Process.myPid()) {
-                        Process.killProcess(info.pid);
-                    }
-                });
-                if (i == 4) {
-                    throw e;
-                }
-                continue;
-            }
-            break;
-        }
-        server.start();
-        latch.await();
-        exitCode = Integer.parseInt((String) server.getResult());
+        updateMessage(FCLApp.getAppContext().getString(R.string.installer_running_processor, String.valueOf(java)));
+        int exitCode = InstallerProcessRunner.run(
+                FCLApp.getAppContext(),
+                command.toArray(new String[0]),
+                java,
+                this::appendInstallerLog);
         if (exitCode != 0) {
             if (java == 8) {
                 runJVMProcess(processor, command, 17);
@@ -238,6 +197,21 @@ public class ForgeNewInstallTask extends Task<Version> {
                 throw new IOException("Game processor exited abnormally with code " + exitCode);
             }
         }
+    }
+
+    private static final int MAX_INSTALL_LOG_LINES = 200;
+
+    private final List<String> installLogs = new ArrayList<>(MAX_INSTALL_LOG_LINES);
+
+    /** 追加安装器日志并同步到任务消息，供 UI 实时显示 */
+    private void appendInstallerLog(String lines) {
+        for (String line : lines.split("\n")) {
+            if (line.isEmpty()) continue;
+            installLogs.add(line);
+            if (installLogs.size() > MAX_INSTALL_LOG_LINES)
+                installLogs.remove(0);
+        }
+        updateMessage(String.join("\n", installLogs));
     }
 
     private final DefaultDependencyManager dependencyManager;
