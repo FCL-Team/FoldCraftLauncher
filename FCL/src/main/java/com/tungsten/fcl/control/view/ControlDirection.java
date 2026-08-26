@@ -241,8 +241,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         post(() -> {
             int x;
             int y;
-            x = (int) ((screenWidth - getSize()) * (data.getBaseInfo().getXPosition() / 1000f));
-            y = (int) ((screenHeight - getSize()) * (data.getBaseInfo().getYPosition() / 1000f));
+            x = Math.round((screenWidth - getSize()) * (data.getBaseInfo().getXPosition() / 1000f));
+            y = Math.round((screenHeight - getSize()) * (data.getBaseInfo().getYPosition() / 1000f));
             if (!displayMode) {
                 setX(x);
                 setY(y);
@@ -479,8 +479,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                         }, true);
                         dialog.show();
                     } else {
-                        getData().getBaseInfo().setXPosition((int) ((1000 * getX()) / (screenWidth - getSize())));
-                        getData().getBaseInfo().setYPosition((int) ((1000 * getY()) / (screenHeight - getSize())));
+                        getData().getBaseInfo().setXPosition(Math.round((1000 * getX()) / (screenWidth - getSize())));
+                        getData().getBaseInfo().setYPosition(Math.round((1000 * getY()) / (screenHeight - getSize())));
                         menu.getViewManager().saveController();
                     }
                     break;
@@ -862,8 +862,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             } else {
                 int x;
                 int y;
-                x = (int) ((screenWidth - getSize()) * (getData().getBaseInfo().getXPosition() / 1000f));
-                y = (int) ((screenHeight - getSize()) * (getData().getBaseInfo().getYPosition() / 1000f));
+                x = Math.round((screenWidth - getSize()) * (getData().getBaseInfo().getXPosition() / 1000f));
+                y = Math.round((screenHeight - getSize()) * (getData().getBaseInfo().getYPosition() / 1000f));
                 if (!displayMode) {
                     setX(x);
                     setY(y);

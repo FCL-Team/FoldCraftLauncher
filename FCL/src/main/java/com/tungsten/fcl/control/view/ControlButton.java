@@ -192,8 +192,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
         post(() -> {
             int x;
             int y;
-            x = (int) ((screenWidth - width) * (data.getBaseInfo().getXPosition() / 1000f));
-            y = (int) ((screenHeight - height) * (data.getBaseInfo().getYPosition() / 1000f));
+            x = Math.round((screenWidth - width) * (data.getBaseInfo().getXPosition() / 1000f));
+            y = Math.round((screenHeight - height) * (data.getBaseInfo().getYPosition() / 1000f));
             setX(x);
             setY(y);
         });
@@ -336,8 +336,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
                         }, true);
                         dialog.show();
                     } else {
-                        getData().getBaseInfo().setXPosition((int) ((1000 * getX()) / (screenWidth - getMeasuredWidth())));
-                        getData().getBaseInfo().setYPosition((int) ((1000 * getY()) / (screenHeight - getMeasuredHeight())));
+                        getData().getBaseInfo().setXPosition(Math.round((1000 * getX()) / (screenWidth - getMeasuredWidth())));
+                        getData().getBaseInfo().setYPosition(Math.round((1000 * getY()) / (screenHeight - getMeasuredHeight())));
                         menu.getViewManager().saveController();
                     }
                     break;
