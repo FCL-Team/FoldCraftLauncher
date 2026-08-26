@@ -138,6 +138,11 @@
             android:foregroundServiceType="dataSync"
             android:process=":jvm" />
         <service
+            android:name="com.mio.download.DownloadService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+        <service
             android:name=".terracotta.TerracottaVPNService"
             android:permission="android.permission.BIND_VPN_SERVICE"
             android:exported="true"
