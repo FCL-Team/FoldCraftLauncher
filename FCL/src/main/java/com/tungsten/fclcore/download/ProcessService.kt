@@ -14,10 +14,11 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.os.postDelayed
 import com.mio.data.Renderer
+import com.tungsten.fcl.BuildConfig
+import com.tungsten.fcl.R
 import com.tungsten.fclauncher.FCLConfig
 import com.tungsten.fclauncher.FCLauncher
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback
-import com.tungsten.fcl.R
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.FileUtils
@@ -25,7 +26,6 @@ import java.io.File
 import java.io.IOException
 import java.util.logging.Level
 import kotlin.concurrent.thread
-import kotlin.jvm.Volatile
 
 class ProcessService : Service() {
     override fun onBind(intent: Intent?): IBinder? {
@@ -38,7 +38,13 @@ class ProcessService : Service() {
         FCLPath.loadPaths(this)
         val command = intent.extras!!.getStringArray("command")
         val java = intent.extras!!.getInt("java")
-        Logging.LOG.info("Installer process service started, java: $java, command: ${command?.joinToString(" ")?.take(200)}")
+        Logging.LOG.info(
+            "Installer process service started, java: $java, command: ${
+                command?.joinToString(
+                    " "
+                )?.take(200)
+            }"
+        )
         // 记录启动标记，供主进程确认安装器服务已启动
         try {
             FileUtils.writeText(
@@ -86,7 +92,9 @@ class ProcessService : Service() {
             }
 
             override fun onLog(log: String?) {
-                Log.e("测试",log.toString())
+                if (BuildConfig.DEBUG) {
+                    Log.d("FCL Debug", log!!)
+                }
                 try {
                     if (firstLog) {
                         FileUtils.writeText(File(bridge.logPath), log)

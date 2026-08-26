@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Process
+import com.tungsten.fcl.R
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.FileUtils
@@ -90,7 +91,7 @@ object InstallerProcessRunner {
                     continue
                 }
                 exitCodeFile.delete()
-                throw IOException("非法安装器退出码: $text")
+                throw IOException(context.getString(R.string.installer_exit_code_invalid, text))
             }
 
             // 确认 :jvm 服务确实启动（由 ProcessService.onStartCommand 写入启动标记）
@@ -99,7 +100,7 @@ object InstallerProcessRunner {
                     serviceStarted = true
                     Logging.LOG.info("Installer process service started")
                 } else if (System.currentTimeMillis() > startedDeadline) {
-                    throw IOException("安装器进程未能启动" + logTail(logFile))
+                    throw IOException(context.getString(R.string.installer_process_failed_to_start) + logTail(logFile, context))
                 }
             }
 
@@ -108,19 +109,19 @@ object InstallerProcessRunner {
             if (System.currentTimeMillis() > deadline) {
                 if (isJvmProcessAlive(activityManager, context.packageName)) {
                     killRemainingProcesses(activityManager, context.packageName)
-                    throw IOException("安装器进程无响应，已强制结束" + logTail(logFile))
+                    throw IOException(context.getString(R.string.installer_process_no_response) + logTail(logFile, context))
                 }
-                throw IOException("安装器进程未返回退出码，可能已异常退出" + logTail(logFile))
+                throw IOException(context.getString(R.string.installer_process_no_exit_code) + logTail(logFile, context))
             }
             Thread.sleep(POLL_INTERVAL_MS)
         }
     }
 
     /** 读取日志文件末尾几行，附在超时错误消息中便于排查 */
-    private fun logTail(logFile: File): String {
+    private fun logTail(logFile: File, context: Context): String {
         return try {
             val tail = FileUtils.readText(logFile).lines().takeLast(5).joinToString("\n")
-            if (tail.isBlank()) "" else "\n最近日志：\n$tail"
+            if (tail.isBlank()) "" else "\n" + context.getString(R.string.installer_recent_logs) + "\n$tail"
         } catch (e: Exception) {
             ""
         }
@@ -147,7 +148,7 @@ object InstallerProcessRunner {
                 }
             }
         }
-        throw IOException("无法启动安装器进程", lastError)
+        throw IOException(context.getString(R.string.installer_process_start_error), lastError)
     }
 
     /** 杀死本应用残留的 :jvm / :crash / 非主进程（不影响其他应用） */
