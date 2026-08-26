@@ -218,8 +218,9 @@ class VersionSettingPage(
                 lastIsolateGameDir = versionSetting.isIsolateGameDir
                 UIManager.instance.manageUI.onRunDirectoryChange(profile, versionId)
             }
-            // usesGlobal 变化时刷新设置项
-            if (enableSpecificSettings.get() != !versionSetting.isUsesGlobal) {
+            // usesGlobal 同步仅对特定版本页有意义；全局页恒显示全部设置项，
+            // 若不跳过，每次输入都会触发全量重建列表导致输入框失焦
+            if (versionId != null && enableSpecificSettings.get() != !versionSetting.isUsesGlobal) {
                 enableSpecificSettings.set(!versionSetting.isUsesGlobal)
                 Schedulers.androidUIThread().execute {
                     adapter.update(
