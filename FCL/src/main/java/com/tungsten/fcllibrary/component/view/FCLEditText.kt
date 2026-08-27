@@ -40,7 +40,6 @@ class FCLEditText @JvmOverloads constructor(
             }
         }
         addTextWatcher()
-        setOnClickListener { }
         ThemeEngine.registerEvent(this) { refreshTheme() }
     }
 
