@@ -528,6 +528,7 @@
     <string name="install_installer_install_offline_extension">Forge/OptiFine installer</string>
     <string name="installer_running_processor">Running installer (Java %s)…</string>
     <string name="installer_recent_logs">Recent logs:</string>
+    <string name="installer_process_retrying">Installer process timed out, retrying (%1$d/%2$d)…</string>
     <string name="installer_process_start_error">Failed to start installer process</string>
     <string name="installer_process_no_exit_code">Installer process did not return an exit code, it may have exited abnormally</string>
     <string name="installer_process_no_response">Installer process is not responding, forcibly terminated</string>

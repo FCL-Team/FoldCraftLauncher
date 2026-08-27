@@ -39,6 +39,18 @@ object InstallerProcessRunner {
     /** 服务启动重试次数 */
     private const val START_RETRY_TIMES = 5
 
+    /** 进程级自动重试次数（首次正常运行之外）：超时后重启 :jvm 进程重跑同一命令 */
+    private const val PROCESS_MAX_RETRIES = 1
+
+    /** 两次尝试之间等待系统回收旧进程的时间 */
+    private const val RETRY_DELAY_MS = 2 * 1000L
+
+    /**
+     * 超时类失败（进程无响应 / 未返回退出码 / 未能启动），可自动重试；
+     * 其他失败（如退出码内容异常）不可重试。
+     */
+    private class ProcessTimeoutException(message: String) : IOException(message)
+
     /**
      * 启动安装器进程并等待其结束。
      *
@@ -46,7 +58,7 @@ object InstallerProcessRunner {
      * @param java 使用的 JRE 版本（8/11/17/21）
      * @param onLog 增量回调安装器日志（每次轮询新增的完整行，按 \n 拼接）
      * @return 安装器退出码
-     * @throws IOException 启动失败、进程异常消失或超时无响应
+     * @throws IOException 各次尝试均启动失败、超时无响应，或退出码内容异常
      */
     @JvmStatic
     @Throws(IOException::class)
@@ -56,6 +68,40 @@ object InstallerProcessRunner {
         val startedFile = File(context.cacheDir, STARTED_FILE)
         val logFile = File(FCLPath.LOG_DIR ?: throw IOException("FCLPath not initialized"), INSTALLER_LOG_FILE)
 
+        var lastError: IOException? = null
+        for (attempt in 0..PROCESS_MAX_RETRIES) {
+            if (attempt > 0) {
+                // 结束上一轮可能残留的安装器进程，等待系统回收后再重试
+                killRemainingProcesses(activityManager, context.packageName)
+                onLog.accept(
+                    context.getString(
+                        R.string.installer_process_retrying,
+                        attempt + 1,
+                        PROCESS_MAX_RETRIES + 1
+                    )
+                )
+                Thread.sleep(RETRY_DELAY_MS)
+            }
+            try {
+                return runOnce(context, activityManager, exitCodeFile, startedFile, logFile, command, java, onLog)
+            } catch (e: ProcessTimeoutException) {
+                lastError = e
+            }
+        }
+        throw requireNotNull(lastError)
+    }
+
+    /** 单次尝试：清理遗留文件、启动服务并轮询退出码 */
+    private fun runOnce(
+        context: Context,
+        activityManager: ActivityManager,
+        exitCodeFile: File,
+        startedFile: File,
+        logFile: File,
+        command: Array<String>,
+        java: Int,
+        onLog: Consumer<String>
+    ): Int {
         // 清理上一轮遗留的退出码与日志文件
         // 注意：不主动杀 :jvm 进程 —— getRunningAppProcesses 里刚退出进程的条目
         // 有延迟才会移除，此间其 pid 可能已被系统复用给新进程，按旧列表杀进程会误杀
@@ -100,7 +146,7 @@ object InstallerProcessRunner {
                     serviceStarted = true
                     Logging.LOG.info("Installer process service started")
                 } else if (System.currentTimeMillis() > startedDeadline) {
-                    throw IOException(context.getString(R.string.installer_process_failed_to_start) + logTail(logFile, context))
+                    throw ProcessTimeoutException(context.getString(R.string.installer_process_failed_to_start) + logTail(logFile, context))
                 }
             }
 
@@ -109,9 +155,9 @@ object InstallerProcessRunner {
             if (System.currentTimeMillis() > deadline) {
                 if (isJvmProcessAlive(activityManager, context.packageName)) {
                     killRemainingProcesses(activityManager, context.packageName)
-                    throw IOException(context.getString(R.string.installer_process_no_response) + logTail(logFile, context))
+                    throw ProcessTimeoutException(context.getString(R.string.installer_process_no_response) + logTail(logFile, context))
                 }
-                throw IOException(context.getString(R.string.installer_process_no_exit_code) + logTail(logFile, context))
+                throw ProcessTimeoutException(context.getString(R.string.installer_process_no_exit_code) + logTail(logFile, context))
             }
             Thread.sleep(POLL_INTERVAL_MS)
         }
