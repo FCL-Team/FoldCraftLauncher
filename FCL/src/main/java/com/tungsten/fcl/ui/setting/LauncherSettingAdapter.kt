@@ -107,16 +107,6 @@ class LauncherSettingAdapter(
     private val TYPE_SOURCE = 5
     private val TYPE_THREADS = 6
 
-    /** 设置行分组：同组相邻行连成一块（行间无间距、去中间圆角） */
-    private sealed class SettingGroup {
-        object Theme : SettingGroup()
-        object Background: SettingGroup()
-        object InGame: SettingGroup()
-        object Launcher: SettingGroup()
-        object TouchController: SettingGroup()
-        object Download : SettingGroup()
-    }
-
     private val prefs = context.getSharedPreferences("launcher", MODE_PRIVATE)
     private var rows: List<Row> = emptyList()
 
