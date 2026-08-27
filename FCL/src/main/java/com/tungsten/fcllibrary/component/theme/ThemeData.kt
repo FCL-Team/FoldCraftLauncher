@@ -17,11 +17,15 @@ import kotlinx.coroutines.runBlocking
 /**
  * 主题数据（不可变 data class，替代原 fakefx 属性版 Theme）。
  *
- * 亮暗切换不改变数据本身，动态取色见 [getColor2] 与 [getBackground]；
- * ltColor/dkColor/autoTint 等由主色派生，随 [color] 变化自动重算。
+ * 亮暗切换不改变数据本身，动态取色见 [getColor] 与 [getColor2] 与 [getBackground]；
+ * ltColor/dkColor/autoTint 等由主色派生，随 [getColor] 变化自动重算。
  */
 data class ThemeData(
+    /** 亮色模式主要主题色（原始值，Java 侧经 [getColor] 动态取色或 [_getColor] 取原始值） */
+    @get:JvmName("_getColor")
     val color: Int,
+    /** 暗色模式主要主题色（原始值） */
+    val colorDark: Int,
     /** 亮色模式次要色（原始值，Java 侧经 [getColor2] 动态取色或 [_getColor2] 取原始值） */
     @get:JvmName("_getColor2")
     val color2: Int,
@@ -36,21 +40,27 @@ data class ThemeData(
     val backgroundLt: BitmapDrawable,
     val backgroundDk: BitmapDrawable
 ) {
-    /** 主色的亮色变体（HSV 提亮，浅色背景/按压态用） */
+    /** 主色的亮色变体（HSV 提亮，浅色背景/按压态用，随当前模式主色动态变化） */
     val ltColor: Int
-        get() = deriveColor(color, brighten = true)
+        get() = deriveColor(getColor(), brighten = true)
 
-    /** 主色的暗色变体（HSV 压暗，选中态/进度条等用） */
+    /** 主色的暗色变体（HSV 压暗，选中态/进度条等用，随当前模式主色动态变化） */
     val dkColor: Int
-        get() = deriveColor(color, brighten = false)
+        get() = deriveColor(getColor(), brighten = false)
 
     /** 与主色对比的自动文字色（黑/白） */
     val autoTint: Int
-        get() = if (ColorUtils.calculateLuminance(color) >= 0.5) Color.BLACK else Color.WHITE
+        get() = if (ColorUtils.calculateLuminance(getColor()) >= 0.5) Color.BLACK else Color.WHITE
 
     /** 半透明自动文字色（提示文字用） */
     val autoHintTint: Int
-        get() = if (ColorUtils.calculateLuminance(color) >= 0.5) 0x99000000.toInt() else 0x99FFFFFF.toInt()
+        get() = if (ColorUtils.calculateLuminance(getColor()) >= 0.5) 0x99000000.toInt() else 0x99FFFFFF.toInt()
+
+    /** 按当前亮暗模式取主要主题色（亮色用 [color]，暗色用 [colorDark]） */
+    fun getColor(): Int {
+        val activity = FCLApp.getActivity()
+        return if (activity != null && ThemeEngine.isNightMode(activity)) colorDark else color
+    }
 
     /** 按当前亮暗模式取次要色（亮色用 [color2]，暗色用 [color2Dark]） */
     fun getColor2(): Int {
@@ -92,7 +102,7 @@ data class ThemeData(
             val dk = ImageUtil.load(context.filesDir.absolutePath + "/background/dk.png")
                 .orElse(ConvertUtils.getBitmapFromRes(context, R.drawable.background_dark))
             return ThemeData(
-                effective.color, effective.color2, effective.color2Dark,
+                effective.color, effective.colorDark, effective.color2, effective.color2Dark,
                 effective.fullscreen, effective.closeSkinModel, effective.animationSpeed,
                 BitmapDrawable(context.resources, lt),
                 BitmapDrawable(context.resources, dk)
@@ -104,6 +114,7 @@ data class ThemeData(
             val old = context.getSharedPreferences("theme", Context.MODE_PRIVATE)
             val migrated = ThemePreference(
                 color = old.getInt("theme_color", ThemePreference().color),
+                colorDark = old.getInt("theme_color_dark", ThemePreference().colorDark),
                 color2 = old.getInt("theme_color2", ThemePreference().color2),
                 color2Dark = old.getInt("theme_color2_dark", ThemePreference().color2Dark),
                 fullscreen = old.getBoolean("fullscreen", ThemePreference().fullscreen),
@@ -129,6 +140,7 @@ data class ThemeData(
                     context.themeDataStore.updateData {
                         ThemePreference(
                             color = theme.color,
+                            colorDark = theme.colorDark,
                             color2 = theme.color2,
                             color2Dark = theme.color2Dark,
                             fullscreen = theme.fullscreen,

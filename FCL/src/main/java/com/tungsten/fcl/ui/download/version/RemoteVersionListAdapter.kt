@@ -63,7 +63,7 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
         binding.tag.setBackgroundTintList(
             ColorStateList(
                 arrayOf<IntArray?>(intArrayOf()),
-                intArrayOf(ThemeEngine.getInstance().getTheme().color)
+                intArrayOf(ThemeEngine.getInstance().getTheme().getColor())
             )
         )
         binding.tag.text = getTag(remoteVersion)

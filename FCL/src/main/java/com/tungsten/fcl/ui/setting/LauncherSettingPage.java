@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.provider.Settings;
 import android.view.WindowManager;
@@ -132,10 +133,16 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                 }
                 break;
             case THEME_COLOR_SET:
-                showColorPicker(ThemeEngine.getInstance().getTheme().getColor(),
+                showColorPicker(ThemeEngine.getInstance().getTheme()._getColor(),
                         color -> ThemeEngine.getInstance().applyColor(color),
                         color -> ThemeEngine.getInstance().applyAndSave(getContext(), color),
                         color -> ThemeEngine.getInstance().applyColor(color));
+                break;
+            case THEME_COLOR_DARK_SET:
+                showColorPicker(ThemeEngine.getInstance().getTheme().getColorDark(),
+                        color -> ThemeEngine.getInstance().applyColorDark(color),
+                        color -> ThemeEngine.getInstance().applyAndSaveDark(getContext(), color),
+                        color -> ThemeEngine.getInstance().applyColorDark(color));
                 break;
             case THEME_COLOR2_SET:
                 showColorPicker(ThemeEngine.getInstance().getTheme()._getColor2(),
@@ -167,11 +174,14 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
             case THEME_COLOR_RESET:
                 ThemeEngine.getInstance().applyAndSave(getContext(), getContext().getColor(R.color.default_theme_color));
                 break;
+            case THEME_COLOR_DARK_RESET:
+                ThemeEngine.getInstance().applyAndSaveDark(getContext(), getContext().getColor(R.color.default_theme_color_dark));
+                break;
             case THEME_COLOR2_RESET:
                 ThemeEngine.getInstance().applyAndSave2(getContext(), Color.parseColor("#000000"));
                 break;
             case THEME_COLOR2_DARK_RESET:
-                ThemeEngine.getInstance().applyAndSave2Dark(getContext(), Color.parseColor("#000000"));
+                ThemeEngine.getInstance().applyAndSave2Dark(getContext(), Color.parseColor("#FFFFFF"));
                 break;
             case BACKGROUND_LIVE_RESET:
                 try {
@@ -181,6 +191,7 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                 }
                 break;
             case THEME_COLOR_FETCH:
+            case THEME_COLOR_DARK_FETCH:
             case THEME_COLOR2_FETCH:
             case THEME_COLOR2_DARK_FETCH:
                 fetchBackgroundColor(tag);
@@ -339,28 +350,49 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
     }
 
     private void fetchBackgroundColor(LauncherSettingTag tag) {
-        boolean isDarkMode = ThemeEngine.isNightMode(getContext());
-
-        Bitmap bitmap = (isDarkMode ?
-                ThemeEngine.getInstance().getTheme().getBackgroundDk() :
-                ThemeEngine.getInstance().getTheme().getBackgroundLt()
-        ).getBitmap();
-
-        if (bitmap != null) {
-            Palette palette = Palette.from(bitmap).generate();
-            int dominantColor = palette.getDominantColor(getContext().getColor(R.color.default_theme_color));
-            if (tag == LauncherSettingTag.THEME_COLOR_FETCH) {
-                int color = palette.getMutedColor(dominantColor);
-                if (ThemeEngine.getInstance().getTheme().getColor() == color) {
-                    color = palette.getLightVibrantColor(dominantColor);
-                }
-                ThemeEngine.getInstance().applyAndSave(getContext(), color);
-            } else if (tag == LauncherSettingTag.THEME_COLOR2_FETCH) {
-                ThemeEngine.getInstance().applyAndSave2(getContext(), palette.getVibrantColor(dominantColor));
-            } else {
-                ThemeEngine.getInstance().applyAndSave2Dark(getContext(), palette.getVibrantColor(dominantColor));
-            }
+        ThemeData theme = ThemeEngine.getInstance().getTheme();
+        switch (tag) {
+            case THEME_COLOR_FETCH:
+                fetchPrimaryColor(theme.getBackgroundLt(), theme._getColor(),
+                        color -> ThemeEngine.getInstance().applyAndSave(getContext(), color));
+                break;
+            case THEME_COLOR_DARK_FETCH:
+                fetchPrimaryColor(theme.getBackgroundDk(), theme.getColorDark(),
+                        color -> ThemeEngine.getInstance().applyAndSaveDark(getContext(), color));
+                break;
+            case THEME_COLOR2_FETCH:
+                fetchSecondaryColor(theme.getBackgroundLt(),
+                        color -> ThemeEngine.getInstance().applyAndSave2(getContext(), color));
+                break;
+            case THEME_COLOR2_DARK_FETCH:
+                fetchSecondaryColor(theme.getBackgroundDk(),
+                        color -> ThemeEngine.getInstance().applyAndSave2Dark(getContext(), color));
+                break;
+            default:
+                break;
         }
+    }
+
+    /** 从指定背景提取主要主题色（muted；与当前色相同时换 lightVibrant 保证可见变化） */
+    private void fetchPrimaryColor(BitmapDrawable background, int currentColor, IntConsumer applyAndSave) {
+        Bitmap bitmap = background.getBitmap();
+        if (bitmap == null) return;
+        Palette palette = Palette.from(bitmap).generate();
+        int dominantColor = palette.getDominantColor(getContext().getColor(R.color.default_theme_color));
+        int color = palette.getMutedColor(dominantColor);
+        if (currentColor == color) {
+            color = palette.getLightVibrantColor(dominantColor);
+        }
+        applyAndSave.accept(color);
+    }
+
+    /** 从指定背景提取次要主题色（vibrant） */
+    private void fetchSecondaryColor(BitmapDrawable background, IntConsumer applyAndSave) {
+        Bitmap bitmap = background.getBitmap();
+        if (bitmap == null) return;
+        Palette palette = Palette.from(bitmap).generate();
+        int dominantColor = palette.getDominantColor(getContext().getColor(R.color.default_theme_color));
+        applyAndSave.accept(palette.getVibrantColor(dominantColor));
     }
 
     private void resetBackground(boolean isDk) {

@@ -120,6 +120,10 @@ object ThemeEngine {
         updateTheme { it.copy(color = color) }
     }
 
+    fun applyColorDark(color: Int) {
+        updateTheme { it.copy(colorDark = color) }
+    }
+
     fun applyColor2(color: Int) {
         updateTheme { it.copy(color2 = color) }
     }
@@ -178,6 +182,11 @@ object ThemeEngine {
 
     fun applyAndSave(context: Context, color: Int) {
         applyColor(color)
+        ThemeData.saveTheme(context, getTheme())
+    }
+
+    fun applyAndSaveDark(context: Context, color: Int) {
+        applyColorDark(color)
         ThemeData.saveTheme(context, getTheme())
     }
 

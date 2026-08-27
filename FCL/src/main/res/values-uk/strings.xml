@@ -680,6 +680,8 @@
     <string name="settings_launcher_launcher_log_export_failed">Неможливо експортувати журнали</string>
     <string name="settings_launcher_launcher_log_export_success">Журнали експортовано в %s</string>
     <string name="settings_launcher_theme">Основний колір теми</string>
+    <string name="settings_launcher_theme_dark">Основний колір теми (темна)</string>
+    <string name="settings_launcher_theme_dark_desc">Налаштування основного кольору теми (темна тема).</string>
     <string name="settings_launcher_theme2">Додатковий колір теми</string>
     <string name="settings_launcher_theme_fetch_background">Колір фону</string>
     <string name="settings_launcher_background_lt">Фон у світлій темі (макс. 5120x5120)</string>

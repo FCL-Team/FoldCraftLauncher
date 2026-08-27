@@ -980,7 +980,9 @@
     <string name="settings_launcher_theme_mode_light">Light Mode</string>
     <string name="settings_launcher_theme_mode_dark">Dark Mode</string>
     <string name="settings_launcher_theme">Main Theme Color</string>
-    <string name="settings_launcher_theme_desc">Customize the main color of the launcher theme.</string>
+    <string name="settings_launcher_theme_desc">Customize the main color (light theme).</string>
+    <string name="settings_launcher_theme_dark">Main Theme Color</string>
+    <string name="settings_launcher_theme_dark_desc">Customize the main color (dark theme).</string>
     <string name="settings_launcher_theme2">Secondary Theme Color</string>
     <string name="settings_launcher_theme2_desc">Customize the secondary color (light theme).</string>
     <string name="settings_launcher_theme2_dark">Secondary Theme Color</string>

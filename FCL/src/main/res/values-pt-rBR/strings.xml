@@ -720,6 +720,8 @@
     <string name="settings_launcher_launcher_log_export_failed">Não foi possível exportar as logs</string>
     <string name="settings_launcher_launcher_log_export_success">Logs foram exportadas para %s</string>
     <string name="settings_launcher_theme">Tema</string>
+    <string name="settings_launcher_theme_dark">Tema (modo escuro)</string>
+    <string name="settings_launcher_theme_dark_desc">Personalize a cor principal do tema (modo escuro).</string>
     <string name="settings_launcher_theme2">Theme2</string>
     <string name="settings_launcher_background_lt">Plano de fundo, modo claro</string>
     <string name="settings_launcher_background_dk">Plano de fundo, modo escuro</string>

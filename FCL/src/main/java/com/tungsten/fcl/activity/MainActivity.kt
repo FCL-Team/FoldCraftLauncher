@@ -181,7 +181,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             uiLayout.post {
                 ThemeEngine.getInstance().registerEvent(leftMenu) {
                     leftMenu.background = GradientDrawable().apply {
-                        setColor(ThemeEngine.getInstance().getTheme().color)
+                        setColor(ThemeEngine.getInstance().getTheme().getColor())
                         shape = GradientDrawable.RECTANGLE
                         ConvertUtils.dip2px(this@MainActivity, 8f).toFloat().apply {
                             cornerRadii = floatArrayOf(0f, 0f, this, this, this, this, 0f, 0f)

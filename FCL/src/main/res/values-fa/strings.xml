@@ -720,6 +720,8 @@
     <string name="settings_launcher_launcher_log_export_failed">خروجی گرفتن از لاگ ها ناموفق بود</string>
     <string name="settings_launcher_launcher_log_export_success">لاگ ها به %s خروجی گرفته شدند</string>
     <string name="settings_launcher_theme">تم</string>
+    <string name="settings_launcher_theme_dark">تم تیره</string>
+    <string name="settings_launcher_theme_dark_desc">سفارشی‌سازی رنگ اصلی تم (تم تیره)</string>
     <string name="settings_launcher_theme2">تم ۲</string>
     <string name="settings_launcher_background_lt">پس زمینه لانچر حالت روشن</string>
     <string name="settings_launcher_background_dk">پس زمینه لانچر حالت تاریک</string>

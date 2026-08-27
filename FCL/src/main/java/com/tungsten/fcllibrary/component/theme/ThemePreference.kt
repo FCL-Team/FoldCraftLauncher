@@ -18,6 +18,7 @@ import java.io.OutputStream
 @Serializable
 data class ThemePreference(
     val color: Int = 0xFF7797CF.toInt(),
+    val colorDark: Int = 0xFF4E77C1.toInt(),
     val color2: Int = 0xFF000000.toInt(),
     val color2Dark: Int = 0xFFFFFFFF.toInt(),
     val fullscreen: Boolean = false,

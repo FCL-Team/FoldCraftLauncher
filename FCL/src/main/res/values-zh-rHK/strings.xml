@@ -790,6 +790,8 @@
     <string name="settings_launcher_launcher_log_export_failed">無法導出日誌</string>
     <string name="settings_launcher_launcher_log_export_success">日誌已被導出至 %s</string>
     <string name="settings_launcher_theme">主要主題色</string>
+    <string name="settings_launcher_theme_dark">主要主題色</string>
+    <string name="settings_launcher_theme_dark_desc">自訂啟動器主色（深色主題）</string>
     <string name="settings_launcher_theme2">次要主題色</string>
     <string name="settings_launcher_theme_fetch_background">從背景圖片提取</string>
     <string name="settings_launcher_background_lt">亮色模式啟動器背景圖片(最大分辨率5120x5120)</string>

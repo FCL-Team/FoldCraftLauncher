@@ -37,6 +37,15 @@
             android:visibility="gone"
             app:ripple="true" />
 
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/buttonIcon1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:auto_tint="true"
+            app:no_padding="true" />
+
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/button2"
             android:layout_width="wrap_content"
@@ -46,6 +55,16 @@
             android:visibility="gone"
             app:ripple="true" />
 
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/buttonIcon2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:visibility="gone"
+            app:auto_tint="true"
+            app:no_padding="true" />
+
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/button3"
             android:layout_width="wrap_content"
@@ -54,6 +73,16 @@
             android:layout_marginStart="10dp"
             android:visibility="gone"
             app:ripple="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/buttonIcon3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:visibility="gone"
+            app:auto_tint="true"
+            app:no_padding="true" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

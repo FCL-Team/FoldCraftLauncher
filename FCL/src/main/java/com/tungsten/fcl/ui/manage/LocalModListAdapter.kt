@@ -172,7 +172,7 @@ class LocalModListAdapter(
             arrayOf<IntArray?>(intArrayOf()),
             intArrayOf(
                 if (selectedItemsProperty.contains(modInfoObject)) ThemeEngine.getInstance()
-                    .getTheme().color else ThemeEngine.getInstance().getTheme()
+                    .getTheme().getColor() else ThemeEngine.getInstance().getTheme()
                     .ltColor
             )
         )
@@ -204,7 +204,7 @@ class LocalModListAdapter(
                 binding.parent.backgroundTintList = ColorStateList(
                     arrayOf<IntArray?>(
                         intArrayOf()
-                    ), intArrayOf(ThemeEngine.getInstance().getTheme().color)
+                    ), intArrayOf(ThemeEngine.getInstance().getTheme().getColor())
                 )
             }
         }
@@ -249,7 +249,7 @@ class LocalModListAdapter(
             uiManager.downloadUI.downloadPage.jumpToModPage(modInfoObject.remoteMod)
         }
 
-        drawable.setTint(ThemeEngine.getInstance().getTheme().color)
+        drawable.setTint(ThemeEngine.getInstance().getTheme().getColor())
         binding.icon.setImageDrawable(drawable)
         val cachedRemoteMod = modInfoObject.remoteMod
         if (cachedRemoteMod != null) {

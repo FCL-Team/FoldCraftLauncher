@@ -103,7 +103,7 @@ class VersionSettingPage(
                     val adapter = parent.adapter as? VersionSettingAdapter
                     if (adapter?.isNextInSameGroup(position) == true) groupDivider else rowSpacing
                 },
-                { ThemeEngine.getInstance().getTheme().color }
+                { ThemeEngine.getInstance().getTheme().getColor() }
             )
         )
         // 主题切换时重绘分割线颜色

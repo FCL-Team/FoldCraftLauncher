@@ -187,9 +187,9 @@ class SplashActivity : FCLActivity() {
     /** 进度条跟随主题：主色系三段渐变指示器 + 半透明主色轨道 */
     private fun refreshLoadingProgressTheme() {
         val theme = ThemeEngine.getInstance().getTheme()
-        binding.loadingProgress.setIndicatorColor(theme.dkColor, theme.color, theme.ltColor)
+        binding.loadingProgress.setIndicatorColor(theme.dkColor, theme.getColor(), theme.ltColor)
         binding.loadingProgress.trackColor = ColorUtils.setAlphaComponent(
-            theme.color, 51
+            theme.getColor(), 51
         )
     }
 

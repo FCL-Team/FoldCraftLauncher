@@ -661,6 +661,8 @@
     <string name="settings_launcher_launcher_log_export_failed">Protokolle können nicht exportiert werden</string>
     <string name="settings_launcher_launcher_log_export_success">Protokolle exportiert nach %s</string>
     <string name="settings_launcher_theme">Hauptfarbe des Themes</string>
+    <string name="settings_launcher_theme_dark">Hauptfarbe des Themes (dunkel)</string>
+    <string name="settings_launcher_theme_dark_desc">Theme-Hauptfarbe für den dunklen Modus anpassen.</string>
     <string name="settings_launcher_theme2">Zusätzliche Theme-Farbe</string>
     <string name="settings_launcher_theme_fetch_background">Hintergrundfarbe</string>
     <string name="settings_launcher_background_lt">Hintergrund im hellen Theme (max. 5120x5120)</string>

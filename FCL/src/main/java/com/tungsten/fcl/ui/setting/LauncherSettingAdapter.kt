@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.edit
 import androidx.recyclerview.widget.RecyclerView
 import com.tungsten.fcl.R
@@ -22,6 +23,8 @@ import com.tungsten.fcl.databinding.ItemVersionSettingSwitchBinding
 import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.setting.DownloadProviders
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.component.view.FCLButton
+import com.tungsten.fcllibrary.component.view.FCLImageButton
 import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.tungsten.fcllibrary.util.LocaleUtils
 
@@ -34,6 +37,9 @@ enum class LauncherSettingTag {
     THEME_COLOR_RESET,
     THEME_COLOR_FETCH,
     THEME_COLOR_SET,
+    THEME_COLOR_DARK_RESET,
+    THEME_COLOR_DARK_FETCH,
+    THEME_COLOR_DARK_SET,
     THEME_COLOR2_RESET,
     THEME_COLOR2_FETCH,
     THEME_COLOR2_SET,
@@ -114,6 +120,11 @@ class LauncherSettingAdapter(
     private val prefs = context.getSharedPreferences("launcher", MODE_PRIVATE)
     private var rows: List<Row> = emptyList()
 
+    // 按钮行图标：重置/设置/从背景提取（图标按钮，用原按钮文案作无障碍描述）
+    private val ICON_RESET = R.drawable.ic_baseline_restore_24
+    private val ICON_SET = R.drawable.ic_baseline_edit_24
+    private val ICON_FETCH = R.drawable.ic_baseline_palette_24
+
     fun rebuild() {
         rows = buildRows()
         notifyDataSetChanged()
@@ -145,17 +156,17 @@ class LauncherSettingAdapter(
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_upgrade,
-                listOf(R.string.settings_launcher_upgrade_check to LauncherSettingTag.CHECK_UPDATE),
+                listOf(Triple(0, R.string.settings_launcher_upgrade_check, LauncherSettingTag.CHECK_UPDATE)),
                 R.string.settings_launcher_upgrade_desc,
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_debug,
-                listOf(R.string.settings_launcher_launcher_log_export to LauncherSettingTag.EXPORT_LOG),
+                listOf(Triple(0, R.string.settings_launcher_launcher_log_export, LauncherSettingTag.EXPORT_LOG)),
                 R.string.settings_launcher_debug_desc,
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_request_recording_permission,
-                listOf(R.string.settings_launcher_request to LauncherSettingTag.REQUEST_AUDIO),
+                listOf(Triple(0, R.string.settings_launcher_request, LauncherSettingTag.REQUEST_AUDIO)),
                 R.string.settings_launcher_request_recording_permission_desc,
             ),
             Row.SwitchRow(
@@ -173,19 +184,29 @@ class LauncherSettingAdapter(
             Row.ButtonRow(
                 R.string.settings_launcher_theme,
                 listOf(
-                    R.string.button_reset to LauncherSettingTag.THEME_COLOR_RESET,
-                    R.string.settings_launcher_theme_fetch_background to LauncherSettingTag.THEME_COLOR_FETCH,
-                    R.string.button_set to LauncherSettingTag.THEME_COLOR_SET
+                    Triple(ICON_RESET, R.string.button_reset, LauncherSettingTag.THEME_COLOR_RESET),
+                    Triple(ICON_FETCH, R.string.settings_launcher_theme_fetch_background, LauncherSettingTag.THEME_COLOR_FETCH),
+                    Triple(ICON_SET, R.string.button_set, LauncherSettingTag.THEME_COLOR_SET)
                 ),
                 R.string.settings_launcher_theme_desc,
                 group = SettingGroup.Theme
             ),
             Row.ButtonRow(
+                R.string.settings_launcher_theme_dark,
+                listOf(
+                    Triple(ICON_RESET, R.string.button_reset, LauncherSettingTag.THEME_COLOR_DARK_RESET),
+                    Triple(ICON_FETCH, R.string.settings_launcher_theme_fetch_background, LauncherSettingTag.THEME_COLOR_DARK_FETCH),
+                    Triple(ICON_SET, R.string.button_set, LauncherSettingTag.THEME_COLOR_DARK_SET)
+                ),
+                R.string.settings_launcher_theme_dark_desc,
+                group = SettingGroup.Theme
+            ),
+            Row.ButtonRow(
                 R.string.settings_launcher_theme2,
                 listOf(
-                    R.string.button_reset to LauncherSettingTag.THEME_COLOR2_RESET,
-                    R.string.settings_launcher_theme_fetch_background to LauncherSettingTag.THEME_COLOR2_FETCH,
-                    R.string.button_set to LauncherSettingTag.THEME_COLOR2_SET
+                    Triple(ICON_RESET, R.string.button_reset, LauncherSettingTag.THEME_COLOR2_RESET),
+                    Triple(ICON_FETCH, R.string.settings_launcher_theme_fetch_background, LauncherSettingTag.THEME_COLOR2_FETCH),
+                    Triple(ICON_SET, R.string.button_set, LauncherSettingTag.THEME_COLOR2_SET)
                 ),
                 R.string.settings_launcher_theme2_desc,
                 group = SettingGroup.Theme
@@ -193,9 +214,9 @@ class LauncherSettingAdapter(
             Row.ButtonRow(
                 R.string.settings_launcher_theme2_dark,
                 listOf(
-                    R.string.button_reset to LauncherSettingTag.THEME_COLOR2_DARK_RESET,
-                    R.string.settings_launcher_theme_fetch_background to LauncherSettingTag.THEME_COLOR2_DARK_FETCH,
-                    R.string.button_set to LauncherSettingTag.THEME_COLOR2_DARK_SET
+                    Triple(ICON_RESET, R.string.button_reset, LauncherSettingTag.THEME_COLOR2_DARK_RESET),
+                    Triple(ICON_FETCH, R.string.settings_launcher_theme_fetch_background, LauncherSettingTag.THEME_COLOR2_DARK_FETCH),
+                    Triple(ICON_SET, R.string.button_set, LauncherSettingTag.THEME_COLOR2_DARK_SET)
                 ),
                 R.string.settings_launcher_theme2_dark_desc,
                 group = SettingGroup.Theme
@@ -203,8 +224,8 @@ class LauncherSettingAdapter(
             Row.ButtonRow(
                 R.string.settings_launcher_background_lt,
                 listOf(
-                    R.string.button_reset to LauncherSettingTag.BACKGROUND_LT_RESET,
-                    R.string.button_set to LauncherSettingTag.BACKGROUND_LT_SET
+                    Triple(ICON_RESET, R.string.button_reset, LauncherSettingTag.BACKGROUND_LT_RESET),
+                    Triple(ICON_SET, R.string.button_set, LauncherSettingTag.BACKGROUND_LT_SET)
                 ),
                 R.string.settings_launcher_background_lt_desc,
                 group = SettingGroup.Background
@@ -212,8 +233,8 @@ class LauncherSettingAdapter(
             Row.ButtonRow(
                 R.string.settings_launcher_background_dk,
                 listOf(
-                    R.string.button_reset to LauncherSettingTag.BACKGROUND_DK_RESET,
-                    R.string.button_set to LauncherSettingTag.BACKGROUND_DK_SET
+                    Triple(ICON_RESET, R.string.button_reset, LauncherSettingTag.BACKGROUND_DK_RESET),
+                    Triple(ICON_SET, R.string.button_set, LauncherSettingTag.BACKGROUND_DK_SET)
                 ),
                 R.string.settings_launcher_background_dk_desc,
                 group = SettingGroup.Background
@@ -221,8 +242,8 @@ class LauncherSettingAdapter(
             Row.ButtonRow(
                 R.string.settings_launcher_background_video,
                 listOf(
-                    R.string.button_reset to LauncherSettingTag.BACKGROUND_LIVE_RESET,
-                    R.string.button_set to LauncherSettingTag.BACKGROUND_LIVE_SET
+                    Triple(ICON_RESET, R.string.button_reset, LauncherSettingTag.BACKGROUND_LIVE_RESET),
+                    Triple(ICON_SET, R.string.button_set, LauncherSettingTag.BACKGROUND_LIVE_SET)
                 ),
                 R.string.settings_launcher_background_video_desc,
                 group = SettingGroup.Background
@@ -237,8 +258,8 @@ class LauncherSettingAdapter(
             Row.ButtonRow(
                 R.string.settings_launcher_cursor,
                 listOf(
-                    R.string.button_reset to LauncherSettingTag.CURSOR_RESET,
-                    R.string.button_set to LauncherSettingTag.CURSOR_SET
+                    Triple(ICON_RESET, R.string.button_reset, LauncherSettingTag.CURSOR_RESET),
+                    Triple(ICON_SET, R.string.button_set, LauncherSettingTag.CURSOR_SET)
                 ),
                 R.string.settings_launcher_cursor_desc,
                 group = SettingGroup.InGame
@@ -246,8 +267,8 @@ class LauncherSettingAdapter(
             Row.ButtonRow(
                 R.string.settings_launcher_menu_icon,
                 listOf(
-                    R.string.button_reset to LauncherSettingTag.MENU_ICON_RESET,
-                    R.string.button_set to LauncherSettingTag.MENU_ICON_SET
+                    Triple(ICON_RESET, R.string.button_reset, LauncherSettingTag.MENU_ICON_RESET),
+                    Triple(ICON_SET, R.string.button_set, LauncherSettingTag.MENU_ICON_SET)
                 ),
                 R.string.settings_launcher_menu_icon_desc,
                 group = SettingGroup.InGame
@@ -350,7 +371,8 @@ class LauncherSettingAdapter(
 
         data class ButtonRow(
             val labelRes: Int,
-            val buttons: List<Pair<Int, LauncherSettingTag>>,
+            /** 按钮三元组（图标 drawable res、按钮文案 res、操作 tag）；iconRes 为 0 时渲染为文字按钮 */
+            val buttons: List<Triple<Int, Int, LauncherSettingTag>>,
             override val descriptionRes: Int = 0,
             override val group: SettingGroup? = null
         ) : Row()
@@ -501,20 +523,46 @@ class LauncherSettingAdapter(
         val binding = ItemLauncherSettingButtonBinding.bind(holder.itemView)
         binding.label.text = context.getString(row.labelRes)
         val buttons = listOf(
-            Triple(binding.button1, 0, LauncherSettingTag.CHECK_UPDATE),
-            Triple(binding.button2, 1, LauncherSettingTag.CHECK_UPDATE),
-            Triple(binding.button3, 2, LauncherSettingTag.CHECK_UPDATE)
+            binding.button1 to binding.buttonIcon1,
+            binding.button2 to binding.buttonIcon2,
+            binding.button3 to binding.buttonIcon3
         )
-        buttons.forEach { (button, index, _) ->
+        buttons.forEachIndexed { index, (button, iconButton) ->
             if (index < row.buttons.size) {
-                val (textRes, tag) = row.buttons[index]
-                button.text = context.getString(textRes)
-                button.visibility = View.VISIBLE
-                button.setOnClickListener { listener.onButtonClick(tag) }
+                val (iconRes, textRes, tag) = row.buttons[index]
+                bindButtonItem(button, iconButton, iconRes, textRes, tag)
             } else {
                 button.visibility = View.GONE
                 button.setOnClickListener(null)
+                iconButton.visibility = View.GONE
+                iconButton.setOnClickListener(null)
             }
+        }
+    }
+
+    /** 绑定按钮内容：iconRes 非 0 时用图标按钮（FCLImageButton，布局已 no_padding 无背景），否则用文字按钮 */
+    private fun bindButtonItem(
+        button: FCLButton,
+        iconButton: FCLImageButton,
+        iconRes: Int,
+        textRes: Int,
+        tag: LauncherSettingTag
+    ) {
+        if (iconRes != 0) {
+            iconButton.setImageDrawable(AppCompatResources.getDrawable(context, iconRes))
+            iconButton.contentDescription = context.getString(textRes)
+            iconButton.visibility = View.VISIBLE
+            iconButton.setOnClickListener { listener.onButtonClick(tag) }
+            button.visibility = View.GONE
+            button.setOnClickListener(null)
+        } else {
+            button.text = context.getString(textRes)
+            button.visibility = View.VISIBLE
+            button.setOnClickListener { listener.onButtonClick(tag) }
+            iconButton.setImageDrawable(null)
+            iconButton.contentDescription = null
+            iconButton.visibility = View.GONE
+            iconButton.setOnClickListener(null)
         }
     }
 

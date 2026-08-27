@@ -882,6 +882,8 @@
     <string name="settings_launcher_theme_mode_light">Chế độ Sáng</string>
     <string name="settings_launcher_theme_mode_dark">Chế độ Tối</string>
     <string name="settings_launcher_theme">Màu Giao diện Chính</string>
+    <string name="settings_launcher_theme_dark">Màu Giao diện Chính (Chế độ Tối)</string>
+    <string name="settings_launcher_theme_dark_desc">Tùy chỉnh màu chính của giao diện (chế độ tối).</string>
     <string name="settings_launcher_theme2">Màu Giao diện Phụ (Chế độ Sáng)</string>
     <string name="settings_launcher_theme2_dark">Màu Giao diện Phụ (Chế độ Tối)</string>
     <string name="settings_launcher_theme_fetch_background">Trích xuất từ ảnh nền</string>
