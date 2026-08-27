@@ -30,7 +30,6 @@ public class WebActivity extends FCLActivity {
         webView.setWebViewClient(new WebViewTrackClient());
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         webView.loadUrl(getIntent().getExtras().getString("url"));
     }
 
@@ -50,6 +49,6 @@ public class WebActivity extends FCLActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        AndroidUtilKt.clearWebViewCache(this);
+//        AndroidUtilKt.clearWebViewCache(this);
     }
 }
