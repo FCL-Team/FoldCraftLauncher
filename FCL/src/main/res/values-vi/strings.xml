@@ -600,6 +600,8 @@
     <string name="message_downloading">Đang tải xuống</string>
     <string name="mods_dependency_skipped_note">%1$d phụ thuộc không thể phân giải và đã bị bỏ qua</string>
     <string name="download_ready_to_install">Đã tải · chạm để cài đặt</string>
+    <string name="mods_already_installed">Mod đã được cài đặt</string>
+    <string name="mods_installed_skipped_note">%1$d phụ thuộc đã cài đặt và bị bỏ qua</string>
     <string name="mods_dependency_resolving">Đang phân giải phụ thuộc bắt buộc…</string>
     <string name="download_manager">Quản lý tải xuống</string>
     <string name="message_error">Lỗi</string>

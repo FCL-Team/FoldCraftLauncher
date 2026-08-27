@@ -516,6 +516,8 @@
     <string name="message_downloading">در حال دانلود</string>
     <string name="mods_dependency_skipped_note">%1$d وابستگی قابل حل نبود و نادیده گرفته شد</string>
     <string name="download_ready_to_install">دانلود شد · برای نصب ضربه بزنید</string>
+    <string name="mods_already_installed">ماد از قبل نصب شده است</string>
+    <string name="mods_installed_skipped_note">%1$d وابستگی از قبل نصب شده و نادیده گرفته شد</string>
     <string name="mods_dependency_resolving">در حال شناسایی وابستگی‌های ضروری…</string>
     <string name="download_manager">مدیریت دانلود</string>
     <string name="message_error">خطا</string>

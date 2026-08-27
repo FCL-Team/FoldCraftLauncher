@@ -5,6 +5,8 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -13,12 +15,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 import java.util.stream.Collectors;
 
 /**
  * 模组前置依赖解析器：从某个远程版本出发，递归解析全部 REQUIRED 前置模组，
  * 为每个前置挑选兼容当前游戏版本的最新文件。
  * BFS + 已访问集合防循环依赖；解析在后台线程执行，单个失败不影响其余。
+ * 去重：先按文件名快速检测本地是否已有同一文件（零网络开销），再通过当前下载源的
+ * 远程反查（CurseForge 文件指纹 / Modrinth SHA-1）做项目级检测，两者命中都跳过下载；
+ * 本体已安装时只跳过本体，前置仍会解析并安装。
  */
 public final class ModDependenciesResolver {
 
@@ -29,8 +35,64 @@ public final class ModDependenciesResolver {
     public record ResolvedDependency(RemoteMod mod, RemoteMod.Version version) {
     }
 
-    /** 解析结果：待下载的前置列表 + 解析失败被跳过的名称 */
-    public record Result(List<ResolvedDependency> dependencies, List<String> failedTitles) {
+    /** 解析结果：待下载的前置列表、解析失败数、因本地已安装而跳过的数量，以及本体是否已安装 */
+    public record Result(List<ResolvedDependency> dependencies, List<String> failedTitles,
+                         boolean rootInstalled, int installedSkipped) {
+    }
+
+    /** 本地已安装索引：文件名即时收集（零网络），项目 id 反查在首次需要时才执行 */
+    private static final class InstalledIndex {
+        private final RemoteModRepository repository;
+        private final Path modsDirectory;
+        private final Set<String> filenames = new HashSet<>();
+        private Set<String> projectIds;
+
+        InstalledIndex(RemoteModRepository repository, Path modsDirectory) {
+            this.repository = repository;
+            this.modsDirectory = modsDirectory;
+            if (modsDirectory != null && Files.isDirectory(modsDirectory)) {
+                try (Stream<Path> files = Files.list(modsDirectory)) {
+                    files.filter(path -> path.toString().endsWith(".jar"))
+                            .forEach(path -> filenames.add(path.getFileName().toString()));
+                } catch (IOException e) {
+                    LOG.log(Level.WARNING, "Failed to list installed mods", e);
+                }
+            }
+        }
+
+        boolean containsFilename(@Nullable String filename) {
+            return filename != null && filenames.contains(filename);
+        }
+
+        boolean containsProject(@Nullable String projectId) {
+            if (projectId == null)
+                return false;
+            if (projectIds == null)
+                projectIds = collectProjectIds();
+            return projectIds.contains(projectId);
+        }
+
+        private Set<String> collectProjectIds() {
+            Set<String> ids = new HashSet<>();
+            if (repository == null || modsDirectory == null || !Files.isDirectory(modsDirectory))
+                return ids;
+            try (Stream<Path> files = Files.list(modsDirectory)) {
+                files.filter(path -> path.toString().endsWith(".jar")).forEach(path -> {
+                    try {
+                        repository.getRemoteVersionByLocalFile(null, path)
+                                .ifPresent(version -> {
+                                    if (version.getModid() != null)
+                                        ids.add(version.getModid());
+                                });
+                    } catch (IOException e) {
+                        LOG.log(Level.FINE, "Skip unidentifiable local mod " + path, e);
+                    }
+                });
+            } catch (IOException e) {
+                LOG.log(Level.WARNING, "Failed to scan installed mods for deduplication", e);
+            }
+            return ids;
+        }
     }
 
     private ModDependenciesResolver() {
@@ -40,13 +102,26 @@ public final class ModDependenciesResolver {
      * 解析 root 版本的全部必需前置（含传递依赖）。
      * 前置的兼容性以 root 自身的 gameVersions / loaders 元数据为准：
      * 只有与 root 适用版本存在交集的前置文件才被选用（loader 存在精确匹配时优先）。
+     * 本体已安装时跳过本体下载，但仍会解析并安装其缺失的前置。
+     *
+     * @param modsDirectory mods 目录，用于本地去重检测；repository 为当前下载源
      */
-    public static Result resolve(RemoteMod.Version root) {
+    public static Result resolve(RemoteMod.Version root, @Nullable Path modsDirectory,
+                                 @Nullable RemoteModRepository repository) {
         List<ResolvedDependency> resolved = new ArrayList<>();
         List<String> failedTitles = new ArrayList<>();
+        InstalledIndex installed = modsDirectory != null && repository != null
+                ? new InstalledIndex(repository, modsDirectory)
+                : null;
+
+        // 本体已安装：跳过本体下载，但前置仍照常解析安装
+        boolean rootInstalled = installed != null &&
+                (installed.containsFilename(getFilename(root)) || installed.containsProject(root.getModid()));
+        int installedSkipped = 0;
+
         if (root.getGameVersions() == null || root.getGameVersions().isEmpty()
                 || root.getDependencies() == null || root.getDependencies().isEmpty())
-            return new Result(resolved, failedTitles);
+            return new Result(resolved, failedTitles, rootInstalled, installedSkipped);
 
         Set<String> visited = new HashSet<>();
         if (root.getModid() != null)
@@ -65,6 +140,11 @@ public final class ModDependenciesResolver {
             String id = dependency.getId();
             if (id == null || !visited.add(id))
                 continue;
+            // 项目 id 已在本地（零网络；文件名在选版本前未知，无法提前检测）
+            if (installed != null && installed.containsProject(id)) {
+                installedSkipped++;
+                continue;
+            }
 
             try {
                 RemoteMod mod = dependency.load();
@@ -72,6 +152,11 @@ public final class ModDependenciesResolver {
                         root.getGameVersions(), root.getLoaders());
                 if (best == null) {
                     failedTitles.add(mod.getTitle());
+                    continue;
+                }
+                // 选定版本后再按文件名快速检测：本地已有同一文件则跳过（零网络开销）
+                if (installed.containsFilename(getFilename(best))) {
+                    installedSkipped++;
                     continue;
                 }
                 resolved.add(new ResolvedDependency(mod, best));
@@ -83,7 +168,11 @@ public final class ModDependenciesResolver {
                 failedTitles.add(id);
             }
         }
-        return new Result(resolved, failedTitles);
+        return new Result(resolved, failedTitles, rootInstalled, installedSkipped);
+    }
+
+    private static String getFilename(RemoteMod.Version version) {
+        return version.getFile() != null ? version.getFile().getFilename() : null;
     }
 
     /**

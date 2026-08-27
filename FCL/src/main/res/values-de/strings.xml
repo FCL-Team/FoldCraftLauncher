@@ -485,6 +485,8 @@
     <string name="message_downloading">Download läuft</string>
     <string name="mods_dependency_skipped_note">%1$d Abhängigkeiten konnten nicht aufgelöst werden und wurden übersprungen</string>
     <string name="download_ready_to_install">Heruntergeladen · Zum Installieren tippen</string>
+    <string name="mods_already_installed">Mod bereits installiert</string>
+    <string name="mods_installed_skipped_note">%1$d Abhängigkeiten bereits installiert und übersprungen</string>
     <string name="mods_dependency_resolving">Erforderliche Abhängigkeiten werden aufgelöst…</string>
     <string name="download_manager">Download-Verwaltung</string>
     <string name="message_error">Fehler</string>

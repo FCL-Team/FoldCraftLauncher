@@ -548,6 +548,8 @@
     <string name="message_downloading">正在下載</string>
     <string name="mods_dependency_skipped_note">另有 %1$d 個前置模組解析失敗，已跳過</string>
     <string name="download_ready_to_install">下載完成，點擊安裝</string>
+    <string name="mods_already_installed">該模組已安裝，無需重複下載</string>
+    <string name="mods_installed_skipped_note">%1$d 個前置模組本地已安裝，已跳過</string>
     <string name="mods_dependency_resolving">正在解析前置模組…</string>
     <string name="download_manager">下載管理</string>
     <string name="message_error">錯誤</string>

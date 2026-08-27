@@ -498,6 +498,8 @@
     <string name="message_downloading">Загрузка</string>
     <string name="mods_dependency_skipped_note">%1$d зависимостей не удалось разрешить и они пропущены</string>
     <string name="download_ready_to_install">Загружено · нажмите для установки</string>
+    <string name="mods_already_installed">Мод уже установлен</string>
+    <string name="mods_installed_skipped_note">%1$d зависимостей уже установлены и пропущены</string>
     <string name="mods_dependency_resolving">Разрешение обязательных зависимостей…</string>
     <string name="download_manager">Менеджер загрузок</string>
     <string name="message_error">Ошибка</string>

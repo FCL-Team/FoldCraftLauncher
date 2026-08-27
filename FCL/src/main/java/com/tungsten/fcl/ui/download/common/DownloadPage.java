@@ -77,6 +77,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 
@@ -603,6 +604,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
      * 一键下载：后台解析该模组的全部 REQUIRED 前置闭包（含传递依赖、防循环），
      * 解析完成后主模组与所有前置一起加入下载队列；
      * 不弹命名对话框，直接使用原始文件名；解析失败的前置跳过并提示数量。
+     * 本地 mods 目录已安装的模组（含本体）通过当前下载源的反查接口去重跳过。
      */
     public static void downloadWithDependencies(Context context, Profile profile, @Nullable String version, RemoteMod.Version file, String subdirectoryName) {
         if (version == null) version = profile.getSelectedVersion();
@@ -611,14 +613,23 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
 
         Toast.makeText(context, context.getString(R.string.mods_dependency_resolving), Toast.LENGTH_SHORT).show();
 
-        // 前置的兼容性以所选模组版本自身的 gameVersions / loaders 为准，解析完一起入队
-        Task.supplyAsync(() -> ModDependenciesResolver.resolve(file))
+        // 前置的兼容性以所选模组版本自身的 gameVersions / loaders 为准，解析完一起入队；
+        // 本体已安装时跳过本体，前置仍会安装
+        Task.supplyAsync(() -> ModDependenciesResolver.resolve(file, modsDirectory,
+                file.getSelf().getType().getRemoteModRepository()))
                 .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
                     if (exception != null || result == null)
                         return;
-                    submitModDownload(context, file.getFile().getFilename(), file, modsDirectory);
+                    if (!result.rootInstalled()) {
+                        submitModDownload(context, file.getFile().getFilename(), file, modsDirectory);
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.mods_already_installed), Toast.LENGTH_SHORT).show();
+                    }
                     for (ModDependenciesResolver.ResolvedDependency dep : result.dependencies()) {
                         submitModDownload(context, dep.version().getFile().getFilename(), dep.version(), modsDirectory);
+                    }
+                    if (result.installedSkipped() > 0) {
+                        Toast.makeText(context, context.getString(R.string.mods_installed_skipped_note, result.installedSkipped()), Toast.LENGTH_SHORT).show();
                     }
                     if (!result.failedTitles().isEmpty()) {
                         Toast.makeText(context, context.getString(R.string.mods_dependency_skipped_note, result.failedTitles().size()), Toast.LENGTH_SHORT).show();

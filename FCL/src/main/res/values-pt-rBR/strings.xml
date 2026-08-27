@@ -516,6 +516,8 @@
     <string name="message_downloading">Baixando</string>
     <string name="mods_dependency_skipped_note">%1$d dependências não puderam ser resolvidas e foram ignoradas</string>
     <string name="download_ready_to_install">Baixado · toque para instalar</string>
+    <string name="mods_already_installed">Mod já instalado</string>
+    <string name="mods_installed_skipped_note">%1$d dependências já instaladas e ignoradas</string>
     <string name="mods_dependency_resolving">Resolvendo dependências obrigatórias…</string>
     <string name="download_manager">Gerenciador de downloads</string>
     <string name="message_error">Erro</string>

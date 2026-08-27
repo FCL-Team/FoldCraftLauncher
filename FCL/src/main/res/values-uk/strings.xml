@@ -493,6 +493,8 @@
     <string name="message_downloading">Завантаження</string>
     <string name="mods_dependency_skipped_note">%1$d залежностей не вдалося розв\'язати, їх пропущено</string>
     <string name="download_ready_to_install">Завантажено · натисніть для встановлення</string>
+    <string name="mods_already_installed">Мод вже встановлено</string>
+    <string name="mods_installed_skipped_note">%1$d залежностей вже встановлено, їх пропущено</string>
     <string name="mods_dependency_resolving">Вирішення обов\'язкових залежностей…</string>
     <string name="download_manager">Менеджер завантажень</string>
     <string name="message_error">Помилка</string>
