@@ -83,8 +83,8 @@ public class ControllerRepoPage extends FCLPage implements View.OnClickListener,
     private FCLProgressBar progressBar;
     private FCLImageButton retry;
 
-    public ControllerRepoPage(Context context, int id, int resId) {
-        super(context, id, resId);
+    public ControllerRepoPage(Context context, int id) {
+        super(context, id, R.layout.page_controller_repo);
     }
 
     public void setLoading(boolean loading) {
@@ -143,7 +143,7 @@ public class ControllerRepoPage extends FCLPage implements View.OnClickListener,
             ArrayList<ControllerCategory> categories = (ArrayList<ControllerCategory>) s[1];
             refreshCategories(categories);
             ControllerListAdapter adapter = new ControllerListAdapter(getContext(), source, categories, indexes, mod -> {
-                ControllerDownloadPage page = new ControllerDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_controller_download, source, ControllerCategory.getLocaledCategories(getContext(), categories, mod.getCategories()), mod);
+                ControllerDownloadPage page = new ControllerDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, source, ControllerCategory.getLocaledCategories(getContext(), categories, mod.getCategories()), mod);
                 UIManager.getInstance().getControllerUI().showTempPage(page);
             });
             recyclerView.setAdapter(adapter);

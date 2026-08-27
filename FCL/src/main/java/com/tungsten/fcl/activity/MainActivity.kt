@@ -952,7 +952,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         val page = LocalModpackPage(
             this,
             FCLPage.PAGE_ID_TEMP,
-            R.layout.page_modpack,
             if(::profile.isInitialized) profile else Profiles.getSelectedProfile(),
             null,
             file

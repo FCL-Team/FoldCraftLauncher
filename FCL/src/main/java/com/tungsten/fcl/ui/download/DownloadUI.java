@@ -65,8 +65,8 @@ public class DownloadUI extends FCLCommonUI {
         // 内容层：游戏安装页 + 共享下载页
         contentContainer = new FrameLayout(getContext());
         container.addView(contentContainer, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-        versionInstallPage = new VersionInstallPage(getContext(), PAGE_ID_DOWNLOAD_GAME, R.layout.page_install_version);
-        downloadPage = new DownloadPage(getContext(), R.layout.page_download);
+        versionInstallPage = new VersionInstallPage(getContext(), PAGE_ID_DOWNLOAD_GAME);
+        downloadPage = new DownloadPage(getContext());
         contentContainer.addView(versionInstallPage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         contentContainer.addView(downloadPage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         downloadPage.getContentView().setVisibility(View.GONE);

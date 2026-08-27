@@ -32,7 +32,7 @@ public class VersionUI extends FCLMultiPageUI {
 
     @Override
     public FCLPage createPage(int position) {
-        return new VersionListPage(getContext(), PAGE_ID_VERSION_LIST, R.layout.page_version_list);
+        return new VersionListPage(getContext(), PAGE_ID_VERSION_LIST);
     }
 
     @Override

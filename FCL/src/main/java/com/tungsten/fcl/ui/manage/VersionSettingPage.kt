@@ -64,9 +64,8 @@ import com.mio.util.openLink
 class VersionSettingPage(
     context: Context?,
     id: Int,
-    resId: Int,
     private val globalSetting: Boolean
-) : FCLPage(context, id, resId), VersionLoadable, VersionSettingAdapter.Listener {
+) : FCLPage(context, id, R.layout.page_version_setting), VersionLoadable, VersionSettingAdapter.Listener {
     private lateinit var lastVersionSetting: VersionSetting
     private lateinit var profile: Profile
     private lateinit var listenerHolder: WeakListenerHolder

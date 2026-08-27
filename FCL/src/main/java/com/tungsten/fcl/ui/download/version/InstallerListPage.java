@@ -42,8 +42,8 @@ public class InstallerListPage extends FCLPage implements View.OnClickListener, 
     private FCLProgressBar progressBar;
     private RecyclerView recyclerView;
 
-    public InstallerListPage(Context context, int id, int resId, String gameVersion, String libraryId, Callback callback) {
-        super(context, id, resId);
+    public InstallerListPage(Context context, int id, String gameVersion, String libraryId, Callback callback) {
+        super(context, id, R.layout.page_install_version);
         this.gameVersion = gameVersion;
         this.libraryId = libraryId;
         this.callback = callback;

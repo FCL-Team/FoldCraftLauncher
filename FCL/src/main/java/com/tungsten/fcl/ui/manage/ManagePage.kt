@@ -32,7 +32,7 @@ import com.tungsten.fcllibrary.ui.ProgressDialog
 import com.tungsten.fcllibrary.util.uploadLog
 import java.io.File
 
-class ManagePage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId), VersionLoadable {
+class ManagePage(context: Context?, id: Int) : FCLPage(context, id, R.layout.page_manage_version), VersionLoadable {
     private val currentVersionUpgradable: BooleanProperty = SimpleBooleanProperty()
     val profile: Profile
         get() = instance.manageUI.profile

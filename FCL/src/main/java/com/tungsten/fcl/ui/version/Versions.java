@@ -48,7 +48,7 @@ public class Versions {
     public static void importModpack(Context context) {
         Profile profile = Profiles.getSelectedProfile();
         if (profile.getRepository().isLoaded()) {
-            ModpackSelectionPage page = new ModpackSelectionPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_selection, profile, null);
+            ModpackSelectionPage page = new ModpackSelectionPage(context, FCLPage.PAGE_ID_TEMP, profile, null);
             UIManager.getInstance().getDownloadUI().showTempPage(page);
         }
     }
@@ -75,7 +75,7 @@ public class Versions {
         TaskExecutor executor = new FileDownloadTask(downloadURL, modpack.toFile())
                 .whenComplete(Schedulers.androidUIThread(), e -> {
                     if (e == null) {
-                        LocalModpackPage page = new LocalModpackPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_modpack, profile, null, modpack.toFile());
+                        LocalModpackPage page = new LocalModpackPage(context, FCLPage.PAGE_ID_TEMP, profile, null, modpack.toFile());
                         UIManager.getInstance().getDownloadUI().showTempPage(page);
                     } else if (e instanceof CancellationException) {
                         Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
@@ -138,7 +138,7 @@ public class Versions {
     }
 
     public static void exportVersion(Context context, Profile profile, String version) {
-        ModpackTypeSelectionPage page = new ModpackTypeSelectionPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_type, profile, version);
+        ModpackTypeSelectionPage page = new ModpackTypeSelectionPage(context, FCLPage.PAGE_ID_TEMP, profile, version);
         UIManager.getInstance().getManageUI().showTempPage(page);
     }
 
@@ -167,7 +167,7 @@ public class Versions {
     }
 
     public static void updateVersion(Context context, Profile profile, String version) {
-        ModpackSelectionPage page = new ModpackSelectionPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_selection, profile, version);
+        ModpackSelectionPage page = new ModpackSelectionPage(context, FCLPage.PAGE_ID_TEMP, profile, version);
         UIManager.getInstance().getManageUI().showTempPage(page);
     }
 

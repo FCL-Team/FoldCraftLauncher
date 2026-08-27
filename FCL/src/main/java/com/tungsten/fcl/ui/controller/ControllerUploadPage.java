@@ -42,8 +42,8 @@ public class ControllerUploadPage extends FCLPage implements View.OnClickListene
     private FCLButton qq;
     private FCLButton share;
 
-    public ControllerUploadPage(Context context, int id, int resId, Controller controller) {
-        super(context, id, resId);
+    public ControllerUploadPage(Context context, int id, Controller controller) {
+        super(context, id, R.layout.page_controller_upload);
         this.controller = controller;
         create();
     }

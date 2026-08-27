@@ -37,7 +37,7 @@ import kotlin.io.path.isRegularFile
 import com.mio.util.getLocalizedText
 import com.mio.util.hasStringId
 
-class VersionListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId),
+class VersionListPage(context: Context?, id: Int) : FCLPage(context, id, R.layout.page_version_list),
     View.OnClickListener {
     private lateinit var binding: PageVersionListBinding
     private var adapter: VersionListAdapter? = null

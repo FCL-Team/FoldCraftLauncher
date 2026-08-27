@@ -67,13 +67,13 @@ public class WorldListItem {
             builder.create().show();
             return;
         }
-        DatapackListPage page = new DatapackListPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_datapack_list, world.getWorldName(), world.getFile());
+        DatapackListPage page = new DatapackListPage(context, FCLPage.PAGE_ID_TEMP, world.getWorldName(), world.getFile());
         UIManager.getInstance().getManageUI().showTempPage(page);
     }
 
     public void showInfo() {
         try {
-            WorldInfoPage page = new WorldInfoPage(context, FCLPage.PAGE_ID_TEMP, R.layout.page_manage_world_info, world);
+            WorldInfoPage page = new WorldInfoPage(context, FCLPage.PAGE_ID_TEMP, world);
             UIManager.getInstance().getManageUI().showTempPage(page);
         } catch (Exception e) {
             // TODO

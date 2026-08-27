@@ -56,8 +56,8 @@ public class ModUpdatesPage extends FCLPage implements View.OnClickListener {
     private FCLButton updateWithout;
     private FCLButton cancel;
 
-    public ModUpdatesPage(Context context, int id, int resId, ModListPage modListPage, ModManager modManager, List<LocalModFile.ModUpdate> list) {
-        super(context, id, resId);
+    public ModUpdatesPage(Context context, int id, ModListPage modListPage, ModManager modManager, List<LocalModFile.ModUpdate> list) {
+        super(context, id, R.layout.page_mod_update);
         this.modListPage = modListPage;
         this.modManager = modManager;
         this.objects = FXCollections.observableList(list.stream().map(it -> new ModUpdateObject(getContext(), it)).collect(Collectors.toList()));

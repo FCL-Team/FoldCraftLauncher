@@ -76,8 +76,8 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
     private FCLImageButton pathButton;
     private FCLButton next;
 
-    public ModpackInfoPage(Context context, int id, int resId, Profile profile, String version, String type, ModpackExportInfo.Options options) {
-        super(context, id, resId);
+    public ModpackInfoPage(Context context, int id, Profile profile, String version, String type, ModpackExportInfo.Options options) {
+        super(context, id, R.layout.page_modpack_info);
         this.profile = profile;
         this.versionName = version;
         this.type = type;
@@ -256,7 +256,7 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
                     )));
                 }
 
-                ModpackFileSelectionPage page = new ModpackFileSelectionPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_modpack_file, profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
+                ModpackFileSelectionPage page = new ModpackFileSelectionPage(getContext(), FCLPage.PAGE_ID_TEMP, profile, versionName, type, ModAdviser::suggestMod, exportInfo, file);
                 UIManager.getInstance().getManageUI().showTempPage(page);
             }
         }

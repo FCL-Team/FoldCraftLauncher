@@ -37,8 +37,8 @@ import com.mio.util.isDocUri
  * 控制布局管理页：左侧布局列表 + 右侧布局信息。
  * 列表选择、信息修改均通过回调直接刷新右侧信息与列表，不使用 fakefx property。
  */
-class ControllerManagePage(context: Context, id: Int, resId: Int) :
-    FCLPage(context, id, resId), View.OnClickListener {
+class ControllerManagePage(context: Context, id: Int) :
+    FCLPage(context, id, R.layout.page_controller_manager), View.OnClickListener {
 
     /** 当前选中的布局 */
     var selectedController: Controller? = null
@@ -152,7 +152,6 @@ class ControllerManagePage(context: Context, id: Int, resId: Int) :
                 val page = ControllerUploadPage(
                     context,
                     PAGE_ID_TEMP,
-                    R.layout.page_controller_upload,
                     selectedController!!
                 )
                 UIManager.instance.controllerUI.showTempPage(page)

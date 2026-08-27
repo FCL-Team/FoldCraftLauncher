@@ -32,9 +32,9 @@ public class ControllerUI extends FCLMultiPageUI {
     @Override
     public FCLPage createPage(int position) {
         if (position == 1) {
-            return new ControllerRepoPage(getContext(), PAGE_ID_CONTROLLER_REPO, R.layout.page_controller_repo);
+            return new ControllerRepoPage(getContext(), PAGE_ID_CONTROLLER_REPO);
         }
-        return new ControllerManagePage(getContext(), PAGE_ID_CONTROLLER_MANAGER, R.layout.page_controller_manager);
+        return new ControllerManagePage(getContext(), PAGE_ID_CONTROLLER_MANAGER);
     }
 
     @Override

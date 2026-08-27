@@ -39,8 +39,8 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
     private Modpack manifest = null;
     private Charset charset;
 
-    public LocalModpackPage(Context context, int id, int resId, Profile profile, String updateVersion, File modpackFile) {
-        super(context, id, resId, profile);
+    public LocalModpackPage(Context context, int id, Profile profile, String updateVersion, File modpackFile) {
+        super(context, id, R.layout.page_modpack, profile);
         this.updateVersion = updateVersion;
         this.modpackFile = modpackFile;
 

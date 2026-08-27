@@ -42,8 +42,8 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
 
     private RemoteVersionListAdapter.OnRemoteVersionSelectListener listener;
 
-    public VersionInstallPage(Context context, int id, int resId) {
-        super(context, id, resId);
+    public VersionInstallPage(Context context, int id) {
+        super(context, id, R.layout.page_install_version);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
         failedRefresh.setOnClickListener(this);
 
         listener = remoteVersion -> {
-            VersionInstallInfoPage page = new VersionInstallInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_installer, remoteVersion.getGameVersion());
+            VersionInstallInfoPage page = new VersionInstallInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, remoteVersion.getGameVersion());
             UIManager.getInstance().getDownloadUI().showTempPage(page);
         };
 

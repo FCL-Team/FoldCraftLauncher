@@ -30,8 +30,8 @@ public class RemoteModVersionPage extends FCLPage {
     private final Profile.ProfileVersion version;
     private final RemoteModVersionPage.DownloadCallback callback;
 
-    public RemoteModVersionPage(Context context, int id, int resId, List<RemoteMod.Version> list, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback, DownloadPage downloadPage) {
-        super(context, id, resId);
+    public RemoteModVersionPage(Context context, int id, List<RemoteMod.Version> list, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback, DownloadPage downloadPage) {
+        super(context, id, R.layout.page_download_addon_version);
         this.version = version;
         this.callback = callback;
 
@@ -39,7 +39,7 @@ public class RemoteModVersionPage extends FCLPage {
         ListView listView = findViewById(R.id.list);
         ModVersionAdapter adapter = new ModVersionAdapter(getContext(), list, modVersion -> {
             if (downloadPage.getPageId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
-                RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon, this.version, modVersion, callback, this, downloadPage);
+                RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, this.version, modVersion, callback, this, downloadPage);
                 UIManager.getInstance().getDownloadUI().showTempPage(page);
             } else {
                 download(modVersion);

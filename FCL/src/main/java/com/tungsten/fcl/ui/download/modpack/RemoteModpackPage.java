@@ -24,8 +24,8 @@ public class RemoteModpackPage extends ModpackPage {
 
     private Modpack modpack;
 
-    public RemoteModpackPage(Context context, int id, int resId, Profile profile, String updateVersion, ServerModpackManifest manifest) {
-        super(context, id, resId, profile);
+    public RemoteModpackPage(Context context, int id, Profile profile, String updateVersion, ServerModpackManifest manifest) {
+        super(context, id, R.layout.page_modpack, profile);
         this.updateVersion = updateVersion;
         this.manifest = manifest;
 

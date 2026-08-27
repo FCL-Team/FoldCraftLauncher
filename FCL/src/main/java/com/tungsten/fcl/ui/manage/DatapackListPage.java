@@ -47,8 +47,8 @@ public class DatapackListPage extends FCLPage implements View.OnClickListener {
     private ListView listView;
     private final DatapackListAdapter adapter;
 
-    public DatapackListPage(Context context, int id, int resId, String worldName, Path worldDir) {
-        super(context, id, resId);
+    public DatapackListPage(Context context, int id, String worldName, Path worldDir) {
+        super(context, id, R.layout.page_datapack_list);
         this.worldDir = worldDir;
 
         datapack = new Datapack(worldDir.resolve("datapacks"));

@@ -64,8 +64,8 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
 
     private SharedPreferences sharedPreferences;
 
-    public LauncherSettingPage(Context context, int id, int resId) {
-        super(context, id, resId);
+    public LauncherSettingPage(Context context, int id) {
+        super(context, id, R.layout.page_setting_launcher);
     }
 
     @Override

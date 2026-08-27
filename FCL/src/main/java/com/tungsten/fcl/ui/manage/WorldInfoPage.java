@@ -74,8 +74,8 @@ public class WorldInfoPage extends FCLPage {
     private FCLEditText foodLevel;
     private FCLEditText xpLevel;
 
-    public WorldInfoPage(Context context, int id, int resId, World world) throws IOException {
-        super(context, id, resId);
+    public WorldInfoPage(Context context, int id, World world) throws IOException {
+        super(context, id, R.layout.page_manage_world_info);
         this.world = world;
         this.levelDat = world.readLevelDat();
         this.dataTag = levelDat.get("Data");

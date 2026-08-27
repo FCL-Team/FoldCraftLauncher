@@ -117,8 +117,8 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
 
     private final LocalModListAdapter adapter;
 
-    public ModListPage(Context context, int id, int resId) {
-        super(context, id, resId);
+    public ModListPage(Context context, int id) {
+        super(context, id, R.layout.page_manage_mod);
         adapter = new LocalModListAdapter(getContext(), this, () -> {
             calculateMod();
             return Unit.INSTANCE;
@@ -532,7 +532,7 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
                             builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.create().show();
                         } else {
-                            ModUpdatesPage page = new ModUpdatesPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_mod_update, this, modManager, result);
+                            ModUpdatesPage page = new ModUpdatesPage(getContext(), FCLPage.PAGE_ID_TEMP, this, modManager, result);
                             UIManager.getInstance().getManageUI().showTempPage(page);
                         }
                     })

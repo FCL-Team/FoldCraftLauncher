@@ -61,8 +61,8 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
     private ListView listView;
     private FCLButton next;
 
-    public ModpackFileSelectionPage(Context context, int id, int resId, Profile profile, String version, String type, ModAdviser adviser, ModpackExportInfo exportInfo, File file) {
-        super(context, id, resId);
+    public ModpackFileSelectionPage(Context context, int id, Profile profile, String version, String type, ModAdviser adviser, ModpackExportInfo exportInfo, File file) {
+        super(context, id, R.layout.page_modpack_file);
         this.profile = profile;
         this.version = version;
         this.modpackType = type;

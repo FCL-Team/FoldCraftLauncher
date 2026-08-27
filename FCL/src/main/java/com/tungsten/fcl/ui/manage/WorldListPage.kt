@@ -44,7 +44,7 @@ import com.mio.util.copyFileToDir
 import com.mio.util.getLocalizedText
 import com.mio.util.isDocUri
 
-class WorldListPage(context: Context?, id: Int, resId: Int) : FCLPage(context, id, resId), VersionLoadable, View.OnClickListener {
+class WorldListPage(context: Context?, id: Int) : FCLPage(context, id, R.layout.page_manage_world), VersionLoadable, View.OnClickListener {
     private val itemsProperty: ListProperty<WorldListItem> =
         SimpleListProperty(FXCollections.observableArrayList())
 

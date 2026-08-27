@@ -145,8 +145,8 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
      */
     private final InvalidationListener sourceListener = observable -> refreshCategory(true);
 
-    public DownloadPage(Context context, int resId) {
-        super(context, FCLPage.PAGE_ID_TEMP, resId);
+    public DownloadPage(Context context) {
+        super(context, FCLPage.PAGE_ID_TEMP, R.layout.page_download);
         this.downloadProvider = DownloadProviders.getDownloadProvider();
         create();
     }
@@ -399,7 +399,7 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
 
     private RemoteModListAdapter createAdapter(ArrayList<RemoteMod> list) {
         return new RemoteModListAdapter(getContext(), this, list, mod -> {
-            RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon_info, this, mod, version.get(), callback);
+            RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, this, mod, version.get(), callback);
             UIManager.getInstance().getDownloadUI().showTempPage(page);
         });
     }
@@ -746,7 +746,7 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
             sourceSpinner.setSelection(1);
             downloadSource.set(sourceSpinner.getItemAtPosition(1).toString());
         }
-        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, R.layout.page_download_addon_info, this, mod, version.get(), callback);
+        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, this, mod, version.get(), callback);
         UIManager.getInstance().getDownloadUI().showTempPage(page);
     }
 }

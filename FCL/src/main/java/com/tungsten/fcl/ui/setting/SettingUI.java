@@ -42,11 +42,11 @@ public class SettingUI extends FCLMultiPageUI {
     public FCLPage createPage(int position) {
         switch (position) {
             case 1:
-                return new LauncherSettingPage(getContext(), PAGE_ID_SETTING_LAUNCHER, R.layout.page_setting_launcher);
+                return new LauncherSettingPage(getContext(), PAGE_ID_SETTING_LAUNCHER);
             case 2:
-                return new AboutPage(getContext(), PAGE_ID_SETTING_ABOUT, R.layout.page_setting_about);
+                return new AboutPage(getContext(), PAGE_ID_SETTING_ABOUT);
             default:
-                return new VersionSettingPage(getContext(), PAGE_ID_SETTING_GAME, R.layout.page_version_setting, true);
+                return new VersionSettingPage(getContext(), PAGE_ID_SETTING_GAME, true);
         }
     }
 

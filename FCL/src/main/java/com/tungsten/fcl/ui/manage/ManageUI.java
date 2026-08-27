@@ -86,14 +86,14 @@ public class ManageUI extends FCLMultiPageUI {
     public FCLPage createPage(int position) {
         return switch (position) {
             case 1 ->
-                    new ManagePage(getContext(), PAGE_ID_MANAGE_MANAGE, R.layout.page_manage_version);
+                    new ManagePage(getContext(), PAGE_ID_MANAGE_MANAGE);
             case 2 ->
-                    new InstallerListPage(getContext(), PAGE_ID_MANAGE_INSTALL, R.layout.page_manage_auto_install);
-            case 3 -> new ModListPage(getContext(), PAGE_ID_MANAGE_MOD, R.layout.page_manage_mod);
+                    new InstallerListPage(getContext(), PAGE_ID_MANAGE_INSTALL);
+            case 3 -> new ModListPage(getContext(), PAGE_ID_MANAGE_MOD);
             case 4 ->
-                    new WorldListPage(getContext(), PAGE_ID_MANAGE_WORLD, R.layout.page_manage_world);
+                    new WorldListPage(getContext(), PAGE_ID_MANAGE_WORLD);
             default ->
-                    new VersionSettingPage(getContext(), PAGE_ID_MANAGE_SETTING, R.layout.page_version_setting, false);
+                    new VersionSettingPage(getContext(), PAGE_ID_MANAGE_SETTING, false);
         };
     }
 
