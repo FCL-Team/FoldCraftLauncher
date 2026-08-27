@@ -76,6 +76,12 @@
     <string name="account_methods_microsoft_hint">Por favor clique no botão de "Login", um código será copiado automaticamente, insira o código no navegador que será aberto para finalizar o processo de login.</string>
     <string name="account_login_refresh">Re-logar</string>
     <string name="account_login_refresh_microsoft_hint">Por causa da autorização de conta estar inválida, você precisa adicionar novamente sua conta Microsoft.\nPor favor clique no botão "OK", um código será copiado automaticamente, insira o código no navegador que será aberto para finalizar o processo de login.</string>
+    <string name="login_state_microsoft_wait_browser">Aguardando autorização no navegador…</string>
+    <string name="login_state_microsoft_xbox">Autenticando com o Xbox Live…</string>
+    <string name="login_state_microsoft_xsts">Obtendo token XSTS do Xbox…</string>
+    <string name="login_state_microsoft_minecraft">Entrando nos serviços do Minecraft…</string>
+    <string name="login_state_microsoft_ownership">Verificando propriedade do jogo…</string>
+    <string name="login_state_microsoft_profile">Obtendo perfil do jogador…</string>
     <string name="account_select_character">Selecionar personagem</string>
     <string name="account_skin">Skin</string>
     <string name="account_skin_type_default">Padrão</string>

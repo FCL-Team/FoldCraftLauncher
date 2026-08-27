@@ -80,6 +80,12 @@
     <string name="account_methods_microsoft_hint">請點擊「登錄」按鈕，稍後會自動複製一段代碼，喺打開嘅瀏覽器頁面中輸入複製嘅代碼並完成登錄過程。</string>
     <string name="account_login_refresh">重新登錄</string>
     <string name="account_login_refresh_microsoft_hint">由於賬號授權無效，需要重新登錄你嘅微軟賬號\n請點擊「確認」按鈕，稍後會自動複製一段代碼，喺打開嘅瀏覽器頁面中輸入複製嘅代碼並完成登錄過程。</string>
+    <string name="login_state_microsoft_wait_browser">等待在瀏覽器完成授權…</string>
+    <string name="login_state_microsoft_xbox">正在驗證 Xbox Live 帳戶…</string>
+    <string name="login_state_microsoft_xsts">正在取得 Xbox XSTS 憑證…</string>
+    <string name="login_state_microsoft_minecraft">正在登入 Minecraft 服務…</string>
+    <string name="login_state_microsoft_ownership">正在驗證遊戲所有權…</string>
+    <string name="login_state_microsoft_profile">正在獲取玩家檔案…</string>
     <string name="account_select_character">選擇角色</string>
     <string name="account_skin">皮膚</string>
     <string name="account_skin_type_default">默認</string>

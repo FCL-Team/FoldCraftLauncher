@@ -81,6 +81,12 @@
     <string name="account_methods_microsoft_hint">Нажмите «Войти», код скопируется автоматически. Вставьте его в браузер.</string>
     <string name="account_login_refresh">Повторный вход</string>
     <string name="account_login_refresh_microsoft_hint">"Поскольку авторизация учетной записи недействительна, вам необходимо повторно добавить свою учетную запись Microsoft. \nНажмите кнопку «ОК», вставьте код в строку в браузере, чтобы завершить процесс входа."</string>
+    <string name="login_state_microsoft_wait_browser">Ожидание авторизации в браузере…</string>
+    <string name="login_state_microsoft_xbox">Выполняется вход в Xbox Live…</string>
+    <string name="login_state_microsoft_xsts">Получение токена XSTS Xbox…</string>
+    <string name="login_state_microsoft_minecraft">Выполняется вход в службы Minecraft…</string>
+    <string name="login_state_microsoft_ownership">Проверка владения игрой…</string>
+    <string name="login_state_microsoft_profile">Получение профиля игрока…</string>
     <string name="account_select_character">Выберите персонажа</string>
     <string name="account_skin">Скин</string>
     <string name="account_skin_type_default">По умолчанию</string>

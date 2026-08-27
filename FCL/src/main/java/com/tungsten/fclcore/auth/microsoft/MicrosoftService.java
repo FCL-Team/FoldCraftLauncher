@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
+import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.auth.AuthenticationException;
 import com.tungsten.fclcore.auth.OAuth;
 import com.tungsten.fclcore.auth.ServerDisconnectException;
@@ -61,6 +62,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class MicrosoftService {
+    /** 登录阶段标识，用于向 UI 报告实时进度 */
+    public static final String STAGE_XBOX = "xbox";
+    public static final String STAGE_XSTS = "xsts";
+    public static final String STAGE_MINECRAFT = "minecraft";
+    public static final String STAGE_OWNERSHIP = "ownership";
+    public static final String STAGE_PROFILE = "profile";
+
     private static final String SCOPE = "XboxLive.signin offline_access";
     private static final ThreadPoolExecutor POOL = threadPool("MicrosoftProfileProperties", true, 2, 10,
             TimeUnit.SECONDS);
@@ -81,10 +89,11 @@ public class MicrosoftService {
         return profileRepository;
     }
 
-    public MicrosoftSession authenticate() throws AuthenticationException {
+    public MicrosoftSession authenticate(AccountFactory.ProgressCallback progressCallback) throws AuthenticationException {
+        requireNonNull(progressCallback);
         try {
             OAuth.Result result = OAuth.MICROSOFT.authenticate(OAuth.GrantFlow.DEVICE, new OAuth.Options(SCOPE, callback));
-            return authenticateViaLiveAccessToken(result.accessToken(), result.refreshToken());
+            return authenticateViaLiveAccessToken(result.accessToken(), result.refreshToken(), progressCallback);
         } catch (IOException e) {
             throw new ServerDisconnectException(e);
         } catch (JsonParseException e) {
@@ -92,10 +101,11 @@ public class MicrosoftService {
         }
     }
 
-    public MicrosoftSession refresh(MicrosoftSession oldSession) throws AuthenticationException {
+    public MicrosoftSession refresh(MicrosoftSession oldSession, AccountFactory.ProgressCallback progressCallback) throws AuthenticationException {
+        requireNonNull(progressCallback);
         try {
             OAuth.Result result = OAuth.MICROSOFT.refresh(oldSession.getRefreshToken(), new OAuth.Options(SCOPE, callback));
-            return authenticateViaLiveAccessToken(result.accessToken(), result.refreshToken());
+            return authenticateViaLiveAccessToken(result.accessToken(), result.refreshToken(), progressCallback);
         } catch (IOException e) {
             throw new ServerDisconnectException(e);
         } catch (JsonParseException e) {
@@ -122,11 +132,12 @@ public class MicrosoftService {
         return uhs;
     }
 
-    private MicrosoftSession authenticateViaLiveAccessToken(String liveAccessToken, String liveRefreshToken) throws IOException, JsonParseException, AuthenticationException {
+    private MicrosoftSession authenticateViaLiveAccessToken(String liveAccessToken, String liveRefreshToken, AccountFactory.ProgressCallback progressCallback) throws IOException, JsonParseException, AuthenticationException {
         String uhs;
         XBoxLiveAuthenticationResponse xboxResponse, minecraftXstsResponse;
         try {
             // Authenticate with XBox Live
+            progressCallback.onProgressChanged(STAGE_XBOX);
             xboxResponse = HttpRequest
                     .POST("https://user.auth.xboxlive.com/user/authenticate")
                     .json(mapOf(
@@ -140,6 +151,7 @@ public class MicrosoftService {
 
             uhs = getUhs(xboxResponse, null);
 
+            progressCallback.onProgressChanged(STAGE_XSTS);
             minecraftXstsResponse = HttpRequest
                     .POST("https://xsts.auth.xboxlive.com/xsts/authorize")
                     .json(mapOf(
@@ -160,6 +172,7 @@ public class MicrosoftService {
         getUhs(minecraftXstsResponse, uhs);
 
         // Authenticate with Minecraft
+        progressCallback.onProgressChanged(STAGE_MINECRAFT);
         MinecraftLoginWithXBoxResponse minecraftResponse = HttpRequest
                 .POST("https://api.minecraftservices.com/authentication/login_with_xbox")
                 .json(mapOf(pair("identityToken", "XBL3.0 x=" + uhs + ";" + minecraftXstsResponse.token)))
@@ -169,6 +182,7 @@ public class MicrosoftService {
         long notAfter = minecraftResponse.expiresIn * 1000L + System.currentTimeMillis();
 
         // Check MC ownership, this is necessary, see GitHub#2979
+        progressCallback.onProgressChanged(STAGE_OWNERSHIP);
         HttpURLConnection request = HttpRequest.GET("https://api.minecraftservices.com/entitlements/mcstore")
                 .authorization("Bearer " + minecraftResponse.accessToken)
                 .retry(5)
@@ -179,6 +193,7 @@ public class MicrosoftService {
         }
 
         // Get Minecraft Account UUID
+        progressCallback.onProgressChanged(STAGE_PROFILE);
         MinecraftProfileResponse profileResponse = getMinecraftProfile(minecraftResponse.tokenType, minecraftResponse.accessToken);
         handleErrorResponse(profileResponse);
 

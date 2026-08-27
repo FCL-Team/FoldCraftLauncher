@@ -76,6 +76,12 @@
     <string name="account_methods_microsoft_hint">لطفا روی دکمه "ورود" کلیک کنید، یک کد به طور خودکار کپی می شود، کد را در مرورگری که باز می شود وارد کنید تا فرآیند ورود به سیستم تکمیل شود.</string>
     <string name="account_login_refresh">ورود دوباره</string>
     <string name="account_login_refresh_microsoft_hint">از آنجایی که مجوز حساب نامعتبر است، باید حساب مایکروسافت خود را دوباره اضافه کنید\nلطفا روی دکمه "تایید" کلیک کنید، یک کد به طور خودکار کپی می شود، کد را در مرورگری که باز می شود وارد کنید تا فرآیند ورود به سیستم تکمیل شود.</string>
+    <string name="login_state_microsoft_wait_browser">در انتظار تأیید در مرورگر…</string>
+    <string name="login_state_microsoft_xbox">در حال تأیید حساب Xbox Live…</string>
+    <string name="login_state_microsoft_xsts">در حال دریافت توکن XSTS ایکس‌باکس…</string>
+    <string name="login_state_microsoft_minecraft">در حال ورود به خدمات ماینکرفت…</string>
+    <string name="login_state_microsoft_ownership">در حال بررسی مالکیت بازی…</string>
+    <string name="login_state_microsoft_profile">در حال دریافت پروفایل بازیکن…</string>
     <string name="account_select_character">انتخاب شخصیت</string>
     <string name="account_skin">اسکین</string>
     <string name="account_skin_type_default">پیش فرض</string>

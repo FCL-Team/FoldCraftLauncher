@@ -41,7 +41,9 @@ public class MicrosoftAccountFactory extends AccountFactory<MicrosoftAccount> {
     public MicrosoftAccount create(CharacterSelector selector, String username, String password, ProgressCallback progressCallback, Object additionalData) throws AuthenticationException {
         Objects.requireNonNull(selector);
 
-        return new MicrosoftAccount(service, selector);
+        // 构造器内即完成首次登录，进度回调必须随构造传入
+        return new MicrosoftAccount(service, selector,
+                progressCallback != null ? progressCallback : AccountFactory.ProgressCallback.NO_OP);
     }
 
     @Override

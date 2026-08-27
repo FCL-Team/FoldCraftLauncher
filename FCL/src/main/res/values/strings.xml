@@ -100,6 +100,12 @@
     <string name="account_methods_microsoft_hint">Please click on the "Login" button, a piece of code will be automatically copied later, enter the code in the opened browser to finish the login process.</string>
     <string name="account_login_refresh">Re-login</string>
     <string name="account_login_refresh_microsoft_hint">Because the account authorization is invalid, you need to re-add your Microsoft account\nPlease click on the "OK" button, a piece of code will be automatically copied later, enter the code in the opened browser to finish the login process.</string>
+    <string name="login_state_microsoft_wait_browser">Waiting for browser authorization…</string>
+    <string name="login_state_microsoft_xbox">Authenticating with Xbox Live…</string>
+    <string name="login_state_microsoft_xsts">Acquiring Xbox XSTS token…</string>
+    <string name="login_state_microsoft_minecraft">Signing in to Minecraft services…</string>
+    <string name="login_state_microsoft_ownership">Verifying game ownership…</string>
+    <string name="login_state_microsoft_profile">Fetching player profile…</string>
     <string name="account_select_character">Select character</string>
     <string name="account_skin">Skin</string>
     <string name="account_skin_type_default">Default</string>

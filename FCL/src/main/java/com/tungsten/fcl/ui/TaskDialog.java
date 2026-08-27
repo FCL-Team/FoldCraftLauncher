@@ -146,6 +146,11 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
         logScroll.post(() -> logScroll.fullScroll(View.FOCUS_DOWN));
     }
 
+    /** 手动追加一条实时进度文字，供无法接入任务体系的流程使用 */
+    public void appendLog(String message) {
+        onInstallerLog(message);
+    }
+
     private void removeMessageListener(Task<?> task) {
         ChangeListener<String> listener = messageListeners.remove(task);
         if (listener != null) {

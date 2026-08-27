@@ -96,6 +96,12 @@
     <string name="account_methods_microsoft_hint">Vui lòng nhấp vào nút "Đăng nhập", một đoạn mã sẽ được tự động sao chép sau đó, nhập mã vào trình duyệt đã mở để hoàn tất quá trình đăng nhập.</string>
     <string name="account_login_refresh">Đăng nhập lại</string>
     <string name="account_login_refresh_microsoft_hint">Vì ủy quyền tài khoản không hợp lệ, bạn cần thêm lại tài khoản Microsoft của mình.\nVui lòng nhấp vào nút "OK", một đoạn mã sẽ được tự động sao chép sau đó, nhập mã vào trình duyệt đã mở để hoàn tất quá trình đăng nhập.</string>
+    <string name="login_state_microsoft_wait_browser">Đang chờ ủy quyền trên trình duyệt…</string>
+    <string name="login_state_microsoft_xbox">Đang xác thực với Xbox Live…</string>
+    <string name="login_state_microsoft_xsts">Đang lấy mã thông báo XSTS của Xbox…</string>
+    <string name="login_state_microsoft_minecraft">Đang đăng nhập vào dịch vụ Minecraft…</string>
+    <string name="login_state_microsoft_ownership">Đang xác minh quyền sở hữu trò chơi…</string>
+    <string name="login_state_microsoft_profile">Đang tải hồ sơ người chơi…</string>
     <string name="account_select_character">Chọn nhân vật</string>
     <string name="account_skin">Skin</string>
     <string name="account_skin_type_default">Mặc định</string>

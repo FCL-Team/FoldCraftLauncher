@@ -37,6 +37,7 @@ import com.mio.data.Renderer;
 import com.mio.manager.RendererManager;
 import com.mio.minecraft.ModCheckException;
 import com.mio.minecraft.ModChecker;
+import com.mio.util.LoginProgressKt;
 import com.mio.util.ParseUtil;
 import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
@@ -60,6 +61,7 @@ import com.tungsten.fclcore.auth.AuthenticationException;
 import com.tungsten.fclcore.auth.CharacterDeletedException;
 import com.tungsten.fclcore.auth.CredentialExpiredException;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloadException;
+import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.download.MaintainTask;
@@ -108,6 +110,7 @@ import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 public final class LauncherHelper {
@@ -186,7 +189,10 @@ public final class LauncherHelper {
                     return null;
                 })
                 .thenComposeAsync(() -> gameVersion.map(s -> new GameVerificationFixTask(dependencyManager, s, version.get())).orElse(null))
-                .thenComposeAsync(() -> logIn(context, account).withStage("launch.state.logging_in"))
+                .thenComposeAsync(() -> logIn(context, account,
+                        // 微软登录阶段实时写入启动过程的日志区
+                        text -> Schedulers.androidUIThread().execute(() -> launchingStepsPane.appendLog(text)))
+                        .withStage("launch.state.logging_in"))
                 .thenComposeAsync(authInfo -> Task.supplyAsync(() -> {
                             try {
                                 MenuSetting menuSetting = new GsonBuilder()
@@ -579,8 +585,17 @@ public final class LauncherHelper {
         }).withStage("launch.state.java");
     }
 
-    private static Task<AuthInfo> logIn(Context context, Account account) {
+    /**
+     * 登录账户；progressConsumer 用于接收微软账户的实时登录阶段文字（可为 null）。
+     */
+    private static Task<AuthInfo> logIn(Context context, Account account, Consumer<String> progressConsumer) {
         return Task.composeAsync(() -> {
+            // 微软账户登录期间上报各认证阶段，进度回调在后台登录线程触发
+            boolean withProgress = account instanceof MicrosoftAccount && progressConsumer != null;
+            if (withProgress) {
+                ((MicrosoftAccount) account).setProgressCallback(
+                        stage -> progressConsumer.accept(LoginProgressKt.loginStageText(context, stage)));
+            }
             try {
                 return Task.completed(account.logIn());
             } catch (CredentialExpiredException e) {
@@ -601,6 +616,10 @@ public final class LauncherHelper {
                     dialog.show();
                 });
                 return Task.fromCompletableFuture(future).thenComposeAsync(task -> task);
+            } finally {
+                if (withProgress) {
+                    ((MicrosoftAccount) account).setProgressCallback(null);
+                }
             }
         });
     }
@@ -632,7 +651,7 @@ public final class LauncherHelper {
         @Override
         public void onClick(View view) {
             if (view == retry) {
-                future.complete(logIn(getContext(), account));
+                future.complete(logIn(getContext(), account, null));
             }
             if (view == skip) {
                 try {

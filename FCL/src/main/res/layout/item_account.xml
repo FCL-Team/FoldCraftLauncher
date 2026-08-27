@@ -65,6 +65,15 @@
                 android:textSize="11sp"
                 app:auto_text_tint="true" />
 
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/login_progress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:textSize="11sp"
+                android:visibility="gone"
+                app:auto_text_tint="true" />
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <com.tungsten.fcllibrary.component.view.FCLImageButton

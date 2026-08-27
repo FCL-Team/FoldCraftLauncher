@@ -20,6 +20,7 @@ package com.tungsten.fclcore.auth.microsoft;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static java.util.Objects.requireNonNull;
 
+import com.tungsten.fclcore.auth.AccountFactory;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.auth.AuthenticationException;
 import com.tungsten.fclcore.auth.CharacterSelector;
@@ -43,6 +44,9 @@ public class MicrosoftAccount extends OAuthAccount {
     protected final MicrosoftService service;
     protected UUID characterUUID;
 
+    /** 登录进度回调，UI 线程注入、后台登录线程读取，故为 volatile */
+    private volatile AccountFactory.ProgressCallback progressCallback = AccountFactory.ProgressCallback.NO_OP;
+
     private boolean authenticated = false;
     private MicrosoftSession session;
 
@@ -52,12 +56,21 @@ public class MicrosoftAccount extends OAuthAccount {
         this.characterUUID = requireNonNull(session.getProfile().getId());
     }
 
-    protected MicrosoftAccount(MicrosoftService service, CharacterSelector characterSelector) throws AuthenticationException {
-        this.service = requireNonNull(service);
+    /**
+     * 注入登录进度回调，仅在登录任务进行期间由 UI 设置，任务结束后应置回 null。
+     */
+    public void setProgressCallback(AccountFactory.ProgressCallback progressCallback) {
+        this.progressCallback = progressCallback != null ? progressCallback : AccountFactory.ProgressCallback.NO_OP;
+    }
 
-        MicrosoftSession acquiredSession = service.authenticate();
+    protected MicrosoftAccount(MicrosoftService service, CharacterSelector characterSelector, AccountFactory.ProgressCallback progressCallback) throws AuthenticationException {
+        this.service = requireNonNull(service);
+        // 构造器内即开始首次认证，进度回调必须在认证发起前就位
+        setProgressCallback(progressCallback);
+
+        MicrosoftSession acquiredSession = service.authenticate(this.progressCallback);
         if (acquiredSession.getProfile() == null) {
-            session = service.refresh(acquiredSession);
+            session = service.refresh(acquiredSession, this.progressCallback);
         } else {
             session = acquiredSession;
         }
@@ -93,7 +106,7 @@ public class MicrosoftAccount extends OAuthAccount {
             if (service.validate(session.getNotAfter(), session.getTokenType(), session.getAccessToken())) {
                 authenticated = true;
             } else {
-                MicrosoftSession acquiredSession = service.refresh(session);
+                MicrosoftSession acquiredSession = service.refresh(session, progressCallback);
                 if (!Objects.equals(acquiredSession.getProfile().getId(), session.getProfile().getId())) {
                     throw new ServerResponseMalformedException("Selected profile changed");
                 }
@@ -110,13 +123,13 @@ public class MicrosoftAccount extends OAuthAccount {
 
     @Override
     public AuthInfo logInWhenCredentialsExpired() throws AuthenticationException {
-        MicrosoftSession acquiredSession = service.authenticate();
+        MicrosoftSession acquiredSession = service.authenticate(progressCallback);
         if (!Objects.equals(characterUUID, acquiredSession.getProfile().getId())) {
             throw new WrongAccountException(characterUUID, acquiredSession.getProfile().getId());
         }
 
         if (acquiredSession.getProfile() == null) {
-            session = service.refresh(acquiredSession);
+            session = service.refresh(acquiredSession, progressCallback);
         } else {
             session = acquiredSession;
         }

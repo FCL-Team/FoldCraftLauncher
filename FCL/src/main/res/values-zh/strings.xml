@@ -87,6 +87,12 @@
     <string name="account_methods_microsoft_hint">请点击“登录”按钮，稍后将自动复制一段代码，在打开的浏览器页面中输入复制的代码并完成登录过程。</string>
     <string name="account_login_refresh">重新登录</string>
     <string name="account_login_refresh_microsoft_hint">由于账号授权无效，需要重新登录您的微软账号\n请点击“确认”按钮，稍后将自动复制一段代码，在打开的浏览器页面中输入复制的代码并完成登录过程。</string>
+    <string name="login_state_microsoft_wait_browser">等待在浏览器中完成授权…</string>
+    <string name="login_state_microsoft_xbox">正在验证 Xbox Live 账户…</string>
+    <string name="login_state_microsoft_xsts">正在获取 Xbox XSTS 令牌…</string>
+    <string name="login_state_microsoft_minecraft">正在登录 Minecraft 服务…</string>
+    <string name="login_state_microsoft_ownership">正在校验游戏所有权…</string>
+    <string name="login_state_microsoft_profile">正在获取玩家档案…</string>
     <string name="account_select_character">选择角色</string>
     <string name="account_skin">皮肤</string>
     <string name="account_skin_type_default">默认</string>

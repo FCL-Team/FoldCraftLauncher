@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 
+import com.mio.util.LoginStageTextBinder
 import com.mio.util.copyText
 import com.mio.util.openLink
 import com.mio.util.openLinkWithBuiltinWebView
@@ -116,6 +117,9 @@ class CreateAccountDialog : FCLDialog, View.OnClickListener {
         if (factory !is MicrosoftAccountFactory) {
             binding.cancel.isEnabled = false
         }
+        // 微软登录期间实时显示各阶段进度；其余类型无阶段可报
+        val microsoft = details as? MicrosoftDetails
+        microsoft?.showProgress(context.getString(R.string.launch_state_logging_in))
 
         val username: String?
         val password: String?
@@ -138,11 +142,12 @@ class CreateAccountDialog : FCLDialog, View.OnClickListener {
                 // factory 为通配符类型，create 结果需显式收窄
                 @Suppress("UNCHECKED_CAST")
                 val account =
-                    factory.create(selector, username, password, null, additionalData) as Account
+                    factory.create(selector, username, password, microsoft?.progressCallback, additionalData) as Account
                 account
             }.whenComplete(Schedulers.androidUIThread()) { account, exception ->
                 binding.login.isEnabled = true
                 binding.cancel.isEnabled = true
+                microsoft?.hideProgress()
                 if (exception == null) {
                     Accounts.addAccount(account)
                     Accounts.setSelectedAccount(account)
@@ -237,7 +242,7 @@ private class OfflineDetails(private val context: Context) : Details {
 
 /**
  * 微软账户登录面板：无输入项，设备码登录时自动复制授权码，
- * 认证浏览器由 OAuth 回调事件打开。
+ * 认证浏览器由 OAuth 回调事件打开；内嵌进度行实时显示登录阶段。
  */
 private class MicrosoftDetails(private val context: Context) : Details {
 
@@ -245,13 +250,20 @@ private class MicrosoftDetails(private val context: Context) : Details {
     private val holder = WeakListenerHolder()
     private val handler = Handler(Looper.getMainLooper())
 
+    /** 登录进度回调：后台线程的阶段通知经主线程调度刷新到内嵌进度行 */
+    val progressCallback: LoginStageTextBinder =
+        LoginStageTextBinder(context, binding.loginProgress.progressText)
+
     var useExternalBrowser = false
 
     init {
         // 设备码请求发出后立即复制到剪贴板，方便用户在浏览器中粘贴
         holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak { event ->
             event?.let {
-                handler.post { copyText(context, it.userCode) }
+                handler.post {
+                    copyText(context, it.userCode)
+                    showProgress(context.getString(R.string.login_state_microsoft_wait_browser))
+                }
             }
         })
         holder.add(Accounts.OAUTH_CALLBACK.onOpenBrowser.registerWeak { event ->
@@ -261,6 +273,15 @@ private class MicrosoftDetails(private val context: Context) : Details {
                 openLinkWithBuiltinWebView(context, event.url)
             }
         })
+    }
+
+    fun showProgress(text: String) {
+        binding.loginProgress.root.visibility = View.VISIBLE
+        binding.loginProgress.progressText.text = text
+    }
+
+    fun hideProgress() {
+        binding.loginProgress.root.visibility = View.GONE
     }
 
     override val view: View get() = binding.root

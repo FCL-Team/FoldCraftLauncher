@@ -78,6 +78,12 @@
     <string name="account_methods_microsoft_hint">Klicken Sie auf „Anmelden“, der Code wird automatisch kopiert. Fügen Sie ihn im Browser ein.</string>
     <string name="account_login_refresh">Erneut anmelden</string>
     <string name="account_login_refresh_microsoft_hint">"Da die Kontoauthentifizierung ungültig ist, müssen Sie Ihr Microsoft-Konto erneut hinzufügen.\nKlicken Sie auf „OK“, fügen Sie den Code im Browser ein, um den Anmeldevorgang abzuschließen."</string>
+    <string name="login_state_microsoft_wait_browser">Warten auf Autorisierung im Browser …</string>
+    <string name="login_state_microsoft_xbox">Authentifizierung mit Xbox Live …</string>
+    <string name="login_state_microsoft_xsts">Xbox-XSTS-Token wird abgerufen …</string>
+    <string name="login_state_microsoft_minecraft">Anmeldung bei den Minecraft-Diensten …</string>
+    <string name="login_state_microsoft_ownership">Spielbesitz wird überprüft …</string>
+    <string name="login_state_microsoft_profile">Spielerprofil wird abgerufen …</string>
     <string name="account_select_character">Charakter auswählen</string>
     <string name="account_skin">Skin</string>
     <string name="account_skin_type_default">Standard</string>

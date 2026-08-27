@@ -48,6 +48,10 @@ public abstract class AccountFactory<T extends Account> {
 
     public interface ProgressCallback {
         void onProgressChanged(String stageName);
+
+        /** 空实现，供无 UI 反馈的静默登录路径使用 */
+        ProgressCallback NO_OP = stageName -> {
+        };
     }
 
     /**

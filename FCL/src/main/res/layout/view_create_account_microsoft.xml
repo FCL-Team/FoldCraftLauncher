@@ -16,6 +16,11 @@
             android:text="@string/account_methods_microsoft_hint"
             android:textSize="13sp"/>
 
+        <include
+            android:id="@+id/login_progress"
+            android:visibility="gone"
+            layout="@layout/view_login_progress"/>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
 
 </ScrollView>
