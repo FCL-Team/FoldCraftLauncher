@@ -78,13 +78,13 @@ public class Versions {
                         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
                         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                         builder.setCancelable(false);
-                        builder.setTitle(context.getString(R.string.download_failed));
+                        builder.setTitle(context.getString(R.string.install_failed_downloading));
                         builder.setMessage(context.getString(R.string.install_failed_downloading_detail, file.file().url()) + "\n" + StringUtils.getStackTrace(e));
                         builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                         builder.create().show();
                     }
                 }).executor();
-        DownloadManager.submit(file.getFile().getFilename(), downloadTask, executor);
+        DownloadManager.submit(file.file().filename(), downloadTask, executor);
         executor.start();
     }
 
