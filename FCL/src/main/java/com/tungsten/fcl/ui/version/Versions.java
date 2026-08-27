@@ -71,6 +71,8 @@ public class Versions {
         TaskExecutor executor = downloadTask.whenComplete(Schedulers.androidUIThread(), e -> {
                     if (e == null) {
                         LocalModpackPage page = new LocalModpackPage(context, FCLPage.PAGE_ID_TEMP, profile, null, modpack.toFile());
+                        // 切换到下载 UI，让安装页显示在前台（用户在别的页面发起下载时也能看到跳转）
+                        UIManager.getInstance().switchUI(UIManager.getInstance().getDownloadUI());
                         UIManager.getInstance().getDownloadUI().showTempPage(page);
                     } else if (e instanceof CancellationException) {
                         Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
