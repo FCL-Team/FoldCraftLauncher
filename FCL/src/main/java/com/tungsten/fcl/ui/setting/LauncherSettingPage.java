@@ -466,6 +466,8 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                         .show();
                 break;
             case SPINNER_THEME_MODE:
+                // 初始化/复用 bind 的回调与当前值相同，忽略；实际切换才生效
+                if (position == sharedPreferences.getInt("themeMode", 0)) return;
                 sharedPreferences.edit().putInt("themeMode", position).apply();
                 int mode = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
                 if (position != 0) {

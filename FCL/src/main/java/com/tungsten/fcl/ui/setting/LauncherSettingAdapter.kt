@@ -565,6 +565,9 @@ class LauncherSettingAdapter(
         binding.spinner.onItemSelectedListener = null
         binding.spinner.adapter = adapter
         binding.spinner.setSelection(row.selection)
+        // setAdapter/setSelection 的选中回调在下一次布局时才异步触发（伪回调），
+        // 用标志吞掉绑定引发的首次回调，行创建/复用时不再重复触发选中逻辑
+        var initialized = false
         binding.spinner.onItemSelectedListener =
             object : android.widget.AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -573,6 +576,10 @@ class LauncherSettingAdapter(
                     position: Int,
                     id: Long
                 ) {
+                    if (!initialized) {
+                        initialized = true
+                        return
+                    }
                     listener.onSpinnerSelect(row.tag, position)
                 }
 
@@ -663,6 +670,8 @@ class LauncherSettingAdapter(
         spinner.onItemSelectedListener = null
         spinner.adapter = adapter
         spinner.setSelection(selection)
+        // 同 bindSpinner：吞掉绑定引发的首次伪回调
+        var initialized = false
         spinner.onItemSelectedListener =
             object : android.widget.AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -671,6 +680,10 @@ class LauncherSettingAdapter(
                     position: Int,
                     id: Long
                 ) {
+                    if (!initialized) {
+                        initialized = true
+                        return
+                    }
                     listener.onSpinnerSelect(tag, position)
                 }
 
