@@ -19,8 +19,7 @@
             android:gravity="center"
             android:singleLine="true"
             android:text="@string/download_manager"
-            android:textSize="16sp"
-            app:auto_text_tint="true" />
+            android:textSize="16sp"/>
 
         <com.tungsten.fcllibrary.component.view.FCLImageView
             android:id="@+id/close"
@@ -28,18 +27,17 @@
             android:layout_height="28dp"
             android:layout_gravity="end|center_vertical"
             android:padding="4dp"
-            android:src="@drawable/ic_baseline_close_24"
-            app:auto_src_tint="true" />
+            android:src="@drawable/ic_baseline_close_24"/>
 
     </FrameLayout>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
         android:layout_weight="1"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp" />
+        android:clipToPadding="false"
+        android:paddingBottom="4dp" />
 
 </LinearLayout>

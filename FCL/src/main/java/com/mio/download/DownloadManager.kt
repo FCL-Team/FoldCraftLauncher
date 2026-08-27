@@ -77,7 +77,9 @@ object DownloadManager {
                     task.progressProperty().removeListener(progressListener)
                     _tasks.update { list -> list.filterNot { it.id == info.id } }
                     releaseDownloadWakeLock()
-                    executor.removeTaskListener(this)
+                    // 注意：不要在 onStop 回调里 removeTaskListener——AsyncTaskExecutor
+                    // 正并发遍历 listener 列表（非线程安全 ArrayList），多任务取消时触发 CME。
+                    // onStop 是任务链的最终回调，executor 随链结束被回收，无需移除。
                     refreshNotification()
                 }
             }

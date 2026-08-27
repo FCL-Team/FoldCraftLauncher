@@ -4,13 +4,15 @@ import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.ListView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.mio.download.DownloadTaskInfo
 import com.mio.util.getScreenWidth
-import com.tungsten.fcl.R
+import com.tungsten.fcl.databinding.ViewDownloadPanelBinding
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.ConvertUtils
 
@@ -20,9 +22,11 @@ class DownloadSlidePanel @JvmOverloads constructor(
     attrs: AttributeSet? = null,
 ) : FrameLayout(context, attrs) {
 
-    private val panel: View
-    private val closeButton: ImageView
-    private val adapter = DownloadListAdapter(context)
+    private val binding: ViewDownloadPanelBinding =
+        ViewDownloadPanelBinding.inflate(LayoutInflater.from(context), this, true)
+    private val panel: View = binding.panel
+    private val closeButton: ImageView = binding.close
+    private val adapter = DownloadListAdapter()
     var isOpen = false
         private set
 
@@ -32,8 +36,6 @@ class DownloadSlidePanel @JvmOverloads constructor(
     init {
         // 容器自身 elevation 需高于左右菜单（100dp），否则面板会被菜单盖住
         elevation = ConvertUtils.dip2px(context, 130f).toFloat()
-        inflate(context, R.layout.view_download_panel, this)
-        panel = findViewById(R.id.panel)
         // 卡片：宽度约占 30% 屏宽，高度铺满（四周留边）
         val margin = ConvertUtils.dip2px(context, 12f)
         panel.layoutParams = LayoutParams(
@@ -46,8 +48,21 @@ class DownloadSlidePanel @JvmOverloads constructor(
             rightMargin = margin
             bottomMargin = margin
         }
-        findViewById<ListView>(R.id.list).adapter = adapter
-        closeButton = findViewById(R.id.close)
+        val list = binding.list
+        list.layoutManager = LinearLayoutManager(context)
+        // item 之间的垂直间隔
+        val itemGap = ConvertUtils.dip2px(context, 8f)
+        list.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: android.graphics.Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                outRect.top = itemGap
+            }
+        })
+        list.adapter = adapter
         closeButton.setOnClickListener { close() }
         // 初始移出屏幕外，避免首次 layout 闪现
         post { panel.translationX = width.toFloat() }
@@ -59,12 +74,12 @@ class DownloadSlidePanel @JvmOverloads constructor(
     private fun refreshTheme() {
         panel.background = GradientDrawable().apply {
             cornerRadius = ConvertUtils.dip2px(context, 16f).toFloat()
-            setColor(ThemeEngine.getInstance().getTheme().ltColor)
+            setColor(ThemeEngine.getInstance().getTheme().autoTint)
         }
     }
 
     fun updateTasks(tasks: List<DownloadTaskInfo>) {
-        adapter.setItems(tasks)
+        adapter.submitList(tasks)
     }
 
     fun toggle() {
