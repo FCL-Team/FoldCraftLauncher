@@ -916,4 +916,5 @@
     <string name="log_upload_share">Поділитися посиланням</string>
     <string name="log_upload_share_template">Я зіткнувся з проблемою в лаунчері, ось посилання на журнал:\n%s</string>
     <string name="close">Закрити</string>
+    <string name="create_account_first">Створіть ігровий акаунт перед запуском гри</string>
 </resources>
