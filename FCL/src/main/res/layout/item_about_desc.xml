@@ -5,6 +5,4 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp"
-    android:background="@drawable/bg_container_white"
-    app:auto_text_tint="true"
-    app:auto_text_background_tint="true"/>
+    app:auto_text_tint="true"/>

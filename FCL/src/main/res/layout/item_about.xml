@@ -4,10 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="15dp"
-    android:layout_marginTop="10dp"
-    android:background="@drawable/bg_container_white_clickable"
-    app:auto_linear_background_tint="true">
+    android:padding="15dp">
 
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/title"
