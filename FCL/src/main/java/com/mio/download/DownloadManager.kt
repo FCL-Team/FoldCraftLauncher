@@ -27,12 +27,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-/** 一条进行中的下载：title 为列表标题，task 提供进度/消息，executor 用于取消 */
+/**
+ * 一条进行中的下载：title 为列表标题，task 提供进度/消息，executor 用于取消。
+ * installAction 非空时表示"完成后待手动安装"的条目（整合包场景）：
+ * 任务结束后保留在面板中，用户点击条目执行 installAction 并移除，
+ * 点击丢弃按钮执行 cleanupAction（清理临时文件）并移除。
+ */
 data class DownloadTaskInfo(
     val id: Long,
     val title: String,
     val task: Task<*>,
-    val executor: TaskExecutor
+    val executor: TaskExecutor,
+    val installAction: Runnable? = null,
+    val cleanupAction: Runnable? = null,
+    /** 下载成功结束、可以执行安装（仅待安装条目使用） */
+    val ready: Boolean = false
 )
 
 /**
@@ -49,11 +58,27 @@ object DownloadManager {
     private val _tasks = MutableStateFlow<List<DownloadTaskInfo>>(emptyList())
     val tasks: StateFlow<List<DownloadTaskInfo>> = _tasks.asStateFlow()
 
+    /** 全部任务的聚合进度（0..1；-1 表示暂无有效进度） */
+    private val _progress = MutableStateFlow(-1f)
+    val progress: StateFlow<Float> = _progress.asStateFlow()
+
     private var idCounter = 0L
 
     @JvmStatic
     fun submit(title: String, task: Task<*>, executor: TaskExecutor): DownloadTaskInfo {
-        val info = DownloadTaskInfo(++idCounter, title, task, executor)
+        return submit(title, task, executor, null, null)
+    }
+
+    /** 提交一个"完成后待手动安装"的下载（整合包场景），见 [DownloadTaskInfo] */
+    @JvmStatic
+    fun submit(
+        title: String,
+        task: Task<*>,
+        executor: TaskExecutor,
+        installAction: Runnable?,
+        cleanupAction: Runnable?
+    ): DownloadTaskInfo {
+        val info = DownloadTaskInfo(++idCounter, title, task, executor, installAction, cleanupAction)
         val wasEmpty = _tasks.value.isEmpty()
         _tasks.update { it + info }
         if (wasEmpty) {
@@ -75,7 +100,15 @@ object DownloadManager {
             override fun onStop(success: Boolean, executor: TaskExecutor) {
                 Schedulers.androidUIThread().execute {
                     task.progressProperty().removeListener(progressListener)
-                    _tasks.update { list -> list.filterNot { it.id == info.id } }
+                    // 待安装条目（整合包）成功完成后置为 ready 并保留在面板中，由用户手动安装或丢弃；
+                    // 失败/取消的条目照旧移除（临时文件由调用方清理）
+                    if (info.installAction == null || !success) {
+                        _tasks.update { list -> list.filterNot { it.id == info.id } }
+                    } else {
+                        _tasks.update { list ->
+                            list.map { if (it.id == info.id) it.copy(ready = true) else it }
+                        }
+                    }
                     releaseDownloadWakeLock()
                     // 注意：不要在 onStop 回调里 removeTaskListener——AsyncTaskExecutor
                     // 正并发遍历 listener 列表（非线程安全 ArrayList），多任务取消时触发 CME。
@@ -87,15 +120,34 @@ object DownloadManager {
         return info
     }
 
+    /** 执行待安装条目的安装动作并从面板移除 */
+    @JvmStatic
+    fun install(info: DownloadTaskInfo) {
+        if (_tasks.value.any { it.id == info.id }) {
+            _tasks.update { list -> list.filterNot { it.id == info.id } }
+            info.installAction?.run()
+        }
+    }
+
+    /** 丢弃待安装条目：执行清理动作（删除临时文件等）并从面板移除 */
+    @JvmStatic
+    fun discard(info: DownloadTaskInfo) {
+        if (_tasks.value.any { it.id == info.id }) {
+            _tasks.update { list -> list.filterNot { it.id == info.id } }
+            info.cleanupAction?.run()
+        }
+    }
+
     @JvmStatic
     fun cancel(info: DownloadTaskInfo) {
         info.executor.cancel()
     }
 
-    /** 任务列表变化后刷新前台通知；全部完成后移除通知并停止服务 */
+    /** 任务列表变化后刷新前台通知与聚合进度；全部完成后移除通知并停止服务 */
     private fun refreshNotification() {
         val context = FCLApp.getAppContext()
         val tasks = _tasks.value
+        _progress.value = aggregateProgress(tasks)
         if (tasks.isEmpty()) {
             NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
             context.stopService(Intent(context, DownloadService::class.java))
@@ -109,14 +161,20 @@ object DownloadManager {
         }
     }
 
+    /** 聚合进度：忽略尚未开始（-1）的任务，用有效进度平均；全部无效时返回 -1 */
+    private fun aggregateProgress(tasks: List<DownloadTaskInfo>): Float {
+        val validValues = tasks.map { it.task.progressProperty().get() }.filter { it >= 0 }
+        return if (validValues.isEmpty()) -1f
+        else validValues.average().toFloat().coerceIn(0f, 1f)
+    }
+
     /** 构建下载进度通知（服务 startForeground 与任务变化刷新共用） */
     internal fun buildNotification(context: Context, tasks: List<DownloadTaskInfo>): Notification {
         createNotificationChannel(context)
-        // 聚合进度：所有任务 progress 的平均值
-        val progressValues = tasks.map { it.task.progressProperty().get() }
-        val indeterminate = progressValues.any { it < 0 }
+        val aggregate = aggregateProgress(tasks)
+        val indeterminate = aggregate < 0
         val percent =
-            if (indeterminate) 0 else (progressValues.average() * 100).toInt().coerceIn(0, 100)
+            if (indeterminate) 0 else (aggregate * 100).toInt().coerceIn(0, 100)
         val first = tasks.first()
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(

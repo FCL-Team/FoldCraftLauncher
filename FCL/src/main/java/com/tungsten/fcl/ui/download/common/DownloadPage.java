@@ -46,6 +46,8 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.mod.ModLoaderType;
+import com.tungsten.fclcore.mod.ModDependenciesResolver;
+import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.mod.curse.CurseAddon;
@@ -595,6 +597,54 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                 executor.start();
         });
         dialog.show();
+    }
+
+    /**
+     * 一键下载：后台解析该模组的全部 REQUIRED 前置闭包（含传递依赖、防循环），
+     * 解析完成后主模组与所有前置一起加入下载队列；
+     * 不弹命名对话框，直接使用原始文件名；解析失败的前置跳过并提示数量。
+     */
+    public static void downloadWithDependencies(Context context, Profile profile, @Nullable String version, RemoteMod.Version file, String subdirectoryName) {
+        if (version == null) version = profile.getSelectedVersion();
+        Path runDirectory = profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
+        Path modsDirectory = runDirectory.resolve(subdirectoryName);
+
+        Toast.makeText(context, context.getString(R.string.mods_dependency_resolving), Toast.LENGTH_SHORT).show();
+
+        // 前置的兼容性以所选模组版本自身的 gameVersions / loaders 为准，解析完一起入队
+        Task.supplyAsync(() -> ModDependenciesResolver.resolve(file))
+                .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+                    if (exception != null || result == null)
+                        return;
+                    submitModDownload(context, file.getFile().getFilename(), file, modsDirectory);
+                    for (ModDependenciesResolver.ResolvedDependency dep : result.dependencies()) {
+                        submitModDownload(context, dep.version().getFile().getFilename(), dep.version(), modsDirectory);
+                    }
+                    if (!result.failedTitles().isEmpty()) {
+                        Toast.makeText(context, context.getString(R.string.mods_dependency_skipped_note, result.failedTitles().size()), Toast.LENGTH_SHORT).show();
+                    }
+                }).start();
+    }
+
+    /** 提交单个模组文件到下载队列：队列标题与保存文件均使用原始文件名 */
+    private static void submitModDownload(Context context, String filename, RemoteMod.Version version, Path modsDirectory) {
+        Path dest = modsDirectory.resolve(filename);
+        FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(version.getFile().getUrl()), dest.toFile(), version.getFile().getIntegrityCheck());
+        fileTask.setName(filename);
+        Task<Void> downloadTask = Task.composeAsync(() -> fileTask);
+        TaskExecutor executor = downloadTask.whenComplete(Schedulers.androidUIThread(), exception -> {
+            if (exception != null && !(exception instanceof CancellationException)) {
+                FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+                builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                builder.setCancelable(false);
+                builder.setTitle(context.getString(R.string.install_failed_downloading));
+                builder.setMessage(DownloadProviders.localizeErrorMessage(context, exception));
+                builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
+                builder.create().show();
+            }
+        }).executor();
+        DownloadManager.submit(filename, fileTask, executor);
+        executor.start();
     }
 
     @Override

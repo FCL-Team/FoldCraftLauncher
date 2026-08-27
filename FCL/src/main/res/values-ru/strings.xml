@@ -111,6 +111,7 @@
     <string name="button_cancel">Отменить</string>
     <string name="button_copy">Копировать</string>
     <string name="button_download">Загрузить</string>
+    <string name="button_download_all">Скачать всё</string>
     <string name="button_export">Экспорт</string>
     <string name="button_hide">Скрыть</string>
     <string name="button_install">Установить</string>
@@ -495,6 +496,9 @@
     <string name="message_copy">Скопировано успешно!</string>
     <string name="message_doing">Подождите</string>
     <string name="message_downloading">Загрузка</string>
+    <string name="mods_dependency_skipped_note">%1$d зависимостей не удалось разрешить и они пропущены</string>
+    <string name="download_ready_to_install">Загружено · нажмите для установки</string>
+    <string name="mods_dependency_resolving">Разрешение обязательных зависимостей…</string>
     <string name="download_manager">Менеджер загрузок</string>
     <string name="message_error">Ошибка</string>
     <string name="message_failed">Операция не удалась</string>

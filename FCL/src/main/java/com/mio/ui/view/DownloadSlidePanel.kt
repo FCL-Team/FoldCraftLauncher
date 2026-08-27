@@ -30,9 +30,6 @@ class DownloadSlidePanel @JvmOverloads constructor(
     var isOpen = false
         private set
 
-    /** 面板开关状态变化回调（用于同步左菜单开关按钮的高亮） */
-    var onOpenChanged: ((Boolean) -> Unit)? = null
-
     init {
         // 容器自身 elevation 需高于左右菜单（100dp），否则面板会被菜单盖住
         elevation = ConvertUtils.dip2px(context, 130f).toFloat()
@@ -89,7 +86,6 @@ class DownloadSlidePanel @JvmOverloads constructor(
     fun open() {
         if (isOpen) return
         isOpen = true
-        onOpenChanged?.invoke(true)
         visibility = VISIBLE
         panel.translationX = width.toFloat()
         panel.animate().translationX(0f).setDuration(200).start()
@@ -98,7 +94,6 @@ class DownloadSlidePanel @JvmOverloads constructor(
     fun close() {
         if (!isOpen) return
         isOpen = false
-        onOpenChanged?.invoke(false)
         panel.animate().translationX(width.toFloat()).setDuration(200).withEndAction {
             visibility = GONE
             panel.translationX = width.toFloat()

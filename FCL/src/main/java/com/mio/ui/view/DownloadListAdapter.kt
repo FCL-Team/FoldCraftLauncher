@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.download.DownloadManager
 import com.mio.download.DownloadTaskInfo
+import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemDownloadTaskBinding
 import com.tungsten.fclcore.fakefx.beans.value.ChangeListener
 import com.tungsten.fclcore.task.FileDownloadTask
@@ -51,7 +52,7 @@ class DownloadListAdapter : ListAdapter<DownloadTaskInfo, DownloadListAdapter.Vi
     }
 
     inner class ViewHolder(
-        binding: ItemDownloadTaskBinding
+        private val binding: ItemDownloadTaskBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         private val title = binding.title
         private val percent = binding.percent
@@ -64,7 +65,10 @@ class DownloadListAdapter : ListAdapter<DownloadTaskInfo, DownloadListAdapter.Vi
             val value = newValue.toDouble()
             // 进度条仅作视觉展示，准确进度以文字为准
             progress.percentProgressProperty().set(value)
-            current?.let { percent.string = progressText(it.task, value) }
+            val info = current ?: return@ChangeListener
+            // 下载完成后进入待安装态，不再显示进度文字
+            if (!info.ready)
+                percent.string = progressText(info.task, value)
         }
         private val messageListener = ChangeListener<String> { _, _, newValue ->
             if (newValue.isNullOrEmpty()) {
@@ -78,10 +82,23 @@ class DownloadListAdapter : ListAdapter<DownloadTaskInfo, DownloadListAdapter.Vi
         fun bind(info: DownloadTaskInfo) {
             unbind()
             current = info
+            val root = binding.root
             title.string = info.title
-            val value = info.task.progressProperty().get()
-            progress.percentProgressProperty().set(value)
-            percent.string = progressText(info.task, value)
+            // 仅在任务成功结束后才进入"待安装"态，下载中仍显示进度
+            val ready = info.ready
+            if (ready) {
+                // 待安装：条目点击执行安装，✕ 执行丢弃（清理临时文件）
+                progress.percentProgressProperty().set(1.0)
+                percent.string = root.context.getString(R.string.download_ready_to_install)
+                cancel.setOnClickListener { DownloadManager.discard(info) }
+                root.setOnClickListener { DownloadManager.install(info) }
+            } else {
+                val value = info.task.progressProperty().get()
+                progress.percentProgressProperty().set(value)
+                percent.string = progressText(info.task, value)
+                cancel.setOnClickListener { DownloadManager.cancel(info) }
+                root.setOnClickListener(null)
+            }
             val message = info.task.messageProperty().get()
             if (message.isNullOrEmpty()) {
                 state.visibilityValue = false
@@ -89,7 +106,6 @@ class DownloadListAdapter : ListAdapter<DownloadTaskInfo, DownloadListAdapter.Vi
                 state.string = message
                 state.visibilityValue = true
             }
-            cancel.setOnClickListener { DownloadManager.cancel(info) }
             info.task.progressProperty().addListener(progressListener)
             info.task.messageProperty().addListener(messageListener)
         }

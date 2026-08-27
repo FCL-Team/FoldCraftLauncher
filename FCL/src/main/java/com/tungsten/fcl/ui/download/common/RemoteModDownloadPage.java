@@ -57,7 +57,7 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
     private FCLImageButton retry;
     private FCLButton download;
     private FCLButton saveAs;
-    private FCLButton cancel;
+    private FCLButton downloadAll;
     private FCLButton back;
 
     public RemoteModDownloadPage(Context context, int id, RemoteMod.Version modVersion, RemoteModVersionPage.DownloadCallback callback, RemoteModVersionPage lastPage, DownloadPage downloadPage) {
@@ -156,12 +156,12 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
         retry = findViewById(R.id.retry);
         download = findViewById(R.id.download);
         saveAs = findViewById(R.id.save_as);
-        cancel = findViewById(R.id.cancel);
+        downloadAll = findViewById(R.id.download_all);
         back = findViewById(R.id.back);
         retry.setOnClickListener(this);
         download.setOnClickListener(this);
         saveAs.setOnClickListener(this);
-        cancel.setOnClickListener(this);
+        downloadAll.setOnClickListener(this);
         back.setOnClickListener(this);
 
         ThemeEngine.getInstance().registerEvent(dependencyLayout, () -> dependencyLayout.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
@@ -201,8 +201,9 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
         if (view == saveAs) {
             lastPage.saveAs(modVersion);
         }
-        if (view == cancel) {
-            UIManager.getInstance().onBackPressed();
+        if (view == downloadAll) {
+            // 一键下载：主模组 + 全部必需前置一起入队
+            DownloadPage.downloadWithDependencies(downloadPage.getContext(), version.getProfile(), version.getVersion(), modVersion, "mods");
         }
         if (view == back) {
             back.setEnabled(false);

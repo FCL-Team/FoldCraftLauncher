@@ -129,6 +129,7 @@
     <string name="button_cancel">Hủy</string>
     <string name="button_copy">Sao chép</string>
     <string name="button_download">Tải xuống</string>
+    <string name="button_download_all">Tải tất cả</string>
     <string name="button_export">Xuất</string>
     <string name="button_hide">Ẩn</string>
     <string name="button_install">Cài đặt</string>
@@ -597,6 +598,9 @@
     <string name="message_copy">Sao chép thành công!</string>
     <string name="message_doing">Vui lòng đợi</string>
     <string name="message_downloading">Đang tải xuống</string>
+    <string name="mods_dependency_skipped_note">%1$d phụ thuộc không thể phân giải và đã bị bỏ qua</string>
+    <string name="download_ready_to_install">Đã tải · chạm để cài đặt</string>
+    <string name="mods_dependency_resolving">Đang phân giải phụ thuộc bắt buộc…</string>
     <string name="download_manager">Quản lý tải xuống</string>
     <string name="message_error">Lỗi</string>
     <string name="message_failed">Thao tác thất bại</string>

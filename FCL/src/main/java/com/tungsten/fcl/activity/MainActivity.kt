@@ -342,7 +342,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         permissionResultLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             }
-        // 下载管理：有任务时左侧菜单出现开关按钮并自动显示面板
+        // 下载管理：有任务时右侧菜单顶部显示波浪进度，点击打开面板
         downloadPanel = DownloadSlidePanel(this)
         binding.root.addView(
             downloadPanel,
@@ -351,28 +351,26 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 FrameLayout.LayoutParams.MATCH_PARENT
             )
         )
-        binding.downloadManagerToggle.setOnClickListener {
-            AnimUtil.playScaleX(it, 150L, 1f, 1.3f, 1f).start()
-            AnimUtil.playScaleY(it, 150L, 1f, 1.3f, 1f).start()
-            downloadPanel.toggle()
-        }
-        downloadPanel.onOpenChanged = { open ->
-            binding.downloadManagerToggle.setSelected(open)
-        }
+        binding.downloadWaveProgress.setOnClickListener { downloadPanel.toggle() }
         lifecycleScope.launch {
             var tasksEmpty = true
             DownloadManager.tasks.collect { tasks ->
                 downloadPanel.updateTasks(tasks)
-                val empty = tasks.isEmpty()
-                binding.downloadManagerToggle.visibility =
-                    if (empty) View.GONE else View.VISIBLE
-                if (empty) {
+                if (tasks.isEmpty()) {
+                    binding.downloadWaveProgress.visibility = View.GONE
                     downloadPanel.close()
-                } else if (tasksEmpty) {
+                } else {
+                    binding.downloadWaveProgress.visibility = View.VISIBLE
                     // 从无任务变为有任务：直接显示面板
-                    downloadPanel.open()
+                    if (tasksEmpty) downloadPanel.open()
                 }
-                tasksEmpty = empty
+                tasksEmpty = tasks.isEmpty()
+            }
+        }
+        // 聚合进度随任务进度变化实时推送，驱动波浪指示器
+        lifecycleScope.launch {
+            DownloadManager.progress.collect { progress ->
+                binding.downloadWaveProgress.setProgress(progress)
             }
         }
         setupLiveBackground()

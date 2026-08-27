@@ -84,20 +84,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:src="@drawable/ic_baseline_settings_24"
-            app:layout_constraintBottom_toTopOf="@id/download_manager_toggle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/multiplayer" />
-
-        <com.tungsten.fcllibrary.component.view.FCLMenuView
-            android:id="@+id/download_manager_toggle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/ic_baseline_download_24"
-            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@id/back"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/setting" />
+            app:layout_constraintTop_toBottomOf="@id/multiplayer" />
 
         <com.tungsten.fcllibrary.component.view.FCLMenuView
             android:id="@+id/back"
@@ -107,7 +96,7 @@
             android:src="@drawable/ic_baseline_arrow_back_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/download_manager_toggle" />
+            app:layout_constraintTop_toBottomOf="@id/setting" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -122,6 +111,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_percent="0.25">
 
+        <com.mio.ui.view.WaveProgressView
+            android:id="@+id/download_wave_progress"
+            android:layout_width="0dp"
+            android:layout_height="28dp"
+            android:layout_marginHorizontal="10dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@id/account"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/account"
             android:layout_width="wrap_content"
@@ -134,7 +134,7 @@
             app:layout_constraintBottom_toTopOf="@id/start"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/download_wave_progress">
 
             <com.tungsten.fcllibrary.component.view.FCLImageView
                 android:id="@+id/avatar"
