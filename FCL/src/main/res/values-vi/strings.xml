@@ -1181,7 +1181,6 @@
     <string name="message_check_plugin">Plugin hiện tại %s không hỗ trợ phiên bản trò chơi này. Tiếp tục sử dụng nó có thể khiến trò chơi bị sự cố! Bạn có muốn tiếp tục không?</string>
     <string name="enabled">Đã bật</string>
     <string name="disabled">Đã tắt</string>
-    <string name="message_warn_restart_after_change">Các thay đổi sẽ có hiệu lực sau khi khởi động lại.</string>
     <string name="message_check_path_valid">Đường dẫn tệp trò chơi đã chọn hiện tại (%s) có thể chứa các ký tự không hợp lệ, có thể khiến trò chơi bị sự cố khi khởi chạy. Bạn nên kiểm tra thư mục trò chơi hoặc đổi tên phiên bản. Bạn có muốn tiếp tục khởi chạy không?</string>
     <string name="message_check_has_modloader">Đã phát hiện phiên bản trò chơi đang khởi chạy có cài đặt mods, nhưng có vẻ như trình tải mod tương ứng chưa được cài đặt. Các mods có thể không hoạt động bình thường sau khi khởi chạy. Bạn có muốn tiếp tục khởi chạy không?</string>
     <string name="message_data_is_loading">Dữ liệu vẫn đang tải và không thể sửa đổi.</string>

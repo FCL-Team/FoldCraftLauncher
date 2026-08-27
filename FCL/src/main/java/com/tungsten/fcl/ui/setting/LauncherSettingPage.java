@@ -455,15 +455,8 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                 // 初始化/复用 bind 的回调与当前值相同，忽略；实际切换才生效
                 if (position == LocaleUtils.getLanguage(getContext())) return;
                 LocaleUtils.changeLanguage(getContext(), position);
-                LocaleUtils.setLanguage(getContext());
-                new FCLAlertDialog.Builder(getContext())
-                        .setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
-                        .setMessage(getContext().getString(R.string.message_warn_restart_after_change))
-                        .setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), () -> {
-
-                        })
-                        .create()
-                        .show();
+                // 立即生效：重建 Activity 重新走 attachBaseContext 应用新语言
+                getActivity().recreate();
                 break;
             case SPINNER_THEME_MODE:
                 // 初始化/复用 bind 的回调与当前值相同，忽略；实际切换才生效
