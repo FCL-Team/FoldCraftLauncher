@@ -187,19 +187,20 @@ public class DownloadPage extends FCLPage implements ManageUI.VersionLoadable, V
                 break;
         }
 
-        // 下载回调（按模式决定安装目录）
+        // 下载回调（按模式决定安装目录）：触发下载时动态取当前选中的游戏目录，
+        // 避免页面存活期间切换目录后仍下载到旧目录
         switch (pageId) {
             case PAGE_ID_DOWNLOAD_MODPACK:
-                callback = (profile, version, file) -> Versions.downloadModpackImpl(getContext(), profile, file);
+                callback = (profile, version, file) -> Versions.downloadModpackImpl(getContext(), Profiles.getSelectedProfile(), file);
                 break;
             case PAGE_ID_DOWNLOAD_MOD:
-                callback = (profile, version, file) -> download(getContext(), profile, version, file, "mods");
+                callback = (profile, version, file) -> download(getContext(), Profiles.getSelectedProfile(), null, file, "mods");
                 break;
             case PAGE_ID_DOWNLOAD_RESOURCE_PACK:
-                callback = (profile, version, file) -> download(getContext(), profile, version, file, "resourcepacks");
+                callback = (profile, version, file) -> download(getContext(), Profiles.getSelectedProfile(), null, file, "resourcepacks");
                 break;
             case PAGE_ID_DOWNLOAD_SHADER_PACK:
-                callback = (profile, version, file) -> download(getContext(), profile, version, file, "shaderpacks");
+                callback = (profile, version, file) -> download(getContext(), Profiles.getSelectedProfile(), null, file, "shaderpacks");
                 break;
             default:
                 callback = null;

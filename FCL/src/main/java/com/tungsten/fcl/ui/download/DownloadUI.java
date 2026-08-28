@@ -11,6 +11,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.download.common.DownloadPage;
+import com.tungsten.fcl.ui.download.common.RemoteModInfoPage;
 import com.tungsten.fcl.ui.download.version.VersionInstallPage;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
@@ -101,11 +102,17 @@ public class DownloadUI extends FCLCommonUI {
         selectedVersionListener = () -> loadVersions(Profiles.getSelectedProfile());
         listenerProfile.addSelectedVersionListener(selectedVersionListener);
 
-        // UI 被 ViewPager 回收时注销监听（替代原 onDestroy 生命周期），防止静态列表累积泄漏
+        // UI 被 ViewPager 回收时注销监听（替代原 onDestroy 生命周期），防止静态列表累积泄漏。
+        // 注意页面离开屏幕仅是 detach（实例保留，重新可见时不重跑 onCreate），
+        // 因此重新可见时需刷新打开中的详情页推荐版本（目录/版本可能在其他页面被切换）
         getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
             public void onViewAttachedToWindow(@NonNull View v) {
-
+                for (FCLPage page : tempPageStack) {
+                    if (page instanceof RemoteModInfoPage) {
+                        ((RemoteModInfoPage) page).reloadVersions();
+                    }
+                }
             }
 
             @Override
