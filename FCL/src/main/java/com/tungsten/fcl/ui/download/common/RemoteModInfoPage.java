@@ -52,7 +52,6 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
     private final RemoteModRepository repository;
     private final ModTranslations translations;
     private final RemoteMod addon;
-    private final Profile.ProfileVersion version;
     private final RemoteModVersionPage.DownloadCallback callback;
     private final DownloadPage page;
 
@@ -81,14 +80,13 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
      */
     private List<RemoteMod.Version> allVersions;
 
-    public RemoteModInfoPage(Context context, int id, DownloadPage page, RemoteMod addon, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback) {
+    public RemoteModInfoPage(Context context, int id, DownloadPage page, RemoteMod addon, @Nullable RemoteModVersionPage.DownloadCallback callback) {
         super(context, id, R.layout.page_download_addon_info);
 
         this.page = page;
         this.repository = page.repository;
         this.addon = addon;
         this.translations = ModTranslations.getTranslationsByRepositoryType(repository.getType());
-        this.version = version;
         this.callback = callback;
 
         create();
@@ -147,7 +145,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
             list.add(0, recommendedVersion);
         }
         ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), list, v -> {
-            RemoteModVersionPage page = new RemoteModVersionPage(getContext(), FCLPage.PAGE_ID_TEMP, new ArrayList<>(versions.get(v)), version, callback, RemoteModInfoPage.this.page);
+            RemoteModVersionPage page = new RemoteModVersionPage(getContext(), FCLPage.PAGE_ID_TEMP, new ArrayList<>(versions.get(v)), callback, RemoteModInfoPage.this.page);
             UIManager.getInstance().getDownloadUI().showTempPage(page);
         });
         versionListView.setAdapter(adapter);

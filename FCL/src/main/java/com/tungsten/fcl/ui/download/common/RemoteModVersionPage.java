@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatDialog;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
-import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.DownloadUI;
@@ -27,19 +26,17 @@ import java.util.List;
 
 public class RemoteModVersionPage extends FCLPage {
 
-    private final Profile.ProfileVersion version;
     private final RemoteModVersionPage.DownloadCallback callback;
 
-    public RemoteModVersionPage(Context context, int id, List<RemoteMod.Version> list, Profile.ProfileVersion version, @Nullable RemoteModVersionPage.DownloadCallback callback, DownloadPage downloadPage) {
+    public RemoteModVersionPage(Context context, int id, List<RemoteMod.Version> list, @Nullable RemoteModVersionPage.DownloadCallback callback, DownloadPage downloadPage) {
         super(context, id, R.layout.page_download_addon_version);
-        this.version = version;
         this.callback = callback;
 
         // 原 onStart 逻辑：页面构造即初始化列表
         ListView listView = findViewById(R.id.list);
         ModVersionAdapter adapter = new ModVersionAdapter(getContext(), list, modVersion -> {
             if (downloadPage.getPageId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
-                RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, this.version, modVersion, callback, this, downloadPage);
+                RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, modVersion, callback, this, downloadPage);
                 UIManager.getInstance().getDownloadUI().showTempPage(page);
             } else {
                 download(modVersion);
@@ -52,7 +49,7 @@ public class RemoteModVersionPage extends FCLPage {
         if (this.callback == null) {
             saveAs(file);
         } else {
-            this.callback.download(version.getProfile(), version.getVersion(), file);
+            this.callback.download(file);
         }
     }
 
@@ -83,6 +80,6 @@ public class RemoteModVersionPage extends FCLPage {
     }
 
     public interface DownloadCallback {
-        void download(Profile profile, @Nullable String version, RemoteMod.Version file);
+        void download(RemoteMod.Version file);
     }
 }

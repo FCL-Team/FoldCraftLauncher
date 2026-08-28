@@ -8,8 +8,6 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.download.common.DownloadPage;
 import com.tungsten.fcl.ui.download.common.RemoteModInfoPage;
 import com.tungsten.fcl.ui.download.version.VersionInstallPage;
@@ -20,7 +18,6 @@ import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 /**
  * 下载 UI：游戏安装页与 5 个下载模式（Mod/整合包/资源包/世界/光影）共享一个
@@ -48,10 +45,6 @@ public class DownloadUI extends FCLCommonUI {
 
     private final ArrayList<FCLPage> tempPageStack = new ArrayList<>();
     private int currentPageId = PAGE_ID_DOWNLOAD_GAME;
-
-    private final Consumer<Profile> versionsListener = this::loadVersions;
-    private Profile listenerProfile;
-    private Runnable selectedVersionListener;
 
     public DownloadUI(Context context, int id) {
         super(context, id);
@@ -96,14 +89,7 @@ public class DownloadUI extends FCLCommonUI {
             }
         });
 
-        Profiles.registerVersionsListener(versionsListener);
-        downloadPage.loadVersion(Profiles.getSelectedProfile(), null);
-        listenerProfile = Profiles.getSelectedProfile();
-        selectedVersionListener = () -> loadVersions(Profiles.getSelectedProfile());
-        listenerProfile.addSelectedVersionListener(selectedVersionListener);
-
-        // UI 被 ViewPager 回收时注销监听（替代原 onDestroy 生命周期），防止静态列表累积泄漏。
-        // 注意页面离开屏幕仅是 detach（实例保留，重新可见时不重跑 onCreate），
+        // 页面离开屏幕仅是 detach（实例保留，重新可见时不重跑 onCreate），
         // 因此重新可见时需刷新打开中的详情页推荐版本（目录/版本可能在其他页面被切换）
         getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
             @Override
@@ -117,10 +103,7 @@ public class DownloadUI extends FCLCommonUI {
 
             @Override
             public void onViewDetachedFromWindow(@NonNull View v) {
-                Profiles.unregisterVersionsListener(versionsListener);
-                if (selectedVersionListener != null) {
-                    listenerProfile.removeSelectedVersionListener(selectedVersionListener);
-                }
+
             }
         });
     }
@@ -261,19 +244,6 @@ public class DownloadUI extends FCLCommonUI {
             dismissCurrentTempPage();
         } else {
             super.onBackPressed();
-        }
-    }
-
-    private void loadVersions(Profile profile) {
-        if (profile == Profiles.getSelectedProfile()) {
-            downloadPage.loadVersion(profile, null);
-            // 先移除旧监听再添加，避免重复注册累积（引用旧 UI 实例导致泄漏）
-            if (selectedVersionListener != null) {
-                listenerProfile.removeSelectedVersionListener(selectedVersionListener);
-            }
-            selectedVersionListener = () -> loadVersions(Profiles.getSelectedProfile());
-            listenerProfile = profile;
-            profile.addSelectedVersionListener(selectedVersionListener);
         }
     }
 

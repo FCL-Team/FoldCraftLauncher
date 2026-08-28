@@ -10,7 +10,6 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.UIManager;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclcore.mod.RemoteMod;
@@ -44,7 +43,6 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
             Pair.pair(RemoteMod.DependencyType.BROKEN, "mods_dependency_broken")
     ));
 
-    private final Profile.ProfileVersion version;
     private final RemoteMod.Version modVersion;
     private final RemoteModVersionPage.DownloadCallback callback;
     private final RemoteModVersionPage lastPage;
@@ -62,9 +60,8 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
     private FCLButton cancel;
     private FCLButton back;
 
-    public RemoteModDownloadPage(Context context, int id, Profile.ProfileVersion version, RemoteMod.Version modVersion, RemoteModVersionPage.DownloadCallback callback, RemoteModVersionPage lastPage, DownloadPage downloadPage) {
+    public RemoteModDownloadPage(Context context, int id, RemoteMod.Version modVersion, RemoteModVersionPage.DownloadCallback callback, RemoteModVersionPage lastPage, DownloadPage downloadPage) {
         super(context, id, R.layout.page_download_addon);
-        this.version = version;
         this.modVersion = modVersion;
         this.callback = callback;
         this.lastPage = lastPage;
@@ -134,7 +131,7 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
             listView.setDivider(new ColorDrawable(getContext().getColor(android.R.color.darker_gray)));
             listView.setDividerHeight(ConvertUtils.dip2px(getContext(), 1));
             DependencyAdapter adapter = new DependencyAdapter(getContext(), downloadPage, dependencies.get(type), mod -> {
-                RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, downloadPage, mod, version, callback);
+                RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, downloadPage, mod, callback);
                 UIManager.getInstance().getDownloadUI().showTempPage(page);
             });
             listView.setAdapter(adapter);
