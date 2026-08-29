@@ -50,7 +50,8 @@ private long loadDialogShowTime = 0;
     public void setup() {
         // Initialize menu view
         MenuView menuView = new MenuView(gameMenu.getActivity());
-        menuView.setElevation(114.0f);
+        // 远高于按键的 z 序上限（按钮 113 + 组序 translationZ），保证菜单永远在最上层
+        menuView.setElevation(2000f);
         menuView.setup(gameMenu);
         gameMenu.setMenuView(menuView);
         gameMenu.getBaseLayout().addView(menuView);
@@ -82,7 +83,7 @@ private long loadDialogShowTime = 0;
                     gameMenu.getViewGroup().getViewData().addDirection((ControlDirectionData) control);
                 }
                 saveController();
-                loadView(control, true);
+                loadView(control, true, 0f);
             } else {
                 Toast.makeText(gameMenu.getActivity(), gameMenu.getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
             }
@@ -109,12 +110,13 @@ private long loadDialogShowTime = 0;
         }
     }
 
-    private void loadView(CustomControl control, boolean parentVisibility) {
+    private void loadView(CustomControl control, boolean parentVisibility, float zOrder) {
         if (control instanceof ControlButtonData data) {
             ControlButton button = new ControlButton(gameMenu.getActivity(), gameMenu, view -> {
                 ((ControlButton) view).setParentVisibility(parentVisibility);
                 ((ControlButton) view).setData(data);
             });
+            button.setTranslationZ(zOrder);
             gameMenu.getBaseLayout().addView(button);
         } else {
             ControlDirectionData data = (ControlDirectionData) control;
@@ -122,6 +124,7 @@ private long loadDialogShowTime = 0;
                 ((ControlDirection) view).setParentVisibility(parentVisibility);
                 ((ControlDirection) view).setData(data);
             });
+            direction.setTranslationZ(zOrder);
             gameMenu.getBaseLayout().addView(direction);
         }
     }
@@ -156,7 +159,6 @@ private long loadDialogShowTime = 0;
         loadCompleted = 0;
         for (ControlViewGroup group : targets()) {
             if (!group.isDataLoaded()) {
-                loadTotal++;
                 requestLoadGroup(group);
             } else {
                 renderGroup(group);
@@ -166,27 +168,47 @@ private long loadDialogShowTime = 0;
     }
 
     /**
-     * 渲染一个布局的全部按键（数据必须已就绪）
+     * 渲染一个布局的全部按键（数据必须已就绪）。
+     * 组间 z 序按文件记录顺序固定（translationZ 步长需跨过按钮/方向键 1px 的 elevation 差），
+     * 异步加载完成顺序不定，仅靠 addView 顺序会使后加载的背景组盖住操作组导致无法点击。
      */
     private void renderGroup(ControlViewGroup group) {
-        group.getViewData().buttonList().forEach(data -> loadView(data, true));
-        group.getViewData().directionList().forEach(data -> loadView(data, true));
+        float zOrder = gameMenu.getController().viewGroups().indexOf(group) * 2f;
+        group.getViewData().buttonList().forEach(data -> loadView(data, true, zOrder));
+        group.getViewData().directionList().forEach(data -> loadView(data, true, zOrder));
+    }
+
+    /** 该布局是否已有按键视图渲染在 baseLayout 上 */
+    private boolean isGroupRendered(ControlViewGroup group) {
+        for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
+            View view = gameMenu.getBaseLayout().getChildAt(i);
+            if (view instanceof CustomView) {
+                if (group.getViewData().buttonList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))
+                        || group.getViewData().directionList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
-     * 异步申请加载布局按键数据（后台解析 + 主线程填充，Controllers 保证回调在主线程）
+     * 异步申请加载布局按键数据（后台解析 + 主线程填充，Controllers 保证回调在主线程），
+     * 进度随批量加载计数推进，就绪后若仍属于当前渲染目标则渲染。
      */
     private void requestLoadGroup(ControlViewGroup group) {
         if (loadingGroups.contains(group.getId())) return;
         loadingGroups.add(group.getId());
+        loadTotal++;
+        updateLoadProgress();
         Controllers.loadViewGroup(gameMenu.getController(), group, new Controllers.ViewGroupLoadCallback() {
             @Override
             public void onLoaded(ControlViewGroup viewGroup) {
                 loadingGroups.remove(viewGroup.getId());
                 loadCompleted++;
                 updateLoadProgress();
-                // 数据就绪：若该布局仍处于当前渲染目标中则加载按键视图
-                if (targets().contains(viewGroup)) {
+                // 数据就绪：属于当前渲染目标时渲染；已渲染（并发重复回调）则跳过
+                if (targets().contains(viewGroup) && !isGroupRendered(viewGroup)) {
                     renderGroup(viewGroup);
                 }
             }
@@ -200,6 +222,39 @@ private long loadDialogShowTime = 0;
                 Log.e("ViewManager", "Failed to load view group " + group.getId(), e);
             }
         });
+    }
+
+    /**
+     * bindViewGroup 主动唤起隐藏布局：独立一次性进度框，回调即关。
+     * 不参与批量加载的共享计数，避免计数跨会话错位时进度框滞留不关。
+     */
+    private void requestLoadForBind(ControlViewGroup group) {
+        if (loadingGroups.contains(group.getId())) return;
+        loadingGroups.add(group.getId());
+        ProgressDialog dialog = new ProgressDialog(gameMenu.getActivity());
+        Controllers.loadViewGroup(gameMenu.getController(), group, new Controllers.ViewGroupLoadCallback() {
+            @Override
+            public void onLoaded(ControlViewGroup viewGroup) {
+                dismissProgressDialog(dialog);
+                loadingGroups.remove(viewGroup.getId());
+                if (!isGroupRendered(viewGroup)) {
+                    renderGroup(viewGroup);
+                }
+            }
+
+            @Override
+            public void onFailed(Throwable e) {
+                dismissProgressDialog(dialog);
+                loadingGroups.remove(group.getId());
+                Log.e("ViewManager", "Failed to load view group " + group.getId(), e);
+            }
+        });
+    }
+
+    private void dismissProgressDialog(ProgressDialog dialog) {
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
     }
 
     private void updateLoadProgress() {
@@ -262,27 +317,13 @@ private long loadDialogShowTime = 0;
         if (viewGroup == null)
             return;
         if (!viewGroup.isDataLoaded()) {
-            // 布局数据未加载：先按需加载，加载完成后渲染为可见
-            loadingGroups.add(viewGroup.getId());
-            loadTotal++;
-            updateLoadProgress();
-            Controllers.loadViewGroup(gameMenu.getController(), viewGroup, new Controllers.ViewGroupLoadCallback() {
-                @Override
-                public void onLoaded(ControlViewGroup vg) {
-                    loadingGroups.remove(vg.getId());
-                    loadCompleted++;
-                    updateLoadProgress();
-                    renderGroup(vg);
-                }
-
-                @Override
-                public void onFailed(Throwable e) {
-                    loadingGroups.remove(viewGroup.getId());
-                    loadCompleted++;
-                    updateLoadProgress();
-                    Log.e("ViewManager", "Failed to load view group " + viewGroup.getId(), e);
-                }
-            });
+            // 布局数据未加载：独立进度框 + 按需加载，就绪后渲染为可见（loadingGroups 防连点重复申请）
+            requestLoadForBind(viewGroup);
+            return;
+        }
+        if (!isGroupRendered(viewGroup)) {
+            // 数据已加载但视图未渲染（隐藏布局不在渲染目标中，或已被 initializeController 清除）：渲染为可见
+            renderGroup(viewGroup);
             return;
         }
         for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {

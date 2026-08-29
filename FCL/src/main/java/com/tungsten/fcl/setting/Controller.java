@@ -428,9 +428,12 @@ public class Controller implements Cloneable, Observable {
             } else {
                 CountDownLatch latch = new CountDownLatch(1);
                 Schedulers.androidUIThread().execute(() -> {
-                    group.setViewData(data);
-                    group.setDataLoaded(true);
-                    latch.countDown();
+                    try {
+                        group.setViewData(data);
+                        group.setDataLoaded(true);
+                    } finally {
+                        latch.countDown();
+                    }
                 });
                 try {
                     latch.await();
