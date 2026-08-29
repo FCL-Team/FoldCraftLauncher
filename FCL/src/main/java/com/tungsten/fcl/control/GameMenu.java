@@ -289,6 +289,13 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         viewGroupProperty.set(viewGroup);
     }
 
+    /** 编辑模式下未选中视图组时选中第一个，保证编辑视图立即可加载，不依赖菜单列表绑定时的兜底回调 */
+    private void selectDefaultViewGroup() {
+        if (editModeProperty.get() && getViewGroup() == null && !getController().viewGroups().isEmpty()) {
+            setViewGroup(getController().viewGroups().get(0));
+        }
+    }
+
     @Nullable
     public ControlViewGroup getViewGroup() {
         return viewGroupProperty.get();
@@ -507,6 +514,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
         editModeProperty.set(isSimulated());
         controllerProperty.set(Controllers.findControllerById(activity.getIntent().getExtras().getString("controller")));
+        selectDefaultViewGroup();
 
         baseLayout = findViewById(R.id.base_layout);
         touchPad = findViewById(R.id.touch_pad);
@@ -794,6 +802,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         switch (tag) {
             case EDIT_MODE:
                 setEditMode(checked);
+                if (checked) {
+                    selectDefaultViewGroup();
+                }
                 break;
             case SHOW_BOUNDARY:
                 setShowViewBoundaries(checked);

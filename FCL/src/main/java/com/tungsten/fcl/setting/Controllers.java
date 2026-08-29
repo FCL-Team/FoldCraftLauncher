@@ -154,7 +154,10 @@ public class Controllers {
 
     public static Controller findControllerById(String id) {
         checkControllers();
-        return controllers.stream().filter(it -> it.getId().equals(id)).findFirst().orElse(controllers.get(0));
+        return controllers.stream().filter(it -> it.getId().equals(id)).findFirst().orElseGet(() -> {
+            Logging.LOG.log(Level.WARNING, "Controller " + id + " not found, fallback to the first one");
+            return controllers.get(0);
+        });
     }
 
     public static void addCallback(Runnable callback) {
