@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -64,6 +65,21 @@ object DownloadManager {
 
     private var idCounter = 0L
 
+    /** 最近一次"已开始下载"提示，连续提交时取消旧的仅显示最新，避免 Toast 排队刷屏 */
+    private var lastStartToast: Toast? = null
+
+    /** 每次添加任务时的轻提示，让用户确认下载已开始 */
+    private fun showStartedToast(context: Context, title: String) {
+        lastStartToast?.cancel()
+        val toast = Toast.makeText(
+            context,
+            "$title · ${context.getString(R.string.message_downloading)}",
+            Toast.LENGTH_SHORT
+        )
+        lastStartToast = toast
+        toast.show()
+    }
+
     @JvmStatic
     fun submit(title: String, task: Task<*>, executor: TaskExecutor): DownloadTaskInfo {
         return submit(title, task, executor, null, null)
@@ -81,6 +97,7 @@ object DownloadManager {
         val info = DownloadTaskInfo(++idCounter, title, task, executor, installAction, cleanupAction)
         val wasEmpty = _tasks.value.isEmpty()
         _tasks.update { it + info }
+        showStartedToast(FCLApp.getAppContext(), title)
         if (wasEmpty) {
             // 从无任务变为有任务：启动前台服务保活，保证后台下载不中断
             try {

@@ -1,6 +1,7 @@
 package com.mio.ui.view
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.Gravity
@@ -30,15 +31,16 @@ class DownloadSlidePanel @JvmOverloads constructor(
     var isOpen = false
         private set
 
+
     init {
         // 容器自身 elevation 需高于左右菜单（100dp），否则面板会被菜单盖住
         elevation = ConvertUtils.dip2px(context, 130f).toFloat()
-        // 卡片：宽度约占 30% 屏宽，高度铺满（四周留边）
+        // 卡片：宽度约占 50% 屏宽、水平居中，高度铺满（四周留边）
         val margin = ConvertUtils.dip2px(context, 12f)
         panel.layoutParams = LayoutParams(
-            (getScreenWidth() * 0.3f).toInt().coerceAtLeast(320),
+            (getScreenWidth() * 0.5f).toInt().coerceAtLeast(320),
             LayoutParams.MATCH_PARENT,
-            Gravity.END
+            Gravity.CENTER_HORIZONTAL or Gravity.TOP
         ).apply {
             leftMargin = margin
             topMargin = margin
@@ -62,7 +64,7 @@ class DownloadSlidePanel @JvmOverloads constructor(
         list.adapter = adapter
         closeButton.setOnClickListener { close() }
         // 初始移出屏幕外，避免首次 layout 闪现
-        post { panel.translationX = width.toFloat() }
+        post { panel.translationY = -height.toFloat() }
         visibility = GONE
         ThemeEngine.getInstance().registerEvent(this, ::refreshTheme)
         refreshTheme()
@@ -71,7 +73,8 @@ class DownloadSlidePanel @JvmOverloads constructor(
     private fun refreshTheme() {
         panel.background = GradientDrawable().apply {
             cornerRadius = ConvertUtils.dip2px(context, 16f).toFloat()
-            setColor(ThemeEngine.getInstance().getTheme().autoTint)
+            // 背景随主题模式：亮色取白色、深色取黑色
+            setColor(if (ThemeEngine.isNightMode(context)) Color.BLACK else Color.WHITE)
         }
     }
 
@@ -87,16 +90,16 @@ class DownloadSlidePanel @JvmOverloads constructor(
         if (isOpen) return
         isOpen = true
         visibility = VISIBLE
-        panel.translationX = width.toFloat()
-        panel.animate().translationX(0f).setDuration(200).start()
+        panel.translationY = -height.toFloat()
+        panel.animate().translationY(0f).setDuration(200).start()
     }
 
     fun close() {
         if (!isOpen) return
         isOpen = false
-        panel.animate().translationX(width.toFloat()).setDuration(200).withEndAction {
+        panel.animate().translationY(-height.toFloat()).setDuration(200).withEndAction {
             visibility = GONE
-            panel.translationX = width.toFloat()
+            panel.translationY = -height.toFloat()
         }.start()
     }
 }

@@ -33,3 +33,4 @@ AGENTS.md
 
 # ZCode 会话文件
 /.zcode/
+.kotlin/

@@ -27,6 +27,7 @@
             android:layout_height="28dp"
             android:layout_gravity="end|center_vertical"
             android:padding="4dp"
+            android:rotation="-90"
             android:src="@drawable/right_arrow" />
 
     </FrameLayout>
