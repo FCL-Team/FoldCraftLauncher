@@ -46,7 +46,11 @@ public final class NeoForgeOfficialVersionList extends VersionList<NeoForgeRemot
             try {
                 versions.clear();
 
-                for (String version : results[0].versions) {
+                // metadata API 结构异常时 versions 组件可能缺失为 null，跳过对应来源防止刷新整体失败
+                List<String> oldVersions = results[0].versions() == null ? Collections.emptyList() : results[0].versions();
+                List<String> metaVersions = results[1].versions() == null ? Collections.emptyList() : results[1].versions();
+
+                for (String version : oldVersions) {
                     versions.put("1.20.1", new NeoForgeRemoteVersion(
                             "1.20.1", NeoForgeRemoteVersion.normalize(version),
                             Collections.singletonList(
@@ -55,7 +59,7 @@ public final class NeoForgeOfficialVersionList extends VersionList<NeoForgeRemot
                     ));
                 }
 
-                for (String version : results[1].versions) {
+                for (String version : metaVersions) {
                     String mcVersion;
 
                     try {
