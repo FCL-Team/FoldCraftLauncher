@@ -28,6 +28,9 @@ class WaveProgressView @JvmOverloads constructor(
 
     /** 0..1；负值表示不确定进度 */
     private var progress = 0f
+
+    /** 参与绘制的进度：逐帧向目标 progress 缓动，避免进度跳变生硬 */
+    private var animatedProgress = 0f
     private var phase = 0f
 
     private val activePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -46,6 +49,8 @@ class WaveProgressView @JvmOverloads constructor(
         interpolator = LinearInterpolator()
         addUpdateListener {
             phase = it.animatedValue as Float
+            // 进度平滑过渡：绘制用进度逐帧向目标靠近
+            animatedProgress += (progress.coerceIn(0f, 1f) - animatedProgress) * 0.12f
             invalidate()
         }
     }
@@ -95,7 +100,7 @@ class WaveProgressView @JvmOverloads constructor(
             return
         }
 
-        val fillRatio = progress.coerceIn(0f, 1f)
+        val fillRatio = animatedProgress.coerceIn(0f, 1f)
         val progressX = w * fillRatio
         val gap = wavelength * 0.4f
 
