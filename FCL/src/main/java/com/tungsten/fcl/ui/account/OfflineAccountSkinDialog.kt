@@ -17,6 +17,7 @@ import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
+import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.tungsten.fcllibrary.skin.SkinRenderer
 import java.io.File
 import java.util.logging.Level
@@ -154,16 +155,14 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
                 refreshModelRadio()
                 refreshSkin()
             }
-            // File selection
+            // File selection：先放缓存，点确认时才落位 SKIN_DIR，取消不影响已有皮肤文件
             binding.skinPath -> MainActivity.getInstance().fileLauncher.launchSingleSelection(
                 null,
                 listOf(".png")
             ) {
-                val selected = it?.get(0) ?: return@launchSingleSelection
-                // 皮肤路径会持久化到 accounts.json，文件必须放在不受缓存清理影响的固定位置
-                val dest = File(FCLPath.SKIN_DIR, "${account.uuid}.png")
-                selected.copyTo(context, dest)
-                binding.skinPathText.string = dest.absolutePath
+                binding.skinPathText.string =
+                    it?.get(0)?.toFile(context, File(FCLPath.CACHE_DIR))?.absolutePath
+                        ?: return@launchSingleSelection
                 refreshSkin()
             }
 
@@ -176,10 +175,9 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
                 null,
                 listOf(".png")
             ) {
-                val selected = it?.get(0) ?: return@launchSingleSelection
-                val dest = File(FCLPath.SKIN_DIR, "${account.uuid}_cape.png")
-                selected.copyTo(context, dest)
-                binding.capePathText.string = dest.absolutePath
+                binding.capePathText.string =
+                    it?.get(0)?.toFile(context, File(FCLPath.CACHE_DIR))?.absolutePath
+                        ?: return@launchSingleSelection
                 refreshSkin()
             }
 
@@ -189,12 +187,25 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
             }
             // Buttons
             binding.positive -> {
+                commitSkinFile(binding.skinPathText, "${account.uuid}.png")
+                commitSkinFile(binding.capePathText, "${account.uuid}_cape.png")
                 account.setSkin(this.skin)
                 accountListItem.refreshSkinBinding()
                 dismiss()
             }
 
             binding.negative -> dismiss()
+        }
+    }
+
+    /** 把临时选中的皮肤/披风文件落位到 SKIN_DIR 固定名，并更新为最终路径 */
+    private fun commitSkinFile(text: FCLTextView, fileName: String) {
+        val srcPath = text.string ?: return
+        val src = File(srcPath)
+        val dest = File(FCLPath.SKIN_DIR, fileName)
+        if (src.canonicalPath != dest.canonicalPath) {
+            runCatching { src.copyTo(dest, overwrite = true) }
+                .onSuccess { text.string = dest.absolutePath }
         }
     }
 }
