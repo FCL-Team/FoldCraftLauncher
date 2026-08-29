@@ -967,6 +967,10 @@
     <string name="settings_launcher_download_source">Download Source</string>
     <string name="settings_launcher_download_source_desc">Choose the download source. Auto mode matches per version.</string>
     <string name="settings_launcher_download_source_auto">Auto Choose Download Mirror</string>
+    <string name="settings_launcher_mod_cache">Mod Cache</string>
+    <string name="settings_launcher_mod_cache_clear">Clear</string>
+    <string name="settings_launcher_mod_cache_desc">Clear cached CurseForge / Modrinth query results.</string>
+    <string name="settings_launcher_mod_cache_cleared">Mod cache cleared</string>
     <string name="settings_launcher_language">Language</string>
     <string name="settings_launcher_language_desc">Switch the launcher UI language. Some languages require a restart.</string>
     <string name="settings_launcher_language_system">Use System Language</string>

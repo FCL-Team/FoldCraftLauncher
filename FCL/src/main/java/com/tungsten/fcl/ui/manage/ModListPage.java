@@ -125,7 +125,6 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
         });
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter.setRecyclerView(recyclerView);
         Bindings.bindContent(adapter.listProperty(), itemsProperty);
 
         adapter.selectedItemsProperty().addListener((InvalidationListener) observable -> switchLayout(adapter.selectedItemsProperty().getSize() > 0));

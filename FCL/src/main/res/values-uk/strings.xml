@@ -680,6 +680,10 @@
     <string name="settings_launcher_download_threads_auto">Автоматично визначати</string>
     <string name="settings_launcher_download_source">Джерело</string>
     <string name="settings_launcher_download_source_auto">Автоматичний вибір дзеркала завантаження</string>
+    <string name="settings_launcher_mod_cache">Кеш модів</string>
+    <string name="settings_launcher_mod_cache_clear">Очистити</string>
+    <string name="settings_launcher_mod_cache_desc">Очистити кешовані результати запитів CurseForge / Modrinth.</string>
+    <string name="settings_launcher_mod_cache_cleared">Кеш модів очищено</string>
     <string name="settings_launcher_language">Мова</string>
     <string name="settings_launcher_language_system">Системна</string>
     <string name="settings_launcher_launcher_log_export">Експортувати</string>

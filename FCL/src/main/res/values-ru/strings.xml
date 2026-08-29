@@ -717,6 +717,10 @@
     <string name="settings_launcher_download_threads_auto">Автоматически определять</string>
     <string name="settings_launcher_download_source">Источник</string>
     <string name="settings_launcher_download_source_auto">Автоматический выбор зеркала загрузки</string>
+    <string name="settings_launcher_mod_cache">Кэш модов</string>
+    <string name="settings_launcher_mod_cache_clear">Очистить</string>
+    <string name="settings_launcher_mod_cache_desc">Очистить кэшированные результаты запросов CurseForge / Modrinth.</string>
+    <string name="settings_launcher_mod_cache_cleared">Кэш модов очищен</string>
     <string name="settings_launcher_language">Язык</string>
     <string name="settings_launcher_language_system">Системный</string>
     <string name="settings_launcher_launcher_log_export">Экспортировать</string>

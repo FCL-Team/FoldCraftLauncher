@@ -720,6 +720,10 @@
     <string name="settings_launcher_download_threads_auto">Automático</string>
     <string name="settings_launcher_download_source">Fonte de download</string>
     <string name="settings_launcher_download_source_auto">Seleção automática</string>
+    <string name="settings_launcher_mod_cache">Cache de mods</string>
+    <string name="settings_launcher_mod_cache_clear">Limpar</string>
+    <string name="settings_launcher_mod_cache_desc">Limpa os resultados de consulta em cache do CurseForge / Modrinth.</string>
+    <string name="settings_launcher_mod_cache_cleared">Cache de mods limpo</string>
     <string name="settings_launcher_language">Linguagem</string>
     <string name="settings_launcher_language_system">Usar linguagem do sistema</string>
     <string name="settings_launcher_launcher_log_export">Exportar logs do launcher</string>

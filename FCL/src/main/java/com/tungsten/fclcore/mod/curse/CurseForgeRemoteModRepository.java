@@ -27,10 +27,12 @@ import com.tungsten.fcl.R;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.RemoteMod;
+import com.tungsten.fclcore.mod.RemoteModCache;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.util.MurmurHash2;
 import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
@@ -260,48 +262,72 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
         }
 
         LOG.info("Matching file " + file.getFileName() + " (fingerprint: " + hash + ") via " + PREFIX + "/v1/fingerprints/432");
-        Response<FingerprintMatchesResult> response = withApiKey(HttpRequest.POST(PREFIX + "/v1/fingerprints/432"))
-                .json(mapOf(pair("fingerprints", Collections.singletonList(hash))))
-                .getJson(new TypeToken<Response<FingerprintMatchesResult>>() {
-                }.getType());
+        // 指纹按文件内容寻址，命中结果与负结果（未命中）均永久缓存
+        CurseAddon.LatestFile match = RemoteModCache.getOrFetch("cf:fp:" + hash, RemoteModCache.TTL_PERMANENT,
+                CurseAddon.LatestFile.class, () -> {
+                    Response<FingerprintMatchesResult> response = withApiKey(HttpRequest.POST(PREFIX + "/v1/fingerprints/432"))
+                            .json(mapOf(pair("fingerprints", Collections.singletonList(hash))))
+                            .getJson(new TypeToken<Response<FingerprintMatchesResult>>() {
+                            }.getType());
 
-        if (response.data().exactMatches() == null || response.data().exactMatches().isEmpty()) {
-            return Optional.empty();
-        }
+                    if (response.data().exactMatches() == null || response.data().exactMatches().isEmpty()) {
+                        return null;
+                    }
+                    return response.data().exactMatches().get(0).file();
+                });
 
-        return Optional.of(response.data().exactMatches().get(0).file().toVersion());
+        return match == null ? Optional.empty() : Optional.of(match.toVersion());
     }
 
     @Override
     public RemoteMod getModById(String id) throws IOException {
-        Response<CurseAddon> response = withApiKey(HttpRequest.GET(PREFIX + "/v1/mods/" + id))
-                .getJson(new TypeToken<Response<CurseAddon>>() {
-                }.getType());
-        return response.data.toMod();
+        CurseAddon addon = RemoteModCache.getOrFetch("cf:mod:" + id, RemoteModCache.TTL_DETAIL,
+                CurseAddon.class, () -> {
+                    Response<CurseAddon> response = withApiKey(HttpRequest.GET(PREFIX + "/v1/mods/" + id))
+                            .getJson(new TypeToken<Response<CurseAddon>>() {
+                            }.getType());
+                    return response.data;
+                });
+        return addon.toMod();
     }
 
     @Override
     public RemoteMod.File getModFile(String modId, String fileId) throws IOException {
-        Response<CurseAddon.LatestFile> response = withApiKey(HttpRequest.GET(String.format("%s/v1/mods/%s/files/%s", PREFIX, modId, fileId)))
-                .getJson(new TypeToken<Response<CurseAddon.LatestFile>>() {
-                }.getType());
-        return response.data().toVersion().getFile();
+        CurseAddon.LatestFile file = RemoteModCache.getOrFetch("cf:file:" + modId + ":" + fileId, RemoteModCache.TTL_PERMANENT,
+                CurseAddon.LatestFile.class, () -> {
+                    Response<CurseAddon.LatestFile> response = withApiKey(HttpRequest.GET(String.format("%s/v1/mods/%s/files/%s", PREFIX, modId, fileId)))
+                            .getJson(new TypeToken<Response<CurseAddon.LatestFile>>() {
+                            }.getType());
+                    return response.data();
+                });
+        return file.toVersion().getFile();
     }
 
     @Override
     public Stream<RemoteMod.Version> getRemoteVersionsById(String id) throws IOException {
-        Response<List<CurseAddon.LatestFile>> response = withApiKey(HttpRequest.GET(PREFIX + "/v1/mods/" + id + "/files",
-                pair("pageSize", "10000")))
-                .getJson(new TypeToken<Response<List<CurseAddon.LatestFile>>>() {
-                }.getType());
-        return response.data().stream().map(CurseAddon.LatestFile::toVersion);
+        List<CurseAddon.LatestFile> files = RemoteModCache.getOrFetch("cf:ver:" + id, RemoteModCache.TTL_VERSIONS,
+                JsonUtils.listTypeOf(CurseAddon.LatestFile.class).getType(),
+                () -> {
+                    Response<List<CurseAddon.LatestFile>> response = withApiKey(HttpRequest.GET(PREFIX + "/v1/mods/" + id + "/files",
+                            pair("pageSize", "10000")))
+                            .getJson(new TypeToken<Response<List<CurseAddon.LatestFile>>>() {
+                            }.getType());
+                    return response.data();
+                });
+        return files.stream().map(CurseAddon.LatestFile::toVersion);
     }
 
     public List<CurseAddon.Category> getCategoriesImpl() throws IOException {
-        Response<List<CurseAddon.Category>> categories = withApiKey(HttpRequest.GET(PREFIX + "/v1/categories", pair("gameId", "432")))
-                .getJson(new TypeToken<Response<List<CurseAddon.Category>>>() {
-                }.getType());
-        return reorganizeCategories(categories.data(), section);
+        // 分类几乎不变，长 TTL 缓存；缓存原始列表，命中后重新组织层级
+        List<CurseAddon.Category> categories = RemoteModCache.getOrFetch("cf:cat:" + section, RemoteModCache.TTL_CATEGORIES,
+                JsonUtils.listTypeOf(CurseAddon.Category.class).getType(),
+                () -> {
+                    Response<List<CurseAddon.Category>> response = withApiKey(HttpRequest.GET(PREFIX + "/v1/categories", pair("gameId", "432")))
+                            .getJson(new TypeToken<Response<List<CurseAddon.Category>>>() {
+                            }.getType());
+                    return response.data();
+                });
+        return reorganizeCategories(categories, section);
     }
 
     @Override

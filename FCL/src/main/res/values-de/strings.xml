@@ -661,6 +661,10 @@
     <string name="settings_launcher_download_threads_auto">Automatisch erkennen</string>
     <string name="settings_launcher_download_source">Quelle</string>
     <string name="settings_launcher_download_source_auto">Automatische Download-Mirror-Auswahl</string>
+    <string name="settings_launcher_mod_cache">Mod-Cache</string>
+    <string name="settings_launcher_mod_cache_clear">Löschen</string>
+    <string name="settings_launcher_mod_cache_desc">Gespeicherte CurseForge-/Modrinth-Abfrageergebnisse löschen.</string>
+    <string name="settings_launcher_mod_cache_cleared">Mod-Cache geleert</string>
     <string name="settings_launcher_language">Sprache</string>
     <string name="settings_launcher_language_system">System</string>
     <string name="settings_launcher_launcher_log_export">Exportieren</string>

@@ -31,6 +31,7 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.databinding.PageSettingLauncherBinding;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.upgrade.UpdateChecker;
+import com.tungsten.fclcore.mod.RemoteModCache;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.FetchTask;
@@ -115,6 +116,11 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                 break;
             case EXPORT_LOG:
                 exportLog();
+                break;
+            case CLEAR_MOD_CACHE:
+                Task.runAsync(RemoteModCache::clear).whenComplete(Schedulers.androidUIThread(), e -> {
+                    Toast.makeText(getContext(), getContext().getString(R.string.settings_launcher_mod_cache_cleared), Toast.LENGTH_SHORT).show();
+                }).start();
                 break;
             case REQUEST_AUDIO:
                 if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO)

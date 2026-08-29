@@ -870,6 +870,10 @@
     <string name="settings_launcher_download_threads_auto">Tự động Xác định</string>
     <string name="settings_launcher_download_source">Nguồn Tải xuống</string>
     <string name="settings_launcher_download_source_auto">Tự động Chọn Máy nhân bản Tải xuống</string>
+    <string name="settings_launcher_mod_cache">Bộ nhớ đệm mod</string>
+    <string name="settings_launcher_mod_cache_clear">Xóa</string>
+    <string name="settings_launcher_mod_cache_desc">Xóa kết quả truy vấn CurseForge / Modrinth đã lưu trong bộ nhớ đệm.</string>
+    <string name="settings_launcher_mod_cache_cleared">Đã xóa bộ nhớ đệm mod</string>
     <string name="settings_launcher_language">Ngôn ngữ</string>
     <string name="settings_launcher_language_system">Sử dụng Ngôn ngữ Hệ thống</string>
     <string name="settings_launcher_language_english" translatable="false">English</string>

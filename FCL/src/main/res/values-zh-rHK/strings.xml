@@ -791,6 +791,10 @@
     <string name="settings_launcher_download_threads_auto">自動選擇併發數</string>
     <string name="settings_launcher_download_source">下載源</string>
     <string name="settings_launcher_download_source_auto">自動選擇下載源</string>
+    <string name="settings_launcher_mod_cache">模組快取</string>
+    <string name="settings_launcher_mod_cache_clear">清除</string>
+    <string name="settings_launcher_mod_cache_desc">清除 CurseForge / Modrinth 的查詢結果快取，清除後將重新連線獲取</string>
+    <string name="settings_launcher_mod_cache_cleared">模組快取已清除</string>
     <string name="settings_launcher_language">語言</string>
     <string name="settings_launcher_language_system">跟隨系統語言</string>
     <string name="settings_launcher_launcher_log_export">導出啟動器日誌</string>
