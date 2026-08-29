@@ -39,6 +39,7 @@ import com.tungsten.fclcore.util.io.ResponseCodeException;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -142,6 +143,10 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                         } else {
                             throw e;
                         }
+                    } catch (FileNotFoundException e) {
+                        // HttpGetRequest 不检查状态码，404/410 直接从 getInputStream 抛出，
+                        // 必须归为负缓存，否则每次扫描都会重复白查
+                        return null;
                     }
                 });
         return mod == null ? Optional.empty() : mod.toVersion();
