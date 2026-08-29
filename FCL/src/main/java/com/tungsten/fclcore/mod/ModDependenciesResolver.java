@@ -81,8 +81,8 @@ public final class ModDependenciesResolver {
                     try {
                         repository.getRemoteVersionByLocalFile(null, path)
                                 .ifPresent(version -> {
-                                    if (version.getModid() != null)
-                                        ids.add(version.getModid());
+                                    if (version.modid() != null)
+                                        ids.add(version.modid());
                                 });
                     } catch (IOException e) {
                         LOG.log(Level.FINE, "Skip unidentifiable local mod " + path, e);
@@ -116,18 +116,18 @@ public final class ModDependenciesResolver {
 
         // 本体已安装：跳过本体下载，但前置仍照常解析安装
         boolean rootInstalled = installed != null &&
-                (installed.containsFilename(getFilename(root)) || installed.containsProject(root.getModid()));
+                (installed.containsFilename(getFilename(root)) || installed.containsProject(root.modid()));
         int installedSkipped = 0;
 
-        if (root.getGameVersions() == null || root.getGameVersions().isEmpty()
-                || root.getDependencies() == null || root.getDependencies().isEmpty())
+        if (root.gameVersions() == null || root.gameVersions().isEmpty()
+                || root.dependencies() == null || root.dependencies().isEmpty())
             return new Result(resolved, failedTitles, rootInstalled, installedSkipped);
 
         Set<String> visited = new HashSet<>();
-        if (root.getModid() != null)
-            visited.add(root.getModid());
+        if (root.modid() != null)
+            visited.add(root.modid());
 
-        Deque<RemoteMod.Dependency> queue = new ArrayDeque<>(root.getDependencies());
+        Deque<RemoteMod.Dependency> queue = new ArrayDeque<>(root.dependencies());
         while (!queue.isEmpty()) {
             if (resolved.size() >= MAX_DEPENDENCIES) {
                 LOG.log(Level.WARNING, "Too many mod dependencies (> " + MAX_DEPENDENCIES + "), truncating");
@@ -149,7 +149,7 @@ public final class ModDependenciesResolver {
             try {
                 RemoteMod mod = dependency.load();
                 RemoteMod.Version best = findLatestCompatible(dependency.getRemoteModRepository(), id,
-                        root.getGameVersions(), root.getLoaders());
+                        root.gameVersions(), root.loaders());
                 if (best == null) {
                     failedTitles.add(mod.getTitle());
                     continue;
@@ -161,8 +161,8 @@ public final class ModDependenciesResolver {
                 }
                 resolved.add(new ResolvedDependency(mod, best));
                 // 传递依赖：选定版本自身的必需前置也加入队列（visited 保证闭环收敛）
-                if (best.getDependencies() != null)
-                    queue.addAll(best.getDependencies());
+                if (best.dependencies() != null)
+                    queue.addAll(best.dependencies());
             } catch (IOException e) {
                 LOG.log(Level.WARNING, "Failed to resolve mod dependency " + id, e);
                 failedTitles.add(id);
@@ -172,7 +172,7 @@ public final class ModDependenciesResolver {
     }
 
     private static String getFilename(RemoteMod.Version version) {
-        return version.getFile() != null ? version.getFile().getFilename() : null;
+        return version.file() != null ? version.file().filename() : null;
     }
 
     /**
@@ -184,20 +184,20 @@ public final class ModDependenciesResolver {
     private static RemoteMod.Version findLatestCompatible(RemoteModRepository repository, String modId,
                                                           List<String> gameVersions, @Nullable List<ModLoaderType> loaders) throws IOException {
         List<RemoteMod.Version> candidates = new ArrayList<>(repository.getRemoteVersionsById(modId)
-                .filter(v -> v.getDatePublished() != null && v.getFile() != null && v.getFile().getUrl() != null)
-                .filter(v -> intersects(v.getGameVersions(), gameVersions))
+                .filter(v -> v.datePublished() != null && v.file() != null && v.file().url() != null)
+                .filter(v -> intersects(v.gameVersions(), gameVersions))
                 .toList());
         if (candidates.isEmpty())
             return null;
         if (loaders != null && !loaders.isEmpty()) {
             List<RemoteMod.Version> precise = candidates.stream()
-                    .filter(v -> intersects(v.getLoaders(), loaders))
+                    .filter(v -> intersects(v.loaders(), loaders))
                     .collect(Collectors.toList());
             if (!precise.isEmpty())
                 candidates = precise;
         }
         return candidates.stream()
-                .max(Comparator.comparing(RemoteMod.Version::getDatePublished))
+                .max(Comparator.comparing(RemoteMod.Version::datePublished))
                 .orElse(null);
     }
 

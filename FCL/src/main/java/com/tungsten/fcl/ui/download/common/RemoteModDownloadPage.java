@@ -10,6 +10,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclcore.mod.RemoteMod;
@@ -203,7 +204,7 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
         }
         if (view == downloadAll) {
             // 一键下载：主模组 + 全部必需前置一起入队
-            DownloadPage.downloadWithDependencies(downloadPage.getContext(), version.getProfile(), version.getVersion(), modVersion, "mods");
+            DownloadPage.downloadWithDependencies(downloadPage.getContext(), Profiles.getSelectedProfile(), null, modVersion, "mods");
         }
         if (view == back) {
             back.setEnabled(false);

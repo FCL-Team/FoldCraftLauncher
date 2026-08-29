@@ -72,6 +72,8 @@ import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -616,17 +618,17 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         // 前置的兼容性以所选模组版本自身的 gameVersions / loaders 为准，解析完一起入队；
         // 本体已安装时跳过本体，前置仍会安装
         Task.supplyAsync(() -> ModDependenciesResolver.resolve(file, modsDirectory,
-                file.getSelf().getType().getRemoteModRepository()))
+                file.self().getType().getRemoteModRepository()))
                 .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
                     if (exception != null || result == null)
                         return;
                     if (!result.rootInstalled()) {
-                        submitModDownload(context, file.getFile().getFilename(), file, modsDirectory);
+                        submitModDownload(context, file.file().filename(), file, modsDirectory);
                     } else {
                         Toast.makeText(context, context.getString(R.string.mods_already_installed), Toast.LENGTH_SHORT).show();
                     }
                     for (ModDependenciesResolver.ResolvedDependency dep : result.dependencies()) {
-                        submitModDownload(context, dep.version().getFile().getFilename(), dep.version(), modsDirectory);
+                        submitModDownload(context, dep.version().file().filename(), dep.version(), modsDirectory);
                     }
                     if (result.installedSkipped() > 0) {
                         Toast.makeText(context, context.getString(R.string.mods_installed_skipped_note, result.installedSkipped()), Toast.LENGTH_SHORT).show();
@@ -640,7 +642,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     /** 提交单个模组文件到下载队列：队列标题与保存文件均使用原始文件名 */
     private static void submitModDownload(Context context, String filename, RemoteMod.Version version, Path modsDirectory) {
         Path dest = modsDirectory.resolve(filename);
-        FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(version.getFile().getUrl()), dest.toFile(), version.getFile().getIntegrityCheck());
+        FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(version.file().url()), dest.toFile(), version.file().getIntegrityCheck());
         fileTask.setName(filename);
         Task<Void> downloadTask = Task.composeAsync(() -> fileTask);
         TaskExecutor executor = downloadTask.whenComplete(Schedulers.androidUIThread(), exception -> {
