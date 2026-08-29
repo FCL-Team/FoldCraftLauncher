@@ -38,7 +38,6 @@ class VersionSettingTest {
         val vs = VersionSetting()
         assertTrue(vs.isUsesGlobal)
         assertEquals("Auto", vs.java)
-        assertEquals("", vs.uuid)
         assertEquals(defaultMemory(), vs.maxMemory)
         assertNull(vs.minMemory)
         assertTrue(vs.isAutoMemory)
@@ -84,11 +83,10 @@ class VersionSettingTest {
             vs.renderer = "gl4es"
             vs.driver = "Mesa"
             vs.isPojavBigCore = true
-            vs.uuid = "uuid-1"
             vs.isNotCheckMod = true
             vs.isDebugLog = true
             vs.isForceResolution = true
-            assertEquals(21, notified.get())
+            assertEquals(20, notified.get())
         } finally {
             vs.removeOnChangeListener(listener)
         }
@@ -168,7 +166,6 @@ class VersionSettingTest {
             renderer = "gl4es"
             driver = "Mesa"
             isPojavBigCore = true
-            uuid = "uuid-1"
             isNotCheckMod = true
             isDebugLog = true
             isForceResolution = true
@@ -192,7 +189,6 @@ class VersionSettingTest {
         assertEquals(vs.renderer, copy.renderer)
         assertEquals(vs.driver, copy.driver)
         assertEquals(vs.isPojavBigCore, copy.isPojavBigCore)
-        assertEquals(vs.uuid, copy.uuid)
         assertEquals(vs.isNotCheckMod, copy.isNotCheckMod)
         assertEquals(vs.isDebugLog, copy.isDebugLog)
         assertEquals(vs.isForceResolution, copy.isForceResolution)
@@ -224,7 +220,6 @@ class VersionSettingTest {
             renderer = "gl4es"
             driver = "Mesa"
             isPojavBigCore = true
-            uuid = "uuid-1"
             isNotCheckMod = true
             isDebugLog = true
             isForceResolution = true
@@ -247,7 +242,6 @@ class VersionSettingTest {
         assertEquals("gl4es", restored.renderer)
         assertEquals("Mesa", restored.driver)
         assertTrue(restored.isPojavBigCore)
-        assertEquals("uuid-1", restored.uuid)
         assertTrue(restored.isNotCheckMod)
         assertTrue(restored.isDebugLog)
         assertTrue(restored.isForceResolution)

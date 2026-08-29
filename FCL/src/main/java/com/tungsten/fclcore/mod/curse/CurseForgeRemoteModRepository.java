@@ -36,12 +36,13 @@ import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import org.jetbrains.annotations.Nullable;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,6 +53,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
+import java.util.zip.Checksum;
 
 public final class CurseForgeRemoteModRepository implements RemoteModRepository {
 
@@ -188,24 +190,76 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
         }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), response.data().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
     }
 
-    @Override
-    public Optional<RemoteMod.Version> getRemoteVersionByLocalFile(LocalModFile localModFile, Path file) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (InputStream stream = Files.newInputStream(file)) {
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = stream.read(buf, 0, buf.length)) != -1) {
+    /**
+     * 计算 CurseForge 文件指纹：剔除空白符（0x9/0xa/0xd/0x20）后计算 MurmurHash2。
+     * 采用流式两遍扫描（1MB 缓冲），不在内存中保留整个过滤后的文件，避免大文件 OOM。
+     */
+    static long calculateFingerprint(Path file) throws IOException {
+        try (SeekableByteChannel channel = Files.newByteChannel(file, StandardOpenOption.READ)) {
+            long startPosition = channel.position();
+
+            byte[] bufferArray = new byte[1024 * 1024];
+            ByteBuffer buffer = ByteBuffer.wrap(bufferArray);
+
+            // 第一遍：统计过滤空白符后的总长度
+            long filteredLength = 0;
+            while (channel.read(buffer) > 0) {
+                int len = buffer.position();
                 for (int i = 0; i < len; i++) {
-                    byte b = buf[i];
+                    byte b = bufferArray[i];
                     if (b != 0x9 && b != 0xa && b != 0xd && b != 0x20) {
-                        baos.write(b);
+                        filteredLength++;
                     }
                 }
+                buffer.clear();
             }
+
+            channel.position(startPosition);
+
+            // 第二遍：原地剔除空白符，喂给流式哈希
+            Checksum hasher = MurmurHash2.hash32(filteredLength, 1);
+            while (channel.read(buffer) > 0) {
+                int len = buffer.position();
+
+                int pos = 0;
+                while (pos < len) {
+                    byte b = bufferArray[pos];
+                    if (b == 0x9 || b == 0xa || b == 0xd || b == 0x20) {
+                        break;
+                    }
+                    pos++;
+                }
+
+                if (pos < len) {
+                    int pos2 = pos + 1;
+                    while (pos2 < len) {
+                        byte b = bufferArray[pos2];
+                        if (b != 0x9 && b != 0xa && b != 0xd && b != 0x20) {
+                            bufferArray[pos++] = b;
+                        }
+                        pos2++;
+                    }
+                }
+
+                hasher.update(bufferArray, 0, pos);
+                buffer.clear();
+            }
+            return hasher.getValue();
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            throw new IOException(e);
+        }
+    }
+
+    @Override
+    public Optional<RemoteMod.Version> getRemoteVersionByLocalFile(LocalModFile localModFile, Path file) throws IOException {
+        long hash = calculateFingerprint(file);
+        // Workaround for https://github.com/HMCL-dev/HMCL/issues/4597
+        // 1.20.1 Forge GeckoLib（id=388172）与wonderland.jar real one（id=1634457）
+        if (hash == 811513880 || hash == 252446230) {
+            return Optional.empty();
         }
 
-        long hash = Integer.toUnsignedLong(MurmurHash2.hash32(baos.toByteArray(), baos.size(), 1));
-
+        LOG.info("Matching file " + file.getFileName() + " (fingerprint: " + hash + ") via " + PREFIX + "/v1/fingerprints/432");
         Response<FingerprintMatchesResult> response = withApiKey(HttpRequest.POST(PREFIX + "/v1/fingerprints/432"))
                 .json(mapOf(pair("fingerprints", Collections.singletonList(hash))))
                 .getJson(new TypeToken<Response<FingerprintMatchesResult>>() {
@@ -303,17 +357,17 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
     }
 
     /**
-         * @see <a href="https://docs.curseforge.com/#tocS_FingerprintsMatchesResult">Schema</a>
-         */
-        private record FingerprintMatchesResult(boolean isCacheBuilt,
-                                                List<FingerprintMatch> exactMatches,
-                                                List<Long> exactFingerprints) {
+     * @see <a href="https://docs.curseforge.com/#tocS_FingerprintsMatchesResult">Schema</a>
+     */
+    private record FingerprintMatchesResult(boolean isCacheBuilt,
+                                            List<FingerprintMatch> exactMatches,
+                                            List<Long> exactFingerprints) {
     }
 
     /**
-         * @see <a href="https://docs.curseforge.com/#tocS_FingerprintMatch">Schema</a>
-         */
-        private record FingerprintMatch(int id, CurseAddon.LatestFile file,
-                                        List<CurseAddon.LatestFile> latestFiles) {
+     * @see <a href="https://docs.curseforge.com/#tocS_FingerprintMatch">Schema</a>
+     */
+    private record FingerprintMatch(int id, CurseAddon.LatestFile file,
+                                    List<CurseAddon.LatestFile> latestFiles) {
     }
 }

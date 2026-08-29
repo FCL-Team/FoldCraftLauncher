@@ -31,10 +31,12 @@ class ThemeDataTest {
 
     private fun themeData(
         color: Int = Color.parseColor("#7797CF"),
+        colorDark: Int = Color.DKGRAY,
         color2: Int = Color.BLACK,
         color2Dark: Int = Color.WHITE
-    ) = ThemeData(color, color2, color2Dark, false, false, 8,
-        BitmapDrawableStub(), BitmapDrawableStub())
+    ) = ThemeData(color, colorDark, color2, color2Dark,
+        fullscreen = false, closeSkinModel = false, animationSpeed = 8,
+        backgroundLt = BitmapDrawableStub(), backgroundDk = BitmapDrawableStub())
 
     /** 占位背景（测试不依赖真实图片资源） */
     private class BitmapDrawableStub : android.graphics.drawable.BitmapDrawable() {

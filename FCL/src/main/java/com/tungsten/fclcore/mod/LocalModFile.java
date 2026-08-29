@@ -176,7 +176,6 @@ public final class LocalModFile implements Comparable<LocalModFile> {
         try {
             currentVersion = repository.getRemoteVersionByLocalFile(this, file);
         } catch (Throwable e) {
-            System.gc();
             Logging.LOG.log(Level.SEVERE, e.toString());
         }
 

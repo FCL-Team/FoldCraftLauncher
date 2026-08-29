@@ -259,9 +259,6 @@ class LocalModListAdapter(
                 delay(200L.milliseconds)
                 if (!isVisible(modInfoObject)) return@launch
                 val mod = withContext(Dispatchers.IO) {
-                    if (modInfoObject.modInfo.file.toFile()
-                            .length() > 104857600
-                    ) return@withContext null
                     for (type in RemoteMod.Type.entries.toTypedArray()) {
                         ensureActive()
                         try {
@@ -283,7 +280,6 @@ class LocalModListAdapter(
                             }
                             return@withContext modInfoObject.remoteMod
                         } catch (e: Throwable) {
-                            System.gc()
                             Logging.LOG.log(Level.SEVERE, e.toString())
                         }
                     }

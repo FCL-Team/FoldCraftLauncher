@@ -134,6 +134,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
     public Optional<RemoteMod.Version> getRemoteVersionByLocalFile(LocalModFile localModFile, Path file) throws IOException {
         String sha1 = DigestUtils.digestToString("SHA-1", file);
 
+        LOG.info("Matching file " + file.getFileName() + " (sha1: " + sha1 + ") via " + PREFIX + "/v2/version_file/" + sha1);
         try {
             ProjectVersion mod = HttpRequest.GET(PREFIX + "/v2/version_file/" + sha1,
                             pair("algorithm", "sha1"))
