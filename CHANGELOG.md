@@ -1,5 +1,87 @@
 # Changelog
 
+## [1.3.2.9] - 2026-08-29
+
+### 中文
+
+#### ✨ 新功能
+
+1. **微软登录实时显示认证进度**：登录过程中实时显示 Xbox 认证、档案获取等各阶段进度，不再只有转圈
+2. **语言切换立即生效**：切换语言后重建 Activity 直接应用新语言，移除"重启后生效"提示
+3. **设置项分组显示**：启动器设置页的主题/背景/游戏内等设置、版本设置页的渲染相关项分别连成组并带次要主题色分隔线，关于页链接行同样合并分组
+4. **深色模式主要主题色**：新增深色模式下的主色调，设置页操作按钮改为图标按钮
+5. **运行时安装详细进度**：运行时安装页逐条目显示"正在复制 xxx"等文件级进度
+6. **未选账户启动引导**：启动游戏未选中账户时改为提示并跳转账户管理页
+
+#### ⚡ 优化
+
+1. **游戏内菜单重构**：重构为 RecyclerView 多级菜单
+2. **安装器进程通信改文件轮询**：通过退出码文件与日志增量读取通信，日志实时显示；修复多次创建安装进程时的卡死与误杀，进程超时后自动重启 :jvm 重跑同一命令
+3. **内置浏览器缓存策略**：改为默认缓存策略，退出时不再清除缓存
+
+#### 🐛 修复
+
+1. 修复切换游戏目录后模组下载位置与推荐版本未跟随新目录
+2. 修复反复安装后 View 树泄漏（TaskDialog 任务监听引用链与临时页动画结束回调不执行），消除累积卡顿
+3. 修复版本设置页输入框失焦（列表误重建），FCLEditText 迁移 Kotlin 并防御部分定制 ROM 焦点前进崩溃
+4. 修复布局编辑关闭后按键位置偏移（千分比换算向下截断导致相邻按键贴住）
+5. 修复设置页 Spinner 绑定伪回调误触发选中逻辑导致主题模式切换卡顿
+6. 修复整合包导出文件选择页滚动时监听器与双向绑定累积导致的 OOM
+7. 修复外部应用调用启动器安装整合包时崩溃
+8. 修复游标抓取状态回调的竞态与空指针隐患
+9. 修复游戏启动时未应用 FPS/内存显示与持续性能模式开关
+10. 修复版本设置页控制器未初始化时显示默认名称、FCLNumberSeekBar 设置进度未同步保存
+11. 调整下载页搜索框输入法全屏行为
+
+#### 🔧 其他
+
+1. 移除自定义 UUID 功能，游戏启动始终使用账户 UUID
+2. 移除"清除缓存"设置项及相关字符串资源，创建账户对话框移除 TabLayout 切换
+3. 禁用主界面 ViewPager2 鼠标滚轮翻页
+4. 下载页游戏目录/版本与已安装标记改为动态获取，移除已无消费的快照链
+5. 显式声明代码直接使用的传递依赖（core-ktx/lifecycle/recyclerview/coroutines），补全 README 相关项目与依赖清单
+6. 清理模块合并后的死代码与重复启动逻辑
+
+### English
+
+#### ✨ New Features
+
+1. **Real-time Microsoft login progress**: Each authentication stage (Xbox auth, profile fetch, etc.) is now shown live during login instead of a bare spinner
+2. **Instant language switching**: Activities are recreated to apply the new language immediately; the "restart to apply" hint is removed
+3. **Grouped settings items**: Related settings are grouped with secondary-theme-color dividers — theme/background/in-game groups on the launcher settings page, renderer-related items on the version settings page, and merged link groups on the about page
+4. **Dark-mode primary theme color**: Added a primary color for dark mode; settings page action buttons are now icon buttons
+5. **Detailed runtime installation progress**: The runtime installation page shows per-file progress such as which file is being copied
+6. **No-account launch guidance**: Starting a game without a selected account now shows a prompt and jumps to the account management page
+
+#### ⚡ Improvements
+
+1. **In-game menu refactored**: Rebuilt as a RecyclerView multi-level menu
+2. **Installer process communication via file polling**: Communicates through an exit-code file with incremental log reading for real-time log display; fixed hangs and wrong-process kills when creating installer processes repeatedly, with automatic :jvm restart and command retry on timeout
+3. **Built-in browser caching**: Now uses the default caching policy and no longer clears the cache on exit
+
+#### 🐛 Bug Fixes
+
+1. Fixed mod download location and recommended version not following the newly selected game directory
+2. Fixed view tree leaks after repeated installations (TaskDialog task-listener chain and temp-page animation end callbacks never running), eliminating accumulated jank
+3. Fixed version settings page input focus loss (spurious list rebuild); FCLEditText migrated to Kotlin with a guard against the focus-advance crash on some custom ROMs
+4. Fixed key position offset after closing the layout editor (truncating the permille conversion made adjacent keys stick together)
+5. Fixed theme mode switching jank caused by settings-page spinner pseudo-callbacks falsely triggering selection logic
+6. Fixed an OOM in the modpack export file picker caused by listeners and bidirectional bindings accumulating while scrolling
+7. Fixed a crash when external apps invoke the launcher to install a modpack
+8. Fixed a race condition and NPE risk in cursor grab state callbacks
+9. Fixed FPS/memory display and sustained performance mode toggles not being applied at game launch
+10. Fixed default controller name display when not initialized on the version settings page, and FCLNumberSeekBar not syncing/saving its progress
+11. Adjusted the download page search box IME fullscreen behavior
+
+#### 🔧 Other
+
+1. Removed the custom UUID feature; game launch always uses the account UUID
+2. Removed the "clear cache" setting and its string resources; removed the TabLayout switch from the create-account dialog
+3. Disabled ViewPager2 mouse-wheel page switching on the main UI
+4. Download page game directory/version and installed markers are now fetched dynamically; the unused snapshot chain was removed
+5. Explicitly declared directly-used transitive dependencies (core-ktx/lifecycle/recyclerview/coroutines); completed the README project and dependency list
+6. Cleaned up dead code and duplicate launch logic left over from the module merge
+
 ## [1.3.2.8] - 2026-08-24
 
 ### 中文
