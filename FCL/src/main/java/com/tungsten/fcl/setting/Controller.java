@@ -3,6 +3,7 @@ package com.tungsten.fcl.setting;
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import android.app.Activity;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
@@ -15,10 +16,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonStyles;
@@ -46,12 +49,16 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -205,6 +212,238 @@ public class Controller implements Cloneable, Observable {
         addPropertyChangedListener(onInvalidating(this::invalidate));
     }
 
+    /**
+     * 完整反序列化用（与 saveToDisk 相同的配置；Controller 各嵌套类自带 @JsonAdapter）。
+     */
+    static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
+            .setPrettyPrinting()
+            .create();
+
+    /**
+     * 源文件引用（轻量加载用）：列表加载只解析元数据，布局按键数据通过
+     * {@link #loadViewGroupData(ControlViewGroup)} 按需从该文件补全。transient 不参与序列化。
+     */
+    private transient File file;
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    /**
+     * 轻量解析：按 JsonReader 流式读取控制器元数据与各布局的元数据（id/name/visibility），
+     * 并注册按钮/方向样式（按键数据解析依赖样式注册表）。布局的按键数据（viewData）留空，
+     * 由 {@link #loadViewGroupData(ControlViewGroup)} 按需补全。相比完整反序列化不实例化
+     * 任何按键对象，启动/列表加载零卡顿。
+     */
+    public static Controller parseLightweight(File file) throws IOException {
+        try {
+            return parseLightweight0(file);
+        } catch (JsonParseException e) {
+            throw e;
+        } catch (Exception e) {
+            // 流式解析的非法状态（缺失字段/类型不符等）统一转为损坏文件异常
+            throw new JsonParseException("Controller file may broken!\n" + e);
+        }
+    }
+
+    private static Controller parseLightweight0(File file) throws IOException {
+        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+            String id = null;
+            String name = "";
+            String version = "";
+            String author = "";
+            String description = "";
+            int versionCode = 1;
+            int controllerVersion = Constants.CONTROLLER_VERSION;
+            List<ControlViewGroup> viewGroups = new ArrayList<>();
+
+            reader.beginObject();
+            while (reader.hasNext()) {
+                switch (reader.nextName()) {
+                    case "id":
+                        id = reader.nextString();
+                        break;
+                    case "name":
+                        name = reader.nextString();
+                        break;
+                    case "version":
+                        version = reader.nextString();
+                        break;
+                    case "author":
+                        author = reader.nextString();
+                        break;
+                    case "description":
+                        description = reader.nextString();
+                        break;
+                    case "versionCode":
+                        versionCode = reader.nextInt();
+                        break;
+                    case "controllerVersion":
+                        controllerVersion = reader.nextInt();
+                        break;
+                    case "buttonStyles":
+                        registerStyles(reader, false);
+                        break;
+                    case "directionStyles":
+                        registerStyles(reader, true);
+                        break;
+                    case "viewGroups":
+                        reader.beginArray();
+                        while (reader.hasNext()) {
+                            String groupId = null;
+                            String groupName = "";
+                            ControlViewGroup.Visibility visibility = ControlViewGroup.Visibility.VISIBLE;
+                            reader.beginObject();
+                            while (reader.hasNext()) {
+                                switch (reader.nextName()) {
+                                    case "id":
+                                        groupId = reader.nextString();
+                                        break;
+                                    case "name":
+                                        groupName = reader.nextString();
+                                        break;
+                                    case "visibility":
+                                        String vis = reader.nextString();
+                                        try {
+                                            visibility = ControlViewGroup.Visibility.valueOf(vis);
+                                        } catch (IllegalArgumentException e) {
+                                            // 未知取值回退为可见
+                                        }
+                                        break;
+                                    default:
+                                        reader.skipValue();
+                                }
+                            }
+                            reader.endObject();
+                            if (groupId != null) {
+                                ControlViewGroup group = new ControlViewGroup(groupId);
+                                group.setName(groupName);
+                                group.setVisibility(visibility);
+                                viewGroups.add(group);
+                            }
+                        }
+                        reader.endArray();
+                        break;
+                    default:
+                        reader.skipValue();
+                }
+            }
+            reader.endObject();
+
+            if (id == null) {
+                throw new JsonParseException("Controller id is missing!");
+            }
+            Controller controller = new Controller(id, name, version, versionCode, author, description, controllerVersion, FXCollections.observableArrayList(viewGroups));
+            controller.setFile(file);
+            return controller;
+        }
+    }
+
+    /** 解析并注册按钮/方向样式（轻量加载时完成，按键数据按需解析时样式名可查） */
+    private static void registerStyles(JsonReader reader, boolean direction) throws IOException {
+        JsonElement element = JsonParser.parseReader(reader);
+        ButtonStyles.init();
+        DirectionStyles.init();
+        if (direction) {
+            List<ControlDirectionStyle> styles = GSON.fromJson(element, new TypeToken<ArrayList<ControlDirectionStyle>>() {
+            }.getType());
+            if (styles != null) styles.forEach(DirectionStyles::addStyle);
+        } else {
+            List<ControlButtonStyle> styles = GSON.fromJson(element, new TypeToken<ArrayList<ControlButtonStyle>>() {
+            }.getType());
+            if (styles != null) styles.forEach(ButtonStyles::addStyle);
+        }
+    }
+
+    /**
+     * 完整解析单个布局的按键数据：流式定位 viewGroups 数组中 id 匹配的布局并解析其
+     * viewData，其余布局跳过（不实例化按键对象）。只做解析不触碰模型，可在任意线程调用。
+     *
+     * @return 完整 viewData，布局不存在或解析失败时返回 null
+     */
+    public ControlViewGroup.ViewData loadViewGroupData(ControlViewGroup viewGroup) {
+        if (file == null) return null;
+        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+            reader.beginObject();
+            while (reader.hasNext()) {
+                if ("viewGroups".equals(reader.nextName())) {
+                    JsonElement element = findViewData(reader, viewGroup.getId());
+                    if (element == null) return null;
+                    return GSON.fromJson(element, ControlViewGroup.ViewData.class);
+                }
+                reader.skipValue();
+            }
+            return null;
+        } catch (IOException e) {
+            Logging.LOG.log(Level.SEVERE, "Failed to load view group " + viewGroup.getId() + " of " + getFileName(), e);
+            return null;
+        }
+    }
+
+    /** 流式定位：仅解析目标布局的 viewData（依赖序列化顺序 id 先于 viewData，FCL 自身格式） */
+    private static JsonElement findViewData(JsonReader reader, String groupId) throws IOException {
+        reader.beginArray();
+        while (reader.hasNext()) {
+            String id = null;
+            JsonElement viewData = null;
+            reader.beginObject();
+            while (reader.hasNext()) {
+                String key = reader.nextName();
+                if ("id".equals(key)) {
+                    id = reader.nextString();
+                } else if ("viewData".equals(key) && groupId.equals(id)) {
+                    viewData = JsonParser.parseReader(reader);
+                } else {
+                    reader.skipValue();
+                }
+            }
+            reader.endObject();
+            if (groupId.equals(id) && viewData != null) {
+                return viewData;
+            }
+        }
+        reader.endArray();
+        return null;
+    }
+
+    /**
+     * 补全所有未加载布局的按键数据（保存前调用，防止轻量对象序列化时丢失按键）。
+     * 解析在调用线程执行；模型填充回主线程（fakefx 列表监听非线程安全，后台线程
+     * 改动会与主线程列表操作并发崩溃）。
+     */
+    public void ensureAllLoaded() {
+        if (file == null) return;
+        for (ControlViewGroup group : viewGroups) {
+            if (group.isDataLoaded()) continue;
+            ControlViewGroup.ViewData data = loadViewGroupData(group);
+            if (data == null) continue;
+            if (Looper.getMainLooper() == Looper.myLooper()) {
+                group.setViewData(data);
+                group.setDataLoaded(true);
+            } else {
+                CountDownLatch latch = new CountDownLatch(1);
+                Schedulers.androidUIThread().execute(() -> {
+                    try {
+                        group.setViewData(data);
+                        group.setDataLoaded(true);
+                    } finally {
+                        latch.countDown();
+                    }
+                });
+                try {
+                    latch.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+    }
+
     public static String generateRandomId() {
         return UUID.randomUUID().toString().substring(0, 8);
     }
@@ -303,6 +542,8 @@ public class Controller implements Cloneable, Observable {
 
     public synchronized void saveToDisk() {
         Schedulers.io().execute(() -> {
+            // 轻量对象先补全未加载布局的按键数据，避免空 viewData 覆盖磁盘上的按钮
+            ensureAllLoaded();
             String str = new GsonBuilder()
                     .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
                     .setPrettyPrinting()
@@ -318,6 +559,10 @@ public class Controller implements Cloneable, Observable {
     public void changeId(String newId) throws IOException {
         renameFile(getFileName(), newId + ".json");
         setId(newId);
+        // 轻量对象同步更新源文件引用，避免按需加载读取已删除的旧文件
+        if (file != null) {
+            file = new File(FCLPath.CONTROLLER_DIR, newId + ".json");
+        }
     }
 
     public void renameFile(String oldFileName, String newFileName) throws IOException {
@@ -422,6 +667,8 @@ public class Controller implements Cloneable, Observable {
                 if (controllerVersion < Constants.CONTROLLER_VERSION) {
                     showUpgradeDialog(name, id);
                 }
+                // 完整反序列化的布局按键数据已就绪（轻量解析构造的布局默认未加载，按需补全）
+                viewGroups.forEach(viewGroup -> viewGroup.setDataLoaded(true));
                 return new Controller(id, name, version, versionCode, author, description, controllerVersion, viewGroups);
             } catch (Exception e) {
                 throw new JsonParseException("Controller file may broken!\n" + e);
