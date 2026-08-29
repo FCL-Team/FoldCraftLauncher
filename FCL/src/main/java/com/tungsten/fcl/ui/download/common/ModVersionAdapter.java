@@ -70,15 +70,15 @@ public class ModVersionAdapter extends FCLAdapter {
         }
         RemoteMod.Version version = list.get(i);
         viewHolder.parent.setOnClickListener(v -> callback.onItemSelect(version));
-        viewHolder.name.setText(version.getName());
+        viewHolder.name.setText(version.name());
         viewHolder.tag.setText(getTag(getContext(), version));
-        viewHolder.date.setText(FORMATTER.format(version.getDatePublished()));
+        viewHolder.date.setText(FORMATTER.format(version.datePublished()));
         return view;
     }
 
     public static String getTag(Context context, RemoteMod.Version version) {
         StringBuilder stringBuilder = new StringBuilder();
-        switch (version.getVersionType()) {
+        switch (version.versionType()) {
             case Beta:
             case Alpha:
                 stringBuilder.append(context.getString(R.string.version_game_snapshot));
@@ -87,7 +87,7 @@ public class ModVersionAdapter extends FCLAdapter {
                 stringBuilder.append(context.getString(R.string.version_game_release));
                 break;
         }
-        for (ModLoaderType modLoaderType : version.getLoaders()) {
+        for (ModLoaderType modLoaderType : version.loaders()) {
             switch (modLoaderType) {
                 case FORGE:
                     stringBuilder.append("   ").append(context.getString(R.string.install_installer_forge));

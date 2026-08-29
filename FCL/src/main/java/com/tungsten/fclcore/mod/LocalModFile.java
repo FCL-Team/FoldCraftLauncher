@@ -52,13 +52,14 @@ public final class LocalModFile implements Comparable<LocalModFile> {
         this.modManager = modManager;
         this.mod = mod;
         this.file = file;
-        this.name = name;
+        // 元数据 record 在真机上 Gson 反序列化缺失字段为 null（构造器不执行），此处归一化回旧类的 "" 默认值
+        this.name = name == null ? "" : name;
         this.description = description;
-        this.authors = authors;
-        this.version = version;
-        this.gameVersion = gameVersion;
-        this.url = url;
-        this.logoPath = logoPath;
+        this.authors = authors == null ? "" : authors;
+        this.version = version == null ? "" : version;
+        this.gameVersion = gameVersion == null ? "" : gameVersion;
+        this.url = url == null ? "" : url;
+        this.logoPath = logoPath == null ? "" : logoPath;
 
         activeProperty = new SimpleBooleanProperty(this, "active", !modManager.isDisabled(file)) {
             @Override
@@ -181,11 +182,11 @@ public final class LocalModFile implements Comparable<LocalModFile> {
 
         if (currentVersion.isEmpty()) return null;
         Optional<RemoteMod.Version> finalCurrentVersion = currentVersion;
-        List<RemoteMod.Version> remoteVersions = repository.getRemoteVersionsById(currentVersion.get().getModid())
-                .filter(version -> version.getGameVersions().contains(gameVersion))
-                .filter(version -> version.getLoaders().contains(getModLoaderType()))
-                .filter(version -> version.getDatePublished().compareTo(finalCurrentVersion.get().getDatePublished()) > 0)
-                .sorted(Comparator.comparing(RemoteMod.Version::getDatePublished).reversed())
+        List<RemoteMod.Version> remoteVersions = repository.getRemoteVersionsById(currentVersion.get().modid())
+                .filter(version -> version.gameVersions().contains(gameVersion))
+                .filter(version -> version.loaders().contains(getModLoaderType()))
+                .filter(version -> version.datePublished().compareTo(finalCurrentVersion.get().datePublished()) > 0)
+                .sorted(Comparator.comparing(RemoteMod.Version::datePublished).reversed())
                 .collect(Collectors.toList());
         if (remoteVersions.isEmpty()) return null;
         return new ModUpdate(this, currentVersion.get(), remoteVersions);
@@ -243,7 +244,7 @@ public final class LocalModFile implements Comparable<LocalModFile> {
 
         public Description(String text) {
             this.parts = new ArrayList<>();
-            this.parts.add(new Part(text, "black"));
+            this.parts.add(new Part(text == null ? "" : text, "black"));
         }
 
         public Description(List<Part> parts) {

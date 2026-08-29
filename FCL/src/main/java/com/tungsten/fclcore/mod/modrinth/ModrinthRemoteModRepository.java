@@ -237,7 +237,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
         @Override
         public List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException {
             Set<RemoteMod.Dependency> dependencies = modRepository.getRemoteVersionsById(id())
-                    .flatMap(version -> version.getDependencies().stream())
+                    .flatMap(version -> version.dependencies().stream())
                     .collect(Collectors.toSet());
             List<RemoteMod> mods = new ArrayList<>();
             for (RemoteMod.Dependency dependency : dependencies) {
@@ -460,7 +460,7 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
         @Override
         public List<RemoteMod> loadDependencies(RemoteModRepository modRepository) throws IOException {
             Set<RemoteMod.Dependency> dependencies = modRepository.getRemoteVersionsById(projectId())
-                    .flatMap(version -> version.getDependencies().stream())
+                    .flatMap(version -> version.dependencies().stream())
                     .collect(Collectors.toSet());
             List<RemoteMod> mods = new ArrayList<>();
             for (RemoteMod.Dependency dependency : dependencies) {

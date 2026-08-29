@@ -135,9 +135,12 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
      */
     protected DownloadSearchViewModel.State searchState;
     /**
-     * 下载源变化时刷新分类并重新搜索（用户手动切换源时触发）
+     * 下载源变化时重置页码、刷新分类并重新搜索（用户手动切换源时触发）
      */
-    private final InvalidationListener sourceListener = observable -> refreshCategory(true);
+    private final InvalidationListener sourceListener = observable -> {
+        pageOffset.set(0);
+        refreshCategory(true);
+    };
 
     public DownloadPage(Context context) {
         super(context, FCLPage.PAGE_ID_TEMP, R.layout.page_download);
@@ -350,7 +353,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                     if (pageId == PAGE_ID_DOWNLOAD_MOD && selectedModLoader != null) {
                         list = (ArrayList<RemoteMod>) list.parallelStream().filter(mod -> {
                             try {
-                                return mod.getData().loadVersions(repository).flatMap(v -> v.getLoaders().stream()).collect(Collectors.toCollection(ArrayList::new)).contains(selectedModLoader);
+                                return mod.getData().loadVersions(repository).flatMap(v -> v.loaders().stream()).collect(Collectors.toCollection(ArrayList::new)).contains(selectedModLoader);
                             } catch (Throwable ignore) {
                             }
                             return true;
@@ -431,7 +434,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         }
         Object self = indented.category().self();
         if (self instanceof CurseAddon.Category curseCategory) {
-            result.append(curseCategory.getName());
+            result.append(curseCategory.name());
         } else if (self instanceof ModrinthRemoteModRepository.Category modrinthCategory) {
             result.append(modrinthCategory.name());
         }
@@ -567,15 +570,15 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
 
         Path runDirectory = version != null && profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
 
-        DownloadAddonDialog dialog = new DownloadAddonDialog(context, file.getFile().getFilename(), name -> {
+        DownloadAddonDialog dialog = new DownloadAddonDialog(context, file.file().filename(), name -> {
             Path dest = runDirectory.resolve(subdirectoryName).resolve(name);
 
             TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
             taskDialog.setTitle(context.getString(R.string.message_downloading));
             Schedulers.androidUIThread().execute(() -> {
                 TaskExecutor executor = Task.composeAsync(() -> {
-                    FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(file.getFile().getUrl()), dest.toFile());
-                    task.setName(file.getName());
+                    FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(file.file().url()), dest.toFile());
+                    task.setName(file.name());
                     return task;
                 }).whenComplete(Schedulers.androidUIThread(), exception -> {
                     if (exception != null) {

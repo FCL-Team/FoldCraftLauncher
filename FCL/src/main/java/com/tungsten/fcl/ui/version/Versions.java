@@ -56,13 +56,13 @@ public class Versions {
         URL downloadURL;
         try {
             modpack = Files.createTempFile("modpack", ".zip");
-            downloadURL = new URL(file.getFile().getUrl());
+            downloadURL = new URL(file.file().url());
         } catch (IOException e) {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
             builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
             builder.setCancelable(false);
             builder.setTitle(context.getString(R.string.download_failed));
-            builder.setMessage(context.getString(R.string.install_failed_downloading_detail, file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
+            builder.setMessage(context.getString(R.string.install_failed_downloading_detail, file.file().url()) + "\n" + StringUtils.getStackTrace(e));
             builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
             builder.create().show();
             return;
@@ -82,7 +82,7 @@ public class Versions {
                         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                         builder.setCancelable(false);
                         builder.setTitle(context.getString(R.string.download_failed));
-                        builder.setMessage(context.getString(R.string.install_failed_downloading_detail, file.getFile().getUrl()) + "\n" + StringUtils.getStackTrace(e));
+                        builder.setMessage(context.getString(R.string.install_failed_downloading_detail, file.file().url()) + "\n" + StringUtils.getStackTrace(e));
                         builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                         builder.create().show();
                     }

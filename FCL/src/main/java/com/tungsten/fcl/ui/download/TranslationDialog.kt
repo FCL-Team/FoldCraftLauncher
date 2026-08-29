@@ -94,9 +94,9 @@ class TranslationDialog(
         override fun onBindViewHolder(holder: TranslationViewHolder, position: Int) {
             val binding = ItemTranslationBinding.bind(holder.itemView)
             val mod = translationList[position]
-            binding.text.text = "${mod.name} ${mod.subname} ${mod.abbr}"
+            binding.text.text = "${mod.name()} ${mod.subname()} ${mod.abbr()}"
             binding.root.setOnClickListener {
-                callback(mod.subname.ifEmpty { mod.abbr })
+                callback(mod.subname().ifEmpty { mod.abbr() })
             }
         }
 

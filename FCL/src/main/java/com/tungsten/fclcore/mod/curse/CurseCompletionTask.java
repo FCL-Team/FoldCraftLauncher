@@ -119,7 +119,7 @@ public final class CurseCompletionTask extends Task<Void> {
                             if (StringUtils.isBlank(file.getFileName()) || file.getUrl() == null) {
                                 try {
                                     RemoteMod.File remoteFile = CurseForgeRemoteModRepository.MODS.getModFile(Integer.toString(file.getProjectID()), Integer.toString(file.getFileID()));
-                                    return file.withFileName(remoteFile.getFilename()).withURL(remoteFile.getUrl());
+                                    return file.withFileName(remoteFile.filename()).withURL(remoteFile.url());
                                 } catch (FileNotFoundException fof) {
                                     Logging.LOG.log(Level.WARNING, "Could not query api.curseforge.com for deleted mods: " + file.getProjectID() + ", " + file.getFileID(), fof);
                                     notFound.set(true);

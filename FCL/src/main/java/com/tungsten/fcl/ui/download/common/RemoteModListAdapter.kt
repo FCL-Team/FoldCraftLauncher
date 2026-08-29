@@ -60,7 +60,7 @@ class RemoteModListAdapter(
                             localModFile.remoteVersion = it
                         }
                         localModFile.remoteVersion?.let {
-                            modIdList.add(it.modid)
+                            modIdList.add(it.modid())
                         }
                     } catch (e: Throwable) {
                         Logging.LOG.log(Level.SEVERE, e.toString())

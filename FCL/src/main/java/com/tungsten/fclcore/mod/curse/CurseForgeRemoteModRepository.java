@@ -126,7 +126,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
     @Override
     public SearchResult search(DownloadProvider downloadProvider, String gameVersion, @Nullable RemoteModRepository.Category category, int pageOffset, int pageSize, String searchFilter, SortType sortType, SortOrder sortOrder) throws IOException {
         int categoryId = 0;
-        if (category != null) categoryId = ((CurseAddon.Category) category.self()).getId();
+        if (category != null) categoryId = ((CurseAddon.Category) category.self()).id();
         var query = new LinkedHashMap<String, String>();
         query.put("gameId", "432");
         query.put("classId", Integer.toString(section));
@@ -300,7 +300,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                             }.getType());
                     return response.data();
                 });
-        return file.toVersion().getFile();
+        return file.toVersion().file();
     }
 
     @Override
@@ -318,8 +318,8 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
     }
 
     public List<CurseAddon.Category> getCategoriesImpl() throws IOException {
-        // 分类几乎不变，长 TTL 缓存；缓存原始列表，命中后重新组织层级
-        List<CurseAddon.Category> categories = RemoteModCache.getOrFetch("cf:cat:" + section, RemoteModCache.TTL_CATEGORIES,
+        // 分类几乎不变，长 TTL 缓存；缓存原始扁平列表
+        return RemoteModCache.getOrFetch("cf:cat:" + section, RemoteModCache.TTL_CATEGORIES,
                 JsonUtils.listTypeOf(CurseAddon.Category.class).getType(),
                 () -> {
                     Response<List<CurseAddon.Category>> response = withApiKey(HttpRequest.GET(PREFIX + "/v1/categories", pair("gameId", "432")))
@@ -327,34 +327,33 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                             }.getType());
                     return response.data();
                 });
-        return reorganizeCategories(categories, section);
     }
 
     @Override
     public Stream<RemoteModRepository.Category> getCategories() throws IOException {
-        return getCategoriesImpl().stream().map(CurseAddon.Category::toCategory);
+        return reorganizeCategories(getCategoriesImpl(), section).stream();
     }
 
-    private List<CurseAddon.Category> reorganizeCategories(List<CurseAddon.Category> categories, int rootId) {
-        List<CurseAddon.Category> result = new ArrayList<>();
-
-        Map<Integer, CurseAddon.Category> categoryMap = new HashMap<>();
+    // API 返回扁平列表，按 parentCategoryId 递归组装层级树；父项不存在的条目直接丢弃（与旧逻辑一致）
+    private List<RemoteModRepository.Category> reorganizeCategories(List<CurseAddon.Category> categories, int rootId) {
+        Map<Integer, List<CurseAddon.Category>> childrenMap = new HashMap<>();
         for (CurseAddon.Category category : categories) {
-            categoryMap.put(category.getId(), category);
+            childrenMap.computeIfAbsent(category.parentCategoryId(), k -> new ArrayList<>()).add(category);
         }
-        for (CurseAddon.Category category : categories) {
-            if (category.getParentCategoryId() == rootId) {
-                result.add(category);
-            } else {
-                CurseAddon.Category parentCategory = categoryMap.get(category.getParentCategoryId());
-                if (parentCategory == null) {
-                    // Category list is not correct, so we ignore this item.
-                    continue;
-                }
-                parentCategory.getSubcategories().add(category);
-            }
+
+        List<RemoteModRepository.Category> result = new ArrayList<>();
+        for (CurseAddon.Category category : childrenMap.getOrDefault(rootId, Collections.emptyList())) {
+            result.add(toCategoryTree(category, childrenMap));
         }
         return result;
+    }
+
+    private RemoteModRepository.Category toCategoryTree(CurseAddon.Category category, Map<Integer, List<CurseAddon.Category>> childrenMap) {
+        List<RemoteModRepository.Category> subcategories = new ArrayList<>();
+        for (CurseAddon.Category subcategory : childrenMap.getOrDefault(category.id(), Collections.emptyList())) {
+            subcategories.add(toCategoryTree(subcategory, childrenMap));
+        }
+        return new RemoteModRepository.Category(category, Integer.toString(category.id()), subcategories);
     }
 
     public static final int SECTION_BUKKIT_PLUGIN = 5;

@@ -209,7 +209,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
                 try {
                     Optional<RemoteMod.Version> remoteVersion = repository.getRemoteVersionByLocalFile(localModFile, localModFile.getFile());
                     if (remoteVersion.isPresent()) {
-                        String modId = remoteVersion.get().getModid();
+                        String modId = remoteVersion.get().modid();
                         if (addon.getModID().equals(modId)) {
                             return remoteVersion.get();
                         }
@@ -229,14 +229,14 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> classifiedVersions
                 = new SimpleMultimap<>(HashMap::new, ArrayList::new);
         for (RemoteMod.Version version : versions) {
-            for (String gameVersion : version.getGameVersions()) {
+            for (String gameVersion : version.gameVersions()) {
                 classifiedVersions.put(gameVersion, version);
             }
         }
 
         for (String gameVersion : classifiedVersions.keys()) {
             List<RemoteMod.Version> versionList = classifiedVersions.get(gameVersion);
-            versionList.sort(Comparator.comparing(RemoteMod.Version::getDatePublished).reversed());
+            versionList.sort(Comparator.comparing(RemoteMod.Version::datePublished).reversed());
         }
         if (page.getPageId() != DownloadUI.PAGE_ID_DOWNLOAD_MODPACK) {
             Profile profile = Profiles.getSelectedProfile();
@@ -248,7 +248,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
                 if (classifiedVersions.keys().contains(mcv)) {
                     classifiedVersions.get(mcv).stream().filter(v -> {
                         if (page.getPageId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
-                            for (ModLoaderType loader : v.getLoaders()) {
+                            for (ModLoaderType loader : v.loaders()) {
                                 if (modLoaders.contains(loader)) {
                                     recommendedVersion = getContext().getString(R.string.recommend_version) + ": " + mcv + " " + loader.name();
                                     return true;

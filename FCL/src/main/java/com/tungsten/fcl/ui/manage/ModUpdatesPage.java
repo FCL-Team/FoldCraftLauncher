@@ -31,7 +31,6 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
-import com.tungsten.fcllibrary.component.view.FCLUILayout;
 
 import java.io.File;
 import java.net.URL;
@@ -194,9 +193,9 @@ public class ModUpdatesPage extends FCLPage implements View.OnClickListener {
 
             enabled.set(!data.getLocalMod().getModManager().isDisabled(data.getLocalMod().getFile()));
             fileName.set(data.getLocalMod().getFileName());
-            currentVersion.set(data.getCurrentVersion().getVersion());
-            targetVersion.set(data.getCandidates().get(0).getVersion());
-            switch (data.getCurrentVersion().getSelf().getType()) {
+            currentVersion.set(data.getCurrentVersion().version());
+            targetVersion.set(data.getCandidates().get(0).version());
+            switch (data.getCurrentVersion().self().getType()) {
                 case CURSEFORGE:
                     source.set(context.getString(com.tungsten.fcl.R.string.mods_curseforge));
                     break;
@@ -283,15 +282,15 @@ public class ModUpdatesPage extends FCLPage implements View.OnClickListener {
                 dependents.add(Task
                         .runAsync(Schedulers.androidUIThread(), () -> local.setOld(true))
                         .thenComposeAsync(() -> {
-                            String fileName = remote.getFile().getFilename();
+                            String fileName = remote.file().filename();
                             if (isDisabled)
                                 fileName += ModManager.DISABLED_EXTENSION;
 
                             FileDownloadTask task = new FileDownloadTask(
-                                    new URL(remote.getFile().getUrl()),
+                                    new URL(remote.file().url()),
                                     modManager.getModsDirectory().resolve(fileName).toFile());
 
-                            task.setName(remote.getName());
+                            task.setName(remote.name());
                             return task;
                         })
                         .whenComplete(Schedulers.androidUIThread(), exception -> {

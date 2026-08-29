@@ -64,7 +64,7 @@ public class ModCheckUpdatesTask extends Task<List<LocalModFile.ModUpdate>> {
                         .filter(task -> task.getResult() != null)
                         .map(Task::getResult)
                         .filter(modUpdate -> !modUpdate.getCandidates().isEmpty())
-                        .max(Comparator.comparing((LocalModFile.ModUpdate modUpdate) -> modUpdate.getCandidates().get(0).getDatePublished()))
+                        .max(Comparator.comparing((LocalModFile.ModUpdate modUpdate) -> modUpdate.getCandidates().get(0).datePublished()))
                         .orElse(null)
                 )
                 .filter(Objects::nonNull)

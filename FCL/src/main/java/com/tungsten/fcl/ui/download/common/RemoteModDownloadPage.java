@@ -70,9 +70,9 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
         create();
 
         // 原 onStart 逻辑：页面构造即填充内容并加载依赖
-        name.setText(modVersion.getName());
+        name.setText(modVersion.name());
         tag.setText(ModVersionAdapter.getTag(getContext(), modVersion));
-        date.setText(ModVersionAdapter.FORMATTER.format(modVersion.getDatePublished()));
+        date.setText(ModVersionAdapter.FORMATTER.format(modVersion.datePublished()));
 
         loadDependencies(modVersion);
     }
@@ -81,7 +81,7 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
         setLoading(true, false);
         Task.supplyAsync(() -> {
             EnumMap<RemoteMod.DependencyType, List<RemoteMod>> dependencies = new EnumMap<>(RemoteMod.DependencyType.class);
-            for (RemoteMod.Dependency dependency : version.getDependencies()) {
+            for (RemoteMod.Dependency dependency : version.dependencies()) {
                 if (dependency.getType() == RemoteMod.DependencyType.INCOMPATIBLE || dependency.getType() == RemoteMod.DependencyType.BROKEN) {
                     continue;
                 }

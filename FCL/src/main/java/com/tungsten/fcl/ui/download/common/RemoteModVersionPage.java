@@ -63,8 +63,8 @@ public class RemoteModVersionPage extends FCLPage {
             dialog.setTitle(getContext().getString(R.string.message_downloading));
             Schedulers.androidUIThread().execute(() -> {
                 TaskExecutor executor = Task.composeAsync(() -> {
-                    FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(file.getFile().getUrl()), new File(folder, file.getFile().getFilename()), file.getFile().getIntegrityCheck());
-                    task.setName(file.getName());
+                    FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(file.file().url()), new File(folder, file.file().filename()), file.file().getIntegrityCheck());
+                    task.setName(file.name());
                     return task;
                 }).executor();
                 dialog.setExecutor(executor);

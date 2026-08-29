@@ -40,18 +40,18 @@ class RemoteModScreenshotAdapter(
         val screenshot = screenshotList[position]
 
         binding.screenshot.setImageDrawable(null)
-        loadScreenshotImage(binding, screenshot.imageUrl)
+        loadScreenshotImage(binding, screenshot.imageUrl())
 
         binding.screenshot.setOnClickListener {
-            loadScreenshotImage(binding, screenshot.imageUrl)
+            loadScreenshotImage(binding, screenshot.imageUrl())
         }
         binding.screenshot.setOnLongClickListener {
-            showFullImageDialog(screenshot.imageUrl)
+            showFullImageDialog(screenshot.imageUrl())
             true
         }
 
-        binding.title.setVisibleIfNotBlank(screenshot.title)
-        binding.description.setVisibleIfNotBlank(screenshot.description)
+        binding.title.setVisibleIfNotBlank(screenshot.title())
+        binding.description.setVisibleIfNotBlank(screenshot.description())
     }
 
     private fun showFullImageDialog(imageUrl: String) {

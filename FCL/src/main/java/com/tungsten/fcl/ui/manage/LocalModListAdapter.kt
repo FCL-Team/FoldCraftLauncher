@@ -278,7 +278,7 @@ class LocalModListAdapter(
                                 )
                             if (remoteVersion.isPresent) {
                                 val remoteMod: RemoteMod? = type.remoteModRepository
-                                    .getModById(remoteVersion.get().modid)
+                                    .getModById(remoteVersion.get().modid())
                                 modInfoObject.modInfo.remoteVersion =
                                     remoteVersion.get()
                                 modInfoObject.remoteMod = remoteMod
@@ -325,7 +325,7 @@ class LocalModListAdapter(
         binding.name.text = mod.title
         binding.jump.visibility = View.VISIBLE
         if (modInfoObject.mod != null && LocaleUtils.isChinese(context)) {
-            val name = modInfoObject.mod.name
+            val name = modInfoObject.mod.name()
             if (name.isNotEmpty() && StringUtils.containsChinese(name)) {
                 binding.name.text = "[${name}]${mod.title}"
             }

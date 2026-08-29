@@ -85,7 +85,7 @@ public record CurseAddon(int id, int gameId, String name, String slug, Links lin
                 "",
                 name,
                 summary,
-                categories.stream().map(category -> Integer.toString(category.getId())).collect(Collectors.toList()),
+                categories.stream().map(category -> Integer.toString(category.id())).collect(Collectors.toList()),
                 links.websiteUrl,
                 iconUrl,
                 this,
@@ -95,18 +95,6 @@ public record CurseAddon(int id, int gameId, String name, String slug, Links lin
     }
 
     public record Links(String websiteUrl, String wikiUrl, String issuesUrl, String sourceUrl) {
-
-        @Override
-        @Nullable
-        public String issuesUrl() {
-            return issuesUrl;
-        }
-
-        @Override
-        @Nullable
-        public String sourceUrl() {
-            return sourceUrl;
-        }
     }
 
     public record Author(int id, String name, String url) {
@@ -121,10 +109,6 @@ public record CurseAddon(int id, int gameId, String name, String slug, Links lin
     }
 
     public record Dependency(int modId, int relationType) {
-        public Dependency() {
-            this(0, 1);
-        }
-
     }
 
     /**
@@ -199,123 +183,16 @@ public record CurseAddon(int id, int gameId, String name, String slug, Links lin
      */
     public record LatestFileIndex(String gameVersion, int fileId, String filename, int releaseType,
                                   int gameVersionTypeId, int modLoader) {
-
-        @Override
-        @Nullable
-        public int gameVersionTypeId() {
-            return gameVersionTypeId;
-        }
     }
 
-    public static class Category {
-        private final int id;
-        private final int gameId;
-        private final String name;
-        private final String slug;
-        private final String url;
-        private final String iconUrl;
-        private final Instant dateModified;
-        private final boolean isClass;
-        private final int classId;
-        private final int parentCategoryId;
-
-        private transient final List<Category> subcategories;
-
-        public Category() {
-            this(0, 0, "", "", "", "", Instant.now(), false, 0, 0);
-        }
-
-        public Category(int id, int gameId, String name, String slug, String url, String iconUrl, Instant dateModified, boolean isClass, int classId, int parentCategoryId) {
-            this.id = id;
-            this.gameId = gameId;
-            this.name = name;
-            this.slug = slug;
-            this.url = url;
-            this.iconUrl = iconUrl;
-            this.dateModified = dateModified;
-            this.isClass = isClass;
-            this.classId = classId;
-            this.parentCategoryId = parentCategoryId;
-
-            this.subcategories = new ArrayList<>();
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public int getGameId() {
-            return gameId;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getSlug() {
-            return slug;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public String getIconUrl() {
-            return iconUrl;
-        }
-
-        public Instant getDateModified() {
-            return dateModified;
-        }
-
-        public boolean isClass() {
-            return isClass;
-        }
-
-        public int getClassId() {
-            return classId;
-        }
-
-        public int getParentCategoryId() {
-            return parentCategoryId;
-        }
-
-        public List<Category> getSubcategories() {
-            return subcategories;
-        }
-
-        public RemoteModRepository.Category toCategory() {
-            return new RemoteModRepository.Category(
-                    this,
-                    Integer.toString(id),
-                    getSubcategories().stream().map(Category::toCategory).collect(Collectors.toList()));
-        }
+    // 纯 API 数据 record：Android 上 D8 会把 record 脱糖为普通类，Gson 反序列化走 Unsafe
+    // 实例化（不执行任何构造器），不能依赖组件缺失时的构造器兜底，也不能携带
+    // subcategories 这类派生状态（层级树由 CurseForgeRemoteModRepository 组装）
+    public record Category(int id, int gameId, String name, String slug, String url, String iconUrl,
+                           Instant dateModified, boolean isClass, int classId, int parentCategoryId) {
     }
 
-    public static class Screenshot {
-        private final int id;
-        private final int modid;
-        private final String title;
-        private final String description;
-        private final String thumbnailUrl;
-        private final String url;
-
-        public Screenshot() {
-            this.id = 0;
-            this.modid = 0;
-            this.title = "";
-            this.description = "";
-            this.thumbnailUrl = "";
-            this.url = "";
-        }
-
-        public Screenshot(int id, int modid, String title, String description, String thumbnailUrl, String url) {
-            this.id = id;
-            this.modid = modid;
-            this.title = title;
-            this.description = description;
-            this.thumbnailUrl = thumbnailUrl;
-            this.url = url;
-        }
+    public record Screenshot(int id, int modid, String title, String description,
+                             String thumbnailUrl, String url) {
     }
 }
