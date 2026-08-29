@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.JavaManager
 import com.mio.ui.adapter.ManageJavaItemAdapter
@@ -21,12 +20,8 @@ import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.io.File
 import java.io.InputStream
-import java.nio.file.Files
-import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
 import com.mio.util.checkElfIsAndroid
-import com.mio.util.getFileName
-import com.mio.util.isDocUri
 
 @SuppressLint("NotifyDataSetChanged")
 class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCLDialog(context) {
@@ -75,13 +70,8 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                 listOf(".tar.xz")
             ) { files ->
                 if (files == null) return@launchSingleSelection
-                val path = files[0]
-                val uri = path.toUri()
-                val fileName = if (isDocUri(uri)) {
-                    getFileName(context, uri)
-                } else {
-                    File(path).name
-                }
+                val file = files[0]
+                val fileName = file.fileName(context)
                 if (!fileName.endsWith(".tar.xz")) {
                     FCLAlertDialog.Builder(context)
                         .setMessage(context.getString(R.string.import_java_wrong_file))
@@ -93,11 +83,7 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                         .show()
                     return@launchSingleSelection
                 }
-                val inputStream = if (isDocUri(uri)) {
-                    context.contentResolver.openInputStream(uri)
-                } else {
-                    Files.newInputStream(Paths.get(path))
-                }
+                val inputStream = file.openInputStream(context)
                 if (JavaManager.javaList.any { it.name == fileName }) {
                     FCLAlertDialog.Builder(context)
                         .setMessage(context.getString(R.string.import_java_overwrite_wrong))

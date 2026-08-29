@@ -31,13 +31,13 @@ public class FileBrowser implements Serializable {
     /**
      * 从 Intent 中获取选中的文件列表
      */
-    public static List<String> getSelectedFiles(Intent data) {
+    public static List<SelectedFile> getSelectedFiles(Intent data) {
         if (data == null) {
             return null;
         }
         List<Uri> selectedFiles = data.getParcelableArrayListExtra(SELECTED_FILES);
         if (selectedFiles != null)
-            return selectedFiles.stream().map(Uri::toString).collect(Collectors.toList());
+            return selectedFiles.stream().map(SelectedFile::new).collect(Collectors.toList());
         return Collections.emptyList();
     }
 
@@ -116,7 +116,7 @@ public class FileBrowser implements Serializable {
      * 回调接口 - 现代化的结果回调
      */
     public interface Callback {
-        void onResult(@Nullable List<String> files);
+        void onResult(@Nullable List<SelectedFile> files);
     }
 
     public static class Builder {

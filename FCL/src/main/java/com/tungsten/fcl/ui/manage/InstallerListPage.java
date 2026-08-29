@@ -3,7 +3,6 @@ package com.tungsten.fcl.ui.manage;
 import static com.tungsten.fcl.ui.download.version.VersionInstallInfoPage.alertFailureMessage;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ScrollView;
@@ -140,13 +139,9 @@ public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadab
         suffix.add(".jar");
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
             if (files == null) return;
-            String path = files.get(0);
-            Uri uri = Uri.parse(path);
-            if (AndroidUtilKt.isDocUri(uri)) {
-                path = AndroidUtilKt.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
-            }
-            if (new File(path).exists()) {
-                doInstallOffline(new File(path));
+            File file = files.get(0).toFile(getActivity(), new File(FCLPath.CACHE_DIR));
+            if (file.exists()) {
+                doInstallOffline(file);
             }
         });
     }

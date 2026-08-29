@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.media.MediaMetadataRetriever
@@ -25,11 +24,9 @@ import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.WebActivity
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.FileUtils
-import com.tungsten.fclcore.util.io.IOUtils
 import net.fornwall.jelf.ElfFile
 import java.io.DataInputStream
 import java.io.File
-import java.io.FileOutputStream
 import java.io.RandomAccessFile
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -228,35 +225,6 @@ fun getMimeType(filePath: String): String {
         return mime
     }
     return mime
-}
-
-fun copyFileToDir(activity: Activity, uri: Uri, destDir: File): String {
-    val name = getFileName(activity, uri)
-    val dest = File(destDir, name)
-    try {
-        activity.contentResolver.openInputStream(uri)?.use { input ->
-            FileOutputStream(dest).use { output ->
-                IOUtils.copyTo(input, output)
-            }
-        }
-    } catch (_: Exception) {
-    }
-    return dest.absolutePath
-}
-
-fun copyFile(context: Context, uri: Uri, dest: File) {
-    try {
-        context.contentResolver.openInputStream(uri)?.use { input ->
-            FileOutputStream(dest).use { output ->
-                IOUtils.copyTo(input, output)
-            }
-        }
-    } catch (_: Exception) {
-    }
-}
-
-fun isDocUri(uri: Uri): Boolean {
-    return uri.scheme == ContentResolver.SCHEME_FILE || uri.scheme == ContentResolver.SCHEME_CONTENT
 }
 
 fun getFileName(context: Context, uri: Uri): String {

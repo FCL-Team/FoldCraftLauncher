@@ -50,7 +50,7 @@ public class WorldListItem {
     public void export() {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
             if (files == null) return;
-            WorldExportDialog dialog = new WorldExportDialog(context, world, files.get(0));
+            WorldExportDialog dialog = new WorldExportDialog(context, world, files.get(0).getPath());
             dialog.show();
         });
     }

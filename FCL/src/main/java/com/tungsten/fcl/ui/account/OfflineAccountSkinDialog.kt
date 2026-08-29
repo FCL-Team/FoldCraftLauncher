@@ -15,8 +15,10 @@ import com.tungsten.fclcore.auth.yggdrasil.TextureModel
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
+import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.skin.SkinRenderer
+import java.io.File
 import java.util.logging.Level
 import com.mio.util.getScreenHeight
 import com.mio.util.getScreenWidth
@@ -157,7 +159,11 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
                 null,
                 listOf(".png")
             ) {
-                binding.skinPathText.string = it?.get(0) ?: return@launchSingleSelection
+                val selected = it?.get(0) ?: return@launchSingleSelection
+                // 皮肤路径会持久化到 accounts.json，文件必须放在不受缓存清理影响的固定位置
+                val dest = File(FCLPath.SKIN_DIR, "${account.uuid}.png")
+                selected.copyTo(context, dest)
+                binding.skinPathText.string = dest.absolutePath
                 refreshSkin()
             }
 
@@ -170,7 +176,10 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
                 null,
                 listOf(".png")
             ) {
-                binding.capePathText.string = it?.get(0) ?: return@launchSingleSelection
+                val selected = it?.get(0) ?: return@launchSingleSelection
+                val dest = File(FCLPath.SKIN_DIR, "${account.uuid}_cape.png")
+                selected.copyTo(context, dest)
+                binding.capePathText.string = dest.absolutePath
                 refreshSkin()
             }
 

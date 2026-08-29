@@ -2,7 +2,6 @@ package com.tungsten.fcl.ui.controller
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -29,9 +28,7 @@ import com.tungsten.fcllibrary.ui.ProgressDialog
 import java.io.File
 import java.io.IOException
 import java.util.logging.Level
-import com.mio.util.copyFileToDir
 import com.mio.util.getMimeType
-import com.mio.util.isDocUri
 
 /**
  * 控制布局管理页：左侧布局列表 + 右侧布局信息。
@@ -182,13 +179,8 @@ class ControllerManagePage(context: Context, id: Int) :
             arrayListOf(".json")
         ) { files ->
             if (files == null) return@launchSingleSelection
-            var path = files[0]
-            val uri = Uri.parse(path)
-            if (isDocUri(uri)) {
-                path = copyFileToDir(activity, uri, File(FCLPath.CACHE_DIR))
-            }
             try {
-                val content = FileUtils.readText(File(path))
+                val content = FileUtils.readText(files[0].toFile(activity, File(FCLPath.CACHE_DIR)))
                 val controller = GsonBuilder().setPrettyPrinting().create()
                     .fromJson(content, Controller::class.java)
                 if (controller.name == "Error") {

@@ -30,6 +30,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.net.URL
 import java.util.logging.Level
+import com.tungsten.fclauncher.utils.FCLPath
 import com.mio.util.getScreenHeight
 import com.mio.util.getScreenWidth
 
@@ -353,11 +354,11 @@ class MicrosoftAccountSkinDialog(
                     null,
                     listOf(".png")
                 ) { result ->
-                    val path = result?.get(0)
-                    if (path != null) {
-                        selectedSkinFile = path
-                        binding.skinFilePath.text = path.substringAfterLast('/')
-                        updatePreviewFromFile(path)
+                    val file = result?.get(0)?.toFile(context, File(FCLPath.CACHE_DIR))
+                    if (file != null) {
+                        selectedSkinFile = file.absolutePath
+                        binding.skinFilePath.text = file.name
+                        updatePreviewFromFile(file.absolutePath)
                     }
                 }
             }

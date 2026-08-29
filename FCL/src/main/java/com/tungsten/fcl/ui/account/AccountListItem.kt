@@ -22,6 +22,7 @@ import com.tungsten.fclcore.auth.offline.OfflineAccount
 import com.tungsten.fclcore.auth.yggdrasil.CompleteGameProfile
 import com.tungsten.fclcore.auth.yggdrasil.TextureType
 import com.tungsten.fclcore.auth.yggdrasil.YggdrasilAccount
+import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings
 import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding
 import com.tungsten.fclcore.fakefx.beans.binding.StringBinding
@@ -185,7 +186,7 @@ class AccountListItem(
 
     private suspend fun selectSkinFile(): String? = suspendCancellableCoroutine { cont ->
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, listOf(".png")) {
-            cont.resume(it?.get(0))
+            cont.resume(it?.get(0)?.toFile(context, File(FCLPath.CACHE_DIR))?.absolutePath)
         }
     }
 
@@ -199,6 +200,11 @@ class AccountListItem(
     }
 
     fun remove() {
+        if (account is OfflineAccount) {
+            // 一并清理本地皮肤/披风文件
+            File(FCLPath.SKIN_DIR, "${account.uuid}.png").delete()
+            File(FCLPath.SKIN_DIR, "${account.uuid}_cape.png").delete()
+        }
         Accounts.getAccounts().remove(account)
     }
 

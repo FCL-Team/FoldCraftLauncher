@@ -19,12 +19,14 @@ import com.tungsten.fcl.ui.UIManager.Companion.instance
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount
 import com.tungsten.fclcore.auth.offline.OfflineAccount
 import com.tungsten.fclcore.auth.offline.Skin
+import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.UUID
 
 class AccountListAdapter(
@@ -172,9 +174,12 @@ class AccountListAdapter(
                 null,
                 listOf(".png")
             ) {
-                val path = it?.get(0) ?: return@launchSingleSelection
+                val selected = it?.get(0) ?: return@launchSingleSelection
+                // 皮肤路径会持久化到 accounts.json，文件必须放在不受缓存清理影响的固定位置
+                val dest = File(FCLPath.SKIN_DIR, "${item.account.uuid}.png")
+                selected.copyTo(context, dest)
                 item.account.skin =
-                    Skin(Skin.Type.LOCAL_FILE, null, path, null)
+                    Skin(Skin.Type.LOCAL_FILE, null, dest.absolutePath, null)
                 item.refreshSkinBinding()
             }
             return@setOnLongClickListener true

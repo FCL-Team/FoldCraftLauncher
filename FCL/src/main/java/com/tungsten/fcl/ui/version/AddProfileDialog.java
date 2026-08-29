@@ -47,7 +47,7 @@ public class AddProfileDialog extends FCLDialog implements View.OnClickListener 
         if (view == editPath) {
             MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
                 if (files == null) return;
-                pathText.setText(files.get(0));
+                pathText.setText(files.get(0).getPath());
             });
         }
         if (view == positive) {

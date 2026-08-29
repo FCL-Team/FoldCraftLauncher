@@ -5,7 +5,6 @@ import static com.tungsten.fclcore.util.StringUtils.isNotBlank;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.net.Uri;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -25,7 +24,6 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.DownloadUI;
-import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
@@ -46,6 +44,7 @@ import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fcllibrary.browser.SelectedFile;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
 import com.tungsten.fcllibrary.component.view.FCLButton;
@@ -55,7 +54,6 @@ import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -423,42 +421,26 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
         suffix.add(".litemod");
         MainActivity.getInstance().fileLauncher.launchMultiSelection(null, suffix, files -> {
             if (files == null) return;
-            List<Object> res = files.stream().map(Uri::parse).filter(Objects::nonNull).map(uri -> {
-                if (AndroidUtilKt.isDocUri(uri)) {
-                    return uri;
-                } else {
-                    return new File(uri.toString());
-                }
-            }).collect(Collectors.toList());
 
             // It's guaranteed that succeeded and failed are thread safe here.
-            List<String> succeeded = new ArrayList<>(res.size());
+            List<String> succeeded = new ArrayList<>(files.size());
             List<String> failed = new ArrayList<>();
 
             Task.runAsync(() -> {
-                for (Object obj : res) {
-                    if (obj instanceof File file) {
-                        try {
-                            modManager.addMod(file.toPath());
-                            succeeded.add(file.getName());
-                        } catch (Exception e) {
-                            LOG.log(Level.WARNING, "Unable to add mod " + file, e);
-                            failed.add(file.getName());
-
-                            // Actually addMod will not throw exceptions because FileChooser has already filtered files.
+                for (SelectedFile file : files) {
+                    String name = file.fileName(getActivity());
+                    try {
+                        if (file.isContent()) {
+                            modManager.addMod(getActivity(), file.getUri(), name);
+                        } else {
+                            modManager.addMod(file.getFile().toPath());
                         }
-                    } else {
-                        try {
-                            Uri uri = (Uri) obj;
-                            String name = AndroidUtilKt.getFileName(getActivity(), uri);
-                            modManager.addMod(getActivity(), uri, name);
-                            succeeded.add(name);
-                        } catch (Exception e) {
-                            LOG.log(Level.WARNING, "Unable to add mod " + obj.toString(), e);
-                            failed.add(obj.toString());
+                        succeeded.add(name);
+                    } catch (Exception e) {
+                        LOG.log(Level.WARNING, "Unable to add mod " + file.getPath(), e);
+                        failed.add(name);
 
-                            // Actually addMod will not throw exceptions because FileChooser has already filtered files.
-                        }
+                        // Actually addMod will not throw exceptions because FileChooser has already filtered files.
                     }
                 }
             }).withRunAsync(Schedulers.androidUIThread(), () -> {

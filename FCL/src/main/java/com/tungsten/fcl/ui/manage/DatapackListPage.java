@@ -6,6 +6,7 @@ import android.widget.ListView;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
+import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ListProperty;
@@ -146,7 +147,9 @@ public class DatapackListPage extends FCLPage implements View.OnClickListener {
         suffix.add(".zip");
         MainActivity.getInstance().fileLauncher.launchMultiSelection(null, suffix, files -> {
             if (files == null) return;
-            List<File> res = files.stream().map(File::new).collect(Collectors.toList());
+            List<File> res = files.stream()
+                    .map(f -> f.toFile(getContext(), new File(FCLPath.CACHE_DIR)))
+                    .collect(Collectors.toList());
             FCLAlertDialog.Builder builder1 = new FCLAlertDialog.Builder(getContext());
             builder1.setCancelable(false);
             builder1.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);

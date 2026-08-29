@@ -56,9 +56,7 @@ public class RemoteModVersionPage extends FCLPage {
     public void saveAs(RemoteMod.Version file) {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
             if (files == null) return;
-            String folder = files.get(0);
-            if (folder == null)
-                return;
+            String folder = files.get(0).getPath();
             TaskDialog dialog = new TaskDialog(getContext(), new TaskCancellationAction(AppCompatDialog::dismiss));
             dialog.setTitle(getContext().getString(R.string.message_downloading));
             Schedulers.androidUIThread().execute(() -> {

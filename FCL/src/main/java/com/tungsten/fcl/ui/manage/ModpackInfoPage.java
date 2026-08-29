@@ -200,7 +200,7 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
     private void selectPath() {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {
             if (files == null) return;
-            path.set(files.get(0));
+            path.set(files.get(0).getPath());
         });
     }
 

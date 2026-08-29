@@ -32,7 +32,6 @@ import com.tungsten.fcl.databinding.PageSettingLauncherBinding;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fclcore.mod.RemoteModCache;
-import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.FetchTask;
 import com.tungsten.fclcore.task.Schedulers;
@@ -275,11 +274,7 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         suffix.add(".jpeg");
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
             if (files == null) return;
-            String path = files.get(0);
-            Uri uri = Uri.parse(path);
-            if (AndroidUtilKt.isDocUri(uri)) {
-                path = AndroidUtilKt.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
-            }
+            String path = files.get(0).toFile(getActivity(), new File(FCLPath.CACHE_DIR)).getAbsolutePath();
             ThemeEngine.getInstance().applyAndSave(getContext(), ((MainActivity) getActivity()).binding.background, isDk ? null : path, isDk ? path : null);
         });
     }
@@ -289,16 +284,7 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         suffix.add(".mp4");
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
             if (files == null) return;
-            String path = files.get(0);
-            Uri uri = Uri.parse(path);
-            if (AndroidUtilKt.isDocUri(uri)) {
-                AndroidUtilKt.copyFile(getActivity(), uri, new File(FCLPath.LIVE_BACKGROUND_PATH));
-            } else {
-                try {
-                    FileUtils.copyFile(new File(path), new File(FCLPath.LIVE_BACKGROUND_PATH));
-                } catch (IOException ignore) {
-                }
-            }
+            files.get(0).copyTo(getActivity(), new File(FCLPath.LIVE_BACKGROUND_PATH));
             MainActivity.getInstance().setupLiveBackground();
         });
     }
@@ -309,23 +295,14 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         suffix.add(".gif");
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
             if (files == null) return;
-            String path = files.get(0);
-            Uri uri = Uri.parse(path);
-            String type = AndroidUtilKt.getFileName(getContext(), uri);
-            if (type.endsWith(".gif")) {
+            String type;
+            if (files.get(0).fileName(getContext()).endsWith(".gif")) {
                 type = "gif";
             } else {
                 type = "png";
             }
             deleteCursorFile();
-            if (AndroidUtilKt.isDocUri(uri)) {
-                AndroidUtilKt.copyFile(getActivity(), uri, new File(FCLPath.FILES_DIR, "cursor." + type));
-            } else {
-                try {
-                    FileUtils.copyFile(new File(path), new File(FCLPath.FILES_DIR, "cursor." + type));
-                } catch (IOException ignore) {
-                }
-            }
+            files.get(0).copyTo(getActivity(), new File(FCLPath.FILES_DIR, "cursor." + type));
         });
     }
 
@@ -335,23 +312,14 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         suffix.add(".gif");
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
             if (files == null) return;
-            String path = files.get(0);
-            Uri uri = Uri.parse(path);
-            String type = AndroidUtilKt.getFileName(getContext(), uri);
-            if (type.endsWith(".gif")) {
+            String type;
+            if (files.get(0).fileName(getContext()).endsWith(".gif")) {
                 type = "gif";
             } else {
                 type = "png";
             }
             deleteMenuIconFile();
-            if (AndroidUtilKt.isDocUri(uri)) {
-                AndroidUtilKt.copyFile(getActivity(), uri, new File(FCLPath.FILES_DIR, "menu_icon." + type));
-            } else {
-                try {
-                    FileUtils.copyFile(new File(path), new File(FCLPath.FILES_DIR, "menu_icon." + type));
-                } catch (IOException ignore) {
-                }
-            }
+            files.get(0).copyTo(getActivity(), new File(FCLPath.FILES_DIR, "menu_icon." + type));
         });
     }
 

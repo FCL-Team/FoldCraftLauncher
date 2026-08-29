@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
 
@@ -12,7 +11,6 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
-import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.mod.server.ServerModpackManifest;
@@ -64,14 +62,7 @@ public class ModpackSelectionPage extends FCLPage implements View.OnClickListene
         suffix.add(".rar");
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, suffix, files -> {
             if (files == null) return;
-            String path = files.get(0);
-            Uri uri = Uri.parse(path);
-            if (AndroidUtilKt.isDocUri(uri)) {
-                path = AndroidUtilKt.copyFileToDir(getActivity(), uri, new File(FCLPath.CACHE_DIR));
-            }
-            if (path == null)
-                return;
-            File selectedFile = new File(path);
+            File selectedFile = files.get(0).toFile(getActivity(), new File(FCLPath.CACHE_DIR));
             Schedulers.androidUIThread().execute(() -> {
                 LocalModpackPage page = new LocalModpackPage(getContext(), FCLPage.PAGE_ID_TEMP, profile, updateVersion, selectedFile);
                 if (updateVersion == null) {

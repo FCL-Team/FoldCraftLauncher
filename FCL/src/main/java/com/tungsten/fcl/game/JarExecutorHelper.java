@@ -4,7 +4,6 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 
 import com.mio.JavaManager;
@@ -36,13 +35,9 @@ public class JarExecutorHelper {
         suffix.add(".jar");
         activity.fileLauncher.launchSingleSelection(null, suffix, files -> {
             if (files == null) return;
-            String path = files.get(0);
-            Uri uri = Uri.parse(path);
-            if (AndroidUtilKt.isDocUri(uri)) {
-                path = AndroidUtilKt.copyFileToDir(activity, uri, new File(FCLPath.CACHE_DIR));
-            }
-            if (new File(path).exists()) {
-                launchJarExecutor(activity, new File(path));
+            File file = files.get(0).toFile(activity, new File(FCLPath.CACHE_DIR));
+            if (file.exists()) {
+                launchJarExecutor(activity, file);
             }
         });
     }
