@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
+
 package com.tungsten.fclcore.mod.modinfo
 
 import com.tungsten.fclcore.mod.LocalModFile

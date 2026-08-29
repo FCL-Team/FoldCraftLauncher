@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
+
 package com.tungsten.fclcore.mod.modinfo
 
 import com.tungsten.fclcore.mod.LocalModFile
@@ -7,8 +9,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.jsonPrimitive
+import com.tungsten.fclcore.util.io.FileUtils
 import java.io.IOException
 import java.nio.file.FileSystem
 import java.nio.file.Files
@@ -29,7 +31,7 @@ data class QuiltModMetadata(
             if (Files.notExists(path))
                 throw IOException("File $modFile is not a Quilt mod.")
 
-            val root: QuiltModMetadata = MOD_METADATA_JSON.decodeFromStream(Files.newInputStream(path))
+            val root: QuiltModMetadata = MOD_METADATA_JSON.decodeFromString(FileUtils.readText(path))
             if (root.schemaVersion != 1)
                 throw IOException("File $modFile is not a supported Quilt mod.")
 

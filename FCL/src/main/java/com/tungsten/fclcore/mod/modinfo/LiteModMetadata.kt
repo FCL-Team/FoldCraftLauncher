@@ -1,10 +1,12 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
+
 package com.tungsten.fclcore.mod.modinfo
 
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.ModManager
+import com.tungsten.fclcore.util.io.FileUtils
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.decodeFromStream
 import java.io.IOException
 import java.nio.file.FileSystem
 import java.nio.file.Files
@@ -31,7 +33,7 @@ data class LiteModMetadata(
             val path = fs.getPath("litemod.json")
             if (Files.notExists(path))
                 throw IOException("File $modFile is not a LiteLoader mod.")
-            val metadata: LiteModMetadata = MOD_METADATA_JSON.decodeFromStream(Files.newInputStream(path))
+            val metadata: LiteModMetadata = MOD_METADATA_JSON.decodeFromString(FileUtils.readText(path))
             return LocalModFile(
                 modManager, modManager.getLocalMod(metadata.name, ModLoaderType.LITE_LOADER), modFile,
                 metadata.name, LocalModFile.Description(metadata.description), metadata.author,

@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
+
 package com.tungsten.fclcore.mod.modinfo
 
 import com.tungsten.fclcore.mod.LocalModFile
@@ -12,6 +14,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import com.tungsten.fclcore.util.io.FileUtils
 import kotlinx.serialization.json.decodeFromStream
 import java.io.IOException
 import java.nio.file.FileSystem
@@ -36,7 +39,7 @@ data class FabricModMetadata(
             val mcmod = fs.getPath("fabric.mod.json")
             if (Files.notExists(mcmod))
                 throw IOException("File $modFile is not a Fabric mod.")
-            val metadata: FabricModMetadata = MOD_METADATA_JSON.decodeFromStream(Files.newInputStream(mcmod))
+            val metadata: FabricModMetadata = MOD_METADATA_JSON.decodeFromString(FileUtils.readText(mcmod))
             val authors = metadata.authors.joinToString(", ") { it.name }
             return LocalModFile(
                 modManager, modManager.getLocalMod(metadata.id, ModLoaderType.FABRIC), modFile,

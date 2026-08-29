@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.serialization.InternalSerializationApi::class)
+
 package com.tungsten.fclcore.mod.modinfo
 
 import com.tungsten.fclcore.mod.LocalModFile
@@ -14,7 +16,6 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.decodeFromStream
 import org.tomlj.Toml
 import org.tomlj.TomlParseResult
 import org.tomlj.TomlTable
@@ -160,7 +161,7 @@ data class ForgeNewModMetadata(
                 val jarInJarMetadata = fs.getPath("META-INF/jarjar/metadata.json")
                 if (Files.exists(jarInJarMetadata)) {
                     val metadata: JarInJarMetadata =
-                        MOD_METADATA_JSON.decodeFromStream(Files.newInputStream(jarInJarMetadata))
+                        MOD_METADATA_JSON.decodeFromString(FileUtils.readText(jarInJarMetadata))
                     embeddedModFiles = ArrayList()
                     for (jar in metadata.jars) {
                         val path = fs.getPath(jar.path)
