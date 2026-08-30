@@ -1,0 +1,54 @@
+name: NX Release
+
+# Builds every push to nx-launcher (reusing the same build.yml matrix the
+# fork already uses) and publishes the resulting APKs to a single rolling
+# "nx-latest" GitHub Release, so there is always one stable download link
+# pointing at the newest build.
+
+on:
+  push:
+    branches: ["nx-launcher"]
+    paths-ignore:
+      - ".github/workflows/**"
+      - "**.md"
+      - "version_map.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download APKs
+        uses: actions/download-artifact@v6
+        with:
+          path: apks
+
+      - name: Write release notes
+        run: |
+          {
+            echo "Otomatik NX Launcher derlemesi (FoldCraftLauncher fork'u)."
+            echo ""
+            echo "- Commit: \`${{ github.sha }}\`"
+            echo "- Tarih: $(date -u +'%Y-%m-%d %H:%M UTC')"
+            echo ""
+            echo "Bu APK'lar debug anahtarıyla imzalanmıştır (Google Play/resmi FCL sürümü değildir)."
+            echo "Cihazının mimarisine göre indir: çoğu telefon için \`app-arm64\`, eski/32-bit cihazlar için \`app-arm\`."
+          } > RELEASE_BODY.md
+
+      - name: Publish rolling release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: nx-latest
+          name: "NX Launcher (otomatik build)"
+          body_path: RELEASE_BODY.md
+          files: apks/**/*.apk
+          make_latest: true
+          target_commitish: ${{ github.sha }}

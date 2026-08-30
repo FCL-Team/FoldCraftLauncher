@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - "**"
+      - "!nx-launcher"
     paths-ignore:
       - ".github/workflows/**"
       - "**.md"
