@@ -3,7 +3,7 @@
 
 Usage: python3 tools/nx_update.py
 
-Requires: git remotes 'origin' (the exgg1453/FoldCraftLauncher fork) and
+Requires: git remotes 'origin' (the exgg1453/NX-Launcher fork) and
 'upstream' (FCL-Team/FoldCraftLauncher) already configured, and optionally
 the GitHub CLI ('gh', authenticated) to report the triggered build's status.
 """
