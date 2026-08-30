@@ -186,7 +186,7 @@ public final class ModDependenciesResolver {
         List<RemoteMod.Version> candidates = new ArrayList<>(repository.getRemoteVersionsById(modId)
                 .filter(v -> v.datePublished() != null && v.file() != null && v.file().url() != null)
                 .filter(v -> intersects(v.gameVersions(), gameVersions))
-                .toList());
+                .collect(Collectors.toList()));
         if (candidates.isEmpty())
             return null;
         if (loaders != null && !loaders.isEmpty()) {
