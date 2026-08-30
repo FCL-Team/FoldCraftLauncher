@@ -15,7 +15,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatDialog;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,13 +26,12 @@ import com.tungsten.fcl.game.LocalizedRemoteModRepository;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
-import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.version.Versions;
+import com.mio.download.DownloadManager;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.FXUtils;
-import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -48,6 +46,8 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.mod.ModLoaderType;
+import com.tungsten.fclcore.mod.ModDependenciesResolver;
+import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.mod.curse.CurseAddon;
@@ -72,11 +72,14 @@ import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CancellationException;
 import java.util.stream.Collectors;
 
@@ -573,14 +576,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         DownloadAddonDialog dialog = new DownloadAddonDialog(context, file.file().filename(), name -> {
             Path dest = runDirectory.resolve(subdirectoryName).resolve(name);
 
-            TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
-            taskDialog.setTitle(context.getString(R.string.message_downloading));
-            Schedulers.androidUIThread().execute(() -> {
-                TaskExecutor executor = Task.composeAsync(() -> {
-                    FileDownloadTask task = new FileDownloadTask(NetworkUtils.toURL(file.file().url()), dest.toFile());
-                    task.setName(file.name());
-                    return task;
-                }).whenComplete(Schedulers.androidUIThread(), exception -> {
+            FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(file.file().url()), dest.toFile());
+            fileTask.setName(file.name());
+            Task<Void> downloadTask = Task.composeAsync(() -> fileTask);
+            TaskExecutor executor = downloadTask.whenComplete(Schedulers.androidUIThread(), exception -> {
                     if (exception != null) {
                         if (exception instanceof CancellationException) {
                             Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
@@ -597,12 +596,68 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                         Toast.makeText(context, context.getString(R.string.install_success), Toast.LENGTH_SHORT).show();
                     }
                 }).executor();
-                taskDialog.setExecutor(executor);
-                taskDialog.show();
+                DownloadManager.submit(name, fileTask, executor);
                 executor.start();
-            });
         });
         dialog.show();
+    }
+
+    /**
+     * 一键下载：后台解析该模组的全部 REQUIRED 前置闭包（含传递依赖、防循环），
+     * 解析完成后主模组与所有前置一起加入下载队列；
+     * 不弹命名对话框，直接使用原始文件名；解析失败的前置跳过并提示数量。
+     * 本地 mods 目录已安装的模组（含本体）通过当前下载源的反查接口去重跳过。
+     */
+    public static void downloadWithDependencies(Context context, Profile profile, @Nullable String version, RemoteMod.Version file, String subdirectoryName) {
+        if (version == null) version = profile.getSelectedVersion();
+        Path runDirectory = profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
+        Path modsDirectory = runDirectory.resolve(subdirectoryName);
+
+        Toast.makeText(context, context.getString(R.string.mods_dependency_resolving), Toast.LENGTH_SHORT).show();
+
+        // 前置的兼容性以所选模组版本自身的 gameVersions / loaders 为准，解析完一起入队；
+        // 本体已安装时跳过本体，前置仍会安装
+        Task.supplyAsync(() -> ModDependenciesResolver.resolve(file, modsDirectory,
+                file.self().getType().getRemoteModRepository()))
+                .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+                    if (exception != null || result == null)
+                        return;
+                    if (!result.rootInstalled()) {
+                        submitModDownload(context, file.file().filename(), file, modsDirectory);
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.mods_already_installed), Toast.LENGTH_SHORT).show();
+                    }
+                    for (ModDependenciesResolver.ResolvedDependency dep : result.dependencies()) {
+                        submitModDownload(context, dep.version().file().filename(), dep.version(), modsDirectory);
+                    }
+                    if (result.installedSkipped() > 0) {
+                        Toast.makeText(context, context.getString(R.string.mods_installed_skipped_note, result.installedSkipped()), Toast.LENGTH_SHORT).show();
+                    }
+                    if (!result.failedTitles().isEmpty()) {
+                        Toast.makeText(context, context.getString(R.string.mods_dependency_skipped_note, result.failedTitles().size()), Toast.LENGTH_SHORT).show();
+                    }
+                }).start();
+    }
+
+    /** 提交单个模组文件到下载队列：队列标题与保存文件均使用原始文件名 */
+    private static void submitModDownload(Context context, String filename, RemoteMod.Version version, Path modsDirectory) {
+        Path dest = modsDirectory.resolve(filename);
+        FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(version.file().url()), dest.toFile(), version.file().getIntegrityCheck());
+        fileTask.setName(filename);
+        Task<Void> downloadTask = Task.composeAsync(() -> fileTask);
+        TaskExecutor executor = downloadTask.whenComplete(Schedulers.androidUIThread(), exception -> {
+            if (exception != null && !(exception instanceof CancellationException)) {
+                FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
+                builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                builder.setCancelable(false);
+                builder.setTitle(context.getString(R.string.install_failed_downloading));
+                builder.setMessage(DownloadProviders.localizeErrorMessage(context, exception));
+                builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
+                builder.create().show();
+            }
+        }).executor();
+        DownloadManager.submit(filename, fileTask, executor);
+        executor.start();
     }
 
     @Override

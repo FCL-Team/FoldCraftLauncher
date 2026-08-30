@@ -106,6 +106,7 @@
     <string name="button_cancel">Cancelar</string>
     <string name="button_copy">Copiar</string>
     <string name="button_download">Baixar</string>
+    <string name="button_download_all">Baixar tudo</string>
     <string name="button_export">Exportar</string>
     <string name="button_hide">Esconder</string>
     <string name="button_install">Instalar</string>
@@ -513,6 +514,12 @@
     <string name="message_copy">Copiado com sucesso!</string>
     <string name="message_doing">Por favor aguarde</string>
     <string name="message_downloading">Baixando</string>
+    <string name="mods_dependency_skipped_note">%1$d dependências não puderam ser resolvidas e foram ignoradas</string>
+    <string name="download_ready_to_install">Baixado · toque para instalar</string>
+    <string name="mods_already_installed">Mod já instalado</string>
+    <string name="mods_installed_skipped_note">%1$d dependências já instaladas e ignoradas</string>
+    <string name="mods_dependency_resolving">Resolvendo dependências obrigatórias…</string>
+    <string name="download_manager">Gerenciador de downloads</string>
     <string name="message_error">Erro</string>
     <string name="message_failed">Falha na operação</string>
     <string name="message_file_exist">Arquivo já existente</string>

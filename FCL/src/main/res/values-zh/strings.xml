@@ -136,6 +136,7 @@
     <string name="button_cancel">取消</string>
     <string name="button_copy">复制</string>
     <string name="button_download">下载</string>
+    <string name="button_download_all">一键下载</string>
     <string name="button_export">导出</string>
     <string name="button_hide">不再显示</string>
     <string name="button_install">安装</string>
@@ -621,6 +622,12 @@
     <string name="message_copy">复制成功！</string>
     <string name="message_doing">请耐心等待</string>
     <string name="message_downloading">正在下载</string>
+    <string name="mods_dependency_skipped_note">另有 %1$d 个前置模组解析失败，已跳过</string>
+    <string name="download_ready_to_install">下载完成，点击安装</string>
+    <string name="mods_already_installed">该模组已安装，无需重复下载</string>
+    <string name="mods_installed_skipped_note">%1$d 个前置模组本地已安装，已跳过</string>
+    <string name="mods_dependency_resolving">正在解析前置模组…</string>
+    <string name="download_manager">下载管理</string>
     <string name="message_error">错误</string>
     <string name="message_failed">操作失败</string>
     <string name="message_file_exist">文件已存在</string>

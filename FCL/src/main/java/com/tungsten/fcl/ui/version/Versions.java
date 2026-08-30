@@ -3,8 +3,7 @@ package com.tungsten.fcl.ui.version;
 import android.content.Context;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatDialog;
-
+import com.mio.download.DownloadManager;
 import com.mio.util.ParseUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
@@ -34,6 +33,7 @@ import com.tungsten.fcllibrary.ui.ProgressDialog;
 
 import java.io.IOException;
 import java.net.URL;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CancellationException;
@@ -68,28 +68,37 @@ public class Versions {
             return;
         }
 
-        TaskDialog taskDialog = new TaskDialog(context, new TaskCancellationAction(AppCompatDialog::dismiss));
-        taskDialog.setTitle(context.getString(R.string.message_downloading));
-        TaskExecutor executor = new FileDownloadTask(downloadURL, modpack.toFile())
-                .whenComplete(Schedulers.androidUIThread(), e -> {
-                    if (e == null) {
-                        LocalModpackPage page = new LocalModpackPage(context, FCLPage.PAGE_ID_TEMP, profile, null, modpack.toFile());
-                        UIManager.getInstance().getDownloadUI().showTempPage(page);
-                    } else if (e instanceof CancellationException) {
+        FileDownloadTask downloadTask = new FileDownloadTask(downloadURL, modpack.toFile());
+        TaskExecutor executor = downloadTask.whenComplete(Schedulers.androidUIThread(), e -> {
+                    if (e instanceof CancellationException) {
+                        modpack.toFile().delete();
                         Toast.makeText(context, context.getString(R.string.message_cancelled), Toast.LENGTH_SHORT).show();
-                    } else {
+                    } else if (e != null) {
+                        modpack.toFile().delete();
                         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
                         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
                         builder.setCancelable(false);
-                        builder.setTitle(context.getString(R.string.download_failed));
+                        builder.setTitle(context.getString(R.string.install_failed_downloading));
                         builder.setMessage(context.getString(R.string.install_failed_downloading_detail, file.file().url()) + "\n" + StringUtils.getStackTrace(e));
                         builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                         builder.create().show();
+                    } else {
+                        // 下载完成：保留在下载面板，由用户手动点击安装
+                        Toast.makeText(context, context.getString(R.string.download_ready_to_install), Toast.LENGTH_LONG).show();
                     }
                 }).executor();
-        taskDialog.setExecutor(executor);
-        taskDialog.show();
+        DownloadManager.submit(file.file().filename(), downloadTask, executor,
+                () -> installDownloadedModpack(context, profile, modpack.toFile()),
+                () -> modpack.toFile().delete());
         executor.start();
+    }
+
+    /** 打开已下载整合包的安装页 */
+    private static void installDownloadedModpack(Context context, Profile profile, File modpack) {
+        LocalModpackPage page = new LocalModpackPage(context, FCLPage.PAGE_ID_TEMP, profile, null, modpack);
+        // 切换到下载 UI，让安装页显示在前台
+        UIManager.getInstance().switchUI(UIManager.getInstance().getDownloadUI());
+        UIManager.getInstance().getDownloadUI().showTempPage(page);
     }
 
     public static void deleteVersion(Context context, Profile profile, String version) {

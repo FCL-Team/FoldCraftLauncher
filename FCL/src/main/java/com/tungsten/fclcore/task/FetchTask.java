@@ -48,6 +48,18 @@ public abstract class FetchTask<T> extends Task<T> {
     protected boolean caching;
     protected CacheRepository repository = CacheRepository.getInstance();
 
+    /** 当前下载进度的字节信息（供 UI 显示"已下载/总量"） */
+    private long downloadedBytes = 0;
+    private long totalBytes = -1;
+
+    public long getDownloadedBytes() {
+        return downloadedBytes;
+    }
+
+    public long getTotalBytes() {
+        return totalBytes;
+    }
+
     public FetchTask(List<URL> urls, int retry) {
         Objects.requireNonNull(urls);
 
@@ -131,6 +143,7 @@ public abstract class FetchTask<T> extends Task<T> {
                     }
 
                     long contentLength = conn.getContentLength();
+                    totalBytes = contentLength;
                     try (Context context = getContext(conn, checkETag); InputStream stream = conn.getInputStream()) {
                         int lastDownloaded = 0, downloaded = 0;
                         byte[] buffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
@@ -143,6 +156,7 @@ public abstract class FetchTask<T> extends Task<T> {
                             context.write(buffer, 0, len);
 
                             downloaded += len;
+                            downloadedBytes = downloaded;
 
                             if (contentLength >= 0) {
                                 // Update progress information per second
@@ -157,6 +171,9 @@ public abstract class FetchTask<T> extends Task<T> {
 
                         updateDownloadSpeed(downloaded - lastDownloaded);
 
+                        // 取消与大小校验之间存在竞态窗口（取消瞬间已读部分数据），
+                        // 取消时不能视为下载失败，否则取消会被包装成 IOException 报错
+                        if (isCancelled()) break download;
                         if (contentLength >= 0 && downloaded != contentLength)
                             throw new IOException("Unexpected file size: " + downloaded + ", expected: " + contentLength);
 
@@ -174,12 +191,18 @@ public abstract class FetchTask<T> extends Task<T> {
                     failedURL = url;
                     exception = ex;
                     Logging.LOG.log(Level.WARNING, "Failed to download " + url + ", repeat times: " + (++repeat) + ((redirects == null || redirects.isEmpty()) ? "" : ", redirects: " + redirects), ex);
+                    // 取消优先于重试：取消期间的异常统一以取消处理
+                    if (isCancelled())
+                        throw new CancellationException();
                 }
             }
         }
 
-        if (exception != null)
+        if (exception != null) {
+            if (isCancelled())
+                throw new CancellationException();
             throw new DownloadException(failedURL, exception);
+        }
     }
 
     private static final Timer timer = new Timer("DownloadSpeedRecorder", true);

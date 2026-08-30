@@ -120,9 +120,9 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/button_save_as"
+                android:text="@string/button_download_all"
                 android:layout_weight="1"
-                android:id="@+id/save_as"/>
+                android:id="@+id/download_all"/>
 
             <com.tungsten.fcllibrary.component.view.FCLButton
                 app:ripple="true"
@@ -130,9 +130,9 @@
                 android:layout_marginEnd="5dp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/dialog_negative"
+                android:text="@string/button_save_as"
                 android:layout_weight="1"
-                android:id="@+id/cancel"/>
+                android:id="@+id/save_as"/>
 
             <com.tungsten.fcllibrary.component.view.FCLButton
                 app:ripple="true"

@@ -9,10 +9,12 @@ import android.content.Context
 import android.content.Intent
 import android.media.MediaMetadataRetriever
 import android.net.Uri
+import android.net.wifi.WifiManager
 import android.opengl.EGL14
 import android.opengl.EGLConfig
 import android.opengl.GLES20
 import android.os.Bundle
+import android.os.PowerManager
 import android.provider.OpenableColumns
 import android.view.MotionEvent
 import android.webkit.CookieManager
@@ -20,6 +22,7 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import com.tungsten.fcl.FCLApp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.WebActivity
 import com.tungsten.fclcore.util.Logging
@@ -329,6 +332,43 @@ fun ViewPager2.disableMouseWheelScroll() {
             child.setOnGenericMotionListener { _, event ->
                 event.action == MotionEvent.ACTION_SCROLL
             }
+        }
+    }
+}
+
+// ===== 后台下载保活锁（引用计数，全部下载结束后释放）=====
+
+private val downloadLock = Any()
+private var downloadLockCount = 0
+private var downloadWakeLock: PowerManager.WakeLock? = null
+private var downloadWifiLock: WifiManager.WifiLock? = null
+
+/** 持锁：屏幕关闭/切后台时保持 CPU 与 WiFi 活跃，下载不被系统休眠中断 */
+fun acquireDownloadWakeLock() {
+    synchronized(downloadLock) {
+        if (downloadLockCount == 0) {
+            val context = FCLApp.getAppContext()
+            downloadWakeLock = (context.getSystemService(Context.POWER_SERVICE) as PowerManager)
+                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "FCL:download")
+                .apply { acquire() }
+            downloadWifiLock = (context.getSystemService(Context.WIFI_SERVICE) as WifiManager)
+                .createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "FCL:download")
+                .apply { acquire() }
+        }
+        downloadLockCount++
+    }
+}
+
+/** 释放锁（引用计数归零时才真正释放） */
+fun releaseDownloadWakeLock() {
+    synchronized(downloadLock) {
+        if (downloadLockCount <= 0) return
+        downloadLockCount--
+        if (downloadLockCount == 0) {
+            downloadWakeLock?.let { if (it.isHeld) it.release() }
+            downloadWakeLock = null
+            downloadWifiLock?.let { if (it.isHeld) it.release() }
+            downloadWifiLock = null
         }
     }
 }

@@ -20,6 +20,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,8 +35,10 @@ import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
+import com.mio.download.DownloadManager
 import com.mio.manager.RendererManager
 import com.mio.ui.dialog.RendererSelectDialog
+import com.mio.ui.view.DownloadSlidePanel
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
@@ -127,6 +130,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     var mediaPlayer: MediaPlayer? = null
     private var videoPosition = 0
+
+    /** 下载管理面板（左侧菜单开关按钮控制，有任务时自动显示） */
+    private lateinit var downloadPanel: DownloadSlidePanel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -336,6 +342,37 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         permissionResultLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             }
+        // 下载管理：有任务时右侧菜单顶部显示波浪进度，点击打开面板
+        downloadPanel = DownloadSlidePanel(this)
+        binding.root.addView(
+            downloadPanel,
+            FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+            )
+        )
+        binding.downloadWaveProgress.setOnClickListener { downloadPanel.toggle() }
+        lifecycleScope.launch {
+            var tasksEmpty = true
+            DownloadManager.tasks.collect { tasks ->
+                downloadPanel.updateTasks(tasks)
+                if (tasks.isEmpty()) {
+                    binding.downloadWaveProgress.visibility = View.GONE
+                    downloadPanel.close()
+                } else {
+                    binding.downloadWaveProgress.visibility = View.VISIBLE
+                    // 从无任务变为有任务：直接显示面板
+                    if (tasksEmpty) downloadPanel.open()
+                }
+                tasksEmpty = tasks.isEmpty()
+            }
+        }
+        // 聚合进度随任务进度变化实时推送，驱动波浪指示器
+        lifecycleScope.launch {
+            DownloadManager.progress.collect { progress ->
+                binding.downloadWaveProgress.setProgress(progress)
+            }
+        }
         setupLiveBackground()
     }
 

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_item"
+    android:paddingStart="8dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="8dp">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/cancel"
+        app:layout_constraintEnd_toStartOf="@id/cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cancel" />
+
+    <com.tungsten.fcllibrary.component.view.FCLImageView
+        android:id="@+id/cancel"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:padding="6dp"
+        android:src="@drawable/ic_baseline_close_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.tungsten.fcllibrary.component.view.FCLProgressBar
+        android:id="@+id/progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="8dp"
+        android:indeterminateDrawable="@drawable/bg_progress_indeterminate"
+        android:max="1000"
+        app:layout_constraintTop_toBottomOf="@+id/cancel" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:singleLine="true"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progress" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="11sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/percent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

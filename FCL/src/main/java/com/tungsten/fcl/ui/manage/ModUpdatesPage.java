@@ -9,6 +9,8 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.ListView;
 
+import com.mio.download.DownloadManager;
+
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.util.TaskCancellationAction;
@@ -109,8 +111,6 @@ public class ModUpdatesPage extends FCLPage implements View.OnClickListener {
                         .filter(o -> o.enabled.get())
                         .map(object -> pair(object.data.getLocalMod(), object.data.getCandidates().get(0)))
                         .collect(Collectors.toList()), keepOldVersion);
-        TaskDialog taskDialog = new TaskDialog(getContext(), TaskCancellationAction.NORMAL);
-        taskDialog.setTitle(getContext().getString(R.string.mods_check_updates_update));
         TaskExecutor executor = task.whenComplete(Schedulers.androidUIThread(), exception -> {
             UIManager.getInstance().getManageUI().dismissCurrentTempPage();
             modListPage.refresh();
@@ -133,8 +133,7 @@ public class ModUpdatesPage extends FCLPage implements View.OnClickListener {
                 builder.create().show();
             }
         }).executor();
-        taskDialog.setExecutor(executor);
-        taskDialog.show();
+        DownloadManager.submit(getContext().getString(R.string.mods_check_updates_update), task, executor);
         executor.start();
     }
 

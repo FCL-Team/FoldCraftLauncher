@@ -14,6 +14,8 @@
         tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -135,6 +137,11 @@
             android:exported="false"
             android:foregroundServiceType="dataSync"
             android:process=":jvm" />
+        <service
+            android:name="com.mio.download.DownloadService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
         <service
             android:name=".terracotta.TerracottaVPNService"
             android:permission="android.permission.BIND_VPN_SERVICE"
