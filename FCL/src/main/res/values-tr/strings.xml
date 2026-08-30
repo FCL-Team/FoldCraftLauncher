@@ -885,6 +885,24 @@
     <string name="settings_fcl_driver">Vulkan Sürücüsü</string>
     <string name="settings_fcl_driver_desc">Vulkan sürücü uygulamasını seçin.</string>
 
+    <string name="device_compatibility_tab">Uyumluluk</string>
+    <string name="device_info_header">Cihaz Bilgisi</string>
+    <string name="device_info_android_version">Android Sürümü: %s</string>
+    <string name="device_info_arch">İşlemci Mimarisi: %s</string>
+    <string name="device_info_ram">RAM: Toplam %1$d MB, Boş %2$d MB</string>
+    <string name="device_info_ram_recommendation">Bu cihaz için önerilen bellek ayırma: %d MB</string>
+    <string name="device_info_gpu">GPU: %1$s %2$s</string>
+    <string name="device_info_gpu_unknown">GPU: Tespit edilemedi</string>
+    <string name="device_info_gles">OpenGL ES Sürümü: %s</string>
+    <string name="device_info_vulkan_yes">Vulkan Desteği: Var (%s)</string>
+    <string name="device_info_vulkan_no">Vulkan Desteği: Yok</string>
+    <string name="device_renderer_header">Render Motoru Uyumluluğu</string>
+    <string name="device_renderer_mc_range_both">%1$s — Minecraft %2$s ile %3$s arası</string>
+    <string name="device_renderer_mc_range_min_only">%1$s — Minecraft %2$s ve üzeri</string>
+    <string name="device_renderer_mc_range_max_only">%1$s — Minecraft %2$s ve altı</string>
+    <string name="device_renderer_mc_range_none">%1$s — Tüm Minecraft sürümleri</string>
+    <string name="device_compatibility_disclaimer">Bu bilgiler, cihazınızın bildirdiği donanım özelliklerine ve her render motorunun bilinen desteklenen Minecraft sürüm aralığına dayanır. En iyi tahmin niteliğindedir, garanti değildir — gerçek uyumluluk kullandığınız mod, shader ve oyun sürümüne göre değişebilir.</string>
+
     <string name="settings_download_netdisk">Netdisk (Çin\'deki kullanıcılar için önerilir)</string>
 
     <string name="settings_game">Oyun Ayarları</string>

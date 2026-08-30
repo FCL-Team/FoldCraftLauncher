@@ -935,6 +935,24 @@
     <string name="settings_fcl_driver">Vulkan Driver</string>
     <string name="settings_fcl_driver_desc">Choose the Vulkan driver implementation.</string>
 
+    <string name="device_compatibility_tab">Compatibility</string>
+    <string name="device_info_header">Device Information</string>
+    <string name="device_info_android_version">Android Version: %s</string>
+    <string name="device_info_arch">CPU Architecture: %s</string>
+    <string name="device_info_ram">RAM: %1$d MB total, %2$d MB free</string>
+    <string name="device_info_ram_recommendation">Recommended memory allocation for this device: %d MB</string>
+    <string name="device_info_gpu">GPU: %1$s %2$s</string>
+    <string name="device_info_gpu_unknown">GPU: Unable to detect</string>
+    <string name="device_info_gles">OpenGL ES Version: %s</string>
+    <string name="device_info_vulkan_yes">Vulkan Support: Yes (%s)</string>
+    <string name="device_info_vulkan_no">Vulkan Support: No</string>
+    <string name="device_renderer_header">Renderer Compatibility</string>
+    <string name="device_renderer_mc_range_both">%1$s — Minecraft %2$s to %3$s</string>
+    <string name="device_renderer_mc_range_min_only">%1$s — Minecraft %2$s and newer</string>
+    <string name="device_renderer_mc_range_max_only">%1$s — Minecraft %2$s and older</string>
+    <string name="device_renderer_mc_range_none">%1$s — All Minecraft versions</string>
+    <string name="device_compatibility_disclaimer">This information is based on your device\'s reported hardware capabilities and each renderer\'s known supported Minecraft version range. It is a best-effort estimate, not a guarantee — actual compatibility can still depend on the specific mods, shaders, and game version you use.</string>
+
     <string name="settings_download_netdisk">Netdisk(Recommended for users in China)</string>
 
     <string name="settings_game">Game Settings</string>
