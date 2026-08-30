@@ -36,7 +36,6 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
 
     private final BooleanProperty installAsVersion = new SimpleBooleanProperty(true);
     private boolean isManuallyCreated = false;
-    private boolean installStarted = false;
     private Modpack manifest = null;
     private Charset charset;
 
@@ -44,19 +43,6 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
         super(context, id, R.layout.page_modpack, profile);
         this.updateVersion = updateVersion;
         this.modpackFile = modpackFile;
-
-        // 用户放弃安装直接返回（页面被移除且尚未开始安装）时，清理已下载的整合包 zip
-        getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(View v) {
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(View v) {
-                if (!installStarted)
-                    modpackFile.delete();
-            }
-        });
 
         // 原 onStart 逻辑：页面构造即读取模组包 manifest
         if (updateVersion != null) {
@@ -179,15 +165,8 @@ public class LocalModpackPage extends ModpackPage implements View.OnClickListene
                 task = ModpackInstaller.getModpackInstallTask(getContext(), profile, updateVersion, modpackFile, manifest, name);
             }
         }
-        installStarted = true;
-        if (task != null) {
-            // 安装结束后清理临时整合包 zip（失败时保留以便重试）
-            task = task.whenComplete(Schedulers.androidUIThread(), e -> {
-                if (e == null)
-                    modpackFile.delete();
-            });
+        if (task != null)
             ModpackInstaller.installModpack(getContext(), task, updateVersion != null);
-        }
     }
 
     @Override

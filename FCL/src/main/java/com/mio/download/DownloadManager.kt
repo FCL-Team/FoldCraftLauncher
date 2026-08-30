@@ -180,7 +180,10 @@ object DownloadManager {
 
     /** 聚合进度：忽略尚未开始（-1）的任务，用有效进度平均；全部无效时返回 -1 */
     private fun aggregateProgress(tasks: List<DownloadTaskInfo>): Float {
-        val validValues = tasks.map { it.task.progressProperty().get() }.filter { it >= 0 }
+        // 待安装（已完成）条目按 100% 计入：进度更新有节流，结束时可能停在最后一次上报值
+        val validValues = tasks.map {
+            if (it.ready) 1.0 else it.task.progressProperty().get()
+        }.filter { it >= 0 }
         return if (validValues.isEmpty()) -1f
         else validValues.average().toFloat().coerceIn(0f, 1f)
     }
