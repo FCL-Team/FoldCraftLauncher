@@ -32,7 +32,7 @@ public final class Logging {
     private Logging() {
     }
 
-    public static final Logger LOG = Logger.getLogger("FCL");
+    public static final Logger LOG = Logger.getLogger("NXLauncher");
     private static final ByteArrayOutputStream storedLogs = new ByteArrayOutputStream(IOUtils.DEFAULT_BUFFER_SIZE);
 
     private static volatile String[] accessTokens = new String[0];

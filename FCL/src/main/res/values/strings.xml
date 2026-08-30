@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Fold Craft Launcher</string>
+    <string name="app_name" translatable="false">NX Launcher</string>
     <string name="app_name_import">Install Modpack</string>
 
     <string name="splash_agreement">FCL requires storage permission to manage and read game files. FCL is fully open-source on GitHub, so please rest assured about your data security. The permission is solely for the game to operate properly and poses no security risks.</string>
@@ -43,11 +43,11 @@
     <string name="setting">Setting</string>
 
     <string name="about">About</string>
-    <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
+    <string name="about_launcher" translatable="false">NX Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
     <string name="about_sponsor">Sponsor</string>
     <string name="about_source">Open Source</string>
-    <string name="about_desc">Fold Craft Launcher is an Android Minecraft Launcher, allows user to launch Minecraft: Java Edition on Android device.\n\nFold Craft Launcher is developed by FCL-Team.\n\nFold Craft Launcher\'s most features are modified based on HMCLCore.\n\nThe app borrows and quotes some codes of PojavLauncher and Boat, so if you are going to distribute this app, please follow GPL-v3 License.</string>
+    <string name="about_desc">NX Launcher is an Android Minecraft Launcher, allows user to launch Minecraft: Java Edition on Android device.\n\nNX Launcher is a fork of Fold Craft Launcher, originally developed by FCL-Team.\n\nMost features are modified based on HMCLCore.\n\nThe app borrows and quotes some codes of PojavLauncher and Boat, so if you are going to distribute this app, please follow GPL-v3 License.</string>
 
     <string name="account_add_server">Add Authentication Server</string>
     <string name="account_add_server_url">Server URL</string>
@@ -1334,7 +1334,7 @@
     <string name="jar_executor_warn">Note! This feature is not for installing mods. If you are installing mods, please use the launcher\'s download function or add them in "Manage Mods".</string>
 
     <!-- 原 FCLLibrary 模块字符串（模块已并入 FCL） -->
-    <string name="file_browser_provider" translatable="false">com.tungsten.fcl.provider</string>
+    <string name="file_browser_provider" translatable="false">com.nx.launcher.provider</string>
     <string name="file_browser_title">File Browser</string>
     <string name="file_browser_back">Back</string>
     <string name="file_browser_close">Exit</string>
