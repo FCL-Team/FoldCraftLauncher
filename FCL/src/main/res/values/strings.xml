@@ -2,21 +2,21 @@
     <string name="app_name" translatable="false">NX Launcher</string>
     <string name="app_name_import">Install Modpack</string>
 
-    <string name="splash_agreement">FCL requires storage permission to manage and read game files. FCL is fully open-source on GitHub, so please rest assured about your data security. The permission is solely for the game to operate properly and poses no security risks.</string>
-    <string name="splash_permission_msg">No storage permission, please grant Fold Craft Launcher the permission.</string>
+    <string name="splash_agreement">NX Launcher requires storage permission to manage and read game files. NX Launcher is fully open-source on GitHub, so please rest assured about your data security. The permission is solely for the game to operate properly and poses no security risks.</string>
+    <string name="splash_permission_msg">No storage permission, please grant NX Launcher the permission.</string>
     <string name="splash_permission_grant">Grant</string>
     <string name="splash_permission_title">Permission to store needed</string>
     <string name="splash_permission_close">Close the app</string>
     <string name="splash_permission_settings">Settings</string>
     <string name="splash_permission_settings_msg">You have chosen "Never Allow" Please manually grant storage permissions in settings.</string>
-    <string name="notification_permission">FCL requires permission to post notifications to prevent issues with normal game installation or startup.</string>
+    <string name="notification_permission">NX Launcher requires permission to post notifications to prevent issues with normal game installation or startup.</string>
 
     <string name="splash_loading_renderer">Initializing renderer...</string>
     <string name="splash_loading_java">Initializing Java runtime...</string>
     <string name="splash_loading_config">Loading configuration and versions...</string>
     <string name="splash_loading_cache">Clearing cache...</string>
 
-    <string name="splash_title">Welcome to Fold Craft Launcher</string>
+    <string name="splash_title">Welcome to NX Launcher</string>
     <string name="splash_eula_error">Cannot get EULA, please check the network.</string>
     <string name="splash_eula_next">Agree and Continue</string>
     <string name="splash_runtime_title">Install or update app runtime</string>
@@ -418,11 +418,11 @@
     <string name="folder_config">Browse configs</string>
     <string name="folder_game">Browse game directory</string>
     <string name="folder_log">Browse log directory</string>
-    <string name="folder_fcl_log">Browse FCL logs</string>
+    <string name="folder_fcl_log">Browse NX Launcher logs</string>
     <string name="upload_log">Upload Log</string>
     <string name="log_not_found">Log file not found</string>
     <string name="log_too_large">Log file is too large</string>
-    <string name="upload_fcl_log">Upload FCL log</string>
+    <string name="upload_fcl_log">Upload NX Launcher log</string>
     <string name="upload_game_log">Upload game log</string>
     <string name="upload_success">Upload success! URL copied to clipboard: %s</string>
     <string name="upload_failed">Upload failed: %s</string>
@@ -710,13 +710,13 @@
     <string name="modpack_type_curse_tolerable_error">Unable to download dependencies, you can try to continue downloading by launching this game instance.</string>
     <string name="modpack_type_curse_error">Unable to download dependencies from CurseForge, please try again or use a proxy connection.</string>
     <string name="modpack_type_curse_not_found">Some dependencies are no longer available, please try to install a newer version of the modpack.</string>
-    <string name="modpack_type_manual_warning">The modpack is manually packaged by the publisher, which may already contain a launcher. It is recommended to try to decompress and run the game with its own launcher. FCL can still import it, with no guarantee of its usability, still continue?</string>
+    <string name="modpack_type_manual_warning">The modpack is manually packaged by the publisher, which may already contain a launcher. It is recommended to try to decompress and run the game with its own launcher. NX Launcher can still import it, with no guarantee of its usability, still continue?</string>
     <string name="modpack_type_mcbbs">MCBBS Type</string>
     <string name="modpack_type_hmcl">HMCL Type</string>
-    <string name="modpack_type_mcbbs_export">Can be imported by FCL, HMCL and MultiMC</string>
+    <string name="modpack_type_mcbbs_export">Can be imported by NX Launcher, HMCL and MultiMC</string>
     <string name="modpack_type_modrinth">Modrinth</string>
     <string name="modpack_type_multimc">MultiMC</string>
-    <string name="modpack_type_multimc_export">Can be imported by FCL, HMCL and MultiMC</string>
+    <string name="modpack_type_multimc_export">Can be imported by NX Launcher, HMCL and MultiMC</string>
     <string name="modpack_type_server">Auto-Update Modpack from Server</string>
     <string name="modpack_type_server_export">Allows server owner to update the game instance remotely</string>
     <string name="modpack_type_server_malformed">Invalid modpack manifest, please refer to the server modpack maker to fix this issue.</string>
@@ -1098,7 +1098,7 @@
     <string name="terracotta_menu">Multiplayer Menu</string>
     <string name="terracotta_menu_open">Open</string>
     <string name="terracotta_notification_title">Terracotta is running</string>
-    <string name="notification_title">FCL Process service is running!</string>
+    <string name="notification_title">NX Launcher Process service is running!</string>
     <string name="terracotta_notification_desc">Identity: %s, State: %s</string>
     <string name="terracotta_status_waiting_host_title">I want to host a session</string>
     <string name="terracotta_status_waiting_host_desc">Create a room and generate an invite code to play with friends</string>
@@ -1118,7 +1118,7 @@
     <string name="terracotta_status_host_ok_code">Invitation code (Copied): </string>
     <string name="terracotta_status_host_ok_code_copy">Copy invitation code</string>
     <string name="terracotta_status_host_ok_code_copy_toast">Invitation code has been copied to clipboard</string>
-    <string name="terracotta_status_host_ok_code_desc">Please remind your friends to select Guest mode in FCL - Multiplayer or HMCL/PCL CE and enter this invitation code.</string>
+    <string name="terracotta_status_host_ok_code_desc">Please remind your friends to select Guest mode in NX Launcher - Multiplayer or HMCL/PCL CE and enter this invitation code.</string>
     <string name="terracotta_status_host_ok_back">This will also close the room, other guests will leave and cannot rejoin.</string>
     <string name="terracotta_status_guest_starting">Joining room</string>
     <string name="terracotta_status_guest_connecting">Joining room</string>
@@ -1144,9 +1144,9 @@
     <string name="terracotta_player_kind_local">Yourself</string>
     <string name="terracotta_player_kind_guest">Guest</string>
     <string name="terracotta_tutorial_host_btn">Host Tutorial</string>
-    <string name="terracotta_tutorial_host">Host Tutorial:\n\n - Read the user notice in the launcher\'s multiplayer homepage, and then enable the multiplayer function.\n - Launch the game, find the multiplayer menu in the in-game FCL menu, and open it.\n - Click &quot;I want to host a session&quot;, to scan the game port.\n - Open the game and turn on the &quot;Open to LAN&quot; option in the game settings.\n - If a pop-up prompts you to request VPN permissions, please grant; otherwise, it will not work properly.\n - Wait for a moment and the invite code will be automatically copied. If it is not automatically copied, you can also copy it manually in the multiplayer menu.\n - Send the invite code to your friends\n\nNotes:\n\n - This software supports offline accounts.\n - This software supports interconnection with software that supports the Scaffolding protocol, such as HMCL and PCL CE.</string>
+    <string name="terracotta_tutorial_host">Host Tutorial:\n\n - Read the user notice in the launcher\'s multiplayer homepage, and then enable the multiplayer function.\n - Launch the game, find the multiplayer menu in the in-game NX Launcher menu, and open it.\n - Click &quot;I want to host a session&quot;, to scan the game port.\n - Open the game and turn on the &quot;Open to LAN&quot; option in the game settings.\n - If a pop-up prompts you to request VPN permissions, please grant; otherwise, it will not work properly.\n - Wait for a moment and the invite code will be automatically copied. If it is not automatically copied, you can also copy it manually in the multiplayer menu.\n - Send the invite code to your friends\n\nNotes:\n\n - This software supports offline accounts.\n - This software supports interconnection with software that supports the Scaffolding protocol, such as HMCL and PCL CE.</string>
     <string name="terracotta_tutorial_guest_btn">Guest Tutorial</string>
-    <string name="terracotta_tutorial_guest">Guest Tutorial:\n\n - Read the user notice in the launcher\'s multiplayer homepage, and then enable the multiplayer function.\n - Launch the game, find the multiplayer menu in the in-game FCL menu, and open it.\n - Click &quot;I want to join a session&quot;, enter the invitation code provided by the host in the input box, and wait patiently.\n - If a pop-up prompts you to request VPN permissions, please grant; otherwise, it will not work properly.\n - After it shows that you have joined the room, select Multiplayer, and double-click Terracotta Lobby.\n\nNotes:\n\n - This software supports offline accounts.\n - This software supports interconnection with software that supports the Scaffolding protocol, such as HMCL and PCL CE.\n - When joining the game using the backup server address, offline accounts are not supported. Please solve this problem yourself.</string>
+    <string name="terracotta_tutorial_guest">Guest Tutorial:\n\n - Read the user notice in the launcher\'s multiplayer homepage, and then enable the multiplayer function.\n - Launch the game, find the multiplayer menu in the in-game NX Launcher menu, and open it.\n - Click &quot;I want to join a session&quot;, enter the invitation code provided by the host in the input box, and wait patiently.\n - If a pop-up prompts you to request VPN permissions, please grant; otherwise, it will not work properly.\n - After it shows that you have joined the room, select Multiplayer, and double-click Terracotta Lobby.\n\nNotes:\n\n - This software supports offline accounts.\n - This software supports interconnection with software that supports the Scaffolding protocol, such as HMCL and PCL CE.\n - When joining the game using the backup server address, offline accounts are not supported. Please solve this problem yourself.</string>
 
     <string name="update">Update</string>
     <string name="update_netdisk">Netdisk</string>
@@ -1298,7 +1298,7 @@
     <string name="mod_check_axiom">Axiom (%s) currently in use has not been patched, it will cause crash.</string>
     <string name="mod_check_sodium">The currently used GL4ES renderer may not support the mods Sodium/Embeddium (%s). Continuing to launch could cause the game to crash. It is recommended to download and use the MobileGlues renderer instead (https://github.com/MobileGL-Dev/MobileGlues-release/releases).</string>
     <string name="mod_check_flashback">Flashback mod (%s) cannot work on Android.</string>
-    <string name="mod_check_ixeris">Ixeris mod (%s) cannot work properly on FCL.</string>
+    <string name="mod_check_ixeris">Ixeris mod (%s) cannot work properly on NX Launcher.</string>
 
     <string name="internal">Internal</string>
     <string name="import_java">Import Java</string>
@@ -1355,7 +1355,7 @@
     <string name="file_browser_share_title">Share the file</string>
     <string name="file_browser_share_message">Are you sure to share this file?</string>
     <string name="crash_reporter_title">Crash Report</string>
-    <string name="crash_reporter_hint">Fold Craft Launcher has encountered an unresolvable error, please seek help from the developer or others.</string>
+    <string name="crash_reporter_hint">NX Launcher has encountered an unresolvable error, please seek help from the developer or others.</string>
     <string name="crash_reporter_restart">Restart</string>
     <string name="crash_reporter_close">Exit</string>
     <string name="crash_reporter_copy">Copy</string>
