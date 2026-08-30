@@ -14,6 +14,8 @@ import sys
 import time
 from pathlib import Path
 
+sys.stdout.reconfigure(line_buffering=True)  # keep progress visible when piped, not just on a TTY
+
 WORK_BRANCH = "nx-launcher"
 POLL_INTERVAL_SECONDS = 15
 POLL_TIMEOUT_SECONDS = 15 * 60
