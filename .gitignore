@@ -33,3 +33,7 @@ AGENTS.md
 
 # ZCode 会话文件
 /.zcode/
+
+# Python
+__pycache__/
+*.pyc
