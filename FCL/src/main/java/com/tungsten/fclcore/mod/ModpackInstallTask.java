@@ -71,12 +71,19 @@ public class ModpackInstallTask<T> extends Task<Void> {
             files.put(file.getPath(), file);
 
 
+        int subDirectoryCount = subDirectories.size();
+        int index = 0;
         for (String subDirectory : subDirectories) {
+            final int finishedDirectories = index++;
             new Unzipper(modpackFile, dest)
                     .setSubDirectory(subDirectory)
                     .setTerminateIfSubDirectoryNotExists()
                     .setReplaceExistentFile(true)
                     .setEncoding(charset)
+                    .setProgressCallback((done, total, entryPath) -> {
+                        updateMessage(entryPath);
+                        updateProgress((finishedDirectories + 1.0 * done / total) / subDirectoryCount);
+                    })
                     .setFilter((destPath, isDirectory, zipEntry, entryPath) -> {
                         if (isDirectory) return true;
                         if (!callback.test(entryPath)) return false;

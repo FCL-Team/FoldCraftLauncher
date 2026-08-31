@@ -59,23 +59,50 @@ public final class MinecraftInstanceTask<T> extends Task<ModpackConfiguration<T>
         List<ModpackConfiguration.FileInformation> overrides = new ArrayList<>();
 
         try (FileSystem fs = CompressingUtils.readonly(zipFile.toPath()).setEncoding(encoding).build()) {
+            // 先遍历统计条目总数（只走目录结构，不解压数据），哈希阶段按条目上报进度
+            long counted = 0;
             for (String subDirectory : subDirectories) {
                 Path root = fs.getPath(subDirectory);
-
                 if (Files.exists(root))
-                    Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                            String relativePath = root.relativize(file).normalize().toString().replace(File.separatorChar, '/');
-                            overrides.add(new ModpackConfiguration.FileInformation(relativePath, DigestUtils.digestToString("SHA-1", file)));
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
+                    counted += countEntries(root);
+            }
+            final long total = counted;
+
+            long[] done = {0};
+            for (String subDirectory : subDirectories) {
+                Path root = fs.getPath(subDirectory);
+                if (!Files.exists(root))
+                    continue;
+                Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        String relativePath = root.relativize(file).normalize().toString().replace(File.separatorChar, '/');
+                        updateMessage(relativePath);
+                        updateProgress(++done[0], total);
+                        overrides.add(new ModpackConfiguration.FileInformation(relativePath, DigestUtils.digestToString("SHA-1", file)));
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
             }
         }
 
         ModpackConfiguration<T> configuration = new ModpackConfiguration<>(manifest, type, name, version, overrides);
         FileUtils.writeText(jsonFile, JsonUtils.GSON.toJson(configuration));
         setResult(configuration);
+    }
+
+    /**
+     * 统计子目录内的文件条目数，只遍历目录结构，不解压数据
+     */
+    private long countEntries(Path root) throws IOException {
+        long[] count = {0};
+        Files.walkFileTree(root, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                count[0]++;
+                return FileVisitResult.CONTINUE;
+            }
+        });
+        return count[0];
     }
 }
