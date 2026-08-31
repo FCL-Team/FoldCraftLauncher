@@ -44,6 +44,9 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
     private TaskCancellationAction onCancel;
     private final Consumer<FileDownloadTask.SpeedEvent> speedEventHandler;
 
+    /** 当前正在写日志的任务，用于在它结束时清空并隐藏日志区 */
+    private Task<?> logTask;
+
     private TaskListPane taskListPane;
     private ListView taskListView;
 
@@ -119,7 +122,10 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
                 @Override
                 public void onRunning(Task<?> task) {
                     Schedulers.androidUIThread().execute(() -> {
-                        ChangeListener<String> listener = (observable, oldValue, newValue) -> onInstallerLog(newValue);
+                        ChangeListener<String> listener = (observable, oldValue, newValue) -> {
+                            logTask = task;
+                            onInstallerLog(newValue);
+                        };
                         task.messageProperty().addListener(listener);
                         messageListeners.put(task, listener);
                     });
@@ -127,7 +133,14 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
 
                 @Override
                 public void onFinished(Task<?> task) {
-                    Schedulers.androidUIThread().execute(() -> removeMessageListener(task));
+                    Schedulers.androidUIThread().execute(() -> {
+                        removeMessageListener(task);
+                        // 写日志的任务结束后清空并隐藏日志区，避免最后一条信息一直占据界面
+                        if (logTask == task) {
+                            logTask = null;
+                            clearLog();
+                        }
+                    });
                 }
             };
             executor.addTaskListener(messageUpdateListener);
@@ -144,6 +157,12 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
         logScroll.setVisibility(View.VISIBLE);
         logView.setText(message);
         logScroll.post(() -> logScroll.fullScroll(View.FOCUS_DOWN));
+    }
+
+    /** 清空日志内容并恢复隐藏 */
+    private void clearLog() {
+        logView.setText("");
+        logScroll.setVisibility(View.GONE);
     }
 
     /** 手动追加一条实时进度文字，供无法接入任务体系的流程使用 */
