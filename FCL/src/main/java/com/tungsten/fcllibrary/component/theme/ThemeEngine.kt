@@ -86,13 +86,24 @@ object ThemeEngine {
         notifyThemeChanged()
     }
 
+    /**
+     * 全量刷新合并为单个任务：拖动取色等场景每帧会触发多次 applyColor，
+     * 若每次都把全部回调逐个 post，主线程队列会被刷新任务淹没（高刷屏上每秒可达数万条），
+     * 输入事件饿死导致界面卡死甚至 ANR；合并后一帧内最多执行一轮全量刷新。
+     */
+    private val refreshRunnable = Runnable {
+        // 回调执行期间可能再注册/注销控件，复制快照遍历防止 ConcurrentModificationException
+        for (runnable in runnables.values.toList()) {
+            runnable.run()
+        }
+        for (runnable in refreshListeners.toList()) {
+            runnable.run()
+        }
+    }
+
     private fun notifyThemeChanged() {
-        for ((_, runnable) in runnables) {
-            handler.post(runnable)
-        }
-        for (runnable in refreshListeners) {
-            handler.post(runnable)
-        }
+        handler.removeCallbacks(refreshRunnable)
+        handler.post(refreshRunnable)
     }
 
     /** 更新主题数据并全量刷新 */
