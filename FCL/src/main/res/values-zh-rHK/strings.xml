@@ -12,7 +12,6 @@
     <string name="splash_loading_java">正在初始化 Java 執行環境…</string>
     <string name="splash_loading_config">正在加載配置同版本列表…</string>
     <string name="splash_loading_cache">正在清理快取…</string>
-
     <string name="splash_title">歡迎使用 Fold Craft Launcher</string>
     <string name="splash_eula_error">無法獲取用戶協議，請檢查網絡。</string>
     <string name="splash_eula_next">同意並繼續</string>
@@ -1057,4 +1056,10 @@
     <string name="log_upload_share_template">我喺啟動器入面遇到咗問題，呢度係日誌連結：\n%s</string>
     <string name="close">關閉</string>
     <string name="create_account_first">啟動遊戲前請先建立遊戲帳戶</string>
+    <string name="message_check_has_modloader">檢測到當前推出的遊戲版本安裝了mods，但似乎沒有安裝相應的mod加載器。 啟動後，模組可能無法正常運行。 您想繼續啟動嗎？</string>
+    <string name="message_data_is_loading">數據仍在加載中，無法修改。</string>
+    <string name="exception_no_suitable_java">找不到合適的Java！</string>
+    <string name="slide_selection">幻燈片選擇</string>
+    <string name="swap_hands">按兩下交換手</string>
+    <string name="jar_executor_warn">注意！ 此功能不適用於安裝模組。如果您正在安裝模組，請使用啟動器的下載功能或將其添加到管理模組中。</string>
 </resources>
