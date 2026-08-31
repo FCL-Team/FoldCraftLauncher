@@ -1057,4 +1057,5 @@
     <string name="log_upload_share_template">我喺啟動器入面遇到咗問題，呢度係日誌連結：\n%s</string>
     <string name="close">關閉</string>
     <string name="create_account_first">啟動遊戲前請先建立遊戲帳戶</string>
+    <string name="version_list_refreshing">正在獲取遠程版本列表…</string>
 </resources>

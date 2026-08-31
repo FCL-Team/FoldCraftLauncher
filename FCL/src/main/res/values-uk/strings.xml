@@ -934,4 +934,5 @@
     <string name="log_upload_share_template">Я зіткнувся з проблемою в лаунчері, ось посилання на журнал:\n%s</string>
     <string name="close">Закрити</string>
     <string name="create_account_first">Створіть ігровий акаунт перед запуском гри</string>
+    <string name="version_list_refreshing">Отримання списку віддалених версій…</string>
 </resources>

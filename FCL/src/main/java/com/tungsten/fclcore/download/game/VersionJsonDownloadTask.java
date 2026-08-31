@@ -17,6 +17,8 @@
  */
 package com.tungsten.fclcore.download.game;
 
+import com.tungsten.fcl.FCLApp;
+import com.tungsten.fcl.R;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.RemoteVersion;
 import com.tungsten.fclcore.download.VersionList;
@@ -40,7 +42,9 @@ public final class VersionJsonDownloadTask extends Task<String> {
         this.dependencyManager = dependencyManager;
         this.gameVersionList = dependencyManager.getVersionList("game");
 
-        dependents.add(Task.fromCompletableFuture(gameVersionList.loadAsync(gameVersion)));
+        // 命名该任务使其在任务列表可见，否则联网刷新版本列表期间对话框长时间无任何输出
+        dependents.add(Task.fromCompletableFuture(gameVersionList.loadAsync(gameVersion))
+                .setName(FCLApp.getAppContext().getString(R.string.version_list_refreshing)));
 
         setSignificance(TaskSignificance.MODERATE);
     }

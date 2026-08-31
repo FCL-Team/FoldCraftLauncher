@@ -896,4 +896,5 @@ desfeita!</string>
     <string name="world_show_all">Mostrar tudo</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
     <string name="create_account_first">Crie uma conta de jogo antes de iniciar o jogo</string>
+    <string name="version_list_refreshing">Obtendo lista de versões remotas…</string>
 </resources>

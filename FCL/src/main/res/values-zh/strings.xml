@@ -1317,4 +1317,5 @@
     <string name="log_upload_share_template">我在启动器里遇到问题了，以下是日志链接：\n%s</string>
     <string name="close">关闭</string>
     <string name="create_account_first">启动游戏前请先创建游戏账户</string>
+    <string name="version_list_refreshing">正在获取远程版本列表…</string>
 </resources>

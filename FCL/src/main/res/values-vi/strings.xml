@@ -1206,4 +1206,5 @@
     <string name="swap_hands">Nhấp đúp để Đổi Tay</string>
     <string name="jar_executor_warn">Lưu ý! Tính năng này không dành cho việc cài đặt mods. Nếu bạn đang cài đặt mods, vui lòng sử dụng chức năng tải xuống của trình khởi chạy hoặc thêm chúng trong "Quản lý Mods".</string>
     <string name="create_account_first">Vui lòng tạo tài khoản trò chơi trước khi khởi động</string>
+    <string name="version_list_refreshing">Đang lấy danh sách phiên bản từ xa…</string>
 </resources>
