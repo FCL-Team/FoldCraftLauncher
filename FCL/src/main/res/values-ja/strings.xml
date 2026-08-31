@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name_import">中世</string>
+    <string name="splash_agreement">FCLは、ゲームファイルの管理および読み取りのためにストレージ権限を必要とします。FCLはGitHubで完全にオープンソース化されておりますので、データのセキュリティについてはご安心ください。この権限はゲームを正常に動作させるためだけのものであり、セキュリティ上のリスクは一切ございません。</string>
+    <string name="splash_permission_msg">ストレージ権限が許可されていません。Fold Craft Launcherに権限を付与してください。</string>
+    <string name="splash_permission_grant">きょか します</string>
+    <string name="splash_permission_title">すとれえじ けんへ が 必要 です</string>
+    <string name="splash_permission_close">あぷり お とじて ください。</string>
+    <string name="splash_permission_settings">設定</string>
+</resources>
