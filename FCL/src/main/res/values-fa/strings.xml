@@ -891,4 +891,5 @@
     <string name="world_show_all">نمایش همه</string>
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
     <string name="create_account_first">لطفاً پیش از اجرای بازی یک حساب بازی بسازید</string>
+    <string name="version_list_refreshing">در حال دریافت فهرست نسخه‌های راه دور…</string>
 </resources>

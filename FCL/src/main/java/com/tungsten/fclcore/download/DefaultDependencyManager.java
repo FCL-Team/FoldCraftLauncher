@@ -17,6 +17,8 @@
  */
 package com.tungsten.fclcore.download;
 
+import com.tungsten.fcl.FCLApp;
+import com.tungsten.fcl.R;
 import com.tungsten.fclcore.download.cleanroom.CleanroomInstallTask;
 import com.tungsten.fclcore.download.forge.ForgeInstallTask;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
@@ -147,7 +149,9 @@ public class DefaultDependencyManager extends AbstractDependencyManager {
         if (baseVersion.isResolved()) throw new IllegalArgumentException("Version should not be resolved");
 
         VersionList<?> versionList = getVersionList(libraryId);
+        // 命名该任务使其在任务列表可见，否则联网刷新版本列表期间对话框长时间无任何输出
         return Task.fromCompletableFuture(versionList.loadAsync(gameVersion))
+                .setName(FCLApp.getAppContext().getString(R.string.version_list_refreshing))
                 .thenComposeAsync(() -> installLibraryAsync(baseVersion, versionList.getVersion(gameVersion, libraryVersion)
                         .orElseThrow(() -> new IOException("Remote library " + libraryId + " has no version " + libraryVersion))))
                 .withStage(String.format("fcl.install.%s:%s", libraryId, libraryVersion));

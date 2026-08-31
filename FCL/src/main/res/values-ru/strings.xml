@@ -977,4 +977,5 @@
     <string name="log_upload_share_template">Я столкнулся с проблемой в лаунчере, вот ссылка на журнал:\n%s</string>
     <string name="close">Закрыть</string>
     <string name="create_account_first">Создайте игровой аккаунт перед запуском игры</string>
+    <string name="version_list_refreshing">Получение списка удалённых версий…</string>
 </resources>

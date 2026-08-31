@@ -1062,4 +1062,5 @@
     <string name="slide_selection">幻燈片選擇</string>
     <string name="swap_hands">按兩下交換手</string>
     <string name="jar_executor_warn">注意！ 此功能不適用於安裝模組。如果您正在安裝模組，請使用啟動器的下載功能或將其添加到管理模組中。</string>
+    <string name="version_list_refreshing">正在獲取遠程版本列表…</string>
 </resources>
