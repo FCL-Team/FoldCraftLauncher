@@ -37,7 +37,7 @@ import com.tungsten.fclcore.util.Pair;
 public final class NetworkUtils {
     public static final String PARAMETER_SEPARATOR = "&";
     public static final String NAME_VALUE_SEPARATOR = "=";
-    private static final int TIME_OUT = 8000;
+    private static final int TIME_OUT = 10000;
 
     private NetworkUtils() {
     }
