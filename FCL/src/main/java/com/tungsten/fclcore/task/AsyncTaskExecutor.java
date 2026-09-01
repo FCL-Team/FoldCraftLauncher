@@ -137,11 +137,18 @@ public final class AsyncTaskExecutor extends TaskExecutor {
                     task.setState(Task.TaskState.READY);
                     if (parentTask != null && task.getStage() == null)
                         task.setStage(parentTask.getStage());
+                    // 与普通任务一致地传递继承 stage 并触发 onRunning，任务列表才能显示该行
+                    if (task.getStage() != null) {
+                        task.setInheritedStage(task.getStage());
+                    } else if (parentTask != null) {
+                        task.setInheritedStage(parentTask.getInheritedStage());
+                    }
 
                     if (task.getSignificance().shouldLog())
                         Logging.LOG.log(Level.FINE, "Executing task: " + task.getName());
 
                     taskListeners.forEach(it -> it.onReady(task));
+                    taskListeners.forEach(it -> it.onRunning(task));
 
                     return task.getFuture(new TaskCompletableFuture() {
                         @Override
