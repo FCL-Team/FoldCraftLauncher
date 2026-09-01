@@ -21,6 +21,16 @@
             android:textColor="@android:color/darker_gray"
             android:textSize="16sp" />
 
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="32dp"
+            android:singleLine="true"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp" />
+
         <com.tungsten.fcllibrary.component.view.FCLImageView
             android:id="@+id/close"
             android:layout_width="28dp"

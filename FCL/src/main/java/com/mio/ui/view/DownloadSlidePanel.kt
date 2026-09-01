@@ -12,10 +12,13 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.download.DownloadTaskInfo
+import com.tungsten.fclcore.task.FetchTask
+import com.tungsten.fclcore.task.Schedulers
 import com.mio.util.getScreenWidth
 import com.tungsten.fcl.databinding.ViewDownloadPanelBinding
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.ConvertUtils
+import java.util.function.Consumer
 
 /** 下载管理卡片：从右侧滑入的圆角卡片，无遮罩，展示全局下载任务进度，后续可容纳登录等其他全局状态 */
 class DownloadSlidePanel @JvmOverloads constructor(
@@ -27,6 +30,14 @@ class DownloadSlidePanel @JvmOverloads constructor(
         ViewDownloadPanelBinding.inflate(LayoutInflater.from(context), this, true)
     private val panel: View = binding.panel
     private val closeButton: ImageView = binding.close
+
+    /** 全局速度事件处理：weak 注册要求调用方持有强引用，否则监听器会被 GC 回收失效 */
+    private val speedHandler = Consumer { event: FetchTask.SpeedEvent ->
+        Schedulers.androidUIThread().execute {
+            speedText.setString(if (event.speed > 0) formatBytes(event.speed.toLong()) + "/s" else "")
+        }
+    }
+    private val speedText = binding.speed
     private val adapter = DownloadListAdapter()
     var isOpen = false
         private set
@@ -66,6 +77,10 @@ class DownloadSlidePanel @JvmOverloads constructor(
         // 初始移出屏幕外，避免首次 layout 闪现
         post { panel.translationY = -height.toFloat() }
         visibility = GONE
+        // 全局下载速度（每秒聚合一次），仅在面板打开时可见
+        FetchTask.speedEvent
+            .channel(FetchTask.SpeedEvent::class.java)
+            .registerWeak(speedHandler)
         ThemeEngine.getInstance().registerEvent(this, ::refreshTheme)
         refreshTheme()
     }
