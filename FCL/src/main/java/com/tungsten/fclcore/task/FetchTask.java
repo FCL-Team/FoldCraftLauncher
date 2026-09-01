@@ -194,6 +194,10 @@ public abstract class FetchTask<T> extends Task<T> {
                     // 取消优先于重试：取消期间的异常统一以取消处理
                     if (isCancelled())
                         throw new CancellationException();
+                    // 仍有下一次重试时先退避等待，避免服务器限流/掐流时连续快速重试继续失败
+                    if (retryTime < retry - 1) {
+                        awaitRetryDelay(retryTime);
+                    }
                 }
             }
         }
@@ -202,6 +206,26 @@ public abstract class FetchTask<T> extends Task<T> {
             if (isCancelled())
                 throw new CancellationException();
             throw new DownloadException(failedURL, exception);
+        }
+    }
+
+    /** 重试退避序列（毫秒）：第 1 次失败后 500ms，之后 2s、5s，更多次保持 5s */
+    private static final long[] RETRY_DELAYS = {500, 2000, 5000};
+
+    /**
+     * 重试前的退避等待。分片轮询 isCancelled()，
+     * 等待期间取消任务可在单个分片内退出，不会拖慢取消响应。
+     */
+    private void awaitRetryDelay(int retryTime) {
+        long delay = RETRY_DELAYS[Math.min(retryTime, RETRY_DELAYS.length - 1)];
+        long deadline = System.currentTimeMillis() + delay;
+        while (!isCancelled() && System.currentTimeMillis() < deadline) {
+            try {
+                Thread.sleep(Math.min(100, deadline - System.currentTimeMillis()));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
         }
     }
 
