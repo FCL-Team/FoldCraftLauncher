@@ -32,6 +32,7 @@
 ⚙️ **Основные преимущества**  
 - Встроенные среды выполнения Java разных версий (Java 8/17/21/25) с возможностью импорта пользовательских версий Java
 - Виртуальная мышь и переназначение клавиш
+- Конвертация раскладок управления между FCL и ZalithLauncher2, импорт раскладок ZL2 с автоматическим преобразованием
 - Поддержка шейдеров (требуются рендереры VirGL/Zink/MG)
 - Гибкое управление ресурсами (моды/модпаки/текстуры/шейдеры/сохранения)
 - Настройка тем оформления (фон/цветовые схемы)
@@ -93,4 +94,4 @@
 - [OpenAL-Soft](https://github.com/kcat/openal-soft): [GNU GPLv2](app_pojavlauncher/src/main/assets/licenses/OPENAL-SOFT_GPL2)
     - [oboe](https://github.com/google/oboe): [Apache License 2.0](app_pojavlauncher/src/main/assets/licenses/OBOE_APACHE2).
     - [pfffft](https://bitbucket.org/jpommier/pffft/src/master/): [ARR](app_pojavlauncher/src/main/assets/licenses/PFFFT_LICENSE)
-- [control-converter](https://github.com/NingZeStudio/control-converter) (конвертер раскладок управления FCL→ZL2, реализация на Go, упакован как `libcc.so`): [MIT License](https://opensource.org/licenses/MIT)
+- [control-converter](https://github.com/NingZeStudio/control-converter) (конвертер раскладок управления FCL↔ZL2, встроенная реализация на чистом Kotlin на основе семантики cc.py, больше не упакован как `libcc.so`): [MIT License](https://opensource.org/licenses/MIT)

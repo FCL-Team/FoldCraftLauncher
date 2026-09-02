@@ -35,6 +35,7 @@
 ⚙️ **功能亮点**  
 - 内置多版本 Java 运行时（Java 8/17/21/25）同时支持导入Java
 - 虚拟鼠标与自定义按键映射
+- 支持 FCL/ZalithLauncher2 控制布局互转，导入 ZL2 布局自动转换
 - 光影支持（需VirGL/Zink/MG渲染器）
 - 动态资源管理（模组/整合包/材质/光影/存档）
 - 个性化主题定制（背景/颜色方案）
@@ -107,4 +108,4 @@
 - [Terracotta](https://github.com/burningtnt/Terracotta)（`net.burningtnt.terracotta` JNI 封装）: [AGPL-3.0](https://github.com/burningtnt/Terracotta/blob/main/LICENSE)
 - [TouchController](https://github.com/TouchController/TouchController)（触摸控制器）: [LGPL-3.0](https://github.com/TouchController/TouchController/blob/main/LICENSE)
 - [discord-rpc](https://github.com/discord/discord-rpc)（libdiscord-rpc.so）: [MIT License](https://github.com/discord/discord-rpc/blob/master/LICENSE)
-- [control-converter](https://github.com/NingZeStudio/control-converter) (FCL→ZL2 控制布局转换，Go 实现，打包为 `libcc.so`): [MIT License](https://opensource.org/licenses/MIT)
+- [control-converter](https://github.com/NingZeStudio/control-converter)（FCL↔ZL2 控制布局转换，以 cc.py 为语义基准的内置纯 Kotlin 实现，不再打包 `libcc.so`）: [MIT License](https://opensource.org/licenses/MIT)
