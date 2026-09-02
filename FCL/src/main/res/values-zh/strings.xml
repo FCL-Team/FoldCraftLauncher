@@ -201,6 +201,7 @@
     <string name="control_converting">正在转换…</string>
     <string name="control_convert_failed">转换失败！</string>
     <string name="control_convert_unsupported">当前设备不支持 ZL2 转换（需 arm64）</string>
+    <string name="control_import_zl2_converted">已识别 ZalithLauncher2 布局，已自动转换导入</string>
     <string name="control_upload">上传布局</string>
 
     <string name="curse_category_0">全部</string>

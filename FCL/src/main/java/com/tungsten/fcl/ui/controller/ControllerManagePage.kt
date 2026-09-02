@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.google.gson.GsonBuilder
+import com.mio.util.LayoutConverter
 import com.mio.util.showErrorDialog
 import com.mio.util.showItemSelectionDialog
 import com.tungsten.fcl.R
@@ -16,7 +17,6 @@ import com.tungsten.fcl.databinding.PageControllerManagerBinding
 import com.tungsten.fcl.setting.Controller
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.ui.UIManager
-import com.tungsten.fcl.util.LayoutConverter
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
@@ -180,7 +180,29 @@ class ControllerManagePage(context: Context, id: Int) :
         ) { files ->
             if (files == null) return@launchSingleSelection
             try {
-                val content = FileUtils.readText(files[0].toFile(activity, File(FCLPath.CACHE_DIR)))
+                var content = FileUtils.readText(files[0].toFile(activity, File(FCLPath.CACHE_DIR)))
+                // 导入时自动识别 ZalithLauncher2 布局，先转换为 FCL 格式再导入
+                var convertedFromZl2 = false
+                if (LayoutConverter.isZl2Layout(content)) {
+                    val input = File(FCLPath.CACHE_DIR, "import_zl2_" + System.currentTimeMillis() + ".json")
+                    val output = File(FCLPath.CACHE_DIR, "import_zl2_converted.json")
+                    try {
+                        input.writeText(content, Charsets.UTF_8)
+                        val error = LayoutConverter.convertZl2ToFcl(input, output)
+                        if (error != null) {
+                            showErrorDialog(
+                                context,
+                                context.getString(R.string.control_convert_failed) + "\n" + error
+                            )
+                            return@launchSingleSelection
+                        }
+                        content = FileUtils.readText(output)
+                        convertedFromZl2 = true
+                    } finally {
+                        input.delete()
+                        output.delete()
+                    }
+                }
                 val controller = GsonBuilder().setPrettyPrinting().create()
                     .fromJson(content, Controller::class.java)
                 if (controller.name == "Error") {
@@ -191,6 +213,13 @@ class ControllerManagePage(context: Context, id: Int) :
                     ).show()
                 } else {
                     addController(controller)
+                    if (convertedFromZl2) {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.control_import_zl2_converted),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
                 }
             } catch (e: Throwable) {
                 showErrorDialog(
