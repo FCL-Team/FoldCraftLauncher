@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -54,7 +55,8 @@ data class DownloadTaskInfo(
 object DownloadManager {
 
     internal const val NOTIFICATION_ID = 1301
-    private const val CHANNEL_ID = "download"
+    private const val CHANNEL_ID = "download_v2"
+    private const val LEGACY_CHANNEL_ID = "download"
 
     /** 通知点击 extra：打开启动器并定位到下载面板 */
     const val EXTRA_OPEN_PANEL = "open_download_panel"
@@ -67,6 +69,9 @@ object DownloadManager {
     val progress: StateFlow<Float> = _progress.asStateFlow()
 
     private var idCounter = 0L
+
+    /** 本次运行是否已发起过通知权限请求，避免重复打扰 */
+    private var permissionRequested = false
 
     /** 最近一次"已开始下载"提示，连续提交时取消旧的仅显示最新，避免 Toast 排队刷屏 */
     private var lastStartToast: Toast? = null
@@ -88,6 +93,25 @@ object DownloadManager {
         return submit(title, task, executor, null, null)
     }
 
+    /** Android 13+ 未授予通知权限时，借下载开始的时机发起一次授权请求（每次运行至多一次） */
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || permissionRequested)
+            return
+        val activity = FCLApp.getActivity() ?: return
+        if (ActivityCompat.checkSelfPermission(
+                activity,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        )
+            return
+        permissionRequested = true
+        ActivityCompat.requestPermissions(
+            activity,
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            1001
+        )
+    }
+
     /** 提交一个"完成后待手动安装"的下载（整合包场景），见 [DownloadTaskInfo] */
     @JvmStatic
     fun submit(
@@ -101,6 +125,7 @@ object DownloadManager {
         val wasEmpty = _tasks.value.isEmpty()
         _tasks.update { it + info }
         showStartedToast(FCLApp.getAppContext(), title)
+        requestNotificationPermissionIfNeeded()
         if (wasEmpty) {
             // 从无任务变为有任务：启动前台服务保活，保证后台下载不中断
             try {
@@ -220,11 +245,14 @@ object DownloadManager {
     }
 
     private fun createNotificationChannel(context: Context) {
+        val manager = context.getSystemService(NotificationManager::class.java)
+        // 旧版本使用低重要性渠道（不弹横幅），升级后删除并启用默认重要性
+        manager.deleteNotificationChannel(LEGACY_CHANNEL_ID)
         val channel = NotificationChannel(
             CHANNEL_ID,
             context.getString(R.string.download_manager),
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_DEFAULT
         )
-        context.getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
+        manager.createNotificationChannel(channel)
     }
 }
