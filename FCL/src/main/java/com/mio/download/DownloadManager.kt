@@ -56,6 +56,9 @@ object DownloadManager {
     internal const val NOTIFICATION_ID = 1301
     private const val CHANNEL_ID = "download"
 
+    /** 通知点击 extra：打开启动器并定位到下载面板 */
+    const val EXTRA_OPEN_PANEL = "open_download_panel"
+
     private val _tasks = MutableStateFlow<List<DownloadTaskInfo>>(emptyList())
     val tasks: StateFlow<List<DownloadTaskInfo>> = _tasks.asStateFlow()
 
@@ -196,7 +199,11 @@ object DownloadManager {
         val percent =
             if (indeterminate) 0 else (aggregate * 100).toInt().coerceIn(0, 100)
         val first = tasks.first()
-        val intent = Intent(context, MainActivity::class.java)
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra(EXTRA_OPEN_PANEL, true)
+            // 单顶复用已存在的启动器实例（热启动走 onNewIntent），避免叠加新实例
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        }
         val pendingIntent = PendingIntent.getActivity(
             context, 0, intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
