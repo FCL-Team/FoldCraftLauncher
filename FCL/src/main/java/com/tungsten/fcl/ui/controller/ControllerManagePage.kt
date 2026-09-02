@@ -173,13 +173,19 @@ class ControllerManagePage(context: Context, id: Int) :
         }
     }
 
+    /** ZL2 布局转换失败：错误弹窗用转换失败文案并携带转换器错误串 */
+    private class Zl2ConvertFailedException(val error: String) : Exception(error)
+
     private fun importController() {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(
             null,
             arrayListOf(".json")
         ) { files ->
             if (files == null) return@launchSingleSelection
-            try {
+            // 导入含拷贝/ZL2 转换/解析等耗时步骤，弹进度框提示，结束时在 whenComplete 关闭
+            val dialog = ProgressDialog(context)
+            // 拷贝/ZL2 识别转换/完整解析都在后台执行，回调本身在主线程，大文件导入不能阻塞主线程（ANR）
+            Task.supplyAsync {
                 var content = FileUtils.readText(files[0].toFile(activity, File(FCLPath.CACHE_DIR)))
                 // 导入时自动识别 ZalithLauncher2 布局，先转换为 FCL 格式再导入
                 var convertedFromZl2 = false
@@ -190,11 +196,7 @@ class ControllerManagePage(context: Context, id: Int) :
                         input.writeText(content, Charsets.UTF_8)
                         val error = LayoutConverter.convertZl2ToFcl(input, output)
                         if (error != null) {
-                            showErrorDialog(
-                                context,
-                                context.getString(R.string.control_convert_failed) + "\n" + error
-                            )
-                            return@launchSingleSelection
+                            throw Zl2ConvertFailedException(error)
                         }
                         content = FileUtils.readText(output)
                         convertedFromZl2 = true
@@ -205,29 +207,45 @@ class ControllerManagePage(context: Context, id: Int) :
                 }
                 val controller = GsonBuilder().setPrettyPrinting().create()
                     .fromJson(content, Controller::class.java)
-                if (controller.name == "Error") {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.control_import_failed),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    addController(controller)
-                    if (convertedFromZl2) {
+                Pair(controller, convertedFromZl2)
+            }.thenAcceptAsync(
+                Schedulers.androidUIThread(),
+                ExceptionalConsumer { result ->
+                    val (controller, convertedFromZl2) = result
+                    if (controller.name == "Error") {
                         Toast.makeText(
                             context,
-                            context.getString(R.string.control_import_zl2_converted),
+                            context.getString(R.string.control_import_failed),
                             Toast.LENGTH_SHORT
                         ).show()
+                    } else {
+                        addController(controller)
+                        if (convertedFromZl2) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.control_import_zl2_converted),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
                 }
-            } catch (e: Throwable) {
-                showErrorDialog(
-                    context,
-                    context.getString(R.string.control_import_failed) + "\n" + e.message
-                )
-                Logging.LOG.log(Level.SEVERE, "Failed to import controller", e)
-            }
+            ).whenComplete(
+                Schedulers.androidUIThread()
+            ) { exception ->
+                dialog.dismiss()
+                if (exception is Zl2ConvertFailedException) {
+                    showErrorDialog(
+                        context,
+                        context.getString(R.string.control_convert_failed) + "\n" + exception.error
+                    )
+                } else if (exception != null) {
+                    showErrorDialog(
+                        context,
+                        context.getString(R.string.control_import_failed) + "\n" + exception.message
+                    )
+                    Logging.LOG.log(Level.SEVERE, "Failed to import controller", exception)
+                }
+            }.start()
         }
     }
 
