@@ -18,8 +18,6 @@ class FCLConfig(
 
     var useVKDriverSystem = false
 
-    var pojavBigCore = false
-
     var installedModLoaders: InstalledModLoaders? = null
 
     var lwjglVersion: String = "3.3.3"

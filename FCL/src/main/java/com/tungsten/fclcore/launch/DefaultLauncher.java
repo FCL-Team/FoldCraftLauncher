@@ -446,7 +446,6 @@ public class DefaultLauncher {
                 finalArgs
         );
         config.setUseVKDriverSystem(options.isVKDriverSystem());
-        config.setPojavBigCore(options.isPojavBigCore());
         config.setInstalledModLoaders(new FCLConfig.InstalledModLoaders(
                 analyzer.has(LibraryAnalyzer.LibraryType.FORGE),
                 analyzer.has(LibraryAnalyzer.LibraryType.CLEANROOM),

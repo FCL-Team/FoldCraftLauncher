@@ -848,7 +848,6 @@
     <string name="settings_fcl_vulkan_driver_system">Sử dụng trình điều khiển Vulkan hệ thống</string>
     <string name="settings_fcl_graphics_backend">Backend Đồ họa (chỉ có hiệu lực cho 26.2+)</string>
     <string name="settings_fcl_renderer">Triển khai OpenGL (Trình kết xuất)</string>
-    <string name="settings_fcl_pojav_bigcore">Buộc trình kết xuất chạy trên lõi lớn</string>
     <string name="settings_fcl_renderer_gl4es" translatable="false">Holy GL4ES (OpenGL 2.1, 1.21.5-)</string>
     <string name="settings_fcl_renderer_virgl" translatable="false">VirGLRenderer (OpenGL 4.3)</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, chỉ hỗ trợ 1.17-)</string>

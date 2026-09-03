@@ -215,9 +215,6 @@ public class FCLauncher {
         if (config.getUseVKDriverSystem()) {
             envMap.put("VULKAN_DRIVER_SYSTEM", "1");
         }
-        if (config.getPojavBigCore()) {
-            envMap.put("POJAV_BIG_CORE_AFFINITY", "1");
-        }
     }
 
     private static void addModLoaderEnv(FCLConfig config, HashMap<String, String> envMap) {

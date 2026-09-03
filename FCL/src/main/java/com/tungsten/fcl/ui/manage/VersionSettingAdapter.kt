@@ -180,13 +180,6 @@ class VersionSettingAdapter(
                 group = SettingGroup.Render,
             )
             result += Row.SwitchRow(
-                R.string.settings_fcl_pojav_bigcore,
-                { versionSetting.isPojavBigCore },
-                { versionSetting.isPojavBigCore = it },
-                descriptionRes = R.string.settings_fcl_pojav_bigcore_desc,
-                group = SettingGroup.Render,
-            )
-            result += Row.SwitchRow(
                 R.string.settings_fcl_vulkan_driver_system,
                 { versionSetting.isVKDriverSystem },
                 { listener.onSpecialSwitch(VersionSettingTag.VULKAN, it) },

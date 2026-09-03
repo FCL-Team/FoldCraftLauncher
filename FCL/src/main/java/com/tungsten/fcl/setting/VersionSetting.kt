@@ -193,13 +193,6 @@ class VersionSetting : Cloneable {
             changed()
         }
 
-    var isPojavBigCore: Boolean = false
-        set(value) {
-            if (field == value) return
-            field = value
-            changed()
-        }
-
     var isNotCheckMod: Boolean = false
         set(value) {
             if (field == value) return
@@ -266,7 +259,6 @@ class VersionSetting : Cloneable {
             it.controller = controller
             it.renderer = renderer
             it.driver = driver
-            it.isPojavBigCore = isPojavBigCore
             it.isNotCheckMod = isNotCheckMod
             it.isDebugLog = isDebugLog
             it.isForceResolution = isForceResolution
@@ -300,7 +292,6 @@ class VersionSetting : Cloneable {
                 addProperty("renderer", src.renderer)
                 addProperty("driver", src.driver)
                 addProperty("isolateGameDir", src.isIsolateGameDir)
-                addProperty("pojavBigCore", src.isPojavBigCore)
                 addProperty("notCheckMod", src.isNotCheckMod)
                 addProperty("debugLog", src.isDebugLog)
                 addProperty("forceResolution", src.isForceResolution)
@@ -340,7 +331,6 @@ class VersionSetting : Cloneable {
                     json["renderer"]?.asString ?: Renderer.ID_NGGL4ES
                 vs.driver = json["driver"]?.asString ?: "Turnip"
                 vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
-                vs.isPojavBigCore = json["pojavBigCore"]?.asBoolean ?: false
                 vs.isNotCheckMod = json["notCheckMod"]?.asBoolean ?: false
                 vs.isDebugLog = json["debugLog"]?.asBoolean ?: false
                 vs.isForceResolution = json["forceResolution"]?.asBoolean ?: false

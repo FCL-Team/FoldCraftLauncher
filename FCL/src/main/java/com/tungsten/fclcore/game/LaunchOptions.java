@@ -42,7 +42,6 @@ public class LaunchOptions implements Serializable {
     private Integer height;
     private String serverIp;
     private boolean vulkanDriverSystem;
-    private boolean pojavBigCore;
     private Renderer renderer;
     private boolean debugLog;
 
@@ -139,10 +138,6 @@ public class LaunchOptions implements Serializable {
      */
     public boolean isVKDriverSystem() {
         return vulkanDriverSystem;
-    }
-
-    public boolean isPojavBigCore() {
-        return pojavBigCore;
     }
 
     /**
@@ -248,11 +243,6 @@ public class LaunchOptions implements Serializable {
 
         public Builder setRenderer(Renderer renderer) {
             options.renderer = renderer;
-            return this;
-        }
-
-        public Builder setPojavBigCore(boolean pojavBigCore) {
-            options.pojavBigCore = pojavBigCore;
             return this;
         }
 

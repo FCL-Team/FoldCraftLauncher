@@ -107,7 +107,6 @@ target_link_libraries(
 add_library(
     pojavexec
     SHARED
-    bigcoreaffinity.c
     egl_bridge.c
     ctxbridges/loader_dlopen.c
     ctxbridges/gl_bridge.c
