@@ -24,6 +24,7 @@ import com.tungsten.fclcore.util.io.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -182,10 +183,13 @@ public final class LocalModFile implements Comparable<LocalModFile> {
 
         if (currentVersion.isEmpty()) return null;
         Optional<RemoteMod.Version> finalCurrentVersion = currentVersion;
+        // 秒级精度比较：网络数据带毫秒/微秒，缓存序列化只保留到秒，精度不一致会让
+        // 同一次发布内的伴生/重传文件首次检查被误判为有更新、二次检查又消失
         List<RemoteMod.Version> remoteVersions = repository.getRemoteVersionsById(currentVersion.get().modid())
                 .filter(version -> version.gameVersions().contains(gameVersion))
                 .filter(version -> version.loaders().contains(getModLoaderType()))
-                .filter(version -> version.datePublished().compareTo(finalCurrentVersion.get().datePublished()) > 0)
+                .filter(version -> version.datePublished().truncatedTo(ChronoUnit.SECONDS)
+                        .compareTo(finalCurrentVersion.get().datePublished().truncatedTo(ChronoUnit.SECONDS)) > 0)
                 .sorted(Comparator.comparing(RemoteMod.Version::datePublished).reversed())
                 .collect(Collectors.toList());
         if (remoteVersions.isEmpty()) return null;
