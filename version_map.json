@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1329,
-    "versionName": "1.3.2.9",
-    "date": "2026.08.29",
+    "versionCode": 1330,
+    "versionName": "1.3.3.0",
+    "date": "2026.09.02",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Microsoft login now shows real-time progress for each authentication stage.\n2. Language switching now takes effect immediately (Activities are recreated to apply the new language), no restart needed.\n3. Launcher/version settings pages now group related items with secondary-theme-color dividers; about page links merged into groups. Added a dark-mode primary theme color, and settings page action buttons are now icons.\n4. The in-game menu is refactored into a RecyclerView multi-level menu.\n5. The runtime installation page shows detailed per-file progress (e.g. which file is being copied).\n6. Starting a game without a selected account now shows a prompt and jumps to the account management page.\n7. Installer process communication switched to file polling with real-time log display; fixed hangs and wrong-process kills when creating installer processes repeatedly, with automatic retry on timeout.\n8. The built-in browser now uses the default caching policy and no longer clears the cache on exit.\n9. Fixed mod download location and recommended version not following the newly selected game directory.\n10. Fixed view tree leaks after repeated installations (TaskDialog listener chain and temp-page animation callbacks), reducing accumulated jank.\n11. Fixed version settings page input focus loss and a focus-advance crash on some custom ROMs.\n12. Fixed key position offset after closing the layout editor, theme mode switching jank caused by spinner pseudo-callbacks, and default controller name display when not initialized.\n13. Fixed an OOM in the modpack export file picker caused by accumulating listeners while scrolling, and a crash when external apps invoke modpack installation.\n14. Fixed a race condition and NPE in cursor grab callbacks, FPS/memory display and sustained performance mode toggles not applied at game launch, and seek bars not persisting progress."
+        "text": "(Translated from Chinese by AI)\n1. New global download manager panel: real-time download speed display, and mod prerequisite dependencies can be downloaded with one tap.\n2. Added disk caching for remote mod query results (fingerprints/details/version lists/categories), now backed by SQLite, reducing repeated network requests; CurseForge fingerprints of large files are now computed in a streaming fashion to avoid OOM, and Modrinth 404 misses are negatively cached to eliminate repeated futile lookups.\n3. Modpack installation now reports real-time progress during unzip and parse stages; the task dialog log area auto-collapses when the logging task finishes; version list refresh tasks now show their names so the wait is visible while installing loaders.\n4. Controller layouts are lazily loaded, speeding up loading.\n5. Downloads now wait with exponential backoff between retries, and the connection timeout is raised to 10 seconds.\n6. MenuView rewritten in Kotlin with improved touch-open drawer detection.\n7. Fixed the offline skin dialog overwriting the old skin file when cancelled; the skin file is only written on confirm.\n8. Fixed freezing on some devices while dragging the theme color picker (theme refresh messages are now merged).\n9. Fixed a crash on NeoForge version lists with missing fields and a controller edit-mode view group initialization timing issue.\n10. Mod data classes record-ized and migrated to kotlinx.serialization, eliminating missing-field NPEs at the root.\n11. Updated MioLibPatcher; upgraded the toolchain to Kotlin 2.4.10 and Gradle 8.14.4, fixing a dex metadata parsing crash.\n12. Updated translations."
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.微软登录实时显示各认证阶段进度\n2.语言切换立即生效（重建 Activity 应用新语言），不再需要重启启动器\n3.启动器/版本设置页设置项分组显示并带次要主题色分隔线，关于页链接行合并分组；新增深色模式主要主题色，设置页操作按钮改为图标\n4.游戏内菜单重构为 RecyclerView 多级菜单\n5.运行时安装页逐条目显示正在复制的文件等详细进度\n6.启动游戏未选中账户时提示并跳转账户管理页\n7.安装器进程通信改文件轮询，日志实时显示；修复多次创建安装进程时的卡死与误杀，进程超时自动重试\n8.内置浏览器改为默认缓存策略，退出时不再清除缓存\n9.修复切换游戏目录后模组下载位置与推荐版本未跟随新目录\n10.修复反复安装后 View 树泄漏（TaskDialog 监听引用链与临时页动画回调），消除累积卡顿\n11.修复版本设置页输入框失焦与部分定制 ROM 焦点移动崩溃\n12.修复布局编辑关闭后按键位置偏移、设置页主题模式切换卡顿、版本设置页控制器未初始化时显示默认名称\n13.修复整合包导出文件选择页滚动时监听器累积导致的 OOM 与外部应用调用安装整合包崩溃\n14.修复游标抓取回调竞态与空指针、游戏启动未应用 FPS/内存显示与持续性能模式开关、进度条设置进度未保存等问题"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增全局下载管理面板：标题行实时显示下载速度，模组前置依赖支持一键下载\n2.新增模组远程查询结果磁盘缓存（指纹/详情/版本列表/分类），存储改用 SQLite，减少重复网络请求；CurseForge 大文件指纹改流式计算避免 OOM，Modrinth 未命中写入负缓存消除重复白查\n3.整合包安装解压与解析阶段上报实时进度，任务对话框日志区在任务结束后自动收起；版本列表刷新任务显示名称，安装加载器期间等待可见\n4.懒加载控制布局，优化加载速度\n5.下载重试间增加指数退避等待，连接超时调整为 10 秒\n6.MenuView 重写为 Kotlin，优化触摸打开抽屉判定\n7.修复离线皮肤对话框取消时覆盖旧皮肤文件，确认时才落位\n8.修复取色拖动时部分设备卡死（主题刷新消息合并）\n9.修复 NeoForge 版本列表缺失字段崩溃与控制器编辑模式视图组初始化时序问题\n10.模组数据类 record 化并迁移 kotlinx.serialization，根治缺失字段 NPE\n11.更新 MioLibPatcher，升级 Kotlin 2.4.10 与 Gradle 8.14.4 工具链并修复 dex metadata 解析崩溃\n12.更新多语言翻译"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/fde4b68ceea0",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.2.9/FCL-release-1.3.2.9-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/8e280c8f74ad",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.3.0/FCL-release-1.3.3.0-all.apk"
   }
 ]
