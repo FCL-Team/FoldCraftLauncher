@@ -1,5 +1,77 @@
 # Changelog
 
+## [1.3.3.0] - 2026-09-02
+
+### 中文
+
+#### ✨ 新功能
+
+1. **全局下载管理与前置依赖一键下载**：下载面板统一管理下载任务，标题行实时显示下载速度；下载模组时自动识别前置依赖并支持一键下载
+2. **模组远程查询磁盘缓存**：指纹/详情/版本列表/分类结果落盘缓存，存储改用 SQLite，消除全量加载与写放大，大幅减少重复网络请求
+3. **整合包安装实时进度**：解压与解析阶段上报实时进度，安装过程不再是无进展的黑盒
+4. **任务等待过程可见**：版本列表刷新任务显示名称，安装加载器期间的联网等待不再表现为静默卡住
+5. **下载面板实时速度**：标题行显示当前下载速度
+
+#### ⚡ 优化
+
+1. **下载稳定性**：重试间增加指数退避等待，连接超时从 8 秒调整为 10 秒
+2. **懒加载控制布局**：控制器布局按键按需异步加载，优化加载速度
+3. **MenuView 重写为 Kotlin**：优化触摸打开抽屉的判定
+4. **模组查询细节优化**：CurseForge 大文件指纹改为流式计算避免 OOM（HMCL#6631）；Modrinth 指纹未命中（404）写入负缓存，消除重复白查与错误日志
+
+#### 🐛 修复
+
+1. 修复离线皮肤对话框取消时覆盖旧皮肤文件，现在点确认时才落位 SKIN_DIR
+2. 修复取色拖动时部分设备卡死（主题刷新消息合并，避免高频重绘风暴）
+3. 修复 NeoForge 版本列表对缺失 versions 字段未判空导致的崩溃
+4. 修复控制器编辑模式视图组初始化时序问题（setup 阶段自动初始化，不再依赖菜单列表绑定兜底）
+5. 修复任务对话框日志区在写日志的任务结束后不收起
+6. 修复 Kotlin 2.4.10 产物 dex 时 metadata 解析崩溃（buildscript classpath 覆盖 R8 9.4.17）
+7. 修复前置解析的 Stream.toList 在低版本设备的兼容性问题
+
+#### 🔧 其他
+
+1. 模组数据类 record 化并迁移 kotlinx.serialization，根治缺失字段 NPE
+2. 文件选择回调迁移 SelectedFile，统一 content 与本地路径处理
+3. 更新 MioLibPatcher
+4. 工具链升级：Kotlin Gradle 插件 2.4.10、Gradle 8.14.4
+5. 更新多语言翻译（日语、繁中 HK、土耳其语等，来自 Weblate）
+
+### English
+
+#### ✨ New Features
+
+1. **Global download manager & one-tap prerequisite download**: The download panel now manages download tasks centrally with real-time speed in the title row; mod prerequisite dependencies are detected automatically and can be downloaded with one tap
+2. **Disk cache for remote mod queries**: Fingerprints/details/version lists/categories are cached on disk, now backed by SQLite, eliminating full in-memory loads and write amplification and greatly reducing repeated network requests
+3. **Real-time modpack install progress**: The unzip and parse stages now report live progress instead of an unresponsive wait
+4. **Visible task waits**: Version list refresh tasks display their names, so the network wait while installing loaders no longer looks like a silent hang
+5. **Live download speed**: The download panel title row shows the current download speed
+
+#### ⚡ Improvements
+
+1. **Download stability**: Exponential backoff waits between retries; connection timeout raised from 8 to 10 seconds
+2. **Lazy controller layout loading**: Controller layout keys load asynchronously on demand, speeding up loading
+3. **MenuView rewritten in Kotlin**: Improved touch-open drawer detection
+4. **Mod query refinements**: CurseForge fingerprints of large files are now computed in a streaming fashion to avoid OOM (HMCL#6631); Modrinth fingerprint misses (404) are negatively cached, eliminating repeated futile lookups and error logs
+
+#### 🐛 Bug Fixes
+
+1. Fixed the offline skin dialog overwriting the old skin file on cancel; the skin file is now only written on confirm
+2. Fixed freezing on some devices while dragging the theme color picker (theme refresh messages are merged to avoid high-frequency redraw storms)
+3. Fixed a crash from NeoForge version lists missing the versions field
+4. Fixed controller edit-mode view group initialization timing (auto-initialized during setup instead of relying on the menu-list binding fallback)
+5. Fixed the task dialog log area not collapsing after the logging task finishes
+6. Fixed a dex metadata parsing crash for Kotlin 2.4.10 output (buildscript classpath now pins R8 9.4.17)
+7. Fixed a compatibility issue with Stream.toList in prerequisite parsing on older devices
+
+#### 🔧 Other
+
+1. Mod data classes record-ized and migrated to kotlinx.serialization, eliminating missing-field NPEs at the root
+2. File-selection callbacks migrated to SelectedFile, unifying content URI and local path handling
+3. Updated MioLibPatcher
+4. Toolchain upgrades: Kotlin Gradle plugin 2.4.10, Gradle 8.14.4
+5. Updated translations (Japanese, Traditional Chinese HK, Turkish, etc., via Weblate)
+
 ## [1.3.2.9] - 2026-08-29
 
 ### 中文
