@@ -6,12 +6,14 @@ import com.mio.data.Renderer
 import com.mio.datastore.pluginDataStore
 import com.mio.manager.RendererManager
 import com.tungsten.fcl.FCLApp
+import com.tungsten.fclcore.util.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.logging.Level
 
 object RendererPlugin : AbstractPlugin<Renderer>() {
 
@@ -204,7 +206,7 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
                     emptyList(),
                     null,
                     false,
-                    prefs[env.key]?.toBooleanStrictOrNull() ?: env.toggle,
+                    prefs[env.key + ENABLED_SUFFIX]?.toBooleanStrictOrNull() ?: env.toggle,
                     env.value
                 )
 
@@ -230,6 +232,8 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
                             .apply { put(packageName, flat) }
                     )
                 }
+            }.onFailure { e ->
+                Logging.LOG.log(Level.SEVERE, "保存插件环境变量配置失败", e)
             }
         }
         val entry = v2Entries[packageName] ?: return
@@ -274,7 +278,7 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
                 }
 
                 is ToggleableEnvV2 -> {
-                    val enabled = prefs[env.key]?.toBooleanStrictOrNull() ?: env.toggle
+                    val enabled = prefs[env.key + ENABLED_SUFFIX]?.toBooleanStrictOrNull() ?: env.toggle
                     if (enabled) result.add("${env.key}=${resolveLibValue(env.key, env.value, dir)}")
                 }
             }

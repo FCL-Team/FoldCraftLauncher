@@ -92,7 +92,9 @@ class RendererEnvDialog(
                     setAdapter(ArrayAdapter(context, R.layout.item_spinner, spec.options).apply {
                         setDropDownViewResource(R.layout.item_spinner_dropdown)
                     })
-                    setSelection(spec.options.indexOf(spec.value).coerceAtLeast(0))
+                    // Spinner 首次布局前 setSelection 会被初始布局重置回第 0 项，post 到布局完成后再选中
+                    val selectedIndex = spec.options.indexOf(spec.value).coerceAtLeast(0)
+                    post { setSelection(selectedIndex) }
                     spinners[spec.key] = this
                 }
                 row.addView(header)
