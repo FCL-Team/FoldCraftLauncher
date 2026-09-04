@@ -79,6 +79,7 @@
             android:layout_weight="1"/>
 
         <com.tungsten.fcllibrary.component.view.FCLSpinner
+        app:auto_text_tint="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

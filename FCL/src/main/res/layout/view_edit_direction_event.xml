@@ -219,6 +219,7 @@
             android:layout_weight="1"/>
 
         <com.tungsten.fcllibrary.component.view.FCLSpinner
+        app:auto_text_tint="false"
             android:id="@+id/follow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

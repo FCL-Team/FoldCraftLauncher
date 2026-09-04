@@ -65,6 +65,7 @@
             android:layout_weight="1"/>
 
         <com.tungsten.fcllibrary.component.view.FCLSpinner
+        app:auto_text_tint="false"
             android:id="@+id/visibility"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -163,6 +164,7 @@
             android:layout_weight="1"/>
 
         <com.tungsten.fcllibrary.component.view.FCLSpinner
+        app:auto_text_tint="false"
             android:id="@+id/size_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -190,6 +192,7 @@
             android:layout_weight="1"/>
 
         <com.tungsten.fcllibrary.component.view.FCLSpinner
+        app:auto_text_tint="false"
             android:id="@+id/width_reference"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -252,6 +255,7 @@
             android:layout_weight="1"/>
 
         <com.tungsten.fcllibrary.component.view.FCLSpinner
+        app:auto_text_tint="false"
             android:id="@+id/height_reference"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

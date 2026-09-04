@@ -35,10 +35,19 @@ class FCLSpinner<T> @JvmOverloads constructor(
     private var items: List<T> = emptyList()
     private var selectedIndex = -1
     private var listener: OnItemSelectedListener<T>? = null
+
+    /** 文字随主题 autoTint（与主色对比的黑/白）；白底对话框场景应关闭以继承默认文字色 */
+    private var autoTextTint = true
+
     private val arrow: Drawable =
         ContextCompat.getDrawable(context, R.drawable.ic_baseline_arrow_drop_down_24)!!.mutate()
 
     init {
+        attrs?.let {
+            val typedArray = context.obtainStyledAttributes(it, R.styleable.FCLSpinner)
+            autoTextTint = typedArray.getBoolean(R.styleable.FCLSpinner_auto_text_tint, true)
+            typedArray.recycle()
+        }
         gravity = Gravity.CENTER_VERTICAL
         textSize = 14f
         setSingleLine(true)
@@ -58,9 +67,21 @@ class FCLSpinner<T> @JvmOverloads constructor(
         setOnClickListener { showPopup() }
     }
 
-    /** 主题刷新：箭头取与主色对比的半透明色，文字色继承主题默认 */
+    /** 主题刷新：开启时文字取与主色对比色、箭头取半透明对比色；
+     *  关闭时文字继承布局/主题默认色，箭头跟随当前文字色 */
     private fun refreshTheme() {
-        arrow.setTint(ThemeEngine.getTheme().autoHintTint)
+        if (autoTextTint) {
+            setTextColor(ThemeEngine.getTheme().autoTint)
+            arrow.setTint(ThemeEngine.getTheme().autoHintTint)
+        } else {
+            arrow.setTint(textColors.defaultColor)
+        }
+    }
+
+    /** 设置文字是否随主题着色（默认开），立即生效 */
+    fun setAutoTextTint(autoTextTint: Boolean) {
+        this.autoTextTint = autoTextTint
+        refreshTheme()
     }
 
     private fun showPopup() {

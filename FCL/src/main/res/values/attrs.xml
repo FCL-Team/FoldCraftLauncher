@@ -36,6 +36,9 @@
         <attr name="auto_text_tint" format="boolean" />
         <attr name="use_theme_color" />
     </declare-styleable>
+    <declare-styleable name="FCLSpinner">
+        <attr name="auto_text_tint" />
+    </declare-styleable>
     <declare-styleable name="FCLCheckedTextView">
         <attr name="auto_checked_text_background_tint" format="boolean" />
         <attr name="auto_checked_text_tint" format="boolean" />

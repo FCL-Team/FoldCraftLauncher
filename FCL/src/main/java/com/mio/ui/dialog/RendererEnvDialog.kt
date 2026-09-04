@@ -83,6 +83,8 @@ class RendererEnvDialog(
                     })
                 }
                 val spinner = FCLSpinner<String>(context).apply {
+                    // 对话框白底，关闭 autoTint 继承默认文字色
+                    setAutoTextTint(false)
                     layoutParams = LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
