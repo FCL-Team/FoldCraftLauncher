@@ -1,11 +1,10 @@
 package com.mio.plugin
 
-import android.content.Context
-import com.tungsten.fcl.FCLApp
 import java.nio.file.Path
 import java.nio.file.Paths
 
-object NativeLibPlugin {
+object NativeLibPlugin : AbstractPlugin<NativeLibPlugin.NativePlugin>() {
+
     data class NativePlugin(
         val packageName: String,
         val appName: String,
@@ -17,16 +16,10 @@ object NativeLibPlugin {
         val envMap: Map<String, String>
     )
 
-    private var isInit = false
-
+    /** 原生库插件列表（懒初始化） */
     @JvmStatic
-    val pluginList: MutableList<NativePlugin> = mutableListOf()
-        get() {
-            if (!isInit) {
-                init(FCLApp.getAppContext())
-            }
-            return field
-        }
+    val pluginList: List<NativePlugin>
+        get() = items
 
     @JvmStatic
     fun getPaths(split: String): String {
@@ -45,27 +38,7 @@ object NativeLibPlugin {
         }
     }
 
-    @JvmStatic
-    fun init(context: Context) {
-        isInit = true
-        PluginManager.enabledApps(context).forEach {
-            parse(it)
-        }
-    }
-
-    @JvmStatic
-    fun isAvailable(): Boolean {
-        return pluginList.isNotEmpty()
-    }
-
-    @JvmStatic
-    fun refresh(context: Context) {
-        pluginList.clear()
-        isInit = false
-        init(context)
-    }
-
-    private fun parse(app: PluginManager.PluginApp) {
+    override fun parse(app: PluginManager.PluginApp) {
         val metaData = app.appInfo.metaData ?: return
         if (!metaData.getBoolean(PluginManager.META_NATIVE_PLUGIN, false)) return
 
@@ -94,7 +67,7 @@ object NativeLibPlugin {
             path = nativeLibraryDir,
             envMap = envMap
         )
-        pluginList.add(plugin)
+        items.add(plugin)
     }
 
     private const val NATIVE_LIB_DIR_PLACEHOLDER = "{nativeLibraryDir}"

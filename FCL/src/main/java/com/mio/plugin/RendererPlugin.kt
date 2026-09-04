@@ -1,42 +1,15 @@
 package com.mio.plugin
 
-import android.content.Context
 import com.mio.data.Renderer
-import com.tungsten.fcl.FCLApp
 
-object RendererPlugin {
-    private var isInit = false;
+object RendererPlugin : AbstractPlugin<Renderer>() {
 
+    /** 插件渲染器列表（懒初始化，内置渲染器见 RendererManager） */
     @JvmStatic
-    val rendererList: MutableList<Renderer> = mutableListOf()
-        get() {
-            if (!isInit) {
-                init(FCLApp.getAppContext())
-            }
-            return field
-        }
+    val rendererList: List<Renderer>
+        get() = items
 
-    @JvmStatic
-    fun init(context: Context) {
-        isInit = true
-        PluginManager.enabledApps(context).forEach {
-            parse(it)
-        }
-    }
-
-    @JvmStatic
-    fun isAvailable(): Boolean {
-        return rendererList.isNotEmpty()
-    }
-
-    @JvmStatic
-    fun refresh(context: Context) {
-        rendererList.clear()
-        isInit = false
-        init(context)
-    }
-
-    private fun parse(app: PluginManager.PluginApp) {
+    override fun parse(app: PluginManager.PluginApp) {
         val metaData = app.appInfo.metaData ?: return
         if (metaData.getBoolean(PluginManager.META_PLUGIN, false)) {
             val rendererString = metaData.getString("renderer") ?: return
@@ -67,7 +40,7 @@ object RendererPlugin {
     }
 
     private fun addRenderer(renderer: Renderer) {
-        rendererList.removeIf { it.id == renderer.id }
-        rendererList.add(renderer)
+        items.removeIf { it.id == renderer.id }
+        items.add(renderer)
     }
 }
