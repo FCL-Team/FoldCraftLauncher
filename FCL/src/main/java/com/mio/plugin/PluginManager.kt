@@ -1,4 +1,4 @@
-package com.mio.manager
+package com.mio.plugin
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,9 +7,8 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import com.mio.datastore.pluginDataStore
+import com.mio.manager.RendererManager
 import com.tungsten.fcl.FCLApp
-import com.tungsten.fclauncher.plugins.DriverPlugin
-import com.tungsten.fclauncher.plugins.NativeLibPlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

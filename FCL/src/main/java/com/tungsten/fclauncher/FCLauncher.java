@@ -16,9 +16,9 @@ import android.util.ArrayMap;
 import com.mio.data.Renderer;
 import com.oracle.dalvik.VMLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
-import com.tungsten.fclauncher.plugins.DriverPlugin;
-import com.tungsten.fclauncher.plugins.FFmpegPlugin;
-import com.tungsten.fclauncher.plugins.NativeLibPlugin;
+import com.mio.plugin.DriverPlugin;
+import com.mio.plugin.FFmpegPlugin;
+import com.mio.plugin.NativeLibPlugin;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
 

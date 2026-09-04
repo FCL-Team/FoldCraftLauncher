@@ -1,7 +1,6 @@
-package com.tungsten.fclauncher.plugins
+package com.mio.plugin
 
 import android.content.Context
-import com.mio.manager.PluginManager
 import com.tungsten.fcl.FCLApp
 import java.nio.file.Path
 import java.nio.file.Paths

@@ -5,8 +5,8 @@ import com.mio.manager.RendererManager
 import com.mio.util.getElfArchFromZip
 import com.tungsten.fcl.R
 import com.tungsten.fclauncher.bridge.FCLBridge
-import com.tungsten.fclauncher.plugins.FFmpegPlugin
-import com.tungsten.fclauncher.plugins.NativeLibPlugin
+import com.mio.plugin.FFmpegPlugin
+import com.mio.plugin.NativeLibPlugin
 import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.util.versioning.GameVersionNumber

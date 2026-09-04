@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.mio.manager.PluginManager
+import com.mio.plugin.PluginManager
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemPluginBinding
 import com.tungsten.fcllibrary.component.theme.ThemeEngine

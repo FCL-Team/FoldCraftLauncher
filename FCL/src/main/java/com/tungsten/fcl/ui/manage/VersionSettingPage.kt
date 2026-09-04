@@ -25,8 +25,8 @@ import com.tungsten.fcl.setting.VersionSetting
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.util.WeakListenerHolder
-import com.tungsten.fclauncher.plugins.DriverPlugin.driverList
-import com.tungsten.fclauncher.plugins.DriverPlugin.selected
+import com.mio.plugin.DriverPlugin.driverList
+import com.mio.plugin.DriverPlugin.selected
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.event.Event
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty

@@ -5,7 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.mio.manager.PluginManager
+import com.mio.plugin.PluginManager
 import com.mio.ui.adapter.PluginManageAdapter
 import com.mio.ui.adapter.SpacingItemDecoration
 import com.tungsten.fcl.R

@@ -1,11 +1,10 @@
-package com.tungsten.fclauncher.plugins;
+package com.mio.plugin;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.system.Os;
 
-import com.mio.manager.PluginManager;
 
 public class FFmpegPlugin {
     public static boolean isAvailable = false;

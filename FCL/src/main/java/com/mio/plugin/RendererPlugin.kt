@@ -1,8 +1,7 @@
-package com.tungsten.fclauncher.plugins
+package com.mio.plugin
 
 import android.content.Context
 import com.mio.data.Renderer
-import com.mio.manager.PluginManager
 import com.tungsten.fcl.FCLApp
 
 object RendererPlugin {
