@@ -40,6 +40,13 @@
     <string name="multiplayer">Nhiều người chơi</string>
     <string name="setting">Cài đặt</string>
     <string name="about">Giới thiệu</string>
+    <string name="settings_plugin">Plugin</string>
+    <string name="plugin_empty">Không phát hiện plugin nào</string>
+    <string name="plugin_type_renderer">Renderer</string>
+    <string name="plugin_type_driver">Driver</string>
+    <string name="plugin_type_native">Thư viện gốc</string>
+    <string name="plugin_enable">Bật</string>
+    <string name="plugin_uninstall">Gỡ cài đặt</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
     <string name="about_sponsor">Nhà tài trợ</string>

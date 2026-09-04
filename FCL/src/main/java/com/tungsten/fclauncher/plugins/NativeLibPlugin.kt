@@ -1,9 +1,7 @@
 package com.tungsten.fclauncher.plugins
 
 import android.content.Context
-import android.content.Intent
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
+import com.mio.manager.PluginManager
 import com.tungsten.fcl.FCLApp
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -21,11 +19,6 @@ object NativeLibPlugin {
     )
 
     private var isInit = false
-
-    private const val PACKAGE_FLAGS =
-        PackageManager.GET_META_DATA or PackageManager.GET_SHARED_LIBRARY_FILES
-
-
 
     @JvmStatic
     val pluginList: MutableList<NativePlugin> = mutableListOf()
@@ -56,16 +49,8 @@ object NativeLibPlugin {
     @JvmStatic
     fun init(context: Context) {
         isInit = true
-        val queryIntentActivities =
-            context.packageManager.queryIntentActivities(
-                Intent("android.intent.action.MAIN"),
-                PACKAGE_FLAGS
-            )
-        queryIntentActivities.forEach {
-            parse(
-                packageManager = context.packageManager,
-                info = it.activityInfo.applicationInfo
-            )
+        PluginManager.enabledApps(context).forEach {
+            parse(it)
         }
     }
 
@@ -81,45 +66,36 @@ object NativeLibPlugin {
         init(context)
     }
 
-    private fun parse(
-        packageManager: PackageManager,
-        info: ApplicationInfo
-    ) {
-        if (info.flags and ApplicationInfo.FLAG_SYSTEM == 0) {
-            val metaData = info.metaData ?: return
-            if (metaData.getBoolean("FCLNativePlugin", false)) {
-                val nativeLibraryDir = info.nativeLibraryDir
-                val packageName = info.packageName
-                val appName = info.loadLabel(packageManager).toString()
-                val appVersion = packageManager.getPackageInfo(packageName, 0).versionName ?: ""
+    private fun parse(app: PluginManager.PluginApp) {
+        val metaData = app.appInfo.metaData ?: return
+        if (!metaData.getBoolean(PluginManager.META_NATIVE_PLUGIN, false)) return
 
-                val environment = metaData.getString("environment") ?: return
-                val des = metaData.getString("des") ?: ""
+        val nativeLibraryDir = app.appInfo.nativeLibraryDir
+        val environment = metaData.getString("environment") ?: return
+        val des = metaData.getString("des") ?: ""
 
-                val envMap = if (environment.isNotEmpty()) {
-                    val entries = environment.split(" ")
-                    buildMap {
-                        entries.forEach { entry ->
-                            put(parseEntry(entry, nativeLibraryDir))
-                        }
-                    }
-                } else {
-                    emptyMap()
+        val envMap = if (environment.isNotEmpty()) {
+            val entries = environment.split(" ")
+            buildMap {
+                entries.forEach { entry ->
+                    put(parseEntry(entry, nativeLibraryDir))
                 }
-
-                val plugin = NativePlugin(
-                    packageName = packageName,
-                    appName = appName,
-                    appVersion = appVersion,
-                    displayName = des,
-                    minMCVer = metaData.safeGetString("minMCVer") ?: "",
-                    maxMCVer = metaData.safeGetString("maxMCVer") ?: "",
-                    path = nativeLibraryDir,
-                    envMap = envMap
-                )
-                pluginList.add(plugin)
             }
+        } else {
+            emptyMap()
         }
+
+        val plugin = NativePlugin(
+            packageName = app.packageName,
+            appName = app.label,
+            appVersion = app.versionName ?: "",
+            displayName = des,
+            minMCVer = metaData.safeGetString("minMCVer") ?: "",
+            maxMCVer = metaData.safeGetString("maxMCVer") ?: "",
+            path = nativeLibraryDir,
+            envMap = envMap
+        )
+        pluginList.add(plugin)
     }
 
     private const val NATIVE_LIB_DIR_PLACEHOLDER = "{nativeLibraryDir}"

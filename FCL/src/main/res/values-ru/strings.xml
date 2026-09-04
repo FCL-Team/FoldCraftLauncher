@@ -28,6 +28,13 @@
     <string name="multiplayer">Мультиплеер</string>
     <string name="setting">Настройки</string>
     <string name="about">О лаунчере</string>
+    <string name="settings_plugin">Плагины</string>
+    <string name="plugin_empty">Плагины не обнаружены</string>
+    <string name="plugin_type_renderer">Рендерер</string>
+    <string name="plugin_type_driver">Драйвер</string>
+    <string name="plugin_type_native">Нативная библиотека</string>
+    <string name="plugin_enable">Включить</string>
+    <string name="plugin_uninstall">Удалить</string>
     <string name="about_sponsor">Спонсоры</string>
     <string name="about_source">Исходный код</string>
     <string name="about_desc">Fold Craft Launcher - это лаунчер который запускать Minecraft: Java Edition на Android устройствах.\n\nFold Craft Launcher разработан командой FCL-Team.\n\nБольшинство функций Fold Craft Launcher модифицированы на основе HMCLCore. Лаунчер использует и цитирует некоторые коды PojavLauncher и Boat, поэтому, если вы собираетесь распространять этот лаунчер, пожалуйста, следуйте лицензии GPL-v3.</string>
