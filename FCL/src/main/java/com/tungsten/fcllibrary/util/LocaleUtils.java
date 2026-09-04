@@ -19,8 +19,15 @@ public class LocaleUtils {
      * 0: System
      * 1: English
      * 2: Simplified Chinese
-     * 3: Traditional Chinese
-     * 4: Vietnamese
+     * 3: Russian
+     * 4: Brazilian Portuguese
+     * 5: Persian
+     * 6: Ukrainian
+     * 7: German
+     * 8: Traditional Chinese (Hong Kong)
+     * 9: Japanese
+     * 10: Turkish
+     * 11: Traditional Chinese (Taiwan)
      */
     public static Locale RUSSIAN = new Locale("ru");
     public static Locale BRAZILIAN_PORTUGUESE = new Locale("pt", "BR");
@@ -28,6 +35,9 @@ public class LocaleUtils {
     public static Locale UKRAINIAN = new Locale("uk");
     public static Locale GERMAN = new Locale("de");
     public static Locale HK = new Locale("zh", "HK");
+    public static Locale JAPANESE = new Locale("ja");
+    public static Locale TURKISH = new Locale("tr");
+    public static Locale TW = new Locale("zh", "TW");
 
     private static DateTimeFormatter dateTimeFormatter;
 
@@ -50,7 +60,7 @@ public class LocaleUtils {
     public static boolean isChinese(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("launcher", Context.MODE_PRIVATE);
         int lang = sharedPreferences.getInt("lang", 0);
-        return lang == 2 || lang == 8 || (lang == 0 && getSystemLocale().getLanguage().startsWith("zh"));
+        return lang == 2 || lang == 8 || lang == 11 || (lang == 0 && getSystemLocale().getLanguage().startsWith("zh"));
     }
 
     public static int getLanguage(Context context) {
@@ -96,6 +106,12 @@ public class LocaleUtils {
                 return GERMAN;
             case 8:
                 return HK;
+            case 9:
+                return JAPANESE;
+            case 10:
+                return TURKISH;
+            case 11:
+                return TW;
             default:
                 return getSystemLocale();
         }
