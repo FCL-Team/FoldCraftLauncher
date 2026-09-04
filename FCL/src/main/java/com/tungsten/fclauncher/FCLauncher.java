@@ -247,6 +247,9 @@ public class FCLauncher {
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
         Renderer renderer = config.getRenderer();
         if (!renderer.getPath().isEmpty()) {
+            if (!renderer.getPojavRendererId().isEmpty()) {
+                envMap.put("POJAV_RENDERER", renderer.getPojavRendererId());
+            }
             String eglName = renderer.getEglName();
             if (eglName.startsWith("/")) {
                 eglName = renderer.getPath() + eglName;

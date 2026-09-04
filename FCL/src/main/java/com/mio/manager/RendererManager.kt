@@ -128,6 +128,13 @@ object RendererManager {
         addRenderer()
     }
 
+    /** 原位替换同 id 的插件渲染器实例（v2 环境变量配置变化后调用），已初始化时才生效 */
+    fun replaceRenderer(renderer: Renderer) {
+        if (!isInit) return
+        rendererList.removeIf { it.id == renderer.id }
+        rendererList.add(renderer)
+    }
+
     @JvmStatic
     fun getRenderer(id: String): Renderer {
         return rendererList.find { it.id == id } ?: RENDERER_NGGL4ES

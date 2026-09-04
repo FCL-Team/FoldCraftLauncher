@@ -31,6 +31,7 @@
     <string name="plugin_type_native">کتابخانه بومی</string>
     <string name="plugin_enable">فعال</string>
     <string name="plugin_uninstall">حذف نصب</string>
+    <string name="plugin_env_config">پیکربندی</string>
     <string name="about_sponsor">حمایت مالی</string>
     <string name="about_source">متن باز</string>
     <string name="about_desc">فولد کرفت لانچر یک لانچر ماینکرفت برای اندروید است که به کاربر امکان اجرای ماینکرفت نسخه جاوا ادیشن را در دستگاه های اندرویدی می دهد.\n\nفولد کرفت لانچر توسط تیم FCL توسعه داده شده است.\n\nبیشتر ویژگی های فولد کرفت لانچر بر اساس HMCLCore اصلاح شده اند.\n\nبرنامه برخی از کد های PojavLauncher و Boat را قرض گرفته و استفاده می کند، بنابراین اگر می خواهید این برنامه را توزیع کنید، لطفا از مجوز GPL-v3 پیروی کنید.</string>

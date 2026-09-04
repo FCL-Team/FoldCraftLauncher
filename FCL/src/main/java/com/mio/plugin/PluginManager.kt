@@ -35,6 +35,9 @@ object PluginManager {
     /** 渲染器/驱动插件的 meta-data 声明开关 */
     const val META_PLUGIN = "fclPlugin"
 
+    /** 渲染器插件 v2（RendererPlugin-v2）的 meta-data 声明，值为 JSON 配置资源 id */
+    const val META_PLUGIN_V2 = "fclPlugin_V2"
+
     /** 原生库插件的 meta-data 声明开关 */
     const val META_NATIVE_PLUGIN = "FCLNativePlugin"
 
@@ -139,7 +142,8 @@ object PluginManager {
             if (info.flags and ApplicationInfo.FLAG_SYSTEM != 0) return@forEach
             val metaData = info.metaData ?: return@forEach
             val isPlugin = metaData.getBoolean(META_PLUGIN, false) ||
-                    metaData.getBoolean(META_NATIVE_PLUGIN, false)
+                    metaData.getBoolean(META_NATIVE_PLUGIN, false) ||
+                    metaData.containsKey(META_PLUGIN_V2)
             if (!isPlugin) return@forEach
             buildApp(pm, info)?.let { apps.add(it) }
         }
@@ -158,7 +162,9 @@ object PluginManager {
             if (info.packageName == FFMPEG_PACKAGE) {
                 add(PluginType.FFMPEG)
             } else {
-                if (metaData?.getString("renderer") != null) add(PluginType.RENDERER)
+                if (metaData?.getString("renderer") != null ||
+                    metaData?.containsKey(META_PLUGIN_V2) == true
+                ) add(PluginType.RENDERER)
                 if (metaData?.getString("driver") != null) add(PluginType.DRIVER)
                 if (metaData?.getBoolean(
                         META_NATIVE_PLUGIN,

@@ -46,6 +46,7 @@
     <string name="plugin_type_native">Thư viện gốc</string>
     <string name="plugin_enable">Bật</string>
     <string name="plugin_uninstall">Gỡ cài đặt</string>
+    <string name="plugin_env_config">Cấu hình</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
     <string name="about_sponsor">Nhà tài trợ</string>

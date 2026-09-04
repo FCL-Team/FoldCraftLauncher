@@ -14,9 +14,18 @@ import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
 
-/** 插件管理持久化数据（DataStore）：被禁用的插件包名列表 */
+/**
+ * 插件管理持久化数据（DataStore）：
+ * @param disabledPlugins 被禁用的插件包名列表
+ * @param rendererEnvPrefs v2 渲染器插件的用户环境变量配置，
+ *   外层 key 为插件包名，内层 key 为环境变量名；值按类型存：
+ *   selectable 存选中值、customizable 存输入文本、toggleable 存 "true"/"false"
+ */
 @Serializable
-data class PluginPreference(val disabledPlugins: List<String> = emptyList())
+data class PluginPreference(
+    val disabledPlugins: List<String> = emptyList(),
+    val rendererEnvPrefs: Map<String, Map<String, String>> = emptyMap(),
+)
 
 val Context.pluginDataStore: DataStore<PluginPreference> by dataStore(
     fileName = "plugin_settings.json",

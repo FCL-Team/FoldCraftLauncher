@@ -6,8 +6,10 @@ import android.net.Uri
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.plugin.PluginManager
+import com.mio.plugin.RendererPlugin
 import com.mio.ui.adapter.PluginManageAdapter
 import com.mio.ui.adapter.SpacingItemDecoration
+import com.mio.ui.dialog.RendererEnvDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.PageSettingPluginBinding
 import com.tungsten.fclcore.task.Task
@@ -46,6 +48,7 @@ class PluginManagePage(context: Context?, id: Int) :
                 PluginManager.refreshAll(context)
                 reload()
             },
+            onConfigure = ::showEnvConfig,
             onUninstall = ::uninstall,
         )
         binding.pluginList.adapter = adapter
@@ -71,6 +74,19 @@ class PluginManagePage(context: Context?, id: Int) :
         adapter.submitList(items)
         binding.pluginList.isVisible = items.isNotEmpty()
         binding.emptyView.isVisible = items.isEmpty()
+    }
+
+    /** v2 渲染器插件的环境变量配置对话框（确认后立即保存并刷新渲染器列表） */
+    private fun showEnvConfig(app: PluginManager.PluginApp) {
+        val specs = RendererPlugin.getConfigurableEnvs(app.packageName)
+        if (specs.isEmpty()) return
+        RendererEnvDialog(
+            context,
+            app.label,
+            specs,
+        ) { values ->
+            RendererPlugin.updateEnvConfigs(context, app.packageName, values)
+        }.show()
     }
 
     private fun uninstall(app: PluginManager.PluginApp) {

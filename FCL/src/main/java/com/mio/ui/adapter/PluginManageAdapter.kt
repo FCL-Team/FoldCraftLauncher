@@ -4,20 +4,23 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.plugin.PluginManager
+import com.mio.plugin.RendererPlugin
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemPluginBinding
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 
 /**
- * 插件管理列表：图标/名称/包名/版本/类型 + 启用开关 + 卸载按钮。
+ * 插件管理列表：图标/名称/包名/版本/类型 + 启用开关 + 配置/卸载按钮。
  * 行背景圆角随主题 tint，插件图标保持原样不着色。
  */
 class PluginManageAdapter(
     private val onEnableChange: (PluginManager.PluginApp, Boolean) -> Unit,
+    private val onConfigure: (PluginManager.PluginApp) -> Unit,
     private val onUninstall: (PluginManager.PluginApp) -> Unit,
 ) : ListAdapter<PluginManageAdapter.Item, PluginManageAdapter.Holder>(DIFF) {
 
@@ -61,6 +64,11 @@ class PluginManageAdapter(
             onEnableChange(item.app, checked)
         }
         binding.uninstall.setOnClickListener { onUninstall(item.app) }
+
+        // v2 渲染器插件的可配置环境变量入口（禁用状态下不可配置）
+        val configurable = item.enabled && RendererPlugin.hasConfigurableEnvs(item.app.packageName)
+        binding.config.isVisible = configurable
+        binding.config.setOnClickListener { if (configurable) onConfigure(item.app) }
     }
 
     private fun typeLabel(context: Context, types: Set<PluginManager.PluginType>): String {

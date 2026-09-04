@@ -58,6 +58,16 @@
         android:contentDescription="@string/plugin_enable" />
 
     <com.tungsten.fcllibrary.component.view.FCLImageButton
+        android:id="@+id/config"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="6dp"
+        android:contentDescription="@string/plugin_env_config"
+        app:auto_tint="true"
+        app:no_padding="true"
+        app:srcCompat="@drawable/ic_baseline_settings_24" />
+
+    <com.tungsten.fcllibrary.component.view.FCLImageButton
         android:id="@+id/uninstall"
         android:layout_width="30dp"
         android:layout_height="30dp"

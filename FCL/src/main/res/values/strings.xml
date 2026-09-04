@@ -50,6 +50,7 @@
     <string name="plugin_type_native">Native Library</string>
     <string name="plugin_enable">Enable</string>
     <string name="plugin_uninstall">Uninstall</string>
+    <string name="plugin_env_config">Configure</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>
     <string name="about_sponsor">Sponsor</string>

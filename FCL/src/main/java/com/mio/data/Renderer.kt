@@ -10,7 +10,9 @@ data class Renderer(
     val pojavEnv: List<String>?,
     val id: String,
     val minMCver: String = "",
-    val maxMCver: String = ""
+    val maxMCver: String = "",
+    /** v2 插件渲染器的 POJAV_RENDERER 值；内置与 v1 插件渲染器为空串（不设置该环境变量） */
+    val pojavRendererId: String = ""
 ) {
     companion object {
         const val ID_GL4ES = "f7e985d8-6d4c-f63c-d9f1-06074dab823a"

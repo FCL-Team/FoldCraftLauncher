@@ -31,6 +31,7 @@
     <string name="plugin_type_native">Biblioteca nativa</string>
     <string name="plugin_enable">Ativar</string>
     <string name="plugin_uninstall">Desinstalar</string>
+    <string name="plugin_env_config">Configurar</string>
     <string name="about_sponsor">Patrocinadores</string>
     <string name="about_source">Código fonte</string>
     <string name="about_desc">Fold Craft é um Launcher de Minecraft no Android, que lhe permite jogar Minecraft: Java Edition no seu aparelho Android.\n\nO Fold Craft Launcher é desenvolvido pela FCL-Team.\n\nA maioria das funcionalidades do Fold Craft Launcher são baseadas no HMCLCore.\n\nO aplicativo usa partes do código de PojavLauncher e Boat, então se deseja distribuir este aplicativo, por favor siga as regras da Licença GPL-v3.</string>
