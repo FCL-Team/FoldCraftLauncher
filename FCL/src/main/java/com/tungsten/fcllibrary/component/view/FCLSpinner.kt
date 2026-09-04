@@ -1,11 +1,14 @@
 package com.tungsten.fcllibrary.component.view
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.RotateDrawable
 import android.text.TextUtils
 import android.util.AttributeSet
 import android.view.Gravity
+import android.view.animation.DecelerateInterpolator
 import android.widget.ArrayAdapter
 import android.widget.ListPopupWindow
 import androidx.appcompat.widget.AppCompatTextView
@@ -42,6 +45,11 @@ class FCLSpinner<T> @JvmOverloads constructor(
     private val arrow: Drawable =
         ContextCompat.getDrawable(context, R.drawable.ic_baseline_arrow_drop_down_24)!!.mutate()
 
+    /** RotateDrawable 包裹箭头以支持 level 驱动的旋转过渡（5000 = 180°） */
+    private val arrowWrapper = RotateDrawable().apply { setDrawable(arrow) }
+
+    private var arrowAnimator: ValueAnimator? = null
+
     init {
         attrs?.let {
             val typedArray = context.obtainStyledAttributes(it, R.styleable.FCLSpinner)
@@ -55,7 +63,7 @@ class FCLSpinner<T> @JvmOverloads constructor(
         val padding = ConvertUtils.dip2px(context, 8f)
         setPadding(padding, padding, padding, padding)
         compoundDrawablePadding = ConvertUtils.dip2px(context, 2f)
-        setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, arrow, null)
+        setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, arrowWrapper, null)
         if (background == null) {
             // 布局未指定背景时套系统涟漪，保留按压反馈
             val typedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.selectableItemBackground))
@@ -92,6 +100,7 @@ class FCLSpinner<T> @JvmOverloads constructor(
         // 弹窗底色取当前亮暗模式的主色，与条目背景（FCLCheckedTextView 主题化）一致
         popup.setBackgroundDrawable(ColorDrawable(ThemeEngine.getTheme().color))
         popup.isModal = true
+        popup.setOnDismissListener { animateArrow(false) }
         popup.setOnItemClickListener { _, _, position, _ ->
             popup.dismiss()
             selectedIndex = position
@@ -99,6 +108,27 @@ class FCLSpinner<T> @JvmOverloads constructor(
             items.getOrNull(position)?.let { listener?.onItemSelected(position, it) }
         }
         popup.show()
+        animateArrow(true)
+    }
+
+    /** 箭头旋转过渡：展开转 180° 朝上，收起转回（level 0..5000 映射 0..180°） */
+    private fun animateArrow(expanded: Boolean) {
+        arrowAnimator?.cancel()
+        arrowAnimator = ValueAnimator.ofInt(arrowWrapper.level, if (expanded) 5000 else 0).apply {
+            duration = 200
+            interpolator = DecelerateInterpolator()
+            addUpdateListener {
+                arrowWrapper.level = it.animatedValue as Int
+                invalidate()
+            }
+            start()
+        }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        arrowAnimator?.cancel()
+        arrowAnimator = null
     }
 
     private fun refreshText() {
