@@ -36,7 +36,7 @@
     <string name="plugin_miolibpatcher_alc10">Патч ALC10</string>
     <string name="plugin_miolibpatcher_alc10_desc">Замінює реалізацію alcGetCurrentContext для виправлення проблем зі звуком OpenAL на деяких пристроях</string>
     <string name="plugin_miolibpatcher_sable">Патч Sable Rapier</string>
-    <string name="plugin_miolibpatcher_sable_desc">Увімкнення примусово вмикає патч Rapier; вимкнення — властивість не задається (автовизначення)</string>
+    <string name="plugin_miolibpatcher_sable_desc">Увімкнено за замовчуванням (властивість не задається); вимкнення примусово вимикає патч Rapier</string>
     <string name="plugin_miolibpatcher_asm">Бекдор ASM</string>
     <string name="plugin_miolibpatcher_asm_desc">Прибирає перевірку ASM 5.0.4 для сумісності зі старими модами (наприклад AE1); впливає на всі моди ASM 5.0.4, вмикайте з обережністю</string>
     <string name="plugin_env_config">Налаштувати</string>

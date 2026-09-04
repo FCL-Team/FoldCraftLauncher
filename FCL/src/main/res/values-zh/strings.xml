@@ -40,7 +40,7 @@
     <string name="plugin_miolibpatcher_alc10">ALC10 补丁</string>
     <string name="plugin_miolibpatcher_alc10_desc">替换 alcGetCurrentContext 实现，修复部分设备的 OpenAL 音频问题</string>
     <string name="plugin_miolibpatcher_sable">Sable Rapier 补丁</string>
-    <string name="plugin_miolibpatcher_sable_desc">开启后强制启用 Rapier 补丁；关闭时不设置属性（自动检测）</string>
+    <string name="plugin_miolibpatcher_sable_desc">默认开启（不设置属性）；关闭时设置属性强制禁用 Rapier 补丁</string>
     <string name="plugin_miolibpatcher_asm">ASM 后门</string>
     <string name="plugin_miolibpatcher_asm_desc">移除 ASM 5.0.4 校验以兼容 AE1 等旧模组（影响所有 ASM 5.0.4 模组，请谨慎启用）</string>
     <string name="plugin_env_config">配置</string>

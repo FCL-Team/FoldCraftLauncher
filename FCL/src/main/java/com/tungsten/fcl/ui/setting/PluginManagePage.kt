@@ -9,9 +9,9 @@ import com.mio.plugin.MioLibPatcherManager
 import com.mio.plugin.PluginManager
 import com.mio.plugin.RendererPlugin
 import com.mio.ui.adapter.PluginManageAdapter
-import com.mio.ui.adapter.PluginManageAdapter.PatcherFeature
 import com.mio.ui.adapter.PluginManageAdapter.Item
 import com.mio.ui.adapter.SpacingItemDecoration
+import com.mio.ui.dialog.MioLibPatcherDialog
 import com.mio.ui.dialog.RendererEnvDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.PageSettingPluginBinding
@@ -20,7 +20,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLPage
 
 /**
- * 插件管理页：置顶 MioLibPatcher 组（启用/禁用 + 功能开关），
+ * 插件管理页：置顶 MioLibPatcher 条目（启用/禁用开关 + 配置对话框），
  * 下方列出所有已识别的插件应用（含已禁用），
  * 支持启用/禁用（立即刷新各插件列表）与卸载（跳转系统卸载）。
  */
@@ -37,23 +37,21 @@ class PluginManagePage(context: Context?, id: Int) :
     private fun create() {
         binding = PageSettingPluginBinding.bind(contentView)
         binding.pluginList.layoutManager = LinearLayoutManager(context)
-        // MioLibPatcher 组内行间留 1dp 缝（绘制分割线），组间与插件行间留 8dp
         val rowSpacing = (8 * context.resources.displayMetrics.density).toInt()
-        val groupDivider = (1 * context.resources.displayMetrics.density).toInt()
         binding.pluginList.addItemDecoration(
-            SpacingItemDecoration(
-                rowSpacing,
-                { parent, position ->
-                    val listAdapter = parent.adapter as? PluginManageAdapter
-                    if (listAdapter?.isNextInSameGroup(position) == true) groupDivider else rowSpacing
-                },
-                { ThemeEngine.getInstance().getTheme().getColor() }
-            )
+            SpacingItemDecoration(rowSpacing, null) {
+                ThemeEngine.getInstance().getTheme().getColor()
+            }
         )
         ThemeEngine.getInstance().registerEvent(binding.pluginList) {
             binding.pluginList.invalidate()
         }
         adapter = PluginManageAdapter(
+            onPatcherEnableChange = { enabled ->
+                MioLibPatcherManager.setEnabled(enabled)
+                reload()
+            },
+            onPatcherConfigure = ::showPatcherConfig,
             onEnableChange = { app, enabled ->
                 PluginManager.setEnabled(context, app.packageName, enabled)
                 PluginManager.refreshAll(context)
@@ -61,23 +59,24 @@ class PluginManagePage(context: Context?, id: Int) :
             },
             onConfigure = ::showEnvConfig,
             onUninstall = ::uninstall,
-            onPatcherEnableChange = { enabled ->
-                MioLibPatcherManager.setEnabled(enabled)
-                reload()
-            },
-            onPatcherFeatureChange = ::onPatcherFeatureChange,
         )
         binding.pluginList.adapter = adapter
         reload()
     }
 
-    private fun onPatcherFeatureChange(feature: PatcherFeature, enabled: Boolean) {
-        when (feature) {
-            PatcherFeature.ALC10 -> MioLibPatcherManager.setAlc10(enabled)
-            PatcherFeature.SABLE_RAPIER -> MioLibPatcherManager.setSablerapier(enabled)
-            PatcherFeature.ASM_BACKPORT -> MioLibPatcherManager.setAsmBackport(enabled)
-        }
-        reload()
+    /** MioLibPatcher 功能开关配置对话框（ALC10 / Sable Rapier / ASM 后门） */
+    private fun showPatcherConfig() {
+        MioLibPatcherDialog(
+            context,
+            MioLibPatcherManager.isAlc10(),
+            MioLibPatcherManager.isSablerapier(),
+            MioLibPatcherManager.isAsmBackport(),
+        ) { alc10, sablerapier, asmBackport ->
+            MioLibPatcherManager.setAlc10(alc10)
+            MioLibPatcherManager.setSablerapier(sablerapier)
+            MioLibPatcherManager.setAsmBackport(asmBackport)
+            reload()
+        }.show()
     }
 
     /** 宿主 Activity onResume 时同步：卸载/安装在系统侧发生，进程内扫描缓存不会自动感知，
@@ -93,23 +92,14 @@ class PluginManagePage(context: Context?, id: Int) :
     }
 
     private fun reload() {
-        val patcherEnabled = MioLibPatcherManager.isEnabled()
         val items = buildList {
-            add(Item.PatcherItem(patcherEnabled))
-            PatcherFeature.entries.forEach { feature ->
-                val featureEnabled = when (feature) {
-                    PatcherFeature.ALC10 -> MioLibPatcherManager.isAlc10()
-                    PatcherFeature.SABLE_RAPIER -> MioLibPatcherManager.isSablerapier()
-                    PatcherFeature.ASM_BACKPORT -> MioLibPatcherManager.isAsmBackport()
-                }
-                add(Item.PatcherFeatureItem(feature, featureEnabled, patcherEnabled))
-            }
+            add(Item.PatcherItem(MioLibPatcherManager.isEnabled()))
             addAll(PluginManager.allApps(context).map {
                 Item.PluginItem(it, PluginManager.isEnabled(context, it.packageName))
             })
         }
         adapter.submitList(items)
-        // 置顶组常驻，插件为空时仅显示空态文案
+        // 置顶条目常驻，插件为空时仅显示空态文案
         binding.emptyView.isVisible = items.none { it is Item.PluginItem }
     }
 

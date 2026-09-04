@@ -35,7 +35,7 @@
     <string name="plugin_miolibpatcher_alc10">Patch ALC10</string>
     <string name="plugin_miolibpatcher_alc10_desc">Substitui alcGetCurrentContext para corrigir problemas de áudio OpenAL em alguns dispositivos</string>
     <string name="plugin_miolibpatcher_sable">Patch Sable Rapier</string>
-    <string name="plugin_miolibpatcher_sable_desc">Força o patch Rapier quando ativado; desativado, a propriedade não é definida (detecção automática)</string>
+    <string name="plugin_miolibpatcher_sable_desc">Ativado por padrão (nenhuma propriedade definida); desativar força a desativação do patch Rapier</string>
     <string name="plugin_miolibpatcher_asm">Backdoor ASM</string>
     <string name="plugin_miolibpatcher_asm_desc">Remove a verificação ASM 5.0.4 para suportar mods antigos como AE1 (afeta todos os mods ASM 5.0.4; use com cautela)</string>
     <string name="plugin_env_config">Configurar</string>

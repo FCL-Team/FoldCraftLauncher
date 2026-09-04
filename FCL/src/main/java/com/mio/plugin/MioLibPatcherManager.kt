@@ -58,13 +58,15 @@ object MioLibPatcherManager {
         update { it.copy(miolibpatcherAsmBackport = enabled) }
     }
 
-    /** 启动 JVM 时按开关生成的功能属性参数（完整 -D 参数，启用时由启动器追加） */
+    /** 启动 JVM 时按开关生成的功能属性参数（完整 -D 参数，启用时由启动器追加）。
+     *  ALC10/ASM 后门默认关闭、开启时置属性；Sable Rapier 默认开启（不设置属性），
+     *  关闭时设置 false 强制禁用（对应 MioLibPatcher README 的 override 逻辑） */
     @JvmStatic
     fun getJvmOptions(): List<String> {
         val pref = snapshot()
         return buildList {
             if (pref.miolibpatcherAlc10) add("-Dmiolibpatcher.alc10=true")
-            if (pref.miolibpatcherSablerapier) add("-Dmiolibpatcher.sablerapier=true")
+            if (!pref.miolibpatcherSablerapier) add("-Dmiolibpatcher.sablerapier=false")
             if (pref.miolibpatcherAsmBackport) add("-Dmiolibpatcher.asmBackport=true")
         }
     }

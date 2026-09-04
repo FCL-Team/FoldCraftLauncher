@@ -36,7 +36,7 @@
     <string name="plugin_miolibpatcher_alc10">ALC10-Patch</string>
     <string name="plugin_miolibpatcher_alc10_desc">Ersetzt alcGetCurrentContext zur Behebung von OpenAL-Audioproblemen auf einigen Geräten</string>
     <string name="plugin_miolibpatcher_sable">Sable-Rapier-Patch</string>
-    <string name="plugin_miolibpatcher_sable_desc">Erzwingt den Rapier-Patch, wenn aktiviert; deaktiviert wird die Eigenschaft nicht gesetzt (automatische Erkennung)</string>
+    <string name="plugin_miolibpatcher_sable_desc">Standardmäßig aktiviert (keine Eigenschaft gesetzt); Deaktivieren erzwingt die Deaktivierung des Rapier-Patchs</string>
     <string name="plugin_miolibpatcher_asm">ASM-Hintertür</string>
     <string name="plugin_miolibpatcher_asm_desc">Entfernt die ASM-5.0.4-Prüfung für Kompatibilität mit älteren Mods wie AE1 (betrifft alle ASM-5.0.4-Mods, mit Vorsicht verwenden)</string>
     <string name="plugin_env_config">Konfigurieren</string>
