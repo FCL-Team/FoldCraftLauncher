@@ -5,12 +5,11 @@
     <string name="splash_permission_title">Потрібен дозвіл на доступ до сховища</string>
     <string name="splash_permission_close">Закрити лаунчер</string>
     <string name="splash_permission_settings">Налаштування</string>
-    <string name="splash_permission_settings_msg">Ви обрали "Заборонити". Надайте доступ до сховища вручну в налаштуваннях.</string>
+    <string name="splash_permission_settings_msg">Ви обрали Заборонити. Надайте доступ до сховища вручну в налаштуваннях.</string>
     <string name="splash_loading_renderer">Ініціалізація рендерера...</string>
     <string name="splash_loading_java">Ініціалізація Java...</string>
     <string name="splash_loading_config">Завантаження конфігурації та версій...</string>
     <string name="splash_loading_cache">Очищення кешу...</string>
-
     <string name="splash_title">Ласкаво просимо до Fold Craft Launcher</string>
     <string name="splash_eula_error">Не вдалося підтвердити наявність ліцензії через проблеми з підключенням.</string>
     <string name="splash_eula_next">Прийняти та продовжити</string>
@@ -47,7 +46,7 @@
     <string name="account_injector_server">Сервер автентифікації</string>
     <string name="account_login">Увійти</string>
     <string name="account_methods_offline">Офлайн-обліковий запис</string>
-    <string name="account_methods_offline_name_invalid">"Ім’я користувача (до 16 символів) має складатися з латинських літер, цифр і символів підкреслення. \nДеякі припустимі імена: Llerey, Tungsten, Tungsten123; \nДеякі неприпустимі імена: Exam ple, Exam-a%%%, Tungsten_hello_world_hello_world. Якщо на сервері є мод, який знімає ці обмеження, ви можете ігнорувати це попередження."</string>
+    <string name="account_methods_offline_name_invalid">Ім’я користувача (до 16 символів) має складатися з латинських літер, цифр і символів підкреслення. \nДеякі припустимі імена: Llerey, Tungsten, Tungsten123; \nДеякі неприпустимі імена: Exam ple, Exam-a%%%, Tungsten_hello_world_hello_world. Якщо на сервері є мод, який знімає ці обмеження, ви можете ігнорувати це попередження.</string>
     <string name="account_methods_yggdrasil">Обліковий запис Mojang</string>
     <string name="account_methods_authlib_injector">Зовнішній обліковий запис</string>
     <string name="account_methods_microsoft">Обліковий запис Microsoft</string>
@@ -72,12 +71,12 @@
     <string name="account_methods_microsoft_error_missing_xbox_account">З вашим обліковим записом Microsoft ще не пов’язано обліковий запис Xbox. Створіть його, перш ніж продовжити.</string>
     <string name="account_methods_microsoft_error_unknown">Не вдалося увійти.</string>
     <string name="account_methods_microsoft_error_wrong_verify_method">Для входу використовуйте адресу електронної пошти та пароль від облікового запису Microsoft. Коди підтвердження не підтримуються.</string>
-    <string name="account_methods_microsoft_error_no_character">"У вашому обліковому записі немає Minecraft Java Edition.\nМожливо, ігровий профіль не створено."</string>
+    <string name="account_methods_microsoft_error_no_character">У вашому обліковому записі немає Minecraft Java Edition.\nМожливо, ігровий профіль не створено.</string>
     <string name="account_methods_microsoft_error_add_family_probably">Перевірте, чи вказаний у налаштуваннях вашого облікового запису вік становить 18 років. Якщо ні і ви вважаєте, що це помилка, перейдіть на сайт Microsoft account, щоб змінити його.</string>
     <string name="account_methods_microsoft_close_page">Авторизація облікового запису Microsoft завершена.</string>
     <string name="account_methods_microsoft_hint">Натисніть «Увійти», код автоматично скопіюється. Вставте його в браузері.</string>
     <string name="account_login_refresh">Повторний вхід</string>
-    <string name="account_login_refresh_microsoft_hint">"Оскільки авторизація облікового запису недійсна, вам потрібно повторно додати свій обліковий запис Microsoft. \nНатисніть кнопку «ОК», вставте код у браузері, щоб завершити процес входу."</string>
+    <string name="account_login_refresh_microsoft_hint">Оскільки авторизація облікового запису недійсна, вам потрібно повторно додати свій обліковий запис Microsoft. \nНатисніть кнопку «ОК», вставте код у браузері, щоб завершити процес входу.</string>
     <string name="login_state_microsoft_wait_browser">Очікування авторизації у браузері…</string>
     <string name="login_state_microsoft_xbox">Виконується вхід до Xbox Live…</string>
     <string name="login_state_microsoft_xsts">Отримання токена XSTS Xbox…</string>
@@ -140,9 +139,9 @@
     <string name="control_edit">Редагувати</string>
     <string name="control_import">Імпортувати</string>
     <string name="control_import_failed">Помилка імпорту</string>
-    <string name="control_upgrade">"Контролер: %s — застарілий, він може викликати помилки, але ми все ще його підтримуємо. \nХочете перенести його на нову версію?"</string>
+    <string name="control_upgrade">Контролер: %s — застарілий, він може викликати помилки, але ми все ще його підтримуємо. \nХочете перенести його на нову версію?</string>
     <string name="control_incompatible">Контролер %s — несумісний. Це може бути викликано занадто низькою версією лаунчера або контролера.</string>
-    <string name="control_upload_requirement">Спочатку приєднайтесь до групи QQ, потім натисніть "Поділитися", щоб поділитися контролером та його інформацією з адміністратором і дочекатися перевірки. Зв’яжіться з адміністратором, щоб повідомити категорію вашого контролера.</string>
+    <string name="control_upload_requirement">Спочатку приєднайтесь до групи QQ, потім натисніть Поділитися, щоб поділитися контролером та його інформацією з адміністратором і дочекатися перевірки. Зв’яжіться з адміністратором, щоб повідомити категорію вашого контролера.</string>
     <string name="control_info_author">Автор:</string>
     <string name="control_info_icon">Іконка:</string>
     <string name="control_info_lang">Мова:</string>
@@ -331,7 +330,7 @@
     <string name="game_crash_reason_cannot_find_launch_target_fmlclient">Не вдалося запустити гру, оскільки Forge встановлено не повністю.\nСпробуйте видалити та переустановити Forge.</string>
     <string name="game_crash_reason_shaders_mod">Не вдалося продовжити гру, оскільки одночасно встановлені OptiFine і Shaders Mod.\nОскільки OptiFine уже включає функції Shaders Mod, просто видаліть Shaders Mod.</string>
     <string name="game_crash_reason_too_many_mods_lead_to_exceeding_the_id_limit">Не вдалося продовжити гру, оскільки встановлено забагато модів, що перевищує ліміт ідентифікаторів (ID) у грі.\nСпробуйте встановити мод JEID або видалити деякі великі моди.</string>
-    <string name="game_crash_reason_night_config_fixes">Не вдалося продовжити гру через проблеми з конфігурацією (Night Config).\nСпробуйте встановити мод "Night Config Fixes", це може вирішити проблему.\nДля додаткової інформації відвідайте GitHub-репозиторій цього мода.</string>
+    <string name="game_crash_reason_night_config_fixes">Не вдалося продовжити гру через проблеми з конфігурацією (Night Config).\nСпробуйте встановити мод Night Config Fixes, це може вирішити проблему.\nДля додаткової інформації відвідайте GitHub-репозиторій цього мода.</string>
     <string name="game_crash_reason_optifine_causes_the_world_to_fail_to_load">Гра могла аварійно завершитися через OptiFine.\nЦя проблема характерна для певних версій OptiFine. Спробуйте змінити версію OptiFine.</string>
     <string name="game_crash_reason_jvm_32bit">Гра аварійно завершилася, оскільки виділений обсяг пам’яті перевищує ліміт 32-розрядної віртуальної машини Java (JVM).</string>
     <string name="game_crash_reason_loading_crashed_forge">Гра аварійно завершилася під час завантаження мода %1$s (%2$s) для Forge.\n\nСпробуйте видалити або оновити цей мод.</string>
@@ -568,7 +567,7 @@
     <string name="modpack_wizard_step_initialization_force_update">Примусово оновити модпак до останньої версії (потрібен файлообмінник)</string>
     <string name="modpack_wizard_step_initialization_include_launcher">Включити лаунчер</string>
     <string name="modpack_wizard_step_initialization_save">Експортувати в</string>
-    <string name="modpack_wizard_step_initialization_warning">"Перед створенням модпака переконайтеся, що гра запускається, і це релізна версія, а не снапшот.\nМайте на увазі, що вам не дозволено додавати моди та ресурсні пакети, які явно позначені як недоступні для поширення або включення в модпак."</string>
+    <string name="modpack_wizard_step_initialization_warning">Перед створенням модпака переконайтеся, що гра запускається, і це релізна версія, а не снапшот.\nМайте на увазі, що вам не дозволено додавати моди та ресурсні пакети, які явно позначені як недоступні для поширення або включення в модпак.</string>
     <string name="modrinth_category_adventure">Пригоди</string>
     <string name="modrinth_category_challenging">Складне</string>
     <string name="modrinth_category_combat">Бій</string>
@@ -635,8 +634,8 @@
     <string name="mods_url">Офіційна сторінка</string>
     <string name="mods_update_modpack_mod_warning">Оновлення модів у модпаку може призвести до непоправних наслідків, можливо, до пошкодження модпака, через що він не зможе запуститися. Ви впевнені, що хочете оновити?</string>
     <string name="mods_screenshot_no_result">Немає доступних скріншотів</string>
-    <string name="profile_shared">"Поділитися з папкою \n(сховище пристрою)"</string>
-    <string name="profile_private">"Приватна папка \n(сховище гри)"</string>
+    <string name="profile_shared">Поділитися з папкою \n(сховище пристрою)</string>
+    <string name="profile_private">Приватна папка \n(сховище гри)</string>
     <string name="profile_name">Назва</string>
     <string name="profile_path">Шлях</string>
     <string name="profile_select">Вибрати папку</string>
@@ -888,7 +887,7 @@
     <string name="launch">Запустити</string>
     <string name="tip_hide_menu_view">Меню приховано. Натисніть клавішу гучності, щоб відкрити меню.</string>
     <string name="modloader">Завантажувач модів</string>
-    <string name="message_warn_renderer_global_setting">Вибрана вами версія має окремі налаштування для кожного профілю, тому вказаний тут рендерер не може бути застосований до поточної версії. Рекомендується тривале натискання кнопки "Запуск" для вибору рендерера.</string>
+    <string name="message_warn_renderer_global_setting">Вибрана вами версія має окремі налаштування для кожного профілю, тому вказаний тут рендерер не може бути застосований до поточної версії. Рекомендується тривале натискання кнопки Запуск для вибору рендерера.</string>
     <!-- 原 FCLLibrary 模块字符串（模块已并入 FCL） -->
     <string name="file_browser_title">Файловий менеджер</string>
     <string name="file_browser_back">Назад</string>

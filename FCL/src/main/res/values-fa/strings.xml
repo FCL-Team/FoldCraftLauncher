@@ -5,12 +5,11 @@
     <string name="splash_permission_title">مجوز دسترسی به حافظه</string>
     <string name="splash_permission_close">بستن</string>
     <string name="splash_permission_settings">تنظیمات</string>
-    <string name="splash_permission_settings_msg">شما گزینه "هرگز اجازه داده نشود" را انتخاب کرده اید، لطفا به صورت دستی مجوز های دسترسی به حافظه را در تنظیمات فعال کنید.</string>
+    <string name="splash_permission_settings_msg">شما گزینه هرگز اجازه داده نشود را انتخاب کرده اید، لطفا به صورت دستی مجوز های دسترسی به حافظه را در تنظیمات فعال کنید.</string>
     <string name="splash_loading_renderer">در حال راه‌اندازی رندرر...</string>
     <string name="splash_loading_java">در حال راه‌اندازی جاوا...</string>
     <string name="splash_loading_config">در حال بارگذاری پیکربندی و نسخه‌ها...</string>
     <string name="splash_loading_cache">در حال پاک‌سازی حافظه پنهان...</string>
-
     <string name="splash_title">به فولد کرفت لانچر خوش آمدید</string>
     <string name="splash_eula_error">خطا در دریافت قرارداد مجوز کاربر نهایی، لطفا اتصال به اینترنت را بررسی کنید.</string>
     <string name="splash_eula_next">پذیرفتن و ادامه</string>
@@ -73,9 +72,9 @@
     <string name="account_methods_microsoft_error_no_character">این حساب مالک ماینکرفت جاوا ادیشن نیست.\nممکن است پروفایل بازی ساخته نشده باشد.</string>
     <string name="account_methods_microsoft_error_add_family_probably">لطفا بررسی کنید که سن ذکر شده در تنظیمات حساب شما حداقل ۱۸ سال باشد. اگر اینطور نیست و فکر می کنید این یک خطا است، می توانید برای تغییر آن به وبسایت رسمی مراجعه کنید.</string>
     <string name="account_methods_microsoft_close_page">مجوز حساب مایکروسافت با موفقیت دریافت شد.</string>
-    <string name="account_methods_microsoft_hint">لطفا روی دکمه "ورود" کلیک کنید، یک کد به طور خودکار کپی می شود، کد را در مرورگری که باز می شود وارد کنید تا فرآیند ورود به سیستم تکمیل شود.</string>
+    <string name="account_methods_microsoft_hint">لطفا روی دکمه ورود کلیک کنید، یک کد به طور خودکار کپی می شود، کد را در مرورگری که باز می شود وارد کنید تا فرآیند ورود به سیستم تکمیل شود.</string>
     <string name="account_login_refresh">ورود دوباره</string>
-    <string name="account_login_refresh_microsoft_hint">از آنجایی که مجوز حساب نامعتبر است، باید حساب مایکروسافت خود را دوباره اضافه کنید\nلطفا روی دکمه "تایید" کلیک کنید، یک کد به طور خودکار کپی می شود، کد را در مرورگری که باز می شود وارد کنید تا فرآیند ورود به سیستم تکمیل شود.</string>
+    <string name="account_login_refresh_microsoft_hint">از آنجایی که مجوز حساب نامعتبر است، باید حساب مایکروسافت خود را دوباره اضافه کنید\nلطفا روی دکمه تایید کلیک کنید، یک کد به طور خودکار کپی می شود، کد را در مرورگری که باز می شود وارد کنید تا فرآیند ورود به سیستم تکمیل شود.</string>
     <string name="login_state_microsoft_wait_browser">در انتظار تأیید در مرورگر…</string>
     <string name="login_state_microsoft_xbox">در حال تأیید حساب Xbox Live…</string>
     <string name="login_state_microsoft_xsts">در حال دریافت توکن XSTS ایکس‌باکس…</string>
@@ -141,7 +140,7 @@
     <string name="control_import_failed">وارد کردن کنترلر ناموفق بود!</string>
     <string name="control_upgrade">کنترلر: %s یک کنترلر منسوخ است و ممکن است باعث ایجاد اشکالات ناشناخته شود، آیا می خواهید آن را به نسخه جدید بروزرسانی کنید؟</string>
     <string name="control_incompatible">کنترلر: %s با فولد کرفت لانچر سازگار نیست، ممکن است نسخه لانچر یا کنترلر خیلی قدیمی باشد، لطفا بررسی کنید.</string>
-    <string name="control_upload_requirement">لطفا ابتدا به گروه QQ بپیوندید، سپس روی "اشتراک گذاری" کلیک کنید تا کنترلر و اطلاعات آن را با ادمین به اشتراک بگذارید و منتظر تایید باشید. لطفا با ادمین تماس بگیرید و کنترلر خود را به او معرفی کنید.</string>
+    <string name="control_upload_requirement">لطفا ابتدا به گروه QQ بپیوندید، سپس روی اشتراک گذاری کلیک کنید تا کنترلر و اطلاعات آن را با ادمین به اشتراک بگذارید و منتظر تایید باشید. لطفا با ادمین تماس بگیرید و کنترلر خود را به او معرفی کنید.</string>
     <string name="control_info_author">سازنده:</string>
     <string name="control_info_icon">آیکون:</string>
     <string name="control_info_lang">زبان:</string>

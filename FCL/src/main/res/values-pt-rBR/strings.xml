@@ -5,12 +5,11 @@
     <string name="splash_permission_title">Permission to store needed</string>
     <string name="splash_permission_close">Close the app</string>
     <string name="splash_permission_settings">Settings</string>
-    <string name="splash_permission_settings_msg">You have chosen "Never Allow." Please manually grant storage permissions in settings.</string>
+    <string name="splash_permission_settings_msg">You have chosen Never Allow. Please manually grant storage permissions in settings.</string>
     <string name="splash_loading_renderer">Inicializando renderizador...</string>
     <string name="splash_loading_java">Inicializando Java...</string>
     <string name="splash_loading_config">Carregando configuração e versões...</string>
     <string name="splash_loading_cache">Limpando cache...</string>
-
     <string name="splash_title">Bem-vindo ao Fold Craft Launcher</string>
     <string name="splash_eula_error">Não foi possível acessar o EULA, por favor verifique a sua conexão.</string>
     <string name="splash_eula_next">Concordar e continuar</string>
@@ -73,9 +72,9 @@
     <string name="account_methods_microsoft_error_no_character">Sua conta não possui o Minecraft Java Edition.\nO perfil do jogo pode não ter sido criado.</string>
     <string name="account_methods_microsoft_error_add_family_probably">Por favor verifique se a idade indicada na sua conta é pelo de 18 anos. Caso contrário e você acredita que isto é um erro, você pode ir ao site oficial e alterar.</string>
     <string name="account_methods_microsoft_close_page">Autorização de conta Microsoft concluída.</string>
-    <string name="account_methods_microsoft_hint">Por favor clique no botão de "Login", um código será copiado automaticamente, insira o código no navegador que será aberto para finalizar o processo de login.</string>
+    <string name="account_methods_microsoft_hint">Por favor clique no botão de Login, um código será copiado automaticamente, insira o código no navegador que será aberto para finalizar o processo de login.</string>
     <string name="account_login_refresh">Re-logar</string>
-    <string name="account_login_refresh_microsoft_hint">Por causa da autorização de conta estar inválida, você precisa adicionar novamente sua conta Microsoft.\nPor favor clique no botão "OK", um código será copiado automaticamente, insira o código no navegador que será aberto para finalizar o processo de login.</string>
+    <string name="account_login_refresh_microsoft_hint">Por causa da autorização de conta estar inválida, você precisa adicionar novamente sua conta Microsoft.\nPor favor clique no botão OK, um código será copiado automaticamente, insira o código no navegador que será aberto para finalizar o processo de login.</string>
     <string name="login_state_microsoft_wait_browser">Aguardando autorização no navegador…</string>
     <string name="login_state_microsoft_xbox">Autenticando com o Xbox Live…</string>
     <string name="login_state_microsoft_xsts">Obtendo token XSTS do Xbox…</string>
@@ -100,7 +99,7 @@
     <string name="archive_name">Nome do arquivo</string>
     <string name="archive_version">Versão</string>
     <string name="assets_download">Baixando assets</string>
-    <string name="assets_download_all">Validando a integridade dos assets </string>
+    <string name="assets_download_all">Validando a integridade dos assets</string>
     <string name="assets_index_malformed">Os arquivos baixados dos assets foram corrompidos.</string>
     <string name="button_back">Voltar</string>
     <string name="button_cancel">Cancelar</string>
@@ -141,21 +140,21 @@
     <string name="control_import_failed">Falha ao importar o controle!</string>
     <string name="control_upgrade">Controle: %s é uma versão antiga de controle, pode haver alguns bugs, mas ainda suportamos, você quer migrar para uma nova versão?</string>
     <string name="control_incompatible">Controle: %s é um controle incompatível, isto pode ser devido a versão do launcher ou controle ser antiga, por favor verifique.</string>
-    <string name="control_upload_requirement">Por favor, entre no grupo QQ primeiro, depois clique em "Compartilhar" para compartilhar o controlador e suas informações com o administrador e aguarde a revisão. Entre em contato com o administrador para informá-lo sobre a categoria do seu controlador.</string>
-    <string name="control_info_author">Autor: </string>
-    <string name="control_info_icon">Ícone: </string>
-    <string name="control_info_lang">Linguagem: </string>
-    <string name="control_info_device">Tipo de dispositivo: </string>
-    <string name="control_info_screenshot">Capturas de tela: </string>
-    <string name="control_info_intro">Introdução: </string>
-    <string name="control_info_description">Descrição: </string>
+    <string name="control_upload_requirement">Por favor, entre no grupo QQ primeiro, depois clique em Compartilhar para compartilhar o controlador e suas informações com o administrador e aguarde a revisão. Entre em contato com o administrador para informá-lo sobre a categoria do seu controlador.</string>
+    <string name="control_info_author">Autor:</string>
+    <string name="control_info_icon">Ícone:</string>
+    <string name="control_info_lang">Linguagem:</string>
+    <string name="control_info_device">Tipo de dispositivo:</string>
+    <string name="control_info_screenshot">Capturas de tela:</string>
+    <string name="control_info_intro">Introdução:</string>
+    <string name="control_info_description">Descrição:</string>
     <string name="control_info_screenshot_max">É possível enviar até 16 capturas de tela!</string>
     <string name="control_info_edit">Editar Informações</string>
     <string name="control_info_more">Mais Informações</string>
-    <string name="control_info_name">Nome: </string>
+    <string name="control_info_name">Nome:</string>
     <string name="control_info_name_exist">O controle já existe, por favor mude o nome!</string>
     <string name="control_info_name_invalid">Nome Inválido</string>
-    <string name="control_info_version">Versão: </string>
+    <string name="control_info_version">Versão:</string>
     <string name="control_info_version_code">Código da versão:</string>
     <string name="control_list">Lista de Controles</string>
     <string name="control_select">Selecionar Controle</string>
@@ -818,8 +817,7 @@
     <string name="version_manage_duplicate_prompt">Nome da instância</string>
     <string name="version_manage_duplicate_confirm">A instância duplicada terá uma cópia de todos os arquivos desta instância, com diretório e configurações de jogo isolados.</string>
     <string name="version_manage_redownload_assets_index">Atualizar assets do jogo</string>
-    <string name="version_manage_remove_confirm">Tem certeza de que deseja remover permanentemente a versão %s? Esta ação não pode ser 
-desfeita!</string>
+    <string name="version_manage_remove_confirm">Tem certeza de que deseja remover permanentemente a versão %s? Esta ação não pode ser desfeita!</string>
     <string name="version_manage_remove_confirm_independent">Como esta instância está armazenada em um diretório isolado, excluí-la também excluirá seus mundos e outros dados. Você ainda deseja excluir a instância %s?</string>
     <string name="version_manage_remove_libraries">Excluir bibliotecas</string>
     <string name="version_manage_rename">Renomear instância</string>

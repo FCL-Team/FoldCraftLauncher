@@ -8,13 +8,12 @@
     <string name="splash_permission_title">Cần quyền lưu trữ</string>
     <string name="splash_permission_close">Đóng ứng dụng</string>
     <string name="splash_permission_settings">Cài đặt</string>
-    <string name="splash_permission_settings_msg">Bạn đã chọn "Không bao giờ cho phép". Vui lòng cấp quyền lưu trữ theo cách thủ công trong cài đặt.</string>
+    <string name="splash_permission_settings_msg">Bạn đã chọn Không bao giờ cho phép. Vui lòng cấp quyền lưu trữ theo cách thủ công trong cài đặt.</string>
     <string name="notification_permission">FCL yêu cầu quyền gửi thông báo để tránh các sự cố khi cài đặt hoặc khởi động trò chơi.</string>
     <string name="splash_loading_renderer">Đang khởi tạo trình kết xuất...</string>
     <string name="splash_loading_java">Đang khởi tạo Java...</string>
     <string name="splash_loading_config">Đang tải cấu hình và phiên bản...</string>
     <string name="splash_loading_cache">Đang dọn bộ nhớ đệm...</string>
-
     <string name="splash_title">Chào mừng đến với Fold Craft Launcher</string>
     <string name="splash_eula_error">Không thể lấy EULA, vui lòng kiểm tra kết nối mạng.</string>
     <string name="splash_eula_next">Đồng ý và Tiếp tục</string>
@@ -86,16 +85,16 @@
     <string name="account_methods_microsoft_error_add_family">Vì bạn chưa đủ 18 tuổi, người lớn phải thêm bạn vào một gia đình để bạn có thể chơi Minecraft.</string>
     <string name="account_methods_microsoft_error_country_unavailable">Xbox Live không khả dụng tại quốc gia / khu vực hiện tại của bạn.</string>
     <string name="account_methods_microsoft_error_missing_xbox_account">Vui lòng xác nhận rằng bạn đã mua Minecraft: Java Edition. Nếu có, vui lòng nhấp vào đây ( https://www.minecraft.net/msaprofile/mygames/editprofile ) để tạo hồ sơ trò chơi của bạn.</string>
-    <string name="account_methods_microsoft_error_banned">Tài khoản của bạn có thể đã bị Xbox Live cấm.\nBạn có thể nhấp vào "Tra cứu cấm" ở trên để biết thêm chi tiết.</string>
+    <string name="account_methods_microsoft_error_banned">Tài khoản của bạn có thể đã bị Xbox Live cấm.\nBạn có thể nhấp vào Tra cứu cấm ở trên để biết thêm chi tiết.</string>
     <string name="account_methods_microsoft_error_unknown">Đăng nhập thất bại</string>
     <string name="account_methods_microsoft_error_wrong_verify_method">Vui lòng đăng nhập bằng tài khoản (như số điện thoại) và mật khẩu của bạn trên trang đăng nhập tài khoản Microsoft. Vui lòng không sử dụng mã xác minh để đăng nhập.</string>
     <string name="account_methods_microsoft_error_no_license">Không tìm thấy bản ghi mua Minecraft. Vui lòng nhấp vào đây ( https://www.xbox.com/games/store/minecraft-java-bedrock-edition-for-pc/9nxp44l49shj ) để lấy trò chơi.\nNếu bạn đang sử dụng Game Pass, vui lòng tạo hồ sơ trò chơi của bạn <a href="https://www.minecraft.net/msaprofile/mygames/editprofile">tại đây</a>. Nếu bạn đã mua trò chơi, vui lòng kiểm tra xem bạn đã đăng nhập đúng tài khoản chưa.</string>
     <string name="account_methods_microsoft_error_no_character">Bạn chưa tạo hồ sơ trò chơi. Vui lòng nhấp vào đây (https://www.minecraft.net/msaprofile/mygames/editprofile ) để tạo.</string>
     <string name="account_methods_microsoft_error_add_family_probably">Vui lòng kiểm tra xem độ tuổi được chỉ định trong cài đặt tài khoản của bạn có ít nhất 18 tuổi không. Nếu không và bạn tin rằng đây là lỗi, bạn có thể truy cập trang web chính thức để thay đổi.</string>
     <string name="account_methods_microsoft_close_page">Ủy quyền tài khoản Microsoft hiện đã hoàn tất.</string>
-    <string name="account_methods_microsoft_hint">Vui lòng nhấp vào nút "Đăng nhập", một đoạn mã sẽ được tự động sao chép sau đó, nhập mã vào trình duyệt đã mở để hoàn tất quá trình đăng nhập.</string>
+    <string name="account_methods_microsoft_hint">Vui lòng nhấp vào nút Đăng nhập, một đoạn mã sẽ được tự động sao chép sau đó, nhập mã vào trình duyệt đã mở để hoàn tất quá trình đăng nhập.</string>
     <string name="account_login_refresh">Đăng nhập lại</string>
-    <string name="account_login_refresh_microsoft_hint">Vì ủy quyền tài khoản không hợp lệ, bạn cần thêm lại tài khoản Microsoft của mình.\nVui lòng nhấp vào nút "OK", một đoạn mã sẽ được tự động sao chép sau đó, nhập mã vào trình duyệt đã mở để hoàn tất quá trình đăng nhập.</string>
+    <string name="account_login_refresh_microsoft_hint">Vì ủy quyền tài khoản không hợp lệ, bạn cần thêm lại tài khoản Microsoft của mình.\nVui lòng nhấp vào nút OK, một đoạn mã sẽ được tự động sao chép sau đó, nhập mã vào trình duyệt đã mở để hoàn tất quá trình đăng nhập.</string>
     <string name="login_state_microsoft_wait_browser">Đang chờ ủy quyền trên trình duyệt…</string>
     <string name="login_state_microsoft_xbox">Đang xác thực với Xbox Live…</string>
     <string name="login_state_microsoft_xsts">Đang lấy mã thông báo XSTS của Xbox…</string>
@@ -172,22 +171,22 @@
     <string name="control_import_failed">Nhập bộ điều khiển thất bại!</string>
     <string name="control_upgrade">Bộ điều khiển: %s là bộ điều khiển cũ, nó có thể gây ra một số lỗi không xác định, nhưng chúng tôi vẫn hỗ trợ nó, bạn có muốn di chuyển nó lên phiên bản mới không?</string>
     <string name="control_incompatible">Bộ điều khiển: %s là bộ điều khiển không tương thích, có thể do phiên bản trình khởi chạy quá thấp hoặc phiên bản bộ điều khiển quá thấp, vui lòng kiểm tra.</string>
-    <string name="control_upload_requirement">Vui lòng tham gia nhóm QQ trước, sau đó nhấp vào "Chia sẻ" để chia sẻ bộ điều khiển và thông tin của nó cho quản trị viên và chờ xem xét. Vui lòng liên hệ với quản trị viên để cho họ biết loại bộ điều khiển của bạn.</string>
-    <string name="control_info_author">Tác giả: </string>
-    <string name="control_info_icon">Biểu tượng: </string>
-    <string name="control_info_lang">Ngôn ngữ: </string>
-    <string name="control_info_device">Loại thiết bị: </string>
-    <string name="control_info_screenshot">Ảnh chụp màn hình: </string>
-    <string name="control_info_intro">Giới thiệu: </string>
-    <string name="control_info_description">Mô tả: </string>
+    <string name="control_upload_requirement">Vui lòng tham gia nhóm QQ trước, sau đó nhấp vào Chia sẻ để chia sẻ bộ điều khiển và thông tin của nó cho quản trị viên và chờ xem xét. Vui lòng liên hệ với quản trị viên để cho họ biết loại bộ điều khiển của bạn.</string>
+    <string name="control_info_author">Tác giả:</string>
+    <string name="control_info_icon">Biểu tượng:</string>
+    <string name="control_info_lang">Ngôn ngữ:</string>
+    <string name="control_info_device">Loại thiết bị:</string>
+    <string name="control_info_screenshot">Ảnh chụp màn hình:</string>
+    <string name="control_info_intro">Giới thiệu:</string>
+    <string name="control_info_description">Mô tả:</string>
     <string name="control_info_screenshot_max">Có thể tải lên tối đa 16 ảnh chụp màn hình!</string>
     <string name="control_info_edit">Chỉnh sửa Thông tin Bộ điều khiển</string>
     <string name="control_info_more">Thêm thông tin</string>
-    <string name="control_info_name">Tên: </string>
+    <string name="control_info_name">Tên:</string>
     <string name="control_info_name_exist">Bộ điều khiển đã tồn tại, vui lòng đổi tên!</string>
     <string name="control_info_name_invalid">Tên không hợp lệ</string>
-    <string name="control_info_version">Phiên bản: </string>
-    <string name="control_info_version_code">Mã phiên bản: </string>
+    <string name="control_info_version">Phiên bản:</string>
+    <string name="control_info_version_code">Mã phiên bản:</string>
     <string name="control_list">Danh sách Bộ điều khiển</string>
     <string name="control_select">Chọn Bộ điều khiển</string>
     <string name="control_share">Chia sẻ Bộ điều khiển</string>
@@ -994,12 +993,12 @@
     <string name="terracotta_status_waiting_guest_prompt_pcl2ce">Mã mời PCL CE cũ</string>
     <string name="terracotta_status_waiting_guest_prompt_scaffolding">Mã mời Scaffolding</string>
     <string name="terracotta_status_host_scanning">Đang quét thế giới LAN</string>
-    <string name="terracotta_status_host_scanning_desc">Vui lòng mở một thế giới, nhấn ESC, chọn "Mở LAN", sau đó chọn "Bắt đầu Thế giới LAN".</string>
+    <string name="terracotta_status_host_scanning_desc">Vui lòng mở một thế giới, nhấn ESC, chọn Mở LAN, sau đó chọn Bắt đầu Thế giới LAN.</string>
     <string name="terracotta_status_host_scanning_back">Thao tác này cũng sẽ dừng quét thế giới LAN.</string>
     <string name="terracotta_status_host_starting">Đang tạo Phòng</string>
     <string name="terracotta_status_host_starting_back">Thao tác này sẽ dừng việc tạo phòng.</string>
     <string name="terracotta_status_host_ok">Đã tạo Phòng</string>
-    <string name="terracotta_status_host_ok_code">Mã mời (Đã sao chép): </string>
+    <string name="terracotta_status_host_ok_code">Mã mời (Đã sao chép):</string>
     <string name="terracotta_status_host_ok_code_copy">Sao chép mã mời</string>
     <string name="terracotta_status_host_ok_code_copy_toast">Mã mời đã được sao chép vào khay nhớ tạm</string>
     <string name="terracotta_status_host_ok_code_desc">Vui lòng nhắc bạn bè của bạn chọn chế độ Khách trong FCL - Nhiều người chơi hoặc HMCL/PCL CE và nhập mã mời này.</string>
@@ -1009,7 +1008,7 @@
     <string name="terracotta_status_guest_starting_back">Thao tác này sẽ không ngăn những khách khác tham gia phòng.</string>
     <string name="terracotta_status_guest_ok">Đã tham gia Phòng</string>
     <string name="terracotta_status_guest_ok_back">Thao tác này sẽ không ngăn những khách khác tham gia phòng.</string>
-    <string name="terracotta_status_guest_ok_address">Vui lòng khởi chạy trò chơi, chọn Nhiều người chơi và nhấp đúp vào Terracotta Lobby. Địa chỉ dự phòng: </string>
+    <string name="terracotta_status_guest_ok_address">Vui lòng khởi chạy trò chơi, chọn Nhiều người chơi và nhấp đúp vào Terracotta Lobby. Địa chỉ dự phòng:</string>
     <string name="terracotta_status_guest_ok_address_copy">Sao chép Địa chỉ dự phòng</string>
     <string name="terracotta_status_guest_ok_address_copy_toast">Địa chỉ dự phòng đã được sao chép vào khay nhớ tạm</string>
     <string name="terracotta_status_guest_ok_address_desc">Vui lòng không sử dụng địa chỉ này trừ khi cần thiết.</string>
@@ -1028,9 +1027,9 @@
     <string name="terracotta_player_kind_local">Bạn</string>
     <string name="terracotta_player_kind_guest">Khách</string>
     <string name="terracotta_tutorial_host_btn">Hướng dẫn Chủ phòng</string>
-    <string name="terracotta_tutorial_host">Hướng dẫn Chủ phòng:\n\n - Đọc thông báo người dùng trên trang chủ nhiều người chơi của trình khởi chạy, sau đó bật chức năng nhiều người chơi.\n - Khởi chạy trò chơi, tìm menu nhiều người chơi trong menu FCL trong trò chơi và mở nó.\n - Nhấp vào "Tôi muốn tổ chức một phiên", để quét cổng trò chơi.\n - Mở trò chơi và bật tùy chọn "Mở LAN" trong cài đặt trò chơi.\n - Nếu cửa sổ bật lên yêu cầu quyền VPN, vui lòng cấp; nếu không, nó sẽ không hoạt động bình thường.\n - Đợi một chút và mã mời sẽ được tự động sao chép. Nếu không được tự động sao chép, bạn cũng có thể sao chép thủ công trong menu nhiều người chơi.\n - Gửi mã mời cho bạn bè của bạn\n\nLưu ý:\n\n - Phần mềm này hỗ trợ tài khoản ngoại tuyến.\n - Phần mềm này hỗ trợ kết nối với các phần mềm hỗ trợ giao thức Scaffolding, chẳng hạn như HMCL và PCL CE.</string>
+    <string name="terracotta_tutorial_host">Hướng dẫn Chủ phòng:\n\n - Đọc thông báo người dùng trên trang chủ nhiều người chơi của trình khởi chạy, sau đó bật chức năng nhiều người chơi.\n - Khởi chạy trò chơi, tìm menu nhiều người chơi trong menu FCL trong trò chơi và mở nó.\n - Nhấp vào Tôi muốn tổ chức một phiên, để quét cổng trò chơi.\n - Mở trò chơi và bật tùy chọn Mở LAN trong cài đặt trò chơi.\n - Nếu cửa sổ bật lên yêu cầu quyền VPN, vui lòng cấp; nếu không, nó sẽ không hoạt động bình thường.\n - Đợi một chút và mã mời sẽ được tự động sao chép. Nếu không được tự động sao chép, bạn cũng có thể sao chép thủ công trong menu nhiều người chơi.\n - Gửi mã mời cho bạn bè của bạn\n\nLưu ý:\n\n - Phần mềm này hỗ trợ tài khoản ngoại tuyến.\n - Phần mềm này hỗ trợ kết nối với các phần mềm hỗ trợ giao thức Scaffolding, chẳng hạn như HMCL và PCL CE.</string>
     <string name="terracotta_tutorial_guest_btn">Hướng dẫn Khách</string>
-    <string name="terracotta_tutorial_guest">Hướng dẫn Khách:\n\n - Đọc thông báo người dùng trên trang chủ nhiều người chơi của trình khởi chạy, sau đó bật chức năng nhiều người chơi.\n - Khởi chạy trò chơi, tìm menu nhiều người chơi trong menu FCL trong trò chơi và mở nó.\n - Nhấp vào "Tôi muốn tham gia một phiên", nhập mã mời do chủ phòng cung cấp vào ô nhập và kiên nhẫn chờ đợi.\n - Nếu cửa sổ bật lên yêu cầu quyền VPN, vui lòng cấp; nếu không, nó sẽ không hoạt động bình thường.\n - Sau khi hiển thị bạn đã tham gia phòng, hãy chọn Nhiều người chơi và nhấp đúp vào Terracotta Lobby.\n\nLưu ý:\n\n - Phần mềm này hỗ trợ tài khoản ngoại tuyến.\n - Phần mềm này hỗ trợ kết nối với các phần mềm hỗ trợ giao thức Scaffolding, chẳng hạn như HMCL và PCL CE.\n - Khi tham gia trò chơi bằng địa chỉ máy chủ dự phòng, tài khoản ngoại tuyến không được hỗ trợ. Vui lòng tự giải quyết vấn đề này.</string>
+    <string name="terracotta_tutorial_guest">Hướng dẫn Khách:\n\n - Đọc thông báo người dùng trên trang chủ nhiều người chơi của trình khởi chạy, sau đó bật chức năng nhiều người chơi.\n - Khởi chạy trò chơi, tìm menu nhiều người chơi trong menu FCL trong trò chơi và mở nó.\n - Nhấp vào Tôi muốn tham gia một phiên, nhập mã mời do chủ phòng cung cấp vào ô nhập và kiên nhẫn chờ đợi.\n - Nếu cửa sổ bật lên yêu cầu quyền VPN, vui lòng cấp; nếu không, nó sẽ không hoạt động bình thường.\n - Sau khi hiển thị bạn đã tham gia phòng, hãy chọn Nhiều người chơi và nhấp đúp vào Terracotta Lobby.\n\nLưu ý:\n\n - Phần mềm này hỗ trợ tài khoản ngoại tuyến.\n - Phần mềm này hỗ trợ kết nối với các phần mềm hỗ trợ giao thức Scaffolding, chẳng hạn như HMCL và PCL CE.\n - Khi tham gia trò chơi bằng địa chỉ máy chủ dự phòng, tài khoản ngoại tuyến không được hỗ trợ. Vui lòng tự giải quyết vấn đề này.</string>
     <string name="update">Cập nhật</string>
     <string name="update_netdisk">Netdisk</string>
     <string name="update_check">Kiểm tra Cập nhật</string>
@@ -1145,7 +1144,7 @@
     <string name="edit">Chỉnh sửa</string>
     <string name="modpack_download_warn_title">Thông báo</string>
     <string name="modpack_download_warn_msg">Trước khi cài đặt, bạn nên hiểu rằng hầu hết các modpack được thiết kế cho PC, vì vậy rất có thể bạn sẽ gặp sự cố hoặc các vấn đề khác khi cố gắng khởi chạy. Đây thường không phải là vấn đề có thể giải quyết ở cấp độ trình khởi chạy. Do đó, bạn cần hiểu kiến thức liên quan và tự giải quyết vấn đề hoặc tìm kiếm sự trợ giúp từ người khác (không hỏi nhà phát triển trình khởi chạy!).</string>
-    <string name="guide_theme2">Nếu bạn thấy màu của văn bản ở bên phải không rõ ràng, bạn có thể nhấp vào đây, sau đó nhấp vào "Cài đặt Trình khởi chạy" và chọn "Màu Giao diện Phụ"</string>
+    <string name="guide_theme2">Nếu bạn thấy màu của văn bản ở bên phải không rõ ràng, bạn có thể nhấp vào đây, sau đó nhấp vào Cài đặt Trình khởi chạy và chọn Màu Giao diện Phụ</string>
     <string name="guide_share_log">Nhấn giữ ở đây để chia sẻ nhật ký trò chơi (latest_game.log).</string>
     <string name="joystick_l">Cần điều khiển trái</string>
     <string name="gamepad_dpad">DPAD</string>
@@ -1153,9 +1152,7 @@
     <string name="joystick_r">Cần điều khiển phải</string>
     <string name="message_vulkan_driver_system">Cảnh báo: Sử dụng trình điều khiển Vulkan hệ thống có thể mang lại hiệu suất tốt hơn, nhưng cũng có thể gây ra sự cố do các vấn đề tương thích!</string>
     <string name="message_loading_controllers">Đang tải bộ điều khiển, vui lòng đợi...</string>
-    <string name="mcmod" translatable="false">
-        <u>MC百科</u>
-    </string>
+    <string name="mcmod" translatable="false"><u>MC百科</u></string>
     <string name="wiki_game">https://minecraft.wiki/w/Special:Search?search=%s</string>
     <string name="wiki_game_search">Java_Edition_%s</string>
     <string name="installed">Đã cài đặt</string>
@@ -1190,7 +1187,7 @@
     <string name="launch">Khởi chạy</string>
     <string name="tip_hide_menu_view">Chế độ xem menu đã bị ẩn. Nhấn phím âm lượng để mở menu.</string>
     <string name="modloader">Trình tải Mod</string>
-    <string name="message_warn_renderer_global_setting">Phiên bản bạn đã chọn hiện tại đã bật cài đặt theo instance, vì vậy trình kết xuất được chọn ở đây không thể áp dụng cho phiên bản hiện tại. Đề xuất nhấn giữ nút "Khởi chạy" để chọn trình kết xuất.</string>
+    <string name="message_warn_renderer_global_setting">Phiên bản bạn đã chọn hiện tại đã bật cài đặt theo instance, vì vậy trình kết xuất được chọn ở đây không thể áp dụng cho phiên bản hiện tại. Đề xuất nhấn giữ nút Khởi chạy để chọn trình kết xuất.</string>
     <string name="message_select_url">Vui lòng chọn một liên kết để tải xuống (nó sẽ mở trong trình duyệt của bạn).</string>
     <string name="supported_mc_version">Phiên bản MC được hỗ trợ:</string>
     <string name="message_check_renderer">Trình kết xuất hiện tại %s không hỗ trợ phiên bản trò chơi này. Tiếp tục sử dụng nó có thể gây ra lỗi kết xuất hoặc sự cố trò chơi! Bạn có muốn tiếp tục không?</string>
@@ -1203,7 +1200,7 @@
     <string name="exception_no_suitable_java">Không tìm thấy Java phù hợp!</string>
     <string name="slide_selection">Lựa chọn Trượt</string>
     <string name="swap_hands">Nhấp đúp để Đổi Tay</string>
-    <string name="jar_executor_warn">Lưu ý! Tính năng này không dành cho việc cài đặt mods. Nếu bạn đang cài đặt mods, vui lòng sử dụng chức năng tải xuống của trình khởi chạy hoặc thêm chúng trong "Quản lý Mods".</string>
+    <string name="jar_executor_warn">Lưu ý! Tính năng này không dành cho việc cài đặt mods. Nếu bạn đang cài đặt mods, vui lòng sử dụng chức năng tải xuống của trình khởi chạy hoặc thêm chúng trong Quản lý Mods.</string>
     <string name="create_account_first">Vui lòng tạo tài khoản trò chơi trước khi khởi động</string>
     <string name="version_list_refreshing">Đang lấy danh sách phiên bản từ xa…</string>
 </resources>

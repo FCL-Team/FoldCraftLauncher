@@ -9,12 +9,10 @@
     <string name="splash_permission_settings">去设置</string>
     <string name="splash_permission_settings_msg">您已选择永不授权，请在设置中手动授予存储权限。</string>
     <string name="notification_permission">FCL需要发布通知的权限，防止无法正常安装/启动游戏 。</string>
-
     <string name="splash_loading_renderer">正在初始化渲染器…</string>
     <string name="splash_loading_java">正在初始化 Java 运行时…</string>
     <string name="splash_loading_config">正在加载配置与版本列表…</string>
     <string name="splash_loading_cache">正在清理缓存…</string>
-
     <string name="splash_title">欢迎使用 Fold Craft Launcher</string>
     <string name="splash_eula_error">无法获取用户协议，请检查网络。</string>
     <string name="splash_eula_next">同意并继续</string>
@@ -22,7 +20,6 @@
     <string name="splash_runtime_install">安装 / 更新</string>
     <string name="splash_runtime_patching">正在优化运行环境…</string>
     <string name="missing_runtime_arch_files">当前安装的启动器缺少当前设备架构（%s）所需的运行时文件，请下载对应架构的安装包（%s）或是全架构安装包（%s）。</string>
-
     <string name="account">账户管理</string>
     <string name="version">版本列表</string>
     <string name="launch_mode">启动方式</string>
@@ -31,12 +28,10 @@
     <string name="controller">控制布局</string>
     <string name="multiplayer">多人联机</string>
     <string name="setting">全局设置</string>
-
     <string name="about">关于</string>
     <string name="about_sponsor">赞助</string>
     <string name="about_source">开源</string>
     <string name="about_desc">你说得对，但是「FCL」是由FCL-Team基于HMCL的核心功能，使用PojavLauncher后端开发的Minecraft Java版启动器。启动器运行在一个被称作「安卓」的系统，在这里，被系统选中的人将被授予「JVM」，导引Java之力。你将扮演一位名为「小白」的神秘用户，在自由的使用中安装不同版本、各有千秋独特的模组，和它们一起运行，找出崩溃闪退的原因，同时逐步发掘「xxException:」的真相。\n\n该应用借鉴和引用了一些 PojavLauncher 和 Boat 的源码，所以如果你要传播分发该软件，请遵循 GPL-v3 协议。</string>
-
     <string name="account_add_server">添加认证服务器</string>
     <string name="account_add_server_url">服务器地址</string>
     <string name="account_add_server_name">服务器名称</string>
@@ -112,26 +107,21 @@
     <string name="account_cape_hidden">披风已隐藏</string>
     <string name="account_state_no_account">没有账户</string>
     <string name="account_state_add">点击添加账户</string>
-
     <string name="action_refresh">刷新</string>
     <string name="action_retry">重试</string>
     <string name="action_share">分享</string>
     <string name="action_upload">上传日志</string>
     <string name="action_skip">跳过</string>
-
     <string name="announcement">公告：%s</string>
     <string name="announcement_significant">此公告为重要公告，隐藏前请确认你已阅读此公告，是否继续隐藏？</string>
-
     <string name="archive_author">作者</string>
     <string name="archive_date">发布时间</string>
     <string name="archive_game_version">游戏版本</string>
     <string name="archive_name">名称</string>
     <string name="archive_version">版本</string>
-
     <string name="assets_download">下载资源</string>
     <string name="assets_download_all">检查资源文件完整性</string>
     <string name="assets_index_malformed">资源文件的索引文件损坏。</string>
-
     <string name="button_back">返回</string>
     <string name="button_cancel">取消</string>
     <string name="button_copy">复制</string>
@@ -153,11 +143,9 @@
     <string name="button_set">设置</string>
     <string name="button_reset">重置</string>
     <string name="button_overwrite">覆盖</string>
-
     <string name="community">社区</string>
     <string name="community_hint">加入社区以获取最新版本，反馈 bug 等。如果你要加入社区，请遵守社区规定。\n注：由于 QQ 群聊人数有限，加入 QQ 群需先赞助10元或以上金额，赞助方式见关于页面。</string>
     <string name="community_qq">QQ 群</string>
-
     <string name="control_create">创建新布局</string>
     <string name="control_delete">你确定要删除该布局吗？</string>
     <string name="control_download">下载布局</string>
@@ -202,9 +190,7 @@
     <string name="control_convert_failed">转换失败！</string>
     <string name="control_convert_unsupported">当前设备不支持 ZL2 转换（需 arm64）</string>
     <string name="control_upload">上传布局</string>
-
     <string name="curse_category_0">全部</string>
-
     <string name="curse_category_4474">科幻</string>
     <string name="curse_category_4481">轻量整合包</string>
     <string name="curse_category_4483">战斗 PVP</string>
@@ -223,7 +209,6 @@
     <string name="curse_category_5128">原版增强</string>
     <string name="curse_category_7418">恐怖</string>
     <string name="curse_category_9243">专家</string>
-
     <string name="curse_category_5299">教育</string>
     <string name="curse_category_5232">额外行星</string>
     <string name="curse_category_5129">原版增强</string>
@@ -249,7 +234,6 @@
     <string name="curse_category_9026">创造模式</string>
     <string name="curse_category_10775">恐怖</string>
     <string name="curse_category_428">匠魂</string>
-
     <string name="curse_category_414">交通运输</string>
     <string name="curse_category_4486">幸运方块 (Lucky Blocks)</string>
     <string name="curse_category_432">建筑 (Buildcraft)</string>
@@ -283,7 +267,6 @@
     <string name="curse_category_7669">暮色森林</string>
     <string name="curse_category_9049">精致存储 (Refined Storage)</string>
     <string name="curse_category_10754">农夫乐事 (Farmer\'s Delight)</string>
-
     <string name="curse_category_5244">字体包</string>
     <string name="curse_category_5193">数据包</string>
     <string name="curse_category_399">蒸汽朋克</string>
@@ -300,7 +283,6 @@
     <string name="curse_category_4465">模组支持</string>
     <string name="curse_category_402">中世纪风格</string>
     <string name="curse_category_401">现代风格</string>
-
     <string name="curse_category_4464">模组</string>
     <string name="curse_category_250">游戏挑战</string>
     <string name="curse_category_249">创造模式</string>
@@ -308,7 +290,6 @@
     <string name="curse_category_253">生存模式</string>
     <string name="curse_category_248">冒险模式</string>
     <string name="curse_category_252">解谜类</string>
-
     <string name="curse_category_4551">硬核任务模式</string>
     <string name="curse_category_4548">幸运方块 (Lucky Blocks)</string>
     <string name="curse_category_4556">任务进度</string>
@@ -323,36 +304,30 @@
     <string name="curse_category_6555">原版风格</string>
     <string name="curse_category_6554">幻想</string>
     <string name="curse_category_6553">写实</string>
-
     <string name="curse_sort_author">作者</string>
     <string name="curse_sort_date_created">创建日期</string>
     <string name="curse_sort_last_updated">最近更新</string>
     <string name="curse_sort_name">名称</string>
     <string name="curse_sort_popularity">热度</string>
     <string name="curse_sort_total_downloads">下载量</string>
-
     <string name="datapack_add">添加数据包</string>
     <string name="datapack_choose_datapack">选择一个数据包导入</string>
-
     <string name="download_code_404">远程服务器不包含需要下载的文件: %s</string>
     <string name="download_failed">下载失败: %1$s，错误码：%2$d</string>
     <string name="download_failed_empty">没有可供选择的版本</string>
     <string name="download_failed_refresh">加载版本列表失败，请重试</string>
-
     <string name="download_provider_mcbbs">我的世界中文论坛 (https://www.mcbbs.net/)</string>
     <string name="download_provider_bmclapi">BMCLAPI (bangbang93, https://bmclapi2.bangbang93.com/)</string>
     <string name="download_provider_mojang">官方 (OptiFine 自动安装使用 OF-302 下载源)</string>
     <string name="download_provider_official">尽量使用官方源</string>
     <string name="download_provider_balanced">选择加载速度快的下载源</string>
     <string name="download_provider_mirror">尽量使用镜像源</string>
-
     <string name="edit_view_clone">复制控件</string>
     <string name="edit_view_delete">删除控件</string>
     <string name="edit_view_event">控件事件</string>
     <string name="edit_view_info">控件基本信息</string>
     <string name="edit_view_no_group">请先添加或选择一个控件组！</string>
     <string name="edit_view_style">控件样式</string>
-
     <string name="edit_button_title">编辑按键</string>
     <string name="edit_button_delete">你确定要删除该按键吗？</string>
     <string name="edit_button_text">显示的文本</string>
@@ -374,7 +349,6 @@
     <string name="edit_button_event_keycodes_keyboard">键盘</string>
     <string name="edit_button_event_keycodes_mouse">鼠标</string>
     <string name="edit_button_event_bind_group">切换控件组可视性</string>
-
     <string name="edit_direction_title">编辑方向控制键</string>
     <string name="edit_direction_delete">你确定要删除该方向控制键吗？</string>
     <string name="edit_direction_event_up">前键值</string>
@@ -387,11 +361,9 @@
     <string name="edit_direction_event_follow_always">完全跟随手指</string>
     <string name="edit_direction_event_sneak">双击中心潜行</string>
     <string name="edit_direction_event_sneak_code">潜行键值</string>
-
     <string name="exception_access_denied">无法获取文件 %s。</string>
     <string name="exception_artifact_malformed">无法校验文件。</string>
     <string name="exception_ssl_handshake">缺少 SSL 证书。</string>
-
     <string name="folder_config">浏览配置文件夹</string>
     <string name="folder_game">浏览游戏文件夹</string>
     <string name="folder_log">浏览日志文件夹</string>
@@ -408,7 +380,6 @@
     <string name="folder_saves">浏览存档文件夹</string>
     <string name="folder_screenshots">浏览截屏文件夹</string>
     <string name="folder_shaderpacks">浏览光影文件夹</string>
-
     <string name="game_crash_info">游戏信息</string>
     <string name="game_crash_reason">崩溃原因</string>
     <string name="game_crash_reason_block">当前游戏因为某个方块不能正常工作，无法继续运行。\n你可以尝试通过 MCEdit 工具编辑存档删除该方块，或者直接删除相应的 Mod。\n方块类型：%1$s\n方块坐标：%2$s</string>
@@ -467,17 +438,14 @@
     <string name="game_crash_reason_unsatisfied_link_error">当前游戏因为缺少本地库：%1$s，无法继续运行。</string>
     <string name="game_crash_title">游戏意外退出</string>
     <string name="game_crash_title_add">(你应该将完整的日志文件发送出来，而不是在这个界面截图)</string>
-
     <string name="help">帮助</string>
     <string name="help_category">类别</string>
     <string name="help_website">网站</string>
-
     <string name="input_hint_not_empty">必填</string>
     <string name="input_hint_optional">选填</string>
     <string name="input_not_empty">请先填写必要的输入框。</string>
     <string name="input_number">指定的输入框必须输入数字。</string>
     <string name="input_url">指定的输入框必须输入有效的链接。</string>
-
     <string name="install_change_version">更改版本</string>
     <string name="install_change_version_confirm">你确定将 %s 版本从 %s 改为 %s 吗?</string>
     <string name="install_failed">安装失败</string>
@@ -511,12 +479,10 @@
     <string name="install_new_game_already_exists">当前版本已存在，请换一个名称。</string>
     <string name="install_new_game_malformed">无效的名称</string>
     <string name="install_success">安装成功</string>
-
     <string name="jar_execute">执行Jar文件</string>
     <string name="jar_execute_custom_args">使用自定义参数执行</string>
     <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
     <string name="jar_executor_crash_reason">尚不支持 Jar Executor 崩溃原因分析。</string>
-
     <string name="launch_pojav">Pojav</string>
     <string name="launch_boat">Boat</string>
     <string name="launch_error_java">你正在使用不推荐的 Java 版本，确定要继续吗？</string>
@@ -525,14 +491,12 @@
     <string name="launch_error_java_continue_disable">继续（禁用检查）</string>
     <string name="launch_failed">无法启动</string>
     <string name="launch_failed_download_library">未能下载游戏依赖 %s</string>
-
     <string name="launch_state_dependencies">检查依赖</string>
     <string name="launch_state_modpack">下载依赖</string>
     <string name="launch_state_java">检查 Java</string>
     <string name="launch_state_logging_in">登录</string>
     <string name="launch_state_waiting_launching">等待游戏启动</string>
     <string name="launch_state_done">完成</string>
-
     <string name="menu_controls">控制</string>
     <string name="menu_controls_current">当前布局方案</string>
     <string name="menu_controls_edit_mode">编辑模式</string>
@@ -549,7 +513,6 @@
     <string name="menu_controls_style">样式</string>
     <string name="menu_controls_button_style">按键样式</string>
     <string name="menu_controls_direction_style">方向控制键样式</string>
-
     <string name="menu_control_base">基本设置</string>
     <string name="menu_control_button">按键</string>
     <string name="menu_control_button_text">文本</string>
@@ -568,7 +531,6 @@
     <string name="menu_control_view_group_empty">请填写控件组名称</string>
     <string name="menu_control_view_group_visible">显示</string>
     <string name="menu_control_view_group_invisible">隐藏</string>
-
     <string name="menu_settings">设置</string>
     <string name="menu_settings_debug">调试</string>
     <string name="menu_settings_disable_gesture">禁用手势</string>
@@ -617,7 +579,6 @@
     <string name="menu_settings_show_log_auto">自动显示日志</string>
     <string name="menu_settings_performance_mode">持续性能模式</string>
     <string name="menu_settings_show_memory">显示内存</string>
-
     <string name="message_cancelled">操作已取消</string>
     <string name="message_copy">复制成功！</string>
     <string name="message_doing">请耐心等待</string>
@@ -634,7 +595,6 @@
     <string name="message_success">已完成</string>
     <string name="message_unknown">未知</string>
     <string name="message_warning">警告</string>
-
     <string name="modpack">整合包</string>
     <string name="modpack_choose">选择要安装的游戏整合包文件</string>
     <string name="modpack_choose_local">导入本地整合包文件</string>
@@ -705,7 +665,6 @@
     <string name="modpack_wizard_step_initialization_include_launcher">包含启动器</string>
     <string name="modpack_wizard_step_initialization_save">选择要导出到的游戏整合包位置</string>
     <string name="modpack_wizard_step_initialization_warning">在制作整合包前，请您确认您选择的版本可以正常启动，\n并保证您的 Minecraft 是正式版而非快照版，\n而且不应当将不允许非官方途径传播的 Mod、材质包等纳入整合包。</string>
-
     <string name="modrinth_category_adventure">冒险</string>
     <string name="modrinth_category_bukkit">Bukkit</string>
     <string name="modrinth_category_bungeecord">BungeeCord</string>
@@ -780,7 +739,6 @@
     <string name="modrinth_category_simplistic">简约</string>
     <string name="modrinth_category_themed">主题</string>
     <string name="modrinth_category_tweaks">优化</string>
-
     <string name="mods">模组</string>
     <string name="mods_add">添加模组</string>
     <string name="mods_add_failed">无法安装模组 %s。</string>
@@ -825,23 +783,19 @@
     <string name="mods_url">官方页面</string>
     <string name="mods_update_modpack_mod_warning">更新整合包中的 Mod 可能导致整合包损坏，使整合包无法正常启动。该操作不可逆，确定要更新吗？</string>
     <string name="mods_screenshot_no_result">没有截图可以展示</string>
-
     <string name="profile_shared">公有目录</string>
     <string name="profile_private">私有目录</string>
     <string name="profile_name">名称</string>
     <string name="profile_path">路径</string>
     <string name="profile_select">选择目录</string>
     <string name="profile_already_exist">该名称已存在！</string>
-
     <string name="quick_input_title">快捷输入</string>
     <string name="quick_input_add">添加新文本</string>
     <string name="quick_input_text">快捷输入文本</string>
     <string name="quick_input_remarks">备注（可空）</string>
     <string name="quick_input_exist">该文本已存在！</string>
     <string name="quick_input_empty">请先填写文本！</string>
-
     <string name="resourcepack">资源包</string>
-
     <string name="search">搜索</string>
     <string name="search_hint_chinese">支持中英文搜索</string>
     <string name="search_hint_english">仅支持英文搜索</string>
@@ -849,7 +803,6 @@
     <string name="search_sort">排序</string>
     <string name="search_first_page">第一页</string>
     <string name="search_last_page">最后一页</string>
-
     <string name="settings_advanced_dont_check_game_completeness">不检查游戏完整性</string>
     <string name="settings_advanced_dont_check_game_completeness_desc">跳过游戏文件完整性检查以加快启动</string>
     <string name="settings_advanced_dont_check_jvm_validity">不检查 JVM 兼容性</string>
@@ -859,7 +812,7 @@
     <string name="settings_advanced_debug_log">输出调试日志</string>
     <string name="settings_advanced_debug_log_desc">输出详细调试日志，便于排查问题</string>
     <string name="settings_advanced_game_dir_default">默认 (.minecraft/)</string>
-    <string name="settings_advanced_game_dir_independent">各版本独立 (存放在 .minecraft/versions/&#60;版本名>/，除 assets、libraries 外)</string>
+    <string name="settings_advanced_game_dir_independent">各版本独立 (存放在 .minecraft/versions/&lt;版本名&gt;/，除 assets、libraries 外)</string>
     <string name="settings_advanced_jvm_args">Java 虚拟机参数</string>
     <string name="settings_advanced_jvm_args_desc">附加 JVM 启动参数</string>
     <string name="settings_advanced_env">环境变量</string>
@@ -872,7 +825,6 @@
     <string name="settings_advanced_server_ip_prompt">启动游戏后自动加入对应服务器</string>
     <string name="settings_advanced_force_resolution">强制设置分辨率</string>
     <string name="settings_advanced_force_resolution_desc">强制游戏以指定分辨率运行（宽x高），实验性选项，谨慎使用</string>
-
     <string name="settings_fcl_controller">控制</string>
     <string name="settings_fcl_controller_desc">选择此版本使用的控制器布局</string>
     <string name="settings_fcl_vulkan_driver_system">使用系统Vulkan驱动</string>
@@ -884,12 +836,9 @@
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, 仅支持 1.17-)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 仅支持GPU a616-a660)</string>
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, 内置的)</string>
-
     <string name="settings_fcl_driver">Vulkan驱动</string>
     <string name="settings_fcl_driver_desc">选择 Vulkan 驱动实现</string>
-
     <string name="settings_download_netdisk">网盘</string>
-
     <string name="settings_game">游戏设置</string>
     <string name="settings_game_dimension">窗口分辨率</string>
     <string name="settings_game_cursor_offset">鼠标指针偏移</string>
@@ -898,10 +847,8 @@
     <string name="settings_game_java_version_auto">自动选择</string>
     <string name="settings_game_working_directory">版本隔离</string>
     <string name="settings_game_working_directory_desc">将游戏文件存放在该版本的独立目录中</string>
-
     <string name="settings_icon">版本图标</string>
     <string name="settings_icon_desc">自定义此版本在版本列表中的显示图标</string>
-
     <string name="settings_launcher">启动器设置</string>
     <string name="settings_launcher_request">请求</string>
     <string name="settings_launcher_debug">调试</string>
@@ -970,7 +917,6 @@
     <string name="settings_launcher_custom_launcher_name_desc">自定义启动器在游戏内显示的名称</string>
     <string name="settings_launcher_allow_screenshot">允许在崩溃界面截图/录屏</string>
     <string name="settings_launcher_allow_screenshot_desc">允许在当前已经禁止截图或录屏的界面继续截图或录屏</string>
-
     <string name="settings_memory">游戏内存</string>
     <string name="settings_memory_desc">设置游戏可用的最大内存（MB），调高可能影响设备稳定性</string>
     <string name="settings_memory_allocate_auto">最低分配 %1$.1f GB / 实际分配 %2$.1f GB</string>
@@ -985,7 +931,6 @@
     <string name="settings_type_global_manage">全局游戏设置</string>
     <string name="settings_type_special_enable">启用游戏特定设置</string>
     <string name="settings_type_special_enable_desc">为此版本单独保存设置，不影响全局设置</string>
-
     <string name="style_name">名称</string>
     <string name="style_warning_delete">你确定要删除该样式吗？</string>
     <string name="style_warning_exist">该样式已存在！</string>
@@ -1013,7 +958,6 @@
     <string name="style_rocker_stroke_color">摇杆边框颜色</string>
     <string name="style_rocker_corner_radius">摇杆圆角半径</string>
     <string name="style_rocker_fill_color">摇杆背景颜色</string>
-
     <string name="terracotta">多人联机</string>
     <string name="terracotta_metadata">陶瓦版本：%s\nEasyTier 版本：%s</string>
     <string name="terracotta_easytier">关于 EasyTier</string>
@@ -1089,7 +1033,6 @@
     <string name="terracotta_tutorial_host">房主使用方法：\n\n - 在启动器多人联机主页阅读用户须知后启用联机功能\n - 启动游戏，在游戏内的 FCL 菜单中找到联机菜单并打开\n - 点击“我想当房主”，扫描游戏端口\n - 进入存档，在游戏暂停菜单中打开“对局域网开放”选项\n - 若弹出提示要求申请 VPN 权限，请授予，否则无法正常使用\n - 稍等片刻将自动复制邀请码，若没有自动复制，也可以前往联机菜单复制\n - 将邀请码发送给你的伙伴\n\n注意事项：\n\n - 该软件支持离线账户\n - 该软件支持与 HMCL 和 PCL CE 等支持 Scaffolding 协议的软件互联</string>
     <string name="terracotta_tutorial_guest_btn">房客教程</string>
     <string name="terracotta_tutorial_guest">房客使用方法：\n\n - 在启动器多人联机主页阅读用户须知后启用联机功能\n - 启动游戏，在游戏内的 FCL 菜单中找到联机菜单并打开\n - 点击“我想当房客”，在输入框内输入房主提供的邀请码，并耐心等待\n - 若弹出提示要求申请 VPN 权限，请授予，否则无法正常使用\n - 显示已加入房间后，在游戏主界面选择多人游戏并刷新，双击进入陶瓦联机大厅\n\n注意事项：\n\n - 该软件支持离线账户\n - 该软件支持与 HMCL 和 PCL CE 等支持 Scaffolding 协议的软件互联\n - 使用备用服务器地址加入游戏时，不支持离线账户，自行解决</string>
-
     <string name="update">更新</string>
     <string name="update_netdisk">更新（网盘）</string>
     <string name="update_check">检查更新</string>
@@ -1106,7 +1049,6 @@
     <string name="update_version">版本：%s</string>
     <string name="update_version_release">正式版</string>
     <string name="update_version_beta">测试版</string>
-
     <string name="version_game">游戏</string>
     <string name="version_game_old">远古版</string>
     <string name="version_game_april_fools">愚人节</string>
@@ -1133,7 +1075,6 @@
     <string name="version_manage_rename_fail">重命名失败</string>
     <string name="version_new_profile">新建目录</string>
     <string name="version_update">更新整合包</string>
-
     <string name="view_info_visibility">可视性</string>
     <string name="view_info_visibility_always">总是可见</string>
     <string name="view_info_visibility_game">游戏内可见</string>
@@ -1151,7 +1092,6 @@
     <string name="view_info_reference">尺寸参考对象</string>
     <string name="view_info_reference_width">屏幕宽</string>
     <string name="view_info_reference_height">屏幕高</string>
-
     <string name="world">世界</string>
     <string name="world_permission_fix">修复世界文件权限</string>
     <string name="world_add">添加世界</string>
@@ -1217,16 +1157,13 @@
     <string name="joystick_r">右摇杆</string>
     <string name="message_vulkan_driver_system">警告：使用系统Vulkan驱动可能获得更好的性能，但也可能因兼容性问题导致崩溃！</string>
     <string name="message_loading_controllers">正在加载自定义按键，请等待...</string>
-
     <string name="wiki_game">https://zh.minecraft.wiki/w/Special:Search?search=%s&amp;variant=zh-cn</string>
     <string name="wiki_game_search">Java版%s</string>
     <string name="installed">已安装</string>
     <string name="message_install_plugin">你可以通过以下方式获取插件。</string>
     <string name="message_install_java">你可以通过以下方式获取Java。</string>
-
     <string name="shaderpack">光影</string>
     <string name="recommend_version">推荐的版本</string>
-
     <string name="mod_check_continue">无视风险!</string>
     <string name="mod_check_physics">当前使用的物理模组（%s）未经修补（将libPhysXJniBindings_64.so从Linux x86_64架构替换到安卓arm64/x86_64），启动后将会崩溃。</string>
     <string name="mod_check_mcef">MCEF（%s）无法在安卓上运行。它通常被用来作为WebDisplays/In-game Browser（浏览器）的前置依赖。</string>
@@ -1239,18 +1176,15 @@
     <string name="mod_check_sodium">当前使用的GL4ES渲染器可能无法运行模组Sodium/Embeddium（%s），继续启动可能会导致游戏崩溃，建议下载并使用MobileGlues渲染器（https://github.com/MobileGL-Dev/MobileGlues-release/releases）。</string>
     <string name="mod_check_flashback">Flashback模组（%s）无法在安卓上运行。</string>
     <string name="mod_check_ixeris">Ixeris模组（%s）无法在FCL上正常运行。</string>
-
     <string name="internal">内置的</string>
     <string name="import_java">导入Java</string>
     <string name="import_java_wrong_file">仅支持导入tar.xz文件。</string>
     <string name="import_java_error">检测到你导入的Java可能不是给当前设备使用的，使用它启动可能会造成程序崩溃，是否继续导入?</string>
     <string name="import_java_error_not_valid">检测到当前导入的Java文件结构无效，无法使用！</string>
     <string name="import_java_overwrite_wrong">该版本的Java已经导入过了，是否覆盖当前版本？</string>
-
     <string name="ingame_folder_browse">浏览目录</string>
     <string name="ingame_folder_import">导入</string>
     <string name="ingame_folder_import_failed">导入文件 %1$s 时遇到问题！\n%2$s</string>
-
     <string name="manage_version">管理版本</string>
     <string name="select_renderer">选择渲染器</string>
     <string name="open_link_failed">未能自动跳转至浏览器，已自动复制链接，请手动打开浏览器粘贴进入。</string>
@@ -1271,8 +1205,6 @@
     <string name="slide_selection">滑动选择</string>
     <string name="swap_hands">双击切换副手</string>
     <string name="jar_executor_warn">注意！该功能不是用于安装模组的，如果你正在安装模组，请使用启动器的下载功能或是在“管理模组”内添加。</string>
-
-
     <!-- 原 FCLLibrary 模块字符串（模块已并入 FCL） -->
     <string name="file_browser_title">文件浏览器</string>
     <string name="file_browser_back">返回</string>
