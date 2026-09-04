@@ -6,9 +6,11 @@ import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 import com.mio.plugin.RendererPlugin.EnvSpec
 import com.mio.plugin.RendererPlugin.EnvType
 import com.mio.plugin.RendererPlugin.EnvValue
+import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogRendererEnvBinding
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.component.view.FCLEditText
@@ -83,8 +85,10 @@ class RendererEnvDialog(
                     })
                 }
                 val spinner = FCLSpinner<String>(context).apply {
-                    // 对话框白底，关闭 autoTint 继承默认文字色
+                    // 对话框恒浅底（dialog_background），关闭 autoTint（深色模式下其残留
+                    // 白色对比色会与浅底同色）并显式使用固定深色文字
                     setAutoTextTint(false)
+                    setTextColor(ContextCompat.getColor(context, R.color.primary_text))
                     layoutParams = LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT

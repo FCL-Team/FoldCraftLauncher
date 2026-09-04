@@ -38,7 +38,7 @@
     <string name="plugin_uninstall">卸载</string>
     <string name="plugin_miolibpatcher_desc">修复模组在 Android 环境下兼容性问题的 JVM 字节码补丁</string>
     <string name="plugin_miolibpatcher_alc10">ALC10 补丁</string>
-    <string name="plugin_miolibpatcher_alc10_desc">替换 alcGetCurrentContext 实现，修复部分设备的 OpenAL 音频问题</string>
+    <string name="plugin_miolibpatcher_alc10_desc">替换 alcGetCurrentContext 实现，修复 1.6.4 Mite 没有声音的问题</string>
     <string name="plugin_miolibpatcher_sable">Sable Rapier 补丁</string>
     <string name="plugin_miolibpatcher_sable_desc">默认开启（不设置属性）；关闭时设置属性强制禁用 Rapier 补丁</string>
     <string name="plugin_miolibpatcher_asm">ASM 后门</string>

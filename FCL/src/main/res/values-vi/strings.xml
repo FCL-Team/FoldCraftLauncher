@@ -48,7 +48,7 @@
     <string name="plugin_uninstall">Gỡ cài đặt</string>
     <string name="plugin_miolibpatcher_desc">Bản vá bytecode JVM khắc phục các vấn đề tương thích mod trên Android</string>
     <string name="plugin_miolibpatcher_alc10">Bản vá ALC10</string>
-    <string name="plugin_miolibpatcher_alc10_desc">Thay thế alcGetCurrentContext để khắc phục sự cố âm thanh OpenAL trên một số thiết bị</string>
+    <string name="plugin_miolibpatcher_alc10_desc">Thay thế alcGetCurrentContext để khắc phục sự cố mất âm thanh trong Mite (1.6.4)</string>
     <string name="plugin_miolibpatcher_sable">Bản vá Sable Rapier</string>
     <string name="plugin_miolibpatcher_sable_desc">Bật theo mặc định (không đặt thuộc tính); tắt sẽ buộc vô hiệu hóa bản vá Rapier</string>
     <string name="plugin_miolibpatcher_asm">Cửa hậu ASM</string>

@@ -53,7 +53,7 @@
     <string name="plugin_miolibpatcher_name">MioLibPatcher</string>
     <string name="plugin_miolibpatcher_desc">JVM bytecode patch that fixes mod compatibility issues on Android</string>
     <string name="plugin_miolibpatcher_alc10">ALC10 patch</string>
-    <string name="plugin_miolibpatcher_alc10_desc">Replaces alcGetCurrentContext to fix OpenAL audio issues on some devices</string>
+    <string name="plugin_miolibpatcher_alc10_desc">Replaces alcGetCurrentContext to fix the no-audio issue in Mite (1.6.4)</string>
     <string name="plugin_miolibpatcher_sable">Sable Rapier patch</string>
     <string name="plugin_miolibpatcher_sable_desc">Enabled by default (no property is set); disable to force-disable the Rapier patch</string>
     <string name="plugin_miolibpatcher_asm">ASM backdoor</string>

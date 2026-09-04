@@ -33,7 +33,7 @@
     <string name="plugin_uninstall">حذف نصب</string>
     <string name="plugin_miolibpatcher_desc">وصله بایت‌کد JVM برای رفع مشکلات سازگاری مادها در اندروید</string>
     <string name="plugin_miolibpatcher_alc10">وصله ALC10</string>
-    <string name="plugin_miolibpatcher_alc10_desc">جایگزینی پیاده‌سازی alcGetCurrentContext برای رفع مشکلات صوتی OpenAL در برخی دستگاه‌ها</string>
+    <string name="plugin_miolibpatcher_alc10_desc">جایگزینی پیاده‌سازی alcGetCurrentContext برای رفع مشکل بی‌صدایی در Mite (1.6.4)</string>
     <string name="plugin_miolibpatcher_sable">وصله Sable Rapier</string>
     <string name="plugin_miolibpatcher_sable_desc">به‌صورت پیش‌فرض فعال است (ویژگی تنظیم نمی‌شود)؛ غیرفعال کردن، غیرفعال‌سازی اجباری وصله Rapier را انجام می‌دهد</string>
     <string name="plugin_miolibpatcher_asm">در پشتی ASM</string>

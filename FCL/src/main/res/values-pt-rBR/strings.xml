@@ -33,7 +33,7 @@
     <string name="plugin_uninstall">Desinstalar</string>
     <string name="plugin_miolibpatcher_desc">Patch de bytecode JVM que corrige problemas de compatibilidade de mods no Android</string>
     <string name="plugin_miolibpatcher_alc10">Patch ALC10</string>
-    <string name="plugin_miolibpatcher_alc10_desc">Substitui alcGetCurrentContext para corrigir problemas de áudio OpenAL em alguns dispositivos</string>
+    <string name="plugin_miolibpatcher_alc10_desc">Substitui alcGetCurrentContext para corrigir o problema de ausência de áudio no Mite (1.6.4)</string>
     <string name="plugin_miolibpatcher_sable">Patch Sable Rapier</string>
     <string name="plugin_miolibpatcher_sable_desc">Ativado por padrão (nenhuma propriedade definida); desativar força a desativação do patch Rapier</string>
     <string name="plugin_miolibpatcher_asm">Backdoor ASM</string>

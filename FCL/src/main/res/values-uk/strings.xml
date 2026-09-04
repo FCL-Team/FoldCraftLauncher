@@ -34,7 +34,7 @@
     <string name="plugin_uninstall">Видалити</string>
     <string name="plugin_miolibpatcher_desc">JVM-байткод-патч для виправлення проблем сумісності модів на Android</string>
     <string name="plugin_miolibpatcher_alc10">Патч ALC10</string>
-    <string name="plugin_miolibpatcher_alc10_desc">Замінює реалізацію alcGetCurrentContext для виправлення проблем зі звуком OpenAL на деяких пристроях</string>
+    <string name="plugin_miolibpatcher_alc10_desc">Замінює реалізацію alcGetCurrentContext для виправлення проблеми відсутності звуку в Mite (1.6.4)</string>
     <string name="plugin_miolibpatcher_sable">Патч Sable Rapier</string>
     <string name="plugin_miolibpatcher_sable_desc">Увімкнено за замовчуванням (властивість не задається); вимкнення примусово вимикає патч Rapier</string>
     <string name="plugin_miolibpatcher_asm">Бекдор ASM</string>
