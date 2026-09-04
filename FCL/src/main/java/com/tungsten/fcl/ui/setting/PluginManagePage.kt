@@ -51,8 +51,15 @@ class PluginManagePage(context: Context?, id: Int) : FCLPage(context, id, R.layo
         reload()
     }
 
-    /** 宿主 Activity onResume 时同步：重扫插件列表（覆盖从系统卸载页返回后列表过期） */
+    /** 宿主 Activity onResume 时同步：卸载/安装在系统侧发生，进程内扫描缓存不会自动感知，
+     *  主动失效后重扫；插件集合或版本变化时联动刷新各插件运行时列表（选择器不再出现已卸载的插件） */
     fun onHostResume() {
+        val before = PluginManager.allApps(context)
+        PluginManager.invalidate()
+        val after = PluginManager.allApps(context)
+        if (before.map { it.packageName to it.lastUpdateTime } != after.map { it.packageName to it.lastUpdateTime }) {
+            PluginManager.refreshAll(context)
+        }
         reload()
     }
 

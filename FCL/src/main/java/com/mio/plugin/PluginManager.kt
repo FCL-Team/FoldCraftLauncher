@@ -46,6 +46,7 @@ object PluginManager {
         val icon: Drawable?,
         val types: Set<PluginType>,
         val appInfo: ApplicationInfo,
+        val lastUpdateTime: Long,
     )
 
     private const val SCAN_FLAGS = PackageManager.GET_META_DATA
@@ -67,6 +68,12 @@ object PluginManager {
             }
             return field
         }
+
+    /** 失效扫描缓存：卸载/安装在系统侧发生，进程内缓存不会自动感知，
+     *  需要在合适的时机（如插件管理页回到前台）主动失效后重扫 */
+    fun invalidate() {
+        isScanInit = false
+    }
 
     /** 已识别的全部插件应用（含已禁用，供管理页展示） */
     fun allApps(context: Context): List<PluginApp> {
@@ -159,8 +166,9 @@ object PluginManager {
         if (types.isEmpty()) return null
         val packageName = info.packageName
         val label = runCatching { info.loadLabel(pm).toString() }.getOrDefault(packageName)
-        val versionName = runCatching { pm.getPackageInfo(packageName, 0).versionName }.getOrNull()
+        val packageInfo = runCatching { pm.getPackageInfo(packageName, 0) }.getOrNull()
+        val versionName = packageInfo?.versionName
         val icon = runCatching { info.loadIcon(pm) }.getOrNull()
-        return PluginApp(packageName, label, versionName, icon, types, info)
+        return PluginApp(packageName, label, versionName, icon, types, info, packageInfo?.lastUpdateTime ?: 0L)
     }
 }

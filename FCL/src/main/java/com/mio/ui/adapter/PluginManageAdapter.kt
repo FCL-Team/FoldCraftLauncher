@@ -80,8 +80,14 @@ class PluginManageAdapter(
                 return oldItem.app.packageName == newItem.app.packageName
             }
 
+            // 不用 data class equals：重扫后 icon/appInfo 是新实例（引用不同），
+            // 会导致每次重扫都整表误判重绑；这里只比较实际展示的状态
             override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
-                return oldItem == newItem
+                return oldItem.enabled == newItem.enabled &&
+                        oldItem.app.label == newItem.app.label &&
+                        oldItem.app.versionName == newItem.app.versionName &&
+                        oldItem.app.types == newItem.app.types &&
+                        oldItem.app.lastUpdateTime == newItem.app.lastUpdateTime
             }
         }
     }
