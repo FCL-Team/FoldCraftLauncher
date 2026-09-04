@@ -899,4 +899,6 @@
     <string name="world_time">EEE, MMM d, yyyy HH:mm:ss</string>
     <string name="create_account_first">لطفاً پیش از اجرای بازی یک حساب بازی بسازید</string>
     <string name="version_list_refreshing">در حال دریافت فهرست نسخه‌های راه دور…</string>
+    <string name="renderer_source">منبع:</string>
+    <string name="renderer_source_builtin">داخلی</string>
 </resources>

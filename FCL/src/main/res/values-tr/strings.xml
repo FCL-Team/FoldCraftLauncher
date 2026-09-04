@@ -263,4 +263,6 @@
     <string name="curse_category_404">Animasyon</string>
     <string name="curse_category_4465">Mod Desteği</string>
     <string name="curse_category_402">Ortaçağ</string>
+    <string name="renderer_source">Kaynak:</string>
+    <string name="renderer_source_builtin">Yerleşik</string>
 </resources>

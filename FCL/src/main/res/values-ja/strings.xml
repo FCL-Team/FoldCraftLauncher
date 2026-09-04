@@ -7,4 +7,6 @@
     <string name="splash_permission_title">すとれえじ けんへ が 必要 です</string>
     <string name="splash_permission_close">あぷり お とじて ください。</string>
     <string name="splash_permission_settings">設定</string>
+    <string name="renderer_source">ソース:</string>
+    <string name="renderer_source_builtin">内蔵</string>
 </resources>

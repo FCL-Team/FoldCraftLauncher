@@ -1018,6 +1018,8 @@
     <string name="message_warn_renderer_global_setting">你當前選擇嘅版本已啟用遊戲特定設置，所以喺此處修改嘅渲染器無法應用於當前版本。建議長按「啟動」按鈕選擇渲染器。</string>
     <string name="message_select_url">請選擇一個鏈接進行下載（將會跳轉至瀏覽器）</string>
     <string name="supported_mc_version">支持嘅MC版本：</string>
+    <string name="renderer_source">來源：</string>
+    <string name="renderer_source_builtin">內置</string>
     <string name="message_check_renderer">當前渲染器 %s 唔支持該遊戲版本，繼續使用可能導致渲染錯誤或遊戲崩潰！是否繼續？</string>
     <!-- 原 FCLLibrary 模块字符串（模块已并入 FCL） -->
     <string name="file_browser_title">檔案瀏覽器</string>

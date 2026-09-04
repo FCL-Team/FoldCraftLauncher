@@ -924,4 +924,6 @@
     <string name="menu_settings_item_bar_scale_height">Hotbar-Skalierung (Höhe)</string>
     <string name="create_account_first">Bitte erstelle ein Spielkonto, bevor du das Spiel startest</string>
     <string name="version_list_refreshing">Remote-Versionsliste wird abgerufen…</string>
+    <string name="renderer_source">Quelle:</string>
+    <string name="renderer_source_builtin">Integriert</string>
 </resources>

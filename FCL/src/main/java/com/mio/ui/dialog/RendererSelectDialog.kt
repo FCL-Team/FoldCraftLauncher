@@ -3,10 +3,12 @@ package com.mio.ui.dialog
 import android.content.Context
 import android.graphics.Point
 import android.view.WindowManager
-import android.widget.ArrayAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.manager.RendererManager
+import com.mio.ui.adapter.RendererSelectItemAdapter
+import com.mio.ui.adapter.SpacingItemDecoration
 import com.tungsten.fcl.R
-import com.tungsten.fcl.databinding.DialogSelectRendererBinding
+import com.tungsten.fcl.databinding.DialogRendererSelectBinding
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
@@ -30,36 +32,37 @@ class RendererSelectDialog(
             params?.height = point.y * 1 / 2
         }
         window?.attributes = params
-        val binding = DialogSelectRendererBinding.inflate(layoutInflater)
+        val binding = DialogRendererSelectBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.title.text = context.getString(R.string.settings_fcl_renderer)
-        binding.listView.adapter = getAdapter()
-        binding.listView.setOnItemClickListener { _, _, position, _ ->
+        val adapter = RendererSelectItemAdapter(
+            context,
+            RendererManager.rendererList,
+            currentRendererId()
+        ) { renderer ->
             val versionSetting =
                 if (isGlobal) Profiles.getSelectedProfile().globalVersionSetting else Profiles.getSelectedProfile().versionSetting
-            versionSetting.renderer = RendererManager.rendererList[position].id
+            versionSetting.renderer = renderer.id
             dismiss()
-            callback.accept(binding.listView.adapter.getItem(position).toString())
+            callback.accept(renderer.des)
         }
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        binding.recyclerView.addItemDecoration(
+            SpacingItemDecoration(ConvertUtils.dip2px(context, 10f))
+        )
+        binding.recyclerView.adapter = adapter
         binding.refresh.setOnClickListener {
             RendererManager.refresh(context)
-            binding.listView.adapter = getAdapter()
+            // rendererList 是同一实例被 clear 后重填，直接全量刷新
+            adapter.notifyDataSetChanged()
         }
         binding.cancel.setOnClickListener {
             dismiss()
         }
     }
-    private fun getAdapter(): ArrayAdapter<String> {
-        return ArrayAdapter(context, R.layout.item_renderer, mutableListOf<String>().apply {
-            RendererManager.rendererList.forEach {
-                val ver = when {
-                    it.minMCver.isNotEmpty() && it.maxMCver.isNotEmpty() -> "${it.minMCver}~${it.maxMCver}"
-                    it.minMCver.isNotEmpty() -> ">=${it.minMCver}"
-                    it.maxMCver.isNotEmpty() -> "<=${it.maxMCver}"
-                    else -> ""
-                }
-                add(if (ver.isNotEmpty()) "${it.des} (${context.getString(R.string.supported_mc_version)} $ver)" else it.des)
-            }
-        })
+
+    private fun currentRendererId(): String {
+        return if (isGlobal) Profiles.getSelectedProfile().globalVersionSetting.renderer
+        else Profiles.getSelectedProfile().versionSetting.renderer
     }
 }

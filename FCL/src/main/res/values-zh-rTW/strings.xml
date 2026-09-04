@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name_import">安裝模組包</string>
     <string name="splash_agreement">FCL 需要取得儲存空間權限，才能管理及讀取遊戲檔案。\nFCL 的原始碼已完整公開於 GitHub，請放心使用，您的資料安全不會受到影響。此權限僅用於確保遊戲能正常運作，不會造成任何安全風險。</string>
+    <string name="renderer_source">來源：</string>
+    <string name="renderer_source_builtin">內建</string>
 </resources>

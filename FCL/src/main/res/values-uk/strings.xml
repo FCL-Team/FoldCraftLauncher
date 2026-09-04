@@ -941,4 +941,6 @@
     <string name="close">Закрити</string>
     <string name="create_account_first">Створіть ігровий акаунт перед запуском гри</string>
     <string name="version_list_refreshing">Отримання списку віддалених версій…</string>
+    <string name="renderer_source">Джерело:</string>
+    <string name="renderer_source_builtin">Вбудований</string>
 </resources>

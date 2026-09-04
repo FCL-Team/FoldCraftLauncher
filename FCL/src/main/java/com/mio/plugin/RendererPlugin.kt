@@ -60,6 +60,8 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
         val nativeLibraryDir: String,
         /** envKey → 插件内本地化标题 */
         val titles: Map<String, String>,
+        /** 插件应用名（渲染器来源显示） */
+        val label: String,
     )
 
     private val v2Entries = mutableMapOf<String, V2Entry>()
@@ -110,7 +112,8 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
                 pojavEnv,
                 app.packageName,
                 minMCVer,
-                maxMCVer
+                maxMCVer,
+                source = app.label
             )
         )
     }
@@ -135,7 +138,7 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
                     if (id != 0) titles[titleKey] = resources.getString(id)
                 }
             }
-            V2Entry(config, app.appInfo.nativeLibraryDir, titles)
+            V2Entry(config, app.appInfo.nativeLibraryDir, titles, app.label)
         }.getOrNull() ?: return
         v2Entries[app.packageName] = entry
         addRenderer(buildV2Renderer(app.packageName, entry))
@@ -155,7 +158,8 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
             packageName,
             config.minMCVer ?: "",
             config.maxMCVer ?: "",
-            config.rendererId
+            config.rendererId,
+            entry.label
         )
     }
 
