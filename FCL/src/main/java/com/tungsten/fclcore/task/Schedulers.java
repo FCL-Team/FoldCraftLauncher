@@ -37,7 +37,7 @@ public final class Schedulers {
      * Get singleton instance of the thread pool for I/O operations,
      * usually for reading files from disk, or Internet connections.
      *
-     * This thread pool has no more than 4 threads, and number of threads will get
+     * This thread pool has no more than 8 threads, and number of threads will get
      * reduced if concurrency is less than thread number.
      *
      * @return Thread pool for I/O operations.
@@ -46,7 +46,7 @@ public final class Schedulers {
         if (IO_EXECUTOR == null) {
             synchronized (Schedulers.class) {
                 if (IO_EXECUTOR == null) {
-                    IO_EXECUTOR = threadPool("IO", true, 4, 10, TimeUnit.SECONDS);
+                    IO_EXECUTOR = threadPool("IO", true, 8, 10, TimeUnit.SECONDS);
                 }
             }
         }
