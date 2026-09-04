@@ -46,6 +46,13 @@
     <string name="plugin_type_native">Thư viện gốc</string>
     <string name="plugin_enable">Bật</string>
     <string name="plugin_uninstall">Gỡ cài đặt</string>
+    <string name="plugin_miolibpatcher_desc">Bản vá bytecode JVM khắc phục các vấn đề tương thích mod trên Android</string>
+    <string name="plugin_miolibpatcher_alc10">Bản vá ALC10</string>
+    <string name="plugin_miolibpatcher_alc10_desc">Thay thế alcGetCurrentContext để khắc phục sự cố âm thanh OpenAL trên một số thiết bị</string>
+    <string name="plugin_miolibpatcher_sable">Bản vá Sable Rapier</string>
+    <string name="plugin_miolibpatcher_sable_desc">Buộc bật bản vá Rapier khi bật; khi tắt không đặt thuộc tính (tự động phát hiện)</string>
+    <string name="plugin_miolibpatcher_asm">Cửa hậu ASM</string>
+    <string name="plugin_miolibpatcher_asm_desc">Loại bỏ kiểm tra ASM 5.0.4 để tương thích với các mod cũ như AE1 (ảnh hưởng tất cả mod ASM 5.0.4, hãy bật thận trọng)</string>
     <string name="plugin_env_config">Cấu hình</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>

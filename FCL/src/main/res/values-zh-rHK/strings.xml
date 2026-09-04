@@ -34,6 +34,13 @@
     <string name="plugin_type_native">原生庫</string>
     <string name="plugin_enable">啟用</string>
     <string name="plugin_uninstall">卸載</string>
+    <string name="plugin_miolibpatcher_desc">修復模組在 Android 環境下相容性問題的 JVM 位元組碼補丁</string>
+    <string name="plugin_miolibpatcher_alc10">ALC10 補丁</string>
+    <string name="plugin_miolibpatcher_alc10_desc">替換 alcGetCurrentContext 實現，修復部分裝置的 OpenAL 音訊問題</string>
+    <string name="plugin_miolibpatcher_sable">Sable Rapier 補丁</string>
+    <string name="plugin_miolibpatcher_sable_desc">開啟後強制啟用 Rapier 補丁；關閉時不指定屬性（自動偵測）</string>
+    <string name="plugin_miolibpatcher_asm">ASM 後門</string>
+    <string name="plugin_miolibpatcher_asm_desc">移除 ASM 5.0.4 校驗以相容 AE1 等舊模組（影響所有 ASM 5.0.4 模組，請謹慎啟用）</string>
     <string name="plugin_env_config">配置</string>
     <string name="about_sponsor">贊助</string>
     <string name="about_source">開源</string>

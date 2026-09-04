@@ -31,6 +31,13 @@
     <string name="plugin_type_native">کتابخانه بومی</string>
     <string name="plugin_enable">فعال</string>
     <string name="plugin_uninstall">حذف نصب</string>
+    <string name="plugin_miolibpatcher_desc">وصله بایت‌کد JVM برای رفع مشکلات سازگاری مادها در اندروید</string>
+    <string name="plugin_miolibpatcher_alc10">وصله ALC10</string>
+    <string name="plugin_miolibpatcher_alc10_desc">جایگزینی پیاده‌سازی alcGetCurrentContext برای رفع مشکلات صوتی OpenAL در برخی دستگاه‌ها</string>
+    <string name="plugin_miolibpatcher_sable">وصله Sable Rapier</string>
+    <string name="plugin_miolibpatcher_sable_desc">در صورت فعال بودن، وصله Rapier را اجباری می‌کند؛ در غیر این صورت ویژگی تنظیم نمی‌شود (تشخیص خودکار)</string>
+    <string name="plugin_miolibpatcher_asm">در پشتی ASM</string>
+    <string name="plugin_miolibpatcher_asm_desc">حذف بررسی ASM 5.0.4 برای سازگاری با مادهای قدیمی مانند AE1 (بر همه مادهای ASM 5.0.4 تأثیر می‌گذارد؛ با احتیاط فعال کنید)</string>
     <string name="plugin_env_config">پیکربندی</string>
     <string name="about_sponsor">حمایت مالی</string>
     <string name="about_source">متن باز</string>

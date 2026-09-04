@@ -50,6 +50,14 @@
     <string name="plugin_type_native">Native Library</string>
     <string name="plugin_enable">Enable</string>
     <string name="plugin_uninstall">Uninstall</string>
+    <string name="plugin_miolibpatcher_name">MioLibPatcher</string>
+    <string name="plugin_miolibpatcher_desc">JVM bytecode patch that fixes mod compatibility issues on Android</string>
+    <string name="plugin_miolibpatcher_alc10">ALC10 patch</string>
+    <string name="plugin_miolibpatcher_alc10_desc">Replaces alcGetCurrentContext to fix OpenAL audio issues on some devices</string>
+    <string name="plugin_miolibpatcher_sable">Sable Rapier patch</string>
+    <string name="plugin_miolibpatcher_sable_desc">Forces the Rapier patch when enabled; when disabled the property is not set (auto-detected)</string>
+    <string name="plugin_miolibpatcher_asm">ASM backdoor</string>
+    <string name="plugin_miolibpatcher_asm_desc">Removes the ASM 5.0.4 API check to support older mods like AE1 (affects all ASM 5.0.4 mods, use with caution)</string>
     <string name="plugin_env_config">Configure</string>
     <string name="about_launcher" translatable="false">Fold Craft Launcher</string>
     <string name="about_developer" translatable="false">FCL-Team</string>

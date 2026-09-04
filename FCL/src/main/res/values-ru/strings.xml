@@ -34,6 +34,13 @@
     <string name="plugin_type_native">Нативная библиотека</string>
     <string name="plugin_enable">Включить</string>
     <string name="plugin_uninstall">Удалить</string>
+    <string name="plugin_miolibpatcher_desc">JVM-байткод-патч, исправляющий проблемы совместимости модов на Android</string>
+    <string name="plugin_miolibpatcher_alc10">Патч ALC10</string>
+    <string name="plugin_miolibpatcher_alc10_desc">Заменяет реализацию alcGetCurrentContext для исправления проблем со звуком OpenAL на некоторых устройствах</string>
+    <string name="plugin_miolibpatcher_sable">Патч Sable Rapier</string>
+    <string name="plugin_miolibpatcher_sable_desc">При включении принудительно включает патч Rapier; при выключении свойство не задаётся (автоопределение)</string>
+    <string name="plugin_miolibpatcher_asm">Бэкдор ASM</string>
+    <string name="plugin_miolibpatcher_asm_desc">Убирает проверку ASM 5.0.4 для совместимости со старыми модами (например AE1); затрагивает все моды ASM 5.0.4, включайте с осторожностью</string>
     <string name="plugin_env_config">Настроить</string>
     <string name="about_sponsor">Спонсоры</string>
     <string name="about_source">Исходный код</string>

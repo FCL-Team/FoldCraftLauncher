@@ -26,6 +26,7 @@ import android.os.Build;
 
 import com.mio.JavaManager;
 import com.mio.data.Renderer;
+import com.mio.plugin.MioLibPatcherManager;
 import com.mio.plugin.NativeLibPlugin;
 import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.FCLauncher;
@@ -210,7 +211,10 @@ public class DefaultLauncher {
 //        if (repository.getGameVersion(version).isPresent() && repository.getGameVersion(version).get().startsWith("1.16")) {
 //
 //        }
-        res.add("-javaagent:" + FCLPath.LIB_PATCHER_PATH);
+        if (MioLibPatcherManager.isEnabled()) {
+            res.add("-javaagent:" + FCLPath.LIB_PATCHER_PATH);
+            MioLibPatcherManager.getJvmOptions().forEach(res::add);
+        }
 
         Set<String> classpath = repository.getClasspath(version);
         addLWJGLClassPath(classpath);
