@@ -4,10 +4,10 @@ import android.content.Context
 import android.graphics.Point
 import android.view.WindowManager
 import android.widget.ArrayAdapter
+import com.mio.plugin.DriverPlugin
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogSelectRendererBinding
 import com.tungsten.fcl.setting.Profiles
-import com.tungsten.fclauncher.plugins.DriverPlugin
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.util.function.Consumer

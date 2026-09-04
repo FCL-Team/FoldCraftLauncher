@@ -7,10 +7,14 @@ import android.widget.Toast
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mio.plugin.DriverPlugin.driverList
+import com.mio.plugin.DriverPlugin.selected
 import com.mio.ui.adapter.SpacingItemDecoration
 import com.mio.ui.dialog.DriverSelectDialog
 import com.mio.ui.dialog.JavaManageDialog
 import com.mio.ui.dialog.RendererSelectDialog
+import com.mio.util.isAdrenoGPU
+import com.mio.util.openLink
 import com.mio.util.showErrorDialog
 import com.mio.util.showItemSelectionDialog
 import com.tungsten.fcl.R
@@ -25,8 +29,6 @@ import com.tungsten.fcl.setting.VersionSetting
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.util.WeakListenerHolder
-import com.tungsten.fclauncher.plugins.DriverPlugin.driverList
-import com.tungsten.fclauncher.plugins.DriverPlugin.selected
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.event.Event
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
@@ -51,8 +53,6 @@ import java.io.File
 import java.io.IOException
 import java.util.Locale
 import java.util.logging.Level
-import com.mio.util.isAdrenoGPU
-import com.mio.util.openLink
 
 /**
  * 版本设置页。设置项由 [VersionSettingAdapter] 以 RecyclerView 行级复用渲染，
@@ -62,7 +62,8 @@ class VersionSettingPage(
     context: Context?,
     id: Int,
     private val globalSetting: Boolean
-) : FCLPage(context, id, R.layout.page_version_setting), VersionLoadable, VersionSettingAdapter.Listener {
+) : FCLPage(context, id, R.layout.page_version_setting), VersionLoadable,
+    VersionSettingAdapter.Listener {
     private lateinit var lastVersionSetting: VersionSetting
     private lateinit var profile: Profile
     private lateinit var listenerHolder: WeakListenerHolder

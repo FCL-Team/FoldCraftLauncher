@@ -15,6 +15,7 @@ public class SettingUI extends FCLMultiPageUI {
 
     public static final int PAGE_ID_SETTING_GAME = 15030;
     public static final int PAGE_ID_SETTING_LAUNCHER = 15031;
+    public static final int PAGE_ID_SETTING_PLUGIN = 15032;
     public static final int PAGE_ID_SETTING_ABOUT = 15034;
 
     private FCLUILayout container;
@@ -35,7 +36,7 @@ public class SettingUI extends FCLMultiPageUI {
 
     @Override
     public int getPageCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -44,6 +45,8 @@ public class SettingUI extends FCLMultiPageUI {
             case 1:
                 return new LauncherSettingPage(getContext(), PAGE_ID_SETTING_LAUNCHER);
             case 2:
+                return new PluginManagePage(getContext(), PAGE_ID_SETTING_PLUGIN);
+            case 3:
                 return new AboutPage(getContext(), PAGE_ID_SETTING_ABOUT);
             default:
                 return new VersionSettingPage(getContext(), PAGE_ID_SETTING_GAME, true);
@@ -55,8 +58,20 @@ public class SettingUI extends FCLMultiPageUI {
         return new String[]{
                 getContext().getString(R.string.settings_type_global_manage),
                 getContext().getString(R.string.settings_launcher),
+                getContext().getString(R.string.settings_plugin),
                 getContext().getString(R.string.about)
         };
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 从系统卸载页返回等场景：同步插件管理页的插件列表（仅刷新已创建的页面）
+        forEachCreatedPage(page -> {
+            if (page instanceof PluginManagePage) {
+                ((PluginManagePage) page).onHostResume();
+            }
+        });
     }
 
     @Override

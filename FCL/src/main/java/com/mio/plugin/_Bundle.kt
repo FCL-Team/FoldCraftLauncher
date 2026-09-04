@@ -1,4 +1,4 @@
-package com.tungsten.fclauncher.plugins
+package com.mio.plugin
 
 import android.os.Bundle
 
