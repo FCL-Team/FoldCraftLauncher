@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- FCLSpinner 下拉弹窗收回：向 anchor 方向收起淡出 -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:interpolator/accelerate_quad">
+    <translate
+        android:duration="150"
+        android:fromYDelta="0"
+        android:toYDelta="-15%" />
+    <alpha
+        android:duration="150"
+        android:fromAlpha="1"
+        android:toAlpha="0" />
+</set>

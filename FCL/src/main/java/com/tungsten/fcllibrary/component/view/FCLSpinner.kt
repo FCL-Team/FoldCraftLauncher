@@ -100,6 +100,8 @@ class FCLSpinner<T> @JvmOverloads constructor(
         // 弹窗底色取当前亮暗模式的主色，与条目背景（FCLCheckedTextView 主题化）一致
         popup.setBackgroundDrawable(ColorDrawable(ThemeEngine.getTheme().color))
         popup.isModal = true
+        // 弹窗过渡：自 anchor 下落淡入，收回上滑淡出（点击外部关闭同样生效）
+        popup.setAnimationStyle(R.style.FCLSpinnerPopupAnimation)
         popup.setOnDismissListener { animateArrow(false) }
         popup.setOnItemClickListener { _, _, position, _ ->
             popup.dismiss()
