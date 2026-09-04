@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -41,7 +40,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
 
     private FCLEditText editName;
     private ControlDirection direction;
-    private FCLSpinner<ControlDirectionStyle.Type> typeSpinner;
+    private FCLSpinner<String> typeSpinner;
 
     private ScrollView container;
     private FCLLinearLayout buttonStyleLayout;
@@ -77,13 +76,10 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         ArrayList<ControlDirectionStyle.Type> types = new ArrayList<>();
         types.add(ControlDirectionStyle.Type.BUTTON);
         types.add(ControlDirectionStyle.Type.ROCKER);
-        typeSpinner.setDataList(types);
         ArrayList<String> typeString = new ArrayList<>();
         typeString.add(getContext().getString(R.string.style_direction_button));
         typeString.add(getContext().getString(R.string.style_direction_rocker));
-        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner, typeString);
-        typeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-        typeSpinner.setAdapter(typeAdapter);
+        typeSpinner.setItems(typeString);
 
         container = findViewById(R.id.container);
 
@@ -317,7 +313,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
 
         container.addView(style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON ? buttonStyleLayout : rockerStyleLayout);
         typeSpinner.setSelection(style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON ? 0 : 1);
-        FXUtils.bindSelection(typeSpinner, style.styleTypeProperty());
+        typeSpinner.setOnItemSelectedListener((index, item) -> style.styleTypeProperty().set(types.get(index)));
         style.styleTypeProperty().addListener(observable -> {
             container.removeAllViewsInLayout();
             container.addView(style.styleTypeProperty().get() == ControlDirectionStyle.Type.BUTTON ? buttonStyleLayout : rockerStyleLayout);

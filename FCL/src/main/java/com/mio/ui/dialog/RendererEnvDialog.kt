@@ -5,12 +5,10 @@ import android.graphics.Point
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import com.mio.plugin.RendererPlugin.EnvSpec
 import com.mio.plugin.RendererPlugin.EnvType
 import com.mio.plugin.RendererPlugin.EnvValue
-import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogRendererEnvBinding
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.component.view.FCLEditText
@@ -89,12 +87,8 @@ class RendererEnvDialog(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT
                     ).apply { topMargin = (4 * density).toInt() }
-                    setAdapter(ArrayAdapter(context, R.layout.item_spinner, spec.options).apply {
-                        setDropDownViewResource(R.layout.item_spinner_dropdown)
-                    })
-                    // Spinner 首次布局前 setSelection 会被初始布局重置回第 0 项，post 到布局完成后再选中
-                    val selectedIndex = spec.options.indexOf(spec.value).coerceAtLeast(0)
-                    post { setSelection(selectedIndex) }
+                    setItems(spec.options)
+                    setSelection(spec.options.indexOf(spec.value).coerceAtLeast(0))
                     spinners[spec.key] = this
                 }
                 row.addView(header)
@@ -133,7 +127,7 @@ class RendererEnvDialog(
             when (spec.type) {
                 EnvType.SELECTABLE -> result[spec.key] = EnvValue(
                     enabled = switches[spec.key]?.isChecked,
-                    value = spinners[spec.key]?.selectedItem?.toString()
+                    value = spinners[spec.key]?.getSelectedItem()?.toString()
                 )
 
                 EnvType.CUSTOMIZABLE -> result[spec.key] = EnvValue(

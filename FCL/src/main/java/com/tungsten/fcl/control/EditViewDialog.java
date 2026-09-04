@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 
@@ -162,23 +161,20 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 editText.setText(data.getText());
                 data.textProperty().bind(editText.stringProperty());
 
-                FCLSpinner<BaseInfoData.VisibilityType> visibilityTypeSpinner = findInfoView(R.id.visibility);
+                FCLSpinner<String> visibilityTypeSpinner = findInfoView(R.id.visibility);
                 ArrayList<BaseInfoData.VisibilityType> visibilityTypes = new ArrayList<>();
                 visibilityTypes.add(BaseInfoData.VisibilityType.ALWAYS);
                 visibilityTypes.add(BaseInfoData.VisibilityType.IN_GAME);
                 visibilityTypes.add(BaseInfoData.VisibilityType.MENU);
-                visibilityTypeSpinner.setDataList(visibilityTypes);
                 ArrayList<String> visibilityTypeString = new ArrayList<>();
                 visibilityTypeString.add(context.getString(R.string.view_info_visibility_always));
                 visibilityTypeString.add(context.getString(R.string.view_info_visibility_game));
                 visibilityTypeString.add(context.getString(R.string.view_info_visibility_menu));
-                ArrayAdapter<String> visibilityTypeAdapter = new ArrayAdapter<>(context, R.layout.item_spinner, visibilityTypeString);
-                visibilityTypeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-                visibilityTypeSpinner.setAdapter(visibilityTypeAdapter);
+                visibilityTypeSpinner.setItems(visibilityTypeString);
                 visibilityTypeSpinner.setSelection(data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ?
                         0 : (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME ?
                              1 : 2));
-                FXUtils.bindSelection(visibilityTypeSpinner, data.getBaseInfo().visibilityTypeProperty());
+                visibilityTypeSpinner.setOnItemSelectedListener((index, item) -> data.getBaseInfo().visibilityTypeProperty().set(visibilityTypes.get(index)));
 
                 FCLPreciseSeekBar xPosition = findInfoView(R.id.x_position);
                 FCLPreciseSeekBar yPosition = findInfoView(R.id.y_position);
@@ -197,19 +193,16 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 xPositionText.stringProperty().bind(Bindings.createStringBinding(() -> xPosition.getProgress() / 10f + " %", xPosition.progressProperty()));
                 yPositionText.stringProperty().bind(Bindings.createStringBinding(() -> yPosition.getProgress() / 10f + " %", yPosition.progressProperty()));
 
-                FCLSpinner<BaseInfoData.SizeType> sizeTypeSpinner = findInfoView(R.id.size_type);
+                FCLSpinner<String> sizeTypeSpinner = findInfoView(R.id.size_type);
                 ArrayList<BaseInfoData.SizeType> sizeTypes = new ArrayList<>();
                 sizeTypes.add(BaseInfoData.SizeType.PERCENTAGE);
                 sizeTypes.add(BaseInfoData.SizeType.ABSOLUTE);
-                sizeTypeSpinner.setDataList(sizeTypes);
                 ArrayList<String> sizeTypeString = new ArrayList<>();
                 sizeTypeString.add(context.getString(R.string.view_info_size_type_percentage));
                 sizeTypeString.add(context.getString(R.string.view_info_size_type_absolute));
-                ArrayAdapter<String> sizeTypeAdapter = new ArrayAdapter<>(context, R.layout.item_spinner, sizeTypeString);
-                sizeTypeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-                sizeTypeSpinner.setAdapter(sizeTypeAdapter);
+                sizeTypeSpinner.setItems(sizeTypeString);
                 sizeTypeSpinner.setSelection(data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE ? 0 : 1);
-                FXUtils.bindSelection(sizeTypeSpinner, data.getBaseInfo().sizeTypeProperty());
+                sizeTypeSpinner.setOnItemSelectedListener((index, item) -> data.getBaseInfo().sizeTypeProperty().set(sizeTypes.get(index)));
 
                 FCLLinearLayout widthReferenceLayout = findInfoView(R.id.width_reference_layout);
                 FCLLinearLayout heightReferenceLayout = findInfoView(R.id.height_reference_layout);
@@ -223,21 +216,15 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 referenceString.add(context.getString(R.string.view_info_reference_width));
                 referenceString.add(context.getString(R.string.view_info_reference_height));
 
-                FCLSpinner<BaseInfoData.PercentageSize.Reference> widthReferenceSpinner = findInfoView(R.id.width_reference);
-                widthReferenceSpinner.setDataList(references);
-                ArrayAdapter<String> widthReferenceAdapter = new ArrayAdapter<>(context, R.layout.item_spinner, referenceString);
-                widthReferenceAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-                widthReferenceSpinner.setAdapter(widthReferenceAdapter);
+                FCLSpinner<String> widthReferenceSpinner = findInfoView(R.id.width_reference);
+                widthReferenceSpinner.setItems(referenceString);
                 widthReferenceSpinner.setSelection(data.getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ? 0 : 1);
-                FXUtils.bindSelection(widthReferenceSpinner, data.getBaseInfo().getPercentageWidth().referenceProperty());
+                widthReferenceSpinner.setOnItemSelectedListener((index, item) -> data.getBaseInfo().getPercentageWidth().referenceProperty().set(references.get(index)));
 
-                FCLSpinner<BaseInfoData.PercentageSize.Reference> heightReferenceSpinner = findInfoView(R.id.height_reference);
-                heightReferenceSpinner.setDataList(references);
-                ArrayAdapter<String> heightReferenceAdapter = new ArrayAdapter<>(context, R.layout.item_spinner, referenceString);
-                heightReferenceAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-                heightReferenceSpinner.setAdapter(heightReferenceAdapter);
+                FCLSpinner<String> heightReferenceSpinner = findInfoView(R.id.height_reference);
+                heightReferenceSpinner.setItems(referenceString);
                 heightReferenceSpinner.setSelection(data.getBaseInfo().getPercentageHeight().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ? 0 : 1);
-                FXUtils.bindSelection(heightReferenceSpinner, data.getBaseInfo().getPercentageHeight().referenceProperty());
+                heightReferenceSpinner.setOnItemSelectedListener((index, item) -> data.getBaseInfo().getPercentageHeight().referenceProperty().set(references.get(index)));
 
                 FCLPreciseSeekBar width = findInfoView(R.id.width);
                 FCLPreciseSeekBar height = findInfoView(R.id.height);
@@ -468,23 +455,20 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
             eventLayout = (FCLLinearLayout) LayoutInflater.from(context).inflate(R.layout.view_edit_direction_event, null);
 
             {
-                FCLSpinner<BaseInfoData.VisibilityType> visibilityTypeSpinner = findInfoView(R.id.visibility);
+                FCLSpinner<String> visibilityTypeSpinner = findInfoView(R.id.visibility);
                 ArrayList<BaseInfoData.VisibilityType> visibilityTypes = new ArrayList<>();
                 visibilityTypes.add(BaseInfoData.VisibilityType.ALWAYS);
                 visibilityTypes.add(BaseInfoData.VisibilityType.IN_GAME);
                 visibilityTypes.add(BaseInfoData.VisibilityType.MENU);
-                visibilityTypeSpinner.setDataList(visibilityTypes);
                 ArrayList<String> visibilityTypeString = new ArrayList<>();
                 visibilityTypeString.add(context.getString(R.string.view_info_visibility_always));
                 visibilityTypeString.add(context.getString(R.string.view_info_visibility_game));
                 visibilityTypeString.add(context.getString(R.string.view_info_visibility_menu));
-                ArrayAdapter<String> visibilityTypeAdapter = new ArrayAdapter<>(context, R.layout.item_spinner, visibilityTypeString);
-                visibilityTypeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-                visibilityTypeSpinner.setAdapter(visibilityTypeAdapter);
+                visibilityTypeSpinner.setItems(visibilityTypeString);
                 visibilityTypeSpinner.setSelection(data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.ALWAYS ?
                         0 : (data.getBaseInfo().getVisibilityType() == BaseInfoData.VisibilityType.IN_GAME ?
                              1 : 2));
-                FXUtils.bindSelection(visibilityTypeSpinner, data.getBaseInfo().visibilityTypeProperty());
+                visibilityTypeSpinner.setOnItemSelectedListener((index, item) -> data.getBaseInfo().visibilityTypeProperty().set(visibilityTypes.get(index)));
 
                 FCLPreciseSeekBar xPosition = findInfoView(R.id.x_position);
                 FCLPreciseSeekBar yPosition = findInfoView(R.id.y_position);
@@ -500,19 +484,16 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 xPositionText.stringProperty().bind(Bindings.createStringBinding(() -> xPosition.getProgress() / 10f + " %", xPosition.progressProperty()));
                 yPositionText.stringProperty().bind(Bindings.createStringBinding(() -> yPosition.getProgress() / 10f + " %", yPosition.progressProperty()));
 
-                FCLSpinner<BaseInfoData.SizeType> sizeTypeSpinner = findInfoView(R.id.size_type);
+                FCLSpinner<String> sizeTypeSpinner = findInfoView(R.id.size_type);
                 ArrayList<BaseInfoData.SizeType> sizeTypes = new ArrayList<>();
                 sizeTypes.add(BaseInfoData.SizeType.PERCENTAGE);
                 sizeTypes.add(BaseInfoData.SizeType.ABSOLUTE);
-                sizeTypeSpinner.setDataList(sizeTypes);
                 ArrayList<String> sizeTypeString = new ArrayList<>();
                 sizeTypeString.add(context.getString(R.string.view_info_size_type_percentage));
                 sizeTypeString.add(context.getString(R.string.view_info_size_type_absolute));
-                ArrayAdapter<String> sizeTypeAdapter = new ArrayAdapter<>(context, R.layout.item_spinner, sizeTypeString);
-                sizeTypeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-                sizeTypeSpinner.setAdapter(sizeTypeAdapter);
+                sizeTypeSpinner.setItems(sizeTypeString);
                 sizeTypeSpinner.setSelection(data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE ? 0 : 1);
-                FXUtils.bindSelection(sizeTypeSpinner, data.getBaseInfo().sizeTypeProperty());
+                sizeTypeSpinner.setOnItemSelectedListener((index, item) -> data.getBaseInfo().sizeTypeProperty().set(sizeTypes.get(index)));
 
                 FCLLinearLayout sizeReferenceLayout = findInfoView(R.id.size_reference_layout);
                 sizeReferenceLayout.visibilityProperty().bind(Bindings.createBooleanBinding(() -> data.getBaseInfo().getSizeType() == BaseInfoData.SizeType.PERCENTAGE, data.getBaseInfo().sizeTypeProperty()));
@@ -524,13 +505,10 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 referenceString.add(context.getString(R.string.view_info_reference_width));
                 referenceString.add(context.getString(R.string.view_info_reference_height));
 
-                FCLSpinner<BaseInfoData.PercentageSize.Reference> sizeReferenceSpinner = findInfoView(R.id.size_reference);
-                sizeReferenceSpinner.setDataList(references);
-                ArrayAdapter<String> sizeReferenceAdapter = new ArrayAdapter<>(context, R.layout.item_spinner, referenceString);
-                sizeReferenceAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-                sizeReferenceSpinner.setAdapter(sizeReferenceAdapter);
+                FCLSpinner<String> sizeReferenceSpinner = findInfoView(R.id.size_reference);
+                sizeReferenceSpinner.setItems(referenceString);
                 sizeReferenceSpinner.setSelection(data.getBaseInfo().getPercentageWidth().getReference() == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ? 0 : 1);
-                FXUtils.bindSelection(sizeReferenceSpinner, data.getBaseInfo().getPercentageWidth().referenceProperty());
+                sizeReferenceSpinner.setOnItemSelectedListener((index, item) -> data.getBaseInfo().getPercentageWidth().referenceProperty().set(references.get(index)));
 
                 FCLPreciseSeekBar size = findInfoView(R.id.size);
 
@@ -639,23 +617,20 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                 sneakSwitch.setChecked(data.getEvent().isSneak());
                 FXUtils.bindBoolean(sneakSwitch, data.getEvent().sneakProperty());
 
-                FCLSpinner<DirectionEventData.FollowOption> followOptionSpinner = findEventView(R.id.follow);
+                FCLSpinner<String> followOptionSpinner = findEventView(R.id.follow);
                 ArrayList<DirectionEventData.FollowOption> followOptions = new ArrayList<>();
                 followOptions.add(DirectionEventData.FollowOption.FIXED);
                 followOptions.add(DirectionEventData.FollowOption.CENTER_FOLLOW);
                 followOptions.add(DirectionEventData.FollowOption.FOLLOW);
-                followOptionSpinner.setDataList(followOptions);
                 ArrayList<String> followOptionString = new ArrayList<>();
                 followOptionString.add(context.getString(R.string.edit_direction_event_follow_fix));
                 followOptionString.add(context.getString(R.string.edit_direction_event_follow_center));
                 followOptionString.add(context.getString(R.string.edit_direction_event_follow_always));
-                ArrayAdapter<String> followOptionAdapter = new ArrayAdapter<>(context, R.layout.item_spinner, followOptionString);
-                followOptionAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-                followOptionSpinner.setAdapter(followOptionAdapter);
+                followOptionSpinner.setItems(followOptionString);
                 followOptionSpinner.setSelection(data.getEvent().getFollowOption() == DirectionEventData.FollowOption.FIXED ?
                         0 : (data.getEvent().getFollowOption() == DirectionEventData.FollowOption.CENTER_FOLLOW ?
                              1 : 2));
-                FXUtils.bindSelection(followOptionSpinner, data.getEvent().followOptionProperty());
+                followOptionSpinner.setOnItemSelectedListener((index, item) -> data.getEvent().followOptionProperty().set(followOptions.get(index)));
             }
 
             container.addView(infoLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

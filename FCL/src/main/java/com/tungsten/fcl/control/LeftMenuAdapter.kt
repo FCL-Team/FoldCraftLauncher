@@ -5,8 +5,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemMenuButtonBinding
@@ -15,6 +13,7 @@ import com.tungsten.fcl.databinding.ItemMenuSpinnerBinding
 import com.tungsten.fcl.databinding.ItemMenuSwitchBinding
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
+import com.tungsten.fcllibrary.component.view.FCLSpinner
 import com.tungsten.fcllibrary.component.view.FCLTextView
 
 /** 左菜单条目标签，交互回调按此分发 */
@@ -192,21 +191,17 @@ class LeftMenuAdapter(
     private fun bindSpinner(holder: Holder, row: Row.SpinnerRow) {
         val binding = ItemMenuSpinnerBinding.bind(holder.itemView)
         binding.label.text = context.getString(row.labelRes)
-        val adapter = ArrayAdapter(context, R.layout.item_spinner_small, row.data)
-        adapter.setDropDownViewResource(R.layout.item_spinner_dropdown_small)
-        binding.spinner.onItemSelectedListener = null
-        binding.spinner.adapter = adapter
-        binding.spinner.setSelection(row.selection)
-        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                listener.onSpinnerSelect(row.tag, position)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        // ViewBinding 对布局中的泛型控件生成 raw 类型，条目实际为 String
+        @Suppress("UNCHECKED_CAST")
+        val spinner = binding.spinner as FCLSpinner<String>
+        spinner.setItems(row.data)
+        spinner.setSelection(row.selection)
+        spinner.setOnItemSelectedListener { position, _ ->
+            listener.onSpinnerSelect(row.tag, position)
         }
         // 视图组尚未选中时（如切换控制器后）主动选中当前项，与原 refreshViewGroupList 的默认选中行为一致
         if (row.tag == LeftMenuTag.CURRENT_VIEW_GROUP && gameMenu.viewGroup == null && row.data.isNotEmpty()) {
-            listener.onSpinnerSelect(row.tag, binding.spinner.selectedItemPosition)
+            listener.onSpinnerSelect(row.tag, spinner.getSelectedIndex())
         }
     }
 

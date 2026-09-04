@@ -5,7 +5,6 @@ import com.tungsten.fcl.ui.UIManager;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.tungsten.fcl.R;
@@ -13,7 +12,6 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
-import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.auth.Account;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
@@ -170,13 +168,8 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
             list.add(0, "");
             map.put("", null);
             config().getAuthlibInjectorServers().forEach(it -> map.put(it.getName(), it.getUrl()));
-            serverSpinner.setDataList(list);
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, list);
-            adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-            serverSpinner.setAdapter(adapter);
-            SimpleStringProperty serverName = new SimpleStringProperty("");
-            FXUtils.bindSelection(serverSpinner, serverName);
-            serverName.addListener(observable -> authlibInjectorServer.set(map.get(serverName.get())));
+            serverSpinner.setItems(list);
+            serverSpinner.setOnItemSelectedListener((index, item) -> authlibInjectorServer.set(map.get(item)));
         }
         serverLayout.setVisibility(options.isRequireAuthlibInjectorServer() ? View.VISIBLE : View.GONE);
         splitS.setVisibility(options.isRequireAuthlibInjectorServer() ? View.VISIBLE : View.GONE);

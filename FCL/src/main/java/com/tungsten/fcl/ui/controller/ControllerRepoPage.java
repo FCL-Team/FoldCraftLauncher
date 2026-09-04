@@ -26,7 +26,6 @@ import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
@@ -72,7 +71,9 @@ public class ControllerRepoPage extends FCLPage implements View.OnClickListener,
     private FCLEditText nameEditText;
     private AppCompatSpinner sourceSpinner;
     private AppCompatSpinner langSpinner;
-    private FCLSpinner<ControllerCategory> categorySpinner;
+    private FCLSpinner<String> categorySpinner;
+    /** 分类数据（与 spinner 显示的本地化文本按下标对应） */
+    private final ArrayList<ControllerCategory> categoryData = new ArrayList<>();
     private AppCompatSpinner deviceSpinner;
 
     private FCLButton check;
@@ -184,15 +185,13 @@ public class ControllerRepoPage extends FCLPage implements View.OnClickListener,
 
     private void refreshCategories(ArrayList<ControllerCategory> categoryDataList) {
         if (refreshCategory) {
-            FXUtils.unbindSelection(categorySpinner, categoryProperty);
+            categoryData.clear();
+            categoryData.addAll(categoryDataList);
             categoryProperty.set(new ControllerCategory(0, null));
-            categorySpinner.setDataList(categoryDataList);
             ArrayList<String> categoryStringList = categoryDataList.stream().map(c -> c.getText(getContext())).collect(Collectors.toCollection(ArrayList::new));
-            ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, categoryStringList);
-            categoryAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-            categorySpinner.setAdapter(categoryAdapter);
+            categorySpinner.setItems(categoryStringList);
             categorySpinner.setSelection(0);
-            FXUtils.bindSelection(categorySpinner, categoryProperty);
+            categorySpinner.setOnItemSelectedListener((index, item) -> categoryProperty.set(categoryData.get(index)));
             refreshCategory = false;
         }
     }

@@ -10,8 +10,6 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
@@ -31,7 +29,6 @@ import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.version.Versions;
 import com.mio.download.DownloadManager;
 import com.mio.util.AndroidUtilKt;
-import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -113,8 +110,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     private FCLTextView sourceText;
     private FCLSpinner<String> sourceSpinner;
     private FCLSpinner<String> gameVersionSpinner;
-    private FCLSpinner<CategoryIndented> categorySpinner;
-    private FCLSpinner<RemoteModRepository.SortType> sortSpinner;
+    private FCLSpinner<String> categorySpinner;
+    /** 分类数据（与 spinner 显示的本地化文本按下标对应） */
+    private final ArrayList<CategoryIndented> categoryData = new ArrayList<>();
+    private FCLSpinner<String> sortSpinner;
     private final ArrayList<String> versionList = new ArrayList<>();
 
     private FCLButton search;
@@ -214,10 +213,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
             downloadSources.clear();
             downloadSource.set(getContext().getString(R.string.mods_curseforge));
         }
-        initSourceSpinner();
         if (searchState.source != null) {
             downloadSource.set(searchState.source);
         }
+        initSourceSpinner();
         downloadSource.addListener(sourceListener);
 
         // 特有控件显隐
@@ -231,13 +230,16 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         nameEditText.setHint(supportChinese.get() ? getContext().getString(R.string.search_hint_chinese) : getContext().getString(R.string.search_hint_english));
         if (mod) {
             binding.modloader.setSelection(searchState.modLoaderPosition);
+            applyModLoader(searchState.modLoaderPosition);
         }
 
         // 恢复该模式的搜索条件（搜索框/游戏版本/排序；分类在分类列表就绪后恢复）
         nameEditText.setText(searchState.searchFilter);
-        int versionIndex = versionList.indexOf(searchState.userGameVersion);
-        gameVersionSpinner.setSelection(Math.max(versionIndex, 0));
+        int versionIndex = Math.max(versionList.indexOf(searchState.userGameVersion), 0);
+        gameVersionSpinner.setSelection(versionIndex);
+        gameVersion.set(versionList.get(versionIndex));
         sortSpinner.setSelection(searchState.sortType.ordinal());
+        sortType.set(searchState.sortType);
 
         // 刷新分类并恢复搜索状态（有结果直接恢复，不重新搜索）
         refreshCategory(false);
@@ -255,12 +257,9 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         sourceText.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
         sourceSpinner.setVisibility(downloadSources.getSize() > 1 ? View.VISIBLE : View.GONE);
         if (downloadSources.getSize() > 1) {
-            sourceSpinner.setDataList(new ArrayList<>(downloadSources));
-            ArrayAdapter<String> sourceAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, new ArrayList<>(downloadSources));
-            sourceAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-            sourceSpinner.setAdapter(sourceAdapter);
+            sourceSpinner.setItems(new ArrayList<>(downloadSources));
             sourceSpinner.setSelection(downloadSource.get().equals(getContext().getString(R.string.mods_modrinth)) ? 1 : 0);
-            FXUtils.bindSelection(sourceSpinner, downloadSource);
+            sourceSpinner.setOnItemSelectedListener((index, item) -> downloadSource.set(item));
         }
     }
 
@@ -491,25 +490,17 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
 
         versionList.addAll(Arrays.stream(RemoteModRepository.DEFAULT_GAME_VERSIONS).collect(Collectors.toList()));
         versionList.add(0, "");
-        gameVersionSpinner.setDataList(versionList);
-        ArrayAdapter<String> gameVersionAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, versionList);
-        gameVersionAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-        gameVersionSpinner.setAdapter(gameVersionAdapter);
+        gameVersionSpinner.setItems(versionList);
         gameVersionSpinner.setSelection(0);
-        FXUtils.bindSelection(gameVersionSpinner, gameVersion);
+        gameVersionSpinner.setOnItemSelectedListener((index, item) -> gameVersion.set(item));
 
-        ArrayList<CategoryIndented> categoryDataList = new ArrayList<>();
-        categoryDataList.add(new CategoryIndented(0, null));
-        categorySpinner.setDataList(categoryDataList);
-        ArrayList<String> categoryStringList = categoryDataList.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
-        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, categoryStringList);
-        categoryAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-        categorySpinner.setAdapter(categoryAdapter);
+        categoryData.add(new CategoryIndented(0, null));
+        ArrayList<String> categoryStringList = categoryData.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
+        categorySpinner.setItems(categoryStringList);
         categorySpinner.setSelection(0);
-        FXUtils.bindSelection(categorySpinner, category);
+        categorySpinner.setOnItemSelectedListener((index, item) -> category.set(categoryData.get(index)));
         downloadSource.addListener(sourceListener);
 
-        sortSpinner.setDataList(new ArrayList<>(Arrays.stream(RemoteModRepository.SortType.values()).collect(Collectors.toList())));
         ArrayList<String> sorts = new ArrayList<>();
         sorts.add(getContext().getString(R.string.curse_sort_popularity));
         sorts.add(getContext().getString(R.string.curse_sort_name));
@@ -517,11 +508,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         sorts.add(getContext().getString(R.string.curse_sort_last_updated));
         sorts.add(getContext().getString(R.string.curse_sort_author));
         sorts.add(getContext().getString(R.string.curse_sort_total_downloads));
-        ArrayAdapter<String> sortAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, sorts);
-        sortAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-        sortSpinner.setAdapter(sortAdapter);
+        // 条目为本地化文本，按下标映射到 SortType（顺序与枚举 values() 一致）
+        sortSpinner.setItems(sorts);
         sortSpinner.setSelection(0);
-        FXUtils.bindSelection(sortSpinner, sortType);
+        sortSpinner.setOnItemSelectedListener((index, item) -> sortType.set(RemoteModRepository.SortType.values()[index]));
         pageOffset.addListener(observable -> getActivity().runOnUiThread(() -> page.setText(getContext().getString(R.string.search_page_n, pageOffset.get() + 1, pageCount.get() == -1 ? "-" : pageCount.getValue().toString()))));
         pageCount.addListener(observable -> getActivity().runOnUiThread(() -> page.setText(getContext().getString(R.string.search_page_n, pageOffset.get() + 1, pageCount.get() == -1 ? "-" : pageCount.getValue().toString()))));
 
@@ -532,36 +522,32 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         modLoaderList.add("NeoForge");
         modLoaderList.add("Fabric");
         modLoaderList.add("Quilt");
-        ArrayAdapter<String> modLoaderAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, modLoaderList);
-        modLoaderAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-        binding.modloader.setAdapter(modLoaderAdapter);
-        binding.modloader.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                searchState.modLoaderPosition = position;
-                switch (position) {
-                    case 0:
-                        selectedModLoader = null;
-                        break;
-                    case 1:
-                        selectedModLoader = ModLoaderType.FORGE;
-                        break;
-                    case 2:
-                        selectedModLoader = ModLoaderType.NEO_FORGED;
-                        break;
-                    case 3:
-                        selectedModLoader = ModLoaderType.FABRIC;
-                        break;
-                    case 4:
-                        selectedModLoader = ModLoaderType.QUILT;
-                }
-            }
+        binding.modloader.setItems(modLoaderList);
+        binding.modloader.setOnItemSelectedListener((index, item) -> applyModLoader(index));
+    }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+    /**
+     * 应用加载器筛选（记录搜索状态并映射枚举；模式恢复时也会调用以同步选中值）
+     */
+    private void applyModLoader(int position) {
+        searchState.modLoaderPosition = position;
+        switch (position) {
+            case 1:
+                selectedModLoader = ModLoaderType.FORGE;
+                break;
+            case 2:
+                selectedModLoader = ModLoaderType.NEO_FORGED;
+                break;
+            case 3:
+                selectedModLoader = ModLoaderType.FABRIC;
+                break;
+            case 4:
+                selectedModLoader = ModLoaderType.QUILT;
+                break;
+            default:
                 selectedModLoader = null;
-            }
-        });
+                break;
+        }
     }
 
     /**
@@ -740,15 +726,12 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                     for (RemoteModRepository.Category category : Lang.toIterable(categories)) {
                         resolveCategory(category, 0, result);
                     }
-                    categorySpinner.setDataList(result);
+                    categoryData.clear();
+                    categoryData.addAll(result);
                     ArrayList<String> resultStr = result.stream().map(this::getLocalizedCategoryIndent).collect(Collectors.toCollection(ArrayList::new));
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, resultStr);
-                    adapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-                    categorySpinner.setAdapter(adapter);
-                    FXUtils.unbindSelection(categorySpinner, category);
+                    categorySpinner.setItems(resultStr);
                     categorySpinner.setSelection(0);
                     category.set(result.get(0));
-                    FXUtils.bindSelection(categorySpinner, category);
                     // 恢复该模式上次的分类筛选（分类列表就绪后）
                     if (searchState.category != null) {
                         for (int i = 1; i < result.size(); i++) {
@@ -786,10 +769,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     public void jumpToModPage(RemoteMod mod) {
         if (mod.getData() instanceof CurseAddon) {
             sourceSpinner.setSelection(0);
-            downloadSource.set(sourceSpinner.getItemAtPosition(0).toString());
+            downloadSource.set(sourceSpinner.getItems().get(0));
         } else {
             sourceSpinner.setSelection(1);
-            downloadSource.set(sourceSpinner.getItemAtPosition(1).toString());
+            downloadSource.set(sourceSpinner.getItems().get(1));
         }
         RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, this, mod, callback);
         UIManager.getInstance().getDownloadUI().showTempPage(page);

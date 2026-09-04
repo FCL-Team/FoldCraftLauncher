@@ -8,7 +8,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.edit
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +24,7 @@ import com.tungsten.fcl.setting.DownloadProviders
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLButton
 import com.tungsten.fcllibrary.component.view.FCLImageButton
+import com.tungsten.fcllibrary.component.view.FCLSpinner
 import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.tungsten.fcllibrary.util.LocaleUtils
 
@@ -566,32 +566,12 @@ class LauncherSettingAdapter(
     private fun bindSpinner(holder: Holder, row: Row.SpinnerRow) {
         val binding = ItemLauncherSettingSpinnerBinding.bind(holder.itemView)
         binding.label.text = context.getString(row.labelRes)
-        val adapter = ArrayAdapter(context, R.layout.item_spinner_auto_tint, row.data)
-        adapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
-        // 先清 listener 再设 adapter/selection，避免复用行时触发旧监听
-        binding.spinner.onItemSelectedListener = null
-        binding.spinner.adapter = adapter
+        // setItems/setSelection 不触发监听，行复用直接覆盖 listener 即可
+        binding.spinner.setItems(row.data)
         binding.spinner.setSelection(row.selection)
-        // setAdapter/setSelection 的选中回调在下一次布局时才异步触发（伪回调），
-        // 用标志吞掉绑定引发的首次回调，行创建/复用时不再重复触发选中逻辑
-        var initialized = false
-        binding.spinner.onItemSelectedListener =
-            object : android.widget.AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: android.widget.AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    if (!initialized) {
-                        initialized = true
-                        return
-                    }
-                    listener.onSpinnerSelect(row.tag, position)
-                }
-
-                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
-            }
+        binding.spinner.setOnItemSelectedListener { position, _ ->
+            listener.onSpinnerSelect(row.tag, position)
+        }
     }
 
     private fun bindSeekBar(holder: Holder, row: Row.SeekBarRow) {
@@ -666,36 +646,19 @@ class LauncherSettingAdapter(
     }
 
     private fun bindSourceSpinner(
-        spinner: com.tungsten.fcllibrary.component.view.FCLSpinner<*>,
+        spinner: FCLSpinner<*>,
         data: List<String>,
         selection: Int,
         tag: LauncherSettingTag
     ) {
-        val adapter = ArrayAdapter(context, R.layout.item_spinner_auto_tint, data)
-        adapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
-        // 先清 listener 再设 adapter/selection，避免复用行时触发旧监听
-        spinner.onItemSelectedListener = null
-        spinner.adapter = adapter
-        spinner.setSelection(selection)
-        // 同 bindSpinner：吞掉绑定引发的首次伪回调
-        var initialized = false
-        spinner.onItemSelectedListener =
-            object : android.widget.AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: android.widget.AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    if (!initialized) {
-                        initialized = true
-                        return
-                    }
-                    listener.onSpinnerSelect(tag, position)
-                }
-
-                override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
-            }
+        // ViewBinding 对布局中的泛型控件生成 raw 类型，条目实际为 String
+        @Suppress("UNCHECKED_CAST")
+        val s = spinner as FCLSpinner<String>
+        s.setItems(data)
+        s.setSelection(selection)
+        s.setOnItemSelectedListener { position, _ ->
+            listener.onSpinnerSelect(tag, position)
+        }
     }
 
     private fun bindThreads(holder: Holder, row: Row.ThreadsRow) {

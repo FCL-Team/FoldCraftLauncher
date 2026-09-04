@@ -6,7 +6,6 @@ import static com.tungsten.fcllibrary.util.LocaleUtils.formatDateTime;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -23,10 +22,7 @@ import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.tungsten.fcl.R;
 import com.mio.util.AndroidUtilKt;
-import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fcl.FCLApp;
-import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.game.World;
@@ -47,7 +43,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 public class WorldInfoPage extends FCLPage {
 
@@ -125,23 +120,16 @@ public class WorldInfoPage extends FCLPage {
         } else {
             generateStructure.setEnabled(false);
         }
-        difficulty.setDataList(new ArrayList<>(Difficulty.items));
-        ArrayAdapter<String> difficultyAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, Difficulty.items.stream().map(Difficulty::toString).collect(Collectors.toList()));
-        difficultyAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-        difficulty.setAdapter(difficultyAdapter);
+        difficulty.setItems(new ArrayList<>(Difficulty.items));
         Tag difficultyTag = dataTag.get("Difficulty");
         if (difficultyTag instanceof ByteTag) {
             ByteTag byteTag = (ByteTag) difficultyTag;
             Difficulty difficulty = Difficulty.of(byteTag.getValue());
             if (difficulty != null) {
                 this.difficulty.setSelection(difficulty.getPosition());
-                ObjectProperty<Difficulty> difficultyProperty = new SimpleObjectProperty<>(difficulty);
-                FXUtils.bindSelection(this.difficulty, difficultyProperty);
-                difficultyProperty.addListener(observable -> {
-                    if (difficultyProperty.get() != null) {
-                        byteTag.setValue((byte) difficultyProperty.get().ordinal());
-                        saveLevelDat();
-                    }
+                this.difficulty.setOnItemSelectedListener((index, item) -> {
+                    byteTag.setValue((byte) item.ordinal());
+                    saveLevelDat();
                 });
             } else {
                 this.difficulty.setEnabled(false);
@@ -178,23 +166,16 @@ public class WorldInfoPage extends FCLPage {
                 if (x instanceof IntTag && y instanceof IntTag && z instanceof IntTag)
                     spawn.setText(spawnDim.formatPosition(((IntTag) x).getValue(), ((IntTag) y).getValue(), ((IntTag) z).getValue()));
             }
-            gameType.setDataList(new ArrayList<>(GameType.items));
-            ArrayAdapter<String> gameTypeAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner_auto_tint, GameType.items.stream().map(GameType::toString).collect(Collectors.toList()));
-            gameTypeAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
-            gameType.setAdapter(gameTypeAdapter);
+            gameType.setItems(new ArrayList<>(GameType.items));
             Tag gameTypeTag = player.get("playerGameType");
             if (gameTypeTag instanceof IntTag) {
                 IntTag intTag = (IntTag) gameTypeTag;
                 GameType gameType = GameType.of(intTag.getValue());
                 if (gameType != null) {
                     this.gameType.setSelection(gameType.getPosition());
-                    ObjectProperty<GameType> gameTypeProperty = new SimpleObjectProperty<>(gameType);
-                    FXUtils.bindSelection(this.gameType, gameTypeProperty);
-                    gameTypeProperty.addListener(observable -> {
-                        if (gameTypeProperty.get() != null) {
-                            intTag.setValue(gameTypeProperty.get().ordinal());
-                            saveLevelDat();
-                        }
+                    this.gameType.setOnItemSelectedListener((index, item) -> {
+                        intTag.setValue(item.ordinal());
+                        saveLevelDat();
                     });
                 } else {
                     this.gameType.setEnabled(false);

@@ -28,7 +28,6 @@ import com.tungsten.fclcore.fakefx.util.StringConverter;
 import com.tungsten.fclcore.util.fakefx.SafeStringConverter;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
-import com.tungsten.fcllibrary.component.view.FCLSpinner;
 import com.tungsten.fcllibrary.component.view.FCLSwitch;
 
 import java.lang.ref.WeakReference;
@@ -181,15 +180,6 @@ public final class FXUtils {
 
     public static void unbindBoolean(FCLCheckBox checkBox, Property<Boolean> property) {
         checkBox.checkProperty().unbindBidirectional(property);
-    }
-
-    public static <T> void bindSelection(FCLSpinner<T> spinner, Property<T> property) {
-        spinner.addSelectListener();
-        spinner.selectedItemProperty().bindBidirectional(property);
-    }
-
-    public static <T> void unbindSelection(FCLSpinner<T> spinner, Property<T> property) {
-        spinner.selectedItemProperty().unbindBidirectional(property);
     }
 
 }

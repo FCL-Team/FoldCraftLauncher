@@ -5,8 +5,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.util.getScreenHeight
@@ -19,6 +17,7 @@ import com.tungsten.fcl.databinding.ItemMenuSpinnerBinding
 import com.tungsten.fcl.databinding.ItemMenuSwitchBinding
 import com.tungsten.fcl.setting.MenuSetting
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
+import com.tungsten.fcllibrary.component.view.FCLSpinner
 import com.tungsten.fcllibrary.component.view.FCLTextView
 
 /** 右菜单一级分类 */
@@ -424,23 +423,13 @@ class RightMenuAdapter(
     private fun bindSpinner(holder: Holder, row: Row.SpinnerRow) {
         val binding = ItemMenuSpinnerBinding.bind(holder.itemView)
         binding.label.text = context.getString(row.labelRes)
-        val adapter = ArrayAdapter(context, R.layout.item_spinner_small, row.data)
-        adapter.setDropDownViewResource(R.layout.item_spinner_dropdown_small)
-        // 先清监听再设 adapter/selection，避免复用行时触发旧监听
-        binding.spinner.onItemSelectedListener = null
-        binding.spinner.adapter = adapter
-        binding.spinner.setSelection(row.selection)
-        binding.spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                listener.onSpinnerSelect(row.tag, position)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        // ViewBinding 对布局中的泛型控件生成 raw 类型，条目实际为 String
+        @Suppress("UNCHECKED_CAST")
+        val spinner = binding.spinner as FCLSpinner<String>
+        spinner.setItems(row.data)
+        spinner.setSelection(row.selection)
+        spinner.setOnItemSelectedListener { position, _ ->
+            listener.onSpinnerSelect(row.tag, position)
         }
     }
 
