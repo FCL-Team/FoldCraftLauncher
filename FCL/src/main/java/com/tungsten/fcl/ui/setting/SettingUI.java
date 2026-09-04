@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profiles;
-import com.mio.ui.page.PluginManagePage;
 import com.tungsten.fcl.ui.manage.VersionSettingPage;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLMultiPageUI;

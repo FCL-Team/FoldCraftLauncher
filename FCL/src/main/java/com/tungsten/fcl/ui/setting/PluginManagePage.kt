@@ -1,4 +1,4 @@
-package com.mio.ui.page
+package com.tungsten.fcl.ui.setting
 
 import android.content.Context
 import android.content.Intent
