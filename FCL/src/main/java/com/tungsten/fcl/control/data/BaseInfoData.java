@@ -2,8 +2,6 @@ package com.tungsten.fcl.control.data;
 
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -13,7 +11,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
@@ -230,16 +227,14 @@ public class BaseInfoData implements Cloneable, Observable {
             if (src == null) return JsonNull.INSTANCE;
             JsonObject obj = new JsonObject();
 
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
             obj.addProperty("visibilityType", src.getVisibilityType().toString());
             obj.addProperty("xPosition", src.getXPosition());
             obj.addProperty("yPosition", src.getYPosition());
             obj.addProperty("sizeType", src.getSizeType().toString());
             obj.addProperty("absoluteWidth", src.getAbsoluteWidth());
             obj.addProperty("absoluteHeight", src.getAbsoluteHeight());
-            obj.add("percentageWidth", gson.toJsonTree(src.getPercentageWidth()).getAsJsonObject());
-            obj.add("percentageHeight", gson.toJsonTree(src.getPercentageHeight()).getAsJsonObject());
+            obj.add("percentageWidth", new PercentageSize.Serializer().serialize(src.getPercentageWidth(), null, null));
+            obj.add("percentageHeight", new PercentageSize.Serializer().serialize(src.getPercentageHeight(), null, null));
 
             return obj;
         }
@@ -251,7 +246,6 @@ public class BaseInfoData implements Cloneable, Observable {
             JsonObject obj = (JsonObject) json;
 
             BaseInfoData data = new BaseInfoData();
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             data.setVisibilityType(getVisibilityType(Optional.ofNullable(obj.get("visibilityType")).map(JsonElement::getAsString).orElse(VisibilityType.ALWAYS.toString())));
             data.setXPosition(Optional.ofNullable(obj.get("xPosition")).map(JsonElement::getAsInt).orElse(0));
@@ -259,8 +253,8 @@ public class BaseInfoData implements Cloneable, Observable {
             data.setSizeType(Optional.ofNullable(obj.get("sizeType")).map(JsonElement::getAsString).orElse(SizeType.PERCENTAGE.toString()).equals(SizeType.ABSOLUTE.toString()) ? SizeType.ABSOLUTE : SizeType.PERCENTAGE);
             data.setAbsoluteWidth(Optional.ofNullable(obj.get("absoluteWidth")).map(JsonElement::getAsInt).orElse(50));
             data.setAbsoluteHeight(Optional.ofNullable(obj.get("absoluteHeight")).map(JsonElement::getAsInt).orElse(50));
-            data.setPercentageWidth(gson.fromJson(Optional.ofNullable(obj.get("percentageWidth")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), new TypeToken<PercentageSize>(){}.getType()));
-            data.setPercentageHeight(gson.fromJson(Optional.ofNullable(obj.get("percentageHeight")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new PercentageSize()).getAsJsonObject()), new TypeToken<PercentageSize>(){}.getType()));
+            data.setPercentageWidth(Optional.ofNullable(obj.get("percentageWidth")).map(JsonElement::getAsJsonObject).map(percentageWidth -> new PercentageSize.Serializer().deserialize(percentageWidth, null, null)).orElseGet(PercentageSize::new));
+            data.setPercentageHeight(Optional.ofNullable(obj.get("percentageHeight")).map(JsonElement::getAsJsonObject).map(percentageHeight -> new PercentageSize.Serializer().deserialize(percentageHeight, null, null)).orElseGet(PercentageSize::new));
 
             return data;
         }

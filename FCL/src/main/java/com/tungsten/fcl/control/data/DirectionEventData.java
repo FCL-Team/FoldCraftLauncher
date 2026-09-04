@@ -2,8 +2,6 @@ package com.tungsten.fcl.control.data;
 
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -14,7 +12,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
@@ -27,10 +24,10 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.util.fakefx.ObservableHelper;
-import com.tungsten.fclcore.util.gson.JsonUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @JsonAdapter(DirectionEventData.Serializer.class)
@@ -198,14 +195,10 @@ public class DirectionEventData implements Cloneable, Observable {
             if (src == null) return JsonNull.INSTANCE;
             JsonObject obj = new JsonObject();
 
-            obj.add("upKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.upKeycodeList()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
-            obj.add("downKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.downKeycodeList()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
-            obj.add("leftKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.leftKeycodeList()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
-            obj.add("rightKeycode", JsonUtils.GSON_SIMPLE.toJsonTree(new ArrayList<>(src.rightKeycodeList()), new TypeToken<ArrayList<Integer>>() {
-            }.getType()).getAsJsonArray());
+            obj.add("upKeycode", toJsonKeycodeList(src.upKeycodeList()));
+            obj.add("downKeycode", toJsonKeycodeList(src.downKeycodeList()));
+            obj.add("leftKeycode", toJsonKeycodeList(src.leftKeycodeList()));
+            obj.add("rightKeycode", toJsonKeycodeList(src.rightKeycodeList()));
             obj.addProperty("followOption", src.getFollowOption().toString());
             obj.addProperty("sneak", src.isSneak());
             obj.addProperty("sneakKeycode", src.getSneakKeycode());
@@ -236,17 +229,26 @@ public class DirectionEventData implements Cloneable, Observable {
          * 通用的方向键反序列化方法
          */
         private void deserializeKeycodeList(JsonObject obj, String keyName, java.util.function.Consumer<ObservableList<Integer>> setter, int defaultKeycode) {
-            if (obj.get(keyName).isJsonArray()) {
-                setter.accept(FXCollections.observableList(JsonUtils.GSON_SIMPLE.fromJson(
-                        Optional.ofNullable(obj.get(keyName)).map(JsonElement::getAsJsonArray).orElse(new JsonArray()),
-                        new TypeToken<ArrayList<Integer>>() {
-                        }.getType()
-                )));
+            JsonElement element = obj.get(keyName);
+            if (element != null && element.isJsonArray()) {
+                ArrayList<Integer> keycodes = new ArrayList<>();
+                for (JsonElement item : element.getAsJsonArray()) {
+                    keycodes.add(item.getAsInt());
+                }
+                setter.accept(FXCollections.observableList(keycodes));
             } else {
                 setter.accept(FXCollections.observableArrayList(
-                        Optional.ofNullable(obj.get(keyName)).map(JsonElement::getAsInt).orElse(defaultKeycode)
+                        element != null && element.isJsonPrimitive() ? element.getAsInt() : defaultKeycode
                 ));
             }
+        }
+
+        private static JsonArray toJsonKeycodeList(List<Integer> keycodes) {
+            JsonArray array = new JsonArray();
+            for (Integer keycode : keycodes) {
+                array.add(keycode);
+            }
+            return array;
         }
 
         public FollowOption getFollowOption(String option) {

@@ -2,8 +2,6 @@ package com.tungsten.fcl.control.data;
 
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -14,7 +12,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -183,14 +180,12 @@ public class ButtonEventData implements Cloneable, Observable {
             if (src == null) return JsonNull.INSTANCE;
             JsonObject obj = new JsonObject();
 
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
             obj.addProperty("pointerFollow", src.isPointerFollow());
             obj.addProperty("Movable", src.isMovable());
-            obj.add("pressEvent", gson.toJsonTree(src.getPressEvent()).getAsJsonObject());
-            obj.add("longPressEvent", gson.toJsonTree(src.getLongPressEvent()).getAsJsonObject());
-            obj.add("clickEvent", gson.toJsonTree(src.getClickEvent()).getAsJsonObject());
-            obj.add("doubleClickEvent", gson.toJsonTree(src.getDoubleClickEvent()).getAsJsonObject());
+            obj.add("pressEvent", new Event.Serializer().serialize(src.getPressEvent(), null, null));
+            obj.add("longPressEvent", new Event.Serializer().serialize(src.getLongPressEvent(), null, null));
+            obj.add("clickEvent", new Event.Serializer().serialize(src.getClickEvent(), null, null));
+            obj.add("doubleClickEvent", new Event.Serializer().serialize(src.getDoubleClickEvent(), null, null));
 
             return obj;
         }
@@ -202,14 +197,13 @@ public class ButtonEventData implements Cloneable, Observable {
             JsonObject obj = (JsonObject) json;
 
             ButtonEventData data = new ButtonEventData();
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             data.setPointerFollow(Optional.ofNullable(obj.get("pointerFollow")).map(JsonElement::getAsBoolean).orElse(false));
             data.setMovable(Optional.ofNullable(obj.get("Movable")).map(JsonElement::getAsBoolean).orElse(false));
-            data.setPressEvent(gson.fromJson(Optional.ofNullable(obj.get("pressEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), new TypeToken<Event>(){}.getType()));
-            data.setLongPressEvent(gson.fromJson(Optional.ofNullable(obj.get("longPressEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), new TypeToken<Event>(){}.getType()));
-            data.setClickEvent(gson.fromJson(Optional.ofNullable(obj.get("clickEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), new TypeToken<Event>(){}.getType()));
-            data.setDoubleClickEvent(gson.fromJson(Optional.ofNullable(obj.get("doubleClickEvent")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new Event()).getAsJsonObject()), new TypeToken<Event>(){}.getType()));
+            data.setPressEvent(Optional.ofNullable(obj.get("pressEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
+            data.setLongPressEvent(Optional.ofNullable(obj.get("longPressEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
+            data.setClickEvent(Optional.ofNullable(obj.get("clickEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
+            data.setDoubleClickEvent(Optional.ofNullable(obj.get("doubleClickEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
 
             return data;
         }

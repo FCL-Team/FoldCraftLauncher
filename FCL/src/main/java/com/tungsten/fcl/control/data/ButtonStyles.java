@@ -5,8 +5,10 @@ import static com.tungsten.fclcore.fakefx.collections.FXCollections.observableAr
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListProperty;
@@ -18,7 +20,6 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.logging.Level;
 
 public class ButtonStyles {
@@ -28,6 +29,7 @@ public class ButtonStyles {
 
     private static final ObservableList<ControlButtonStyle> styles = observableArrayList(style -> new Observable[]{style});
     private static final ReadOnlyListWrapper<ControlButtonStyle> stylesWrapper = new ReadOnlyListWrapper<>(styles);
+    private static final Gson PRETTY_GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static void checkStyles() {
         if (!initialized)
@@ -75,13 +77,13 @@ public class ButtonStyles {
         ArrayList<ControlButtonStyle> list = new ArrayList<>();
         try {
             String json = FileUtils.readText(new File(FCLPath.CONTROLLER_DIR + "/styles/button_styles.json"));
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            ArrayList<ControlButtonStyle> styles = gson.fromJson(json, new TypeToken<ArrayList<ControlButtonStyle>>() {
-            }.getType());
-            if (Objects.isNull(styles)) {
-                new File(FCLPath.CONTROLLER_DIR + "/styles/button_styles.json").delete();
+            JsonElement element = JsonParser.parseString(json);
+            if (element.isJsonArray()) {
+                for (JsonElement item : element.getAsJsonArray()) {
+                    list.add(new ControlButtonStyle.Serializer().deserialize(item, null, null));
+                }
             } else {
-                list.addAll(styles);
+                new File(FCLPath.CONTROLLER_DIR + "/styles/button_styles.json").delete();
             }
         } catch (IOException e) {
             Logging.LOG.log(Level.SEVERE, "Failed to get button styles", e);
@@ -100,8 +102,11 @@ public class ButtonStyles {
     }
 
     public static void saveStyles() {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        String json = gson.toJson(new ArrayList<>(styles));
+        JsonArray array = new JsonArray();
+        for (ControlButtonStyle style : styles) {
+            array.add(new ControlButtonStyle.Serializer().serialize(style, null, null));
+        }
+        String json = PRETTY_GSON.toJson(array);
         try {
             FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR + "/styles/button_styles.json"), json);
         } catch (IOException e) {

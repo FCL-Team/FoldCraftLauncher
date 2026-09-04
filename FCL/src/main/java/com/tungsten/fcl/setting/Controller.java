@@ -20,7 +20,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
@@ -220,7 +219,7 @@ public class Controller implements Cloneable, Observable {
     }
 
     /**
-     * 完整反序列化用（与 saveToDisk 相同的配置；Controller 各嵌套类自带 @JsonAdapter）。
+     * 反序列化入口用（Controller 各嵌套类自带 @JsonAdapter，解析递归为手写实现，不做类型解析）。
      */
     static final Gson GSON = new GsonBuilder()
             .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
@@ -357,14 +356,42 @@ public class Controller implements Cloneable, Observable {
         ButtonStyles.init();
         DirectionStyles.init();
         if (direction) {
-            List<ControlDirectionStyle> styles = GSON.fromJson(element, new TypeToken<ArrayList<ControlDirectionStyle>>() {
-            }.getType());
+            List<ControlDirectionStyle> styles = fromJsonDirectionStyleList(element);
             if (styles != null) styles.forEach(DirectionStyles::addStyle);
         } else {
-            List<ControlButtonStyle> styles = GSON.fromJson(element, new TypeToken<ArrayList<ControlButtonStyle>>() {
-            }.getType());
+            List<ControlButtonStyle> styles = fromJsonStyleList(element);
             if (styles != null) styles.forEach(ButtonStyles::addStyle);
         }
+    }
+
+    private static List<ControlButtonStyle> fromJsonStyleList(JsonElement element) {
+        ArrayList<ControlButtonStyle> list = new ArrayList<>();
+        if (element != null && element.isJsonArray()) {
+            for (JsonElement item : element.getAsJsonArray()) {
+                list.add(new ControlButtonStyle.Serializer().deserialize(item, null, null));
+            }
+        }
+        return list;
+    }
+
+    private static List<ControlDirectionStyle> fromJsonDirectionStyleList(JsonElement element) {
+        ArrayList<ControlDirectionStyle> list = new ArrayList<>();
+        if (element != null && element.isJsonArray()) {
+            for (JsonElement item : element.getAsJsonArray()) {
+                list.add(new ControlDirectionStyle.Serializer().deserialize(item, null, null));
+            }
+        }
+        return list;
+    }
+
+    private static List<ControlViewGroup> fromJsonViewGroupList(JsonElement element) {
+        ArrayList<ControlViewGroup> list = new ArrayList<>();
+        if (element != null && element.isJsonArray()) {
+            for (JsonElement item : element.getAsJsonArray()) {
+                list.add(new ControlViewGroup.Serializer().deserialize(item, null, null));
+            }
+        }
+        return list;
     }
 
     /**
@@ -381,7 +408,7 @@ public class Controller implements Cloneable, Observable {
                 if ("viewGroups".equals(reader.nextName())) {
                     JsonElement element = findViewData(reader, viewGroup.getId());
                     if (element == null) return null;
-                    return GSON.fromJson(element, ControlViewGroup.ViewData.class);
+                    return new ControlViewGroup.ViewData.Serializer().deserialize(element, null, null);
                 }
                 reader.skipValue();
             }
@@ -628,8 +655,6 @@ public class Controller implements Cloneable, Observable {
             if (src == null)
                 return JsonNull.INSTANCE;
 
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("id", src.getId());
             jsonObject.addProperty("name", src.getName());
@@ -640,21 +665,41 @@ public class Controller implements Cloneable, Observable {
             jsonObject.addProperty("controllerVersion", src.getControllerVersion());
             Stream<ControlButtonStyle> buttonStyleStream = src.viewGroups().stream().map(viewGroup -> viewGroup.getViewData().buttonList()).flatMap(buttonList -> buttonList.stream().map(data -> data.getStyle().getName()).distinct()).distinct().map(ButtonStyles::findStyleByName);
             Stream<ControlDirectionStyle> directionStyleStream = src.viewGroups().stream().map(viewGroup -> viewGroup.getViewData().directionList()).flatMap(directionList -> directionList.stream().map(data -> data.getStyle().getName()).distinct()).distinct().map(DirectionStyles::findStyleByName);
-            jsonObject.add("buttonStyles", gson.toJsonTree(buttonStyleStream.collect(Collectors.toList()), new TypeToken<ArrayList<ControlButtonStyle>>() {
-            }.getType()).getAsJsonArray());
-            jsonObject.add("directionStyles", gson.toJsonTree(directionStyleStream.collect(Collectors.toList()), new TypeToken<ArrayList<ControlDirectionStyle>>() {
-            }.getType()).getAsJsonArray());
-            jsonObject.add("viewGroups", gson.toJsonTree(new ArrayList<>(src.viewGroups()), new TypeToken<ArrayList<ControlViewGroup>>() {
-            }.getType()).getAsJsonArray());
+            jsonObject.add("buttonStyles", toJsonStyleList(buttonStyleStream.collect(Collectors.toList())));
+            jsonObject.add("directionStyles", toJsonDirectionStyleList(directionStyleStream.collect(Collectors.toList())));
+            jsonObject.add("viewGroups", toJsonViewGroupList(src.viewGroups()));
 
             return jsonObject;
+        }
+
+        private static JsonArray toJsonStyleList(List<ControlButtonStyle> styles) {
+            JsonArray array = new JsonArray();
+            for (ControlButtonStyle style : styles) {
+                array.add(new ControlButtonStyle.Serializer().serialize(style, null, null));
+            }
+            return array;
+        }
+
+        private static JsonArray toJsonDirectionStyleList(List<ControlDirectionStyle> styles) {
+            JsonArray array = new JsonArray();
+            for (ControlDirectionStyle style : styles) {
+                array.add(new ControlDirectionStyle.Serializer().serialize(style, null, null));
+            }
+            return array;
+        }
+
+        private static JsonArray toJsonViewGroupList(ObservableList<ControlViewGroup> viewGroups) {
+            JsonArray array = new JsonArray();
+            for (ControlViewGroup viewGroup : viewGroups) {
+                array.add(new ControlViewGroup.Serializer().serialize(viewGroup, null, null));
+            }
+            return array;
         }
 
         @Override
         public Controller deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             if (json == JsonNull.INSTANCE || !(json instanceof JsonObject)) return null;
             JsonObject obj = (JsonObject) json;
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             try {
                 String id = Optional.ofNullable(obj.get("id")).map(JsonElement::getAsString).orElse(generateRandomId());
@@ -670,16 +715,13 @@ public class Controller implements Cloneable, Observable {
                     return new Controller("Incompatible Controller - " + name);
                 }
 
-                List<ControlButtonStyle> buttonStyles = gson.fromJson(Optional.ofNullable(obj.get("buttonStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlButtonStyle>>() {
-                }.getType());
-                List<ControlDirectionStyle> directionStyles = gson.fromJson(Optional.ofNullable(obj.get("directionStyles")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlDirectionStyle>>() {
-                }.getType());
+                List<ControlButtonStyle> buttonStyles = fromJsonStyleList(obj.get("buttonStyles"));
+                List<ControlDirectionStyle> directionStyles = fromJsonDirectionStyleList(obj.get("directionStyles"));
                 ButtonStyles.init();
                 DirectionStyles.init();
                 buttonStyles.forEach(ButtonStyles::addStyle);
                 directionStyles.forEach(DirectionStyles::addStyle);
-                ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("viewGroups")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<ControlViewGroup>>() {
-                }.getType()));
+                ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(fromJsonViewGroupList(obj.get("viewGroups")));
 
                 if (controllerVersion < Constants.CONTROLLER_VERSION) {
                     showUpgradeDialog(name, id);

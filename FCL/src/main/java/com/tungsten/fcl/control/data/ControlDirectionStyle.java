@@ -4,8 +4,6 @@ import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import android.graphics.Color;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -15,7 +13,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.reflect.TypeToken;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
@@ -151,12 +148,11 @@ public class ControlDirectionStyle implements Cloneable, Observable {
         public JsonElement serialize(ControlDirectionStyle src, java.lang.reflect.Type typeOfSrc, JsonSerializationContext context) {
             if (src == null) return JsonNull.INSTANCE;
             JsonObject obj = new JsonObject();
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             obj.addProperty("name", src.getName());
             obj.addProperty("styleType", src.getStyleType().toString());
-            obj.add("buttonStyle", gson.toJsonTree(src.getButtonStyle()).getAsJsonObject());
-            obj.add("rockerStyle", gson.toJsonTree(src.getRockerStyle()).getAsJsonObject());
+            obj.add("buttonStyle", new ButtonStyle.Serializer().serialize(src.getButtonStyle(), null, null));
+            obj.add("rockerStyle", new RockerStyle.Serializer().serialize(src.getRockerStyle(), null, null));
 
             return obj;
         }
@@ -168,11 +164,10 @@ public class ControlDirectionStyle implements Cloneable, Observable {
             JsonObject obj = (JsonObject) json;
 
             ControlDirectionStyle style = new ControlDirectionStyle(Optional.ofNullable(obj.get("name")).map(JsonElement::getAsString).orElse(""));
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
             style.setStyleType(Optional.ofNullable(obj.get("styleType")).map(JsonElement::getAsString).orElse(Type.BUTTON.toString()).equals(Type.ROCKER.toString()) ? Type.ROCKER : Type.BUTTON);
-            style.setButtonStyle(gson.fromJson(Optional.ofNullable(obj.get("buttonStyle")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new ButtonStyle()).getAsJsonObject()), new TypeToken<ButtonStyle>(){}.getType()));
-            style.setRockerStyle(gson.fromJson(Optional.ofNullable(obj.get("rockerStyle")).map(JsonElement::getAsJsonObject).orElse(gson.toJsonTree(new RockerStyle()).getAsJsonObject()), new TypeToken<RockerStyle>(){}.getType()));
+            style.setButtonStyle(Optional.ofNullable(obj.get("buttonStyle")).map(JsonElement::getAsJsonObject).map(buttonStyle -> new ButtonStyle.Serializer().deserialize(buttonStyle, null, null)).orElseGet(ButtonStyle::new));
+            style.setRockerStyle(Optional.ofNullable(obj.get("rockerStyle")).map(JsonElement::getAsJsonObject).map(rockerStyle -> new RockerStyle.Serializer().deserialize(rockerStyle, null, null)).orElseGet(RockerStyle::new));
 
             return style;
         }
