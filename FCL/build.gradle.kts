@@ -90,6 +90,8 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // core library desugaring：java.time / java.util.stream / Optional 等脱糖到 minSdk 26 可用
+        isCoreLibraryDesugaringEnabled = true
     }
 
     packaging {
@@ -221,6 +223,7 @@ kotlin {
 }
 
 dependencies {
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
     implementation(project(":ZipFileSystem"))
     implementation(project(":Terracotta"))
