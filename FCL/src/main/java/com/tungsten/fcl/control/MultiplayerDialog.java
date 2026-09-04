@@ -1,6 +1,5 @@
 package com.tungsten.fcl.control;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -26,7 +25,7 @@ import com.tungsten.fcl.terracotta.profile.TerracottaProfile;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.task.Schedulers;
-import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
@@ -49,6 +48,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public class MultiplayerDialog extends FCLDialog implements View.OnClickListener {
@@ -199,62 +199,91 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
                 player = getContext().getString(R.string.terracotta_player_anonymous);
             final String finalPlayer = player;
 
-            inviteCodeInputDialog = new InviteCodeInputDialog(getContext(), code -> Task.supplyAsync(Schedulers.io(), () -> {
-                        Schedulers.androidUIThread().execute(() -> {
-                            host.setEnabled(false);
-                            guest.setEnabled(false);
-                            Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
-                        });
-                        return TerracottaNodeList.fetch();
-                    })
-                    .thenAcceptAsync(Schedulers.androidUIThread(), nodes -> {
-                        List<String> nodeList = new ArrayList<>();
-                        for (URI node : nodes) {
-                            nodeList.add(node.toString());
-                        }
-                        try {
-                            boolean success = Terracotta.setGuesting(code, finalPlayer, nodeList);
-                            if (success)
-                                return;
+            inviteCodeInputDialog = new InviteCodeInputDialog(getContext(), code -> {
+                host.setEnabled(false);
+                guest.setEnabled(false);
+                Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
+                fetchNodesAsync()
+                        .thenAcceptAsync(nodes -> {
+                            List<String> nodeList = new ArrayList<>();
+                            for (URI node : nodes) {
+                                nodeList.add(node.toString());
+                            }
+                            try {
+                                boolean success = Terracotta.setGuesting(code, finalPlayer, nodeList);
+                                if (success)
+                                    return;
 
-                            host.setEnabled(true);
-                            guest.setEnabled(true);
-                            Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
-                            Toast.makeText(getContext(), getContext().getString(R.string.terracotta_status_waiting_guest_prompt_invalid), Toast.LENGTH_SHORT).show();
-                        } catch (Exception e) {
-                            Logging.LOG.log(Level.SEVERE, e.getMessage());
-                            host.setEnabled(true);
-                            guest.setEnabled(true);
-                            Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
-                        }
-                    }).start());
-
-            host.setOnClickListener(v -> Task.supplyAsync(Schedulers.io(), () -> {
-                        Schedulers.androidUIThread().execute(() -> {
-                            host.setEnabled(false);
-                            guest.setEnabled(false);
-                            Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
+                                host.setEnabled(true);
+                                guest.setEnabled(true);
+                                Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
+                                Toast.makeText(getContext(), getContext().getString(R.string.terracotta_status_waiting_guest_prompt_invalid), Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                Logging.LOG.log(Level.SEVERE, "MultiplayerDialog: setGuesting failed", e);
+                                host.setEnabled(true);
+                                guest.setEnabled(true);
+                                Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
+                            }
+                        }, Schedulers.androidUIThread())
+                        .exceptionally(e -> {
+                            Logging.LOG.log(Level.SEVERE, "MultiplayerDialog: fetch chain failed", e);
+                            Schedulers.androidUIThread().execute(() -> {
+                                host.setEnabled(true);
+                                guest.setEnabled(true);
+                                Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
+                            });
+                            return null;
                         });
-                        return TerracottaNodeList.fetch();
-                    })
-                    .thenAcceptAsync(Schedulers.androidUIThread(), nodes -> {
-                        List<String> nodeList = new ArrayList<>();
-                        for (URI node : nodes) {
-                            nodeList.add(node.toString());
-                        }
-                        try {
-                            Terracotta.setScanning(null, finalPlayer, nodeList);
-                        } catch (Exception e) {
-                            Logging.LOG.log(Level.SEVERE, e.getMessage());
-                            host.setEnabled(true);
-                            guest.setEnabled(true);
-                            Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
-                        }
-                    }).start());
+            });
+
+            host.setOnClickListener(v -> {
+                host.setEnabled(false);
+                guest.setEnabled(false);
+                Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
+                fetchNodesAsync()
+                        .thenAcceptAsync(nodes -> {
+                            List<String> nodeList = new ArrayList<>();
+                            for (URI node : nodes) {
+                                nodeList.add(node.toString());
+                            }
+                            try {
+                                Terracotta.setScanning(null, finalPlayer, nodeList);
+                            } catch (Exception e) {
+                                Logging.LOG.log(Level.SEVERE, "MultiplayerDialog: setScanning failed", e);
+                                host.setEnabled(true);
+                                guest.setEnabled(true);
+                                Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
+                            }
+                        }, Schedulers.androidUIThread())
+                        .exceptionally(e -> {
+                            Logging.LOG.log(Level.SEVERE, "MultiplayerDialog: fetch chain failed", e);
+                            Schedulers.androidUIThread().execute(() -> {
+                                host.setEnabled(true);
+                                guest.setEnabled(true);
+                                Objects.requireNonNull(getParent().progressBar).setVisibility(View.GONE);
+                            });
+                            return null;
+                        });
+            });
             guest.setOnClickListener(v -> inviteCodeInputDialog.show());
 
             findViewById(R.id.host_sub_text).setSelected(true);
             findViewById(R.id.guest_sub_text).setSelected(true);
+        }
+
+        /**
+         * 用一次性 daemon 线程执行节点列表请求，避免被共享线程池阻塞。
+         */
+        private static CompletableFuture<List<URI>> fetchNodesAsync() {
+            CompletableFuture<List<URI>> future = new CompletableFuture<>();
+            Lang.thread(() -> {
+                try {
+                    future.complete(TerracottaNodeList.fetch());
+                } catch (Exception e) {
+                    future.completeExceptionally(e);
+                }
+            }, "TerracottaNodeFetch", true);
+            return future;
         }
 
         @Override
@@ -483,9 +512,9 @@ public class MultiplayerDialog extends FCLDialog implements View.OnClickListener
                 Objects.requireNonNull(getParent().progressBar).setVisibility(View.VISIBLE);
             });
             ((FCLLinearLayout) findViewById(R.id.difficulty_layout)).visibilityProperty().bind(Bindings.createBooleanBinding(() ->
-                    Terracotta.stateProperty().get() instanceof TerracottaState.GuestStarting &&
-                            ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != null &&
-                            ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != TerracottaState.GuestStarting.Difficulty.UNKNOWN,
+                            Terracotta.stateProperty().get() instanceof TerracottaState.GuestStarting &&
+                                    ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != null &&
+                                    ((TerracottaState.GuestStarting) Terracotta.stateProperty().get()).getDifficulty() != TerracottaState.GuestStarting.Difficulty.UNKNOWN,
                     Terracotta.stateProperty()));
             ((FCLImageView) findViewById(R.id.difficulty_icon)).imageProperty().bind(Bindings.createObjectBinding(() -> {
                 if (Terracotta.stateProperty().get() instanceof TerracottaState.GuestStarting &&
