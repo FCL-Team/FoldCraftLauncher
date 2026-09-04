@@ -2,10 +2,10 @@ package com.mio.manager
 
 import android.content.Context
 import com.mio.data.Renderer
-import com.tungsten.fcl.R
 import com.mio.plugin.DriverPlugin
 import com.mio.plugin.RendererPlugin
 import com.tungsten.fcl.FCLApp
+import com.tungsten.fcl.R
 
 object RendererManager {
     lateinit var RENDERER_GL4ES: Renderer

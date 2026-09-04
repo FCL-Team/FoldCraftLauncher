@@ -160,7 +160,11 @@ object PluginManager {
             } else {
                 if (metaData?.getString("renderer") != null) add(PluginType.RENDERER)
                 if (metaData?.getString("driver") != null) add(PluginType.DRIVER)
-                if (metaData?.getBoolean(META_NATIVE_PLUGIN, false) == true) add(PluginType.NATIVE_LIB)
+                if (metaData?.getBoolean(
+                        META_NATIVE_PLUGIN,
+                        false
+                    ) == true
+                ) add(PluginType.NATIVE_LIB)
             }
         }
         if (types.isEmpty()) return null
@@ -169,6 +173,14 @@ object PluginManager {
         val packageInfo = runCatching { pm.getPackageInfo(packageName, 0) }.getOrNull()
         val versionName = packageInfo?.versionName
         val icon = runCatching { info.loadIcon(pm) }.getOrNull()
-        return PluginApp(packageName, label, versionName, icon, types, info, packageInfo?.lastUpdateTime ?: 0L)
+        return PluginApp(
+            packageName,
+            label,
+            versionName,
+            icon,
+            types,
+            info,
+            packageInfo?.lastUpdateTime ?: 0L
+        )
     }
 }

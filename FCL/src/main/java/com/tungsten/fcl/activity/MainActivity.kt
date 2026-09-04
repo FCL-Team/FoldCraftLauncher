@@ -37,6 +37,7 @@ import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
 import com.mio.download.DownloadManager
 import com.mio.manager.RendererManager
+import com.mio.plugin.DriverPlugin
 import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.ui.view.DownloadSlidePanel
 import com.mio.util.AnimUtil
@@ -63,7 +64,6 @@ import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
 import com.tungsten.fcl.ui.main.MainUI
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
-import com.mio.plugin.DriverPlugin
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount

@@ -18,7 +18,8 @@ import com.tungsten.fcllibrary.component.ui.FCLPage
  * 插件管理页：列出所有已识别的插件应用（含已禁用），
  * 支持启用/禁用（立即刷新各插件列表）与卸载（跳转系统卸载）。
  */
-class PluginManagePage(context: Context?, id: Int) : FCLPage(context, id, R.layout.page_setting_plugin) {
+class PluginManagePage(context: Context?, id: Int) :
+    FCLPage(context, id, R.layout.page_setting_plugin) {
 
     private lateinit var binding: PageSettingPluginBinding
     private lateinit var adapter: PluginManageAdapter
@@ -74,7 +75,12 @@ class PluginManagePage(context: Context?, id: Int) : FCLPage(context, id, R.layo
 
     private fun uninstall(app: PluginManager.PluginApp) {
         try {
-            context.startActivity(Intent(Intent.ACTION_DELETE, Uri.parse("package:${app.packageName}")))
+            context.startActivity(
+                Intent(
+                    Intent.ACTION_DELETE,
+                    Uri.parse("package:${app.packageName}")
+                )
+            )
         } catch (_: Exception) {
         }
     }
