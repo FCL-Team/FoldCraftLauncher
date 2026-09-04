@@ -107,4 +107,4 @@
 - [Terracotta](https://github.com/burningtnt/Terracotta)（`net.burningtnt.terracotta` JNI 封装）: [AGPL-3.0](https://github.com/burningtnt/Terracotta/blob/main/LICENSE)
 - [TouchController](https://github.com/TouchController/TouchController)（触摸控制器）: [LGPL-3.0](https://github.com/TouchController/TouchController/blob/main/LICENSE)
 - [discord-rpc](https://github.com/discord/discord-rpc)（libdiscord-rpc.so）: [MIT License](https://github.com/discord/discord-rpc/blob/master/LICENSE)
-- [control-converter](https://github.com/NingZeStudio/control-converter) (FCL→ZL2 控制布局转换，Go 实现，打包为 `libcc.so`): [MIT License](https://opensource.org/licenses/MIT)
+- [control-converter](https://github.com/NingZeStudio/control-converter) (FCL→ZL2 控制布局转换，rust 实现，打包为 `libcc.so`): [MIT License](https://opensource.org/licenses/MIT)
