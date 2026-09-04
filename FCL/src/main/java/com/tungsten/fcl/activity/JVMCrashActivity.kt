@@ -3,8 +3,10 @@ package com.tungsten.fcl.activity
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Process
+import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
 import androidx.core.content.FileProvider
@@ -15,6 +17,7 @@ import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fcllibrary.component.FCLActivity
+import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.uploadLog
 import java.io.File
 import java.io.IOException
@@ -44,6 +47,12 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
         binding.upload.setOnClickListener(this)
         binding.share.setOnClickListener(this)
 
+        // 崩溃页背景跟随 FCL 亮暗设置：windowBackground 只在创建时按进程初始模式解析，
+        // :crash 进程冷启动后 applySavedNightMode 才生效，背景不会自动切换，需显式设置并随主题刷新
+        ThemeEngine.registerEvent(binding.root) {
+            binding.root.setBackgroundColor(resolveWindowBackgroundColor())
+        }
+
 
         val game = intent.extras!!.getBoolean("isGame")
         exitCode = intent.extras!!.getInt("exitCode")
@@ -60,6 +69,19 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
             Logging.LOG.log(Level.WARNING, "Failed to read log file", e)
             binding.error.text = e.message
         }
+    }
+
+    /** 解析当前生效主题的窗口背景色，与主界面背景保持一致 */
+    private fun resolveWindowBackgroundColor(): Int {
+        val outValue = TypedValue()
+        if (theme.resolveAttribute(android.R.attr.windowBackground, outValue, true) &&
+            outValue.type >= TypedValue.TYPE_FIRST_COLOR_INT &&
+            outValue.type <= TypedValue.TYPE_LAST_COLOR_INT
+        ) {
+            return outValue.data
+        }
+        // windowBackground 非纯色时退回按亮暗取黑白
+        return if (ThemeEngine.isNightMode(this)) Color.BLACK else Color.WHITE
     }
 
     @Throws(IOException::class)
