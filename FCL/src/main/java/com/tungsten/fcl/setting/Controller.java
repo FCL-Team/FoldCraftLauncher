@@ -58,6 +58,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -161,6 +162,12 @@ public class Controller implements Cloneable, Observable {
     }
 
     private final ObservableList<ControlViewGroup> viewGroups;
+
+    /**
+     * 保存合并标记：有未落盘的修改时为 true；已有保存任务在跑时为 true。
+     */
+    private final AtomicBoolean saveDirty = new AtomicBoolean(false);
+    private final AtomicBoolean saveActive = new AtomicBoolean(false);
 
     public ObservableList<ControlViewGroup> viewGroups() {
         return viewGroups;
@@ -541,18 +548,28 @@ public class Controller implements Cloneable, Observable {
     }
 
     public synchronized void saveToDisk() {
+        saveDirty.set(true);
+        if (saveActive.getAndSet(true)) {
+            // 已有保存任务在排队或执行，稍后由它补存最新状态
+            return;
+        }
         Schedulers.io().execute(() -> {
-            // 轻量对象先补全未加载布局的按键数据，避免空 viewData 覆盖磁盘上的按钮
-            ensureAllLoaded();
-            String str = new GsonBuilder()
-                    .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
-                    .setPrettyPrinting()
-                    .create().toJson(this);
-            try {
-                FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR, getFileName()), str);
-            } catch (IOException e) {
-                Logging.LOG.log(Level.SEVERE, "Failed to save controller!", e);
-            }
+            do {
+                saveDirty.set(false);
+                // 轻量对象先补全未加载布局的按键数据，避免空 viewData 覆盖磁盘上的按钮
+                ensureAllLoaded();
+                String str = new GsonBuilder()
+                        .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
+                        .setPrettyPrinting()
+                        .create().toJson(this);
+                try {
+                    FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR, getFileName()), str);
+                } catch (IOException e) {
+                    Logging.LOG.log(Level.SEVERE, "Failed to save controller!", e);
+                }
+                // 保存期间又有新修改则再写一次，保证不丢最新数据
+            } while (saveDirty.getAndSet(false));
+            saveActive.set(false);
         });
     }
 

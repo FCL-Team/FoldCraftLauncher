@@ -435,8 +435,6 @@ public class ButtonEventData implements Cloneable, Observable {
                 if (src == null) return JsonNull.INSTANCE;
                 JsonObject obj = new JsonObject();
 
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
                 obj.addProperty("autoKeep", src.isAutoKeep());
                 obj.addProperty("autoClick", src.isAutoClick());
                 obj.addProperty("openMenu", src.isOpenMenu());
@@ -445,8 +443,16 @@ public class ButtonEventData implements Cloneable, Observable {
                 obj.addProperty("input", src.isInput());
                 obj.addProperty("quickInput", src.isQuickInput());
                 obj.addProperty("outputText", src.getOutputText());
-                obj.add("outputKeycodes", gson.toJsonTree(new ArrayList<>(src.outputKeycodesList()), new TypeToken<ArrayList<Integer>>(){}.getType()).getAsJsonArray());
-                obj.add("bindViewGroup", gson.toJsonTree(new ArrayList<>(src.bindViewGroupList()), new TypeToken<ArrayList<String>>(){}.getType()).getAsJsonArray());
+                JsonArray outputKeycodes = new JsonArray();
+                for (Integer code : src.outputKeycodesList()) {
+                    outputKeycodes.add(code);
+                }
+                obj.add("outputKeycodes", outputKeycodes);
+                JsonArray bindViewGroup = new JsonArray();
+                for (String group : src.bindViewGroupList()) {
+                    bindViewGroup.add(group);
+                }
+                obj.add("bindViewGroup", bindViewGroup);
 
                 return obj;
             }
@@ -458,7 +464,6 @@ public class ButtonEventData implements Cloneable, Observable {
                 JsonObject obj = (JsonObject) json;
 
                 Event event = new Event();
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
                 event.setAutoKeep(Optional.ofNullable(obj.get("autoKeep")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setAutoClick(Optional.ofNullable(obj.get("autoClick")).map(JsonElement::getAsBoolean).orElse(false));
@@ -468,8 +473,16 @@ public class ButtonEventData implements Cloneable, Observable {
                 event.setInput(Optional.ofNullable(obj.get("input")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setQuickInput(Optional.ofNullable(obj.get("quickInput")).map(JsonElement::getAsBoolean).orElse(false));
                 event.setOutputText(Optional.ofNullable(obj.get("outputText")).map(JsonElement::getAsString).orElse(""));
-                event.setOutputKeycodes(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<Integer>>(){}.getType())));
-                event.setBindViewGroup(FXCollections.observableList(gson.fromJson(Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsJsonArray).orElse(new JsonArray()), new TypeToken<ArrayList<String>>(){}.getType())));
+                ArrayList<Integer> outputKeycodes = new ArrayList<>();
+                for (JsonElement element : Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsJsonArray).orElseGet(JsonArray::new)) {
+                    outputKeycodes.add(element.getAsInt());
+                }
+                event.setOutputKeycodes(FXCollections.observableList(outputKeycodes));
+                ArrayList<String> bindViewGroup = new ArrayList<>();
+                for (JsonElement element : Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsJsonArray).orElseGet(JsonArray::new)) {
+                    bindViewGroup.add(element.getAsString());
+                }
+                event.setBindViewGroup(FXCollections.observableList(bindViewGroup));
 
                 return event;
             }
