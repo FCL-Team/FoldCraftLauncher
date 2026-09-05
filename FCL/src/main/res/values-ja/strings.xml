@@ -18,4 +18,6 @@
     <string name="animation_flying">飛行</string>
     <string name="animation_crouch">しゃがみ</string>
     <string name="animation_swim">泳ぎ</string>
+    <string name="animation_hands_up_running">両手を上げて走る</string>
+    <string name="animation_hands_up_jumping">両手を上げてジャンプ</string>
 </resources>

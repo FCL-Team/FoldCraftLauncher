@@ -1413,4 +1413,6 @@
     <string name="animation_flying">Flying</string>
     <string name="animation_crouch">Crouch</string>
     <string name="animation_swim">Swim</string>
+    <string name="animation_hands_up_running">Hands-up Running</string>
+    <string name="animation_hands_up_jumping">Hands-up Jumping</string>
 </resources>

@@ -942,4 +942,6 @@
     <string name="animation_flying">Fliegen</string>
     <string name="animation_crouch">Schleichen</string>
     <string name="animation_swim">Schwimmen</string>
+    <string name="animation_hands_up_running">Rennen, Hände hoch</string>
+    <string name="animation_hands_up_jumping">Hüpfen, Hände hoch</string>
 </resources>

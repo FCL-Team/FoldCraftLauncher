@@ -917,4 +917,6 @@
     <string name="animation_flying">پرواز</string>
     <string name="animation_crouch">خم شدن</string>
     <string name="animation_swim">شنا</string>
+    <string name="animation_hands_up_running">دویدن با دست‌های بالا</string>
+    <string name="animation_hands_up_jumping">پریدن با دست‌های بالا</string>
 </resources>

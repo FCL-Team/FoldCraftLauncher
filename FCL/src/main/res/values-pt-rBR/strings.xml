@@ -921,4 +921,6 @@
     <string name="animation_flying">Voando</string>
     <string name="animation_crouch">Agachado</string>
     <string name="animation_swim">Nadando</string>
+    <string name="animation_hands_up_running">Correndo de mãos altas</string>
+    <string name="animation_hands_up_jumping">Pulando de mãos altas</string>
 </resources>

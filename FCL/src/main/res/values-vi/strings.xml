@@ -1230,4 +1230,6 @@
     <string name="animation_flying">Bay</string>
     <string name="animation_crouch">Rúc</string>
     <string name="animation_swim">Bơi</string>
+    <string name="animation_hands_up_running">Chạy giơ tay</string>
+    <string name="animation_hands_up_jumping">Nhảy giơ tay</string>
 </resources>

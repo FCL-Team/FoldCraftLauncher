@@ -959,4 +959,6 @@
     <string name="animation_flying">Політ</string>
     <string name="animation_crouch">Присідання</string>
     <string name="animation_swim">Плавання</string>
+    <string name="animation_hands_up_running">Біг з піднятими руками</string>
+    <string name="animation_hands_up_jumping">Стрибки з піднятими руками</string>
 </resources>

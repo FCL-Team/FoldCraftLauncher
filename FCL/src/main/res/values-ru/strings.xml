@@ -1002,4 +1002,6 @@
     <string name="animation_flying">Полёт</string>
     <string name="animation_crouch">Красться</string>
     <string name="animation_swim">Плавание</string>
+    <string name="animation_hands_up_running">Бег с поднятыми руками</string>
+    <string name="animation_hands_up_jumping">Прыжки с поднятыми руками</string>
 </resources>

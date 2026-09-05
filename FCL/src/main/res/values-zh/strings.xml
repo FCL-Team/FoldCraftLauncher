@@ -1275,4 +1275,6 @@
     <string name="animation_flying">飞行</string>
     <string name="animation_crouch">潜行</string>
     <string name="animation_swim">游泳</string>
+    <string name="animation_hands_up_running">举手奔跑</string>
+    <string name="animation_hands_up_jumping">举手蹦跳</string>
 </resources>
