@@ -3,7 +3,7 @@
 //
 
 #include "jvm_hooks.h"
-#include "fcl/include/fcl_internal.h"
+#include "log.h"
 #include <stdlib.h>
 
 /**

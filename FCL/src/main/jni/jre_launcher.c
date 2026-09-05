@@ -33,7 +33,8 @@
 // Boardwalk: missing include
 #include <string.h>
 
-#include "fcl/include/fcl_internal.h"
+#include "fcl/fcl_internal.h"
+#include "utils.h"
 
 
 // Uncomment to try redirect signal handling to JVM
@@ -172,30 +173,6 @@ static jint launchJVM(int margc, char **margv) {
        DOT_VERSION, *margv, *margv, // "java", "openjdk",
        JNI_FALSE, JNI_TRUE, JNI_FALSE, 0);
 */
-}
-
-char **convert_to_char_array(JNIEnv *env, jobjectArray jstringArray) {
-    int num_rows = (*env)->GetArrayLength(env, jstringArray);
-    char **cArray = (char **) malloc(num_rows * sizeof(char *));
-    jstring row;
-
-    for (int i = 0; i < num_rows; i++) {
-        row = (jstring) (*env)->GetObjectArrayElement(env, jstringArray, i);
-        cArray[i] = (char *) (*env)->GetStringUTFChars(env, row, 0);
-    }
-
-    return cArray;
-}
-
-
-void free_char_array(JNIEnv *env, jobjectArray jstringArray, const char **charArray) {
-    int num_rows = (*env)->GetArrayLength(env, jstringArray);
-    jstring row;
-
-    for (int i = 0; i < num_rows; i++) {
-        row = (jstring) (*env)->GetObjectArrayElement(env, jstringArray, i);
-        (*env)->ReleaseStringUTFChars(env, row, charArray[i]);
-    }
 }
 
 /*

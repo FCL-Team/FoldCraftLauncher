@@ -49,6 +49,8 @@ import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
+import com.tungsten.fcl.game.sdl.GamepadInputMode;
+import com.tungsten.fcl.game.sdl.SdlSettings;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.control.data.DirectionStyles;
@@ -959,6 +961,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                     logWindow.setVisibility(menuSetting.isAutoShowLog());
                 }
                 break;
+            case SDL_AUTO_SHOW_IME:
+                SdlSettings.setSdlAutoShowIme(checked);
+                break;
         }
     }
 
@@ -975,6 +980,8 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             menuSetting.setGestureMode(GestureMode.getById(position));
         } else if (tag == RightMenuTag.MOUSE_MODE) {
             menuSetting.setMouseMoveMode(MouseMoveMode.getById(position));
+        } else if (tag == RightMenuTag.GAMEPAD_INPUT_MODE) {
+            SdlSettings.setGamepadInputMode(GamepadInputMode.values()[position]);
         }
     }
 

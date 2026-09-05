@@ -105,8 +105,7 @@ public class FCLBridge {
     public native void setLdLibraryPath(String path);
 
     public native void setupExitTrap(FCLBridge bridge);
-
-    public native void setFCLBridge(FCLBridge fclBridge);
+    public  native static void initializeHooks();
 
     public void setThread(Thread thread) {
         this.thread = thread;
@@ -132,7 +131,6 @@ public class FCLBridge {
         this.handler = new Handler(Looper.getMainLooper());
         this.callback = callback;
         this.surface = surface;
-        setFCLBridge(this);
         CallbackBridge.setFCLBridge(this);
         receiveLog("==================== Before Start ====================\n");
         receiveLog("invoke redirectStdio\n");

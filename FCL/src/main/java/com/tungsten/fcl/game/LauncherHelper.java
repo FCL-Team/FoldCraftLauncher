@@ -239,6 +239,7 @@ public final class LauncherHelper {
                         }).thenComposeAsync(fclBridge -> {
                             GameOption gameOption = new GameOption(repository.getRunDirectory(selectedVersion).getAbsolutePath());
                             gameOption.set("preferredGraphicsBackend", setting.getGraphicsBackend());
+                            gameOption.set("startedCleanly", "true");
                             gameOption.save();
                             return Task.completed(fclBridge);
                         }).thenAcceptAsync(fclBridge -> Schedulers.androidUIThread().execute(() -> {

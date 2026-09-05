@@ -14,14 +14,16 @@
 #include <dlfcn.h>
 #include <jni.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <stdatomic.h>
 #include <math.h>
 #include <android/log.h>
 
 #include "environ/environ.h"
-#include "fcl/include/fcl_internal.h"
+#include "log.h"
 #include "jvm_hooks/jvm_hooks.h"
+#include "utils.h"
 
 #define EVENT_TYPE_CHAR 1000
 #define EVENT_TYPE_CHAR_MODS 1001
@@ -32,9 +34,17 @@
 
 static void registerFunctions(JNIEnv *env);
 
-JNIEXPORT jstring JNICALL
-Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNIEnv *env, jclass clazz, jint action,
-                                                   jbyteArray copySrc);
+JNIEXPORT jboolean JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeNotifyLauncher(JNIEnv* env, __attribute__((unused)) jclass clazz, jint type, jintArray action) {
+    TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "nativeNotifyLauncher failed!\n",);
+    jboolean result = (*dvm_env)->CallStaticBooleanMethod(dvm_env, pojav_environ->bridgeClazz,
+                                                          pojav_environ->method_notifyLauncher, type, convertIntArrayJVM(env, dvm_env, action));
+    if ((*dvm_env)->ExceptionCheck(dvm_env)) {
+        (*dvm_env)->ExceptionDescribe(dvm_env);
+        (*dvm_env)->ExceptionClear(dvm_env);
+        return JNI_FALSE;
+    }
+    return result;
+}
 
 jint JNI_OnLoad(JavaVM *vm, __attribute__((unused)) void *reserved) {
     if (pojav_environ->dalvikJavaVMPtr == NULL) {
@@ -52,6 +62,12 @@ jint JNI_OnLoad(JavaVM *vm, __attribute__((unused)) void *reserved) {
         pojav_environ->method_onGrabStateChanged = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(
                 pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->bridgeClazz,
                 "onGrabStateChanged", "(Z)V");
+        pojav_environ->method_onDirectInputEnable = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(
+                pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->bridgeClazz,
+                "onDirectInputEnable", "()V");
+        pojav_environ->method_notifyLauncher = (*pojav_environ->dalvikJNIEnvPtr_ANDROID)->GetStaticMethodID(
+                pojav_environ->dalvikJNIEnvPtr_ANDROID, pojav_environ->bridgeClazz,
+                "notifyLauncher", "(I[I)Z");
         pojav_environ->isUseStackQueueCall = JNI_FALSE;
     } else if (pojav_environ->dalvikJavaVMPtr != vm) {
         __android_log_print(ANDROID_LOG_INFO, "Native", "Saving JVM environ...");
@@ -303,17 +319,6 @@ void noncritical_set_stackqueue(__attribute__((unused)) JNIEnv *env,
     critical_set_stackqueue(use_input_stack_queue);
 }
 
-jstring convertStringJVM(JNIEnv *srcEnv, JNIEnv *dstEnv, jstring srcStr) {
-    if (srcStr == NULL) {
-        return NULL;
-    }
-
-    const char *srcStrC = (*srcEnv)->GetStringUTFChars(srcEnv, srcStr, 0);
-    jstring dstStr = (*dstEnv)->NewStringUTF(dstEnv, srcStrC);
-    (*srcEnv)->ReleaseStringUTFChars(srcEnv, srcStr, srcStrC);
-    return dstStr;
-}
-
 JNIEXPORT jstring JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNIEnv *env,
                                                                              __attribute__((unused)) jclass clazz,
                                                                              jint action,
@@ -322,9 +327,11 @@ JNIEXPORT jstring JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNI
     FCL_INTERNAL_LOG("Debug: Clipboard access is going on\n", pojav_environ->isUseStackQueueCall);
 #endif
 
-    JNIEnv *dalvikEnv;
-    (*pojav_environ->dalvikJavaVMPtr)->AttachCurrentThread(pojav_environ->dalvikJavaVMPtr,
-                                                           &dalvikEnv, NULL);
+    JNIEnv *dalvikEnv = NULL;
+    jboolean detachedBefore = (*pojav_environ->dalvikJavaVMPtr)->GetEnv(pojav_environ->dalvikJavaVMPtr, (void **) &dalvikEnv, JNI_VERSION_1_4) == JNI_EDETACHED;
+    if (detachedBefore) {
+        (*pojav_environ->dalvikJavaVMPtr)->AttachCurrentThread(pojav_environ->dalvikJavaVMPtr, &dalvikEnv, NULL);
+    }
     assert(dalvikEnv != NULL);
     assert(pojav_environ->bridgeClazz != NULL);
 
@@ -346,7 +353,9 @@ JNIEXPORT jstring JNICALL Java_org_lwjgl_glfw_CallbackBridge_nativeClipboard(JNI
         (*dalvikEnv)->DeleteLocalRef(dalvikEnv, copyDst);
         (*env)->ReleaseByteArrayElements(env, copySrc, (jbyte *) copySrcC, 0);
     }
-    (*pojav_environ->dalvikJavaVMPtr)->DetachCurrentThread(pojav_environ->dalvikJavaVMPtr);
+    if (detachedBefore) {
+        (*pojav_environ->dalvikJavaVMPtr)->DetachCurrentThread(pojav_environ->dalvikJavaVMPtr);
+    }
     return pasteDst;
 }
 
@@ -389,6 +398,46 @@ Java_org_lwjgl_glfw_CallbackBridge_nativeSetGrabbing(__attribute__((unused)) JNI
     }
     pojav_environ->isGrabbing = grabbing;
     printf("cursor visibility: %s\n", grabbing == 0 ? "true" : "false");
+}
+
+JNIEXPORT jlong JNICALL
+Java_org_lwjgl_glfw_GLFW_internalGetGamepadDataPointer(__attribute__((unused)) JNIEnv* env, __attribute__((unused)) jclass clazz) {
+    return (jlong)(intptr_t)&pojav_environ->gamepadState;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_org_lwjgl_glfw_CallbackBridge_nativeEnableGamepadDirectInput(__attribute__((unused)) JNIEnv* env, __attribute__((unused)) jclass clazz) {
+    TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "nativeEnableGamepadDirectInput failed!\n", return JNI_FALSE;);
+    (*dvm_env)->CallStaticVoidMethod(dvm_env, pojav_environ->bridgeClazz, pojav_environ->method_onDirectInputEnable);
+    return JNI_TRUE;
+}
+
+JNIEXPORT void JNICALL
+Java_com_tungsten_fcl_game_sdl_SdlBridge_initializeControllerSubsystems(__attribute__((unused)) JNIEnv* env, __attribute__((unused)) jclass clazz) {
+    typedef int (*SDL_Init_Func)(unsigned int flags);
+    void* handle = dlopen("libSDL3.so", RTLD_NOW);
+    if (handle == NULL) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "initializeControllerSubsystems: libSDL3.so dlopen failed");
+        return;
+    }
+    SDL_Init_Func SDL_Init = (SDL_Init_Func) dlsym(handle, "SDL_Init");
+    if (SDL_Init == NULL) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "initializeControllerSubsystems: SDL_Init not found");
+        return;
+    }
+    // SDL3: SDL_INIT_GAMEPAD=0x2000 | SDL_INIT_JOYSTICK=0x200 | SDL_INIT_EVENTS=0x4000
+    SDL_Init(0x2000u | 0x200u | 0x4000u);
+    __android_log_print(ANDROID_LOG_INFO, "FCL", "initializeControllerSubsystems: SDL controller subsystems initialized");
+}
+
+JNIEXPORT jobject JNICALL
+Java_org_lwjgl_glfw_CallbackBridge_nativeCreateGamepadButtonBuffer(JNIEnv* env, __attribute__((unused)) jclass clazz) {
+    return (*env)->NewDirectByteBuffer(env, pojav_environ->gamepadState.buttons, sizeof(pojav_environ->gamepadState.buttons));
+}
+
+JNIEXPORT jobject JNICALL
+Java_org_lwjgl_glfw_CallbackBridge_nativeCreateGamepadAxisBuffer(JNIEnv* env, __attribute__((unused)) jclass clazz) {
+    return (*env)->NewDirectByteBuffer(env, pojav_environ->gamepadState.axes, sizeof(pojav_environ->gamepadState.axes));
 }
 
 jboolean critical_send_char(jchar codepoint) {
@@ -479,7 +528,9 @@ void noncritical_send_cursor_pos(__attribute__((unused)) JNIEnv *env,
 
 void critical_send_key(jint key, jint scancode, jint action, jint mods) {
     if (pojav_environ->GLFW_invoke_Key && pojav_environ->isInputReady) {
-        pojav_environ->keyDownBuffer[max(0, key - 31)] = (jbyte) action;
+        if (key >= 31 && key <= 348 && pojav_environ->keyDownBuffer != NULL) {
+            pojav_environ->keyDownBuffer[key - 31] = (jbyte) action;
+        }
         if (pojav_environ->isUseStackQueueCall) {
             sendData(EVENT_TYPE_KEY, key, scancode, action, mods);
         } else {
@@ -496,7 +547,9 @@ void noncritical_send_key(__attribute__((unused)) JNIEnv *env, __attribute__((un
 
 void critical_send_mouse_button(jint button, jint action, jint mods) {
     if (pojav_environ->GLFW_invoke_MouseButton && pojav_environ->isInputReady) {
-        pojav_environ->mouseDownBuffer[max(0, button)] = (jbyte) action;
+        if (button >= 0 && button < 8 && pojav_environ->mouseDownBuffer != NULL) {
+            pojav_environ->mouseDownBuffer[button] = (jbyte) action;
+        }
         if (pojav_environ->isUseStackQueueCall) {
             sendData(EVENT_TYPE_MOUSE_BUTTON, button, action, mods, 0);
         } else {
@@ -510,6 +563,19 @@ void noncritical_send_mouse_button(__attribute__((unused)) JNIEnv *env,
                                    __attribute__((unused)) jclass clazz, jint button, jint action,
                                    jint mods) {
     critical_send_mouse_button(button, action, mods);
+}
+
+void critical_reset_input_state(void) {
+    if (pojav_environ->keyDownBuffer != NULL) {
+        memset(pojav_environ->keyDownBuffer, 0, 318);
+    }
+    if (pojav_environ->mouseDownBuffer != NULL) {
+        memset(pojav_environ->mouseDownBuffer, 0, 8);
+    }
+}
+
+void noncritical_reset_input_state(__attribute__((unused)) JNIEnv* env, __attribute__((unused)) jclass clazz) {
+    critical_reset_input_state();
 }
 
 void critical_send_screen_size(jint width, jint height) {
@@ -603,6 +669,7 @@ const static JNINativeMethod critical_fcns[] = {
         {"nativeSendKey",               "(IIII)V", critical_send_key},
         {"nativeSendCursorPos",         "(FF)V",   critical_send_cursor_pos},
         {"nativeSendMouseButton",       "(III)V",  critical_send_mouse_button},
+        {"nativeResetInputState",       "()V",     critical_reset_input_state},
         {"nativeSendScroll",            "(DD)V",   critical_send_scroll},
         {"nativeSendScreenSize",        "(II)V",   critical_send_screen_size}
 };
@@ -614,6 +681,7 @@ const static JNINativeMethod noncritical_fcns[] = {
         {"nativeSendKey",               "(IIII)V", noncritical_send_key},
         {"nativeSendCursorPos",         "(FF)V",   noncritical_send_cursor_pos},
         {"nativeSendMouseButton",       "(III)V",  noncritical_send_mouse_button},
+        {"nativeResetInputState",       "()V",     noncritical_reset_input_state},
         {"nativeSendScroll",            "(DD)V",   noncritical_send_scroll},
         {"nativeSendScreenSize",        "(II)V",   noncritical_send_screen_size}
 };

@@ -29,6 +29,9 @@ public class GLFW
 {
     static FloatBuffer joystickData = (FloatBuffer)FloatBuffer.allocate(8).flip();
     static ByteBuffer buttonData = (ByteBuffer)ByteBuffer.allocate(8).flip();
+    private static long gamepadDataPointer;
+    private static ByteBuffer gamepadButtonData;
+    private static FloatBuffer gamepadAxisData;
     /** The major version number of the GLFW library. This is incremented when the API is changed in non-compatible ways. */
     public static final int GLFW_VERSION_MAJOR = 3;
 
@@ -556,7 +559,7 @@ public class GLFW
     public static boolean mGLFWIsInputReady;
     private static boolean mGLFWInputPumping;
     private static boolean mGLFWWindowVisibleOnCreation = true;
-    public static final ByteBuffer keyDownBuffer = ByteBuffer.allocateDirect(317);
+    public static final ByteBuffer keyDownBuffer = ByteBuffer.allocateDirect(318);
     public static final ByteBuffer mouseDownBuffer = ByteBuffer.allocateDirect(8);
 
     public static long mainContext = 0;
@@ -929,8 +932,10 @@ public class GLFW
     }
 
     public static void glfwGetWindowContentScale(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("float *") FloatBuffer xscale, @Nullable @NativeType("float *") FloatBuffer yscale) {
-        if (xscale != null) xscale.put(1f);
-        if (yscale != null) yscale.put(1f);
+        if (xscale != null && yscale != null) {
+            xscale.put(1f);
+            yscale.put(1f);
+        }
     }
 
     @Nullable
@@ -1385,13 +1390,16 @@ public class GLFW
     }
 
     public static int glfwGetKey(@NativeType("GLFWwindow *") long window, int key) {
-        // This is jank, anything asking for int 348 results in an IndexOutOfBounds because idk.
-        // Probably an off-by-one error. This is the 'fix'
-        if (key == GLFW_KEY_LAST){return GLFW_KEY_LAST;}
-        return keyDownBuffer.get(Math.max(0, key-31));
+        if (key < 31 || key > GLFW_KEY_LAST) {
+            return 0;
+        }
+        return keyDownBuffer.get(key - 31);
     }
 
     public static int glfwGetMouseButton(@NativeType("GLFWwindow *") long window, int button) {
+        if (button < 0 || button >= mouseDownBuffer.capacity()) {
+            return 0;
+        }
         return mouseDownBuffer.get(button);
     }
     public static void glfwGetCursorPos(@NativeType("GLFWwindow *") long window, @Nullable @NativeType("double *") DoubleBuffer xpos, @Nullable @NativeType("double *") DoubleBuffer ypos) {
@@ -1444,51 +1452,60 @@ public class GLFW
     public static void glfwRequestWindowAttention(@NativeType("GLFWwindow *") long window) {
     }
 
+    private static native long internalGetGamepadDataPointer();
+
+    private static void ensureGamepadBuffers() {
+        if (gamepadDataPointer == 0L) {
+            gamepadDataPointer = internalGetGamepadDataPointer();
+            gamepadButtonData = CallbackBridge.nativeCreateGamepadButtonBuffer();
+            gamepadAxisData = CallbackBridge.nativeCreateGamepadAxisBuffer().order(ByteOrder.LITTLE_ENDIAN).asFloatBuffer();
+            CallbackBridge.enableGamepadDirectInput();
+        }
+    }
+
     public static boolean glfwJoystickPresent(int jid) {
-        if(jid == 0) {
-            return true;
-        }else return false;
+        return jid == 0;
     }
     public static String glfwGetJoystickName(int jid) {
-        if(jid == 0) {
-            return "AIC event bus controller";
-        }else return null;
+        return jid == 0 ? "Pojav XBOX 360 compatible gamepad" : null;
     }
     public static FloatBuffer glfwGetJoystickAxes(int jid) {
-        if(jid == 0) {
-            return joystickData;
-        }else return null;
+        if (jid != 0) return null;
+        ensureGamepadBuffers();
+        return gamepadAxisData;
     }
     public static ByteBuffer glfwGetJoystickButtons(int jid) {
-        if(jid == 0) {
-            return buttonData;
-        }else return null;
+        if (jid != 0) return null;
+        ensureGamepadBuffers();
+        return gamepadButtonData;
     }
     public static ByteBuffer glfwGetjoystickHats(int jid) {
         return null;
     }
     public static boolean glfwJoystickIsGamepad(int jid) {
-        if(jid == 0) return true;
-        else return false;
+        if (jid != 0) return false;
+        ensureGamepadBuffers();
+        return true;
     }
     public static String glfwGetJoystickGUID(int jid) {
-        if(jid == 0) return "aio0";
-        else return null;
+        return jid == 0 ? "030000005e0400008e02000056210000" : null;
     }
     public static long glfwGetJoystickUserPointer(int jid) {
         return 0;
     }
     public static void glfwSetJoystickUserPointer(int jid, long pointer) {
-
     }
     public static boolean glfwUpdateGamepadMappings(ByteBuffer string) {
         return false;
     }
     public static String glfwGetGamepadName(int jid) {
-        return null;
+        return jid == 0 ? "Pojav XBOX 360 compatible gamepad" : null;
     }
     public static boolean glfwGetGamepadState(int jid, GLFWGamepadState state) {
-        return false;
+        if (jid != 0 || state == null) return false;
+        ensureGamepadBuffers();
+        memCopy(gamepadDataPointer, state.address(), state.sizeof());
+        return true;
     }
 
     /** Array version of: {@link #glfwGetVersion GetVersion} */
@@ -1581,15 +1598,6 @@ public class GLFW
         }
         xpos[0] = 0;
         ypos[0] = 0;
-    }
-
-    public static void glfwGetWindowPos(@NativeType("GLFWwindow *") long window, @NativeType("int *") @Nullable IntBuffer xpos, @NativeType("int *") @Nullable IntBuffer ypos) {
-        if (CHECKS) {
-            checkSafe(xpos, 1);
-            checkSafe(ypos, 1);
-        }
-        xpos.put(0);
-        ypos.put(0);
     }
 
     /** Array version of: {@link #glfwGetWindowSize GetWindowSize} */
