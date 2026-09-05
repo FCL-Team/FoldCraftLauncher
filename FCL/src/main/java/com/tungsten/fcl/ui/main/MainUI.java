@@ -10,8 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.mio.skin.AnimationDialog;
+import com.mio.skin.SkinAnimations;
 import com.mio.skin.SkinRenderer;
 import com.mio.skin.SkinViewer;
+
+import static com.mio.skin.SkinAnimationsKt.restoreSkinAnimation;
+import static com.mio.skin.SkinAnimationsKt.saveSkinAnimation;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
@@ -78,11 +82,16 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
         skinViewer = findViewById(R.id.skin_viewer);
         renderer = new SkinRenderer(getContext());
         skinViewer.setRenderer(renderer, 5f);
+        // 恢复上次选择的动画
+        restoreSkinAnimation(getContext(), renderer);
         // 双击模型弹出动画切换窗口
         skinViewer.setOnDoubleClick(() -> {
             Context context = getContext();
             if (context instanceof Activity && !((Activity) context).isDestroyed() && !((Activity) context).isFinishing()) {
-                new AnimationDialog(context, renderer.getAnimation(), animation -> renderer.playAnimation(animation)).show();
+                new AnimationDialog(context, renderer.getAnimation(), animation -> {
+                    renderer.playAnimation(animation);
+                    saveSkinAnimation(context, renderer);
+                }).show();
             }
         });
         checkAnnouncement();

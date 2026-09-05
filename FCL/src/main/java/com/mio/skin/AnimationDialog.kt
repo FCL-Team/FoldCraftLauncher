@@ -38,22 +38,10 @@ class AnimationDialog(
         setContentView(binding.root)
         setCancelable(true)
 
-        val factories = listOf(
-            R.string.animation_idle to { IdleAnimation() },
-            R.string.animation_walking to { WalkingAnimation() },
-            R.string.animation_running to { RunningAnimation() },
-            R.string.animation_hands_up_running to { HandsUpRunningAnimation() },
-            R.string.animation_hands_up_jumping to { HandsUpJumpingAnimation() },
-            R.string.animation_flying to { FlyingAnimation() },
-            R.string.animation_swim to { SwimAnimation() },
-            R.string.animation_crouch to { CrouchAnimation() },
-            R.string.animation_wave to { WaveAnimation() },
-            R.string.animation_hit to { HitAnimation() }
-        )
-        factories.forEach { (nameRes, factory) ->
-            val animation = factory()
-            val selected = current != null && animation::class == current::class
-            binding.container.addView(createRow(nameRes, animation, selected), rowParams())
+        SkinAnimations.entries.forEach { entry ->
+            val animation = entry.factory()
+            val selected = current != null && entry.type == current.javaClass
+            binding.container.addView(createRow(entry.nameRes, animation, selected), rowParams())
         }
     }
 
