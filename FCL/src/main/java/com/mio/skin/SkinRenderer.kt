@@ -47,6 +47,7 @@ class SkinRenderer(context: Context) {
     private var positionLocation = 0
     private var texCoordLocation = 0
     private var mvpMatrixLocation = 0
+    private var shadeLocation = 0
     private var skinTextureId = 0
     private var capeTextureId = 0
     private val projMatrix = FloatArray(16)
@@ -125,6 +126,8 @@ class SkinRenderer(context: Context) {
         positionLocation = GLES20.glGetAttribLocation(program, "aPosition")
         texCoordLocation = GLES20.glGetAttribLocation(program, "aTexCoord")
         mvpMatrixLocation = GLES20.glGetUniformLocation(program, "uMVPMatrix")
+        shadeLocation = GLES20.glGetUniformLocation(program, "uShade")
+        GLES20.glUniform1f(shadeLocation, 1f)
         GLES20.glEnableVertexAttribArray(positionLocation)
         GLES20.glEnableVertexAttribArray(texCoordLocation)
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
@@ -171,7 +174,7 @@ class SkinRenderer(context: Context) {
     // ---- 内部实现 ----
 
     private fun drawPart(part: PlayerModel.Part) {
-        for (mesh in part.meshes) {
+        for ((index, mesh) in part.meshes.withIndex()) {
             // wrapper 旋转 → 部件挂点 → 部件旋转（XYZ 顺序，同 three.js）→ pivot → 网格偏移
             System.arraycopy(wrapperMatrix, 0, modelMatrix, 0, 16)
             Matrix.translateM(modelMatrix, 0, part.posX, part.posY, part.posZ)
@@ -182,7 +185,16 @@ class SkinRenderer(context: Context) {
             Matrix.translateM(modelMatrix, 0, mesh.offsetX, mesh.offsetY, mesh.offsetZ)
             Matrix.multiplyMM(mvpMatrix, 0, pvMatrix, 0, modelMatrix, 0)
             GLES20.glUniformMatrix4fv(mvpMatrixLocation, 1, false, mvpMatrix, 0)
+            GLES20.glUniform1f(shadeLocation, 1f)
             mesh.box.draw(positionLocation, texCoordLocation)
+            // 挤出侧壁与第二层网格同矩阵绘制，整体调暗模拟背光，增强立体感
+            if (index == 1) {
+                part.extrusion?.let {
+                    GLES20.glUniform1f(shadeLocation, EXTRUSION_SHADE)
+                    it.draw(positionLocation, texCoordLocation)
+                    GLES20.glUniform1f(shadeLocation, 1f)
+                }
+            }
         }
     }
 
@@ -213,7 +225,13 @@ class SkinRenderer(context: Context) {
         }
         pendingHasUpdate = false
         model.setSlim(pendingSlim)
-        pendingSkin?.let { skinTextureId = uploadTexture(skinTextureId, it) }
+        pendingSkin?.let {
+            skinTextureId = uploadTexture(skinTextureId, it)
+            // 用皮肤像素重建第二层轮廓挤出网格（边缘实心化）
+            val pixels = IntArray(it.width * it.height)
+            it.getPixels(pixels, 0, it.width, 0, 0, it.width, it.height)
+            model.rebuildOverlayExtrusions(pixels, it.width)
+        }
         pendingSkin = null
         val cape = pendingCape
         if (cape != null) {
@@ -286,11 +304,12 @@ class SkinRenderer(context: Context) {
         private const val FRAGMENT_SHADER = """
             precision mediump float;
             uniform sampler2D uTexture;
+            uniform float uShade;
             varying vec2 vTexCoord;
             void main() {
                 vec4 color = texture2D(uTexture, vTexCoord);
                 if (color.a < 0.1) discard;
-                gl_FragColor = color;
+                gl_FragColor = vec4(color.rgb * uShade, color.a);
             }
         """
 
@@ -301,6 +320,9 @@ class SkinRenderer(context: Context) {
         private const val MIN_SCALE = 0.7f
         private const val MAX_SCALE = 2.0f
         private const val ROTATE_STEP = 2f
+
+        /** 挤出侧壁的背光亮度系数（参考 3d-Skin-Layers 的方向光照观感） */
+        private const val EXTRUSION_SHADE = 0.8f
 
         private val FOV_TAN = tan(Math.toRadians(FOV / 2.0)).toFloat()
 

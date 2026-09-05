@@ -38,6 +38,9 @@ class PlayerModel {
         var rotationX = 0f
         var rotationY = 0f
         var rotationZ = 0f
+
+        /** 第二层轮廓挤出网格（与第二层网格同矩阵绘制，无则为 null） */
+        var extrusion: OverlayExtrusion? = null
     }
 
     val head = Part(0f, 8f, 0f, listOf(
@@ -78,11 +81,28 @@ class PlayerModel {
 
     val skinParts: List<Part> = listOf(head, body, rightArm, leftArm, rightLeg, leftLeg)
 
+    /**
+     * 第二层轮廓挤出网格：为 overlay 不透明像素的边缘生成侧壁（颜色取临近色块），
+     * 使第二层边缘实心化，增强 3D 效果。
+     */
+    val headExtrusion = OverlayExtrusion(9f, 9f, 9f, 8f, 8f, 8f, 32f, 0f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
+    val bodyExtrusion = OverlayExtrusion(8.5f, 12.5f, 4.5f, 8f, 12f, 4f, 16f, 32f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
+    val rightArmExtrusion = OverlayExtrusion(4.5f, 12.5f, 4.5f, 4f, 12f, 4f, 40f, 32f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
+    val leftArmExtrusion = OverlayExtrusion(4.5f, 12.5f, 4.5f, 4f, 12f, 4f, 48f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
+    val rightLegExtrusion = OverlayExtrusion(4.5f, 12.5f, 4.5f, 4f, 12f, 4f, 0f, 32f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
+    val leftLegExtrusion = OverlayExtrusion(4.5f, 12.5f, 4.5f, 4f, 12f, 4f, 0f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
+    val overlayExtrusions: List<OverlayExtrusion> = listOf(
+        headExtrusion, bodyExtrusion, rightArmExtrusion, leftArmExtrusion, rightLegExtrusion, leftLegExtrusion
+    )
+
     /** 玩家整体偏移与倾斜（奔跑动画的跳跃/躲闪/倾斜，其余动画为 0） */
     var rootX = 0f
     var rootY = 0f
     var rootZ = 0f
     var rootRotationZ = 0f
+
+    private var skinPixels: IntArray? = null
+    private var skinBitmapWidth = 0
 
     var slim = false
         private set
@@ -95,6 +115,13 @@ class PlayerModel {
         rightLeg.pivotY = -6f
         leftLeg.pivotY = -6f
         cape.rotationY = Math.PI.toFloat()
+        // 挤出网格跟随所属部件的第二层网格矩阵
+        head.extrusion = headExtrusion
+        body.extrusion = bodyExtrusion
+        rightArm.extrusion = rightArmExtrusion
+        leftArm.extrusion = leftArmExtrusion
+        rightLeg.extrusion = rightLegExtrusion
+        leftLeg.extrusion = leftLegExtrusion
     }
 
     /**
@@ -135,11 +162,21 @@ class PlayerModel {
     }
 
     /**
+     * 用皮肤像素重建全部第二层挤出网格（仅渲染线程调用，皮肤纹理更新时触发）。
+     */
+    fun rebuildOverlayExtrusions(pixels: IntArray, bitmapWidth: Int) {
+        skinPixels = pixels
+        skinBitmapWidth = bitmapWidth
+        overlayExtrusions.forEach { it.rebuild(pixels, bitmapWidth) }
+    }
+
+    /**
      * EGL context 重建后调用：所有网格的 VBO id 已失效，重置以便下次绘制时重新上传。
      */
     fun resetGpuResources() {
         skinParts.forEach { part -> part.meshes.forEach { it.box.resetGpuResources() } }
         cape.meshes.forEach { it.box.resetGpuResources() }
+        overlayExtrusions.forEach { it.resetGpuResources() }
     }
 
     private fun applySlimArms() {
@@ -155,6 +192,9 @@ class PlayerModel {
         leftArm.meshes[1].box.setGeometry(
             armOverlayWidth, 12.5f, 4.5f, 48f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT, armWidth, 12f, 4f
         )
+        // 手臂挤出网格几何随 slim 变化，setGeometry 内部会用缓存的皮肤像素重建
+        rightArmExtrusion.setGeometry(armOverlayWidth, 12.5f, 4.5f, armWidth, 12f, 4f, 40f, 32f)
+        leftArmExtrusion.setGeometry(armOverlayWidth, 12.5f, 4.5f, armWidth, 12f, 4f, 48f, 48f)
     }
 
     companion object {
