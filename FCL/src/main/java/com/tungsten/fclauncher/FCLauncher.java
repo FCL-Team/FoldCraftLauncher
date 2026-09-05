@@ -253,8 +253,15 @@ public class FCLauncher {
             envMap.put("SDL_OPENGL_LIBRARY", rendererId);
         }
         String egl = envMap.get("POJAVEXEC_EGL");
+        if (egl != null && !egl.startsWith("/")) {
+            // 纯文件名：插件渲染器用其自身 lib 目录（主 APK 目录下没有该库），
+            // 内置渲染器用主 APK native 目录
+            String pluginPath = config.getRenderer().getPath();
+            egl = (pluginPath == null || pluginPath.isEmpty()
+                    ? FCLPath.NATIVE_LIB_DIR : pluginPath) + "/" + egl;
+        }
         if (egl != null) {
-            envMap.put("SDL_EGL_LIBRARY", egl.startsWith("/") ? egl : FCLPath.NATIVE_LIB_DIR + "/" + egl);
+            envMap.put("SDL_EGL_LIBRARY", egl);
         }
     }
 
