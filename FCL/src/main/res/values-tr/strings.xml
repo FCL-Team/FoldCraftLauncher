@@ -190,6 +190,7 @@
     <string name="control_converting">Dönüştürülüyor…</string>
     <string name="control_convert_failed">Dönüştürme başarısız oldu!</string>
     <string name="control_convert_unsupported">Bu cihazda ZL2 dönüştürmesi desteklenmiyor (arm64 gerekli)</string>
+    <string name="control_import_zl2_converted">ZalithLauncher2 düzeni algılandı ve otomatik dönüştürülerek içe aktarıldı</string>
     <string name="control_upload">Kontrolcü Yükle</string>
     <string name="curse_category_0">Hepsi</string>
     <string name="curse_category_4474">Bilim Kurgu</string>

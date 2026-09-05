@@ -212,6 +212,7 @@
     <string name="control_converting">Đang chuyển đổi…</string>
     <string name="control_convert_failed">Chuyển đổi thất bại!</string>
     <string name="control_convert_unsupported">Không hỗ trợ chuyển đổi ZL2 trên thiết bị này (cần arm64)</string>
+    <string name="control_import_zl2_converted">Đã nhận diện bố cục ZalithLauncher2 và tự động chuyển đổi để nhập</string>
     <string name="control_upload">Tải lên Bộ điều khiển</string>
     <string name="curse_category_0">Tất cả</string>
     <string name="curse_category_4474">Khoa học viễn tưởng</string>

@@ -1,2 +1,5 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# 控件转换器金样测试资源按字节比较，禁止换行符转换（否则 Windows autocrlf 检出为 CRLF 导致字节级对拍失败）
+FCL/src/test/resources/controlconverter/** -text

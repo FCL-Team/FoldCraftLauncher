@@ -33,6 +33,7 @@
 ⚙️ **Key Highlights**  
 - Built-in multi-version Java runtimes (Java 8/17/21/25) with custom Java import support
 - Virtual mouse and customizable key mapping
+- FCL↔ZalithLauncher2 control layout conversion, importing a ZL2 layout converts it automatically
 - Shaders support (requires VirGL/Zink/MG renderers)
 - Dynamic resource management (mods/modpacks/textures/shaders/saves)
 - Personalized theme customization (background/color schemes)
@@ -105,4 +106,4 @@ We'd love your help with translations! The project's localization is managed on 
 - [Terracotta](https://github.com/burningtnt/Terracotta) (`net.burningtnt.terracotta` JNI wrapper): [AGPL-3.0](https://github.com/burningtnt/Terracotta/blob/main/LICENSE)
 - [TouchController](https://github.com/TouchController/TouchController) (touch controller): [LGPL-3.0](https://github.com/TouchController/TouchController/blob/main/LICENSE)
 - [discord-rpc](https://github.com/discord/discord-rpc) (libdiscord-rpc.so): [MIT License](https://github.com/discord/discord-rpc/blob/master/LICENSE)
-- [control-converter](https://github.com/NingZeStudio/control-converter) (FCL→ZL2 control layout converter, Go implementation, packaged as `libcc.so`): [MIT License](https://opensource.org/licenses/MIT)
+- [control-converter](https://github.com/NingZeStudio/control-converter) (FCL↔ZL2 control layout converter, pure Kotlin implementation in-tree based on cc.py semantics, no longer packaged as `libcc.so`): [MIT License](https://opensource.org/licenses/MIT)

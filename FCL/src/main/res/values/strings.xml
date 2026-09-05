@@ -240,6 +240,7 @@
     <string name="control_converting">Converting…</string>
     <string name="control_convert_failed">Conversion failed!</string>
     <string name="control_convert_unsupported">ZL2 conversion is not supported on this device (arm64 required)</string>
+    <string name="control_import_zl2_converted">ZalithLauncher2 layout detected and converted</string>
     <string name="control_upload">Upload Controller</string>
 
     <string name="curse_category_0">All</string>
