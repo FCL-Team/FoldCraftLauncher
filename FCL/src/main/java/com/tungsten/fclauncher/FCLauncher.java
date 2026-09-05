@@ -246,23 +246,29 @@ public class FCLauncher {
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
         addRendererEnvInner(config, envMap);
-        // SDL 需要独立的 GL/EGL 库名：GL 用渲染器 id，EGL 用库绝对路径。
+        // SDL 需要独立的 GL/EGL 库绝对路径（GL 用渲染器 GL 库、EGL 用渲染器 EGL 库）。
         // 必须对所有渲染器路径生效（插件渲染器在 inner 中途 return）
-        String rendererId = envMap.get("POJAV_RENDERER");
-        if (rendererId != null) {
-            envMap.put("SDL_OPENGL_LIBRARY", rendererId);
-        }
+        Renderer renderer = config.getRenderer();
         String egl = envMap.get("POJAVEXEC_EGL");
         if (egl != null && !egl.startsWith("/")) {
-            // 纯文件名：插件渲染器用其自身 lib 目录（主 APK 目录下没有该库），
-            // 内置渲染器用主 APK native 目录
-            String pluginPath = config.getRenderer().getPath();
-            egl = (pluginPath == null || pluginPath.isEmpty()
-                    ? FCLPath.NATIVE_LIB_DIR : pluginPath) + "/" + egl;
+            egl = rendererLibPath(renderer) + "/" + egl;
         }
         if (egl != null) {
             envMap.put("SDL_EGL_LIBRARY", egl);
         }
+        String gl = renderer.getGlName();
+        if (gl != null && !gl.isEmpty()) {
+            if (!gl.startsWith("/")) {
+                gl = rendererLibPath(renderer) + "/" + gl;
+            }
+            envMap.put("SDL_OPENGL_LIBRARY", gl);
+        }
+    }
+
+    /** 渲染器库所在目录：插件渲染器用其自身 lib 目录（主 APK 目录下没有该库），内置渲染器用主 APK native 目录 */
+    private static String rendererLibPath(Renderer renderer) {
+        String pluginPath = renderer.getPath();
+        return pluginPath == null || pluginPath.isEmpty() ? FCLPath.NATIVE_LIB_DIR : pluginPath;
     }
 
     private static void addRendererEnvInner(FCLConfig config, HashMap<String, String> envMap) {
