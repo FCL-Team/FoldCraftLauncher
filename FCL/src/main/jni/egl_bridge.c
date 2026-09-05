@@ -101,6 +101,10 @@ EXTERNAL_API void *pojavGetCurrentContext() {
     if (pojav_environ->config_renderer == RENDERER_VIRGL) {
         return virglGetCurrentContext();
     }
+    // SDL 模式下渲染桥未初始化（br_* 为 NULL），返回 NULL 而非空指针调用
+    if (br_get_current == NULL) {
+        return NULL;
+    }
     return br_get_current();
 }
 
@@ -338,16 +342,26 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
 
 EXTERNAL_API void pojavSwapBuffers() {
     atomic_fetch_add(&fps, 1);
-    if (pojav_environ->config_renderer == RENDERER_VIRGL)
+    // SDL 模式（config_renderer 未匹配任何渲染桥）下这些调用必须为 no-op，
+    // 否则 br_* 函数指针为 NULL 会空指针崩溃（fixPojavGLContext 路径）
+    if (pojav_environ->config_renderer == RENDERER_VK_ZINK
+     || pojav_environ->config_renderer == RENDERER_GL4ES) {
+        br_swap_buffers();
+    }
+    if (pojav_environ->config_renderer == RENDERER_VIRGL) {
         virglSwapBuffers();
-    else br_swap_buffers();
+    }
 }
 
 
 EXTERNAL_API void pojavMakeCurrent(void *window) {
-    if (pojav_environ->config_renderer == RENDERER_VIRGL)
+    if (pojav_environ->config_renderer == RENDERER_VK_ZINK
+     || pojav_environ->config_renderer == RENDERER_GL4ES) {
+        br_make_current((basic_render_window_t *) window);
+    }
+    if (pojav_environ->config_renderer == RENDERER_VIRGL) {
         virglMakeCurrent(window);
-    else br_make_current((basic_render_window_t *) window);
+    }
 }
 
 EXTERNAL_API void *pojavCreateContext(void *contextSrc) {
@@ -356,6 +370,9 @@ EXTERNAL_API void *pojavCreateContext(void *contextSrc) {
 
     if (pojav_environ->config_renderer == RENDERER_VIRGL)
         return virglCreateContext(contextSrc);
+
+    if (br_init_context == NULL)
+        return NULL;
 
     return br_init_context((basic_render_window_t *) contextSrc);
 }
@@ -375,9 +392,13 @@ Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPA
 }
 
 EXTERNAL_API void pojavSwapInterval(int interval) {
-    if (pojav_environ->config_renderer == RENDERER_VIRGL)
+    if (pojav_environ->config_renderer == RENDERER_VK_ZINK
+     || pojav_environ->config_renderer == RENDERER_GL4ES) {
+        br_swap_interval(interval);
+    }
+    if (pojav_environ->config_renderer == RENDERER_VIRGL) {
         virglSwapInterval(interval);
-    else br_swap_interval(interval);
+    }
 }
 
 JNIEXPORT jint JNICALL
