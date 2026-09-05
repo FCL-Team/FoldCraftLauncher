@@ -272,4 +272,7 @@
     <string name="animation_running">Koşma</string>
     <string name="animation_wave">El salla</string>
     <string name="animation_hit">Vuruş</string>
+    <string name="animation_flying">Uçuş</string>
+    <string name="animation_crouch">Eğilme</string>
+    <string name="animation_swim">Yüzme</string>
 </resources>

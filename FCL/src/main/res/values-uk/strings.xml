@@ -956,4 +956,7 @@
     <string name="animation_running">Біг</string>
     <string name="animation_wave">Махати</string>
     <string name="animation_hit">Удар</string>
+    <string name="animation_flying">Політ</string>
+    <string name="animation_crouch">Присідання</string>
+    <string name="animation_swim">Плавання</string>
 </resources>

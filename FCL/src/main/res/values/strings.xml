@@ -1410,4 +1410,7 @@
     <string name="animation_running">Running</string>
     <string name="animation_wave">Wave</string>
     <string name="animation_hit">Hit</string>
+    <string name="animation_flying">Flying</string>
+    <string name="animation_crouch">Crouch</string>
+    <string name="animation_swim">Swim</string>
 </resources>

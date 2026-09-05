@@ -914,4 +914,7 @@
     <string name="animation_running">دویدن</string>
     <string name="animation_wave">تکان دادن دست</string>
     <string name="animation_hit">ضربه</string>
+    <string name="animation_flying">پرواز</string>
+    <string name="animation_crouch">خم شدن</string>
+    <string name="animation_swim">شنا</string>
 </resources>
