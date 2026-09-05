@@ -1266,4 +1266,10 @@
     <string name="close">关闭</string>
     <string name="create_account_first">启动游戏前请先创建游戏账户</string>
     <string name="version_list_refreshing">正在获取远程版本列表…</string>
+    <string name="animation_select">选择动画</string>
+    <string name="animation_idle">待机</string>
+    <string name="animation_walking">走路</string>
+    <string name="animation_running">奔跑</string>
+    <string name="animation_wave">挥手</string>
+    <string name="animation_hit">挥击</string>
 </resources>

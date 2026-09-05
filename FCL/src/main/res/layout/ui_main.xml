@@ -84,7 +84,7 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <com.tungsten.fcllibrary.skin.SkinViewer
+    <com.mio.skin.SkinViewer
         android:id="@+id/skin_viewer"
         android:layout_width="0dp"
         android:layout_height="0dp"

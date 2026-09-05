@@ -950,4 +950,10 @@
     <string name="version_list_refreshing">Отримання списку віддалених версій…</string>
     <string name="renderer_source">Джерело:</string>
     <string name="renderer_source_builtin">Вбудований</string>
+    <string name="animation_select">Вибір анімації</string>
+    <string name="animation_idle">Стояння</string>
+    <string name="animation_walking">Ходьба</string>
+    <string name="animation_running">Біг</string>
+    <string name="animation_wave">Махати</string>
+    <string name="animation_hit">Удар</string>
 </resources>

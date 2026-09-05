@@ -246,8 +246,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         0 -> {
                             refreshMenuView(home)
                             home.setSelected(true)
-                            // 主页重建/重新进入时应用皮肤位置状态（right_menu 隐藏则固定）
-                            fixSkinViewerPosition(binding.rightMenu.visibility != View.VISIBLE)
+                            // 主页重建/重新进入时应用皮肤位置状态（right_menu 隐藏则固定；
+                            // skinViewerWidth 仅在隐藏右菜单时捕获，未捕获过（为 0）时保持默认百分比布局，
+                            // 否则会把皮肤宽度设为 0 导致模型消失
+                            fixSkinViewerPosition(binding.rightMenu.visibility != View.VISIBLE && skinViewerWidth > 0)
                         }
 
                         1 -> {
