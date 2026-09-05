@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
@@ -302,5 +303,18 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
         super.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+    }
+
+    /**
+     * SDL 原生层（Android_JNI_ShowMessageBox）会在宿主对象的运行时类上按名
+     * 查找 messageboxShowMessageBox；本宿主非 SDLActivity 子类，必须桥接到
+     * SDLActivity 的静态实现，否则查找失败会带着 pending 异常触发 JniAbort
+     */
+    @Keep
+    public int messageboxShowMessageBox(int flags, String title, String message,
+                                        int[] buttonFlags, int[] buttonIds,
+                                        String[] buttonTexts, int[] colors) {
+        return SDLActivity.messageboxShowMessageBox(this, flags, title, message,
+                buttonFlags, buttonIds, buttonTexts, colors);
     }
 }
