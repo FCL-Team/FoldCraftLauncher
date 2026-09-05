@@ -11,6 +11,7 @@ import androidx.annotation.Keep
 import androidx.annotation.MainThread
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import org.libsdl.app.SDL
 import org.libsdl.app.SDLActivity
 import org.libsdl.app.SDLSurface
@@ -35,6 +36,9 @@ object SdlBridge {
     private var surfaceGeneration = 0L
     private var jniReady = false
     private var sdlInitialized = false
+
+    private val _composeFocus = MutableStateFlow(0)
+    val composeFocus = _composeFocus.asStateFlow()
 
     @JvmStatic
     @Synchronized
@@ -99,6 +103,11 @@ object SdlBridge {
         activityRef = WeakReference(activity)
         layoutRef = WeakReference(layout)
         currentSurface = surface
+    }
+
+    @JvmStatic
+    fun requestComposeFocus() {
+        _composeFocus.update { it + 1 }
     }
 
     @JvmStatic

@@ -5,8 +5,6 @@
 
 package org.libsdl.app;
 
-import androidx.annotation.Keep;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.hardware.Sensor;
@@ -25,6 +23,8 @@ import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.Keep;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -943,9 +943,9 @@ class SDLGenericMotionListener_API26 extends SDLGenericMotionListener_API24 {
         if (!SDLActivity.isDeXMode() || Build.VERSION.SDK_INT >= 27 /* Android 8.1 (O_MR1) */) {
             if (enabled) {
                 SDLActivity.getContentView().requestPointerCapture();
-            } else {
+            }/* else {
                 SDLActivity.getContentView().releasePointerCapture();
-            }
+            }*/
             mRelativeModeEnabled = enabled;
             return true;
         } else {
