@@ -95,10 +95,9 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
                     if (!ThemeEngine.getInstance().getTheme().isCloseSkinModel()) {
                         skinViewer.setVisibility(View.VISIBLE);
                         skinViewer.onResume();
-                        Bitmap[] texture = renderer.getTexture();
-                        if (texture != null) {
-                            renderer.updateTexture(texture[0], texture[1]);
-                        }
+                        // 纹理由渲染线程 onSurfaceCreated 从 renderer.texture 自行重建，
+                        // 此处不可重喂 updateTexture：与后台皮肤加载回调存在覆盖竞态，
+                        // 会把刚加载的真实皮肤覆盖回默认
                     } else {
                         skinViewer.onPause();
                         skinViewer.setVisibility(View.GONE);
