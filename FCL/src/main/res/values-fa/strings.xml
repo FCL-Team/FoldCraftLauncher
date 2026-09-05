@@ -908,4 +908,10 @@
     <string name="version_list_refreshing">در حال دریافت فهرست نسخه‌های راه دور…</string>
     <string name="renderer_source">منبع:</string>
     <string name="renderer_source_builtin">داخلی</string>
+    <string name="animation_select">انتخاب انیمیشن</string>
+    <string name="animation_idle">بی‌حرکت</string>
+    <string name="animation_walking">راه رفتن</string>
+    <string name="animation_running">دویدن</string>
+    <string name="animation_wave">تکان دادن دست</string>
+    <string name="animation_hit">ضربه</string>
 </resources>

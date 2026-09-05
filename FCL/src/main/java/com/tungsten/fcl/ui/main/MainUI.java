@@ -1,5 +1,6 @@
 package com.tungsten.fcl.ui.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,6 +9,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
+import com.mio.skin.AnimationDialog;
 import com.mio.skin.SkinRenderer;
 import com.mio.skin.SkinViewer;
 import com.tungsten.fcl.R;
@@ -76,6 +78,12 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
         skinViewer = findViewById(R.id.skin_viewer);
         renderer = new SkinRenderer(getContext());
         skinViewer.setRenderer(renderer, 5f);
+        // 双击模型弹出动画切换窗口
+        skinViewer.setOnDoubleClick(() -> {
+            Context context = getContext();
+            if (context instanceof Activity && !((Activity) context).isDestroyed() && !((Activity) context).isFinishing()) {
+                new AnimationDialog(context, renderer.getAnimation(), animation -> renderer.playAnimation(animation)).show();            }
+        });
         checkAnnouncement();
         setupSkinDisplay();
 

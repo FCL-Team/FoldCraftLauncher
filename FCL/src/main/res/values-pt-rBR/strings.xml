@@ -912,4 +912,10 @@
     <string name="version_list_refreshing">Obtendo lista de versões remotas…</string>
     <string name="renderer_source">Fonte:</string>
     <string name="renderer_source_builtin">Integrado</string>
+    <string name="animation_select">Selecionar animação</string>
+    <string name="animation_idle">Parado</string>
+    <string name="animation_walking">Andando</string>
+    <string name="animation_running">Correndo</string>
+    <string name="animation_wave">Acenando</string>
+    <string name="animation_hit">Golpe</string>
 </resources>

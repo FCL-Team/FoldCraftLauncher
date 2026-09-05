@@ -1404,4 +1404,10 @@
     <string name="close">Close</string>
     <string name="create_account_first">Please create a game account before launching</string>
     <string name="version_list_refreshing">Fetching remote version list…</string>
+    <string name="animation_select">Select Animation</string>
+    <string name="animation_idle">Idle</string>
+    <string name="animation_walking">Walking</string>
+    <string name="animation_running">Running</string>
+    <string name="animation_wave">Wave</string>
+    <string name="animation_hit">Hit</string>
 </resources>

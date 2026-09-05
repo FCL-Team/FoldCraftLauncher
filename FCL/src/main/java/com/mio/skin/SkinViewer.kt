@@ -12,6 +12,7 @@ import android.util.AttributeSet
 import android.view.Choreographer
 import android.view.MotionEvent
 import android.view.TextureView
+import android.view.ViewConfiguration
 import com.tungsten.fclcore.util.Logging
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -34,6 +35,13 @@ class SkinViewer @JvmOverloads constructor(
     private var renderer: SkinRenderer? = null
     private var density = 1f
 
+    /** 双击模型回调（UI 线程，SAM 接口便于 Java 侧 lambda 调用） */
+    fun interface OnDoubleClickListener {
+        fun onDoubleClick()
+    }
+
+    var onDoubleClick: OnDoubleClickListener? = null
+
     // 触摸状态（仅 UI 线程访问）
     private var previousX = 0f
     private var previousY = 0f
@@ -41,6 +49,10 @@ class SkinViewer @JvmOverloads constructor(
     private var secondaryPointerId = 0
     private var pinchStartDistance = 0.0
     private var pinchStartScale = 1f
+    private var lastTapTime = 0L
+    private var lastTapX = 0f
+    private var lastTapY = 0f
+    private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
 
     // 渲染线程（renderHandler 仅在 renderThread 非 null 时有效）
     private var renderThread: HandlerThread? = null
@@ -86,6 +98,20 @@ class SkinViewer @JvmOverloads constructor(
             if (event.pointerCount == 1) {
                 val x = event.x
                 val y = event.y
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    // 双击检测：两次按下间隔短且位置接近
+                    val now = System.currentTimeMillis()
+                    val dx = x - lastTapX
+                    val dy = y - lastTapY
+                    if (now - lastTapTime < DOUBLE_TAP_INTERVAL && dx * dx + dy * dy < touchSlop * touchSlop) {
+                        lastTapTime = 0L
+                        onDoubleClick?.onDoubleClick()
+                    } else {
+                        lastTapTime = now
+                        lastTapX = x
+                        lastTapY = y
+                    }
+                }
                 if (event.action == MotionEvent.ACTION_MOVE) {
                     renderer?.rotateStep((x - previousX) / density, (y - previousY) / density)
                 }
@@ -286,5 +312,9 @@ class SkinViewer @JvmOverloads constructor(
     private fun stopFrameLoop() {
         frameLoopRunning = false
         frameCallback?.let { choreographer?.removeFrameCallback(it) }
+    }
+
+    companion object {
+        private const val DOUBLE_TAP_INTERVAL = 300L
     }
 }

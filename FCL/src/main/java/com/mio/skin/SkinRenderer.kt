@@ -28,7 +28,10 @@ class SkinRenderer(context: Context) {
     private val appContext = context.applicationContext
 
     private val model = PlayerModel()
-    private val animation = WalkingAnimation(model)
+
+    /** 当前播放的动画（默认走路），切换时重置模型姿态与动画进度 */
+    var animation: PlayerAnimation = WalkingAnimation()
+        private set
 
     // 手势状态（UI 线程写、渲染线程读，单字段读写无需同步）
     private var scale = 1f
@@ -103,6 +106,14 @@ class SkinRenderer(context: Context) {
         scale = value.coerceIn(MIN_SCALE, MAX_SCALE)
     }
 
+    /**
+     * 切换动画并重置姿态与进度（语义同 skinview3d 的 viewer.animation setter）。
+     */
+    fun playAnimation(animation: PlayerAnimation) {
+        this.animation = animation
+        model.resetJoints()
+    }
+
     // ---- 渲染线程回调（由 SkinViewer 驱动）----
 
     fun onSurfaceCreated() {
@@ -132,13 +143,15 @@ class SkinRenderer(context: Context) {
         consumePendingUpdate()
         GLES20.glClearColor(0f, 0f, 0f, 0f)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
-        animation.update(deltaSeconds)
+        animation.update(model, deltaSeconds)
 
         val distance = cameraDistance()
         Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, distance, 0f, 0f, 0f, 0f, 1f, 0f)
         Matrix.multiplyMM(pvMatrix, 0, projMatrix, 0, viewMatrix, 0)
-        // 模型整体旋转（拖动手势）：先 X 后 Y，与旧版固定管线旋转顺序一致
+        // 玩家整体偏移与倾斜（动画驱动）→ 模型整体旋转（拖动手势）：先 X 后 Y，与旧版固定管线旋转顺序一致
         Matrix.setIdentityM(wrapperMatrix, 0)
+        Matrix.translateM(wrapperMatrix, 0, model.rootX, model.rootY, model.rootZ)
+        Matrix.rotateM(wrapperMatrix, 0, Math.toDegrees(model.rootRotationZ.toDouble()).toFloat(), 0f, 0f, 1f)
         Matrix.rotateM(wrapperMatrix, 0, rotationX, 1f, 0f, 0f)
         Matrix.rotateM(wrapperMatrix, 0, rotationY, 0f, 1f, 0f)
 

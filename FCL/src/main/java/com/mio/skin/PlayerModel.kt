@@ -4,9 +4,10 @@ package com.mio.skin
  * 玩家 3D 模型，部件几何尺寸/位置/旋转轴心与 skinview3d 的 PlayerObject 一致：
  * 玩家面向 +Z，总高 32 且纵向以原点为中心（脚底 -16、头顶 +16）。
  *
- * 旋转角均为弧度，由动画（[WalkingAnimation]）逐帧写入；
- * 旋转围绕部件挂点（position）进行，pivot 为部件内网格相对挂点的固定偏移
+ * 旋转角均为弧度，由动画（[PlayerAnimation] 子类）逐帧写入；
+ * 旋转围绕部件挂点（pos）进行，pivot 为部件内网格相对挂点的固定偏移
  * （手臂在肩部、腿在髋部），网格再经自身 offset 偏移。
+ * root 平移/旋转为玩家整体变换（奔跑动画的跳跃/躲闪/倾斜）。
  */
 class PlayerModel {
 
@@ -18,13 +19,19 @@ class PlayerModel {
         val offsetZ: Float = 0f
     )
 
-    /** 可旋转部件，rotation 围绕挂点旋转 */
+    /** 可旋转部件，rotation 围绕挂点旋转；挂点位置可被动画修改（resetJoints 恢复） */
     class Part(
-        val posX: Float,
-        val posY: Float,
-        val posZ: Float,
+        baseX: Float,
+        baseY: Float,
+        baseZ: Float,
         val meshes: List<Mesh>
     ) {
+        val baseX = baseX
+        val baseY = baseY
+        val baseZ = baseZ
+        var posX = baseX
+        var posY = baseY
+        var posZ = baseZ
         var pivotX = 0f
         var pivotY = 0f
         var pivotZ = 0f
@@ -71,6 +78,12 @@ class PlayerModel {
 
     val skinParts: List<Part> = listOf(head, body, rightArm, leftArm, rightLeg, leftLeg)
 
+    /** 玩家整体偏移与倾斜（奔跑动画的跳跃/躲闪/倾斜，其余动画为 0） */
+    var rootX = 0f
+    var rootY = 0f
+    var rootZ = 0f
+    var rootRotationZ = 0f
+
     var slim = false
         private set
 
@@ -94,6 +107,31 @@ class PlayerModel {
         }
         slim = value
         applySlimArms()
+    }
+
+    /**
+     * 重置姿态：部件位置/旋转与整体变换恢复默认（切换动画时调用，
+     * 语义同 skinview3d 的 resetJoints）。
+     */
+    fun resetJoints() {
+        skinParts.forEach { part ->
+            part.posX = part.baseX
+            part.posY = part.baseY
+            part.posZ = part.baseZ
+            part.rotationX = 0f
+            part.rotationY = 0f
+            part.rotationZ = 0f
+        }
+        cape.posX = cape.baseX
+        cape.posY = cape.baseY
+        cape.posZ = cape.baseZ
+        cape.rotationX = 0f
+        cape.rotationY = Math.PI.toFloat()
+        cape.rotationZ = 0f
+        rootX = 0f
+        rootY = 0f
+        rootZ = 0f
+        rootRotationZ = 0f
     }
 
     /**

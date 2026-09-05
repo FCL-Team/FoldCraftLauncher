@@ -4,17 +4,12 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * 走路动画，公式与 skinview3d 的 WalkingAnimation 一致（progress 以秒累计）。
+ * 走路动画，公式与 skinview3d 的 WalkingAnimation 一致。
  * 覆盖腿/臂摆动、头部小幅摆动与披风摆动。
  */
-class WalkingAnimation(private val player: PlayerModel) {
+class WalkingAnimation(var headBobbing: Boolean = true) : PlayerAnimation() {
 
-    var speed = 1f
-    var headBobbing = true
-    var progress = 0f
-
-    fun update(deltaTime: Float) {
-        // 以当前 progress 计算姿态，随后再累加（与 skinview3d 一致）
+    override fun animate(player: PlayerModel, delta: Float) {
         val t = progress * 8f
 
         // 腿部摆动
@@ -39,11 +34,5 @@ class WalkingAnimation(private val player: PlayerModel) {
 
         // 披风绕 X 轴固定倾角（PI*0.06 = 10.8°）+ 低频摆动
         player.cape.rotationX = sin(t / 1.5f) * 0.06f + PI * 0.06f
-
-        progress += deltaTime * speed
-    }
-
-    companion object {
-        private val PI = Math.PI.toFloat()
     }
 }

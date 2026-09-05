@@ -9,4 +9,10 @@
     <string name="splash_permission_settings">設定</string>
     <string name="renderer_source">ソース:</string>
     <string name="renderer_source_builtin">内蔵</string>
+    <string name="animation_select">アニメーション選択</string>
+    <string name="animation_idle">待機</string>
+    <string name="animation_walking">歩き</string>
+    <string name="animation_running">走る</string>
+    <string name="animation_wave">挨拶</string>
+    <string name="animation_hit">攻撃</string>
 </resources>
