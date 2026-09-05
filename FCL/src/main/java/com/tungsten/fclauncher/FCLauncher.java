@@ -245,6 +245,20 @@ public class FCLauncher {
     }
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
+        addRendererEnvInner(config, envMap);
+        // SDL 需要独立的 GL/EGL 库名：GL 用渲染器 id，EGL 用库绝对路径。
+        // 必须对所有渲染器路径生效（插件渲染器在 inner 中途 return）
+        String rendererId = envMap.get("POJAV_RENDERER");
+        if (rendererId != null) {
+            envMap.put("SDL_OPENGL_LIBRARY", rendererId);
+        }
+        String egl = envMap.get("POJAVEXEC_EGL");
+        if (egl != null) {
+            envMap.put("SDL_EGL_LIBRARY", egl.startsWith("/") ? egl : FCLPath.NATIVE_LIB_DIR + "/" + egl);
+        }
+    }
+
+    private static void addRendererEnvInner(FCLConfig config, HashMap<String, String> envMap) {
         Renderer renderer = config.getRenderer();
         if (!renderer.getPath().isEmpty()) {
             if (!renderer.getPojavRendererId().isEmpty()) {
@@ -315,15 +329,6 @@ public class FCLauncher {
             } else if (renderer.isEqual(Renderer.ID_FREEDRENO)) {
                 envMap.put("POJAV_RENDERER", "gallium_freedreno");
             }
-        }
-        // SDL 需要独立的 GL/EGL 库名：GL 用渲染器 id，EGL 用库绝对路径
-        String rendererId = envMap.get("POJAV_RENDERER");
-        if (rendererId != null) {
-            envMap.put("SDL_OPENGL_LIBRARY", rendererId);
-        }
-        String egl = envMap.get("POJAVEXEC_EGL");
-        if (egl != null) {
-            envMap.put("SDL_EGL_LIBRARY", egl.startsWith("/") ? egl : FCLPath.NATIVE_LIB_DIR + "/" + egl);
         }
     }
 
