@@ -1272,4 +1272,7 @@
     <string name="animation_running">奔跑</string>
     <string name="animation_wave">挥手</string>
     <string name="animation_hit">挥击</string>
+    <string name="animation_flying">飞行</string>
+    <string name="animation_crouch">潜行</string>
+    <string name="animation_swim">游泳</string>
 </resources>

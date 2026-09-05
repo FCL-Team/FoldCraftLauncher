@@ -160,6 +160,14 @@ class SkinRenderer(context: Context) {
         Matrix.rotateM(
             wrapperMatrix,
             0,
+            Math.toDegrees(model.rootRotationX.toDouble()).toFloat(),
+            1f,
+            0f,
+            0f
+        )
+        Matrix.rotateM(
+            wrapperMatrix,
+            0,
             Math.toDegrees(model.rootRotationZ.toDouble()).toFloat(),
             0f,
             0f,

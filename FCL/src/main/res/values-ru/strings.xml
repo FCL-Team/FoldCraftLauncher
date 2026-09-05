@@ -999,4 +999,7 @@
     <string name="animation_running">Бег</string>
     <string name="animation_wave">Помахать</string>
     <string name="animation_hit">Удар</string>
+    <string name="animation_flying">Полёт</string>
+    <string name="animation_crouch">Красться</string>
+    <string name="animation_swim">Плавание</string>
 </resources>

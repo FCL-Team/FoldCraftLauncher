@@ -42,6 +42,9 @@ class AnimationDialog(
             R.string.animation_idle to { IdleAnimation() },
             R.string.animation_walking to { WalkingAnimation() },
             R.string.animation_running to { RunningAnimation() },
+            R.string.animation_flying to { FlyingAnimation() },
+            R.string.animation_swim to { SwimAnimation() },
+            R.string.animation_crouch to { CrouchAnimation() },
             R.string.animation_wave to { WaveAnimation() },
             R.string.animation_hit to { HitAnimation() }
         )

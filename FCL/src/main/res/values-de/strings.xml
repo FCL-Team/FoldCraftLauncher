@@ -939,4 +939,7 @@
     <string name="animation_running">Rennen</string>
     <string name="animation_wave">Winken</string>
     <string name="animation_hit">Schlagen</string>
+    <string name="animation_flying">Fliegen</string>
+    <string name="animation_crouch">Schleichen</string>
+    <string name="animation_swim">Schwimmen</string>
 </resources>

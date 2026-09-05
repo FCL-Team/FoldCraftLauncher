@@ -1227,4 +1227,7 @@
     <string name="animation_running">Chạy</string>
     <string name="animation_wave">Vẫy tay</string>
     <string name="animation_hit">Đánh</string>
+    <string name="animation_flying">Bay</string>
+    <string name="animation_crouch">Rúc</string>
+    <string name="animation_swim">Bơi</string>
 </resources>

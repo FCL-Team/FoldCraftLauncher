@@ -242,10 +242,11 @@ class PlayerModel {
         leftLegExtrusion
     )
 
-    /** 玩家整体偏移与倾斜（奔跑动画的跳跃/躲闪/倾斜，其余动画为 0） */
+    /** 玩家整体偏移与倾斜（飞行俯身/游泳下潜/奔跑的跳跃躲闪倾斜，其余动画为 0） */
     var rootX = 0f
     var rootY = 0f
     var rootZ = 0f
+    var rootRotationX = 0f
     var rootRotationZ = 0f
 
     private var skinPixels: IntArray? = null
@@ -305,6 +306,7 @@ class PlayerModel {
         rootX = 0f
         rootY = 0f
         rootZ = 0f
+        rootRotationX = 0f
         rootRotationZ = 0f
     }
 

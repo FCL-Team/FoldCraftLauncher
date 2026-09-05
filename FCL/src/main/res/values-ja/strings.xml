@@ -15,4 +15,7 @@
     <string name="animation_running">走る</string>
     <string name="animation_wave">挨拶</string>
     <string name="animation_hit">攻撃</string>
+    <string name="animation_flying">飛行</string>
+    <string name="animation_crouch">しゃがみ</string>
+    <string name="animation_swim">泳ぎ</string>
 </resources>

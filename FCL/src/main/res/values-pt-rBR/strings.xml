@@ -918,4 +918,7 @@
     <string name="animation_running">Correndo</string>
     <string name="animation_wave">Acenando</string>
     <string name="animation_hit">Golpe</string>
+    <string name="animation_flying">Voando</string>
+    <string name="animation_crouch">Agachado</string>
+    <string name="animation_swim">Nadando</string>
 </resources>
