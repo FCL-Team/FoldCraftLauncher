@@ -272,27 +272,29 @@ class SkinViewer @JvmOverloads constructor(
         this.choreographer = choreographer
         val callback = object : Choreographer.FrameCallback {
             override fun doFrame(frameTimeNanos: Long) {
-                if (!frameLoopRunning) {
-                    return
-                }
-                val delta = if (lastFrameNanos == 0L) {
-                    1f / 60f
-                } else {
-                    (frameTimeNanos - lastFrameNanos) / 1_000_000_000f
-                }
-                lastFrameNanos = frameTimeNanos
-                try {
-                    renderer?.onDrawFrame(delta)
-                    if (!EGL14.eglSwapBuffers(eglDisplay, eglSurface)) {
-                        // surface 已失效，停止出帧
-                        stopFrameLoop()
-                        return
-                    }
-                } catch (e: Throwable) {
-                    Logging.LOG.warning("SkinViewer: render frame failed: $e")
-                }
                 if (frameLoopRunning) {
-                    choreographer.postFrameCallback(this)
+                    // 帧率上限 60：距上一渲染帧不足帧间隔时跳过本次 vsync（高刷新率屏幕下生效）
+                    if (lastFrameNanos == 0L || frameTimeNanos - lastFrameNanos >= FRAME_INTERVAL_NANOS) {
+                        val delta = if (lastFrameNanos == 0L) {
+                            1f / 60f
+                        } else {
+                            (frameTimeNanos - lastFrameNanos) / 1_000_000_000f
+                        }
+                        lastFrameNanos = frameTimeNanos
+                        try {
+                            renderer?.onDrawFrame(delta)
+                            if (!EGL14.eglSwapBuffers(eglDisplay, eglSurface)) {
+                                // surface 已失效，停止出帧
+                                stopFrameLoop()
+                                return
+                            }
+                        } catch (e: Throwable) {
+                            Logging.LOG.warning("SkinViewer: render frame failed: $e")
+                        }
+                    }
+                    if (frameLoopRunning) {
+                        choreographer.postFrameCallback(this)
+                    }
                 }
             }
         }
@@ -316,5 +318,8 @@ class SkinViewer @JvmOverloads constructor(
 
     companion object {
         private const val DOUBLE_TAP_INTERVAL = 300L
+
+        /** 帧率上限 60fps 的帧间隔（略低于 16.67ms，容忍 vsync 时间戳抖动） */
+        private const val FRAME_INTERVAL_NANOS = 16_000_000L
     }
 }
