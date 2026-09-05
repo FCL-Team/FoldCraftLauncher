@@ -60,10 +60,13 @@ class SkinRenderer(context: Context) {
     // UI 线程 → 渲染线程 的待处理纹理更新
     @Volatile
     private var pendingSkin: Bitmap? = null
+
     @Volatile
     private var pendingCape: Bitmap? = null
+
     @Volatile
     private var pendingSlim = false
+
     @Volatile
     private var pendingHasUpdate = false
 
@@ -154,7 +157,14 @@ class SkinRenderer(context: Context) {
         // 玩家整体偏移与倾斜（动画驱动）→ 模型整体旋转（拖动手势）：先 X 后 Y，与旧版固定管线旋转顺序一致
         Matrix.setIdentityM(wrapperMatrix, 0)
         Matrix.translateM(wrapperMatrix, 0, model.rootX, model.rootY, model.rootZ)
-        Matrix.rotateM(wrapperMatrix, 0, Math.toDegrees(model.rootRotationZ.toDouble()).toFloat(), 0f, 0f, 1f)
+        Matrix.rotateM(
+            wrapperMatrix,
+            0,
+            Math.toDegrees(model.rootRotationZ.toDouble()).toFloat(),
+            0f,
+            0f,
+            1f
+        )
         Matrix.rotateM(wrapperMatrix, 0, rotationX, 1f, 0f, 0f)
         Matrix.rotateM(wrapperMatrix, 0, rotationY, 0f, 1f, 0f)
 
@@ -178,9 +188,30 @@ class SkinRenderer(context: Context) {
             // wrapper 旋转 → 部件挂点 → 部件旋转（XYZ 顺序，同 three.js）→ pivot → 网格偏移
             System.arraycopy(wrapperMatrix, 0, modelMatrix, 0, 16)
             Matrix.translateM(modelMatrix, 0, part.posX, part.posY, part.posZ)
-            Matrix.rotateM(modelMatrix, 0, Math.toDegrees(part.rotationX.toDouble()).toFloat(), 1f, 0f, 0f)
-            Matrix.rotateM(modelMatrix, 0, Math.toDegrees(part.rotationY.toDouble()).toFloat(), 0f, 1f, 0f)
-            Matrix.rotateM(modelMatrix, 0, Math.toDegrees(part.rotationZ.toDouble()).toFloat(), 0f, 0f, 1f)
+            Matrix.rotateM(
+                modelMatrix,
+                0,
+                Math.toDegrees(part.rotationX.toDouble()).toFloat(),
+                1f,
+                0f,
+                0f
+            )
+            Matrix.rotateM(
+                modelMatrix,
+                0,
+                Math.toDegrees(part.rotationY.toDouble()).toFloat(),
+                0f,
+                1f,
+                0f
+            )
+            Matrix.rotateM(
+                modelMatrix,
+                0,
+                Math.toDegrees(part.rotationZ.toDouble()).toFloat(),
+                0f,
+                0f,
+                1f
+            )
             Matrix.translateM(modelMatrix, 0, part.pivotX, part.pivotY, part.pivotZ)
             Matrix.translateM(modelMatrix, 0, mesh.offsetX, mesh.offsetY, mesh.offsetZ)
             Matrix.multiplyMM(mvpMatrix, 0, pvMatrix, 0, modelMatrix, 0)
@@ -208,7 +239,8 @@ class SkinRenderer(context: Context) {
         Schedulers.androidUIThread().execute {
             try {
                 val normalized = NormalizedSkin(skin)
-                pendingSkin = if (normalized.isOldFormat) normalized.normalizedTexture else normalized.originalTexture
+                pendingSkin =
+                    if (normalized.isOldFormat) normalized.normalizedTexture else normalized.originalTexture
                 pendingCape = cape
                 pendingSlim = slimOverride ?: normalized.isSlim
                 pendingHasUpdate = true
@@ -250,10 +282,26 @@ class SkinRenderer(context: Context) {
         val ids = IntArray(1)
         GLES20.glGenTextures(1, ids, 0)
         GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, ids[0])
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST)
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST)
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_S, GLES20.GL_CLAMP_TO_EDGE)
-        GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D, GLES20.GL_TEXTURE_WRAP_T, GLES20.GL_CLAMP_TO_EDGE)
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_MIN_FILTER,
+            GLES20.GL_NEAREST
+        )
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_MAG_FILTER,
+            GLES20.GL_NEAREST
+        )
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_WRAP_S,
+            GLES20.GL_CLAMP_TO_EDGE
+        )
+        GLES20.glTexParameteri(
+            GLES20.GL_TEXTURE_2D,
+            GLES20.GL_TEXTURE_WRAP_T,
+            GLES20.GL_CLAMP_TO_EDGE
+        )
         GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
         return ids[0]
     }

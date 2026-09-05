@@ -82,7 +82,8 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
         skinViewer.setOnDoubleClick(() -> {
             Context context = getContext();
             if (context instanceof Activity && !((Activity) context).isDestroyed() && !((Activity) context).isFinishing()) {
-                new AnimationDialog(context, renderer.getAnimation(), animation -> renderer.playAnimation(animation)).show();            }
+                new AnimationDialog(context, renderer.getAnimation(), animation -> renderer.playAnimation(animation)).show();
+            }
         });
         checkAnnouncement();
         setupSkinDisplay();

@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.SurfaceTexture
 import android.opengl.EGL14
 import android.opengl.EGLConfig
-import android.opengl.EGLSurface
 import android.os.Handler
 import android.os.HandlerThread
 import android.util.AttributeSet
@@ -60,8 +59,10 @@ class SkinViewer @JvmOverloads constructor(
     private var choreographer: Choreographer? = null
     private var frameCallback: Choreographer.FrameCallback? = null
     private var lastFrameNanos = 0L
+
     @Volatile
     private var frameLoopRunning = false
+
     @Volatile
     private var resumeRequested = false
 
@@ -71,7 +72,7 @@ class SkinViewer @JvmOverloads constructor(
     private var eglSurface = EGL14.EGL_NO_SURFACE
 
     init {
-        setOpaque(false)
+        isOpaque = false
         isClickable = true
         surfaceTextureListener = this
     }
@@ -121,20 +122,22 @@ class SkinViewer @JvmOverloads constructor(
                 when (event.actionMasked) {
                     MotionEvent.ACTION_DOWN ->
                         primaryPointerId = event.getPointerId(event.actionIndex)
+
                     MotionEvent.ACTION_POINTER_DOWN -> {
                         secondaryPointerId = event.getPointerId(event.actionIndex)
                         val deltaX = event.getX(event.findPointerIndex(primaryPointerId)) -
-                            event.getX(event.findPointerIndex(secondaryPointerId))
+                                event.getX(event.findPointerIndex(secondaryPointerId))
                         val deltaY = event.getY(event.findPointerIndex(primaryPointerId)) -
-                            event.getY(event.findPointerIndex(secondaryPointerId))
+                                event.getY(event.findPointerIndex(secondaryPointerId))
                         pinchStartDistance = sqrt((deltaX * deltaX + deltaY * deltaY).toDouble())
                         pinchStartScale = renderer?.getScale() ?: 1f
                     }
+
                     MotionEvent.ACTION_MOVE -> {
                         val deltaX = event.getX(event.findPointerIndex(primaryPointerId)) -
-                            event.getX(event.findPointerIndex(secondaryPointerId))
+                                event.getX(event.findPointerIndex(secondaryPointerId))
                         val deltaY = event.getY(event.findPointerIndex(primaryPointerId)) -
-                            event.getY(event.findPointerIndex(secondaryPointerId))
+                                event.getY(event.findPointerIndex(secondaryPointerId))
                         val distance = sqrt((deltaX * deltaX + deltaY * deltaY).toDouble())
                         val delta = (distance - pinchStartDistance).toFloat()
                         val diagonal = sqrt((width * width + height * height).toDouble()).toFloat()
@@ -142,7 +145,7 @@ class SkinViewer @JvmOverloads constructor(
                     }
                 }
             }
-        } catch (ignored: Throwable) {
+        } catch (_: Throwable) {
         }
         return true
     }
@@ -200,7 +203,7 @@ class SkinViewer @JvmOverloads constructor(
         }
         try {
             latch.await(1, TimeUnit.SECONDS)
-        } catch (ignored: InterruptedException) {
+        } catch (_: InterruptedException) {
         }
         thread.quitSafely()
     }
@@ -234,15 +237,32 @@ class SkinViewer @JvmOverloads constructor(
         )
         val configs = arrayOfNulls<EGLConfig>(1)
         val counts = IntArray(1)
-        if (!EGL14.eglChooseConfig(eglDisplay, configAttribs, 0, configs, 0, 1, counts, 0) || counts[0] == 0) {
+        if (!EGL14.eglChooseConfig(
+                eglDisplay,
+                configAttribs,
+                0,
+                configs,
+                0,
+                1,
+                counts,
+                0
+            ) || counts[0] == 0
+        ) {
             return false
         }
         val contextAttribs = intArrayOf(EGL14.EGL_CONTEXT_CLIENT_VERSION, 2, EGL14.EGL_NONE)
-        eglContext = EGL14.eglCreateContext(eglDisplay, configs[0], EGL14.EGL_NO_CONTEXT, contextAttribs, 0)
+        eglContext =
+            EGL14.eglCreateContext(eglDisplay, configs[0], EGL14.EGL_NO_CONTEXT, contextAttribs, 0)
         if (eglContext == EGL14.EGL_NO_CONTEXT) {
             return false
         }
-        eglSurface = EGL14.eglCreateWindowSurface(eglDisplay, configs[0], surface, intArrayOf(EGL14.EGL_NONE), 0)
+        eglSurface = EGL14.eglCreateWindowSurface(
+            eglDisplay,
+            configs[0],
+            surface,
+            intArrayOf(EGL14.EGL_NONE),
+            0
+        )
         if (eglSurface == EGL14.EGL_NO_SURFACE) {
             return false
         }
@@ -251,7 +271,12 @@ class SkinViewer @JvmOverloads constructor(
 
     private fun releaseEGL() {
         if (eglDisplay != EGL14.EGL_NO_DISPLAY) {
-            EGL14.eglMakeCurrent(eglDisplay, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_SURFACE, EGL14.EGL_NO_CONTEXT)
+            EGL14.eglMakeCurrent(
+                eglDisplay,
+                EGL14.EGL_NO_SURFACE,
+                EGL14.EGL_NO_SURFACE,
+                EGL14.EGL_NO_CONTEXT
+            )
             if (eglSurface != EGL14.EGL_NO_SURFACE) {
                 EGL14.eglDestroySurface(eglDisplay, eglSurface)
             }

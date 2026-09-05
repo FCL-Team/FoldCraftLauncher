@@ -14,19 +14,11 @@ import java.nio.FloatBuffer
  * UV 矩形按第一层尺寸偏移。网格由皮肤像素重建（渲染线程调用）。
  */
 class OverlayExtrusion(
-    outerX: Float, outerY: Float, outerZ: Float,
-    innerX: Float, innerY: Float, innerZ: Float,
-    u: Float, v: Float,
+    private var outerX: Float, private var outerY: Float, private var outerZ: Float,
+    private var innerX: Float, private var innerY: Float, private var innerZ: Float,
+    private var u: Float, private var v: Float,
     private val textureWidth: Float, private val textureHeight: Float
 ) {
-    private var outerX = outerX
-    private var outerY = outerY
-    private var outerZ = outerZ
-    private var innerX = innerX
-    private var innerY = innerY
-    private var innerZ = innerZ
-    private var u = u
-    private var v = v
 
     private var positions = FloatArray(0)
     private var uvs = FloatArray(0)
@@ -115,18 +107,30 @@ class OverlayExtrusion(
         val h = innerY
         val d = innerZ
         faces = listOf(
-            face(floatArrayOf(-hx, hy, hz, hx, hy, hz, -hx, -hy, hz, hx, -hy, hz),
-                u + d, v + d, w, h, 2, 1f),
-            face(floatArrayOf(hx, hy, -hz, -hx, hy, -hz, hx, -hy, -hz, -hx, -hy, -hz),
-                u + w + d * 2, v + d, w, h, 2, -1f),
-            face(floatArrayOf(-hx, hy, -hz, -hx, hy, hz, -hx, -hy, -hz, -hx, -hy, hz),
-                u, v + d, d, h, 0, -1f),
-            face(floatArrayOf(hx, hy, hz, hx, hy, -hz, hx, -hy, hz, hx, -hy, -hz),
-                u + w + d, v + d, d, h, 0, 1f),
-            face(floatArrayOf(-hx, hy, -hz, hx, hy, -hz, -hx, hy, hz, hx, hy, hz),
-                u + d, v, w, d, 1, 1f),
-            face(floatArrayOf(-hx, -hy, -hz, hx, -hy, -hz, -hx, -hy, hz, hx, -hy, hz),
-                u + w + d, v, w, d, 1, -1f)
+            face(
+                floatArrayOf(-hx, hy, hz, hx, hy, hz, -hx, -hy, hz, hx, -hy, hz),
+                u + d, v + d, w, h, 2, 1f
+            ),
+            face(
+                floatArrayOf(hx, hy, -hz, -hx, hy, -hz, hx, -hy, -hz, -hx, -hy, -hz),
+                u + w + d * 2, v + d, w, h, 2, -1f
+            ),
+            face(
+                floatArrayOf(-hx, hy, -hz, -hx, hy, hz, -hx, -hy, -hz, -hx, -hy, hz),
+                u, v + d, d, h, 0, -1f
+            ),
+            face(
+                floatArrayOf(hx, hy, hz, hx, hy, -hz, hx, -hy, hz, hx, -hy, -hz),
+                u + w + d, v + d, d, h, 0, 1f
+            ),
+            face(
+                floatArrayOf(-hx, hy, -hz, hx, hy, -hz, -hx, hy, hz, hx, hy, hz),
+                u + d, v, w, d, 1, 1f
+            ),
+            face(
+                floatArrayOf(-hx, -hy, -hz, hx, -hy, -hz, -hx, -hy, hz, hx, -hy, hz),
+                u + w + d, v, w, d, 1, -1f
+            )
         )
     }
 
@@ -142,7 +146,8 @@ class OverlayExtrusion(
         val innerCorners = FloatArray(12)
         for (i in 0 until 4) {
             for (k in 0 until 3) {
-                innerCorners[i * 3 + k] = if (k == axis) sign * innerHalf[axis] else outerCorners[i * 3 + k]
+                innerCorners[i * 3 + k] =
+                    if (k == axis) sign * innerHalf[axis] else outerCorners[i * 3 + k]
             }
         }
         return Face(outerCorners, innerCorners, u1, v1, pw.toInt(), ph.toInt())
@@ -161,7 +166,13 @@ class OverlayExtrusion(
     }
 
     /** 面上 (i,j) 像素的邻位是否透明（越出 UV 矩形视为透明） */
-    private fun isTransparent(face: Face, pixels: IntArray, bitmapWidth: Int, i: Int, j: Int): Boolean {
+    private fun isTransparent(
+        face: Face,
+        pixels: IntArray,
+        bitmapWidth: Int,
+        i: Int,
+        j: Int
+    ): Boolean {
         if (i < 0 || i >= face.pw || j < 0 || j >= face.ph) {
             return true
         }
@@ -175,8 +186,10 @@ class OverlayExtrusion(
         face: Face, i1: Int, j1: Int, i2: Int, j2: Int,
         cu: Float, cv: Float
     ) {
-        val e1 = FloatArray(3); val e2 = FloatArray(3)
-        val i1p = FloatArray(3); val i2p = FloatArray(3)
+        val e1 = FloatArray(3)
+        val e2 = FloatArray(3)
+        val i1p = FloatArray(3)
+        val i2p = FloatArray(3)
         corner(face, true, i1, j1, e1, 0)
         corner(face, true, i2, j2, e2, 0)
         corner(face, false, i1, j1, i1p, 0)
@@ -195,9 +208,19 @@ class OverlayExtrusion(
             vboUvs = ids[1]
         }
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboPositions)
-        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, positions.size * 4, toFloatBuffer(positions), GLES20.GL_STATIC_DRAW)
+        GLES20.glBufferData(
+            GLES20.GL_ARRAY_BUFFER,
+            positions.size * 4,
+            toFloatBuffer(positions),
+            GLES20.GL_STATIC_DRAW
+        )
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboUvs)
-        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, uvs.size * 4, toFloatBuffer(uvs), GLES20.GL_STATIC_DRAW)
+        GLES20.glBufferData(
+            GLES20.GL_ARRAY_BUFFER,
+            uvs.size * 4,
+            toFloatBuffer(uvs),
+            GLES20.GL_STATIC_DRAW
+        )
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
     }
 

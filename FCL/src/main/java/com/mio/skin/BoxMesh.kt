@@ -64,18 +64,30 @@ class BoxMesh(
         // UV 矩形偏移遵循 Minecraft 皮肤规范（同 skinview3d setUVs，宽高深用 UV 尺寸）：
         // 右(u,v+d) 前(u+d,v+d) 左(u+w+d,v+d) 后(u+2d+w,v+d) 上(u+d,v) 下(u+w+d,v)
         val faces = arrayOf(
-            floatArrayOf(-hx, hy, hz, hx, hy, hz, -hx, -hy, hz, hx, -hy, hz,
-                u + ud, v + ud, u + uw + ud, v + ud + uh),
-            floatArrayOf(hx, hy, -hz, -hx, hy, -hz, hx, -hy, -hz, -hx, -hy, -hz,
-                u + uw + ud * 2, v + ud, u + uw * 2 + ud * 2, v + ud + uh),
-            floatArrayOf(-hx, hy, -hz, -hx, hy, hz, -hx, -hy, -hz, -hx, -hy, hz,
-                u, v + ud, u + ud, v + ud + uh),
-            floatArrayOf(hx, hy, hz, hx, hy, -hz, hx, -hy, hz, hx, -hy, -hz,
-                u + uw + ud, v + ud, u + uw + ud * 2, v + ud + uh),
-            floatArrayOf(-hx, hy, -hz, hx, hy, -hz, -hx, hy, hz, hx, hy, hz,
-                u + ud, v, u + uw + ud, v + ud),
-            floatArrayOf(-hx, -hy, -hz, hx, -hy, -hz, -hx, -hy, hz, hx, -hy, hz,
-                u + uw + ud, v, u + uw * 2 + ud, v + ud)
+            floatArrayOf(
+                -hx, hy, hz, hx, hy, hz, -hx, -hy, hz, hx, -hy, hz,
+                u + ud, v + ud, u + uw + ud, v + ud + uh
+            ),
+            floatArrayOf(
+                hx, hy, -hz, -hx, hy, -hz, hx, -hy, -hz, -hx, -hy, -hz,
+                u + uw + ud * 2, v + ud, u + uw * 2 + ud * 2, v + ud + uh
+            ),
+            floatArrayOf(
+                -hx, hy, -hz, -hx, hy, hz, -hx, -hy, -hz, -hx, -hy, hz,
+                u, v + ud, u + ud, v + ud + uh
+            ),
+            floatArrayOf(
+                hx, hy, hz, hx, hy, -hz, hx, -hy, hz, hx, -hy, -hz,
+                u + uw + ud, v + ud, u + uw + ud * 2, v + ud + uh
+            ),
+            floatArrayOf(
+                -hx, hy, -hz, hx, hy, -hz, -hx, hy, hz, hx, hy, hz,
+                u + ud, v, u + uw + ud, v + ud
+            ),
+            floatArrayOf(
+                -hx, -hy, -hz, hx, -hy, -hz, -hx, -hy, hz, hx, -hy, hz,
+                u + uw + ud, v, u + uw * 2 + ud, v + ud
+            )
         )
         var vi = 0
         var ti = 0
@@ -103,9 +115,19 @@ class BoxMesh(
             vboUvs = ids[1]
         }
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboPositions)
-        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, positions.size * 4, toFloatBuffer(positions), GLES20.GL_STATIC_DRAW)
+        GLES20.glBufferData(
+            GLES20.GL_ARRAY_BUFFER,
+            positions.size * 4,
+            toFloatBuffer(positions),
+            GLES20.GL_STATIC_DRAW
+        )
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vboUvs)
-        GLES20.glBufferData(GLES20.GL_ARRAY_BUFFER, uvs.size * 4, toFloatBuffer(uvs), GLES20.GL_STATIC_DRAW)
+        GLES20.glBufferData(
+            GLES20.GL_ARRAY_BUFFER,
+            uvs.size * 4,
+            toFloatBuffer(uvs),
+            GLES20.GL_STATIC_DRAW
+        )
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
     }
 

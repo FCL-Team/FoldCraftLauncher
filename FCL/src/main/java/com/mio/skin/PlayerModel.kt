@@ -21,14 +21,11 @@ class PlayerModel {
 
     /** 可旋转部件，rotation 围绕挂点旋转；挂点位置可被动画修改（resetJoints 恢复） */
     class Part(
-        baseX: Float,
-        baseY: Float,
-        baseZ: Float,
+        val baseX: Float,
+        val baseY: Float,
+        val baseZ: Float,
         val meshes: List<Mesh>
     ) {
-        val baseX = baseX
-        val baseY = baseY
-        val baseZ = baseZ
         var posX = baseX
         var posY = baseY
         var posZ = baseZ
@@ -43,41 +40,130 @@ class PlayerModel {
         var extrusion: OverlayExtrusion? = null
     }
 
-    val head = Part(0f, 8f, 0f, listOf(
-        Mesh(BoxMesh(8f, 8f, 8f, 0f, 0f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT), offsetY = 4f),
-        // 第二层几何放大但 UV 仍按原始部件尺寸偏移
-        Mesh(BoxMesh(9f, 9f, 9f, 32f, 0f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT, 8f, 8f, 8f), offsetY = 4f)
-    ))
+    val head = Part(
+        0f, 8f, 0f, listOf(
+            Mesh(
+                BoxMesh(8f, 8f, 8f, 0f, 0f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT),
+                offsetY = 4f
+            ),
+            // 第二层几何放大但 UV 仍按原始部件尺寸偏移
+            Mesh(
+                BoxMesh(9f, 9f, 9f, 32f, 0f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT, 8f, 8f, 8f),
+                offsetY = 4f
+            )
+        )
+    )
 
-    val body = Part(0f, 2f, 0f, listOf(
-        Mesh(BoxMesh(8f, 12f, 4f, 16f, 16f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)),
-        Mesh(BoxMesh(8.5f, 12.5f, 4.5f, 16f, 32f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT, 8f, 12f, 4f))
-    ))
+    val body = Part(
+        0f, 2f, 0f, listOf(
+            Mesh(BoxMesh(8f, 12f, 4f, 16f, 16f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)),
+            Mesh(
+                BoxMesh(
+                    8.5f,
+                    12.5f,
+                    4.5f,
+                    16f,
+                    32f,
+                    SKIN_TEXTURE_WIDTH,
+                    SKIN_TEXTURE_HEIGHT,
+                    8f,
+                    12f,
+                    4f
+                )
+            )
+        )
+    )
 
-    val rightArm = Part(-5f, 6f, 0f, listOf(
-        Mesh(BoxMesh(4f, 12f, 4f, 40f, 16f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)),
-        Mesh(BoxMesh(4.5f, 12.5f, 4.5f, 40f, 32f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT, 4f, 12f, 4f))
-    ))
+    val rightArm = Part(
+        -5f, 6f, 0f, listOf(
+            Mesh(BoxMesh(4f, 12f, 4f, 40f, 16f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)),
+            Mesh(
+                BoxMesh(
+                    4.5f,
+                    12.5f,
+                    4.5f,
+                    40f,
+                    32f,
+                    SKIN_TEXTURE_WIDTH,
+                    SKIN_TEXTURE_HEIGHT,
+                    4f,
+                    12f,
+                    4f
+                )
+            )
+        )
+    )
 
-    val leftArm = Part(5f, 6f, 0f, listOf(
-        Mesh(BoxMesh(4f, 12f, 4f, 32f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)),
-        Mesh(BoxMesh(4.5f, 12.5f, 4.5f, 48f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT, 4f, 12f, 4f))
-    ))
+    val leftArm = Part(
+        5f, 6f, 0f, listOf(
+            Mesh(BoxMesh(4f, 12f, 4f, 32f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)),
+            Mesh(
+                BoxMesh(
+                    4.5f,
+                    12.5f,
+                    4.5f,
+                    48f,
+                    48f,
+                    SKIN_TEXTURE_WIDTH,
+                    SKIN_TEXTURE_HEIGHT,
+                    4f,
+                    12f,
+                    4f
+                )
+            )
+        )
+    )
 
-    val rightLeg = Part(-1.9f, -4f, -0.1f, listOf(
-        Mesh(BoxMesh(4f, 12f, 4f, 0f, 16f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)),
-        Mesh(BoxMesh(4.5f, 12.5f, 4.5f, 0f, 32f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT, 4f, 12f, 4f))
-    ))
+    val rightLeg = Part(
+        -1.9f, -4f, -0.1f, listOf(
+            Mesh(BoxMesh(4f, 12f, 4f, 0f, 16f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)),
+            Mesh(
+                BoxMesh(
+                    4.5f,
+                    12.5f,
+                    4.5f,
+                    0f,
+                    32f,
+                    SKIN_TEXTURE_WIDTH,
+                    SKIN_TEXTURE_HEIGHT,
+                    4f,
+                    12f,
+                    4f
+                )
+            )
+        )
+    )
 
-    val leftLeg = Part(1.9f, -4f, -0.1f, listOf(
-        Mesh(BoxMesh(4f, 12f, 4f, 16f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)),
-        Mesh(BoxMesh(4.5f, 12.5f, 4.5f, 0f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT, 4f, 12f, 4f))
-    ))
+    val leftLeg = Part(
+        1.9f, -4f, -0.1f, listOf(
+            Mesh(BoxMesh(4f, 12f, 4f, 16f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)),
+            Mesh(
+                BoxMesh(
+                    4.5f,
+                    12.5f,
+                    4.5f,
+                    0f,
+                    48f,
+                    SKIN_TEXTURE_WIDTH,
+                    SKIN_TEXTURE_HEIGHT,
+                    4f,
+                    12f,
+                    4f
+                )
+            )
+        )
+    )
 
     /** 披风：单层网格，rotationY 恒为 PI（背面朝外），rotationX 由动画驱动 */
-    val cape = Part(0f, 8f, -2f, listOf(
-        Mesh(BoxMesh(10f, 16f, 1f, 0f, 0f, CAPE_TEXTURE_WIDTH, CAPE_TEXTURE_HEIGHT), offsetY = -8f, offsetZ = 0.5f)
-    ))
+    val cape = Part(
+        0f, 8f, -2f, listOf(
+            Mesh(
+                BoxMesh(10f, 16f, 1f, 0f, 0f, CAPE_TEXTURE_WIDTH, CAPE_TEXTURE_HEIGHT),
+                offsetY = -8f,
+                offsetZ = 0.5f
+            )
+        )
+    )
 
     val skinParts: List<Part> = listOf(head, body, rightArm, leftArm, rightLeg, leftLeg)
 
@@ -85,14 +171,75 @@ class PlayerModel {
      * 第二层轮廓挤出网格：为 overlay 不透明像素的边缘生成侧壁（颜色取临近色块），
      * 使第二层边缘实心化，增强 3D 效果。
      */
-    val headExtrusion = OverlayExtrusion(9f, 9f, 9f, 8f, 8f, 8f, 32f, 0f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
-    val bodyExtrusion = OverlayExtrusion(8.5f, 12.5f, 4.5f, 8f, 12f, 4f, 16f, 32f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
-    val rightArmExtrusion = OverlayExtrusion(4.5f, 12.5f, 4.5f, 4f, 12f, 4f, 40f, 32f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
-    val leftArmExtrusion = OverlayExtrusion(4.5f, 12.5f, 4.5f, 4f, 12f, 4f, 48f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
-    val rightLegExtrusion = OverlayExtrusion(4.5f, 12.5f, 4.5f, 4f, 12f, 4f, 0f, 32f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
-    val leftLegExtrusion = OverlayExtrusion(4.5f, 12.5f, 4.5f, 4f, 12f, 4f, 0f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
+    val headExtrusion =
+        OverlayExtrusion(9f, 9f, 9f, 8f, 8f, 8f, 32f, 0f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
+    val bodyExtrusion = OverlayExtrusion(
+        8.5f,
+        12.5f,
+        4.5f,
+        8f,
+        12f,
+        4f,
+        16f,
+        32f,
+        SKIN_TEXTURE_WIDTH,
+        SKIN_TEXTURE_HEIGHT
+    )
+    val rightArmExtrusion = OverlayExtrusion(
+        4.5f,
+        12.5f,
+        4.5f,
+        4f,
+        12f,
+        4f,
+        40f,
+        32f,
+        SKIN_TEXTURE_WIDTH,
+        SKIN_TEXTURE_HEIGHT
+    )
+    val leftArmExtrusion = OverlayExtrusion(
+        4.5f,
+        12.5f,
+        4.5f,
+        4f,
+        12f,
+        4f,
+        48f,
+        48f,
+        SKIN_TEXTURE_WIDTH,
+        SKIN_TEXTURE_HEIGHT
+    )
+    val rightLegExtrusion = OverlayExtrusion(
+        4.5f,
+        12.5f,
+        4.5f,
+        4f,
+        12f,
+        4f,
+        0f,
+        32f,
+        SKIN_TEXTURE_WIDTH,
+        SKIN_TEXTURE_HEIGHT
+    )
+    val leftLegExtrusion = OverlayExtrusion(
+        4.5f,
+        12.5f,
+        4.5f,
+        4f,
+        12f,
+        4f,
+        0f,
+        48f,
+        SKIN_TEXTURE_WIDTH,
+        SKIN_TEXTURE_HEIGHT
+    )
     val overlayExtrusions: List<OverlayExtrusion> = listOf(
-        headExtrusion, bodyExtrusion, rightArmExtrusion, leftArmExtrusion, rightLegExtrusion, leftLegExtrusion
+        headExtrusion,
+        bodyExtrusion,
+        rightArmExtrusion,
+        leftArmExtrusion,
+        rightLegExtrusion,
+        leftLegExtrusion
     )
 
     /** 玩家整体偏移与倾斜（奔跑动画的跳跃/躲闪/倾斜，其余动画为 0） */
@@ -184,13 +331,47 @@ class PlayerModel {
         val armOverlayWidth = if (slim) 3.5f else 4.5f
         rightArm.pivotX = if (slim) -0.5f else -1f
         leftArm.pivotX = if (slim) 0.5f else 1f
-        rightArm.meshes[0].box.setGeometry(armWidth, 12f, 4f, 40f, 16f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
-        rightArm.meshes[1].box.setGeometry(
-            armOverlayWidth, 12.5f, 4.5f, 40f, 32f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT, armWidth, 12f, 4f
+        rightArm.meshes[0].box.setGeometry(
+            armWidth,
+            12f,
+            4f,
+            40f,
+            16f,
+            SKIN_TEXTURE_WIDTH,
+            SKIN_TEXTURE_HEIGHT
         )
-        leftArm.meshes[0].box.setGeometry(armWidth, 12f, 4f, 32f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
+        rightArm.meshes[1].box.setGeometry(
+            armOverlayWidth,
+            12.5f,
+            4.5f,
+            40f,
+            32f,
+            SKIN_TEXTURE_WIDTH,
+            SKIN_TEXTURE_HEIGHT,
+            armWidth,
+            12f,
+            4f
+        )
+        leftArm.meshes[0].box.setGeometry(
+            armWidth,
+            12f,
+            4f,
+            32f,
+            48f,
+            SKIN_TEXTURE_WIDTH,
+            SKIN_TEXTURE_HEIGHT
+        )
         leftArm.meshes[1].box.setGeometry(
-            armOverlayWidth, 12.5f, 4.5f, 48f, 48f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT, armWidth, 12f, 4f
+            armOverlayWidth,
+            12.5f,
+            4.5f,
+            48f,
+            48f,
+            SKIN_TEXTURE_WIDTH,
+            SKIN_TEXTURE_HEIGHT,
+            armWidth,
+            12f,
+            4f
         )
         // 手臂挤出网格几何随 slim 变化，setGeometry 内部会用缓存的皮肤像素重建
         rightArmExtrusion.setGeometry(armOverlayWidth, 12.5f, 4.5f, armWidth, 12f, 4f, 40f, 32f)
