@@ -17,6 +17,9 @@ import com.tungsten.fcl.control.GameMenu;
  * From PojavLauncher
  * This class is intended for sending characters used in chat via the virtual keyboard
  */
+import com.tungsten.fcl.game.sdl.SdlBridge;
+import org.libsdl.app.SDLActivity;
+
 public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText {
 
     public static final String TEXT_FILLER = "                              ";
@@ -90,6 +93,15 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
      * Toggle on and off the soft keyboard, depending of the state
      */
     public void switchKeyboardState() {
+        // SDL 集成启用时由 SDL 输入框接管（字符经 SDLInputConnection 直达 SDL 原生文本事件）
+        if (SdlBridge.getSdlEnabled()) {
+            if (SDLActivity.isSDLEditKeyboardShown()) {
+                SDLActivity.disableSDLEditKeyboard();
+            } else {
+                SDLActivity.enableSDLEditKeyboard();
+            }
+            return;
+        }
         InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(INPUT_METHOD_SERVICE);
         if (hasFocus()) {
             inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);

@@ -37,6 +37,11 @@ public class SDLDummyEdit extends View implements View.OnKeyListener
 
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if (!SdlImeController.isTextInputActive()) {
+            //文本输入通道关闭后，编辑文本的view不应再参与输入
+            SdlImeController.requestHide(SdlImeController.Source.BACK);
+            return true;
+        }
         return SDLActivity.handleKeyEvent(v, keyCode, event, ic);
     }
 
@@ -50,9 +55,17 @@ public class SDLDummyEdit extends View implements View.OnKeyListener
         // FIXME: And determine the keyboard presence doing this: http://stackoverflow.com/questions/2150078/how-to-check-visibility-of-software-keyboard-in-android
         // FIXME: An even more effective way would be if Android provided this out of the box, but where would the fun be in that :)
         if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-            SDLActivity.disableSDLEditKeyboard();
+            SdlImeController.requestHide(SdlImeController.Source.BACK);
         }
         return super.onKeyPreIme(keyCode, event);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && !SdlImeController.isTextInputActive()) {
+            SdlImeController.requestHide(SdlImeController.Source.BACK);
+        }
     }
 
     @Override
