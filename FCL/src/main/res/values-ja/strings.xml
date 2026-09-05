@@ -9,4 +9,9 @@
     <string name="splash_permission_settings">設定</string>
     <string name="renderer_source">ソース:</string>
     <string name="renderer_source_builtin">内蔵</string>
+    <string name="animation_select">アニメーション選択</string>
+    <string name="animation_idle">待機</string>
+    <string name="animation_idle_variant_1">待機バリアント1</string>
+    <string name="animation_idle_variant_2">待機バリアント2</string>
+    <string name="animation_idle_variant_3">待機バリアント3</string>
 </resources>

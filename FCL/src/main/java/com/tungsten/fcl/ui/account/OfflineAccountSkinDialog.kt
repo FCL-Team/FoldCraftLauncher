@@ -4,10 +4,14 @@ import android.content.Context
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import com.mio.skin.SkinRenderer
+import com.mio.util.getScreenHeight
+import com.mio.util.getScreenWidth
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.DialogOfflineAccountSkinBinding
 import com.tungsten.fcl.game.TexturesLoader
+import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.offline.OfflineAccount
 import com.tungsten.fclcore.auth.offline.Skin
 import com.tungsten.fclcore.auth.offline.Skin.LoadedSkin
@@ -15,14 +19,10 @@ import com.tungsten.fclcore.auth.yggdrasil.TextureModel
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
-import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.component.view.FCLTextView
-import com.tungsten.fcllibrary.skin.SkinRenderer
 import java.io.File
 import java.util.logging.Level
-import com.mio.util.getScreenHeight
-import com.mio.util.getScreenWidth
 
 class OfflineAccountSkinDialog(context: Context, private val accountListItem: AccountListItem) :
     FCLDialog(context), View.OnClickListener {

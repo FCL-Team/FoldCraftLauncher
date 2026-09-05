@@ -993,4 +993,9 @@
     <string name="close">Закрыть</string>
     <string name="create_account_first">Создайте игровой аккаунт перед запуском игры</string>
     <string name="version_list_refreshing">Получение списка удалённых версий…</string>
+    <string name="animation_select">Выбор анимации</string>
+    <string name="animation_idle">Простой</string>
+    <string name="animation_idle_variant_1">Простой 1</string>
+    <string name="animation_idle_variant_2">Простой 2</string>
+    <string name="animation_idle_variant_3">Простой 3</string>
 </resources>

@@ -1404,4 +1404,9 @@
     <string name="close">Close</string>
     <string name="create_account_first">Please create a game account before launching</string>
     <string name="version_list_refreshing">Fetching remote version list…</string>
+    <string name="animation_select">Select Animation</string>
+    <string name="animation_idle">Idle</string>
+    <string name="animation_idle_variant_1">Idle variant 1</string>
+    <string name="animation_idle_variant_2">Idle variant 2</string>
+    <string name="animation_idle_variant_3">Idle variant 3</string>
 </resources>

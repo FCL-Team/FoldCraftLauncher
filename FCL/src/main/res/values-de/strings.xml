@@ -933,4 +933,9 @@
     <string name="version_list_refreshing">Remote-Versionsliste wird abgerufen…</string>
     <string name="renderer_source">Quelle:</string>
     <string name="renderer_source_builtin">Integriert</string>
+    <string name="animation_select">Animation wählen</string>
+    <string name="animation_idle">Stillstehen</string>
+    <string name="animation_idle_variant_1">Stillstehen 1</string>
+    <string name="animation_idle_variant_2">Stillstehen 2</string>
+    <string name="animation_idle_variant_3">Stillstehen 3</string>
 </resources>

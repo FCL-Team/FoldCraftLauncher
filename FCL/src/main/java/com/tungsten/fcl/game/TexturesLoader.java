@@ -267,6 +267,37 @@ public final class TexturesLoader {
                 }, uuidFallback);
     }
 
+    /**
+     * 同步加载账户皮肤与披风（在 IO 线程调用）。
+     * 供 SkinTextureLoader 的回调式加载使用，兜底行为与 textureBinding 一致：加载失败返回默认皮肤。
+     */
+    public static Bitmap[] loadSkinAndCape(Account account) {
+        Bitmap defaultSkin = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).image();
+        Bitmap finalSkin = defaultSkin;
+        Bitmap finalCape = null;
+        try {
+            Optional<Map<TextureType, Texture>> textures = account.getTextures().get();
+            if (textures.isPresent()) {
+                Texture skin = textures.get().get(TextureType.SKIN);
+                Texture cape = textures.get().get(TextureType.CAPE);
+                if (skin != null && StringUtils.isNotBlank(skin.getUrl())) {
+                    if (account instanceof OfflineAccount) {
+                        finalSkin = loadTexture(skin, (OfflineAccount) account).image();
+                        finalCape = loadCape(skin, (OfflineAccount) account);
+                    } else {
+                        finalSkin = loadTexture(skin).image();
+                    }
+                }
+                if (cape != null && StringUtils.isNotBlank(cape.getUrl())) {
+                    finalCape = loadCape(cape);
+                }
+            }
+        } catch (Exception e) {
+            LOG.log(Level.WARNING, "Failed to load texture, using default", e);
+        }
+        return new Bitmap[]{finalSkin, finalCape};
+    }
+
     public static ObjectBinding<Bitmap[]> textureBinding(Account account) {
         Bitmap[] fallback = new Bitmap[]{getDefaultSkin(TextureModel.detectUUID(account.getUUID())).image(), null};
         return BindingMapping.of(account.getTextures())

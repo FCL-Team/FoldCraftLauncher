@@ -1221,4 +1221,9 @@
     <string name="jar_executor_warn">Lưu ý! Tính năng này không dành cho việc cài đặt mods. Nếu bạn đang cài đặt mods, vui lòng sử dụng chức năng tải xuống của trình khởi chạy hoặc thêm chúng trong Quản lý Mods.</string>
     <string name="create_account_first">Vui lòng tạo tài khoản trò chơi trước khi khởi động</string>
     <string name="version_list_refreshing">Đang lấy danh sách phiên bản từ xa…</string>
+    <string name="animation_select">Chọn hoạt ảnh</string>
+    <string name="animation_idle">Đứng yên</string>
+    <string name="animation_idle_variant_1">Đứng yên 1</string>
+    <string name="animation_idle_variant_2">Đứng yên 2</string>
+    <string name="animation_idle_variant_3">Đứng yên 3</string>
 </resources>

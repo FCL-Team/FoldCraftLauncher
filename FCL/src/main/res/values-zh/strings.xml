@@ -1266,4 +1266,9 @@
     <string name="close">关闭</string>
     <string name="create_account_first">启动游戏前请先创建游戏账户</string>
     <string name="version_list_refreshing">正在获取远程版本列表…</string>
+    <string name="animation_select">选择动画</string>
+    <string name="animation_idle">待机</string>
+    <string name="animation_idle_variant_1">待机变体 1</string>
+    <string name="animation_idle_variant_2">待机变体 2</string>
+    <string name="animation_idle_variant_3">待机变体 3</string>
 </resources>

@@ -266,4 +266,9 @@
     <string name="curse_category_402">Ortaçağ</string>
     <string name="renderer_source">Kaynak:</string>
     <string name="renderer_source_builtin">Yerleşik</string>
+    <string name="animation_select">Animasyon seç</string>
+    <string name="animation_idle">Bekleme</string>
+    <string name="animation_idle_variant_1">Bekleme 1</string>
+    <string name="animation_idle_variant_2">Bekleme 2</string>
+    <string name="animation_idle_variant_3">Bekleme 3</string>
 </resources>
