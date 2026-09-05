@@ -20,7 +20,7 @@ import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.component.view.FCLButton
 import com.tungsten.fcllibrary.component.view.FCLTextView
-import com.tungsten.fcllibrary.skin.SkinRenderer
+import com.mio.skin.SkinRenderer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

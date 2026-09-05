@@ -1,16 +1,21 @@
 package com.tungsten.fcl.ui.main;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
+import com.mio.skin.SkinRenderer;
+import com.mio.skin.SkinViewer;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.TexturesLoader;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fclcore.auth.Account;
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
+import com.tungsten.fclcore.fakefx.beans.binding.ObjectBinding;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
@@ -22,8 +27,6 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
-import com.tungsten.fcllibrary.skin.SkinRenderer;
-import com.tungsten.fcllibrary.skin.SkinViewer;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.util.logging.Level;
@@ -45,6 +48,14 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
     private SkinRenderer renderer;
 
     private ObjectProperty<Account> currentAccount;
+    private ObjectBinding<Bitmap[]> skinBinding;
+
+    private final InvalidationListener skinBindingListener = observable -> {
+        Bitmap[] texture = skinBinding.get();
+        if (texture != null) {
+            renderer.updateTexture(texture[0], texture[1]);
+        }
+    };
 
     public MainUI(Context context, int id) {
         super(context, id);
@@ -76,7 +87,10 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
                     if (!ThemeEngine.getInstance().getTheme().isCloseSkinModel()) {
                         skinViewer.setVisibility(View.VISIBLE);
                         skinViewer.onResume();
-                        renderer.updateTexture(renderer.getTexture()[0], renderer.getTexture()[1]);
+                        Bitmap[] texture = renderer.getTexture();
+                        if (texture != null) {
+                            renderer.updateTexture(texture[0], texture[1]);
+                        }
                     } else {
                         skinViewer.onPause();
                         skinViewer.setVisibility(View.GONE);
@@ -150,11 +164,21 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
             @Override
             protected void invalidated() {
                 Account account = get();
-                renderer.textureProperty().unbind();
+                if (skinBinding != null) {
+                    skinBinding.removeListener(skinBindingListener);
+                    skinBinding = null;
+                }
                 if (account == null) {
                     renderer.updateTexture(BitmapFactory.decodeStream(MainUI.class.getResourceAsStream("/assets/img/alex.png")), null);
                 } else {
-                    renderer.textureProperty().bind(TexturesLoader.textureBinding(account));
+                    skinBinding = TexturesLoader.textureBinding(account);
+                    skinBinding.addListener(skinBindingListener);
+                    // fakefx bind() 会立即同步当前值并触发懒加载绑定；仅 addListener 时
+                    // 皮肤已缓存的情况下不会再回调，需主动取一次当前值
+                    Bitmap[] texture = skinBinding.get();
+                    if (texture != null) {
+                        renderer.updateTexture(texture[0], texture[1]);
+                    }
                 }
             }
         };
@@ -164,8 +188,15 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
     public void refreshSkin(Account account) {
         Schedulers.androidUIThread().execute(() -> {
             if (currentAccount.get() == account) {
-                renderer.textureProperty().unbind();
-                renderer.textureProperty().bind(TexturesLoader.textureBinding(currentAccount.get()));
+                if (skinBinding != null) {
+                    skinBinding.removeListener(skinBindingListener);
+                }
+                skinBinding = TexturesLoader.textureBinding(currentAccount.get());
+                skinBinding.addListener(skinBindingListener);
+                Bitmap[] texture = skinBinding.get();
+                if (texture != null) {
+                    renderer.updateTexture(texture[0], texture[1]);
+                }
             }
         });
     }

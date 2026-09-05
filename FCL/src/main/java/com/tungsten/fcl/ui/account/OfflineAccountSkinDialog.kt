@@ -18,7 +18,7 @@ import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.component.view.FCLTextView
-import com.tungsten.fcllibrary.skin.SkinRenderer
+import com.mio.skin.SkinRenderer
 import java.io.File
 import java.util.logging.Level
 import com.mio.util.getScreenHeight
