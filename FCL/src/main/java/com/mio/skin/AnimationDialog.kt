@@ -1,16 +1,14 @@
 package com.mio.skin
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
+import com.mio.ui.dialogCardBackground
 import com.mio.util.getScreenWidth
-import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogAnimationSwitchBinding
 import com.tungsten.fcl.databinding.ItemAnimationBinding
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
@@ -60,20 +58,8 @@ class AnimationDialog(
                 setColor(ColorUtils.setAlphaComponent(themeColor, 30))
             }
         } else {
-            // 普通行：卡片色以对话框背景为基准（资源按亮暗模式解析），暗色下仅微亮避免刺眼
-            GradientDrawable().apply {
-                cornerRadius = 10 * density
-                val dialogColor = ContextCompat.getColor(context, R.color.dialog_background)
-                val darkMode = ThemeEngine.isNightMode(context)
-                val blend = if (darkMode) 0.07f else 0.02f
-                setColor(
-                    ColorUtils.blendARGB(
-                        dialogColor,
-                        if (darkMode) Color.WHITE else Color.BLACK,
-                        blend
-                    )
-                )
-            }
+            // 普通行：卡片色以对话框背景为基准，亮色向黑微调保持可辨识、暗色向白微亮
+            dialogCardBackground(context, density)
         }
         return row.root
     }
