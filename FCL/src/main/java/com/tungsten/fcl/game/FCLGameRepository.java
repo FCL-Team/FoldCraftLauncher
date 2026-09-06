@@ -411,6 +411,7 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setServerIp(vs.getServerIp())
                 .setVkDriverSystem(vs.isVKDriverSystem())
                 .setRenderer(RendererManager.getRenderer(vs.getRenderer()))
+                .setGraphicsBackend(vs.getGraphicsBackend())
                 .setDebugLog(vs.isDebugLog());
 
         if (vs.isAutoMemory() && builder.getJavaArguments().stream().anyMatch(it -> it.startsWith("-Xmx"))) {
