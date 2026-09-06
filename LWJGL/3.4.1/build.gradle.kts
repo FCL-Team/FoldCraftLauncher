@@ -11,6 +11,19 @@ configurations {
     }
 }
 
+// JSound（javax.sound → OpenAL 桥接）源码由所有 lwjgl 版本共享，修改只需改 shared 一处的代码。
+// 注意：公共代码必须保持 Java 8 兼容，因为 3.3.3 以 Java 8 编译。
+sourceSets {
+    main {
+        java {
+            srcDir("../shared/src/main/java")
+        }
+        resources {
+            srcDir("../shared/src/main/resources")
+        }
+    }
+}
+
 dependencies {
     compileOnly(fileTree(mapOf("dir" to "../compileOnly", "include" to listOf("*.jar"))))
     implementation(fileTree(mapOf("dir" to "libs/$lwjglVersion", "include" to listOf("*.jar"))))
