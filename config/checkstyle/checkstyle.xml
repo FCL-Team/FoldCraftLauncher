@@ -1,0 +1,105 @@
+<?xml version="1.0" ?>
+<!DOCTYPE module PUBLIC
+        "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
+        "https://checkstyle.org/dtds/configuration_1_3.dtd">
+
+<!--
+    FCL 的 checkstyle 规则集。
+
+    设计原则：
+    1. 以 HMCL 上游规则集（config/checkstyle/checkstyle.xml）为骨架，它不查行长、
+       不强制 javadoc、不禁星号导入，与 Android Studio 默认格式化风格兼容；
+    2. 只保留存量代码已满足的检查 —— 与现状冲突的规则（缩进、对齐空格、EOF 换行、
+       未用导入、多空行、工具类构造器、final 类、协变 equals、无 Locale 的大小写转换）
+       已按「规则适配现状」决策移除，避免 CI 对存量代码全线飘红；
+    3. 移植/第三方代码（org/lwjgl、org/libsdl、fakefx 遗留的 OpenJFX 移植）不参与检查，
+       规则只约束启动器自有代码；
+    4. 新代码仍建议遵循 Android Studio 默认格式化（Ctrl+Alt+L）：
+       缩进 4 空格、K&R 花括号、} else { 同行、单空格分隔、local 大小写转换带 Locale。
+-->
+<module name="Checker">
+    <!-- 禁止 tab 字符（字符串内除外） -->
+    <module name="FileTabCharacter"/>
+    <!-- .properties 文件不允许重复键 -->
+    <module name="UniqueProperties">
+        <property name="fileExtensions" value="properties"/>
+    </module>
+
+    <!-- 移植/第三方代码不参与检查：lwjgl、libsdl、fakefx（OpenJFX 遗留移植，迁移中将被删除） -->
+    <module name="BeforeExecutionExclusionFileFilter">
+        <property name="fileNamePattern" value=".*[\\/](?:lwjgl|libsdl|fakefx)[\\/].*"/>
+    </module>
+
+    <!-- 单文件最大行数，防止巨型文件 -->
+    <module name="FileLength">
+        <property name="max" value="2000"/>
+    </module>
+
+    <module name="TreeWalker">
+        <!-- 支持 //CHECKSTYLE:OFF ... //CHECKSTYLE:ON 局部禁用 -->
+        <module name="SuppressionCommentFilter"/>
+
+        <!-- 注释 -->
+        <module name="MissingDeprecated"> <!-- @deprecated 需在 javadoc 中说明原因 -->
+        </module>
+        <module name="MissingOverride"/> <!-- 有 @inheritDoc 的 javadoc 必须带 @Override -->
+        <module name="PackageAnnotation"/> <!-- 包级注解只能放在 package-info 中 -->
+
+        <!-- 代码块 -->
+        <module name="EmptyCatchBlock"> <!-- 空 catch 块的异常变量必须命名为 expected/ignore 或写注释 -->
+            <property name="exceptionVariableName" value="expected|ignore"/>
+        </module>
+        <module name="LeftCurly"> <!-- 左花括号同行（K&R，AS 默认风格） -->
+            <property name="option" value="eol"/>
+        </module>
+        <module name="RightCurly"> <!-- } else { / } catch { 同行（K&R） -->
+            <property name="option" value="same"/>
+        </module>
+
+        <!-- 杂项 -->
+        <module name="ArrayTypeStyle"/> <!-- 数组类型写法 int[] array 而非 int array[] -->
+        <module name="MutableException"/> <!-- 异常类必须不可变 -->
+        <module name="UpperEll"/> <!-- long 字面量后缀必须大写 L -->
+
+        <!-- 修饰符 -->
+        <module name="RedundantModifier">
+            <property name="tokens" value="METHOD_DEF, VARIABLE_DEF, INTERFACE_DEF, ANNOTATION_FIELD_DEF, ENUM_DEF, CLASS_DEF"/>
+        </module>
+
+        <!-- 类设计 -->
+        <module name="SimplifyBooleanReturn"/> <!-- 不要 if (b) return true; else return false; -->
+        <module name="StringLiteralEquality"/> <!-- 禁止 myString == "this" -->
+        <module name="OneTopLevelClass"/> <!-- 一个文件只允许一个顶层类 -->
+        <module name="ThrowsCount"> <!-- 单个方法最多声明 5 个异常 -->
+            <property name="max" value="5"/>
+        </module>
+        <module name="OuterTypeFilename"/> <!-- 类 Foo 必须在 Foo.java 中 -->
+
+        <!-- 编码规范 -->
+        <module name="DefaultComesLast"/> <!-- switch 的 default 必须在最后 -->
+        <module name="EmptyStatement"/> <!-- 禁止多余的分号 -->
+        <module name="EqualsHashCode"/> <!-- 实现 equals 必须同时实现 hashCode，反之亦然 -->
+        <module name="NoFinalizer"/> <!-- 禁止 finalize() -->
+        <module name="FallThrough"/> <!-- switch 分支不允许非空语句贯穿 -->
+        <module name="IllegalInstantiation"/>
+
+        <!-- 规模限制 -->
+        <module name="ParameterNumber"> <!-- 方法最多 12 个参数，重写方法不检查 -->
+            <property name="max" value="12"/>
+            <property name="ignoreOverriddenMethods" value="true"/>
+            <property name="tokens" value="METHOD_DEF"/>
+        </module>
+
+        <!-- 空白 -->
+        <module name="GenericWhitespace"/> <!-- 泛型 <> 两侧空白规范 -->
+        <!--
+            不再启用 WhitespaceAround / SingleSpaceSeparator / Indentation：
+            存量代码存在列对齐与少量 `){`、逗号后缺空格的情况，与现状冲突，
+            已按「规则适配现状」决策移除；运算符两侧空白由 Android Studio 默认格式化保证。
+        -->
+
+        <!-- 导入 -->
+        <module name="RedundantImport"/> <!-- 同包/重复导入 -->
+        <module name="IllegalImport"/> <!-- 禁止导入 sun.* 等 -->
+    </module>
+</module>

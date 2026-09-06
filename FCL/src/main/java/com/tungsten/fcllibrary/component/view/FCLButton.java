@@ -47,8 +47,7 @@ public class FCLButton extends AppCompatButton {
                 if (isDown) {
                     setBackgroundDrawable(drawablePress);
                     applyTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
-                }
-                else {
+                } else {
                     setBackgroundDrawable(drawableNormal);
                     applyTextColor(ThemeEngine.getInstance().getTheme().getLtColor());
                 }

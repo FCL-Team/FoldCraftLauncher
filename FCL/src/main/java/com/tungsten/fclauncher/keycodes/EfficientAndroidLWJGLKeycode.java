@@ -23,8 +23,6 @@ import static org.lwjgl.glfw.CallbackBridge.sendKeyPress;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 
-import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
-
 import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Arrays;

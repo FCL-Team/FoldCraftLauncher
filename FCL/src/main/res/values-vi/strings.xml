@@ -589,7 +589,6 @@
     <string name="menu_settings_mouse_offset_y">Độ lệch Chuột Y</string>
     <string name="menu_settings_physical_mouse_mode">Chuột Vật lý</string>
     <string name="menu_settings_gamepad">GamePad</string>
-    <string name="menu_settings_gamepad_disable_mapping">Tắt Ánh xạ Gamepad</string>
     <string name="menu_settings_gamepad_reset_mapper">Đặt lại Mapper</string>
     <string name="menu_settings_gamepad_button_binding">Ràng buộc nút</string>
     <string name="menu_settings_gamepad_open_button">Mở</string>

@@ -25,6 +25,7 @@ import com.tungsten.fclcore.util.versioning.VersionNumber;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The remote version.
@@ -115,10 +116,18 @@ public class RemoteVersion implements Comparable<RemoteVersion> {
                 .toString();
     }
 
+    /**
+     * 缓存已解析的 {@link VersionNumber}，避免 TreeSet 大量插入（如 Fabric/Quilt 的
+     * 游戏版本 × 加载器版本笛卡尔积，可达数万条）时对同一版本串反复执行开销较大的
+     * Maven 版本解析。
+     */
+    private static final ConcurrentHashMap<String, VersionNumber> VERSION_NUMBER_CACHE = new ConcurrentHashMap<>();
+
     @Override
     public int compareTo(RemoteVersion o) {
         // newer versions are smaller than older versions
-        return VersionNumber.asVersion(o.selfVersion).compareTo(VersionNumber.asVersion(selfVersion));
+        return VERSION_NUMBER_CACHE.computeIfAbsent(o.selfVersion, VersionNumber::asVersion)
+                .compareTo(VERSION_NUMBER_CACHE.computeIfAbsent(selfVersion, VersionNumber::asVersion));
     }
 
     public enum Type {

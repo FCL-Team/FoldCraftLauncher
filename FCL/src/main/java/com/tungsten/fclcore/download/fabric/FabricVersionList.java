@@ -75,7 +75,7 @@ public final class FabricVersionList extends VersionList<FabricRemoteVersion> {
     }
 
     private static String getLaunchMetaUrl(String gameVersion, String loaderVersion) {
-        return String.format("https://meta.fabricmc.net/v2/versions/loader/%s/%s", gameVersion, loaderVersion);
+        return "https://meta.fabricmc.net/v2/versions/loader/" + gameVersion + "/" + loaderVersion;
     }
 
     private static class GameVersion {

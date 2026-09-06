@@ -200,12 +200,14 @@ class SkinViewer @JvmOverloads constructor(
             stopFrameLoop()
             releaseEGL()
             latch.countDown()
+            // 在渲染线程内先取消 vsync 调度再自行退出，
+            // 避免 UI 线程 quitSafely 与渲染线程 vsync 投递竞争导致 Choreographer 死线程崩溃
+            thread.quitSafely()
         }
         try {
             latch.await(1, TimeUnit.SECONDS)
         } catch (_: InterruptedException) {
         }
-        thread.quitSafely()
     }
 
     /** EGL 初始化失败时由渲染线程自行清理退出 */

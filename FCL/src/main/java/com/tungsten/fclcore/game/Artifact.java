@@ -116,7 +116,9 @@ public final class Artifact {
         return fileName;
     }
 
-    public String getPath() { return path; }
+    public String getPath() {
+        return path;
+    }
 
     public Path getPath(Path root) {
         return root.resolve(path);

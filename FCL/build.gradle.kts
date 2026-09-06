@@ -9,6 +9,25 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     alias(libs.plugins.kotlin.serialization)
+    id("checkstyle")
+}
+
+checkstyle {
+    // 规则集 config/checkstyle/checkstyle.xml 与 Android Studio 默认格式对齐，仅检查 Java 代码
+    toolVersion = "10.12.5"
+    configFile = rootProject.file("config/checkstyle/checkstyle.xml")
+}
+
+// AGP 不提供 Java 插件的 SourceSetContainer，checkstyle 插件不会自动创建任务，
+// 因此手动注册 checkstyle 任务，检查范围为主源码目录的 Java 文件
+tasks.register<Checkstyle>("checkstyle") {
+    description = "Run checkstyle on the FCL Java sources."
+    group = "verification"
+    source(layout.projectDirectory.dir("src/main/java"))
+    include("**/*.java")
+    classpath = files()
+    maxErrors = 0
+    maxWarnings = 0
 }
 
 android {
