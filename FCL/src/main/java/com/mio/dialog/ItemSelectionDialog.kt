@@ -71,7 +71,7 @@ class ItemSelectionDialog(
         val binding = DialogItemSelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.title.text = title
-        // 宽度：以最长条目与标题为基准自适应，夹在 MD3 区间 [280dp, min(560dp, 屏宽-48dp)]
+        // 宽度：以最长条目与标题为基准自适应，下限 320dp，上限与屏幕左右留 24dp 边距
         val metrics = context.resources.displayMetrics
         val longest = items.maxByOrNull { it.length } ?: ""
         val sample = LayoutInflater.from(context).inflate(R.layout.item_text, null, false) as ViewGroup
@@ -90,12 +90,13 @@ class ItemSelectionDialog(
             metrics.widthPixels - ConvertUtils.dip2px(context, 48f)
         )
         val width = maxOf(
-            ConvertUtils.dip2px(context, 280f),
+            ConvertUtils.dip2px(context, 320f),
             minOf(maxWidth, maxOf(sample.measuredWidth, titleView.measuredWidth) + ConvertUtils.dip2px(context, 48f))
         )
-        // 高度：条目行高实测累加，超出 small 上限（50% 屏）或大对话框上限（90% 屏）时滚动
-        val spacing = ConvertUtils.dip2px(context, 10f)
-        val contentHeight = items.size * sample.measuredHeight + (items.size - 1) * spacing
+        // 高度：条目行高实测（下限 48dp 触摸目标）累加，超出 small 上限（50% 屏）或大对话框上限（90% 屏）时滚动
+        val spacing = ConvertUtils.dip2px(context, 12f)
+        val rowHeight = sample.measuredHeight.coerceAtLeast(ConvertUtils.dip2px(context, 48f))
+        val contentHeight = items.size * rowHeight + (items.size - 1) * spacing
         val headTailHeight = ConvertUtils.dip2px(context, 140f)
         val maxContentHeight = ((if (small) 0.5f else 0.9f) * metrics.heightPixels - headTailHeight)
             .toInt()
@@ -107,7 +108,7 @@ class ItemSelectionDialog(
             dismiss()
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        binding.recyclerView.addItemDecoration(SpacingItemDecoration(ConvertUtils.dip2px(context, 10f)))
+        binding.recyclerView.addItemDecoration(SpacingItemDecoration(ConvertUtils.dip2px(context, 12f)))
         binding.cancel.setOnClickListener { dismiss() }
     }
 }
