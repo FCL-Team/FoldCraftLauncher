@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.ui.adapter.SpacingItemDecoration
@@ -14,6 +15,7 @@ import com.tungsten.fcl.databinding.DialogItemSelectionBinding
 import com.tungsten.fcl.databinding.ItemTextBinding
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.tungsten.fcllibrary.util.ConvertUtils
 
 /**
@@ -66,21 +68,40 @@ class ItemSelectionDialog(
     }
 
     init {
-        val screenHeight = context.resources.displayMetrics.heightPixels
-        // small 模式：按条目数估算内容高度，条目少时抬升到屏幕 35%（自动放大），条目多时封顶 50% 滚动
-        val contentHeight = items.size * ConvertUtils.dip2px(context, 50f)
-        val height = if (small) {
-            contentHeight.coerceIn(
-                (screenHeight * 0.35f).toInt(),
-                (screenHeight * 0.5f).toInt()
-            )
-        } else {
-            ViewGroup.LayoutParams.MATCH_PARENT
-        }
-        window?.setLayout(ConvertUtils.dip2px(context, 500f), height)
         val binding = DialogItemSelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.title.text = title
+        // 宽度：以最长条目与标题为基准自适应，夹在 MD3 区间 [280dp, min(560dp, 屏宽-48dp)]
+        val metrics = context.resources.displayMetrics
+        val longest = items.maxByOrNull { it.length } ?: ""
+        val sample = LayoutInflater.from(context).inflate(R.layout.item_text, null, false) as ViewGroup
+        sample.findViewById<FCLTextView>(R.id.text).text = longest
+        sample.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        val titleView = binding.title
+        titleView.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        val maxWidth = minOf(
+            ConvertUtils.dip2px(context, 560f),
+            metrics.widthPixels - ConvertUtils.dip2px(context, 48f)
+        )
+        val width = maxOf(
+            ConvertUtils.dip2px(context, 280f),
+            minOf(maxWidth, maxOf(sample.measuredWidth, titleView.measuredWidth) + ConvertUtils.dip2px(context, 48f))
+        )
+        // 高度：条目行高实测累加，超出 small 上限（50% 屏）或大对话框上限（90% 屏）时滚动
+        val spacing = ConvertUtils.dip2px(context, 10f)
+        val contentHeight = items.size * sample.measuredHeight + (items.size - 1) * spacing
+        val headTailHeight = ConvertUtils.dip2px(context, 140f)
+        val maxContentHeight = ((if (small) 0.5f else 0.9f) * metrics.heightPixels - headTailHeight)
+            .toInt()
+            .coerceAtLeast(0)
+        binding.recyclerView.layoutParams.height = minOf(contentHeight, maxContentHeight)
+        window?.setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT)
         binding.recyclerView.adapter = ItemSelectionAdapter(context, items, selectedIndex) { position, item ->
             callback(position, item)
             dismiss()
