@@ -25,9 +25,10 @@ fun showItemSelectionDialog(
     title: String = "",
     items: List<String>,
     small: Boolean = true,
+    selectedIndex: Int = -1,
     callback: (Int, String) -> Unit
 ) {
-    ItemSelectionDialog(context, title, items,small) { position, item ->
+    ItemSelectionDialog(context, title, items, small, selectedIndex) { position, item ->
         callback(position, item)
     }.show()
 }

@@ -16,3 +16,9 @@ fun dialogCardBackground(context: Context, density: Float): GradientDrawable = G
     val blend = if (dark) 0.07f else 0.02f
     setColor(ColorUtils.blendARGB(dialogColor, if (dark) Color.WHITE else Color.BLACK, blend))
 }
+
+/** 对话框内选中条目背景：主题色半透明圆角底（与 AnimationDialog 选中行一致） */
+fun selectedCardBackground(themeColor: Int, density: Float): GradientDrawable = GradientDrawable().apply {
+    cornerRadius = 10 * density
+    setColor(ColorUtils.setAlphaComponent(themeColor, 30))
+}

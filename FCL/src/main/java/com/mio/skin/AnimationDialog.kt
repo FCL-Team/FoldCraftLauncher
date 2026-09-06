@@ -1,13 +1,12 @@
 package com.mio.skin
 
 import android.content.Context
-import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.core.graphics.ColorUtils
 import com.mio.ui.dialogCardBackground
+import com.mio.ui.selectedCardBackground
 import com.mio.util.getScreenWidth
 import com.tungsten.fcl.databinding.DialogAnimationSwitchBinding
 import com.tungsten.fcl.databinding.ItemAnimationBinding
@@ -53,10 +52,7 @@ class AnimationDialog(
             // 当前动画：主题色圆角底 + 勾选图标
             row.check.setColorFilter(themeColor)
             row.check.visibility = View.VISIBLE
-            GradientDrawable().apply {
-                cornerRadius = 10 * density
-                setColor(ColorUtils.setAlphaComponent(themeColor, 30))
-            }
+            selectedCardBackground(themeColor, density)
         } else {
             // 普通行：卡片色以对话框背景为基准，亮色向黑微调保持可辨识、暗色向白微亮
             dialogCardBackground(context, density)

@@ -344,11 +344,13 @@ class VersionSettingPage(
             }
 
             VersionSettingTag.EDIT_BACKEND -> {
+                val backends = listOf("default", "opengl", "vulkan")
                 showItemSelectionDialog(
                     context,
                     context.getString(R.string.settings_fcl_graphics_backend),
-                    listOf("default", "opengl", "vulkan"),
-                    false
+                    backends,
+                    false,
+                    selectedIndex = backends.indexOf(lastVersionSetting.graphicsBackend)
                 ) { _, backendName: String ->
                     lastVersionSetting.graphicsBackend = backendName
                     adapter.refreshRow(VersionSettingTag.EDIT_BACKEND)
