@@ -64,8 +64,15 @@ class AnimationDialog(
             GradientDrawable().apply {
                 cornerRadius = 10 * density
                 val dialogColor = ContextCompat.getColor(context, R.color.dialog_background)
-                val blend = if (ThemeEngine.isNightMode(context)) 0.07f else 0.65f
-                setColor(ColorUtils.blendARGB(dialogColor, Color.WHITE, blend))
+                val darkMode = ThemeEngine.isNightMode(context)
+                val blend = if (darkMode) 0.07f else 0.02f
+                setColor(
+                    ColorUtils.blendARGB(
+                        dialogColor,
+                        if (darkMode) Color.WHITE else Color.BLACK,
+                        blend
+                    )
+                )
             }
         }
         return row.root
