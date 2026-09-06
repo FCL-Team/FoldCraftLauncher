@@ -12,14 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.control.GameMenu;
+import com.tungsten.fcl.game.sdl.SdlBridge;
+
+import org.libsdl.app.SDLActivity;
 
 /**
  * From PojavLauncher
  * This class is intended for sending characters used in chat via the virtual keyboard
  */
-import com.tungsten.fcl.game.sdl.SdlBridge;
-import org.libsdl.app.SDLActivity;
-
 public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText {
 
     public static final String TEXT_FILLER = "                              ";

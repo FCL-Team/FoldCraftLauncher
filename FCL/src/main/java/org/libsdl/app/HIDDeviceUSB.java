@@ -237,7 +237,7 @@ class HIDDeviceUSB implements HIDDevice {
             if (feature) {
                 return false;
             }
-            return true;            
+            return true;
         }
 
         if (report_number == 0x0) {
@@ -294,7 +294,7 @@ class HIDDeviceUSB implements HIDDevice {
         if (mConnection != null) {
             if (mClaimed) {
                 UsbInterface iface = mDevice.getInterface(mInterfaceIndex);
-                mConnection.releaseInterface(iface);                
+                mConnection.releaseInterface(iface);
             }
             mConnection.close();
             mConnection = null;

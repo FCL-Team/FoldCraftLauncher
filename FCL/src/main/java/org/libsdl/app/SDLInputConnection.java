@@ -144,4 +144,3 @@ class SDLInputConnection extends BaseInputConnection
 
     public static native void nativeGenerateScancodeForUnichar(char c);
 }
-

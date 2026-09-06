@@ -9,6 +9,7 @@ import android.view.Surface
 import android.view.ViewGroup
 import androidx.annotation.Keep
 import androidx.annotation.MainThread
+import java.lang.ref.WeakReference
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,10 +17,9 @@ import org.libsdl.app.SDL
 import org.libsdl.app.SDLActivity
 import org.libsdl.app.SDLSurface
 import org.lwjgl.glfw.CallbackBridge
-import java.lang.ref.WeakReference
 
 /**
- * Owns the SDL integration state shared by the launcher and game JVM.
+ * SDL 集成状态桥，由启动器与游戏 JVM 共享（移植自 ZalithLauncher2 feat/sdl3）。
  */
 @Keep
 object SdlBridge {

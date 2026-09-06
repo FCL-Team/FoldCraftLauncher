@@ -594,7 +594,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
         if (mHIDDeviceManager != null) {
             mHIDDeviceManager.setFrozen(true);
-        }        
+        }
 
         if (!mHasMultiWindow) {
             pauseNativeThread();
@@ -608,7 +608,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
         if (mHIDDeviceManager != null) {
             mHIDDeviceManager.setFrozen(false);
-        }        
+        }
 
         if (!mHasMultiWindow) {
             resumeNativeThread();
@@ -687,7 +687,7 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         if (hasFocus || !SDLActivity.nativeGetHintBoolean("SDL_JOYSTICK_ALLOW_BACKGROUND_EVENTS", false)) {
             if (mHIDDeviceManager != null) {
                 mHIDDeviceManager.setFrozen(!hasFocus);
-            }            
+            }
         }
 
         if (SDLActivity.mBrokenLibraries) {
@@ -2181,4 +2181,3 @@ class SDLClipboardHandler implements
         SDLActivity.onNativeClipboardChanged();
     }
 }
-

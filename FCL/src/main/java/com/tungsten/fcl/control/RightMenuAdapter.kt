@@ -15,7 +15,6 @@ import com.tungsten.fcl.databinding.ItemMenuCategoryBinding
 import com.tungsten.fcl.databinding.ItemMenuSeekbarBinding
 import com.tungsten.fcl.databinding.ItemMenuSpinnerBinding
 import com.tungsten.fcl.databinding.ItemMenuSwitchBinding
-import com.tungsten.fcl.game.sdl.GamepadInputMode
 import com.tungsten.fcl.game.sdl.SdlSettings
 import com.tungsten.fcl.setting.MenuSetting
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
