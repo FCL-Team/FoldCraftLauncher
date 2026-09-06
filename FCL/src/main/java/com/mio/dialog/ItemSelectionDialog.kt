@@ -8,13 +8,11 @@ import android.view.WindowManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.ui.adapter.SpacingItemDecoration
-import com.mio.ui.dialogCardBackground
-import com.mio.ui.selectedCardBackground
+import com.mio.ui.applySelectableItemStyle
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogItemSelectionBinding
 import com.tungsten.fcl.databinding.ItemTextBinding
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
-import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.tungsten.fcllibrary.util.ConvertUtils
 
@@ -53,11 +51,8 @@ class ItemSelectionDialog(
         ) {
             val binding = ItemTextBinding.bind(holder.itemView)
             binding.text.text = items[position]
-            binding.root.background = if (position == selectedIndex) {
-                selectedCardBackground(ThemeEngine.getTheme().getColor(), density)
-            } else {
-                dialogCardBackground(context, density)
-            }
+            // 选中态统一样式：选中项主题色底，其余普通卡片（条目无勾选图标）
+            applySelectableItemStyle(context, binding.root, null, position == selectedIndex, density)
             binding.root.setOnClickListener { callback(position, items[position]) }
         }
 
