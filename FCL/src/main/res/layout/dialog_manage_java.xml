@@ -21,6 +21,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:padding="10dp"
         app:layout_constraintBottom_toTopOf="@id/import_java"
         app:layout_constraintTop_toBottomOf="@id/text" />
 
