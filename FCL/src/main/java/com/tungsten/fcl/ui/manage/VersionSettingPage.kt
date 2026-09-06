@@ -308,7 +308,7 @@ class VersionSettingPage(
             VersionSettingTag.EDIT_ICON -> onExploreIcon()
             VersionSettingTag.DELETE_ICON -> onDeleteIcon()
             VersionSettingTag.EDIT_JAVA -> {
-                JavaManageDialog(context) {
+                JavaManageDialog(context, lastVersionSetting.java) {
                     lastVersionSetting.java = it
                     adapter.refreshRow(VersionSettingTag.EDIT_JAVA)
                 }.show()

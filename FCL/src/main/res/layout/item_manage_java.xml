@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 与渲染器选择弹窗一致的列表项卡片：名称 16sp + 版本 12sp，右侧为删除按钮 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:padding="10dp"
     android:stateListAnimator="@xml/anim_scale">
 
-    <TextView
+    <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/java_name"
-        style="@style/TextAppearance.AppCompat.Body1"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:textColor="@color/primary_text"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/delete"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.28"
         tools:text="Java 8" />
 
-    <TextView
+    <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/java_version"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textSize="10sp"
-        app:layout_constraintStart_toStartOf="@+id/java_name"
-        app:layout_constraintTop_toBottomOf="@+id/java_name"
+        android:layout_marginTop="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toStartOf="@id/delete"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/java_name"
         tools:text="1.8.0_292" />
 
     <com.tungsten.fcllibrary.component.view.FCLImageButton
         android:id="@+id/delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
         android:src="@drawable/ic_baseline_delete_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

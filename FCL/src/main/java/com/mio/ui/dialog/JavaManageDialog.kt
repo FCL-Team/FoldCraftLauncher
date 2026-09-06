@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.JavaManager
 import com.mio.ui.adapter.ManageJavaItemAdapter
+import com.mio.ui.adapter.SpacingItemDecoration
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.DialogManageJavaBinding
@@ -24,7 +25,7 @@ import java.util.concurrent.CompletableFuture
 import com.mio.util.checkElfIsAndroid
 
 @SuppressLint("NotifyDataSetChanged")
-class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCLDialog(context) {
+class JavaManageDialog(context: Context, val currentJava: String? = null, val onSelected: (String) -> Unit) : FCLDialog(context) {
     private val versionList = mutableListOf<JavaVersion>()
     private var isLoading = false
     private val binding: DialogManageJavaBinding
@@ -37,7 +38,7 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
         refresh()
         binding.recyclerView.adapter =
             ManageJavaItemAdapter(
-                context, versionList
+                context, versionList, currentJava
             ) { java, isDelete ->
                 if (isDelete) {
                     FCLAlertDialog.Builder(context)
@@ -57,6 +58,7 @@ class JavaManageDialog(context: Context, val onSelected: (String) -> Unit) : FCL
                 }
             }
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        binding.recyclerView.addItemDecoration(SpacingItemDecoration(ConvertUtils.dip2px(context, 10f)))
         binding.cancel.setOnClickListener { if (!isLoading) dismiss() }
         binding.autoSelect.setOnClickListener {
             if (isLoading) return@setOnClickListener
