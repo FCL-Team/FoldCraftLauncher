@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.ui.adapter.SpacingItemDecoration
@@ -93,7 +94,8 @@ class ItemSelectionDialog(
             minOf(maxWidth, maxOf(sample.measuredWidth, titleView.measuredWidth) + ConvertUtils.dip2px(context, 48f))
         )
         // 高度：先按实际宽度测量空白根布局得到标题 + 按钮 + 内边距高度（列表暂空为 0），
-        // 再叠加条目行高实测值；超出 small 上限（50% 屏）或大对话框上限（90% 屏）时列表滚动
+        // 再叠加条目行高实测值；超出 small 上限（50% 屏）或大对话框上限（90% 屏）时列表滚动。
+        // 窗口高度交给 WRAP_CONTENT：根为 wrap 的线性布局，实际显示高度与内容精确一致，不会裁剪按钮
         binding.root.measure(
             View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
@@ -103,10 +105,9 @@ class ItemSelectionDialog(
         val rowHeight = sample.measuredHeight.coerceAtLeast(ConvertUtils.dip2px(context, 48f))
         val contentHeight = items.size * rowHeight + (items.size - 1) * spacing
         val maxWindowHeight = ((if (small) 0.5f else 0.9f) * metrics.heightPixels).toInt()
-        val windowHeight = minOf(headTailHeight + contentHeight, maxWindowHeight)
         binding.recyclerView.layoutParams.height = minOf(contentHeight, maxWindowHeight - headTailHeight)
             .coerceAtLeast(0)
-        window?.setLayout(width, windowHeight)
+        window?.setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT)
         binding.recyclerView.adapter = ItemSelectionAdapter(context, items, selectedIndex) { position, item ->
             callback(position, item)
             dismiss()
