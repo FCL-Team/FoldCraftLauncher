@@ -13,5 +13,6 @@ typedef bytehook_stub_t (*bytehook_hook_all_t)(const char *callee_path_name, con
 void create_chmod_hooks(bytehook_hook_all_t bytehook_hook_all_p);
 void create_sdl_hooks(bytehook_hook_all_t bytehook_hook_all_p);
 void create_sdl_dlopen_hooks(bytehook_hook_all_t bytehook_hook_all_p);
+void *sdlDlsymProxy(const char *symbol, void *real);
 
 #endif //POJAVLAUNCHER_NATIVE_HOOKS_H

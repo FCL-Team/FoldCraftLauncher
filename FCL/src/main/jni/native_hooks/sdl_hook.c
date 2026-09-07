@@ -14,28 +14,43 @@
 #include <string.h>
 #include <android/log.h>
 
-#define LOG_TO_I(...) __android_log_print(ANDROID_LOG_INFO, "FCL", __VA_ARGS__)
-#define LOG_TO_W(...) __android_log_print(ANDROID_LOG_WARN, "FCL", __VA_ARGS__)
-#define LOG_TO_E(...) __android_log_print(ANDROID_LOG_ERROR, "FCL", __VA_ARGS__)
+#define LOG_TO_I(fmt, ...) printf(fmt "\n", ##__VA_ARGS__)
+#define LOG_TO_W(fmt, ...) printf(fmt "\n", ##__VA_ARGS__)
+#define LOG_TO_E(fmt, ...) printf(fmt "\n", ##__VA_ARGS__)
 
 // --- 最小 SDL3 声明（仅 hook 所需；完整 headers 由 lwjgl-sdl 绑定侧提供） ---
 typedef uint32_t SDL_InitFlags;
 typedef struct SDL_Window SDL_Window;
-typedef struct SDL_Rect { int x, y, w, h; } SDL_Rect;
+typedef struct SDL_Rect {
+    int x, y, w, h;
+} SDL_Rect;
 
 bool SDL_InitSubSystem(SDL_InitFlags flags);
+
 bool SDL_SetHint(const char *name, const char *value);
+
 bool SDL_SetTextInputArea(SDL_Window *window, const SDL_Rect *rect, int cursor);
+
 void SDL_SetError(const char *fmt, ...);
+
 const char *SDL_GetError(void);
+
 SDL_Window *SDL_GetWindowFromEvent(const void *event);
+
 SDL_Window *SDL_GetWindowFromID(uint32_t id);
+
 bool SDL_GL_SetAttribute(int attr, int value);
+
 void *SDL_LoadObject(const char *path);
+
 void SDL_UnloadObject(void *handle);
+
 void *SDL_LoadFunction(void *handle, const char *name);
+
 SDL_Window *SDL_CreateWindow(const char *title, int w, int h, uint32_t flags);
+
 SDL_Window *SDL_CreateWindowWithProperties(uint32_t props);
+
 void SDL_DestroyWindow(SDL_Window *window);
 
 // egl_bridge.c（libpojavexec.so），SDL 路径下经 EGL 交换代理计帧
@@ -60,9 +75,14 @@ typedef void *EGLDisplay;
 typedef void *EGLConfig;
 typedef int EGLint;
 typedef int EGLBoolean;
-typedef EGLBoolean (*eglChooseConfig_t)(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *configs,
+
+typedef EGLBoolean (*eglChooseConfig_t)(EGLDisplay dpy, const EGLint *attrib_list,
+                                        EGLConfig *configs,
                                         EGLint config_size, EGLint *num_config);
-typedef void *(*eglCreateContext_t)(EGLDisplay dpy, EGLConfig config, void *share, const EGLint *attrib_list);
+
+typedef void *(*eglCreateContext_t)(EGLDisplay dpy, EGLConfig config, void *share,
+                                    const EGLint *attrib_list);
+
 typedef EGLBoolean (*eglSwapBuffers_t)(EGLDisplay dpy, void *surface);
 
 // EGL 常量（EGL/egl.h），避免引入完整 EGL 头
@@ -86,7 +106,8 @@ typedef EGLBoolean (*eglSwapBuffers_t)(EGLDisplay dpy, void *surface);
 static SDL_Window *sdlLastEventWindow = NULL;
 
 static SDL_Window *custom_SDL_GetWindowFromEvent_Func(const void *event) {
-    SDL_Window *window = BYTEHOOK_CALL_PREV(custom_SDL_GetWindowFromEvent_Func, SDL_GetWindowFromEvent_t, event);
+    SDL_Window *window = BYTEHOOK_CALL_PREV(custom_SDL_GetWindowFromEvent_Func,
+                                            SDL_GetWindowFromEvent_t, event);
     if (window != NULL) {
         sdlLastEventWindow = window;
     } else if (sdlLastEventWindow != NULL) {
@@ -97,7 +118,8 @@ static SDL_Window *custom_SDL_GetWindowFromEvent_Func(const void *event) {
 }
 
 static SDL_Window *custom_SDL_GetWindowFromID_Func(uint32_t id) {
-    SDL_Window *window = BYTEHOOK_CALL_PREV(custom_SDL_GetWindowFromID_Func, SDL_GetWindowFromID_t, id);
+    SDL_Window *window = BYTEHOOK_CALL_PREV(custom_SDL_GetWindowFromID_Func, SDL_GetWindowFromID_t,
+                                            id);
     if (window != NULL) {
         sdlLastEventWindow = window;
     } else if (sdlLastEventWindow != NULL) {
@@ -127,7 +149,8 @@ static EGLBoolean normalizeEglChooseConfigList(const EGLint *attrib_list, EGLint
             break;
         }
         if (attr == EGL_RENDERABLE_TYPE) {
-            if ((val & (EGL_OPENGL_ES3_BIT | EGL_OPENGL_BIT)) != 0 && (val & EGL_OPENGL_ES2_BIT) == 0) {
+            if ((val & (EGL_OPENGL_ES3_BIT | EGL_OPENGL_BIT)) != 0 &&
+                (val & EGL_OPENGL_ES2_BIT) == 0) {
                 val = (val & ~(EGL_OPENGL_ES3_BIT | EGL_OPENGL_BIT)) | EGL_OPENGL_ES2_BIT;
             }
         }
@@ -177,7 +200,8 @@ static eglChooseConfig_t sOrigEglChooseConfig = NULL;
 static eglCreateContext_t sOrigEglCreateContext = NULL;
 static eglSwapBuffers_t sOrigEglSwapBuffers = NULL;
 
-static void *proxyEglCreateContext(EGLDisplay dpy, EGLConfig config, void *share, const EGLint *attrib_list) {
+static void *
+proxyEglCreateContext(EGLDisplay dpy, EGLConfig config, void *share, const EGLint *attrib_list) {
     EGLint fixed[64];
     const EGLint *use_list = attrib_list;
     int version = normalizeEglContextAttribs(attrib_list, fixed, 64);
@@ -193,8 +217,9 @@ static void *proxyEglCreateContext(EGLDisplay dpy, EGLConfig config, void *share
     return ctx;
 }
 
-static EGLBoolean proxyEglChooseConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *configs,
-                                       EGLint config_size, EGLint *num_config) {
+static EGLBoolean
+proxyEglChooseConfig(EGLDisplay dpy, const EGLint *attrib_list, EGLConfig *configs,
+                     EGLint config_size, EGLint *num_config) {
     // 归一化 RENDERABLE_TYPE 后转发（见 normalizeEglChooseConfigList）
     EGLint fixed[64];
     const EGLint *use_list = attrib_list;
@@ -274,21 +299,25 @@ static void custom_SDL_DestroyWindow_Func(SDL_Window *window) {
     BYTEHOOK_POP_STACK();
 }
 
-static bool custom_SDL_InitSubSystem_Func(SDL_InitFlags flags) {
+// launcher 集成通知与会话 hint 设置（InitSubSystem hook 与 dlsym 代理共用）
+static bool sdlInitSubSystemPrepare(SDL_InitFlags flags) {
     // Call notifyLauncher on SDL_InitSubSystem, this sets up all the JNI stuff needed by SDL.
     TRY_ATTACH_ENV(dvm_env, pojav_environ->dalvikJavaVMPtr, "SDL_InitSubSystem failed!",
-            SET_DLSYM_PTR(dlopen("libSDL3.so", RTLD_NOLOAD), SDL_SetError);
-            if (SDL_SetError_p) SDL_SetError_p("Failed to load SDL launcher integration android-side. This is not an SDL bug, please contact the launcher developer.");
-            return false;
-            );
+                   SET_DLSYM_PTR(dlopen("libSDL3.so", RTLD_NOLOAD), SDL_SetError);
+                           if (SDL_SetError_p)
+                               SDL_SetError_p(
+                                       "Failed to load SDL launcher integration android-side. This is not an SDL bug, please contact the launcher developer.");
+                           return false;
+    );
 
     // Just in case of bozo
     jint safeFlags;
     if (flags > INT32_MAX) {
         safeFlags = -1;
-    } else safeFlags = (jint)flags;
+    } else safeFlags = (jint) flags;
 
-    notifyLauncher(dvm_env, NOTIF_TYPE_SDL, (int[]){ACTION_INIT_LAUNCHER_INTEGRATION, safeFlags}, 2);
+    notifyLauncher(dvm_env, NOTIF_TYPE_SDL, (int[]) {ACTION_INIT_LAUNCHER_INTEGRATION, safeFlags},
+                   2);
 
     // This is the normal for the launcher, the default in SDL is false.
     SET_DLSYM_PTR(dlopen("libSDL3.so", RTLD_NOLOAD), SDL_SetHint);
@@ -302,10 +331,14 @@ static bool custom_SDL_InitSubSystem_Func(SDL_InitFlags flags) {
     // 但移动端依赖 SDL 唤起输入法；MC 在 SDL_Init 之前设置此 hint，
     // 本 hook 于 SDL_Init 时执行，此处覆盖回启用。
     if (SDL_SetHint_p) SDL_SetHint_p("SDL_ENABLE_SCREEN_KEYBOARD", "1");
+    return true;
+}
 
+static bool custom_SDL_InitSubSystem_Func(SDL_InitFlags flags) {
+    if (!sdlInitSubSystemPrepare(flags)) return false;
     // Call original func after doing all the needed setup
     bool r = BYTEHOOK_CALL_PREV(custom_SDL_InitSubSystem_Func, SDL_InitSubSystem_t, flags);
-    if (!r){
+    if (!r) {
         SET_DLSYM_PTR(dlopen("libSDL3.so", RTLD_NOLOAD), SDL_GetError);
         LOG_TO_E("SDL_Hook: SDL_InitSubsystem Error: %s", SDL_GetError_p());
     }
@@ -319,7 +352,8 @@ static bool custom_SDL_InitSubSystem_Func(SDL_InitFlags flags) {
 static void forceEglProfileEs(void) {
     SET_DLSYM_PTR(dlopen("libSDL3.so", RTLD_NOLOAD), SDL_GL_SetAttribute);
     if (SDL_GL_SetAttribute_p) {
-        SDL_GL_SetAttribute_p(20 /* SDL_GL_CONTEXT_PROFILE_MASK */, 4 /* SDL_GL_CONTEXT_PROFILE_ES */);
+        SDL_GL_SetAttribute_p(20 /* SDL_GL_CONTEXT_PROFILE_MASK */,
+                              4 /* SDL_GL_CONTEXT_PROFILE_ES */);
     }
 }
 
@@ -340,7 +374,8 @@ static SDL_Window *reusePrimaryWindow(void) {
 static SDL_Window *custom_SDL_CreateWindow_Func(const char *title, int w, int h, uint32_t flags) {
     forceEglProfileEs();
     if (sPrimaryWindow != NULL) return reusePrimaryWindow();
-    SDL_Window *wnd = BYTEHOOK_CALL_PREV(custom_SDL_CreateWindow_Func, SDL_CreateWindow_t, title, w, h, flags);
+    SDL_Window *wnd = BYTEHOOK_CALL_PREV(custom_SDL_CreateWindow_Func, SDL_CreateWindow_t, title, w,
+                                         h, flags);
     if (wnd != NULL) sPrimaryWindow = wnd;
     BYTEHOOK_POP_STACK();
     return wnd;
@@ -349,7 +384,8 @@ static SDL_Window *custom_SDL_CreateWindow_Func(const char *title, int w, int h,
 static SDL_Window *custom_SDL_CreateWindowWithProperties_Func(uint32_t props) {
     forceEglProfileEs();
     if (sPrimaryWindow != NULL) return reusePrimaryWindow();
-    SDL_Window *wnd = BYTEHOOK_CALL_PREV(custom_SDL_CreateWindowWithProperties_Func, SDL_CreateWindowWithProperties_t, props);
+    SDL_Window *wnd = BYTEHOOK_CALL_PREV(custom_SDL_CreateWindowWithProperties_Func,
+                                         SDL_CreateWindowWithProperties_t, props);
     if (wnd != NULL) sPrimaryWindow = wnd;
     BYTEHOOK_POP_STACK();
     return wnd;
@@ -357,18 +393,214 @@ static SDL_Window *custom_SDL_CreateWindowWithProperties_Func(uint32_t props) {
 
 void create_sdl_hooks(bytehook_hook_all_t bytehook_hook_all_p) {
     // Don't set callee_path_name to anything besides NULL or else it won't be able to find the symbol
-    bytehook_stub_t stub_SDL_InitSubSystem = bytehook_hook_all_p(NULL, "SDL_InitSubSystem", &custom_SDL_InitSubSystem_Func, NULL, NULL);
-    bytehook_stub_t stub_SDL_GetWindowFromEvent = bytehook_hook_all_p(NULL, "SDL_GetWindowFromEvent", &custom_SDL_GetWindowFromEvent_Func, NULL, NULL);
-    bytehook_stub_t stub_SDL_GetWindowFromID = bytehook_hook_all_p(NULL, "SDL_GetWindowFromID", &custom_SDL_GetWindowFromID_Func, NULL, NULL);
+    bytehook_stub_t stub_SDL_InitSubSystem = bytehook_hook_all_p(NULL, "SDL_InitSubSystem",
+                                                                 &custom_SDL_InitSubSystem_Func,
+                                                                 NULL, NULL);
+    bytehook_stub_t stub_SDL_GetWindowFromEvent = bytehook_hook_all_p(NULL,
+                                                                      "SDL_GetWindowFromEvent",
+                                                                      &custom_SDL_GetWindowFromEvent_Func,
+                                                                      NULL, NULL);
+    bytehook_stub_t stub_SDL_GetWindowFromID = bytehook_hook_all_p(NULL, "SDL_GetWindowFromID",
+                                                                   &custom_SDL_GetWindowFromID_Func,
+                                                                   NULL, NULL);
     // 窗口创建前强制 ES profile（覆盖 SDL3 的两种窗口创建入口）
-    bytehook_stub_t stub_SDL_CreateWindow = bytehook_hook_all_p(NULL, "SDL_CreateWindow", &custom_SDL_CreateWindow_Func, NULL, NULL);
-    bytehook_stub_t stub_SDL_CreateWindowWithProperties = bytehook_hook_all_p(NULL, "SDL_CreateWindowWithProperties", &custom_SDL_CreateWindowWithProperties_Func, NULL, NULL);
+    bytehook_stub_t stub_SDL_CreateWindow = bytehook_hook_all_p(NULL, "SDL_CreateWindow",
+                                                                &custom_SDL_CreateWindow_Func, NULL,
+                                                                NULL);
+    bytehook_stub_t stub_SDL_CreateWindowWithProperties = bytehook_hook_all_p(NULL,
+                                                                              "SDL_CreateWindowWithProperties",
+                                                                              &custom_SDL_CreateWindowWithProperties_Func,
+                                                                              NULL, NULL);
     // 接管 SDL 的 EGL 函数解析，注入归一化代理
-    bytehook_stub_t stub_SDL_LoadFunction = bytehook_hook_all_p(NULL, "SDL_LoadFunction", &custom_SDL_LoadFunction_Func, NULL, NULL);
+    bytehook_stub_t stub_SDL_LoadFunction = bytehook_hook_all_p(NULL, "SDL_LoadFunction",
+                                                                &custom_SDL_LoadFunction_Func, NULL,
+                                                                NULL);
     // Vulkan 加载器一致性：SDL 侧改用启动器重定向的加载器句柄
-    bytehook_stub_t stub_SDL_LoadObject = bytehook_hook_all_p(NULL, "SDL_LoadObject", &custom_SDL_LoadObject_Func, NULL, NULL);
-    bytehook_stub_t stub_SDL_UnloadObject = bytehook_hook_all_p(NULL, "SDL_UnloadObject", &custom_SDL_UnloadObject_Func, NULL, NULL);
+    bytehook_stub_t stub_SDL_LoadObject = bytehook_hook_all_p(NULL, "SDL_LoadObject",
+                                                              &custom_SDL_LoadObject_Func, NULL,
+                                                              NULL);
+    bytehook_stub_t stub_SDL_UnloadObject = bytehook_hook_all_p(NULL, "SDL_UnloadObject",
+                                                                &custom_SDL_UnloadObject_Func, NULL,
+                                                                NULL);
     // 主窗口销毁跟踪，配合窗口复用（见 custom_SDL_DestroyWindow_Func）
-    bytehook_stub_t stub_SDL_DestroyWindow = bytehook_hook_all_p(NULL, "SDL_DestroyWindow", &custom_SDL_DestroyWindow_Func, NULL, NULL);
-    LOG_TO_I("SDL_Hook: Successfully initialized SDL hooks, stubs: InitSubSystem=%p GetWindowFromEvent=%p GetWindowFromID=%p LoadFunction=%p CreateWindow=%p CreateWindowWithProps=%p LoadObject=%p UnloadObject=%p DestroyWindow=%p", stub_SDL_InitSubSystem, stub_SDL_GetWindowFromEvent, stub_SDL_GetWindowFromID, stub_SDL_LoadFunction, stub_SDL_CreateWindow, stub_SDL_CreateWindowWithProperties, stub_SDL_LoadObject, stub_SDL_UnloadObject, stub_SDL_DestroyWindow);
+    bytehook_stub_t stub_SDL_DestroyWindow = bytehook_hook_all_p(NULL, "SDL_DestroyWindow",
+                                                                 &custom_SDL_DestroyWindow_Func,
+                                                                 NULL, NULL);
+    LOG_TO_I(
+            "SDL_Hook: Successfully initialized SDL hooks, stubs: InitSubSystem=%p GetWindowFromEvent=%p GetWindowFromID=%p LoadFunction=%p CreateWindow=%p CreateWindowWithProps=%p LoadObject=%p UnloadObject=%p DestroyWindow=%p",
+            stub_SDL_InitSubSystem, stub_SDL_GetWindowFromEvent, stub_SDL_GetWindowFromID,
+            stub_SDL_LoadFunction, stub_SDL_CreateWindow, stub_SDL_CreateWindowWithProperties,
+            stub_SDL_LoadObject, stub_SDL_UnloadObject, stub_SDL_DestroyWindow);
+}
+
+// ---------- dlsym 层代理 ----------
+// LWJGL 的 org.lwjgl.sdl 绑定（以及 glfwstub 等）经 dlopen+dlsym 解析 SDL 函数指针后
+// 再调用，bytehook 的 hook_all（GOT 导入补丁）拦截不到这类调用。customDlsym
+// （sdl_dlopen_hook.c）在 dlsym 出口把下表符号换成这里的代理：代理内直接调用缓存的
+// 真实 SDL 函数，与上方 hook 共用同一套主窗口复用/launcher 集成逻辑，但不依赖
+// bytehook 的调用上下文（不使用 CALL_PREV/POP_STACK）。
+
+typedef bool (*sdlInitSubSystem_t)(SDL_InitFlags);
+
+typedef SDL_Window *(*sdlCreateWindow_t)(const char *, int, int, uint32_t);
+
+typedef SDL_Window *(*sdlCreateWindowWithProperties_t)(uint32_t);
+
+typedef void (*sdlDestroyWindow_t)(SDL_Window *);
+
+typedef SDL_Window *(*sdlGetWindowFromEvent_t)(const void *);
+
+typedef SDL_Window *(*sdlGetWindowFromID_t)(uint32_t);
+
+typedef void *(*sdlLoadObject_t)(const char *);
+
+typedef void *(*sdlLoadFunction_t)(void *, const char *);
+
+typedef void (*sdlUnloadObject_t)(void *);
+
+static sdlInitSubSystem_t realSdlInitSubSystem;
+static sdlCreateWindow_t realSdlCreateWindow;
+static sdlCreateWindowWithProperties_t realSdlCreateWindowWithProperties;
+static sdlDestroyWindow_t realSdlDestroyWindow;
+static sdlGetWindowFromEvent_t realSdlGetWindowFromEvent;
+static sdlGetWindowFromID_t realSdlGetWindowFromID;
+static sdlLoadObject_t realSdlLoadObject;
+static sdlLoadFunction_t realSdlLoadFunction;
+static sdlUnloadObject_t realSdlUnloadObject;
+
+static bool proxy_SDL_InitSubSystem(SDL_InitFlags flags) {
+    if (!sdlInitSubSystemPrepare(flags)) return false;
+    bool result = realSdlInitSubSystem(flags);
+    if (!result) {
+        SET_DLSYM_PTR(dlopen("libSDL3.so", RTLD_NOLOAD), SDL_GetError);
+        LOG_TO_E("SDL_Hook: SDL_InitSubsystem Error: %s", SDL_GetError_p());
+    }
+    return result;
+}
+
+static SDL_Window *proxy_SDL_CreateWindow(const char *title, int w, int h, uint32_t flags) {
+    forceEglProfileEs();
+    if (sPrimaryWindow != NULL) return reusePrimaryWindow();
+    SDL_Window *window = realSdlCreateWindow(title, w, h, flags);
+    if (window != NULL) sPrimaryWindow = window;
+    return window;
+}
+
+static SDL_Window *proxy_SDL_CreateWindowWithProperties(uint32_t props) {
+    forceEglProfileEs();
+    if (sPrimaryWindow != NULL) return reusePrimaryWindow();
+    SDL_Window *window = realSdlCreateWindowWithProperties(props);
+    if (window != NULL) sPrimaryWindow = window;
+    return window;
+}
+
+static void proxy_SDL_DestroyWindow(SDL_Window *window) {
+    if (window == sPrimaryWindow) sPrimaryWindow = NULL;
+    realSdlDestroyWindow(window);
+}
+
+static SDL_Window *proxy_SDL_GetWindowFromEvent(const void *event) {
+    SDL_Window *window = realSdlGetWindowFromEvent(event);
+    if (window != NULL) {
+        sdlLastEventWindow = window;
+    } else if (sdlLastEventWindow != NULL) {
+        window = sdlLastEventWindow;
+    }
+    return window;
+}
+
+static SDL_Window *proxy_SDL_GetWindowFromID(uint32_t id) {
+    SDL_Window *window = realSdlGetWindowFromID(id);
+    if (window != NULL) {
+        sdlLastEventWindow = window;
+    } else if (sdlLastEventWindow != NULL) {
+        window = sdlLastEventWindow;
+    }
+    return window;
+}
+
+static void *proxy_SDL_LoadObject(const char *path) {
+    if (path != NULL && strstr(path, "libvulkan") != NULL) {
+        const char *vkptr = getenv("VULKAN_PTR");
+        if (vkptr != NULL && vkptr[0] != '\0') {
+            void *handle = (void *) (uintptr_t) strtoull(vkptr, NULL, 16);
+            if (handle != NULL) return handle;
+        }
+    }
+    return realSdlLoadObject(path);
+}
+
+static void *proxy_SDL_LoadFunction(void *handle, const char *name) {
+    void *result = realSdlLoadFunction(handle, name);
+    if (name != NULL) {
+        if (strcmp(name, "eglChooseConfig") == 0) {
+            if (sOrigEglChooseConfig == NULL && result != NULL) {
+                sOrigEglChooseConfig = (eglChooseConfig_t) result;
+            }
+            result = (void *) proxyEglChooseConfig;
+        } else if (strcmp(name, "eglCreateContext") == 0) {
+            if (sOrigEglCreateContext == NULL && result != NULL) {
+                sOrigEglCreateContext = (eglCreateContext_t) result;
+            }
+            result = (void *) proxyEglCreateContext;
+        } else if (strcmp(name, "eglSwapBuffers") == 0) {
+            if (sOrigEglSwapBuffers == NULL && result != NULL) {
+                sOrigEglSwapBuffers = (eglSwapBuffers_t) result;
+            }
+            result = (void *) proxyEglSwapBuffers;
+        }
+    }
+    return result;
+}
+
+static void proxy_SDL_UnloadObject(void *handle) {
+    const char *vkptr = getenv("VULKAN_PTR");
+    if (vkptr != NULL && vkptr[0] != '\0') {
+        void *vulkanHandle = (void *) (uintptr_t) strtoull(vkptr, NULL, 16);
+        if (handle == vulkanHandle) return;
+    }
+    realSdlUnloadObject(handle);
+}
+
+/** customDlsym 出口：把 SDL 符号解析换成 dlsym 层代理；返回 NULL 表示不拦截 */
+void *sdlDlsymProxy(const char *symbol, void *real) {
+    if (strcmp(symbol, "SDL_InitSubSystem") == 0) {
+        if (realSdlInitSubSystem == NULL) realSdlInitSubSystem = (sdlInitSubSystem_t) real;
+        return (void *) proxy_SDL_InitSubSystem;
+    }
+    if (strcmp(symbol, "SDL_CreateWindow") == 0) {
+        if (realSdlCreateWindow == NULL) realSdlCreateWindow = (sdlCreateWindow_t) real;
+        return (void *) proxy_SDL_CreateWindow;
+    }
+    if (strcmp(symbol, "SDL_CreateWindowWithProperties") == 0) {
+        if (realSdlCreateWindowWithProperties == NULL)
+            realSdlCreateWindowWithProperties = (sdlCreateWindowWithProperties_t) real;
+        return (void *) proxy_SDL_CreateWindowWithProperties;
+    }
+    if (strcmp(symbol, "SDL_DestroyWindow") == 0) {
+        if (realSdlDestroyWindow == NULL) realSdlDestroyWindow = (sdlDestroyWindow_t) real;
+        return (void *) proxy_SDL_DestroyWindow;
+    }
+    if (strcmp(symbol, "SDL_GetWindowFromEvent") == 0) {
+        if (realSdlGetWindowFromEvent == NULL)
+            realSdlGetWindowFromEvent = (sdlGetWindowFromEvent_t) real;
+        return (void *) proxy_SDL_GetWindowFromEvent;
+    }
+    if (strcmp(symbol, "SDL_GetWindowFromID") == 0) {
+        if (realSdlGetWindowFromID == NULL) realSdlGetWindowFromID = (sdlGetWindowFromID_t) real;
+        return (void *) proxy_SDL_GetWindowFromID;
+    }
+    if (strcmp(symbol, "SDL_LoadObject") == 0) {
+        if (realSdlLoadObject == NULL) realSdlLoadObject = (sdlLoadObject_t) real;
+        return (void *) proxy_SDL_LoadObject;
+    }
+    if (strcmp(symbol, "SDL_LoadFunction") == 0) {
+        if (realSdlLoadFunction == NULL) realSdlLoadFunction = (sdlLoadFunction_t) real;
+        return (void *) proxy_SDL_LoadFunction;
+    }
+    if (strcmp(symbol, "SDL_UnloadObject") == 0) {
+        if (realSdlUnloadObject == NULL) realSdlUnloadObject = (sdlUnloadObject_t) real;
+        return (void *) proxy_SDL_UnloadObject;
+    }
+    return NULL;
 }
