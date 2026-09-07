@@ -860,7 +860,7 @@
     <string name="settings_fcl_renderer_desc">选择 OpenGL 渲染器实现</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, 仅支持 adreno616-660)</string>
-    <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+, 内置的)</string>
+    <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+)</string>
     <string name="settings_fcl_driver">Vulkan驱动</string>
     <string name="settings_fcl_driver_desc">选择 Vulkan 驱动实现</string>
     <string name="settings_download_netdisk">网盘</string>
