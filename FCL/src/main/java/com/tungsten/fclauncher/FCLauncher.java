@@ -21,6 +21,7 @@ import com.oracle.dalvik.VMLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.Architecture;
 import com.tungsten.fclauncher.utils.FCLPath;
+import com.tungsten.fclcore.util.Logging;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 
 public class FCLauncher {
 
@@ -184,7 +186,8 @@ public class FCLauncher {
                 a = "-Djava.library.path=${natives_directory}";
             }
             a = a.replace("${natives_directory}", libraryPath);
-            args[i] = config.getRenderer() == null ? a : a.replace("${gl_lib_name}", config.getRenderer().getGLPath());
+            config.getRenderer();
+            args[i] = a.replace("${gl_lib_name}", config.getRenderer().getGLPath());
         }
         return args;
     }
@@ -251,13 +254,20 @@ public class FCLauncher {
         Renderer renderer = config.getRenderer();
         String egl = envMap.get("POJAVEXEC_EGL");
         if (egl != null && !egl.startsWith("/")) {
-            egl = rendererLibPath(renderer) + "/" + egl;
+            File candidate = new File(rendererLibPath(renderer), egl);
+            // 仅当库真实打包在渲染器目录内才给 SDL 绝对路径；
+            // 不在目录内（如系统 EGL libEGL.so）交给 SDL 按自身默认解析
+            if (candidate.isFile()) {
+                egl = candidate.getAbsolutePath();
+            } else {
+                egl = null;
+            }
         }
         if (egl != null) {
             envMap.put("SDL_EGL_LIBRARY", egl);
         }
         String gl = renderer.getGlName();
-        if (gl != null && !gl.isEmpty()) {
+        if (!gl.isEmpty()) {
             if (!gl.startsWith("/")) {
                 gl = rendererLibPath(renderer) + "/" + gl;
             }
@@ -265,10 +275,12 @@ public class FCLauncher {
         }
     }
 
-    /** 渲染器库所在目录：插件渲染器用其自身 lib 目录（主 APK 目录下没有该库），内置渲染器用主 APK native 目录 */
+    /**
+     * 渲染器库所在目录：插件渲染器用其自身 lib 目录（主 APK 目录下没有该库），内置渲染器用主 APK native 目录
+     */
     private static String rendererLibPath(Renderer renderer) {
         String pluginPath = renderer.getPath();
-        return pluginPath == null || pluginPath.isEmpty() ? FCLPath.NATIVE_LIB_DIR : pluginPath;
+        return pluginPath.isEmpty() ? FCLPath.NATIVE_LIB_DIR : pluginPath;
     }
 
     private static void addRendererEnvInner(FCLConfig config, HashMap<String, String> envMap) {
@@ -518,7 +530,7 @@ public class FCLauncher {
                 // launch
                 launch(config, bridge, task);
             } catch (IOException e) {
-                e.printStackTrace();
+                Logging.LOG.log(Level.SEVERE, e.toString());
             }
         });
 
