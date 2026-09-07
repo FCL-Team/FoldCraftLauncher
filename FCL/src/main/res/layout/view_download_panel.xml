@@ -18,7 +18,6 @@
             android:gravity="center"
             android:singleLine="true"
             android:text="@string/download_manager"
-            android:textColor="@android:color/darker_gray"
             android:textSize="16sp" />
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
@@ -28,7 +27,6 @@
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="32dp"
             android:singleLine="true"
-            android:textColor="@android:color/darker_gray"
             android:textSize="12sp" />
 
         <com.tungsten.fcllibrary.component.view.FCLImageView

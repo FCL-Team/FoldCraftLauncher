@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.download.DownloadManager
 import com.mio.download.DownloadTaskInfo
+import com.mio.ui.applySelectableItemStyle
+import com.tungsten.fcl.FCLApp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemDownloadTaskBinding
 import com.tungsten.fclcore.fakefx.beans.value.ChangeListener
@@ -69,6 +71,13 @@ class DownloadListAdapter : ListAdapter<DownloadTaskInfo, DownloadListAdapter.Vi
             unbind()
             current = info
             val root = binding.root
+            applySelectableItemStyle(
+                FCLApp.getAppContext(),
+                binding.root,
+                null,
+                false,
+                FCLApp.getAppContext().resources.displayMetrics.density
+            )
             title.string = info.title
             // 仅在任务成功结束后才进入"待安装"态，下载中仍显示进度
             val ready = info.ready
@@ -126,7 +135,12 @@ class DownloadListAdapter : ListAdapter<DownloadTaskInfo, DownloadListAdapter.Vi
 /** 字节数格式化为可读速度/大小文本 */
 internal fun formatBytes(bytes: Long): String {
     return when {
-        bytes >= 1024L * 1024 * 1024 -> String.format(Locale.US, "%.2f GB", bytes / 1024.0 / 1024.0 / 1024.0)
+        bytes >= 1024L * 1024 * 1024 -> String.format(
+            Locale.US,
+            "%.2f GB",
+            bytes / 1024.0 / 1024.0 / 1024.0
+        )
+
         bytes >= 1024L * 1024 -> String.format(Locale.US, "%.1f MB", bytes / 1024.0 / 1024.0)
         bytes >= 1024L -> String.format(Locale.US, "%.0f KB", bytes / 1024.0)
         else -> "$bytes B"

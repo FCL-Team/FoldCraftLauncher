@@ -12,10 +12,10 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.download.DownloadTaskInfo
-import com.tungsten.fclcore.task.FetchTask
-import com.tungsten.fclcore.task.Schedulers
 import com.mio.util.getScreenWidth
 import com.tungsten.fcl.databinding.ViewDownloadPanelBinding
+import com.tungsten.fclcore.task.FetchTask
+import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.util.function.Consumer
@@ -34,7 +34,7 @@ class DownloadSlidePanel @JvmOverloads constructor(
     /** 全局速度事件处理：weak 注册要求调用方持有强引用，否则监听器会被 GC 回收失效 */
     private val speedHandler = Consumer { event: FetchTask.SpeedEvent ->
         Schedulers.androidUIThread().execute {
-            speedText.setString(if (event.speed > 0) formatBytes(event.speed.toLong()) + "/s" else "")
+            speedText.string = if (event.speed > 0) formatBytes(event.speed.toLong()) + "/s" else ""
         }
     }
     private val speedText = binding.speed
@@ -69,7 +69,10 @@ class DownloadSlidePanel @JvmOverloads constructor(
                 parent: RecyclerView,
                 state: RecyclerView.State
             ) {
-                outRect.top = itemGap
+                val position = parent.getChildAdapterPosition(view)
+                if (position != 0) {
+                    outRect.top = itemGap
+                }
             }
         })
         list.adapter = adapter
