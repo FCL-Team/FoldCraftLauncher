@@ -15,7 +15,6 @@ import com.tungsten.fcl.ui.manage.ManageUI.VersionLoadable
 import com.tungsten.fcl.ui.manage.adapter.ManageItemAdapter
 import com.tungsten.fcl.ui.manage.item.ManageItem
 import com.tungsten.fcl.ui.version.Versions
-import com.tungsten.fcl.util.RequestCodes
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty
@@ -27,7 +26,6 @@ import com.tungsten.fcllibrary.browser.options.LibMode
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLPage
-import com.tungsten.fcllibrary.component.view.FCLUILayout
 import com.tungsten.fcllibrary.ui.ProgressDialog
 import com.tungsten.fcllibrary.util.uploadLog
 import java.io.File
@@ -236,7 +234,7 @@ class ManagePage(context: Context?, id: Int) : FCLPage(context, id, R.layout.pag
     }
 
     private fun uploadLatestLog() {
-        val logFile = File(FCLPath.LOG_DIR, "latest_game.log")
+        val logFile = FCLPath.getLatestGameLog()
         if (!logFile.exists()) {
             showErrorDialog(context,R.string.log_not_found)
             return

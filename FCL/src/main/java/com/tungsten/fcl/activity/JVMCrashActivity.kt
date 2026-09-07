@@ -9,7 +9,6 @@ import android.os.Process
 import android.util.TypedValue
 import android.view.View
 import android.view.WindowManager
-import androidx.core.content.FileProvider
 import com.mio.util.showErrorDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityJvmCrashBinding
@@ -18,6 +17,8 @@ import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.util.findFatalErrorLogPath
+import com.tungsten.fcllibrary.util.shareLogFile
 import com.tungsten.fcllibrary.util.uploadLog
 import java.io.File
 import java.io.IOException
@@ -131,32 +132,7 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
             }
         }
         if (v === binding.share) {
-            try {
-                val intent = Intent(Intent.ACTION_SEND)
-                val file = File.createTempFile("fcl-latest", ".log")
-                file.delete()
-                FileUtils.copyFile(File(logPath), file)
-                fatalErrorLogPath?.let {
-                    file.appendText("\n${readLog(it)}")
-                }
-                val uri = FileProvider.getUriForFile(
-                    this,
-                    application.packageName + ".provider",
-                    file
-                )
-                intent.setType("text/plain")
-                intent.putExtra(Intent.EXTRA_STREAM, uri)
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                startActivity(
-                    Intent.createChooser(
-                        intent,
-                        getString(com.tungsten.fcl.R.string.crash_reporter_share)
-                    )
-                )
-            } catch (e: Exception) {
-                Logging.LOG.log(Level.INFO, "Share error: $e")
-            }
+            shareLogFile(this, File(logPath))
         }
     }
 
@@ -174,11 +150,6 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
             RegexOption.DOT_MATCHES_ALL
         )
         return pattern.find(text)?.groupValues?.get(1)
-    }
-
-    fun findFatalErrorLogPath(log: String): String? {
-        val pattern = Regex("^\\s*#?\\s*(.*hs_err_pid\\d+\\.log.*)\\s*$", RegexOption.MULTILINE)
-        return pattern.find(log)?.groupValues?.get(1)?.trim()
     }
 
     companion object {

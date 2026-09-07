@@ -28,7 +28,6 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.core.content.edit
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.forEach
@@ -88,6 +87,7 @@ import com.tungsten.fcllibrary.component.ui.FCLPage
 import com.tungsten.fcllibrary.component.view.FCLMenuView
 import com.tungsten.fcllibrary.component.view.FCLMenuView.OnSelectListener
 import com.tungsten.fcllibrary.util.ConvertUtils
+import com.tungsten.fcllibrary.util.shareLogFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -303,7 +303,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 setting.setOnSelectListener(this@MainActivity)
                 home.setSelected(true)
                 home.setOnLongClickListener {
-                    shareLog()
+                    shareLogFile(this@MainActivity, FCLPath.getLatestGameLog())
                     true
                 }
                 back.setOnClickListener(this@MainActivity)
@@ -905,31 +905,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             ).forEachIndexed { index, objectAnimator ->
                 objectAnimator.interpolator(BounceInterpolator()).startAfter((index + 1) * 100L)
             }
-        }
-    }
-
-    private fun shareLog() {
-        try {
-            val file = File(FCLPath.LOG_DIR).resolve("latest_game.log")
-            if (!file.exists()) return
-            val intent = Intent(Intent.ACTION_SEND)
-
-            val uri = FileProvider.getUriForFile(
-                this,
-                "${application.packageName}.provider",
-                file
-            )
-            intent.type = "text/plain"
-            intent.putExtra(Intent.EXTRA_STREAM, uri)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            startActivity(
-                Intent.createChooser(
-                    intent,
-                    getString(R.string.crash_reporter_share)
-                )
-            )
-        } catch (e: Exception) {
-            LOG.log(Level.INFO, "Share error: $e")
         }
     }
 

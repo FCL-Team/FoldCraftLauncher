@@ -477,7 +477,7 @@ public class FCLauncher {
     }
 
     public static FCLBridge launchMinecraft(FCLConfig config) {
-        return launchProcess(config, "latest_game.log", "Minecraft", true, true, true);
+        return launchProcess(config, FCLPath.LATEST_GAME_LOG, "Minecraft", true, true, true);
     }
 
     public static FCLBridge launchJarExecutor(FCLConfig config) {

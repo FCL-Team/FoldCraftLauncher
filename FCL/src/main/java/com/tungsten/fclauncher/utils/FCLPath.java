@@ -9,6 +9,8 @@ public class FCLPath {
 
     public static String NATIVE_LIB_DIR;
 
+    public static final String LATEST_GAME_LOG = "latest_game.log";
+
     public static String LOG_DIR;
     public static String CACHE_DIR;
 
@@ -100,11 +102,14 @@ public class FCLPath {
         init(SHARED_COMMON_DIR);
     }
 
-    private static boolean init(String path) {
+    private static void init(String path) {
         if (!new File(path).exists()) {
-            return new File(path).mkdirs();
+            new File(path).mkdirs();
         }
-        return true;
+    }
+
+    public static File getLatestGameLog() {
+        return new File(LOG_DIR, LATEST_GAME_LOG);
     }
 
 }
