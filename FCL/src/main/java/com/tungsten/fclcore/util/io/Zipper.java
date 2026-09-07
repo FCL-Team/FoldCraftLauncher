@@ -19,32 +19,47 @@ package com.tungsten.fclcore.util.io;
 
 import com.tungsten.fclcore.util.function.ExceptionalPredicate;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.BufferedWriter;
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 /**
  * Non thread-safe
+ *
+ * @author huangyuhui
  */
 public final class Zipper implements Closeable {
 
     private final ZipOutputStream zos;
     private final byte[] buffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
+    private final Set<String> entryNames;
 
     public Zipper(Path zipFile) throws IOException {
-        this(zipFile, StandardCharsets.UTF_8);
+        this(zipFile, false);
     }
 
-    public Zipper(Path zipFile, Charset encoding) throws IOException {
-        this.zos = new ZipOutputStream(Files.newOutputStream(zipFile), encoding);
+    public Zipper(Path zipFile, boolean allowDuplicateEntry) throws IOException {
+        this.zos = new ZipOutputStream(Files.newOutputStream(zipFile), StandardCharsets.UTF_8);
+        this.entryNames = allowDuplicateEntry ? new HashSet<>() : null;
     }
 
     private static String normalize(String path) {
@@ -54,6 +69,20 @@ public final class Zipper implements Closeable {
         if (path.endsWith("/"))
             path = path.substring(0, path.length() - 1);
         return path;
+    }
+
+    private ZipEntry newEntry(String name) throws IOException {
+        if (entryNames == null || name.endsWith("/") || entryNames.add(name))
+            return new ZipEntry(name);
+
+        for (int i = 1; i < 10; i++) {
+            String newName = name + "." + i;
+            if (entryNames.add(newName)) {
+                return new ZipEntry(newName);
+            }
+        }
+
+        throw new ZipException("duplicate entry: " + name);
     }
 
     private static String resolve(String dir, String file) {
@@ -70,7 +99,7 @@ public final class Zipper implements Closeable {
     /**
      * Compress all the files in sourceDir
      *
-     * @param source  the file in basePath to be compressed
+     * @param source    the file in basePath to be compressed
      * @param targetDir the path of the directory in this zip file.
      */
     public void putDirectory(Path source, String targetDir) throws IOException {
@@ -80,13 +109,13 @@ public final class Zipper implements Closeable {
     /**
      * Compress all the files in sourceDir
      *
-     * @param source  the file in basePath to be compressed
+     * @param source    the file in basePath to be compressed
      * @param targetDir the path of the directory in this zip file.
-     * @param filter  returns false if you do not want that file or directory
+     * @param filter    returns false if you do not want that file or directory
      */
     public void putDirectory(Path source, String targetDir, ExceptionalPredicate<String, IOException> filter) throws IOException {
         String root = normalize(targetDir);
-        Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(source, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 if (".DS_Store".equals(file.getFileName().toString())) {
@@ -117,16 +146,12 @@ public final class Zipper implements Closeable {
         });
     }
 
-    public void putFile(File file, String path) throws IOException {
-        putFile(file.toPath(), path);
-    }
-
     public void putFile(Path file, String path) throws IOException {
         path = normalize(path);
 
         BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
 
-        ZipEntry entry = new ZipEntry(attrs.isDirectory() ? path + "/" : path);
+        ZipEntry entry = newEntry(attrs.isDirectory() ? path + "/" : path);
         entry.setCreationTime(attrs.creationTime());
         entry.setLastAccessTime(attrs.lastAccessTime());
         entry.setLastModifiedTime(attrs.lastModifiedTime());
@@ -148,9 +173,55 @@ public final class Zipper implements Closeable {
     }
 
     public void putStream(InputStream in, String path) throws IOException {
-        zos.putNextEntry(new ZipEntry(normalize(path)));
+        zos.putNextEntry(newEntry(normalize(path)));
         IOUtils.copyTo(in, zos, buffer);
         zos.closeEntry();
+    }
+
+    public OutputStream putStream(String path) throws IOException {
+        zos.putNextEntry(newEntry(normalize(path)));
+        return new OutputStream() {
+            public void write(int b) throws IOException {
+                zos.write(b);
+            }
+
+            public void write(byte @NotNull [] b) throws IOException {
+                zos.write(b);
+            }
+
+            public void write(byte @NotNull [] b, int off, int len) throws IOException {
+                zos.write(b, off, len);
+            }
+
+            public void flush() throws IOException {
+                zos.flush();
+            }
+
+            public void close() throws IOException {
+                zos.closeEntry();
+            }
+        };
+    }
+
+    public void putLines(Stream<String> lines, String path) throws IOException {
+        zos.putNextEntry(newEntry(normalize(path)));
+
+        try {
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(zos));
+            lines.forEachOrdered(line -> {
+                try {
+                    writer.write(line);
+                    writer.write('\n');
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
+            writer.flush();
+        } catch (UncheckedIOException e) {
+            throw e.getCause();
+        } finally {
+            zos.closeEntry();
+        }
     }
 
     public void putTextFile(String text, String path) throws IOException {
@@ -158,7 +229,7 @@ public final class Zipper implements Closeable {
     }
 
     public void putTextFile(String text, Charset encoding, String path) throws IOException {
-        zos.putNextEntry(new ZipEntry(normalize(path)));
+        zos.putNextEntry(newEntry(normalize(path)));
         zos.write(text.getBytes(encoding));
         zos.closeEntry();
     }
