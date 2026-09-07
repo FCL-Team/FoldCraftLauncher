@@ -342,7 +342,6 @@ public class FCLauncher {
             envMap.put("force_glsl_extensions_warn", "true");
             envMap.put("allow_higher_compat_version", "true");
             envMap.put("allow_glsl_extension_directive_midshader", "true");
-            envMap.put("MESA_LOADER_DRIVER_OVERRIDE", "zink");
             envMap.put("VTEST_SOCKET_NAME", new File(config.getContext().getCacheDir().getAbsolutePath(), ".virgl_test").getAbsolutePath());
             if (renderer.isEqual(Renderer.ID_VIRGL)) {
                 envMap.put("POJAV_RENDERER", "gallium_virgl");

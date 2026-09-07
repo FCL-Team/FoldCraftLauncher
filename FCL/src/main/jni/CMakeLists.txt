@@ -19,6 +19,37 @@ if (${ANDROID_ABI} STREQUAL "arm64-v8a")
     add_definitions(-DADRENO_POSSIBLE)
 endif ()
 
+# 模块：androidnsbypass - Android linker 命名空间绕过工具库
+# （vendor 自 Amethyst-Android 的 androidnsbypass 子模块 616dc33，MIT 协议）
+add_library(
+        androidnsbypass
+        SHARED
+        androidnsbypass/android_linker_ns.cpp
+        androidnsbypass/elf_soname_patcher.c
+        androidnsbypass/nsbypass.c
+        androidnsbypass/nsbypass_dlfcn.c
+        androidnsbypass/utils.c
+)
+
+set_target_properties(
+        androidnsbypass
+        PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON
+)
+
+target_include_directories(
+        androidnsbypass
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/androidnsbypass/include
+)
+
+target_link_libraries(
+        androidnsbypass
+        PRIVATE
+        log
+)
+
 # 模块：fcl
 add_library(
         fcl
@@ -42,13 +73,20 @@ target_link_libraries(
         android
 )
 
-# 模块：linkerhook - 与 Amethyst-Android 布局一致，hook.c 位于 driver_helper/
+# 模块：linkerhook - 拦截 libvulkan 加载器以加载 Turnip 驱动
 add_library(
         linkerhook
         SHARED
-        driver_helper/hook.c
+        driver_helper/internal_android_dlopen_hook/turnip/hook.c
 )
 
+target_link_libraries(
+        linkerhook
+        PRIVATE
+        androidnsbypass
+)
+
+# 符号全局化，确保 libvulkan 加载器优先解析到 hook 的 android_dlopen_ext
 target_link_options(
         linkerhook
         PRIVATE
@@ -115,7 +153,6 @@ add_library(
     jvm_hooks/java_exec_hooks.c
     jvm_hooks/emui_iterator_fix_hook.c
     jvm_hooks/lwjgl_dlopen_hook.c
-    driver_helper/nsbypass.c
     native_hooks/exit_hook.c
     native_hooks/chmod_hook.c
     native_hooks/sdl_hook.c
@@ -135,6 +172,7 @@ target_link_libraries(
         pojavexec
         PRIVATE
         fcl
+        androidnsbypass
         log
         dl
         android
@@ -150,3 +188,16 @@ if (${ANDROID_ABI} STREQUAL "arm64-v8a")
             GLESv2
     )
 endif ()
+
+# 模块：glxshim - 为 LWJGL 3.3.5 之前的版本提供 glXGetProcAddress 符号
+add_library(
+        glxshim
+        SHARED
+        driver_helper/glxshim/glxshim.c
+)
+
+target_link_libraries(
+        glxshim
+        PRIVATE
+        pojavexec
+)

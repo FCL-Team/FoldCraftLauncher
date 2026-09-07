@@ -12,6 +12,8 @@
 
 #include "environ/environ.h"
 #include "utils.h"
+#include <androidnsbypass/nsbypass.h>
+#include "global_state.h"
 
 typedef int (*Main_Function_t)(int, char**);
 typedef void (*android_update_LD_LIBRARY_PATH_t)(const char*);
@@ -148,6 +150,11 @@ JNIEXPORT jlong JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNI
     void* handle;
     dlerror();
     handle = dlopen(lib_name, RTLD_GLOBAL | RTLD_LAZY);
+
+    // 普通 dlopen 失败时改用逃逸命名空间：可加载私有 API 库，同时保持命名空间隔离
+    if (handle == NULL) {
+        handle = linker_ns_dlopen(lib_name, RTLD_GLOBAL | RTLD_LAZY, app_escapeNs);
+    }
 
     char * error = dlerror();
     if(error != NULL && handle == NULL) {

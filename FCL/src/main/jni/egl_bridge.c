@@ -31,7 +31,9 @@
 #include <android/dlext.h>
 #include "ctxbridges/bridge_tbl.h"
 #include "ctxbridges/osm_bridge.h"
-#include "driver_helper/nsbypass.h"
+#include <androidnsbypass/nsbypass_t.h>
+#include <androidnsbypass/nsbypass.h>
+#include "global_state.h"
 #include "log.h"
 #include <stdatomic.h>
 
@@ -108,6 +110,9 @@ EXTERNAL_API void *pojavGetCurrentContext() {
     return br_get_current();
 }
 
+// 已加载的 Vulkan 句柄缓存（set_vulkan_ptr 与 loadTurnipVulkan 共用，各 ABI 都需要）
+static void* g_vulkan_ptr = NULL;
+
 #ifdef ADRENO_POSSIBLE
 
 bool checkAdrenoGraphics() {
@@ -155,62 +160,43 @@ bool checkAdrenoGraphics() {
     return is_adreno;
 }
 
+static struct android_namespace_t* vulkanLoaderNs;
+
 void* loadTurnipVulkan() {
+    if (g_vulkan_ptr) return g_vulkan_ptr;
     if (!checkAdrenoGraphics())
         return NULL;
 
-    const char* native_dir = getenv("DRIVER_PATH");
     const char* cache_dir = getenv("TMPDIR");
-
-    if (!native_dir)
-        return NULL;
-
-    if (!linker_ns_load(native_dir))
-        return NULL;
-
-    void* linkerhook = linker_ns_dlopen("liblinkerhook.so", RTLD_LOCAL | RTLD_NOW);
-    if (!linkerhook)
-        return NULL;
-
-    void* turnip_driver_handle = linker_ns_dlopen("libvulkan_freedreno.so", RTLD_LOCAL | RTLD_NOW);
-    if (!turnip_driver_handle) {
-        dlclose(linkerhook);
-        return NULL;
-    }
-
-    void* dl_android = linker_ns_dlopen("libdl_android.so", RTLD_LOCAL | RTLD_LAZY);
-    if (!dl_android) {
-        dlclose(linkerhook);
-        dlclose(turnip_driver_handle);
-        return NULL;
-    }
-
-    void* android_get_exported_namespace = dlsym(dl_android, "android_get_exported_namespace");
-    void (*linkerhookPassHandles)(void*, void*, void*) = dlsym(linkerhook, "app__pojav_linkerhook_pass_handles");
-
-    if (!linkerhookPassHandles || !android_get_exported_namespace) {
-        dlclose(dl_android);
-        dlclose(linkerhook);
-        dlclose(turnip_driver_handle);
-        return NULL;
-    }
-
-    linkerhookPassHandles(turnip_driver_handle, android_dlopen_ext, android_get_exported_namespace);
-
-    void* libvulkan = linker_ns_dlopen_unique(cache_dir, "libvulkan.so", RTLD_LOCAL | RTLD_NOW);
-    if (!libvulkan) {
-        dlclose(dl_android);
-        dlclose(linkerhook);
-        dlclose(turnip_driver_handle);
-        return NULL;
-    }
-
-    return libvulkan;
+    vulkanLoaderNs = private_create_namespace(
+            "vulkan-loader-NS",
+            NULL,
+            NULL,
+            ANDROID_NAMESPACE_TYPE_SHARED_ISOLATED,
+            NULL,
+            NULL,
+            __builtin_return_address(0)
+            );
+    // 先加载 hook，使其符号优先进入符号表从而拦截 android_dlopen_ext
+    linker_ns_dlopen("liblinkerhook.so", RTLD_LOCAL | RTLD_NOW, vulkanLoaderNs);
+    // 授予命名空间访问系统库的权限
+    private_link_namespaces_all_libs(vulkanLoaderNs, get_escape_namespace());
+#if defined(__aarch64__) || defined(__x86_64__)
+#define VULKAN_LOADER_PATH "/system/lib64/libvulkan.so"
+#elif defined(__arm__) || defined(__i386__)
+#define VULKAN_LOADER_PATH "/system/lib/libvulkan.so"
+#endif
+    return linker_ns_dlopen_unique(
+            VULKAN_LOADER_PATH,
+            cache_dir,
+            RTLD_LOCAL | RTLD_NOW,
+            vulkanLoaderNs);
 }
 
 #endif
 
 static void set_vulkan_ptr(void* ptr) {
+    g_vulkan_ptr = ptr;
     char envval[64];
     sprintf(envval, "%"PRIxPTR, (uintptr_t)ptr);
     setenv("VULKAN_PTR", envval, 1);
@@ -247,6 +233,7 @@ int pojavInitOpenGL() {
             load_vulkan();
             setenv("GALLIUM_DRIVER", "zink", 1);
             setenv("MESA_ANDROID_NO_KMS_SWRAST", "1", 1);
+            setenv("MESA_LOADER_DRIVER_OVERRIDE", "zink", 1);
         }
         set_gl_bridge_tbl();
     }
@@ -324,9 +311,9 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
             /* Nothing to do: initialization is handled in Java-side */
             // pojavInitVulkan();
             break;
-        case GLFW_OPENGL_API:
+        case GLFW_OPENGL_API: {
             const char *renderer = getenv("POJAV_RENDERER");
-            if (!strncmp("opengles", renderer, 8)) {
+            if (strncmp(renderer, "opengles", 8) == 0) {
                 pojav_environ->config_renderer = RENDERER_GL4ES;
             } else if (!strcmp(renderer, "vulkan_zink")) {
                 pojav_environ->config_renderer = RENDERER_VK_ZINK;
@@ -334,6 +321,7 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
             /* Nothing to do: initialization is called in pojavCreateContext */
             // pojavInitOpenGL();
             break;
+        }
         default:
             printf("GLFW: Unimplemented API 0x%x\n", value);
             abort();
