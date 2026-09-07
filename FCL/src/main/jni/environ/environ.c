@@ -10,7 +10,7 @@
 
 struct pojav_environ_s *pojav_environ;
 
-__attribute__((constructor)) void env_init() {
+__attribute__((constructor)) static void env_init() {
     char *strptr_env = getenv("POJAV_ENVIRON");
     if (strptr_env == NULL) {
         __android_log_print(ANDROID_LOG_INFO, "Environ", "No Pojav environ found, creating...");
