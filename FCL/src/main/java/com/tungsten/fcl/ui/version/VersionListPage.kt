@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.tabs.TabLayout
 import com.google.gson.JsonParseException
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
@@ -99,53 +100,70 @@ class VersionListPage(context: Context?, id: Int) : FCLPage(context, id, R.layou
                 })
             }
         }
-        binding.category.setOnCheckedChangeListener { _, i ->
-            when (i) {
-                R.id.all -> {
-                    adapter?.updateVersionList(children)
-                }
-
-                R.id.fabric -> {
-                    adapter?.updateVersionList(
-                        children.filter {
-                            it.libraries.split(",").find { lib ->
-                                lib.contains(":") && lib.contains("Fabric")
-                            } != null
-                        }
-                    )
-                }
-
-                R.id.forge -> {
-                    adapter?.updateVersionList(
-                        children.filter {
-                            it.libraries.split(",").find { lib ->
-                                lib.contains(":") && lib.contains("Forge") && !lib.contains("NeoForge")
-                            } != null
-                        }
-                    )
-                }
-
-                R.id.neoforge -> {
-                    adapter?.updateVersionList(
-                        children.filter {
-                            it.libraries.split(",").find { lib ->
-                                lib.contains(":") && lib.contains("NeoForge")
-                            } != null
-                        }
-                    )
-                }
-
-                R.id.other -> {
-                    adapter?.updateVersionList(
-                        children.filter {
-                            it.libraries.split(",").none { lib ->
-                                lib.contains("Fabric") || lib.contains("Forge") || lib.contains("NeoForge")
-                            }
-                        }
-                    )
-                }
-
+        binding.category.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                filterByTab(tab.position)
             }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+            }
+        })
+        // TabLayout 无 XML 默认选中，初始化选中「全部」分类
+        binding.category.selectTab(binding.category.getTabAt(0))
+    }
+
+    /**
+     * 按分类 tab 过滤版本列表：0 全部，1 Fabric，2 Forge，3 NeoForge，4 其他
+     */
+    private fun filterByTab(position: Int) {
+        when (position) {
+            0 -> {
+                adapter?.updateVersionList(children)
+            }
+
+            1 -> {
+                adapter?.updateVersionList(
+                    children.filter {
+                        it.libraries.split(",").find { lib ->
+                            lib.contains(":") && lib.contains("Fabric")
+                        } != null
+                    }
+                )
+            }
+
+            2 -> {
+                adapter?.updateVersionList(
+                    children.filter {
+                        it.libraries.split(",").find { lib ->
+                            lib.contains(":") && lib.contains("Forge") && !lib.contains("NeoForge")
+                        } != null
+                    }
+                )
+            }
+
+            3 -> {
+                adapter?.updateVersionList(
+                    children.filter {
+                        it.libraries.split(",").find { lib ->
+                            lib.contains(":") && lib.contains("NeoForge")
+                        } != null
+                    }
+                )
+            }
+
+            else -> {
+                adapter?.updateVersionList(
+                    children.filter {
+                        it.libraries.split(",").none { lib ->
+                            lib.contains("Fabric") || lib.contains("Forge") || lib.contains("NeoForge")
+                        }
+                    }
+                )
+            }
+
         }
     }
 
@@ -163,7 +181,7 @@ class VersionListPage(context: Context?, id: Int) : FCLPage(context, id, R.layou
         loadJob?.cancel()
         var job: Job? = null
         job = MainActivity.getInstance().lifecycleScope.launch {
-            binding.category.check(R.id.all)
+            binding.category.selectTab(binding.category.getTabAt(0))
             binding.search.removeTextChangedListener(textWatcher)
             binding.search.setText("")
             binding.refresh.isEnabled = false

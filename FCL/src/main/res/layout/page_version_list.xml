@@ -68,60 +68,45 @@
         <com.mio.ui.widget.FCLAppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_container_white"
-            app:auto_tint="true">
+            android:background="@android:color/transparent">
 
-            <HorizontalScrollView
+            <com.tungsten.fcllibrary.component.view.FCLTabLayout
+                android:id="@+id/category"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                app:layout_scrollFlags="scroll|enterAlways|snap">
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tab_top_rounded"
+                app:follow_theme="true"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:tabMode="auto"
+                app:tabTextAppearance="@style/TabTextAppearance"
+                app:tabUnboundedRipple="false">
 
-                <RadioGroup
-                    android:id="@+id/category"
+                <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:text="@string/curse_category_0" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
-                        android:id="@+id/all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:checked="true"
-                        android:text="@string/curse_category_0"
-                        app:text_use_theme_color="true" />
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Fabric" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
-                        android:id="@+id/fabric"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Fabric"
-                        app:text_use_theme_color="true" />
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="Forge" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
-                        android:id="@+id/forge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Forge"
-                        app:text_use_theme_color="true" />
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="NeoForge" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
-                        android:id="@+id/neoforge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="NeoForge"
-                        app:text_use_theme_color="true" />
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="@string/control_download_device_other" />
 
-                    <com.tungsten.fcllibrary.component.view.FCLRadioButton
-                        android:id="@+id/other"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/control_download_device_other"
-                        app:text_use_theme_color="true" />
-
-                </RadioGroup>
-
-            </HorizontalScrollView>
+            </com.tungsten.fcllibrary.component.view.FCLTabLayout>
 
         </com.mio.ui.widget.FCLAppBarLayout>
 
