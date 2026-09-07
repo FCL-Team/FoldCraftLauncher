@@ -14,7 +14,7 @@ import com.mio.util.openLink
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemAboutBinding
 import com.tungsten.fcl.databinding.ItemAboutDescBinding
-import com.tungsten.fcl.databinding.PageSettingAboutBinding
+import com.tungsten.fcl.databinding.PageSettingListBinding
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLPage
@@ -23,35 +23,36 @@ import com.tungsten.fcllibrary.component.ui.FCLPage
  * 关于页：说明置顶，下方链接行合成一组（组内绘制分割线），
  * 行背景与分割线样式与版本设置页一致。
  */
-class AboutPage(context: Context?, id: Int) : FCLPage(context, id, R.layout.page_setting_about) {
+class AboutPage(context: Context?, id: Int) : FCLPage(context, id, R.layout.page_setting_list) {
 
-    private lateinit var binding: PageSettingAboutBinding
+    private lateinit var binding: PageSettingListBinding
 
     init {
         create()
     }
 
     private fun create() {
-        binding = PageSettingAboutBinding.bind(contentView)
-        binding.aboutList.layoutManager = LinearLayoutManager(context)
+        binding = PageSettingListBinding.bind(contentView)
+        binding.settingList.layoutManager = LinearLayoutManager(context)
         // 说明行与链接组之间留 8dp 间距，组内行间留 1dp 缝并绘制分割线
         val rowSpacing = (8 * context.resources.displayMetrics.density).toInt()
         val groupDivider = (1 * context.resources.displayMetrics.density).toInt()
-        binding.aboutList.addItemDecoration(
+        binding.settingList.addItemDecoration(
             SpacingItemDecoration(
                 rowSpacing,
                 { parent, position ->
                     val adapter = parent.adapter as? AboutAdapter
                     if (adapter?.isNextInSameGroup(position) == true) groupDivider else rowSpacing
                 },
+                true,
                 { ThemeEngine.getInstance().getTheme().getColor() }
             )
         )
         // 主题切换时重绘分割线颜色
-        ThemeEngine.getInstance().registerEvent(binding.aboutList) {
-            binding.aboutList.invalidate()
+        ThemeEngine.getInstance().registerEvent(binding.settingList) {
+            binding.settingList.invalidate()
         }
-        binding.aboutList.adapter = AboutAdapter { openLinkAt(it) }
+        binding.settingList.adapter = AboutAdapter { openLinkAt(it) }
     }
 
     override fun refresh(vararg param: Any?): Task<*>? {

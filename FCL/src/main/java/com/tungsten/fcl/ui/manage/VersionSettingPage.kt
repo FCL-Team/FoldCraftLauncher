@@ -19,7 +19,7 @@ import com.mio.util.showItemSelectionDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.control.SelectControllerDialog
-import com.tungsten.fcl.databinding.PageVersionSettingBinding
+import com.tungsten.fcl.databinding.PageSettingListBinding
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
@@ -61,14 +61,14 @@ class VersionSettingPage(
     context: Context?,
     id: Int,
     private val globalSetting: Boolean
-) : FCLPage(context, id, R.layout.page_version_setting), VersionLoadable,
+) : FCLPage(context, id, R.layout.page_setting_list), VersionLoadable,
     VersionSettingAdapter.Listener {
     private lateinit var lastVersionSetting: VersionSetting
     private lateinit var profile: Profile
     private lateinit var listenerHolder: WeakListenerHolder
     private var versionId: String? = null
 
-    private lateinit var binding: PageVersionSettingBinding
+    private lateinit var binding: PageSettingListBinding
     private lateinit var adapter: VersionSettingAdapter
 
     /** 当前版本设置的变更监听（loadVersion 时切换注册对象） */
@@ -86,7 +86,7 @@ class VersionSettingPage(
     }
 
     private fun create() {
-        binding = PageVersionSettingBinding.bind(contentView)
+        binding = PageSettingListBinding.bind(contentView)
         adapter = VersionSettingAdapter(context, globalSetting, this)
         binding.settingList.layoutManager = LinearLayoutManager(context)
         // 行间用间距分隔（ItemDecoration），最后一行不加；同组相邻行间留 1dp 缝并绘制次要色分割线
@@ -99,6 +99,7 @@ class VersionSettingPage(
                     val adapter = parent.adapter as? VersionSettingAdapter
                     if (adapter?.isNextInSameGroup(position) == true) groupDivider else rowSpacing
                 },
+                true,
                 { ThemeEngine.getInstance().getTheme().getColor() }
             )
         )

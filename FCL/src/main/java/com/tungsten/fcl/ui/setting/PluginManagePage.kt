@@ -14,7 +14,7 @@ import com.mio.ui.adapter.SpacingItemDecoration
 import com.mio.ui.dialog.MioLibPatcherDialog
 import com.mio.ui.dialog.RendererEnvDialog
 import com.tungsten.fcl.R
-import com.tungsten.fcl.databinding.PageSettingPluginBinding
+import com.tungsten.fcl.databinding.PageSettingListBinding
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLPage
@@ -25,9 +25,9 @@ import com.tungsten.fcllibrary.component.ui.FCLPage
  * 支持启用/禁用（立即刷新各插件列表）与卸载（跳转系统卸载）。
  */
 class PluginManagePage(context: Context?, id: Int) :
-    FCLPage(context, id, R.layout.page_setting_plugin) {
+    FCLPage(context, id, R.layout.page_setting_list) {
 
-    private lateinit var binding: PageSettingPluginBinding
+    private lateinit var binding: PageSettingListBinding
     private lateinit var adapter: PluginManageAdapter
 
     init {
@@ -35,16 +35,16 @@ class PluginManagePage(context: Context?, id: Int) :
     }
 
     private fun create() {
-        binding = PageSettingPluginBinding.bind(contentView)
-        binding.pluginList.layoutManager = LinearLayoutManager(context)
+        binding = PageSettingListBinding.bind(contentView)
+        binding.settingList.layoutManager = LinearLayoutManager(context)
         val rowSpacing = (8 * context.resources.displayMetrics.density).toInt()
-        binding.pluginList.addItemDecoration(
-            SpacingItemDecoration(rowSpacing, null) {
+        binding.settingList.addItemDecoration(
+            SpacingItemDecoration(rowSpacing, null, true) {
                 ThemeEngine.getInstance().getTheme().getColor()
             }
         )
-        ThemeEngine.getInstance().registerEvent(binding.pluginList) {
-            binding.pluginList.invalidate()
+        ThemeEngine.getInstance().registerEvent(binding.settingList) {
+            binding.settingList.invalidate()
         }
         adapter = PluginManageAdapter(
             onPatcherEnableChange = { enabled ->
@@ -60,7 +60,7 @@ class PluginManagePage(context: Context?, id: Int) :
             onConfigure = ::showEnvConfig,
             onUninstall = ::uninstall,
         )
-        binding.pluginList.adapter = adapter
+        binding.settingList.adapter = adapter
         reload()
     }
 
