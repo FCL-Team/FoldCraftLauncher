@@ -9,10 +9,6 @@
     <string name="splash_permission_settings">Ayarlar</string>
     <string name="splash_permission_settings_msg">Asla İzin Verme seçeneğini seçtiniz. Lütfen depolama izinlerini ayarlardan manuel olarak verin.</string>
     <string name="notification_permission">FCL, oyunun normal kurulumu veya başlatılmasıyla ilgili sorunları önlemek için bildirim gönderme iznine ihtiyaç duyar.</string>
-    <string name="splash_loading_renderer">Renderer başlatılıyor...</string>
-    <string name="splash_loading_java">Java runtime (çalışma zamanı) başlatılıyor...</string>
-    <string name="splash_loading_config">Ayarlar ve versiyon yükleniyor...</string>
-    <string name="splash_loading_cache">Bellek temizleniyor...</string>
     <string name="splash_title">Fold Craft Launcher\'a hoş geldin</string>
     <string name="splash_eula_error">EULA alınamıyor, lütfen internet bağlantınızı kontrol edin.</string>
     <string name="splash_eula_next">Kabul et ve Devam et</string>
