@@ -201,3 +201,52 @@ target_link_libraries(
         PRIVATE
         pojavexec
 )
+
+# 模块：jsound - OpenJDK libjsound 核心 + OpenAL 平台后端
+# 为四套 JRE（jre8/17/21/25）提供 javax.sound.sampled 的原生实现，
+# 核心 .c/.h 文件 vendor 自 openjdk/jdk17u
+# （https://github.com/openjdk/jdk17u/blob/master/src/java.desktop/share/native/libjsound，
+# GPL-2.0 + Classpath 异常，与本项目 GPL-3.0 兼容；8u 与 17u 的该目录字节级一致，
+# 故一套源码可同时服务两代 ABI）。PORT/MIDI 子系统关闭（桩返回 0 设备），
+# 音频路径由 jsound_openal.c 桥接 OpenAL，JDK8 的 Platform 额外 native 由 jdk8_compat.c 补齐
+add_library(
+        jsound
+        SHARED
+        jsound/Utilities.c
+        jsound/Platform.c
+        jsound/DirectAudioDevice.c
+        jsound/DirectAudioDeviceProvider.c
+        jsound/PortMixer.c
+        jsound/PortMixerProvider.c
+        jsound/MidiOutDevice.c
+        jsound/MidiOutDeviceProvider.c
+        jsound/MidiInDevice.c
+        jsound/MidiInDeviceProvider.c
+        jsound/PlatformMidi.c
+        jsound/jsound_openal.c
+        jsound/jdk8_compat.c
+)
+
+target_include_directories(
+        jsound
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/jsound
+)
+
+target_compile_definitions(
+        jsound
+        PRIVATE
+        X_PLATFORM=X_LINUX
+        _LITTLE_ENDIAN
+        USE_DAUDIO=TRUE
+        USE_PORTS=FALSE
+        USE_PLATFORM_MIDI_OUT=FALSE
+        USE_PLATFORM_MIDI_IN=FALSE
+)
+
+target_link_libraries(
+        jsound
+        PRIVATE
+        log
+        dl
+)

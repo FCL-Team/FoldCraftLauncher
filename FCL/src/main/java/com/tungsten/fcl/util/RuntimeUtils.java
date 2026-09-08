@@ -240,6 +240,14 @@ public class RuntimeUtils {
         File fileLib = new File(dest, libFolder + "/libawt_xawt.so");
         fileLib.delete();
         FileUtils.copyFile(new File(context.getApplicationInfo().nativeLibraryDir, "libawt_xawt.so"), fileLib);
+        // 补装 libjsound.so：jre17/21/25 资产原生缺失该库，jre8 自带的 ALSA 版在
+        // Android 上无后端，统一替换为 OpenAL 后端的原生 Java Sound 实现
+        File jsound = new File(context.getApplicationInfo().nativeLibraryDir, "libjsound.so");
+        if (jsound.exists()) {
+            File jsoundDest = new File(dest, libFolder + "/libjsound.so");
+            jsoundDest.delete();
+            FileUtils.copyFile(jsound, jsoundDest);
+        }
     }
 
 }
