@@ -93,15 +93,18 @@ class WaveProgressView @JvmOverloads constructor(
         val amplitude = height * 0.32f
         val trackAmplitude = amplitude * 0.25f
         val wavelength = w / 2.5f
+        // 绘制区间两端内缩半个线宽：圆帽向外凸出 stroke/2，贴边绘制会被视图边界竖向裁平
+        val inset = activePaint.strokeWidth / 2f
+        val endX = w - inset
 
         if (progress < 0f) {
             // 不确定态：全宽波浪持续流动
-            canvas.drawPath(buildWave(0f, w, centerY, { amplitude }, wavelength), activePaint)
+            canvas.drawPath(buildWave(inset, endX, centerY, { amplitude }, wavelength), activePaint)
             return
         }
 
         val fillRatio = animatedProgress.coerceIn(0f, 1f)
-        val progressX = w * fillRatio
+        val progressX = inset + (endX - inset) * fillRatio
         val gap = wavelength * 0.4f
 
         // 振幅沿 x 连续：progressX 左侧全幅（活跃）、右侧低幅（track）、交界处平滑过渡，
@@ -120,13 +123,13 @@ class WaveProgressView @JvmOverloads constructor(
 
         if (fillRatio < 1f) {
             canvas.drawPath(
-                buildWave(progressX, w, centerY, ::amplitudeAt, wavelength),
+                buildWave(progressX, endX, centerY, ::amplitudeAt, wavelength),
                 trackPaint
             )
         }
         if (fillRatio > 0f) {
             canvas.drawPath(
-                buildWave(0f, progressX, centerY, ::amplitudeAt, wavelength),
+                buildWave(inset, progressX, centerY, ::amplitudeAt, wavelength),
                 activePaint
             )
         }
