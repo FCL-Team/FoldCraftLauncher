@@ -69,6 +69,8 @@ bool dlsym_EGL() {
 
 // 供 glxshim 等外部库转发 eglGetProcAddress
 __attribute__((visibility("default")))
-void *getProcAddress(const char* procname){
+void *getProcAddress(const char *procname) {
+    // SDL 路径不经过 pojavInitOpenGL，首次调用时补齐 EGL 符号解析
+    if (eglGetProcAddress_p == NULL && !dlsym_EGL()) return NULL;
     return eglGetProcAddress_p(procname);
 }
