@@ -547,7 +547,7 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
         try {
             modManager.rollback(from, to);
             refresh();
-        } catch (IOException ex) {
+        } catch (Throwable ex) {
             Toast.makeText(getContext(), getContext().getString(R.string.message_failed), Toast.LENGTH_SHORT).show();
         }
     }
