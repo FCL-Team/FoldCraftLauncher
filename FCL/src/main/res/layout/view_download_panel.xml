@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="15dp">
+    android:paddingStart="10dp"
+    android:paddingTop="5dp"
+    android:paddingEnd="10dp">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -37,7 +39,9 @@
             android:layout_height="28dp"
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="5dp"
-            android:background="@drawable/ic_baseline_close_24"
+            android:background="@drawable/right_arrow"
+            android:padding="5dp"
+            android:rotation="-90"
             app:no_padding="true"
             app:use_theme_color="true" />
 
