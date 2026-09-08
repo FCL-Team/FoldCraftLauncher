@@ -1,7 +1,11 @@
 package com.mio.ui.view
 
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.ColorUtils
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +16,8 @@ import com.tungsten.fcl.databinding.ItemDownloadTaskBinding
 import com.tungsten.fclcore.fakefx.beans.value.ChangeListener
 import com.tungsten.fclcore.task.FileDownloadTask
 import com.tungsten.fclcore.task.Task
+import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.util.ConvertUtils
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -69,6 +75,7 @@ class DownloadListAdapter : ListAdapter<DownloadTaskInfo, DownloadListAdapter.Vi
             unbind()
             current = info
             val root = binding.root
+            applyMenuItemBorderStyle(root)
             title.string = info.title
             // 仅在任务成功结束后才进入"待安装"态，下载中仍显示进度
             val ready = info.ready
@@ -130,5 +137,18 @@ internal fun formatBytes(bytes: Long): String {
         bytes >= 1024L * 1024 -> String.format(Locale.US, "%.1f MB", bytes / 1024.0 / 1024.0)
         bytes >= 1024L -> String.format(Locale.US, "%.0f KB", bytes / 1024.0)
         else -> "$bytes B"
+    }
+}
+
+/** 右菜单列内条目样式：透明圆角底 + 次要主题色半透明细边框（bind 时按当前主题应用） */
+private fun applyMenuItemBorderStyle(root: View) {
+    val context = root.context
+    root.background = GradientDrawable().apply {
+        cornerRadius = 8f * context.resources.displayMetrics.density
+        setColor(Color.TRANSPARENT)
+        setStroke(
+            ConvertUtils.dip2px(context, 1f),
+            ColorUtils.setAlphaComponent(ThemeEngine.getInstance().getTheme().getColor2(), 180)
+        )
     }
 }

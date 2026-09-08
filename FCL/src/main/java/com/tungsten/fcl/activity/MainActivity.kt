@@ -20,7 +20,6 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.animation.BounceInterpolator
 import android.view.animation.OvershootInterpolator
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -38,7 +37,6 @@ import com.mio.download.DownloadManager
 import com.mio.manager.RendererManager
 import com.mio.plugin.DriverPlugin
 import com.mio.ui.dialog.RendererSelectDialog
-import com.mio.ui.view.DownloadSlidePanel
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
@@ -131,8 +129,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     var mediaPlayer: MediaPlayer? = null
     private var videoPosition = 0
 
-    /** 下载管理面板（左侧菜单开关按钮控制，有任务时自动显示） */
-    private lateinit var downloadPanel: DownloadSlidePanel
+    /** 右列内容当前是否为下载面板（true 时波浪/账号等让位给任务列表） */
+    private var downloadPanelOpen = false
+
+    /** 是否有下载任务（收起面板时用于决定波浪指示器显隐） */
+    private var hasTasks = false
 
     /** 通知点击进入后待执行的"定位到下载页"请求（uiManager 初始化前先排队） */
     private var pendingOpenDownload = false
@@ -347,27 +348,22 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         permissionResultLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
             }
-        // 下载管理：有任务时右侧菜单顶部显示波浪进度，点击打开面板
-        downloadPanel = DownloadSlidePanel(this)
-        binding.root.addView(
-            downloadPanel,
-            FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-            )
-        )
-        binding.downloadWaveProgress.setOnClickListener { downloadPanel.toggle() }
+        // 下载管理：有任务时右侧菜单顶部显示波浪进度，点击切换为下载面板内容
+        binding.downloadPanel.onCloseRequest = { closeDownloadPanel() }
+        binding.downloadWaveProgress.setOnClickListener {
+            if (downloadPanelOpen) closeDownloadPanel() else openDownloadPanel()
+        }
         lifecycleScope.launch {
             var tasksEmpty = true
             DownloadManager.tasks.collect { tasks ->
-                downloadPanel.updateTasks(tasks)
+                binding.downloadPanel.updateTasks(tasks)
+                hasTasks = tasks.isNotEmpty()
                 if (tasks.isEmpty()) {
-                    binding.downloadWaveProgress.visibility = View.GONE
-                    downloadPanel.close()
-                } else {
-                    binding.downloadWaveProgress.visibility = View.VISIBLE
-                    // 从无任务变为有任务：直接显示面板
-                    if (tasksEmpty) downloadPanel.open()
+                    if (downloadPanelOpen) closeDownloadPanel()
+                    else binding.downloadWaveProgress.visibility = View.GONE
+                } else if (tasksEmpty) {
+                    // 从无任务变为有任务：自动展开面板
+                    openDownloadPanel()
                 }
                 tasksEmpty = tasks.isEmpty()
             }
@@ -396,7 +392,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         if (!pendingOpenDownload) return
         if (_uiManager == null) return
         uiManager.switchUI(uiManager.downloadUI)
-        downloadPanel.open()
+        openDownloadPanel()
         pendingOpenDownload = false
     }
 
@@ -622,6 +618,71 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             params.marginEnd = 0
         }
         skin.layoutParams = params
+    }
+
+    /** 展开下载面板：常规内容向下滑出、面板自上方滑入；右菜单隐藏或尚未布局时静态切换 */
+    private fun openDownloadPanel() {
+        if (downloadPanelOpen) return
+        binding.apply {
+            val menuReady = rightMenu.visibility == View.VISIBLE &&
+                rightMenuContent.height > 0 && downloadPanel.height > 0
+            if (!menuReady) {
+                // 菜单隐藏或首帧未布局（如通知冷启动）：面板直接作为列内容（随菜单）出现
+                rightMenuContent.visibility = View.INVISIBLE
+                downloadPanel.apply { visibility = View.VISIBLE; translationY = 0f }
+                if (rightMenu.visibility != View.VISIBLE) showRightMenu()
+            } else {
+                // 常规内容向下滑出
+                rightMenuContent.animate().translationY(rightMenuContent.height.toFloat())
+                    .setDuration(200)
+                    .withEndAction {
+                        // 期间可能已被收起，仅在仍处于展开态时收尾
+                        if (downloadPanelOpen) {
+                            rightMenuContent.visibility = View.INVISIBLE
+                            rightMenuContent.translationY = 0f
+                        }
+                    }
+                    .start()
+                // 面板自上方滑入
+                downloadPanel.visibility = View.VISIBLE
+                downloadPanel.translationY = -downloadPanel.height.toFloat()
+                downloadPanel.animate().translationY(0f).setDuration(200).start()
+            }
+            downloadPanelOpen = true
+        }
+    }
+
+    /** 收起下载面板：面板向上滑出、常规内容自下方滑入；波浪指示器按任务状态恢复 */
+    private fun closeDownloadPanel() {
+        if (!downloadPanelOpen) return
+        binding.apply {
+            val menuReady = rightMenu.visibility == View.VISIBLE &&
+                rightMenuContent.height > 0 && downloadPanel.height > 0
+            if (!menuReady) {
+                // 菜单隐藏或尚未布局：直接静态恢复内容
+                downloadPanel.apply { visibility = View.INVISIBLE; translationY = 0f }
+                rightMenuContent.visibility = View.VISIBLE
+                downloadWaveProgress.visibility = if (hasTasks) View.VISIBLE else View.GONE
+            } else {
+                // 面板自上方滑出
+                downloadPanel.animate().translationY(-downloadPanel.height.toFloat())
+                    .setDuration(200)
+                    .withEndAction {
+                        // 期间可能已被重新展开，仅在仍处于收起态时收尾
+                        if (!downloadPanelOpen) {
+                            downloadPanel.visibility = View.INVISIBLE
+                            downloadPanel.translationY = 0f
+                        }
+                    }
+                    .start()
+                // 常规内容自下方滑入（波浪显隐按当前任务状态决定）
+                downloadWaveProgress.visibility = if (hasTasks) View.VISIBLE else View.GONE
+                rightMenuContent.visibility = View.VISIBLE
+                rightMenuContent.translationY = rightMenuContent.height.toFloat()
+                rightMenuContent.animate().translationY(0f).setDuration(200).start()
+            }
+            downloadPanelOpen = false
+        }
     }
 
     fun refreshMenuView(view: FCLMenuView?) {
