@@ -5,6 +5,8 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.tungsten.fcl.FCLApp
+import com.tungsten.fcllibrary.util.ConvertUtils
 
 /**
  * 列表行间垂直间距装饰器（替代手工分隔线），最后一行不添加间距。
@@ -16,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 class SpacingItemDecoration @JvmOverloads constructor(
     private val spacingPx: Int,
     private val spacingFor: ((RecyclerView, Int) -> Int)? = null,
+    private val topSpacing: Boolean = false,
     private val dividerColor: (() -> Int)? = null
 ) : RecyclerView.ItemDecoration() {
 
@@ -31,6 +34,9 @@ class SpacingItemDecoration @JvmOverloads constructor(
         val position = parent.getChildAdapterPosition(view)
         if (position != itemCount - 1) {
             outRect.bottom = spacingFor?.invoke(parent, position) ?: spacingPx
+            if (topSpacing && position == 0) {
+                outRect.top = ConvertUtils.dip2px(FCLApp.getAppContext(), 10f)
+            }
         }
     }
 

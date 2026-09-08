@@ -9,14 +9,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import android.view.View
 import android.widget.Toast
-import androidx.annotation.StringRes
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
-import androidx.core.graphics.ColorUtils
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -50,11 +47,6 @@ import java.util.logging.Level
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : FCLActivity() {
-    companion object {
-        /** enterLauncher 内的加载步骤总数，进度按步骤均分 */
-        private const val LOADING_TOTAL = 5
-    }
-
     var lwjgl: Boolean = false
     var cacio: Boolean = false
     var cacio17: Boolean = false
@@ -72,10 +64,6 @@ class SplashActivity : FCLActivity() {
         binding = ActivitySplashBinding.inflate(layoutInflater)
         sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE)
         setContentView(binding.root)
-        ThemeEngine.getInstance().registerEvent(binding.loadingProgress) {
-            refreshLoadingProgressTheme()
-        }
-        refreshLoadingProgressTheme()
         ImageUtil.loadInto(
             binding.background, ThemeEngine.getInstance().getTheme().getBackground(this)
         )
@@ -138,22 +126,15 @@ class SplashActivity : FCLActivity() {
         }
     }
 
-
     fun enterLauncher() {
-        binding.loadingPanel.visibility = View.VISIBLE
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                updateLoading(R.string.splash_loading_renderer, 1)
                 RendererManager.init(this@SplashActivity)
-                updateLoading(R.string.splash_loading_java, 2)
                 JavaManager.init()
-                updateLoading(R.string.message_loading_controllers, 3)
                 Controllers.init()
-                updateLoading(R.string.splash_loading_config, 4)
                 runCatching { ConfigHolder.init() }.exceptionOrNull()?.let {
                     Logging.LOG.log(Level.WARNING, it.message)
                 }
-                updateLoading(R.string.splash_loading_cache, 5)
                 if (System.currentTimeMillis() - sharedPreferences.getLong(
                         "clear_cache", 0L
                     ) >= 3 * 1000 * 60 * 60 * 24
@@ -170,27 +151,6 @@ class SplashActivity : FCLActivity() {
             )
             finish()
         }
-    }
-
-    /** 更新加载信息区：当前步骤文案、步骤计数与进度条（进度按步骤均匀划分，平滑动画过渡） */
-    @SuppressLint("SetTextI18n")
-    private suspend fun updateLoading(@StringRes textRes: Int, step: Int) {
-        withContext(Dispatchers.Main) {
-            binding.loadingInfo.setText(textRes)
-            binding.loadingCount.text = "$step/$LOADING_TOTAL"
-            binding.loadingProgress.setProgressCompat(
-                step * binding.loadingProgress.max / LOADING_TOTAL, true
-            )
-        }
-    }
-
-    /** 进度条跟随主题：主色系三段渐变指示器 + 半透明主色轨道 */
-    private fun refreshLoadingProgressTheme() {
-        val theme = ThemeEngine.getInstance().getTheme()
-        binding.loadingProgress.setIndicatorColor(theme.dkColor, theme.getColor(), theme.ltColor)
-        binding.loadingProgress.trackColor = ColorUtils.setAlphaComponent(
-            theme.getColor(), 51
-        )
     }
 
     private fun handleModpack(newIntent: Intent): Intent {

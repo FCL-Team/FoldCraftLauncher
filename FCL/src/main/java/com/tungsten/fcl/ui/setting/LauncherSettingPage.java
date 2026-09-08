@@ -28,7 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.mio.ui.adapter.SpacingItemDecoration;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
-import com.tungsten.fcl.databinding.PageSettingLauncherBinding;
+import com.tungsten.fcl.databinding.PageSettingListBinding;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.upgrade.UpdateChecker;
 import com.tungsten.fclcore.mod.RemoteModCache;
@@ -65,14 +65,14 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
     private SharedPreferences sharedPreferences;
 
     public LauncherSettingPage(Context context, int id) {
-        super(context, id, R.layout.page_setting_launcher);
+        super(context, id, R.layout.page_setting_list);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         sharedPreferences = getActivity().getSharedPreferences("launcher", MODE_PRIVATE);
-        PageSettingLauncherBinding binding = PageSettingLauncherBinding.bind(getContentView());
+        PageSettingListBinding binding = PageSettingListBinding.bind(getContentView());
         LauncherSettingAdapter adapter = new LauncherSettingAdapter(getContext(), this);
         binding.settingList.setLayoutManager(new LinearLayoutManager(getContext()));
         // 行间用间距分隔（ItemDecoration），最后一行不加；同组相邻行留 1dp 缝并绘制次要色分割线
@@ -83,6 +83,7 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         binding.settingList.addItemDecoration(new SpacingItemDecoration(rowSpacing,
                 (parent, position) -> ((LauncherSettingAdapter) parent.getAdapter()).isNextInSameGroup(position)
                         ? finalGroupDivider : finalRowSpacing,
+                true,
                 () -> ThemeEngine.getInstance().getTheme().getColor()));
         // 主题切换时重绘分割线颜色
         ThemeEngine.getInstance().registerEvent(
@@ -347,7 +348,9 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         }
     }
 
-    /** 从指定背景提取主要主题色（muted；与当前色相同时换 lightVibrant 保证可见变化） */
+    /**
+     * 从指定背景提取主要主题色（muted；与当前色相同时换 lightVibrant 保证可见变化）
+     */
     private void fetchPrimaryColor(BitmapDrawable background, int currentColor, IntConsumer applyAndSave) {
         Bitmap bitmap = background.getBitmap();
         if (bitmap == null) return;
@@ -360,7 +363,9 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         applyAndSave.accept(color);
     }
 
-    /** 从指定背景提取次要主题色（vibrant） */
+    /**
+     * 从指定背景提取次要主题色（vibrant）
+     */
     private void fetchSecondaryColor(BitmapDrawable background, IntConsumer applyAndSave) {
         Bitmap bitmap = background.getBitmap();
         if (bitmap == null) return;
