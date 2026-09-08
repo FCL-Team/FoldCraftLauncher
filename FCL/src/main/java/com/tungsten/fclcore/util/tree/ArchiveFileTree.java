@@ -19,10 +19,10 @@ package com.tungsten.fclcore.util.tree;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
+import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,7 +46,7 @@ public abstract class ArchiveFileTree<R, E extends ArchiveEntry> implements Clos
 
         String name = namePath.toString();
         if (name.endsWith(".jar") || name.endsWith(".zip")) {
-            return new ZipFileTree(new ZipFile(file));
+            return CompressingUtils.openZipTree(file);
         } else if (name.endsWith(".tar") || name.endsWith(".tar.gz") || name.endsWith(".tgz")) {
             return TarFileTree.open(file);
         } else {
@@ -108,8 +108,13 @@ public abstract class ArchiveFileTree<R, E extends ArchiveEntry> implements Clos
         return dir;
     }
 
+    /** 条目在树中的键名，子类可覆写以修正条目名 */
+    protected String entryName(E entry) {
+        return entry.getName();
+    }
+
     protected void addEntry(E entry) throws IOException {
-        String[] path = entry.getName().split("/");
+        String[] path = entryName(entry).split("/");
         List<String> pathList = Arrays.asList(path);
 
         Dir<E> dir = root;

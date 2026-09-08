@@ -7,7 +7,7 @@ import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.ModManager
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.CompressingUtils
-import com.tungsten.fclcore.util.io.FileUtils
+import com.tungsten.fclcore.util.tree.ZipFileTree
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -16,14 +16,13 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
 import org.tomlj.Toml
 import org.tomlj.TomlParseResult
 import org.tomlj.TomlTable
 import java.io.IOException
-import java.nio.file.FileSystem
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardCopyOption
 import java.util.StringJoiner
 import java.util.jar.Attributes
 import java.util.jar.Manifest
@@ -53,18 +52,18 @@ data class ForgeNewModMetadata(
 
         @JvmStatic
         @Throws(IOException::class)
-        fun fromForgeFile(modManager: ModManager, modFile: Path, fs: FileSystem): LocalModFile =
-            fromFile(modManager, modFile, fs, ModLoaderType.FORGE)
+        fun fromForgeFile(modManager: ModManager, modFile: Path, tree: ZipFileTree): LocalModFile =
+            fromFile(modManager, modFile, tree, ModLoaderType.FORGE)
 
         @JvmStatic
         @Throws(IOException::class)
-        fun fromNeoForgeFile(modManager: ModManager, modFile: Path, fs: FileSystem): LocalModFile =
-            fromFile(modManager, modFile, fs, ModLoaderType.NEO_FORGED)
+        fun fromNeoForgeFile(modManager: ModManager, modFile: Path, tree: ZipFileTree): LocalModFile =
+            fromFile(modManager, modFile, tree, ModLoaderType.NEO_FORGED)
 
         private fun fromFile(
             modManager: ModManager,
             modFile: Path,
-            fs: FileSystem,
+            tree: ZipFileTree,
             modLoaderType: ModLoaderType
         ): LocalModFile {
             if (modLoaderType != ModLoaderType.FORGE && modLoaderType != ModLoaderType.NEO_FORGED) {
@@ -73,18 +72,18 @@ data class ForgeNewModMetadata(
 
             if (modLoaderType == ModLoaderType.NEO_FORGED) {
                 try {
-                    return fromFile0("META-INF/neoforge.mods.toml", modLoaderType, modManager, modFile, fs)
+                    return fromFile0("META-INF/neoforge.mods.toml", modLoaderType, modManager, modFile, tree)
                 } catch (ignored: Exception) {
                 }
             }
 
             try {
-                return fromFile0("META-INF/mods.toml", modLoaderType, modManager, modFile, fs)
+                return fromFile0("META-INF/mods.toml", modLoaderType, modManager, modFile, tree)
             } catch (ignored: Exception) {
             }
 
             try {
-                return fromEmbeddedMod(modManager, modFile, fs, modLoaderType)
+                return fromEmbeddedMod(modManager, modFile, tree, modLoaderType)
             } catch (ignored: Exception) {
             }
 
@@ -96,12 +95,11 @@ data class ForgeNewModMetadata(
             modLoaderType: ModLoaderType,
             modManager: ModManager,
             modFile: Path,
-            fs: FileSystem
+            tree: ZipFileTree
         ): LocalModFile {
-            val modToml = fs.getPath(tomlPath)
-            if (Files.notExists(modToml))
-                throw IOException("File $modFile is not a Forge 1.13+ or NeoForge mod.")
-            val tomlParseResult: TomlParseResult = Toml.parse(FileUtils.readText(modToml))
+            val modToml = tree.getEntry(tomlPath)
+                ?: throw IOException("File $modFile is not a Forge 1.13+ or NeoForge mod.")
+            val tomlParseResult: TomlParseResult = Toml.parse(tree.readTextEntry(modToml))
             if (tomlParseResult.hasErrors()) {
                 val ioException = IOException("Mod $modFile $tomlPath is malformed..")
                 tomlParseResult.errors().forEach(ioException::addSuppressed)
@@ -111,11 +109,11 @@ data class ForgeNewModMetadata(
             if (metadata.mods.isEmpty())
                 throw IOException("Mod $modFile $tomlPath is malformed..")
             val mod = metadata.mods.first()
-            val manifestMF = fs.getPath("META-INF/MANIFEST.MF")
+            val manifestMF = tree.getEntry("META-INF/MANIFEST.MF")
             var jarVersion: String? = ""
-            if (Files.exists(manifestMF)) {
+            if (manifestMF != null) {
                 try {
-                    Files.newInputStream(manifestMF).use { input ->
+                    tree.getInputStream(manifestMF).use { input ->
                         jarVersion = Manifest(input).mainAttributes.getValue(Attributes.Name.IMPLEMENTATION_VERSION)
                     }
                 } catch (e: IOException) {
@@ -138,34 +136,33 @@ data class ForgeNewModMetadata(
         private fun fromEmbeddedMod(
             modManager: ModManager,
             modFile: Path,
-            fs: FileSystem,
+            tree: ZipFileTree,
             modLoaderType: ModLoaderType
         ): LocalModFile {
-            val manifestFile = fs.getPath("META-INF/MANIFEST.MF")
-            if (Files.notExists(manifestFile))
-                throw IOException("Missing MANIFEST.MF in file $modFile")
+            val manifestFile = tree.getEntry("META-INF/MANIFEST.MF")
+                ?: throw IOException("Missing MANIFEST.MF in file $modFile")
 
-            val manifest: Manifest = Files.newInputStream(manifestFile).use { Manifest(it) }
+            val manifest: Manifest = tree.getInputStream(manifestFile).use { Manifest(it) }
 
-            var embeddedModFiles: List<Path> = emptyList()
+            var embeddedModFiles: List<ZipArchiveEntry> = emptyList()
 
             val embeddedDependenciesMod = manifest.mainAttributes.getValue("Embedded-Dependencies-Mod")
             if (embeddedDependenciesMod != null) {
-                val embeddedModFile = fs.getPath(embeddedDependenciesMod)
-                if (Files.notExists(embeddedModFile)) {
+                val embeddedModFile = tree.getEntry(embeddedDependenciesMod)
+                if (embeddedModFile == null) {
                     LOG.warning("Missing embedded-dependencies-mod: $embeddedDependenciesMod")
                     throw IOException()
                 }
                 embeddedModFiles = listOf(embeddedModFile)
             } else {
-                val jarInJarMetadata = fs.getPath("META-INF/jarjar/metadata.json")
-                if (Files.exists(jarInJarMetadata)) {
+                val jarInJarMetadata = tree.getEntry("META-INF/jarjar/metadata.json")
+                if (jarInJarMetadata != null) {
                     val metadata: JarInJarMetadata =
-                        MOD_METADATA_JSON.decodeFromString(FileUtils.readText(jarInJarMetadata))
+                        MOD_METADATA_JSON.decodeFromString(tree.readTextEntry(jarInJarMetadata))
                     embeddedModFiles = ArrayList()
                     for (jar in metadata.jars) {
-                        val path = fs.getPath(jar.path)
-                        if (Files.exists(path)) {
+                        val path = tree.getEntry(jar.path)
+                        if (path != null) {
                             embeddedModFiles += path
                         } else {
                             LOG.warning("Missing embedded-dependencies-mod: ${jar.path}")
@@ -181,10 +178,10 @@ data class ForgeNewModMetadata(
             val tempFile = Files.createTempFile("hmcl-", ".zip")
             try {
                 for (embeddedModFile in embeddedModFiles) {
-                    Files.copy(embeddedModFile, tempFile, StandardCopyOption.REPLACE_EXISTING)
+                    tree.extractTo(embeddedModFile, tempFile)
                     try {
-                        CompressingUtils.createReadOnlyZipFileSystem(tempFile).use { embeddedFs ->
-                            return fromFile(modManager, modFile, embeddedFs, modLoaderType)
+                        CompressingUtils.openZipTree(tempFile).use { embeddedTree ->
+                            return fromFile(modManager, modFile, embeddedTree, modLoaderType)
                         }
                     } catch (ignored: Exception) {
                     }

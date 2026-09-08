@@ -10,10 +10,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
-import com.tungsten.fclcore.util.io.FileUtils
+import com.tungsten.fclcore.util.tree.ZipFileTree
 import java.io.IOException
-import java.nio.file.FileSystem
-import java.nio.file.Files
 import java.nio.file.Path
 
 @Serializable
@@ -26,12 +24,11 @@ data class QuiltModMetadata(
     companion object {
         @JvmStatic
         @Throws(IOException::class)
-        fun fromFile(modManager: ModManager, modFile: Path, fs: FileSystem): LocalModFile {
-            val path = fs.getPath("quilt.mod.json")
-            if (Files.notExists(path))
-                throw IOException("File $modFile is not a Quilt mod.")
+        fun fromFile(modManager: ModManager, modFile: Path, tree: ZipFileTree): LocalModFile {
+            val path = tree.getEntry("quilt.mod.json")
+                ?: throw IOException("File $modFile is not a Quilt mod.")
 
-            val root: QuiltModMetadata = MOD_METADATA_JSON.decodeFromString(FileUtils.readText(path))
+            val root: QuiltModMetadata = MOD_METADATA_JSON.decodeFromString(tree.readTextEntry(path))
             if (root.schemaVersion != 1)
                 throw IOException("File $modFile is not a supported Quilt mod.")
 

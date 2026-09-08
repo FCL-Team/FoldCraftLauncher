@@ -14,11 +14,9 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import com.tungsten.fclcore.util.io.FileUtils
+import com.tungsten.fclcore.util.tree.ZipFileTree
 import kotlinx.serialization.json.decodeFromStream
 import java.io.IOException
-import java.nio.file.FileSystem
-import java.nio.file.Files
 import java.nio.file.Path
 
 @Serializable
@@ -35,11 +33,11 @@ data class FabricModMetadata(
     companion object {
         @JvmStatic
         @Throws(IOException::class)
-        fun fromFile(modManager: ModManager, modFile: Path, fs: FileSystem): LocalModFile {
-            val mcmod = fs.getPath("fabric.mod.json")
-            if (Files.notExists(mcmod))
-                throw IOException("File $modFile is not a Fabric mod.")
-            val metadata: FabricModMetadata = MOD_METADATA_JSON.decodeFromString(FileUtils.readText(mcmod))
+        fun fromFile(modManager: ModManager, modFile: Path, tree: ZipFileTree): LocalModFile {
+            val mcmod = tree.getEntry("fabric.mod.json")
+                ?: throw IOException("File $modFile is not a Fabric mod.")
+            val metadata: FabricModMetadata =
+                MOD_METADATA_JSON.decodeFromStream(tree.getInputStream(mcmod))
             val authors = metadata.authors.joinToString(", ") { it.name }
             return LocalModFile(
                 modManager, modManager.getLocalMod(metadata.id, ModLoaderType.FABRIC), modFile,

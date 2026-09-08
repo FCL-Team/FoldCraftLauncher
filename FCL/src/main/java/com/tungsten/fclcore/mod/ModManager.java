@@ -36,6 +36,7 @@ import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.io.CompressingUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.tree.ZipFileTree;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import org.apache.commons.io.IOUtils;
@@ -61,7 +62,7 @@ import java.util.function.Consumer;
 public final class ModManager {
     @FunctionalInterface
     private interface ModMetadataReader {
-        LocalModFile fromFile(ModManager modManager, Path modFile, FileSystem fs) throws IOException, JsonParseException;
+        LocalModFile fromFile(ModManager modManager, Path modFile, ZipFileTree tree) throws IOException, JsonParseException;
     }
 
     private static final Map<String, List<Pair<ModMetadataReader, ModLoaderType>>> READERS;
@@ -155,10 +156,10 @@ public final class ModManager {
         LocalModFile modInfo = null;
 
         List<Exception> exceptions = new ArrayList<>();
-        try (FileSystem fs = CompressingUtils.createReadOnlyZipFileSystem(file)) {
+        try (ZipFileTree tree = CompressingUtils.openZipTree(file)) {
             for (ModMetadataReader reader : supportedReaders) {
                 try {
-                    modInfo = reader.fromFile(this, file, fs);
+                    modInfo = reader.fromFile(this, file, tree);
                     break;
                 } catch (Exception e) {
                     exceptions.add(e);
@@ -168,15 +169,14 @@ public final class ModManager {
             if (modInfo == null) {
                 for (ModMetadataReader reader : unsupportedReaders) {
                     try {
-                        modInfo = reader.fromFile(this, file, fs);
+                        modInfo = reader.fromFile(this, file, tree);
                         break;
                     } catch (Exception ignored) {
                     }
                 }
             }
         } catch (Throwable e) {
-            // 损坏的压缩文件（如 zip 结构损坏时 zipfs 抛 ZipError）无法打开，
-            // 记录并跳过该文件，避免导致整个模组列表加载失败
+            // 损坏的压缩文件无法打开，记录并跳过该文件，避免导致整个模组列表加载失败
             LOG.warning("Failed to open mod file " + file + e);
             brokenFiles.add(file);
             return null;

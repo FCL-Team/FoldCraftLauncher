@@ -6,13 +6,11 @@ import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.ModLoaderType
 import com.tungsten.fclcore.mod.ModManager
 import com.tungsten.fclcore.util.StringUtils
-import com.tungsten.fclcore.util.io.FileUtils
+import com.tungsten.fclcore.util.tree.ZipFileTree
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.decodeFromJsonElement
 import java.io.IOException
-import java.nio.file.FileSystem
-import java.nio.file.Files
 import java.nio.file.Path
 
 @Serializable
@@ -33,13 +31,12 @@ data class ForgeOldModMetadata(
     companion object {
         @JvmStatic
         @Throws(IOException::class)
-        fun fromFile(modManager: ModManager, modFile: Path, fs: FileSystem): LocalModFile {
-            val mcmod = fs.getPath("mcmod.info")
-            if (Files.notExists(mcmod))
-                throw IOException("File $modFile is not a Forge mod.")
+        fun fromFile(modManager: ModManager, modFile: Path, tree: ZipFileTree): LocalModFile {
+            val mcmod = tree.getEntry("mcmod.info")
+                ?: throw IOException("File $modFile is not a Forge mod.")
 
             // mcmod.info 顶层兼容数组与 {modList: [...]} 对象两种形态，取第一条
-            val element = MOD_METADATA_JSON.parseToJsonElement(FileUtils.readText(mcmod))
+            val element = MOD_METADATA_JSON.parseToJsonElement(tree.readTextEntry(mcmod))
             val metadata: ForgeOldModMetadata = when (element) {
                 is JsonArray -> MOD_METADATA_JSON.decodeFromJsonElement<List<ForgeOldModMetadata>>(element).firstOrNull()
                 else -> MOD_METADATA_JSON.decodeFromJsonElement<ForgeOldModMetadataLst>(element).modList.firstOrNull()

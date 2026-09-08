@@ -19,12 +19,16 @@ package com.tungsten.fclcore.util.tree;
 
 import com.tungsten.fclcore.util.io.IOUtils;
 
+import org.apache.commons.compress.archivers.zip.GeneralPurposeBit;
+import org.apache.commons.compress.archivers.zip.UnicodePathExtraField;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipExtraField;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributeView;
@@ -33,6 +37,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Set;
+import java.util.zip.CRC32;
 
 /**
  * @author Glavo
@@ -104,6 +109,31 @@ public final class ZipFileTree extends ArchiveFileTree<ZipFile, ZipArchiveEntry>
 
             posixView.setPermissions(permissions);
         }
+    }
+
+    /**
+     * ignoreLocalFileHeader 模式下 commons-compress 不应用 Unicode Path extra field（0x7075），
+     * 建树时手动解析并校验 CRC 后替换条目名。
+     * <p>
+     * 参考 HMCL PR 6837（https://github.com/HMCL-dev/HMCL/pull/6837）
+     */
+    @Override
+    protected String entryName(ZipArchiveEntry entry) {
+        GeneralPurposeBit gpBit = entry.getGeneralPurposeBit();
+        if (gpBit == null || gpBit.usesUTF8ForNames())
+            return entry.getName();
+
+        if (entry.getExtraField(UnicodePathExtraField.UPATH_ID) instanceof UnicodePathExtraField unicodePath
+                && unicodePath.getUnicodeName() != null) {
+            byte[] rawName = entry.getRawName();
+            if (rawName != null) {
+                CRC32 crc = new CRC32();
+                crc.update(rawName);
+                if (crc.getValue() == unicodePath.getNameCRC32())
+                    return new String(unicodePath.getUnicodeName(), StandardCharsets.UTF_8);
+            }
+        }
+        return entry.getName();
     }
 
     @Override

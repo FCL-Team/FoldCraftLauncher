@@ -152,23 +152,22 @@ public final class CompressingUtils {
         return new ZipFileTree(openZipFile(zipFile));
     }
 
-    public static ZipFileTree openZipTree(Path zipFile, Charset charset) throws IOException {
-        return new ZipFileTree(openZipFile(zipFile, charset));
-    }
-
     public static ZipFile openZipFile(Path zipFile) throws IOException {
         return openZipFileWithPossibleEncoding(zipFile, StandardCharsets.UTF_8);
     }
 
     public static ZipFile openZipFile(Path zipFile, Charset charset) throws IOException {
-        return ZipFile.builder().setPath(zipFile).setCharset(charset).get();
+        // 参考 HMCL PR 6834（https://github.com/HMCL-dev/HMCL/pull/6834）：
+        // 打开 zip 时只解析中央目录，跳过对全部 local file header 的预读（数据偏移延迟到
+        // getInputStream 时才解析），显著加快大压缩包的打开速度
+        return ZipFile.builder().setPath(zipFile).setCharset(charset).setIgnoreLocalFileHeader(true).get();
     }
 
     public static ZipFile openZipFileWithPossibleEncoding(Path zipFile, Charset possibleEncoding) throws IOException {
         if (possibleEncoding == null)
             possibleEncoding = StandardCharsets.UTF_8;
 
-        ZipFile zipReader = ZipFile.builder().setSeekableByteChannel(Files.newByteChannel(zipFile)).get();
+        ZipFile zipReader = ZipFile.builder().setSeekableByteChannel(Files.newByteChannel(zipFile)).setIgnoreLocalFileHeader(true).get();
 
         Charset suitableEncoding;
         try {
@@ -185,7 +184,7 @@ public final class CompressingUtils {
         }
 
         zipReader.close();
-        return ZipFile.builder().setSeekableByteChannel(Files.newByteChannel(zipFile)).setCharset(suitableEncoding).get();
+        return ZipFile.builder().setSeekableByteChannel(Files.newByteChannel(zipFile)).setCharset(suitableEncoding).setIgnoreLocalFileHeader(true).get();
     }
 
     public static final class Builder {
