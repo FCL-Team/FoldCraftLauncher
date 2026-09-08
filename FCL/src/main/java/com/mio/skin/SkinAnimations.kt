@@ -33,6 +33,10 @@ object SkinAnimations {
     /** 校验动画 id，未知 id（含旧版持久化值）回退默认待机 */
     fun validId(id: String): String =
         entries.firstOrNull { it.id == id }?.id ?: DEFAULT_ID
+
+    /** 待机变体 clip（随机插播候选，不含基础待机） */
+    val variantIds: List<String> =
+        entries.drop(1).filter { it.id.startsWith("idle_sub") }.map { it.id }
 }
 
 /** 恢复上次选择的动画（异步读取，读取完成后切换） */

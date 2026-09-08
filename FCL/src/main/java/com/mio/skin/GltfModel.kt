@@ -201,17 +201,36 @@ class GltfModel private constructor() {
     private var currentClip: GltfClip? = null
     private var time = 0f
 
+    /** 当前 clip 的累计经过时间（不取模，用于检测循环回绕） */
+    private var elapsed = 0f
+
     private val tempMatrix = FloatArray(16)
 
     // ---- 对外 API ----
 
     fun findClip(id: String): GltfClip? = clips.firstOrNull { it.name == id }
 
+    /** 当前 clip 的播放时间（无 clip 时为 0） */
+    fun clipTime(): Float = time
+
+    /**
+     * 判断当前 clip 是否已完整播放过一轮：循环播放 time 对 duration 取模会回绕到 0，
+     * 用累计经过时间与播放时间比较检测回绕（首次调用时经过时间尚未积累，恒为 false）。
+     */
+    fun clipElapsedAtLeast(clipId: String): Boolean {
+        val clip = currentClip ?: return false
+        if (clip.name != clipId || clip.duration <= 0f) {
+            return false
+        }
+        return elapsed >= clip.duration
+    }
+
     /** 切换动画：全部节点恢复 rest 后由新 clip 驱动；未知 id 返回 false */
     fun playAnimation(id: String): Boolean {
         val clip = findClip(id) ?: return false
         currentClip = clip
         time = 0f
+        elapsed = 0f
         nodes.forEach { it.resetPose() }
         return true
     }
@@ -219,6 +238,7 @@ class GltfModel private constructor() {
     fun update(deltaSeconds: Float) {
         val clip = currentClip
         if (clip != null) {
+            elapsed += deltaSeconds
             time = (time + deltaSeconds) % clip.duration
             for (channel in clip.channels) {
                 channel.apply(time)
