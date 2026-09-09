@@ -464,6 +464,7 @@
     <string name="menu_controls_auto_fit">Encaixe automático</string>
     <string name="menu_controls_auto_fit_dist">Distância do encaixe</string>
     <string name="menu_controls_groups">Grupo de botões</string>
+    <string name="menu_controls_finish_edit">Concluir edição</string>
     <string name="menu_controls_manage">Gerenciar</string>
     <string name="menu_controls_current_view_group">Grupo atual</string>
     <string name="menu_controls_add_button">Adicionar botão</string>

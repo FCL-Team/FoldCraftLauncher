@@ -339,7 +339,8 @@ private long loadDialogShowTime = 0;
             ArrayList<ControlViewGroup> list = new ArrayList<>();
             if (gameMenu.isShowOtherGroups()) {
                 for (ControlViewGroup group : controller.viewGroups()) {
-                    if (group != gameMenu.getViewGroup()) {
+                    // 参考组可被编辑面板临时隐藏；当前编辑组始终渲染
+                    if (group != gameMenu.getViewGroup() && !gameMenu.isEditorGroupHidden(group)) {
                         list.add(group);
                     }
                 }

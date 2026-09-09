@@ -21,4 +21,5 @@
     <string name="edit_direction_event_can_lock">前進ロック</string>
     <string name="edit_direction_event_lock_threshold">ロックしきい値</string>
     <string name="menu_settings_controls_opacity">コントロールの不透明度</string>
+    <string name="menu_controls_finish_edit">編集を終了</string>
 </resources>

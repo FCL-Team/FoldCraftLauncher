@@ -92,6 +92,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Level;
 
@@ -281,6 +285,45 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         return showOtherGroupsProperty.get();
     }
 
+    /** 编辑会话内被临时隐藏的控件组（仅影响编辑画布渲染，不改持久属性） */
+    private final Set<String> editorHiddenGroups = new HashSet<>();
+
+    public boolean isEditorGroupHidden(@NonNull ControlViewGroup group) {
+        return editorHiddenGroups.contains(group.getId());
+    }
+
+    public void setEditorGroupHidden(@NonNull ControlViewGroup group, boolean hidden) {
+        if (hidden) {
+            editorHiddenGroups.add(group.getId());
+        } else {
+            editorHiddenGroups.remove(group.getId());
+        }
+    }
+
+    /** 切换当前编辑组（含样式名重解析），并刷新左右菜单 */
+    private void selectViewGroup(@Nullable ControlViewGroup viewGroup) {
+        setViewGroup(viewGroup);
+        if (viewGroup != null) {
+            viewGroup.getViewData().buttonList().forEach(it -> {
+                String name = it.getStyle().getName();
+                ControlButtonStyle style = ButtonStyles.findStyleByName(name);
+                if (name.equals(style.getName())) {
+                    it.setStyle(style);
+                }
+            });
+            viewGroup.getViewData().directionList().forEach(it -> {
+                String name = it.getStyle().getName();
+                ControlDirectionStyle style = DirectionStyles.findStyleByName(name);
+                if (name.equals(style.getName())) {
+                    it.setStyle(style);
+                }
+            });
+        }
+        if (rightMenuAdapter != null) {
+            rightMenuAdapter.rebuild();
+        }
+    }
+
     private final ObjectProperty<Controller> controllerProperty = new SimpleObjectProperty<>(this, "controller", null);
 
     public ObjectProperty<Controller> controllerProperty() {
@@ -362,7 +405,12 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             leftMenuAdapter.rebuild();
             getController().addListener(i -> leftMenuAdapter.rebuild());
         });
-        editModeProperty.addListener(i -> leftMenuAdapter.rebuild());
+        editModeProperty.addListener(i -> {
+            leftMenuAdapter.rebuild();
+            if (rightMenuAdapter != null) {
+                rightMenuAdapter.rebuild();
+            }
+        });
 
         hideAllViewsProperty.addListener(i -> {
             if (isHideAllViews()) {
@@ -404,6 +452,32 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             @Override
             public void onSeekBarChange(@NonNull RightMenuTag tag, int progress) {
                 handleRightSeekBarChange(tag, progress);
+            }
+
+            @Override
+            public void onEditGroupSelect(@NonNull ControlViewGroup group) {
+                selectViewGroup(group);
+            }
+
+            @Override
+            public void onEditGroupToggle(@NonNull ControlViewGroup group, boolean visible) {
+                setEditorGroupHidden(group, !visible);
+                viewManager.initializeController();
+            }
+
+            @Override
+            public void onEditGroupMove(@NonNull ControlViewGroup group, boolean up) {
+                List<ControlViewGroup> groups = getController().viewGroups();
+                int index = groups.indexOf(group);
+                int target = up ? index - 1 : index + 1;
+                if (index == -1 || target < 0 || target >= groups.size()) {
+                    return;
+                }
+                Collections.swap(groups, index, target);
+                getViewManager().saveController();
+                // 组顺序决定渲染 z 序，重建控件
+                viewManager.initializeController();
+                rightMenuAdapter.rebuild();
             }
         });
         rightMenuList.setAdapter(rightMenuAdapter);
@@ -767,6 +841,12 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         switch (tag) {
             case MANAGE_VIEW_GROUPS: {
                 ViewGroupDialog dialog = new ViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null);
+                dialog.setOnDismissListener(d -> {
+                    // 组增删/排序后刷新左右菜单与控件渲染
+                    leftMenuAdapter.rebuild();
+                    rightMenuAdapter.rebuild();
+                    viewManager.initializeController();
+                });
                 dialog.show();
                 break;
             }
@@ -849,24 +929,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         if (tag == LeftMenuTag.CURRENT_CONTROLLER) {
             setController(Controllers.getControllers().get(position));
         } else if (tag == LeftMenuTag.CURRENT_VIEW_GROUP) {
-            ControlViewGroup viewGroup = getController().viewGroups().get(position);
-            setViewGroup(viewGroup);
-            if (viewGroup != null) {
-                viewGroup.getViewData().buttonList().forEach(it -> {
-                    String name = it.getStyle().getName();
-                    ControlButtonStyle style = ButtonStyles.findStyleByName(name);
-                    if (name.equals(style.getName())) {
-                        it.setStyle(style);
-                    }
-                });
-                viewGroup.getViewData().directionList().forEach(it -> {
-                    String name = it.getStyle().getName();
-                    ControlDirectionStyle style = DirectionStyles.findStyleByName(name);
-                    if (name.equals(style.getName())) {
-                        it.setStyle(style);
-                    }
-                });
-            }
+            selectViewGroup(getController().viewGroups().get(position));
         }
     }
 
@@ -925,6 +988,20 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 builder.create().show();
                 break;
             }
+            case MANAGE_GROUPS: {
+                ViewGroupDialog dialog = new ViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null);
+                dialog.setOnDismissListener(d -> {
+                    // 组增删/排序后刷新左右菜单与控件渲染
+                    leftMenuAdapter.rebuild();
+                    rightMenuAdapter.rebuild();
+                    viewManager.initializeController();
+                });
+                dialog.show();
+                break;
+            }
+            case FINISH_EDIT:
+                setEditMode(false);
+                break;
         }
     }
 
