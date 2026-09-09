@@ -93,6 +93,7 @@
                 <data android:pathPattern=".*\\.7z" />
             </intent-filter>
         </activity-alias>
+
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode"
@@ -144,9 +145,9 @@
             android:foregroundServiceType="dataSync" />
         <service
             android:name=".terracotta.TerracottaVPNService"
-            android:permission="android.permission.BIND_VPN_SERVICE"
             android:exported="true"
             android:foregroundServiceType="connectedDevice|dataSync"
+            android:permission="android.permission.BIND_VPN_SERVICE"
             tools:ignore="VpnServicePolicy">
             <intent-filter>
                 <action android:name="android.net.VpnService" />
@@ -180,8 +181,12 @@
     </application>
     <queries>
         <package android:name="net.kdt.pojavlaunch.ffmpeg" />
+
         <intent>
             <action android:name="android.intent.action.MAIN" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
     </queries>
 </manifest>

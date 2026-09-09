@@ -26,6 +26,7 @@ import com.tungsten.fcl.control.MenuCallback;
 import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.game.sdl.SdlBridge;
+import com.mio.flite.FliteTts;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.terracotta.Terracotta;
 import com.mio.util.AndroidUtilKt;
@@ -284,6 +285,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         Terracotta.setWaiting(this, true);
         CallbackBridge.resetInputState();
         SdlBridge.reset();
+        FliteTts.shutdown();
         super.onDestroy();
     }
 
