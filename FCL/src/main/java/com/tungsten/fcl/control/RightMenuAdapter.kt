@@ -63,7 +63,7 @@ enum class RightMenuTag {
     SDL_AUTO_SHOW_IME,
 
     // 编辑模式控件组面板
-    ADD_GROUP, EDIT_GROUP, REMOVE_GROUP, FINISH_EDIT
+    EDIT_GROUP, REMOVE_GROUP
 }
 
 /**
@@ -356,22 +356,12 @@ class RightMenuAdapter(
     }
     }
 
-    /** 编辑模式控件组面板：顶部操作 + 各组（点击切组、开关显隐、编辑属性、删除），组行长按拖动排序 */
+    /** 编辑模式控件组面板：各组行（点击切组、开关显隐、编辑属性、删除），组行长按拖动排序 */
     private fun buildEditRows(): List<Row> {
         val groups = gameMenu.controller?.viewGroups() ?: emptyList()
-        val rows = mutableListOf<Row>(
-            Row.ButtonRow(
-                R.string.menu_control_view_group_add,
-                listOf(
-                    R.string.menu_control_view_group_add to RightMenuTag.ADD_GROUP,
-                    R.string.menu_controls_finish_edit to RightMenuTag.FINISH_EDIT
-                )
-            )
-        )
-        groups.forEach { group ->
-            rows += Row.ControlGroupRow(group)
+        return groups.map { group ->
+            Row.ControlGroupRow(group)
         }
-        return rows
     }
 
     private sealed class Row {

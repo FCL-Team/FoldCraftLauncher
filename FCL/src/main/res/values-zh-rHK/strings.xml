@@ -489,7 +489,6 @@
     <string name="menu_controls_auto_fit">自動吸附</string>
     <string name="menu_controls_auto_fit_dist">自動吸附間距</string>
     <string name="menu_controls_groups">控件組</string>
-    <string name="menu_controls_finish_edit">完成編輯</string>
     <string name="menu_controls_manage">管理</string>
     <string name="menu_controls_current_view_group">當前控件組</string>
     <string name="menu_controls_add_button">添加按鍵</string>

@@ -431,7 +431,6 @@
     <string name="menu_controls_auto_fit">Automatische Positionierung</string>
     <string name="menu_controls_auto_fit_dist">Automatischer Abstand zur Position</string>
     <string name="menu_controls_groups">Gruppe</string>
-    <string name="menu_controls_finish_edit">Bearbeitung beenden</string>
     <string name="menu_controls_manage">Bearbeiten</string>
     <string name="menu_controls_current_view_group">Aktuelle Gruppe</string>
     <string name="menu_controls_add_button">Schaltfläche hinzufügen</string>

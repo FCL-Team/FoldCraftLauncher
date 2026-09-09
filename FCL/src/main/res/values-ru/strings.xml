@@ -436,7 +436,6 @@
     <string name="menu_controls_auto_fit">Автонастройки позиции</string>
     <string name="menu_controls_auto_fit_dist">Автонастройка расстояния до позиции</string>
     <string name="menu_controls_groups">Группа</string>
-    <string name="menu_controls_finish_edit">Завершить редактирование</string>
     <string name="menu_controls_manage">Редактировать</string>
     <string name="menu_controls_current_view_group">Текущая группа</string>
     <string name="menu_controls_add_button">Добавить кнопку</string>

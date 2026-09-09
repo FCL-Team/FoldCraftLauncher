@@ -463,7 +463,6 @@
     <string name="menu_controls_auto_fit">موقعیت تناسب خودکار</string>
     <string name="menu_controls_auto_fit_dist">فاصله موقعیت تناسب خودکار</string>
     <string name="menu_controls_groups">گروه های ویو</string>
-    <string name="menu_controls_finish_edit">پایان ویرایش</string>
     <string name="menu_controls_manage">مدیریت</string>
     <string name="menu_controls_current_view_group">گروه ویو فعلی</string>
     <string name="menu_controls_add_button">افزودن دکمه</string>

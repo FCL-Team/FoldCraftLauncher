@@ -86,6 +86,7 @@ import com.tungsten.fcllibrary.component.FCLActivity;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
+import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
@@ -135,6 +136,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     private RightMenuAdapter rightMenuAdapter;
     private FCLTextView rightMenuTitle;
     private FCLTextView rightMenuBack;
+    private FCLButton addGroupButton;
     private RecyclerView rightMenuList;
 
     private MultiplayerDialog multiplayerDialog;
@@ -406,12 +408,23 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 selectDefaultViewGroup();
             }
             leftMenuAdapter.rebuild();
+            if (rightMenuAdapter != null) {
+                rightMenuAdapter.rebuild();
+            }
             getController().addListener(i -> leftMenuAdapter.rebuild());
         });
         editModeProperty.addListener(i -> {
             leftMenuAdapter.rebuild();
             if (rightMenuAdapter != null) {
                 rightMenuAdapter.rebuild();
+            }
+            if (addGroupButton != null) {
+                addGroupButton.setVisibility(isEditMode() ? View.VISIBLE : View.GONE);
+            }
+            if (rightMenuTitle != null) {
+                // 标题跟随面板内容：编辑模式为控件组面板，否则为设置中心
+                rightMenuTitle.setText(isEditMode() ? R.string.menu_controls_groups : R.string.menu_settings);
+                rightMenuBack.setVisibility(View.GONE);
             }
         });
 
@@ -553,6 +566,10 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         rightMenuTitle = findViewById(R.id.menu_title);
         rightMenuBack = findViewById(R.id.menu_back);
         rightMenuBack.setOnClickListener(v -> showCategories());
+        // 编辑模式控件组面板的底部固定按钮
+        addGroupButton = findViewById(R.id.add_group_button);
+        addGroupButton.setOnClickListener(v -> addEditGroup());
+        addGroupButton.setVisibility(isEditMode() ? View.VISIBLE : View.GONE);
 
         logWindow.setVisibility(menuSetting.isShowLog() || (!isSimulated() && menuSetting.isAutoShowLog()));
     }
@@ -1039,12 +1056,6 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 builder.create().show();
                 break;
             }
-            case ADD_GROUP:
-                addEditGroup();
-                break;
-            case FINISH_EDIT:
-                setEditMode(false);
-                break;
         }
     }
 

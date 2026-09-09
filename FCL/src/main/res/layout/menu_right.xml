@@ -44,7 +44,19 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/add_group_button"
         app:layout_constraintTop_toBottomOf="@id/menu_title" />
+
+    <!-- 编辑模式控件组面板：底部固定的新建组按钮（列表不随其滚动） -->
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/add_group_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:singleLine="true"
+        android:text="@string/menu_control_view_group_add"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

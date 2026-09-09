@@ -431,7 +431,6 @@
     <string name="menu_controls_auto_fit">Автонастройка позиції</string>
     <string name="menu_controls_auto_fit_dist">Автонастройка відстані до позиції</string>
     <string name="menu_controls_groups">Група</string>
-    <string name="menu_controls_finish_edit">Завершити редагування</string>
     <string name="menu_controls_manage">Редагувати</string>
     <string name="menu_controls_current_view_group">Поточна група</string>
     <string name="menu_controls_add_button">Додати кнопку</string>

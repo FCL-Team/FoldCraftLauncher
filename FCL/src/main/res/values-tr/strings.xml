@@ -273,5 +273,4 @@
     <string name="edit_direction_event_can_lock">İleri Kilidi</string>
     <string name="edit_direction_event_lock_threshold">Kilit Eşiği</string>
     <string name="menu_settings_controls_opacity">Kontrol Opaklığı</string>
-    <string name="menu_controls_finish_edit">Düzenlemeyi Bitir</string>
 </resources>

@@ -534,7 +534,6 @@
     <string name="menu_controls_auto_fit">Tự động điều chỉnh Vị trí</string>
     <string name="menu_controls_auto_fit_dist">Khoảng cách Tự động điều chỉnh Vị trí</string>
     <string name="menu_controls_groups">Nhóm Chế độ xem</string>
-    <string name="menu_controls_finish_edit">Hoàn tất Chỉnh sửa</string>
     <string name="menu_controls_manage">Quản lý</string>
     <string name="menu_controls_current_view_group">Nhóm Chế độ xem hiện tại</string>
     <string name="menu_controls_add_button">Thêm Nút</string>
