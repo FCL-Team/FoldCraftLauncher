@@ -22,7 +22,6 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.GestureMode;
 import com.tungsten.fcl.control.MouseMoveMode;
@@ -44,6 +43,7 @@ import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.Objects;
@@ -69,6 +69,41 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private int cursorMode;
 
     private BooleanProperty visibilityProperty;
+
+    private boolean ghost = false;
+
+    @Override
+    public void setGhost(boolean ghost) {
+        this.ghost = ghost;
+        updateAlpha();
+    }
+
+    @Override
+    public boolean isGhost() {
+        return ghost;
+    }
+
+    /** alpha 合并优先级：一键隐藏 > 编辑参考组 > 正常 */
+    private void updateAlpha() {
+        setAlpha(menu.isHideAllViews() ? 0 : (ghost ? GHOST_ALPHA : 1));
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+        if (selected) {
+            // 线框与手柄跟随主题色
+            int color = ThemeEngine.getInstance().getTheme().getColor();
+            selectedPaint.setColor(color);
+            handlePaint.setColor(color);
+        }
+        invalidate();
+    }
+
+    @Override
+    public boolean isSelected() {
+        return selected;
+    }
 
     private final BooleanProperty parentVisibilityProperty = new SimpleBooleanProperty(this, "parentVisibility", true);
 
@@ -111,6 +146,11 @@ public class ControlButton extends AppCompatButton implements CustomView {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
+        selectedPaint.setAntiAlias(true);
+        selectedPaint.setStyle(Paint.Style.STROKE);
+        selectedPaint.setStrokeWidth(4);
+        handlePaint.setAntiAlias(true);
+        handlePaint.setStyle(Paint.Style.FILL);
         screenWidth = AndroidUtilKt.getScreenWidth();
         screenHeight = AndroidUtilKt.getScreenHeight();
 
@@ -132,9 +172,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 cancelAllEvent();
             }
         });
-        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
-            setAlpha(menu.isHideAllViews() ? 0 : 1);
-        });
+        alphaListener = invalidate -> Schedulers.androidUIThread().execute(this::updateAlpha);
 
         post(() -> {
             notifyData();
@@ -145,7 +183,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
             dataProperty.addListener(dataChangeListener);
             getData().addListener(notifyListener);
             menu.showViewBoundariesProperty().addListener(boundaryListener);
-            setAlpha(menu.isHideAllViews() ? 0 : 1);
+            updateAlpha();
             menu.hideAllViewsProperty().addListener(alphaListener);
             if (listener != null) {
                 listener.onReady(this);
@@ -200,7 +238,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
         // Visibility
         visibilityProperty().unbind();
-        if (menu.isEditMode()) {
+        if (ghost) {
+            // 编辑参考组控件始终可见
+            visibilityProperty().set(true);
+        } else if (menu.isEditMode()) {
             visibilityProperty().bind(Bindings.createBooleanBinding(() -> menu.getViewGroup() != null && (menu.getViewGroup().getViewData().buttonList().stream().anyMatch(it -> it.getId().equals(getData().getId()))),
                     menu.editModeProperty(), menu.viewGroupProperty()));
         } else {
@@ -247,13 +288,21 @@ public class ControlButton extends AppCompatButton implements CustomView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (menu.isShowViewBoundaries()) {
+        if (menu.isShowViewBoundaries() && !ghost) {
             boundaryPath.moveTo(0, 0);
             boundaryPath.lineTo(getWidth(), 0);
             boundaryPath.lineTo(getWidth(), getHeight());
             boundaryPath.lineTo(0, getHeight());
             boundaryPath.lineTo(0, 0);
             canvas.drawPath(boundaryPath, boundaryPaint);
+        }
+        if (selected && menu.isEditMode()) {
+            // 选中框与按钮边缘保持间隔；手柄画在控件内角，命中区与视觉重合
+            float gap = ConvertUtils.dip2px(getContext(), SELECT_GAP_DP);
+            float visual = ConvertUtils.dip2px(getContext(), HANDLE_VISUAL_DP);
+            canvas.drawRect(-gap, -gap, getWidth() + gap, getHeight() + gap, selectedPaint);
+            canvas.drawRect(0, 0, visual, visual, handlePaint);
+            canvas.drawRect(getWidth() - visual, getHeight() - visual, getWidth(), getHeight(), handlePaint);
         }
     }
 
@@ -272,6 +321,23 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private long firstClickTime;
     private boolean doubleClickEvent = false;
 
+    // 编辑模式选中态与双角手柄缩放：手柄画在控件内角（命中区与视觉重合，仅手柄可缩放），选中框外扩间隔
+    private static final float SELECT_GAP_DP = 4f;
+    private static final float HANDLE_VISUAL_DP = 12f;
+    private static final float HANDLE_TOUCH_DP = HANDLE_VISUAL_DP;
+    private boolean selected = false;
+    private boolean resizing = false;
+    private boolean resizeFromTopLeft = false;
+    private float resizeStartX;
+    private float resizeStartY;
+    private int resizeStartWidth;
+    private int resizeStartHeight;
+    // 缩放位移用屏幕坐标：拖左上手柄时 view 自身移动，view 坐标会形成正反馈抖动
+    private float downRawX;
+    private float downRawY;
+    private final Paint selectedPaint = new Paint();
+    private final Paint handlePaint = new Paint();
+
     private final Handler handler = new Handler();
     private final Runnable runnable = () -> handleLongPressEvent(!longPressEvent);
 
@@ -284,6 +350,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (ghost) {
+            return true;
+        }
         if (menu.isEditMode()) {
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
@@ -293,53 +362,81 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     positionX = getX();
                     positionY = getY();
                     downTime = System.currentTimeMillis();
+                    downRawX = event.getRawX();
+                    downRawY = event.getRawY();
+                    // 按下点落在缩放手柄上：本次手势为缩放而非移动
+                    resizeFromTopLeft = inTopLeftHandle(event.getX(), event.getY());
+                    resizing = resizeFromTopLeft || inBottomRightHandle(event.getX(), event.getY());
+                    if (resizing) {
+                        resizeStartX = getX();
+                        resizeStartY = getY();
+                        resizeStartWidth = getWidth();
+                        resizeStartHeight = getHeight();
+                    }
+                    menu.getViewManager().hideEditBar();
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    int deltaX = (int) (event.getX() - downX);
-                    int deltaY = (int) (event.getY() - downY);
-                    float targetX = Math.max(0, Math.min(screenWidth - getWidth(), getX() + deltaX));
-                    float targetY = Math.max(0, Math.min(screenHeight - getHeight(), getY() + deltaY));
-                    setX(targetX);
-                    setY(targetY);
-                    autoFitPosition();
+                    if (resizing) {
+                        int minWidth = ConvertUtils.dip2px(getContext(), 5);
+                        float dx = event.getRawX() - downRawX;
+                        float dy = event.getRawY() - downRawY;
+                        int newWidth;
+                        int newHeight;
+                        if (resizeFromTopLeft) {
+                            // 左上手柄：右下角锚定
+                            newWidth = Math.max(minWidth, resizeStartWidth - (int) dx);
+                            newHeight = Math.max(minWidth, resizeStartHeight - (int) dy);
+                            setX(resizeStartX + resizeStartWidth - newWidth);
+                            setY(resizeStartY + resizeStartHeight - newHeight);
+                        } else {
+                            // 右下手柄：左上角锚定
+                            newWidth = Math.max(minWidth, resizeStartWidth + (int) dx);
+                            newHeight = Math.max(minWidth, resizeStartHeight + (int) dy);
+                        }
+                        ViewGroup.LayoutParams layoutParams = getLayoutParams();
+                        layoutParams.width = newWidth;
+                        layoutParams.height = newHeight;
+                        setLayoutParams(layoutParams);
+                    } else {
+                        int deltaX = (int) (event.getX() - downX);
+                        int deltaY = (int) (event.getY() - downY);
+                        float targetX = Math.max(0, Math.min(screenWidth - getWidth(), getX() + deltaX));
+                        float targetY = Math.max(0, Math.min(screenHeight - getHeight(), getY() + deltaY));
+                        setX(targetX);
+                        setY(targetY);
+                        autoFitPosition();
+                    }
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
                     removeLine(0);
                     removeLine(1);
                     setNormalStyle();
+                    if (resizing) {
+                        resizing = false;
+                        if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                            // 缩放结束：把最终像素尺寸与位置写回数据（位置与视觉一致，避免刷新后跳变）
+                            writeBackResizeSize();
+                        } else {
+                            // 手势中断：未写回数据，按数据恢复
+                            notifyData();
+                        }
+                        menu.getViewManager().showEditBar(this);
+                        break;
+                    }
                     if (System.currentTimeMillis() - downTime <= 100
                             && Math.abs(event.getX() - downX) <= 10
                             && Math.abs(event.getY() - downY) <= 10) {
                         setX(positionX);
                         setY(positionY);
-                        EditViewDialog dialog = new EditViewDialog(getContext(), getData().clone(), menu, new EditViewDialog.Callback() {
-                            @Override
-                            public void onPositive(CustomControl view) {
-                                ControlButtonData newData = ((ControlButtonData) view).clone();
-                                getData().setText(newData.getText());
-                                getData().setBaseInfo(newData.getBaseInfo());
-                                getData().setStyle(newData.getStyle());
-                                getData().setEvent(newData.getEvent());
-                                menu.getViewManager().saveController();
-                            }
-
-                            @Override
-                            public void onClone(CustomControl view) {
-                                menu.getViewManager().addView(view);
-                            }
-
-                            @Override
-                            public void onDelete() {
-                                menu.getViewManager().removeView(getData());
-                            }
-                        }, true);
-                        dialog.show();
+                        // 轻点选中；编辑/复制/删除通过悬浮操作栏操作
+                        menu.getViewManager().selectView(this);
                     } else {
                         getData().getBaseInfo().setXPosition(Math.round((1000 * getX()) / (screenWidth - getMeasuredWidth())));
                         getData().getBaseInfo().setYPosition(Math.round((1000 * getY()) / (screenHeight - getMeasuredHeight())));
                         menu.getViewManager().saveController();
                     }
+                    menu.getViewManager().showEditBar(this);
                     break;
             }
         } else {
@@ -411,6 +508,52 @@ public class ControlButton extends AppCompatButton implements CustomView {
         initialY = cursorMode == FCLBridge.CursorEnabled ? menu.getCursorY() : menu.getPointerY();
     }
 
+    /** 触点是否落在左上/右下缩放手柄的命中区域（区域覆盖控件内侧角） */
+    private boolean inTopLeftHandle(float x, float y) {
+        if (!selected) {
+            return false;
+        }
+        int touch = ConvertUtils.dip2px(getContext(), HANDLE_TOUCH_DP);
+        return x <= touch && y <= touch;
+    }
+
+    private boolean inBottomRightHandle(float x, float y) {
+        if (!selected) {
+            return false;
+        }
+        int touch = ConvertUtils.dip2px(getContext(), HANDLE_TOUCH_DP);
+        return x >= getWidth() - touch && y >= getHeight() - touch;
+    }
+
+    /** 缩放结束：把最终像素尺寸与当前位置写回数据（百分比保持各自参考轴，[1,1000]；绝对为 dp），并刷新视图 */
+    private void writeBackResizeSize() {
+        BaseInfoData baseInfo = getData().getBaseInfo();
+        int width = getWidth();
+        int height = getHeight();
+        // 位置夹到屏内后与尺寸一起写回，保证刷新后视觉位置不变
+        float x = Math.max(0, Math.min(screenWidth - width, getX()));
+        float y = Math.max(0, Math.min(screenHeight - height, getY()));
+        setX(x);
+        setY(y);
+        if (baseInfo.getSizeType() == BaseInfoData.SizeType.ABSOLUTE) {
+            float density = getResources().getDisplayMetrics().density;
+            baseInfo.setAbsoluteWidth(Math.max(5, Math.round(width / density)));
+            baseInfo.setAbsoluteHeight(Math.max(5, Math.round(height / density)));
+        } else {
+            baseInfo.getPercentageWidth().setSize(pixelToPermille(width, baseInfo.getPercentageWidth().getReference()));
+            baseInfo.getPercentageHeight().setSize(pixelToPermille(height, baseInfo.getPercentageHeight().getReference()));
+        }
+        baseInfo.setXPosition(Math.round((1000 * x) / (screenWidth - width)));
+        baseInfo.setYPosition(Math.round((1000 * y) / (screenHeight - height)));
+        notifyData();
+        menu.getViewManager().saveController();
+    }
+
+    private int pixelToPermille(int pixel, BaseInfoData.PercentageSize.Reference reference) {
+        int base = reference == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ? screenWidth : screenHeight;
+        return Math.max(1, Math.min(1000, Math.round(pixel * 1000f / base)));
+    }
+
     private void showLine(int orientation, int pref, int self) {
         if (menu == null)
             return;
@@ -448,6 +591,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
             if (viewGroup.getChildAt(i).getVisibility() == VISIBLE) {
                 View button = viewGroup.getChildAt(i);
                 if (button == this || (!(button instanceof ControlButton) && !(button instanceof ControlDirection))) {
+                    continue;
+                }
+                // 参考组控件仅作视觉参考，不作为吸附目标
+                if (((CustomView) button).isGhost()) {
                     continue;
                 }
                 //buttonLeft, buttonRight, buttonUp, buttonDown

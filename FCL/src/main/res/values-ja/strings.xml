@@ -14,4 +14,6 @@
     <string name="animation_idle_variant_1">待機バリアント1</string>
     <string name="animation_idle_variant_2">待機バリアント2</string>
     <string name="animation_idle_variant_3">待機バリアント3</string>
+    <string name="menu_controls_show_other_groups">他のグループを表示</string>
+    <string name="menu_controls_edit_hint">タップで選択、ドラッグで移動、隅のハンドルをドラッグでサイズ変更</string>
 </resources>

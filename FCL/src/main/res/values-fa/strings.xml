@@ -454,6 +454,8 @@
     <string name="menu_controls_current">کنترلر فعلی</string>
     <string name="menu_controls_edit_mode">حالت ویرایش</string>
     <string name="menu_controls_show_boundary">نمایش مرز های ویو</string>
+    <string name="menu_controls_show_other_groups">نمایش گروه های دیگر</string>
+    <string name="menu_controls_edit_hint">برای انتخاب ضربه بزنید، برای جابه‌جایی بکشید، برای تغییر اندازه دستگیره های گوشه را بکشید</string>
     <string name="menu_controls_hide_all">پنهان کردن همه ویو ها</string>
     <string name="menu_controls_auto_fit">موقعیت تناسب خودکار</string>
     <string name="menu_controls_auto_fit_dist">فاصله موقعیت تناسب خودکار</string>

@@ -267,4 +267,6 @@
     <string name="animation_idle_variant_1">Bekleme 1</string>
     <string name="animation_idle_variant_2">Bekleme 2</string>
     <string name="animation_idle_variant_3">Bekleme 3</string>
+    <string name="menu_controls_show_other_groups">Diğer Grupları Göster</string>
+    <string name="menu_controls_edit_hint">Seçmek için dokunun, taşımak için sürükleyin, boyutlandırmak için köşe tutamaklarını sürükleyin</string>
 </resources>

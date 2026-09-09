@@ -422,6 +422,8 @@
     <string name="menu_controls_current">Поточне керування</string>
     <string name="menu_controls_edit_mode">Режим редагування</string>
     <string name="menu_controls_show_boundary">Показати межі кнопок</string>
+    <string name="menu_controls_show_other_groups">Показати інші групи</string>
+    <string name="menu_controls_edit_hint">Торкніться для вибору, перетягніть для переміщення, потягніть за кутові маркери для зміни розміру</string>
     <string name="menu_controls_hide_all">Приховати всі елементи</string>
     <string name="menu_controls_auto_fit">Автонастройка позиції</string>
     <string name="menu_controls_auto_fit_dist">Автонастройка відстані до позиції</string>

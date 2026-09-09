@@ -267,6 +267,20 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         return hideAllViewsProperty.get();
     }
 
+    private final BooleanProperty showOtherGroupsProperty = new SimpleBooleanProperty(this, "showOtherGroups", false);
+
+    public BooleanProperty showOtherGroupsProperty() {
+        return showOtherGroupsProperty;
+    }
+
+    public void setShowOtherGroups(boolean showOtherGroups) {
+        showOtherGroupsProperty.set(showOtherGroups);
+    }
+
+    public boolean isShowOtherGroups() {
+        return showOtherGroupsProperty.get();
+    }
+
     private final ObjectProperty<Controller> controllerProperty = new SimpleObjectProperty<>(this, "controller", null);
 
     public ObjectProperty<Controller> controllerProperty() {
@@ -813,10 +827,14 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 setEditMode(checked);
                 if (checked) {
                     selectDefaultViewGroup();
+                    Toast.makeText(getActivity(), R.string.menu_controls_edit_hint, Toast.LENGTH_LONG).show();
                 }
                 break;
             case SHOW_BOUNDARY:
                 setShowViewBoundaries(checked);
+                break;
+            case SHOW_OTHER_GROUPS:
+                setShowOtherGroups(checked);
                 break;
             case HIDE_ALL:
                 setHideAllViews(checked);

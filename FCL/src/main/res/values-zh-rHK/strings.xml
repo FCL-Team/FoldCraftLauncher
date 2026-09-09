@@ -480,6 +480,8 @@
     <string name="menu_controls_current">當前佈局方案</string>
     <string name="menu_controls_edit_mode">編輯模式</string>
     <string name="menu_controls_show_boundary">顯示控件邊緣</string>
+    <string name="menu_controls_show_other_groups">顯示其他佈局組</string>
+    <string name="menu_controls_edit_hint">輕點選中，拖動移動，拖動角手柄調整大小</string>
     <string name="menu_controls_hide_all">隱藏所有控件</string>
     <string name="menu_controls_auto_fit">自動吸附</string>
     <string name="menu_controls_auto_fit_dist">自動吸附間距</string>

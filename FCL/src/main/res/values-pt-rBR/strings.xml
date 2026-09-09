@@ -454,6 +454,8 @@
     <string name="menu_controls_current">Controle atual</string>
     <string name="menu_controls_edit_mode">Modo de edição</string>
     <string name="menu_controls_show_boundary">Mostrar limites</string>
+    <string name="menu_controls_show_other_groups">Mostrar outros grupos</string>
+    <string name="menu_controls_edit_hint">Toque para selecionar, arraste para mover, arraste as alças dos cantos para redimensionar</string>
     <string name="menu_controls_hide_all">Esconder botões</string>
     <string name="menu_controls_auto_fit">Encaixe automático</string>
     <string name="menu_controls_auto_fit_dist">Distância do encaixe</string>

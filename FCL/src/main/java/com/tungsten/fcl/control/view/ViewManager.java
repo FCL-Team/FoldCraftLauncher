@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
@@ -47,6 +48,154 @@ private long loadDialogShowTime = 0;
         this.gameMenu = gameMenu;
     }
 
+    /** 编辑模式当前选中的控件（缩放手柄与悬浮操作栏的目标） */
+    private CustomView selectedView;
+    private ControlEditBar editBar;
+
+    public void selectView(CustomView view) {
+        if (selectedView == view) return;
+        if (selectedView != null) {
+            selectedView.setSelected(false);
+        }
+        selectedView = view;
+        if (view != null) {
+            view.setSelected(true);
+            positionEditBar(view);
+        } else {
+            editBar.hideAnimated();
+        }
+    }
+
+    public void clearSelection() {
+        selectView(null);
+    }
+
+    /** 拖动/缩放开始时隐藏操作栏，避免悬空 */
+    public void hideEditBar() {
+        editBar.hideAnimated();
+    }
+
+    /** 拖动/缩放结束后重新定位显示操作栏 */
+    public void showEditBar(CustomView view) {
+        if (selectedView == view) {
+            positionEditBar(view);
+        }
+    }
+
+    /** 操作栏定位：控件下方居中（防出屏，底部放不下时移到上方） */
+    private void positionEditBar(CustomView view) {
+        View target = (View) view;
+        editBar.showAnimated();
+        editBar.post(() -> {
+            if (editBar.getVisibility() != View.VISIBLE || editBar.getMeasuredWidth() == 0) {
+                return;
+            }
+            int barWidth = editBar.getMeasuredWidth();
+            int barHeight = editBar.getMeasuredHeight();
+            int margin = (int) (24 * gameMenu.getActivity().getResources().getDisplayMetrics().density);
+            int screenW = gameMenu.getBaseLayout().getWidth();
+            int screenH = gameMenu.getBaseLayout().getHeight();
+            float x = target.getX() + target.getWidth() / 2f - barWidth / 2f;
+            x = Math.max(0, Math.min(screenW - barWidth, x));
+            float y = target.getY() + target.getHeight() + margin;
+            if (y + barHeight > screenH) {
+                y = target.getY() - margin - barHeight;
+            }
+            editBar.setX(Math.max(0, x));
+            editBar.setY(Math.max(0, y));
+        });
+    }
+
+    private void setupEditBar() {
+        editBar = new ControlEditBar(gameMenu.getActivity());
+        // 远高于按键的 z 序，低于菜单悬浮球
+        editBar.setElevation(1500f);
+        editBar.setVisibility(View.GONE);
+        editBar.setListener(new ControlEditBar.Listener() {
+            @Override
+            public void onSettings() {
+                openEditDialog();
+            }
+
+            @Override
+            public void onCopy() {
+                if (selectedView instanceof ControlButton) {
+                    addView(((ControlButton) selectedView).getData().cloneView());
+                } else if (selectedView instanceof ControlDirection) {
+                    addView(((ControlDirection) selectedView).getData().cloneView());
+                }
+            }
+
+            @Override
+            public void onDelete() {
+                if (selectedView instanceof ControlButton) {
+                    removeView(((ControlButton) selectedView).getData());
+                } else if (selectedView instanceof ControlDirection) {
+                    removeView(((ControlDirection) selectedView).getData());
+                }
+            }
+        });
+        gameMenu.getBaseLayout().addView(editBar);
+    }
+
+    /** 打开选中控件的编辑对话框（设置/复制/删除中的"设置"） */
+    private void openEditDialog() {
+        if (selectedView instanceof ControlButton) {
+            ControlButton button = (ControlButton) selectedView;
+            EditViewDialog dialog = new EditViewDialog(gameMenu.getActivity(), button.getData().clone(), gameMenu, new EditViewDialog.Callback() {
+                @Override
+                public void onPositive(CustomControl view) {
+                    ControlButtonData newData = ((ControlButtonData) view).clone();
+                    button.getData().setText(newData.getText());
+                    button.getData().setBaseInfo(newData.getBaseInfo());
+                    button.getData().setStyle(newData.getStyle());
+                    button.getData().setEvent(newData.getEvent());
+                    saveController();
+                    if (selectedView == button) {
+                        positionEditBar(button);
+                    }
+                }
+
+                @Override
+                public void onClone(CustomControl view) {
+                    addView(view);
+                }
+
+                @Override
+                public void onDelete() {
+                    removeView(button.getData());
+                }
+            }, true);
+            dialog.show();
+        } else if (selectedView instanceof ControlDirection) {
+            ControlDirection direction = (ControlDirection) selectedView;
+            EditViewDialog dialog = new EditViewDialog(gameMenu.getActivity(), direction.getData().clone(), gameMenu, new EditViewDialog.Callback() {
+                @Override
+                public void onPositive(CustomControl view) {
+                    ControlDirectionData newData = ((ControlDirectionData) view).clone();
+                    direction.getData().setBaseInfo(newData.getBaseInfo());
+                    direction.getData().setStyle(newData.getStyle());
+                    direction.getData().setEvent(newData.getEvent());
+                    saveController();
+                    if (selectedView == direction) {
+                        positionEditBar(direction);
+                    }
+                }
+
+                @Override
+                public void onClone(CustomControl view) {
+                    addView(view);
+                }
+
+                @Override
+                public void onDelete() {
+                    removeView(direction.getData());
+                }
+            }, true);
+            dialog.show();
+        }
+    }
+
     public void setup() {
         // Initialize menu view
         MenuView menuView = new MenuView(gameMenu.getActivity());
@@ -63,10 +212,12 @@ private long loadDialogShowTime = 0;
             menuView.setVisibility(View.INVISIBLE);
         }
         // Initialize controller
+        setupEditBar();
         initializeController();
         gameMenu.controllerProperty().addListener(i -> initializeController());
         gameMenu.viewGroupProperty().addListener(i -> initializeController());
         gameMenu.editModeProperty().addListener(i -> initializeController());
+        gameMenu.showOtherGroupsProperty().addListener(i -> initializeController());
     }
 
     public void addView(CustomControl control) {
@@ -83,7 +234,7 @@ private long loadDialogShowTime = 0;
                     gameMenu.getViewGroup().getViewData().addDirection((ControlDirectionData) control);
                 }
                 saveController();
-                loadView(control, true, 0f);
+                loadView(control, true, 0f, false);
             } else {
                 Toast.makeText(gameMenu.getActivity(), gameMenu.getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
             }
@@ -92,6 +243,7 @@ private long loadDialogShowTime = 0;
 
     public void removeView(CustomControl control) {
         if (gameMenu.getViewGroup() != null && gameMenu.isEditMode()) {
+            clearSelection();
             for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
                 View view = gameMenu.getBaseLayout().getChildAt(i);
                 if (view instanceof CustomView) {
@@ -110,13 +262,14 @@ private long loadDialogShowTime = 0;
         }
     }
 
-    private void loadView(CustomControl control, boolean parentVisibility, float zOrder) {
+    private void loadView(CustomControl control, boolean parentVisibility, float zOrder, boolean ghost) {
         if (control instanceof ControlButtonData data) {
             ControlButton button = new ControlButton(gameMenu.getActivity(), gameMenu, view -> {
                 ((ControlButton) view).setParentVisibility(parentVisibility);
                 ((ControlButton) view).setData(data);
             });
             button.setTranslationZ(zOrder);
+            button.setGhost(ghost);
             gameMenu.getBaseLayout().addView(button);
         } else {
             ControlDirectionData data = (ControlDirectionData) control;
@@ -125,6 +278,7 @@ private long loadDialogShowTime = 0;
                 ((ControlDirection) view).setData(data);
             });
             direction.setTranslationZ(zOrder);
+            direction.setGhost(ghost);
             gameMenu.getBaseLayout().addView(direction);
         }
     }
@@ -134,14 +288,24 @@ private long loadDialogShowTime = 0;
     }
 
     /**
-     * 需要渲染的布局：编辑模式为当前布局，游戏模式为全部可见布局
-     * （隐藏布局不加载，bindViewGroup 事件唤起时按需加载）。
+     * 需要渲染的布局：编辑模式为当前布局（开启"显示其他布局组"时其余布局以参考组 ghost 渲染），
+     * 游戏模式为全部可见布局（隐藏布局不加载，bindViewGroup 事件唤起时按需加载）。
      */
     private List<ControlViewGroup> targets() {
         Controller controller = gameMenu.getController();
         if (controller == null) return Collections.emptyList();
         if (gameMenu.isEditMode()) {
-            return gameMenu.getViewGroup() == null ? Collections.emptyList() : Collections.singletonList(gameMenu.getViewGroup());
+            if (gameMenu.getViewGroup() == null) return Collections.emptyList();
+            ArrayList<ControlViewGroup> list = new ArrayList<>();
+            if (gameMenu.isShowOtherGroups()) {
+                for (ControlViewGroup group : controller.viewGroups()) {
+                    if (group != gameMenu.getViewGroup()) {
+                        list.add(group);
+                    }
+                }
+            }
+            list.add(gameMenu.getViewGroup());
+            return list;
         }
         ArrayList<ControlViewGroup> list = new ArrayList<>();
         for (ControlViewGroup group : controller.viewGroups()) {
@@ -171,11 +335,13 @@ private long loadDialogShowTime = 0;
      * 渲染一个布局的全部按键（数据必须已就绪）。
      * 组间 z 序按文件记录顺序固定（translationZ 步长需跨过按钮/方向键 1px 的 elevation 差），
      * 异步加载完成顺序不定，仅靠 addView 顺序会使后加载的背景组盖住操作组导致无法点击。
+     * 编辑模式的参考组（ghost）压到所有操作组之下，异步乱序加载也不遮挡当前组。
      */
     private void renderGroup(ControlViewGroup group) {
-        float zOrder = gameMenu.getController().viewGroups().indexOf(group) * 2f;
-        group.getViewData().buttonList().forEach(data -> loadView(data, true, zOrder));
-        group.getViewData().directionList().forEach(data -> loadView(data, true, zOrder));
+        boolean ghost = gameMenu.isEditMode() && group != gameMenu.getViewGroup();
+        float zOrder = ghost ? -2f : gameMenu.getController().viewGroups().indexOf(group) * 2f;
+        group.getViewData().buttonList().forEach(data -> loadView(data, true, zOrder, ghost));
+        group.getViewData().directionList().forEach(data -> loadView(data, true, zOrder, ghost));
     }
 
     /** 该布局是否已有按键视图渲染在 baseLayout 上 */
@@ -301,6 +467,7 @@ private long loadDialogShowTime = 0;
     }
 
     private void removeAllCustomViews() {
+        clearSelection();
         ArrayList<View> views = new ArrayList<>();
         for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
             if (gameMenu.getBaseLayout().getChildAt(i) instanceof CustomView) {

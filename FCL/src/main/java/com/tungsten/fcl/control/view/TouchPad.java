@@ -145,6 +145,10 @@ public class TouchPad extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        // 编辑模式下触摸落到触摸板说明未命中任何控件：取消选中
+        if (gameMenu.isEditMode() && event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            gameMenu.getViewManager().clearSelection();
+        }
         if (gameMenu.getTouchController() != null) {
             gameMenu.getTouchController().handleTouchEvent(event);
         }

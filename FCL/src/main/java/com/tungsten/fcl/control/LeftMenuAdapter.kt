@@ -18,7 +18,7 @@ import com.tungsten.fcllibrary.component.view.FCLTextView
 
 /** 左菜单条目标签，交互回调按此分发 */
 enum class LeftMenuTag {
-    EDIT_MODE, SHOW_BOUNDARY, HIDE_ALL, AUTO_FIT, AUTO_FIT_DIST,
+    EDIT_MODE, SHOW_BOUNDARY, SHOW_OTHER_GROUPS, HIDE_ALL, AUTO_FIT, AUTO_FIT_DIST,
     CURRENT_CONTROLLER, CURRENT_VIEW_GROUP,
     MANAGE_VIEW_GROUPS, ADD_BUTTON, ADD_DIRECTION, MANAGE_BUTTON_STYLE, MANAGE_DIRECTION_STYLE
 }
@@ -77,12 +77,13 @@ class LeftMenuAdapter(
         )
         if (gameMenu.isEditMode) {
             rows = rows + listOf(
-                Row.SpinnerRow(
-                    R.string.menu_controls_current_view_group,
-                    viewGroups.map { it.name },
-                    currentViewGroup?.let { viewGroups.indexOf(it).coerceAtLeast(0) } ?: 0,
-                    LeftMenuTag.CURRENT_VIEW_GROUP
-                ),
+            Row.SpinnerRow(
+                R.string.menu_controls_current_view_group,
+                viewGroups.map { it.name },
+                currentViewGroup?.let { viewGroups.indexOf(it).coerceAtLeast(0) } ?: 0,
+                LeftMenuTag.CURRENT_VIEW_GROUP
+            ),
+            Row.SwitchRow(R.string.menu_controls_show_other_groups, { gameMenu.isShowOtherGroups }, LeftMenuTag.SHOW_OTHER_GROUPS),
                 Row.ButtonRow(R.string.menu_controls_groups, listOf(R.string.menu_controls_manage to LeftMenuTag.MANAGE_VIEW_GROUPS)),
                 Row.ButtonRow(R.string.menu_controls_add_button, listOf(R.string.menu_controls_add_view_button to LeftMenuTag.ADD_BUTTON)),
                 Row.ButtonRow(R.string.menu_controls_add_direction, listOf(R.string.menu_controls_add_view_button to LeftMenuTag.ADD_DIRECTION)),

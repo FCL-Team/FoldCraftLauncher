@@ -513,6 +513,8 @@
     <string name="menu_controls_current">当前布局方案</string>
     <string name="menu_controls_edit_mode">编辑模式</string>
     <string name="menu_controls_show_boundary">显示控件边缘</string>
+    <string name="menu_controls_show_other_groups">显示其他布局组</string>
+    <string name="menu_controls_edit_hint">轻点选中，拖动移动，拖动角手柄调整大小</string>
     <string name="menu_controls_hide_all">隐藏所有控件</string>
     <string name="menu_controls_auto_fit">自动吸附</string>
     <string name="menu_controls_auto_fit_dist">自动吸附间距</string>
