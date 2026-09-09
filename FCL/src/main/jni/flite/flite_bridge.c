@@ -21,7 +21,7 @@ static JavaVM *dalvik_vm;
 static jobject application;
 static jclass bridge_class;
 static jmethodID bridge_init;   // ()Z
-static jmethodID bridge_speak;  // (Ljava/lang/String;F)F
+static jmethodID bridge_speak;  // ([BF)F
 static int bridge_ready;
 
 // text2speech 1.18.11（MC 26.x）的合成流程在 Java 侧逐句持有
@@ -45,36 +45,6 @@ static JNIEnv *attach_dalvik(void) {
 }
 
 // 同 fcl_loader.c：把非法的 modified UTF-8 序列替换为 '?'，避免 NewStringUTF 异常
-static void correct_utf_bytes(char *bytes) {
-    size_t three = 0;
-    while (*bytes != '\0') {
-        unsigned char utf8 = *(bytes++);
-        switch (utf8 >> 4) {
-            case 0x00: case 0x01: case 0x02: case 0x03:
-            case 0x04: case 0x05: case 0x06: case 0x07:
-                three = 0;
-                break;
-            case 0x08: case 0x09: case 0x0a: case 0x0b:
-            case 0x0f:
-                *(bytes - 1) = '?';
-                three = 0;
-                break;
-            case 0x0c: case 0x0d:
-                three = 1;
-                break;
-            case 0x0e:
-                three = 2;
-                break;
-        }
-        while (three-- > 0 && *bytes != '\0') {
-            if ((*bytes++ & 0xc0) != 0x80) {
-                *(bytes - 1) = '?';
-                break;
-            }
-        }
-    }
-}
-
 static int setup_bridge(JNIEnv *env) {
     jclass app_class = (*env)->GetObjectClass(env, application);
     jmethodID get_loader = app_class == NULL
@@ -101,7 +71,7 @@ static int setup_bridge(JNIEnv *env) {
     bridge_class = (*env)->NewGlobalRef(env, cls);
     (*env)->DeleteLocalRef(env, cls);
     bridge_init = (*env)->GetStaticMethodID(env, bridge_class, "init", "()Z");
-    bridge_speak = (*env)->GetStaticMethodID(env, bridge_class, "speak", "(Ljava/lang/String;F)F");
+    bridge_speak = (*env)->GetStaticMethodID(env, bridge_class, "speak", "([BF)F");
     if (bridge_init == NULL || bridge_speak == NULL) return 0;
     return 1;
 
@@ -137,14 +107,14 @@ static int ensure_bridge(void) {
 }
 
 static jfloat fcl_flite_say_with_gain(JNIEnv *env, const char *text, jfloat gain) {
-    char *fixed = strdup(text);
-    if (fixed == NULL) return -1.0f;
-    correct_utf_bytes(fixed);
-    jstring jtext = (*env)->NewStringUTF(env, fixed);
-    free(fixed);
-    if (jtext == NULL) return -1.0f;
-    jfloat duration = (*env)->CallStaticFloatMethod(env, bridge_class, bridge_speak, jtext, gain);
-    (*env)->DeleteLocalRef(env, jtext);
+    // 以 UTF-8 字节数组传递文本，规避 NewStringUTF 的 modified UTF-8
+    // 对增补平面字符（emoji 等）的破坏
+    jsize len = (jsize) strlen(text);
+    jbyteArray bytes = (*env)->NewByteArray(env, len);
+    if (bytes == NULL) return -1.0f;
+    (*env)->SetByteArrayRegion(env, bytes, 0, len, (const jbyte *) text);
+    jfloat duration = (*env)->CallStaticFloatMethod(env, bridge_class, bridge_speak, bytes, gain);
+    (*env)->DeleteLocalRef(env, bytes);
     if ((*env)->ExceptionCheck(env)) {
         (*env)->ExceptionClear(env);
         return -1.0f;

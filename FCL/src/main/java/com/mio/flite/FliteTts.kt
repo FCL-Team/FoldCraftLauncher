@@ -26,6 +26,9 @@ object FliteTts {
     /** 朗读阶段等待引擎就绪的上限，TTS 引擎进程冷启动在部分 ROM 上可达数十秒 */
     private const val READY_WAIT_SECONDS = 20L
 
+    /** 单次朗读的完成等待上限，防止引擎僵死挂住游戏侧朗读线程 */
+    private const val SPEAK_WAIT_SECONDS = 30L
+
     private const val STATE_UNINIT = 0
     private const val STATE_INITIALIZING = 1
     private const val STATE_READY = 2
@@ -43,6 +46,10 @@ object FliteTts {
     @Volatile
     private var readySignal = CountDownLatch(1)
 
+    @Volatile
+    private var candidateEngines: List<String> = emptyList()
+    private val triedEngines: MutableSet<String> = ConcurrentHashMap.newKeySet()
+
     private val utteranceCounter = AtomicLong()
     private val pendingUtterances = ConcurrentHashMap<String, CountDownLatch>()
 
@@ -58,7 +65,7 @@ object FliteTts {
                     readySignal = CountDownLatch(1)
                     state = STATE_INITIALIZING
                     val signal = readySignal
-                    Handler(ttsThread.looper).post { constructTts(signal) }
+                    Handler(ttsThread.looper).post { constructTts(signal, null) }
                 }
             }
         }
@@ -71,9 +78,9 @@ object FliteTts {
         return if (arrived) state == STATE_READY else true
     }
 
-    /** 朗读一段文本并阻塞至播放完成，返回耗时秒数；gain 为相对音量（1.0 为默认）；不可用或失败返回 -1 */
+    /** 朗读一段 UTF-8 文本并阻塞至播放完成，返回耗时秒数；gain 为相对音量（1.0 为默认）；不可用或失败返回 -1 */
     @JvmStatic
-    fun speak(text: String, gain: Float): Float {
+    fun speak(message: ByteArray, gain: Float): Float {
         if (state == STATE_FAILED) return -1f
         if (state == STATE_INITIALIZING) {
             // 朗读发生在游戏侧串行队列上，阻塞等待与 flite 的同步播放语义一致
@@ -85,6 +92,8 @@ object FliteTts {
         }
         if (state != STATE_READY) return -1f
         val instance = tts ?: return -1f
+        val text = runCatching { String(message, Charsets.UTF_8) }.getOrNull() ?: return -1f
+        if (text.isBlank()) return -1f
         val utteranceId = "fcl-flite-${utteranceCounter.incrementAndGet()}"
         val done = CountDownLatch(1)
         pendingUtterances[utteranceId] = done
@@ -92,7 +101,7 @@ object FliteTts {
             val params = Bundle().apply { putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, gain) }
             if (instance.speak(text, TextToSpeech.QUEUE_ADD, params, utteranceId) != TextToSpeech.SUCCESS) return -1f
             val start = System.nanoTime()
-            done.await()
+            if (!done.await(SPEAK_WAIT_SECONDS, TimeUnit.SECONDS)) return -1f
             return (System.nanoTime() - start) / 1_000_000_000f
         } catch (_: InterruptedException) {
             return -1f
@@ -108,27 +117,35 @@ object FliteTts {
         state = STATE_UNINIT
         releaseInstance()
         readySignal.countDown()
+        triedEngines.clear()
+        candidateEngines = emptyList()
         pendingUtterances.keys.toList().forEach { id ->
             pendingUtterances.remove(id)?.countDown()
         }
     }
 
-    private fun constructTts(signal: CountDownLatch) {
+    private fun constructTts(signal: CountDownLatch, engine: String?) {
         val ref = AtomicReference<TextToSpeech>()
         try {
-            val instance = TextToSpeech(FCLApp.getAppContext()) { code ->
+            val listener = TextToSpeech.OnInitListener { code ->
                 if (state == STATE_INITIALIZING) {
                     if (code == TextToSpeech.SUCCESS) {
                         ref.get()?.let { tts = it }
                         state = STATE_READY
-                        Log.i(TAG, "TextToSpeech ready")
+                        Log.i(TAG, "TextToSpeech ready (engine=${engine ?: "default"})")
+                        signal.countDown()
                     } else {
-                        state = STATE_FAILED
-                        Log.e(TAG, "init failed: status=$code")
+                        Log.e(TAG, "engine init failed: engine=${engine ?: "default"} status=$code")
+                        // 非终态：还有候选引擎时不放行等待方，由回退结果决定
+                        tryNextEngine(signal, ref.get(), engine)
                     }
-                    signal.countDown()
                 }
                 // 过期回调（期间已 shutdown/重新初始化）直接忽略
+            }
+            val instance = if (engine == null) {
+                TextToSpeech(FCLApp.getAppContext(), listener)
+            } else {
+                TextToSpeech(FCLApp.getAppContext(), listener, engine)
             }
             ref.set(instance)
             instance.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
@@ -154,11 +171,28 @@ object FliteTts {
                     return
                 }
                 tts = instance
+                candidateEngines = runCatching { instance.engines.map { it.name } }.getOrDefault(emptyList())
             }
         } catch (e: Throwable) {
             Log.e(TAG, "create TextToSpeech failed", e)
+            tryNextEngine(signal, null, engine)
+        }
+    }
+
+    /** 当前引擎初始化失败后，依次尝试设备上其他已安装的语音引擎 */
+    private fun tryNextEngine(signal: CountDownLatch, failed: TextToSpeech?, failedEngine: String?) {
+        triedEngines.add(failedEngine ?: "default")
+        val next = candidateEngines.firstOrNull { it !in triedEngines }
+        if (next == null) {
             state = STATE_FAILED
+            Log.e(TAG, "no usable TTS engine (tried=$triedEngines), narrator disabled")
             signal.countDown()
+            return
+        }
+        Log.i(TAG, "falling back to TTS engine: $next")
+        Handler(ttsThread.looper).post {
+            failed?.runCatching { shutdown() }
+            constructTts(signal, next)
         }
     }
 
