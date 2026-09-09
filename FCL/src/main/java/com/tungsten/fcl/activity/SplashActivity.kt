@@ -115,14 +115,16 @@ class SplashActivity : FCLActivity() {
     }
 
     fun start() {
+        // init 协程可能在 Activity 转后台（onSaveInstanceState 之后）才恢复，Splash 流程无需保留事务状态，允许状态丢失
         if (sharedPreferences.getBoolean("isFirstLaunch", true)) {
             supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.frag_start_anim, R.anim.frag_stop_anim)
-                .replace(R.id.fragment, EulaFragment::class.java, null).commit()
+                .replace(R.id.fragment, EulaFragment::class.java, null).commitAllowingStateLoss()
         } else {
             supportFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.frag_start_anim, R.anim.frag_stop_anim)
-                .replace(R.id.fragment, RuntimeFragment::class.java, null).commit()
+                .replace(R.id.fragment, RuntimeFragment::class.java, null)
+                .commitAllowingStateLoss()
         }
     }
 
