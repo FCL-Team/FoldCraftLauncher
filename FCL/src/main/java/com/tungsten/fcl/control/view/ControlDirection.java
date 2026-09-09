@@ -86,10 +86,10 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         return ghost;
     }
 
-    /** alpha 合并优先级：一键隐藏 > 编辑参考组 > 正常 */
+    /** alpha 合并优先级：一键隐藏 > 编辑参考组 > 全局不透明度 */
     private void updateAlpha() {
         if (menu != null) {
-            setAlpha(menu.isHideAllViews() ? 0 : (ghost ? GHOST_ALPHA : 1));
+            setAlpha(menu.getViewManager().resolveAlpha(this));
         }
     }
 
@@ -485,6 +485,10 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private boolean startClick = false;
     private boolean startRecord = false;
 
+    // 前进锁：lockArmed 为推杆满足锁定条件（正北且超过阈值），UP 时进入 forwardLocked 保持前进
+    private boolean lockArmed = false;
+    private boolean forwardLocked = false;
+
     // 编辑模式选中态与双角手柄缩放：手柄画在控件内角（命中区与视觉重合，仅手柄可缩放），选中框外扩间隔
     private static final float SELECT_GAP_DP = 4f;
     private static final float HANDLE_VISUAL_DP = 12f;
@@ -644,6 +648,12 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             } else {
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
+                        if (forwardLocked) {
+                            // 解除前进锁：释放方向键并复位杆体，随后正常处理本次触摸
+                            forwardLocked = false;
+                            applyRockerLockVisual(false);
+                            cancelAllEvent();
+                        }
                         if (getData().getEvent().getFollowOption() == DirectionEventData.FollowOption.FOLLOW ||
                                 (getData().getEvent().getFollowOption() == DirectionEventData.FollowOption.CENTER_FOLLOW
                                         && event.getX() >= (float) ((getSize() / 2) - (rockerSize / 2))
@@ -694,6 +704,15 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                                 }
                             }
                         }
+                        if (event.getActionMasked() == MotionEvent.ACTION_UP && lockArmed && !forwardLocked) {
+                            // 进入前进锁：保持方向键按下，杆体留在当前位置等待再次触摸解除
+                            lockArmed = false;
+                            forwardLocked = true;
+                            applyRockerLockVisual(true);
+                            break;
+                        }
+                        lockArmed = false;
+                        forwardLocked = false;
                         cancelAllEvent();
                         break;
                 }
@@ -880,9 +899,51 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         int maxDistance = (getSize() / 2) - (rockerSize / 2);
         Point centerPoint = new Point(getSize() / 2, getSize() / 2);
         Point touchPoint = new Point(x, y);
+        // 死区：位移比例不足视为未推动，杆体回中并释放全部方向
+        int deadZone = getData().getEvent().getDeadZone();
+        if (deadZone > 0) {
+            float lenX = touchPoint.x - centerPoint.x;
+            float lenY = touchPoint.y - centerPoint.y;
+            float ratio = (float) Math.sqrt(lenX * lenX + lenY * lenY) / maxDistance * 100;
+            if (ratio < deadZone) {
+                lockArmed = false;
+                resetRockerToCenter();
+                return;
+            }
+        }
         Point position = getRockerPositionPoint(centerPoint, touchPoint, maxDistance);
         rocker.setX(position.x - (float) (rockerSize / 2));
         rocker.setY(position.y - (float) (rockerSize / 2));
+        // 前进锁武装判定：正北方向且位移达到阈值
+        if (getData().getEvent().isCanLock()) {
+            float lenX = touchPoint.x - centerPoint.x;
+            float lenY = touchPoint.y - centerPoint.y;
+            float ratio = (float) Math.sqrt(lenX * lenX + lenY * lenY) / maxDistance * 100;
+            lockArmed = tempDirection == Direction.DIRECTION_UP && ratio >= getData().getEvent().getLockThreshold();
+        } else {
+            lockArmed = false;
+        }
+    }
+
+    /** 杆体回中并释放全部方向键（死区或解除锁定时） */
+    private void resetRockerToCenter() {
+        if (tempDirection != Direction.DIRECTION_CENTER) {
+            tempDirection = Direction.DIRECTION_CENTER;
+            handleMoveEvent(false, false, false, false);
+        }
+        setButtonPosition(rocker, (getSize() / 2) - (rockerSize / 2), (getSize() / 2) - (rockerSize / 2));
+    }
+
+    /** 前进锁视觉提示：锁定时杆体描边变为主题色 */
+    private void applyRockerLockVisual(boolean locked) {
+        if (drawableRocker == null) {
+            return;
+        }
+        if (locked) {
+            drawableRocker.setStroke(ConvertUtils.dip2px(getContext(), 2), ThemeEngine.getInstance().getTheme().getColor());
+        } else {
+            drawableRocker.setStroke(ConvertUtils.dip2px(getContext(), getData().getStyle().getRockerStyle().getRockerStrokeWidth() / 10f), getData().getStyle().getRockerStyle().getRockerStrokeColor());
+        }
     }
 
     private Point getRockerPositionPoint(Point centerPoint, Point touchPoint, float maxDistance) {
@@ -1037,6 +1098,9 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 setButtonPosition(area, 0, 0);
                 setButtonPosition(rocker, (getSize() / 2) - (rockerSize / 2), (getSize() / 2) - (rockerSize / 2));
                 tempDirection = Direction.DIRECTION_CENTER;
+                lockArmed = false;
+                forwardLocked = false;
+                applyRockerLockVisual(false);
             }
             if (menu != null) {
                 for (Integer code : getData().getEvent().upKeycodeList()) {

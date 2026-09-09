@@ -227,4 +227,102 @@
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_direction_event_dead_zone"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
+            android:id="@+id/dead_zone"
+            app:min_value="0"
+            app:max_value="90"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:gravity="end"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:id="@+id/dead_zone_text"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_direction_event_can_lock"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/can_lock"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_direction_event_lock_threshold"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
+            android:id="@+id/lock_threshold"
+            app:min_value="10"
+            app:max_value="90"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:gravity="end"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="10dp"
+            android:id="@+id/lock_threshold_text"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
 </com.tungsten.fcllibrary.component.view.FCLLinearLayout>

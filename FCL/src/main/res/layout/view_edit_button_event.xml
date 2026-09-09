@@ -71,6 +71,32 @@
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_button_event_swipable"
+            android:layout_gravity="center"
+            android:singleLine="true"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLSwitch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/swipable"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
     <com.tungsten.fcllibrary.component.view.FCLTabLayout
         android:layout_marginTop="10dp"
         android:id="@+id/tab_layout"

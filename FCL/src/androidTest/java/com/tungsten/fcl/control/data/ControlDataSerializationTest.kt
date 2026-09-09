@@ -60,6 +60,7 @@ class ControlDataSerializationTest {
         val data = ButtonEventData()
         data.setPointerFollow(true)
         data.setMovable(true)
+        data.setSwipable(true)
         data.getPressEvent().setOutputKeycodes(FXCollections.observableArrayList(1, 2, 3))
         data.getClickEvent().setQuickInput(true)
 
@@ -70,6 +71,7 @@ class ControlDataSerializationTest {
         val restored = ButtonEventData.Serializer().deserialize(json, null, null)
         assertEquals(data.isPointerFollow(), restored.isPointerFollow())
         assertEquals(data.isMovable(), restored.isMovable())
+        assertEquals(data.isSwipable(), restored.isSwipable())
         assertEquals(data.getPressEvent().outputKeycodesList(), restored.getPressEvent().outputKeycodesList())
         assertEquals(data.getClickEvent().isQuickInput(), restored.getClickEvent().isQuickInput())
     }
@@ -109,6 +111,9 @@ class ControlDataSerializationTest {
         event.setFollowOption(DirectionEventData.FollowOption.FOLLOW)
         event.setSneak(false)
         event.setSneakKeycode(42)
+        event.setDeadZone(20)
+        event.setCanLock(true)
+        event.setLockThreshold(45)
 
         val json = DirectionEventData.Serializer().serialize(event, null, null) as JsonObject
         assertTrue(json.get("upKeycode").isJsonArray)
@@ -120,6 +125,9 @@ class ControlDataSerializationTest {
         assertEquals(event.getFollowOption(), restored.getFollowOption())
         assertEquals(event.isSneak(), restored.isSneak())
         assertEquals(event.getSneakKeycode(), restored.getSneakKeycode())
+        assertEquals(event.getDeadZone(), restored.getDeadZone())
+        assertEquals(event.isCanLock(), restored.isCanLock())
+        assertEquals(event.getLockThreshold(), restored.getLockThreshold())
     }
 
     // ==================== ControlButtonData（含 style/baseInfo/event 嵌套） ====================

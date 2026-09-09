@@ -320,6 +320,7 @@
     <string name="edit_button_text">顯示嘅文本</string>
     <string name="edit_button_event_follow">指針跟隨手指</string>
     <string name="edit_button_event_movable">可移動</string>
+    <string name="edit_button_event_swipable">滑動聯動</string>
     <string name="edit_button_event_press">按壓</string>
     <string name="edit_button_event_long_press">長按</string>
     <string name="edit_button_event_click">點擊</string>
@@ -343,6 +344,9 @@
     <string name="edit_direction_event_left">左鍵值</string>
     <string name="edit_direction_event_right">右鍵值</string>
     <string name="edit_direction_event_follow">跟隨設置（僅作用於搖桿樣式）</string>
+    <string name="edit_direction_event_dead_zone">搖桿死區</string>
+    <string name="edit_direction_event_can_lock">前進鎖</string>
+    <string name="edit_direction_event_lock_threshold">鎖定閾值</string>
     <string name="edit_direction_event_follow_fix">固定嘅</string>
     <string name="edit_direction_event_follow_center">中心部位跟隨手指</string>
     <string name="edit_direction_event_follow_always">完全跟隨手指</string>
@@ -552,6 +556,7 @@
     <string name="menu_settings_item_bar_scale">物品欄縮放</string>
     <string name="menu_settings_item_bar_scale_width">物品欄縮放（寬度）</string>
     <string name="menu_settings_item_bar_scale_height">物品欄縮放（高度）</string>
+    <string name="menu_settings_controls_opacity">控件不透明度</string>
     <string name="menu_settings_show_log">顯示日誌</string>
     <string name="menu_settings_show_log_auto">自動顯示日誌</string>
     <string name="menu_settings_performance_mode">持續性能模式</string>

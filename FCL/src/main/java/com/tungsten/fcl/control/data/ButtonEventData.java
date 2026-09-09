@@ -66,6 +66,23 @@ public class ButtonEventData implements Cloneable, Observable {
     }
 
     /**
+     * 滑动联动：手指滑出边界自动释放，滑入相邻联动按钮触发其按下
+     */
+    private final BooleanProperty swipableProperty = new SimpleBooleanProperty(this, "swipable", false);
+
+    public BooleanProperty swipableProperty() {
+        return swipableProperty;
+    }
+
+    public void setSwipable(boolean swipable) {
+        swipableProperty.set(swipable);
+    }
+
+    public boolean isSwipable() {
+        return swipableProperty.get();
+    }
+
+    /**
      * Press event
      */
     private final ObjectProperty<Event> pressEventProperty = new SimpleObjectProperty<>(this, "pressEvent", new Event());
@@ -140,6 +157,7 @@ public class ButtonEventData implements Cloneable, Observable {
     public void addPropertyChangedListener(InvalidationListener listener) {
         pointerFollowProperty.addListener(listener);
         movableProperty.addListener(listener);
+        swipableProperty.addListener(listener);
         pressEventProperty.addListener(listener);
         longPressEventProperty.addListener(listener);
         clickEventProperty.addListener(listener);
@@ -167,6 +185,7 @@ public class ButtonEventData implements Cloneable, Observable {
         ButtonEventData data = new ButtonEventData();
         data.setPointerFollow(isPointerFollow());
         data.setMovable(isMovable());
+        data.setSwipable(isSwipable());
         data.setPressEvent(getPressEvent().clone());
         data.setLongPressEvent(getLongPressEvent().clone());
         data.setClickEvent(getClickEvent().clone());
@@ -182,6 +201,7 @@ public class ButtonEventData implements Cloneable, Observable {
 
             obj.addProperty("pointerFollow", src.isPointerFollow());
             obj.addProperty("Movable", src.isMovable());
+            obj.addProperty("swipable", src.isSwipable());
             obj.add("pressEvent", new Event.Serializer().serialize(src.getPressEvent(), null, null));
             obj.add("longPressEvent", new Event.Serializer().serialize(src.getLongPressEvent(), null, null));
             obj.add("clickEvent", new Event.Serializer().serialize(src.getClickEvent(), null, null));
@@ -200,6 +220,7 @@ public class ButtonEventData implements Cloneable, Observable {
 
             data.setPointerFollow(Optional.ofNullable(obj.get("pointerFollow")).map(JsonElement::getAsBoolean).orElse(false));
             data.setMovable(Optional.ofNullable(obj.get("Movable")).map(JsonElement::getAsBoolean).orElse(false));
+            data.setSwipable(Optional.ofNullable(obj.get("swipable")).map(JsonElement::getAsBoolean).orElse(false));
             data.setPressEvent(Optional.ofNullable(obj.get("pressEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
             data.setLongPressEvent(Optional.ofNullable(obj.get("longPressEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
             data.setClickEvent(Optional.ofNullable(obj.get("clickEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));

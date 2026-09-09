@@ -16,4 +16,9 @@
     <string name="animation_idle_variant_3">待機バリアント3</string>
     <string name="menu_controls_show_other_groups">他のグループを表示</string>
     <string name="menu_controls_edit_hint">タップで選択、ドラッグで移動、隅のハンドルをドラッグでサイズ変更</string>
+    <string name="edit_button_event_swipable">スワイプ連動</string>
+    <string name="edit_direction_event_dead_zone">デッドゾーン</string>
+    <string name="edit_direction_event_can_lock">前進ロック</string>
+    <string name="edit_direction_event_lock_threshold">ロックしきい値</string>
+    <string name="menu_settings_controls_opacity">コントロールの不透明度</string>
 </resources>

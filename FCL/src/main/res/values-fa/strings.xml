@@ -304,6 +304,7 @@
     <string name="edit_button_text">متن نمایشی</string>
     <string name="edit_button_event_follow">نشانگر انگشت را دنبال می کند</string>
     <string name="edit_button_event_movable">متحرک</string>
+    <string name="edit_button_event_swipable">اتصال کشیدنی</string>
     <string name="edit_button_event_press">فشردن</string>
     <string name="edit_button_event_long_press">فشار طولانی</string>
     <string name="edit_button_event_click">کلیک</string>
@@ -327,6 +328,9 @@
     <string name="edit_direction_event_left">کد کلید چپ</string>
     <string name="edit_direction_event_right">کد کلید راست</string>
     <string name="edit_direction_event_follow">دنبال کردن (فقط برای استایل جوی استیک)</string>
+    <string name="edit_direction_event_dead_zone">ناحیه مرده</string>
+    <string name="edit_direction_event_can_lock">قفل رو به جلو</string>
+    <string name="edit_direction_event_lock_threshold">آستانه قفل</string>
     <string name="edit_direction_event_follow_fix">دنبال کردن ثابت</string>
     <string name="edit_direction_event_follow_center">دنبال کردن انگشت</string>
     <string name="edit_direction_event_follow_always">همه قسمت ها انگشت را دنبال می کنند</string>
@@ -521,6 +525,7 @@
     <string name="menu_settings_item_bar_scale">اندازه نوار آیتم</string>
     <string name="menu_settings_item_bar_scale_width">اندازه نوار آیتم (عرض)</string>
     <string name="menu_settings_item_bar_scale_height">اندازه نوار آیتم (ارتفاع)</string>
+    <string name="menu_settings_controls_opacity">شفافیت کنترل ها</string>
     <string name="menu_settings_show_log">نمایش لاگ</string>
     <string name="message_cancelled">عملیات لغو شد</string>
     <string name="message_copy">با موفقیت کپی شد!</string>

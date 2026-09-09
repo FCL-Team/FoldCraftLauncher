@@ -287,6 +287,46 @@ private long loadDialogShowTime = 0;
         gameMenu.getController().saveToDisk();
     }
 
+    /** 计算控件合成透明度：一键隐藏 > 参考组 > 全局不透明度 */
+    public float resolveAlpha(CustomView view) {
+        if (gameMenu.isHideAllViews()) {
+            return 0f;
+        }
+        float base = view.isGhost() ? CustomView.GHOST_ALPHA : 1f;
+        return base * gameMenu.getMenuSetting().getControlsOpacity() / 100f;
+    }
+
+    /** 全局不透明度变化时刷新全部控件 */
+    public void applyControlsOpacity() {
+        for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
+            View view = gameMenu.getBaseLayout().getChildAt(i);
+            if (view instanceof CustomView) {
+                view.setAlpha(resolveAlpha((CustomView) view));
+            }
+        }
+    }
+
+    /**
+     * 滑动链：查找包含父容器坐标点的可滑动联动按钮（排除 exclude 与参考组），
+     * 手指从联动按钮滑出后命中谁，就触发谁的按下。
+     */
+    public ControlButton findSwipableButtonAt(float x, float y, CustomView exclude) {
+        for (int i = gameMenu.getBaseLayout().getChildCount() - 1; i >= 0; i--) {
+            View view = gameMenu.getBaseLayout().getChildAt(i);
+            if (!(view instanceof ControlButton button)
+                    || button == exclude
+                    || button.getVisibility() != View.VISIBLE
+                    || !button.getData().getEvent().isSwipable()) {
+                continue;
+            }
+            if (x >= button.getX() && x <= button.getX() + button.getWidth()
+                    && y >= button.getY() && y <= button.getY() + button.getHeight()) {
+                return button;
+            }
+        }
+        return null;
+    }
+
     /**
      * 需要渲染的布局：编辑模式为当前布局（开启"显示其他布局组"时其余布局以参考组 ghost 渲染），
      * 游戏模式为全部可见布局（隐藏布局不加载，bindViewGroup 事件唤起时按需加载）。

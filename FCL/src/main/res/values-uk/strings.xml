@@ -272,6 +272,7 @@
     <string name="edit_button_text">Текст на кнопці</string>
     <string name="edit_button_event_follow">Пропускати дотик</string>
     <string name="edit_button_event_movable">Переміщувана кнопка</string>
+    <string name="edit_button_event_swipable">Свайп-ланцюжок</string>
     <string name="edit_button_event_press">Натискання</string>
     <string name="edit_button_event_long_press">Довге натискання</string>
     <string name="edit_button_event_click">Натиснути</string>
@@ -295,6 +296,9 @@
     <string name="edit_direction_event_left">Ліва кнопка</string>
     <string name="edit_direction_event_right">Права кнопка</string>
     <string name="edit_direction_event_follow">Стік</string>
+    <string name="edit_direction_event_dead_zone">Мертва зона</string>
+    <string name="edit_direction_event_can_lock">Фіксація вперед</string>
+    <string name="edit_direction_event_lock_threshold">Поріг фіксації</string>
     <string name="edit_direction_event_follow_fix">Фіксований</string>
     <string name="edit_direction_event_follow_center">Напівдинамічний</string>
     <string name="edit_direction_event_follow_always">Динамічний</string>
@@ -496,6 +500,7 @@
     <string name="menu_settings_item_bar_scale">Розмір панелі предметів</string>
     <string name="menu_settings_item_bar_scale_width">Розмір панелі предметів (ширина)</string>
     <string name="menu_settings_item_bar_scale_height">Розмір панелі предметів (висота)</string>
+    <string name="menu_settings_controls_opacity">Непрозорість кнопок</string>
     <string name="menu_settings_show_log">Показати лог</string>
     <string name="menu_settings_show_log_auto">Автопоказ логу</string>
     <string name="menu_settings_performance_mode">Режим стабільної продуктивності</string>

@@ -146,6 +146,57 @@ public class DirectionEventData implements Cloneable, Observable {
         return sneakKeycodeProperty.get();
     }
 
+    /**
+     * 摇杆死区比例（实际百分比 ×100，0–90），死区内视为未推动
+     */
+    private final IntegerProperty deadZoneProperty = new SimpleIntegerProperty(this, "deadZone", 0);
+
+    public IntegerProperty deadZoneProperty() {
+        return deadZoneProperty;
+    }
+
+    public void setDeadZone(int deadZone) {
+        deadZoneProperty.set(deadZone);
+    }
+
+    public int getDeadZone() {
+        return deadZoneProperty.get();
+    }
+
+    /**
+     * 启用前进锁：推杆到正北方向并超过锁定阈值时，松手保持前进
+     */
+    private final BooleanProperty canLockProperty = new SimpleBooleanProperty(this, "canLock", false);
+
+    public BooleanProperty canLockProperty() {
+        return canLockProperty;
+    }
+
+    public void setCanLock(boolean canLock) {
+        canLockProperty.set(canLock);
+    }
+
+    public boolean isCanLock() {
+        return canLockProperty.get();
+    }
+
+    /**
+     * 前进锁触发阈值（正北方向位移与最大位移之比 ×100，默认 30）
+     */
+    private final IntegerProperty lockThresholdProperty = new SimpleIntegerProperty(this, "lockThreshold", 30);
+
+    public IntegerProperty lockThresholdProperty() {
+        return lockThresholdProperty;
+    }
+
+    public void setLockThreshold(int lockThreshold) {
+        lockThresholdProperty.set(lockThreshold);
+    }
+
+    public int getLockThreshold() {
+        return lockThresholdProperty.get();
+    }
+
     public DirectionEventData() {
         addPropertyChangedListener(onInvalidating(this::invalidate));
     }
@@ -158,6 +209,9 @@ public class DirectionEventData implements Cloneable, Observable {
         followOptionProperty.addListener(listener);
         sneakProperty.addListener(listener);
         sneakKeycodeProperty.addListener(listener);
+        deadZoneProperty.addListener(listener);
+        canLockProperty.addListener(listener);
+        lockThresholdProperty.addListener(listener);
     }
 
     private ObservableHelper observableHelper = new ObservableHelper(this);
@@ -186,6 +240,9 @@ public class DirectionEventData implements Cloneable, Observable {
         data.setFollowOption(getFollowOption());
         data.setSneak(isSneak());
         data.setSneakKeycode(getSneakKeycode());
+        data.setDeadZone(getDeadZone());
+        data.setCanLock(isCanLock());
+        data.setLockThreshold(getLockThreshold());
         return data;
     }
 
@@ -202,6 +259,9 @@ public class DirectionEventData implements Cloneable, Observable {
             obj.addProperty("followOption", src.getFollowOption().toString());
             obj.addProperty("sneak", src.isSneak());
             obj.addProperty("sneakKeycode", src.getSneakKeycode());
+            obj.addProperty("deadZone", src.getDeadZone());
+            obj.addProperty("canLock", src.isCanLock());
+            obj.addProperty("lockThreshold", src.getLockThreshold());
 
             return obj;
         }
@@ -221,6 +281,9 @@ public class DirectionEventData implements Cloneable, Observable {
             data.setFollowOption(getFollowOption(Optional.ofNullable(obj.get("followOption")).map(JsonElement::getAsString).orElse(FollowOption.CENTER_FOLLOW.toString())));
             data.setSneak(Optional.ofNullable(obj.get("sneak")).map(JsonElement::getAsBoolean).orElse(true));
             data.setSneakKeycode(Optional.ofNullable(obj.get("sneakKeycode")).map(JsonElement::getAsInt).orElse(FCLKeycodes.KEY_LEFTSHIFT));
+            data.setDeadZone(Optional.ofNullable(obj.get("deadZone")).map(JsonElement::getAsInt).orElse(0));
+            data.setCanLock(Optional.ofNullable(obj.get("canLock")).map(JsonElement::getAsBoolean).orElse(false));
+            data.setLockThreshold(Optional.ofNullable(obj.get("lockThreshold")).map(JsonElement::getAsInt).orElse(30));
 
             return data;
         }

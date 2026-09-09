@@ -83,9 +83,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
         return ghost;
     }
 
-    /** alpha 合并优先级：一键隐藏 > 编辑参考组 > 正常 */
+    /** alpha 合并优先级：一键隐藏 > 编辑参考组 > 全局不透明度 */
     private void updateAlpha() {
-        setAlpha(menu.isHideAllViews() ? 0 : (ghost ? GHOST_ALPHA : 1));
+        setAlpha(menu.getViewManager().resolveAlpha(this));
     }
 
     @Override
@@ -321,6 +321,11 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private long firstClickTime;
     private boolean doubleClickEvent = false;
 
+    // 滑动链：swipePressed 为当前被链式按住的按钮（初始是自己，滑出释放后可能为 null），
+    // swipeEngaged 标记出过界（抬起时不再触发单击/双击）
+    private ControlButton swipePressed;
+    private boolean swipeEngaged = false;
+
     // 编辑模式选中态与双角手柄缩放：手柄画在控件内角（命中区与视觉重合，仅手柄可缩放），选中框外扩间隔
     private static final float SELECT_GAP_DP = 4f;
     private static final float HANDLE_VISUAL_DP = 12f;
@@ -453,6 +458,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     positionX = getX();
                     positionY = getY();
                     downTime = System.currentTimeMillis();
+                    swipePressed = this;
+                    swipeEngaged = false;
                     handlePressEvent(!pressEvent);
                     handler.postDelayed(runnable, 400);
                     break;
@@ -461,6 +468,10 @@ public class ControlButton extends AppCompatButton implements CustomView {
                         cursorMode = menu.getCursorMode();
                         setInitialPosition();
                     }
+                    // 滑动链与指针跟随/可移动并存：链式切换只改变按住的按钮，指针移动照常
+                    if (getData().getEvent().isSwipable()) {
+                        handleSwipeMove(event);
+                    }
                     handleMoveEvent(event);
                     if ((Math.abs(event.getX() - downX) > 2 || Math.abs(event.getY() - downY) > 2) && System.currentTimeMillis() - downTime < 400) {
                         handler.removeCallbacks(runnable);
@@ -468,6 +479,20 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
+                    if (swipeEngaged) {
+                        // 滑动链结束：释放链上被按住的按钮（滑回自己时是自己），不触发单击/双击
+                        if (swipePressed != null) {
+                            swipePressed.handleSwipeExit();
+                            swipePressed = null;
+                        }
+                        setNormalStyle();
+                        if (Objects.equals(menu.getInput().getPointerId(), getData().getId())) {
+                            menu.getInput().setPointerId(null);
+                        }
+                        handler.removeCallbacks(runnable);
+                        break;
+                    }
+                    swipePressed = null;
                     if (!getData().getEvent().getPressEvent().isAutoKeep() && !(getData().getEvent().getLongPressEvent().isAutoKeep() && longPressEvent)) {
                         setNormalStyle();
                     }
@@ -693,6 +718,50 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private void handlePressEvent(boolean enable) {
         pressEvent = enable;
         handleTickEvent(enable, getData().getEvent().getPressEvent(), 0);
+    }
+
+    /**
+     * 滑动链移动：手指在当前按住的按钮内不动，滑出后释放它并按下命中的下一个联动按钮
+     * （可滑回自己），悬空滑入任意联动按钮也会按下。
+     */
+    private void handleSwipeMove(MotionEvent event) {
+        float parentX = getX() + event.getX();
+        float parentY = getY() + event.getY();
+        if (swipePressed != null
+                && parentX >= swipePressed.getX() && parentX <= swipePressed.getX() + swipePressed.getWidth()
+                && parentY >= swipePressed.getY() && parentY <= swipePressed.getY() + swipePressed.getHeight()) {
+            return;
+        }
+        if (swipePressed == null) {
+            // 悬空：滑入任一联动按钮时按下
+            ControlButton next = menu.getViewManager().findSwipableButtonAt(parentX, parentY, null);
+            if (next != null) {
+                swipePressed = next;
+                next.handleSwipeEnter();
+            }
+            return;
+        }
+        swipePressed.handleSwipeExit();
+        handler.removeCallbacks(runnable);
+        swipeEngaged = true;
+        swipePressed = menu.getViewManager().findSwipableButtonAt(parentX, parentY, null);
+        if (swipePressed != null) {
+            swipePressed.handleSwipeEnter();
+        }
+    }
+
+    /** 滑动链进入：触发按下保持事件与按压样式 */
+    private void handleSwipeEnter() {
+        handlePressEvent(true);
+        setPressedStyle();
+    }
+
+    /** 滑动链退出：释放按下保持事件（含自动保持锁存）并复位状态、恢复样式 */
+    private void handleSwipeExit() {
+        handleUpAfterPressEvent();
+        cancelTickEvent(getData().getEvent().getPressEvent());
+        pressEvent = false;
+        setNormalStyle();
     }
 
     private void handleUpAfterPressEvent() {

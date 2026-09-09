@@ -36,6 +36,7 @@ enum class RightMenuTag {
     // 功能
     LOCK_VIEW, HIDE_VIEW, SHOW_FPS, OPEN_MULTIPLAYER, OPEN_QUICK_INPUT, OPEN_SEND_KEY,
     SOFT_KEYBOARD_ADJUST, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, WINDOW_SCALE, CURSOR_OFFSET,
+    CONTROLS_OPACITY,
 
     // 手势
     DISABLE_GESTURE, GESTURE_MODE, DISABLE_LEFT_TOUCH,
@@ -174,6 +175,10 @@ class RightMenuAdapter(
                 { menuSetting.itemBarHeight * 100 / screenHeight },
                 RightMenuTag.ITEM_BAR_HEIGHT,
                 "%"
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_controls_opacity, 100, 10,
+                { menuSetting.controlsOpacity }, RightMenuTag.CONTROLS_OPACITY, "%"
             ),
             Row.SeekBarRow(
                 R.string.settings_game_dimension, 300, 1,

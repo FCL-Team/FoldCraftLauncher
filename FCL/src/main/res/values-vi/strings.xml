@@ -355,6 +355,7 @@
     <string name="edit_button_text">Văn bản hiển thị</string>
     <string name="edit_button_event_follow">Con trỏ theo ngón tay</string>
     <string name="edit_button_event_movable">Có thể di chuyển</string>
+    <string name="edit_button_event_swipable">Trượt nối</string>
     <string name="edit_button_event_press">Nhấn</string>
     <string name="edit_button_event_long_press">Nhấn giữ</string>
     <string name="edit_button_event_click">Nhấp</string>
@@ -378,6 +379,9 @@
     <string name="edit_direction_event_left">Mã phím Trái</string>
     <string name="edit_direction_event_right">Mã phím Phải</string>
     <string name="edit_direction_event_follow">Tùy chọn Theo dõi (Chỉ dành cho kiểu cần gạt)</string>
+    <string name="edit_direction_event_dead_zone">Vùng Chết</string>
+    <string name="edit_direction_event_can_lock">Khóa Tiến lên</string>
+    <string name="edit_direction_event_lock_threshold">Ngưỡng Khóa</string>
     <string name="edit_direction_event_follow_fix">Cố định</string>
     <string name="edit_direction_event_follow_center">Tâm theo ngón tay</string>
     <string name="edit_direction_event_follow_always">Tất cả các phần theo ngón tay</string>
@@ -602,6 +606,7 @@
     <string name="menu_settings_item_bar_scale">Tỷ lệ Thanh Vật phẩm</string>
     <string name="menu_settings_item_bar_scale_width">Tỷ lệ Thanh Vật phẩm (chiều rộng)</string>
     <string name="menu_settings_item_bar_scale_height">Tỷ lệ Thanh Vật phẩm (chiều cao)</string>
+    <string name="menu_settings_controls_opacity">Độ mờ Bộ điều khiển</string>
     <string name="menu_settings_show_log">Hiển thị Nhật ký</string>
     <string name="menu_settings_show_log_auto">Tự động Hiển thị Nhật ký</string>
     <string name="menu_settings_performance_mode">Chế độ Hiệu suất Duy trì</string>

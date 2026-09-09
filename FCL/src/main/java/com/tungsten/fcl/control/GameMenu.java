@@ -1030,6 +1030,10 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                     heightListener.onOptionChanged(true);
                 }
                 break;
+            case CONTROLS_OPACITY:
+                menuSetting.setControlsOpacity(progress);
+                viewManager.applyControlsOpacity();
+                break;
             case WINDOW_SCALE: {
                 double doubleValue = progress / 100d;
                 menuSetting.setWindowScale(doubleValue);
