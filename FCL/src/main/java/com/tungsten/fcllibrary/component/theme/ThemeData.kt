@@ -84,7 +84,7 @@ data class ThemeData(
             hsv[1] += (1 - hsv[1]) * 0.3f
             hsv[2] -= (1 - hsv[2]) * 0.3f
         }
-        return Color.HSVToColor(hsv)
+        return Color.HSVToColor(Color.alpha(base), hsv)
     }
 
     companion object {
