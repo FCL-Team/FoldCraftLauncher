@@ -4,7 +4,7 @@ import com.tungsten.fcl.control.data.CustomControl;
 
 public interface CustomView {
     /** 编辑模式参考组（ghost）控件的透明度 */
-    float GHOST_ALPHA = 0.2f;
+    float GHOST_ALPHA = 0.4f;
 
     CustomControl.ViewType getType();
     String getViewId();

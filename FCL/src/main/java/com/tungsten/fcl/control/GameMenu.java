@@ -26,6 +26,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -271,38 +272,37 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         return hideAllViewsProperty.get();
     }
 
-    private final BooleanProperty showOtherGroupsProperty = new SimpleBooleanProperty(this, "showOtherGroups", false);
-
-    public BooleanProperty showOtherGroupsProperty() {
-        return showOtherGroupsProperty;
-    }
-
-    public void setShowOtherGroups(boolean showOtherGroups) {
-        showOtherGroupsProperty.set(showOtherGroups);
-    }
-
-    public boolean isShowOtherGroups() {
-        return showOtherGroupsProperty.get();
-    }
-
-    /** 编辑会话内被临时隐藏的控件组（仅影响编辑画布渲染，不改持久属性） */
-    private final Set<String> editorHiddenGroups = new HashSet<>();
+    /** 编辑会话内手动开启显示的控件组（默认只显示当前编辑组，避免大型布局多组叠加渲染卡顿） */
+    private final Set<String> editorVisibleGroups = new HashSet<>();
 
     public boolean isEditorGroupHidden(@NonNull ControlViewGroup group) {
-        return editorHiddenGroups.contains(group.getId());
+        // 当前编辑组始终显示
+        return group != getViewGroup() && !editorVisibleGroups.contains(group.getId());
     }
 
     public void setEditorGroupHidden(@NonNull ControlViewGroup group, boolean hidden) {
         if (hidden) {
-            editorHiddenGroups.add(group.getId());
+            editorVisibleGroups.remove(group.getId());
         } else {
-            editorHiddenGroups.remove(group.getId());
+            editorVisibleGroups.add(group.getId());
         }
     }
 
-    /** 切换当前编辑组（含样式名重解析），并刷新左右菜单 */
-    private void selectViewGroup(@Nullable ControlViewGroup viewGroup) {
-        setViewGroup(viewGroup);
+    /** 新建控件组（右侧面板"添加控件组"） */
+    private void addEditGroup() {
+        EditViewGroupDialog dialog = new EditViewGroupDialog(getActivity(), this, new ControlViewGroup(UUID.randomUUID().toString()), (name, visibility) -> {
+            ControlViewGroup viewGroup = new ControlViewGroup(UUID.randomUUID().toString());
+            viewGroup.setName(name);
+            viewGroup.setVisibility(visibility);
+            getController().addViewGroup(viewGroup);
+            rightMenuAdapter.rebuild();
+            viewManager.initializeController();
+        });
+        dialog.show();
+    }
+
+    /** 切换当前编辑组（含样式名重解析），并刷新控件组面板 */
+    private void selectViewGroup(@Nullable ControlViewGroup viewGroup) {        setViewGroup(viewGroup);
         if (viewGroup != null) {
             viewGroup.getViewData().buttonList().forEach(it -> {
                 String name = it.getStyle().getName();
@@ -402,6 +402,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         getController().addListener(i -> leftMenuAdapter.rebuild());
         controllerProperty.addListener(invalidate -> {
             setViewGroup(null);
+            if (isEditMode()) {
+                selectDefaultViewGroup();
+            }
             leftMenuAdapter.rebuild();
             getController().addListener(i -> leftMenuAdapter.rebuild());
         });
@@ -466,24 +469,86 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             }
 
             @Override
-            public void onEditGroupMove(@NonNull ControlViewGroup group, boolean up) {
-                List<ControlViewGroup> groups = getController().viewGroups();
-                int index = groups.indexOf(group);
-                int target = up ? index - 1 : index + 1;
-                if (index == -1 || target < 0 || target >= groups.size()) {
-                    return;
-                }
-                Collections.swap(groups, index, target);
-                getViewManager().saveController();
-                // 组顺序决定渲染 z 序，重建控件
-                viewManager.initializeController();
-                rightMenuAdapter.rebuild();
+            public void onEditGroupAdd() {
+                addEditGroup();
+            }
+
+            @Override
+            public void onEditGroupEdit(@NonNull ControlViewGroup group) {
+                EditViewGroupDialog dialog = new EditViewGroupDialog(getActivity(), GameMenu.this, group, (name, visibility) -> {
+                    group.setName(name);
+                    group.setVisibility(visibility);
+                    getController().updateViewGroup(group);
+                    rightMenuAdapter.rebuild();
+                });
+                dialog.show();
+            }
+
+            @Override
+            public void onEditGroupRemove(@NonNull ControlViewGroup group) {
+                FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);
+                builder.setCancelable(false);
+                builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+                builder.setMessage(activity.getString(R.string.menu_control_view_group_delete));
+                builder.setPositiveButton(() -> {
+                    getController().removeViewGroup(group);
+                    if (group == getViewGroup()) {
+                        setViewGroup(null);
+                    }
+                    rightMenuAdapter.rebuild();
+                    viewManager.initializeController();
+                });
+                builder.setNegativeButton(null);
+                builder.create().show();
             }
         });
         rightMenuList.setAdapter(rightMenuAdapter);
         rightMenuAdapter.rebuild();
         rightMenuList.addItemDecoration(new SpacingDecoration(
                 Math.round(6 * activity.getResources().getDisplayMetrics().density)));
+        // 编辑模式控件组长按拖动排序：拖动中实时交换组顺序，松手持久化并按新 z 序重建控件
+        ItemTouchHelper.SimpleCallback dragCallback = new ItemTouchHelper.SimpleCallback(
+                ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0) {
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return isEditMode();
+            }
+
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                return rightMenuAdapter.isControlGroupPosition(viewHolder.getBindingAdapterPosition())
+                        ? makeMovementFlags(ItemTouchHelper.UP | ItemTouchHelper.DOWN, 0)
+                        : makeMovementFlags(0, 0);
+            }
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                int from = rightMenuAdapter.groupIndexOf(viewHolder.getBindingAdapterPosition());
+                int to = rightMenuAdapter.groupIndexOf(target.getBindingAdapterPosition());
+                List<ControlViewGroup> groups = getController().viewGroups();
+                if (from < 0 || to < 0 || from >= groups.size() || to >= groups.size()) {
+                    return false;
+                }
+                Collections.swap(groups, from, to);
+                rightMenuAdapter.notifyItemMoved(viewHolder.getBindingAdapterPosition(), target.getBindingAdapterPosition());
+                return true;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+            }
+
+            @Override
+            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+                // 拖动结束：持久化组顺序并按新 z 序重建控件
+                getViewManager().saveController();
+                viewManager.initializeController();
+            }
+        };
+        new ItemTouchHelper(dragCallback).attachToRecyclerView(rightMenuList);
 
         rightMenuTitle = findViewById(R.id.menu_title);
         rightMenuBack = findViewById(R.id.menu_back);
@@ -839,17 +904,6 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
     private void handleLeftButtonClick(LeftMenuTag tag) {
         switch (tag) {
-            case MANAGE_VIEW_GROUPS: {
-                ViewGroupDialog dialog = new ViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null);
-                dialog.setOnDismissListener(d -> {
-                    // 组增删/排序后刷新左右菜单与控件渲染
-                    leftMenuAdapter.rebuild();
-                    rightMenuAdapter.rebuild();
-                    viewManager.initializeController();
-                });
-                dialog.show();
-                break;
-            }
             case ADD_BUTTON: {
                 if (getViewGroup() == null) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
@@ -906,15 +960,14 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             case EDIT_MODE:
                 setEditMode(checked);
                 if (checked) {
+                    // 每次进入编辑模式重置为只显示当前编辑组，其他组由右侧面板手动开启
+                    editorVisibleGroups.clear();
                     selectDefaultViewGroup();
                     Toast.makeText(getActivity(), R.string.menu_controls_edit_hint, Toast.LENGTH_LONG).show();
                 }
                 break;
             case SHOW_BOUNDARY:
                 setShowViewBoundaries(checked);
-                break;
-            case SHOW_OTHER_GROUPS:
-                setShowOtherGroups(checked);
                 break;
             case HIDE_ALL:
                 setHideAllViews(checked);
@@ -928,8 +981,6 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     private void handleLeftSpinnerSelect(LeftMenuTag tag, int position) {
         if (tag == LeftMenuTag.CURRENT_CONTROLLER) {
             setController(Controllers.getControllers().get(position));
-        } else if (tag == LeftMenuTag.CURRENT_VIEW_GROUP) {
-            selectViewGroup(getController().viewGroups().get(position));
         }
     }
 
@@ -988,17 +1039,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 builder.create().show();
                 break;
             }
-            case MANAGE_GROUPS: {
-                ViewGroupDialog dialog = new ViewGroupDialog(getActivity(), this, false, FXCollections.observableList(new ArrayList<>()), null);
-                dialog.setOnDismissListener(d -> {
-                    // 组增删/排序后刷新左右菜单与控件渲染
-                    leftMenuAdapter.rebuild();
-                    rightMenuAdapter.rebuild();
-                    viewManager.initializeController();
-                });
-                dialog.show();
+            case ADD_GROUP:
+                addEditGroup();
                 break;
-            }
             case FINISH_EDIT:
                 setEditMode(false);
                 break;

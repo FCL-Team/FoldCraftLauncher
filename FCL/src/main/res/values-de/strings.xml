@@ -426,7 +426,6 @@
     <string name="menu_controls_current">Aktuelle Steuerung</string>
     <string name="menu_controls_edit_mode">Bearbeitungsmodus</string>
     <string name="menu_controls_show_boundary">Schaltflächengrenzen anzeigen</string>
-    <string name="menu_controls_show_other_groups">Andere Gruppen anzeigen</string>
     <string name="menu_controls_edit_hint">Zum Auswählen tippen, zum Verschieben ziehen, zum Skalieren die Eckgriffe ziehen</string>
     <string name="menu_controls_hide_all">Alle Elemente ausblenden</string>
     <string name="menu_controls_auto_fit">Automatische Positionierung</string>

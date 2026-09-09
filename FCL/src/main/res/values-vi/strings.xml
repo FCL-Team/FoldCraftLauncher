@@ -529,7 +529,6 @@
     <string name="menu_controls_current">Bộ điều khiển hiện tại</string>
     <string name="menu_controls_edit_mode">Chế độ Chỉnh sửa</string>
     <string name="menu_controls_show_boundary">Hiển thị Ranh giới Chế độ xem</string>
-    <string name="menu_controls_show_other_groups">Hiện các nhóm khác</string>
     <string name="menu_controls_edit_hint">Chạm để chọn, kéo để di chuyển, kéo tay cầm ở góc để đổi kích thước</string>
     <string name="menu_controls_hide_all">Ẩn Tất cả Chế độ xem</string>
     <string name="menu_controls_auto_fit">Tự động điều chỉnh Vị trí</string>

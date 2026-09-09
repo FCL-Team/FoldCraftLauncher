@@ -587,7 +587,6 @@
     <string name="menu_controls_current">Current Controller</string>
     <string name="menu_controls_edit_mode">Edit Mode</string>
     <string name="menu_controls_show_boundary">Show View Boundaries</string>
-    <string name="menu_controls_show_other_groups">Show Other Groups</string>
     <string name="menu_controls_edit_hint">Tap to select, drag to move, drag the corner handles to resize</string>
     <string name="menu_controls_hide_all">Hide All Views</string>
     <string name="menu_controls_auto_fit">Auto Fit Position</string>

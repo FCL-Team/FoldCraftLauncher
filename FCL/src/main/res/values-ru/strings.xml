@@ -431,7 +431,6 @@
     <string name="menu_controls_current">Текущее управление</string>
     <string name="menu_controls_edit_mode">Режим редактирования</string>
     <string name="menu_controls_show_boundary">Показать границы кнопок</string>
-    <string name="menu_controls_show_other_groups">Показать другие группы</string>
     <string name="menu_controls_edit_hint">Коснитесь для выбора, перетащите для перемещения, потяните за угловые маркеры для изменения размера</string>
     <string name="menu_controls_hide_all">Скрыть все элементы</string>
     <string name="menu_controls_auto_fit">Автонастройки позиции</string>

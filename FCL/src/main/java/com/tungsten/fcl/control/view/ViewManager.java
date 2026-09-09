@@ -217,7 +217,6 @@ private long loadDialogShowTime = 0;
         gameMenu.controllerProperty().addListener(i -> initializeController());
         gameMenu.viewGroupProperty().addListener(i -> initializeController());
         gameMenu.editModeProperty().addListener(i -> initializeController());
-        gameMenu.showOtherGroupsProperty().addListener(i -> initializeController());
     }
 
     public void addView(CustomControl control) {
@@ -328,7 +327,7 @@ private long loadDialogShowTime = 0;
     }
 
     /**
-     * 需要渲染的布局：编辑模式为当前布局（开启"显示其他布局组"时其余布局以参考组 ghost 渲染），
+     * 需要渲染的布局：编辑模式为当前布局 + 未被编辑面板隐藏的其他布局（参考组，可多组同时显示），
      * 游戏模式为全部可见布局（隐藏布局不加载，bindViewGroup 事件唤起时按需加载）。
      */
     private List<ControlViewGroup> targets() {
@@ -337,12 +336,10 @@ private long loadDialogShowTime = 0;
         if (gameMenu.isEditMode()) {
             if (gameMenu.getViewGroup() == null) return Collections.emptyList();
             ArrayList<ControlViewGroup> list = new ArrayList<>();
-            if (gameMenu.isShowOtherGroups()) {
-                for (ControlViewGroup group : controller.viewGroups()) {
-                    // 参考组可被编辑面板临时隐藏；当前编辑组始终渲染
-                    if (group != gameMenu.getViewGroup() && !gameMenu.isEditorGroupHidden(group)) {
-                        list.add(group);
-                    }
+            for (ControlViewGroup group : controller.viewGroups()) {
+                // 参考组可被编辑面板临时隐藏；当前编辑组始终渲染
+                if (group != gameMenu.getViewGroup() && !gameMenu.isEditorGroupHidden(group)) {
+                    list.add(group);
                 }
             }
             list.add(gameMenu.getViewGroup());

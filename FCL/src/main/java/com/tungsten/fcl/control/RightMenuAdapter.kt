@@ -63,7 +63,7 @@ enum class RightMenuTag {
     SDL_AUTO_SHOW_IME,
 
     // 编辑模式控件组面板
-    MANAGE_GROUPS, FINISH_EDIT
+    ADD_GROUP, EDIT_GROUP, REMOVE_GROUP, FINISH_EDIT
 }
 
 /**
@@ -88,11 +88,17 @@ class RightMenuAdapter(
         /** 编辑模式控件组面板：点击组名切换当前编辑组 */
         fun onEditGroupSelect(group: ControlViewGroup)
 
-        /** 编辑模式控件组面板：切换组的编辑画布显示/隐藏 */
+        /** 编辑模式控件组面板：切换组在编辑画布的显示/隐藏（可多组同时显示） */
         fun onEditGroupToggle(group: ControlViewGroup, visible: Boolean)
 
-        /** 编辑模式控件组面板：上移/下移调整组渲染层级 */
-        fun onEditGroupMove(group: ControlViewGroup, up: Boolean)
+        /** 编辑模式控件组面板：新建控件组 */
+        fun onEditGroupAdd()
+
+        /** 编辑模式控件组面板：编辑组属性（名称/初始可见性） */
+        fun onEditGroupEdit(group: ControlViewGroup)
+
+        /** 编辑模式控件组面板：删除组（含确认） */
+        fun onEditGroupRemove(group: ControlViewGroup)
     }
 
     private val menuSetting: MenuSetting get() = gameMenu.menuSetting
@@ -350,20 +356,20 @@ class RightMenuAdapter(
     }
     }
 
-    /** 编辑模式控件组面板：顶部操作 + 各组（点击切组、开关显示、按钮调层级） */
+    /** 编辑模式控件组面板：顶部操作 + 各组（点击切组、开关显隐、编辑属性、删除），组行长按拖动排序 */
     private fun buildEditRows(): List<Row> {
         val groups = gameMenu.controller?.viewGroups() ?: emptyList()
         val rows = mutableListOf<Row>(
             Row.ButtonRow(
-                R.string.menu_controls_groups,
+                R.string.menu_control_view_group_add,
                 listOf(
-                    R.string.menu_controls_manage to RightMenuTag.MANAGE_GROUPS,
+                    R.string.menu_control_view_group_add to RightMenuTag.ADD_GROUP,
                     R.string.menu_controls_finish_edit to RightMenuTag.FINISH_EDIT
                 )
             )
         )
-        groups.forEachIndexed { index, group ->
-            rows += Row.ControlGroupRow(group, isFirst = index == 0, isLast = index == groups.size - 1)
+        groups.forEach { group ->
+            rows += Row.ControlGroupRow(group)
         }
         return rows
     }
@@ -371,11 +377,9 @@ class RightMenuAdapter(
     private sealed class Row {
         data class CategoryRow(val category: RightMenuCategory) : Row()
 
-        /** 控件组行：组名（点击切换编辑组）+ 上移/下移（渲染层级）+ 显示开关 */
+        /** 控件组行：组名（点击切换编辑组）+ 属性编辑 + 删除 + 显示开关；长按拖动调整渲染层级 */
         data class ControlGroupRow(
-            val group: ControlViewGroup,
-            val isFirst: Boolean,
-            val isLast: Boolean
+            val group: ControlViewGroup
         ) : Row()
 
         data class SwitchRow(
@@ -452,7 +456,7 @@ class RightMenuAdapter(
         }
     }
 
-    /** 控件组行：当前编辑组主题色高亮，组名点击切换，开关控制编辑画布显隐，按钮调整渲染层级 */
+    /** 控件组行：当前编辑组主题色高亮，组名点击切换，开关控制编辑画布显隐，按钮编辑/删除属性 */
     private fun bindControlGroup(holder: Holder, row: Row.ControlGroupRow) {
         val binding = ItemMenuControlGroupBinding.bind(holder.itemView)
         val isCurrent = row.group == gameMenu.viewGroup
@@ -461,11 +465,8 @@ class RightMenuAdapter(
             holder.itemView.background = selectedCardBackground(ThemeEngine.getTheme().getColor(), density)
         }
         binding.label.setOnClickListener { listener.onEditGroupSelect(row.group) }
-        listOf(binding.up to true, binding.down to false).forEach { (button, up) ->
-            button.setText(if (up) "▲" else "▼")
-            button.visibility = if (up && row.isFirst || !up && row.isLast) View.GONE else View.VISIBLE
-            button.setOnClickListener { listener.onEditGroupMove(row.group, up) }
-        }
+        binding.edit.setOnClickListener { listener.onEditGroupEdit(row.group) }
+        binding.delete.setOnClickListener { listener.onEditGroupRemove(row.group) }
         binding.switchView.setOnCheckedChangeListener(null)
         binding.switchView.isChecked = !gameMenu.isEditorGroupHidden(row.group)
         // 当前编辑组始终显示，不允许隐藏
@@ -474,6 +475,13 @@ class RightMenuAdapter(
             listener.onEditGroupToggle(row.group, checked)
         }
     }
+
+    /** 该位置是否为控件组行（组行前有一个操作行） */
+    fun isControlGroupPosition(position: Int): Boolean =
+        gameMenu.isEditMode && position in 1..rows.lastIndex
+
+    /** 控件组行位置转组列表索引 */
+    fun groupIndexOf(position: Int): Int = position - 1
 
     private fun bindCategory(holder: Holder, row: Row.CategoryRow) {
         val binding = ItemMenuCategoryBinding.bind(holder.itemView)
