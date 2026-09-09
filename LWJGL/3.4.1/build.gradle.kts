@@ -55,7 +55,6 @@ tasks.jar {
         "lwjgl-spvc.jar",
         "lwjgl-vma.jar",
         "lwjgl-vulkan.jar",
-        "lwjgl-sdl.jar",
         "lwjgl-spng.jar"
     )
 
