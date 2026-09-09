@@ -594,8 +594,12 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                             && Math.abs(event.getY() - downY) <= 10) {
                         setX(positionX);
                         setY(positionY);
-                        // 轻点选中；编辑/复制/删除通过悬浮操作栏操作
-                        menu.getViewManager().selectView(this);
+                        // 轻点切换选中：已选中（操作栏显示中）时取消选中，未选中时选中
+                        if (selected) {
+                            menu.getViewManager().clearSelection();
+                        } else {
+                            menu.getViewManager().selectView(this);
+                        }
                     } else {
                         getData().getBaseInfo().setXPosition(Math.round((1000 * getX()) / (screenWidth - getSize())));
                         getData().getBaseInfo().setYPosition(Math.round((1000 * getY()) / (screenHeight - getSize())));
