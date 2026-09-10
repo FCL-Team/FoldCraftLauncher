@@ -12,9 +12,6 @@ static __thread osm_render_window_t* currentBundle;
 // a tiny buffer for rendering when there's nowhere t render
 static char no_render_buffer[4];
 
-// Its not in a .h file because it is not supposed to be used outsife of this file.
-void setNativeWindowSwapInterval(struct ANativeWindow* nativeWindow, int swapInterval);
-
 bool osm_init() {
     if(!dlsym_OSMesa()) return false;
     return true;

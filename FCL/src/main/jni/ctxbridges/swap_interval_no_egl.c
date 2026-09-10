@@ -222,8 +222,10 @@ struct ANativeWindow_real
 // endregion
 
 void setNativeWindowSwapInterval(struct ANativeWindow* nativeWindow, int swapInterval) {
+    // BufferQueue 同步模式下 dequeueBuffer 按垂直同步信号阻塞，持续帧率会被锁在屏幕刷新率；
+    // 交换间隔 0 会让 Surface 切入异步模式（生产者不再阻塞），因此关闭垂直同步时必须显式置 0
     if(!getenv("POJAV_VSYNC_IN_ZINK")) {
-        return;
+        swapInterval = 0;
     }
     struct ANativeWindow_real* nativeWindowReal = (struct ANativeWindow_real*) nativeWindow;
     if(nativeWindowReal->common.magic != ANDROID_NATIVE_WINDOW_MAGIC) {

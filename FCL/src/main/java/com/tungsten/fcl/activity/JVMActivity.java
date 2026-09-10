@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -103,12 +104,32 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         });
     }
 
+    /**
+     * 请求系统将屏幕切换到设备支持的最高刷新率，避免游戏帧率被系统限制在自选的较低刷新档位
+     *
+     * 参考 MinecraftGLSurface（https://github.com/AngelAuraMC/Amethyst-Android/blob/v3_openjdk/app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/MinecraftGLSurface.java）
+     */
+    private void voteMaxDisplayRefreshRate(Surface surface) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return;
+        float maxRefreshRate = 120f;
+        for (float rate : getDisplay().getMode().getAlternativeRefreshRates()) {
+            maxRefreshRate = Math.max(maxRefreshRate, rate);
+        }
+        surface.setFrameRate(
+                maxRefreshRate,
+                Surface.FRAME_RATE_COMPATIBILITY_DEFAULT,
+                Surface.CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS
+        );
+    }
+
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
+        Surface nativeSurface = new Surface(surfaceTexture);
+        voteMaxDisplayRefreshRate(nativeSurface);
         if (isRunning) {
             fclBridge.setSurfaceTexture(surfaceTexture);
-            CallbackBridge.setupBridgeWindow(new Surface(surfaceTexture));
-            SdlBridge.prepareSurface(this, new Surface(surfaceTexture), (ViewGroup) textureView.getParent(), this);
+            CallbackBridge.setupBridgeWindow(nativeSurface);
+            SdlBridge.prepareSurface(this, nativeSurface, (ViewGroup) textureView.getParent(), this);
             menu.onGraphicOutput();
             return;
         }
@@ -133,8 +154,8 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         // SDL 集成：初始化 SDL 运行时并绑定 Surface（游戏 JVM 侧 SDL_Init 时再完成加载）
         CallbackBridge.windowWidth = width;
         CallbackBridge.windowHeight = height;
-        SdlBridge.prepareSurface(this, new Surface(surfaceTexture), (ViewGroup) textureView.getParent(), this);
-        fclBridge.execute(new Surface(surfaceTexture), menu.getCallbackBridge());
+        SdlBridge.prepareSurface(this, nativeSurface, (ViewGroup) textureView.getParent(), this);
+        fclBridge.execute(nativeSurface, menu.getCallbackBridge());
         fclBridge.setSurfaceTexture(surfaceTexture);
         fclBridge.pushEventWindow(width, height);
     }
