@@ -420,6 +420,8 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         }
         recyclerView.setAdapter(adapter);
+        // 复用缓存 adapter 时本地安装状态可能已变化，重新检测
+        refreshInstalledState();
     }
 
     protected String getLocalizedCategoryIndent(CategoryIndented indented) {
@@ -553,7 +555,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     /**
      * 下载到当前选中游戏目录的指定子目录（版本未选中时落到根目录）
      */
-    private static void download(Context context, RemoteMod.Version file, String subdirectoryName) {
+    private void download(Context context, RemoteMod.Version file, String subdirectoryName) {
         Profile profile = Profiles.getSelectedProfile();
         String version = profile.getSelectedVersion();
 
@@ -580,6 +582,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                         }
                     } else {
                         Toast.makeText(context, context.getString(R.string.install_success), Toast.LENGTH_SHORT).show();
+                        refreshInstalledState();
                     }
                 }).executor();
                 DownloadManager.submit(name, fileTask, executor);
@@ -594,7 +597,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
      * 不弹命名对话框，直接使用原始文件名；解析失败的前置跳过并提示数量。
      * 本地 mods 目录已安装的模组（含本体）通过当前下载源的反查接口去重跳过。
      */
-    public static void downloadWithDependencies(Context context, Profile profile, @Nullable String version, RemoteMod.Version file, String subdirectoryName) {
+    public void downloadWithDependencies(Context context, Profile profile, @Nullable String version, RemoteMod.Version file, String subdirectoryName) {
         if (version == null) version = profile.getSelectedVersion();
         Path runDirectory = profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
         Path modsDirectory = runDirectory.resolve(subdirectoryName);
@@ -625,8 +628,8 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                 }).start();
     }
 
-    /** 提交单个模组文件到下载队列：队列标题与保存文件均使用原始文件名 */
-    private static void submitModDownload(Context context, String filename, RemoteMod.Version version, Path modsDirectory) {
+    /** 提交单个模组文件到下载队列：队列标题与保存文件均使用原始文件名；成功完成后刷新安装状态 */
+    private void submitModDownload(Context context, String filename, RemoteMod.Version version, Path modsDirectory) {
         Path dest = modsDirectory.resolve(filename);
         FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(version.file().url()), dest.toFile(), version.file().getIntegrityCheck());
         fileTask.setName(filename);
@@ -640,10 +643,21 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                 builder.setMessage(DownloadProviders.localizeErrorMessage(context, exception));
                 builder.setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive), null);
                 builder.create().show();
+            } else if (exception == null) {
+                refreshInstalledState();
             }
         }).executor();
         DownloadManager.submit(filename, fileTask, executor);
         executor.start();
+    }
+
+    /**
+     * 本地已安装模组变化后刷新列表"已安装"标记（adapter 内部有变化检测，重复调用无害）
+     */
+    private void refreshInstalledState() {
+        if (adapter != null) {
+            adapter.refreshInstalledState();
+        }
     }
 
     @Override

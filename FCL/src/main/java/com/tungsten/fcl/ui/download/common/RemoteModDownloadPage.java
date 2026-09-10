@@ -204,7 +204,7 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
         }
         if (view == downloadAll) {
             // 一键下载：主模组 + 全部必需前置一起入队
-            DownloadPage.downloadWithDependencies(downloadPage.getContext(), Profiles.getSelectedProfile(), null, modVersion, "mods");
+            downloadPage.downloadWithDependencies(downloadPage.getContext(), Profiles.getSelectedProfile(), null, modVersion, "mods");
         }
         if (view == back) {
             back.setEnabled(false);
