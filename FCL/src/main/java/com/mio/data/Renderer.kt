@@ -14,7 +14,9 @@ data class Renderer(
     /** v2 插件渲染器的 POJAV_RENDERER 值；内置与 v1 插件渲染器为空串（不设置该环境变量） */
     val pojavRendererId: String = "",
     /** 来源显示名（插件应用名）；内置渲染器为空串 */
-    val source: String = ""
+    val source: String = "",
+    /** 展示用最大兼容版本，空串回落 maxMCver；兼容性判断始终用 maxMCver */
+    val displayMaxMCver: String = ""
 ) {
     companion object {
         const val ID_GL4ES = "f7e985d8-6d4c-f63c-d9f1-06074dab823a"

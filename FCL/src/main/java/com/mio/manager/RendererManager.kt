@@ -52,7 +52,8 @@ object RendererManager {
             null,
             Renderer.ID_VIRGL,
             "",
-            "26.2"
+            "26.3-snapshot-3",
+            displayMaxMCver = "26.2"
         )
 
         RENDERER_VGPU = Renderer(
@@ -78,7 +79,8 @@ object RendererManager {
             null,
             Renderer.ID_ZINK,
             "",
-            "26.2"
+            "26.3-snapshot-3",
+            displayMaxMCver = "26.2"
         )
 
         RENDERER_FREEDRENO = Renderer(
@@ -91,7 +93,8 @@ object RendererManager {
             null,
             Renderer.ID_FREEDRENO,
             "",
-            "26.2"
+            "26.3-snapshot-3",
+            displayMaxMCver = "26.2"
         )
 
         RENDERER_NGGL4ES = Renderer(
@@ -104,7 +107,8 @@ object RendererManager {
             null,
             Renderer.ID_NGGL4ES,
             "",
-            "26.2"
+            "26.3-snapshot-3",
+            displayMaxMCver = "26.2"
         )
 
         RendererPlugin.init(context)

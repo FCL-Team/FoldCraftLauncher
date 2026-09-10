@@ -40,11 +40,12 @@ class RendererSelectItemAdapter(
         )
         val renderer = renderers[position]
         binding.title.text = renderer.des
+        val displayMax = renderer.displayMaxMCver.ifEmpty { renderer.maxMCver }
         val ver = when {
-            renderer.minMCver.isNotEmpty() && renderer.maxMCver.isNotEmpty() ->
-                "${renderer.minMCver}~${renderer.maxMCver}"
+            renderer.minMCver.isNotEmpty() && displayMax.isNotEmpty() ->
+                "${renderer.minMCver}~$displayMax"
             renderer.minMCver.isNotEmpty() -> ">=${renderer.minMCver}"
-            renderer.maxMCver.isNotEmpty() -> "<=${renderer.maxMCver}"
+            displayMax.isNotEmpty() -> "<=$displayMax"
             else -> ""
         }
         binding.version.text = context.getString(R.string.supported_mc_version) + " " +
