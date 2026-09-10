@@ -141,7 +141,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
     private MultiplayerDialog multiplayerDialog;
 
-    /** 右菜单切换动画进行中标记，避免动画叠加 */
+    /**
+     * 右菜单切换动画进行中标记，避免动画叠加
+     */
     private boolean rightMenuAnimating;
 
     private MenuView menuView;
@@ -274,7 +276,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         return hideAllViewsProperty.get();
     }
 
-    /** 编辑会话内手动开启显示的控件组（默认只显示当前编辑组，避免大型布局多组叠加渲染卡顿） */
+    /**
+     * 编辑会话内手动开启显示的控件组（默认只显示当前编辑组，避免大型布局多组叠加渲染卡顿）
+     */
     private final Set<String> editorVisibleGroups = new HashSet<>();
 
     public boolean isEditorGroupHidden(@NonNull ControlViewGroup group) {
@@ -290,7 +294,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         }
     }
 
-    /** 新建控件组（右侧面板"添加控件组"） */
+    /**
+     * 新建控件组（右侧面板"添加控件组"）
+     */
     private void addEditGroup() {
         EditViewGroupDialog dialog = new EditViewGroupDialog(getActivity(), this, new ControlViewGroup(UUID.randomUUID().toString()), (name, visibility) -> {
             ControlViewGroup viewGroup = new ControlViewGroup(UUID.randomUUID().toString());
@@ -303,8 +309,11 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         dialog.show();
     }
 
-    /** 切换当前编辑组（含样式名重解析），并刷新控件组面板 */
-    private void selectViewGroup(@Nullable ControlViewGroup viewGroup) {        setViewGroup(viewGroup);
+    /**
+     * 切换当前编辑组（含样式名重解析），并刷新控件组面板
+     */
+    private void selectViewGroup(@Nullable ControlViewGroup viewGroup) {
+        setViewGroup(viewGroup);
         if (viewGroup != null) {
             viewGroup.getViewData().buttonList().forEach(it -> {
                 String name = it.getStyle().getName();
@@ -350,7 +359,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         viewGroupProperty.set(viewGroup);
     }
 
-    /** 编辑模式下未选中视图组时选中第一个，保证编辑视图立即可加载，不依赖菜单列表绑定时的兜底回调 */
+    /**
+     * 编辑模式下未选中视图组时选中第一个，保证编辑视图立即可加载，不依赖菜单列表绑定时的兜底回调
+     */
     private void selectDefaultViewGroup() {
         if (editModeProperty.get() && getViewGroup() == null && !getController().viewGroups().isEmpty()) {
             setViewGroup(getController().viewGroups().get(0));
@@ -590,7 +601,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         });
     }
 
-    /** 菜单切换动画：旧列表淡出后切换内容，新列表滑入淡入 */
+    /**
+     * 菜单切换动画：旧列表淡出后切换内容，新列表滑入淡入
+     */
     private void switchRightMenuContent(boolean toCategory, Runnable refresh) {
         if (rightMenuAnimating) {
             refresh.run();
