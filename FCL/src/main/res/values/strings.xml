@@ -45,7 +45,7 @@
     <string name="plugin_type_native">Native Library</string>
     <string name="plugin_enable">Enable</string>
     <string name="plugin_uninstall">Uninstall</string>
-    <string name="plugin_miolibpatcher_name">MioLibPatcher</string>
+    <string name="plugin_miolibpatcher_name" translatable="false">MioLibPatcher</string>
     <string name="plugin_miolibpatcher_desc">JVM bytecode patch that fixes mod compatibility issues on Android</string>
     <string name="plugin_miolibpatcher_alc10">ALC10 patch</string>
     <string name="plugin_miolibpatcher_alc10_desc">Replaces alcGetCurrentContext to fix the no-audio issue in Mite (1.6.4)</string>
