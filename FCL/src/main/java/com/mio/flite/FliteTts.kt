@@ -110,6 +110,12 @@ object FliteTts {
         }
     }
 
+    /** 停止当前朗读并唤醒对应的阻塞等待，游戏侧 clear/destroy 经 libflite 桥接调用 */
+    @JvmStatic
+    fun stop() {
+        tts?.stop()
+    }
+
     /** 释放 TTS 引擎并唤醒所有阻塞中的朗读 */
     @JvmStatic
     @Synchronized

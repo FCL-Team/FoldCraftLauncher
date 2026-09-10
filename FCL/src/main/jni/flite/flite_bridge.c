@@ -22,6 +22,7 @@ static jobject application;
 static jclass bridge_class;
 static jmethodID bridge_init;   // ()Z
 static jmethodID bridge_speak;  // ([BF)F
+static jmethodID bridge_stop;   // ()V
 static int bridge_ready;
 
 // text2speech 1.18.11（MC 26.x）的合成流程在 Java 侧逐句持有
@@ -72,7 +73,8 @@ static int setup_bridge(JNIEnv *env) {
     (*env)->DeleteLocalRef(env, cls);
     bridge_init = (*env)->GetStaticMethodID(env, bridge_class, "init", "()Z");
     bridge_speak = (*env)->GetStaticMethodID(env, bridge_class, "speak", "([BF)F");
-    if (bridge_init == NULL || bridge_speak == NULL) return 0;
+    bridge_stop = (*env)->GetStaticMethodID(env, bridge_class, "stop", "()V");
+    if (bridge_init == NULL || bridge_speak == NULL || bridge_stop == NULL) return 0;
     return 1;
 
 fail:
@@ -142,6 +144,16 @@ JNIEXPORT jfloat JNICALL fcl_flite_say(const char *text) {
     JNIEnv *env = attach_dalvik();
     if (env == NULL) return -1.0f;
     return fcl_flite_say_with_gain(env, text, 1.0f);
+}
+
+// 打断当前朗读：游戏 clear() 经 MioLibPatcher 注入的 JNA 调用进入
+// （TTSCancelTransformer 按 "flite_cancel" 符号懒解析，勿改名）
+JNIEXPORT void JNICALL flite_cancel(void) {
+    if (!ensure_bridge()) return;
+    JNIEnv *env = attach_dalvik();
+    if (env == NULL) return;
+    (*env)->CallStaticVoidMethod(env, bridge_class, bridge_stop);
+    if ((*env)->ExceptionCheck(env)) (*env)->ExceptionClear(env);
 }
 
 // flite 引擎接口（text2speech 1.16.7~1.17.9，MC 1.20.2~1.21.x）
