@@ -725,7 +725,7 @@
     <string name="settings_advanced_server_ip_prompt">Entra automaticamente após iniciar o jogo.</string>
     <string name="settings_fcl_controller">Controle</string>
     <string name="settings_fcl_renderer">Implementação OpenGL (Renderizador)</string>
-    <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, suporta 1.17-)</string>
+    <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+)</string>
     <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, suporta GPU Adreno 616-660)</string>
     <string name="settings_download_netdisk">Netdisk (Recomendado para usuários na China)</string>
     <string name="settings_game">Config. do Jogo</string>

@@ -662,8 +662,8 @@
     <string name="settings_fcl_controller">Controller</string>
     <string name="settings_fcl_vulkan_driver_system">System-Vulkan-Treiber verwenden</string>
     <string name="settings_fcl_renderer">OpenGL-Implementierung (Renderer)</string>
-    <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+, nur 1.17-)</string>
-    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, nur für GPU a616-a660)</string>
+    <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+)</string>
+    <string name="settings_fcl_renderer_freedreno">Freedreno (OpenGL 4.6, nur für adreno616-660)</string>
     <string name="settings_fcl_driver">Vulkan-Treiber</string>
     <string name="settings_download_netdisk">Netdisk(Qıtayda qullanğanlar içün tevsiye etile)</string>
     <string name="settings_game">Spieleinstellungen</string>
