@@ -250,3 +250,38 @@ target_link_libraries(
         log
         dl
 )
+
+# 模块：flite 系列 shim —— 游戏 text2speech 经 JNA 按名加载的 flite 语音引擎接口，
+# 桥接到安卓系统 TTS（核心见 flite/flite_bridge.c 与 com.mio.flite.FliteTts，
+# 依赖启动器注入的 DALVIK_JAVAVM / DALVIK_APPLICATION 环境变量）
+add_library(
+        flite
+        SHARED
+        flite/flite_bridge.c
+)
+
+target_link_libraries(
+        flite
+        PRIVATE
+        log
+)
+
+# fliteWrapper：text2speech 1.13.9 及更早的接口名（init/say），转发 libflite
+add_library(
+        fliteWrapper
+        SHARED
+        flite/flite_wrapper.c
+)
+
+target_link_libraries(
+        fliteWrapper
+        PRIVATE
+        flite
+)
+
+# flite_cmu_us_kal16：仅提供非空 voice 指针的占位符号
+add_library(
+        flite_cmu_us_kal16
+        SHARED
+        flite/flite_cmu_us_kal16.c
+)
