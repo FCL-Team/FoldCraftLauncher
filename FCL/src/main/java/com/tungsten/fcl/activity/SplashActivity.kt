@@ -21,6 +21,7 @@ import com.mio.JavaManager
 import com.mio.manager.RendererManager
 import com.mio.util.ImageUtil
 import com.mio.util.getFileName
+import com.mio.util.getSystemDnsServerAddresses
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivitySplashBinding
 import com.tungsten.fcl.fragment.EulaFragment
@@ -251,22 +252,32 @@ class SplashActivity : FCLActivity() {
             java21 = RuntimeUtils.isLatest(FCLPath.JAVA_21_PATH, "/assets/app_runtime/java/jre21")
             java25 = RuntimeUtils.isLatest(FCLPath.JAVA_25_PATH, "/assets/app_runtime/java/jre25")
             jna = RuntimeUtils.isLatest(FCLPath.JNA_PATH, "/assets/app_runtime/jna")
-            if (!File(FCLPath.JAVA_PATH, "resolv.conf").exists()) {
+            val resolvFile = File(FCLPath.JAVA_PATH, "resolv.conf")
+            val servers = buildSet {
+                getSystemDnsServerAddresses()
+                    // JNDI DNS 的 nameserver 解析无法处理裸 IPv6 地址，仅保留 IPv4
+                    ?.filterNot { it.contains(':') }
+                    ?.let { addAll(it) }
+
+                // 按地区获取公共 DNS
                 if (LocaleUtils.getSystemLocale().displayName != Locale.CHINA.displayName) {
-                    FileUtils.writeText(
-                        File(FCLPath.JAVA_PATH + "/resolv.conf"), """
-     nameserver 1.1.1.1
-     nameserver 1.0.0.1
-     """.trimIndent()
-                    )
+                    add("1.1.1.1")
+                    add("1.0.0.1")
                 } else {
-                    FileUtils.writeText(
-                        File(FCLPath.JAVA_PATH + "/resolv.conf"), """
-     nameserver 8.8.8.8
-     nameserver 8.8.4.4
-     """.trimIndent()
-                    )
+                    add("223.5.5.5")
+                    add("119.29.29.29")
                 }
+            }
+            Logging.LOG.log(Level.INFO, "Using DNS servers for game: $servers")
+            val configText = servers.joinToString(separator = "\n") { "nameserver $it" }
+            runCatching {
+                // 配置文件不存在或内容不一致时覆写一次
+                if (!resolvFile.exists() || resolvFile.readText().trim() != configText.trim()) {
+                    resolvFile.writeText(configText)
+                }
+            }.onFailure {
+                Logging.LOG.log(Level.WARNING, "Failed to create resolv.conf", it)
+                resolvFile.delete()
             }
         } catch (e: IOException) {
             e.printStackTrace()
