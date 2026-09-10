@@ -426,15 +426,25 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         });
         editModeProperty.addListener(i -> {
             leftMenuAdapter.rebuild();
+            if (!isEditMode()) {
+                // 退出编辑：恢复设置中心（分类列表 + 标题），并复位可能残留的二级分类状态
+                if (rightMenuAdapter != null) {
+                    showCategories();
+                }
+                if (addGroupButton != null) {
+                    addGroupButton.setVisibility(View.GONE);
+                }
+                return;
+            }
             if (rightMenuAdapter != null) {
                 rightMenuAdapter.rebuild();
             }
             if (addGroupButton != null) {
-                addGroupButton.setVisibility(isEditMode() ? View.VISIBLE : View.GONE);
+                addGroupButton.setVisibility(View.VISIBLE);
             }
             if (rightMenuTitle != null) {
-                // 标题跟随面板内容：编辑模式为控件组面板，否则为设置中心
-                rightMenuTitle.setText(isEditMode() ? R.string.menu_controls_groups : R.string.menu_settings);
+                // 标题跟随面板内容：编辑模式为控件组面板
+                rightMenuTitle.setText(R.string.menu_controls_groups);
                 rightMenuBack.setVisibility(View.GONE);
             }
         });
@@ -581,6 +591,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         addGroupButton = findViewById(R.id.add_group_button);
         addGroupButton.setOnClickListener(v -> addEditGroup());
         addGroupButton.setVisibility(isEditMode() ? View.VISIBLE : View.GONE);
+        // editModeProperty 的监听注册于本方法之前，启动即处于编辑态（布局编辑器）时
+        // 监听回调会因标题未初始化而跳过，此处补一次同步
+        rightMenuTitle.setText(isEditMode() ? R.string.menu_controls_groups : R.string.menu_settings);
 
         logWindow.setVisibility(menuSetting.isShowLog() || (!isSimulated() && menuSetting.isAutoShowLog()));
     }
