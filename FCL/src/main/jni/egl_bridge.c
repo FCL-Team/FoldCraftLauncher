@@ -53,6 +53,9 @@ extern void updateMonitorSize(int width, int height);
 EGLConfig config;
 struct PotatoBridge potatoBridge;
 
+// MC 最近一次请求的交换间隔；-1 表示尚未请求
+static int lastSwapInterval = -1;
+
 #define RENDERER_GL4ES 1
 #define RENDERER_VK_ZINK 2
 #define RENDERER_VULKAN 4
@@ -88,7 +91,14 @@ EXTERNAL_API void pojavTerminate() {
 JNIEXPORT void JNICALL
 Java_org_lwjgl_glfw_CallbackBridge_setupBridgeWindow(JNIEnv *env, ABI_COMPAT jclass clazz,
                                                      jobject surface) {
+    // 首个窗口由 pojavInit 应用交换间隔；此处处理窗口重建（旋转、分屏等）：
+    // 生产者状态会随新窗口重置，若不重新应用，MC 不会再次发起交换间隔调用，帧率会退回锁定在屏幕刷新率
+    bool windowRecreated = pojav_environ->pojavWindow != NULL;
     pojav_environ->pojavWindow = ANativeWindow_fromSurface(env, surface);
+    if (windowRecreated && pojav_environ->config_renderer != RENDERER_VULKAN) {
+        if (lastSwapInterval >= 0) setNativeWindowSwapInterval(pojav_environ->pojavWindow, lastSwapInterval);
+        else if (!getenv("POJAV_VSYNC_IN_ZINK")) setNativeWindowSwapInterval(pojav_environ->pojavWindow, 0);
+    }
     if (br_setup_window != NULL) br_setup_window();
 }
 
@@ -300,6 +310,10 @@ EXTERNAL_API int pojavInit() {
                                      AHARDWAREBUFFER_FORMAT_R8G8B8X8_UNORM);
     updateMonitorSize(pojav_environ->savedWidth, pojav_environ->savedHeight);
     pojavInitOpenGL();
+    // 垂直同步开关关闭时主动切入异步模式，解除帧率对屏幕刷新率的锁定；开启时交由 MC 的交换间隔调用决定
+    if (pojav_environ->config_renderer != RENDERER_VULKAN && !getenv("POJAV_VSYNC_IN_ZINK")) {
+        setNativeWindowSwapInterval(pojav_environ->pojavWindow, 0);
+    }
     return 1;
 }
 
@@ -380,6 +394,8 @@ Java_org_lwjgl_vulkan_VK_getVulkanDriverHandle(ABI_COMPAT JNIEnv *env, ABI_COMPA
 }
 
 EXTERNAL_API void pojavSwapInterval(int interval) {
+    lastSwapInterval = interval;
+
     if (pojav_environ->config_renderer == RENDERER_VK_ZINK
      || pojav_environ->config_renderer == RENDERER_GL4ES) {
         br_swap_interval(interval);

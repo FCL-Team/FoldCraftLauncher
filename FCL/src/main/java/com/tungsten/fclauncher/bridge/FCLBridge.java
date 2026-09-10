@@ -107,6 +107,17 @@ public class FCLBridge {
     public native void setupExitTrap(FCLBridge bridge);
     public static native void initializeHooks();
 
+    /**
+     * 返回当前（Dalvik/ART）JavaVM 指针，供游戏 JVM 侧原生代码经环境变量 attach 回安卓运行时
+     */
+    public static native long getJavaVMPointer();
+
+    /**
+     * 为对象创建全局引用并以十六进制字符串返回其地址，配合 {@link #getJavaVMPointer()} 注入环境变量
+     */
+    @Nullable
+    public static native String jObjectToString(@Nullable Object object);
+
     public void setThread(Thread thread) {
         this.thread = thread;
     }

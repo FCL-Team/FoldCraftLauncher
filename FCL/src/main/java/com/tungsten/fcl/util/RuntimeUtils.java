@@ -6,12 +6,10 @@ import android.system.Os;
 import com.tungsten.fcl.R;
 import com.tungsten.fclauncher.FCLauncher;
 import com.tungsten.fclauncher.utils.Architecture;
-import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.Pack200Utils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.io.IOUtils;
-import com.tungsten.fclcore.util.io.Unzipper;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -51,8 +49,8 @@ public class RuntimeUtils {
             }
         }
         if (!targetFile.exists()) return false;
-        long version = Long.parseLong(IOUtils.readFullyAsString(RuntimeUtils.class.getResourceAsStream(srcDir + "/version")));
-        String installedVersion = FileUtils.readText(targetFile);
+        long version = Long.parseLong(IOUtils.readFullyAsString(RuntimeUtils.class.getResourceAsStream(srcDir + "/version")).trim());
+        String installedVersion = FileUtils.readText(targetFile).trim();
         if (installedVersion.isEmpty()) return false;
         return targetFile.exists() && Long.parseLong(installedVersion) == version;
     }
@@ -76,15 +74,16 @@ public class RuntimeUtils {
     public static void installJna(Context context, String targetDir, String srcDir, InstallListener listener) throws IOException {
         FileUtils.deleteDirectory(new File(targetDir));
         new File(targetDir).mkdirs();
-        copyAssets(context, srcDir, targetDir, listener);
-        File file = new File(FCLPath.JNA_PATH, "jna-arm64.zip");
-        new Unzipper(file, new File(FCLPath.RUNTIME_DIR)).setFilter((zipEntry, isDirectory, destFile, entryPath) -> {
-            if (listener != null && !isDirectory) {
-                listener.onUpdate(entryPath);
+        copyAssets(context, srcDir + "/version", targetDir + "/version", listener);
+        // assets 按 <版本>/natives/<abi>/libjnidispatch.so 分架构存放，
+        // 将当前架构的 so 复制到 <版本>/ 下，得到运行时加载所需的 libjnidispatch.so 结构
+        String abi = Architecture.archAsStringAndroid(Architecture.getDeviceArchitecture());
+        for (String version : context.getAssets().list(srcDir)) {
+            String nativesDir = srcDir + "/" + version + "/natives/" + abi;
+            if (context.getAssets().list(nativesDir).length > 0) {
+                copyAssets(context, nativesDir, targetDir + "/" + version, listener);
             }
-            return true;
-        }).unzip();
-        file.delete();
+        }
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
