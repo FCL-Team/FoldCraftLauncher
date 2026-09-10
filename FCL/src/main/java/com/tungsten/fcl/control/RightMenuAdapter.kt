@@ -466,12 +466,12 @@ class RightMenuAdapter(
         }
     }
 
-    /** 该位置是否为控件组行（组行前有一个操作行） */
+    /** 该位置是否为控件组行（编辑模式列表全部为组行） */
     fun isControlGroupPosition(position: Int): Boolean =
-        gameMenu.isEditMode && position in 1..rows.lastIndex
+        gameMenu.isEditMode && position in rows.indices
 
     /** 控件组行位置转组列表索引 */
-    fun groupIndexOf(position: Int): Int = position - 1
+    fun groupIndexOf(position: Int): Int = position
 
     private fun bindCategory(holder: Holder, row: Row.CategoryRow) {
         val binding = ItemMenuCategoryBinding.bind(holder.itemView)
