@@ -454,7 +454,7 @@ class RightMenuAdapter(
         if (isCurrent) {
             holder.itemView.background = selectedCardBackground(ThemeEngine.getTheme().getColor(), density)
         }
-        binding.label.setOnClickListener { listener.onEditGroupSelect(row.group) }
+        binding.root.setOnClickListener { listener.onEditGroupSelect(row.group) }
         binding.edit.setOnClickListener { listener.onEditGroupEdit(row.group) }
         binding.delete.setOnClickListener { listener.onEditGroupRemove(row.group) }
         binding.switchView.setOnCheckedChangeListener(null)
