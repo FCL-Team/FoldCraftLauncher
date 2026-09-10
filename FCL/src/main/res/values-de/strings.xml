@@ -272,6 +272,7 @@
     <string name="edit_button_text">Schaltflächentext</string>
     <string name="edit_button_event_follow">Berührung durchlassen</string>
     <string name="edit_button_event_movable">Bewegliche Schaltfläche</string>
+    <string name="edit_button_event_swipable">Wisch-Verknüpfung</string>
     <string name="edit_button_event_press">Drücken</string>
     <string name="edit_button_event_long_press">Langes Drücken</string>
     <string name="edit_button_event_click">Klicken</string>
@@ -295,6 +296,9 @@
     <string name="edit_direction_event_left">Linke Schaltfläche</string>
     <string name="edit_direction_event_right">Rechte Schaltfläche</string>
     <string name="edit_direction_event_follow">Stick</string>
+    <string name="edit_direction_event_dead_zone">Toter Bereich</string>
+    <string name="edit_direction_event_can_lock">Vorwärts-Arretierung</string>
+    <string name="edit_direction_event_lock_threshold">Arretierungsschwelle</string>
     <string name="edit_direction_event_follow_fix">Fest</string>
     <string name="edit_direction_event_follow_center">Halb-dynamisch</string>
     <string name="edit_direction_event_follow_always">Dynamisch</string>
@@ -422,6 +426,7 @@
     <string name="menu_controls_current">Aktuelle Steuerung</string>
     <string name="menu_controls_edit_mode">Bearbeitungsmodus</string>
     <string name="menu_controls_show_boundary">Schaltflächengrenzen anzeigen</string>
+    <string name="menu_controls_edit_hint">Zum Auswählen tippen, zum Verschieben ziehen, zum Skalieren die Eckgriffe ziehen</string>
     <string name="menu_controls_hide_all">Alle Elemente ausblenden</string>
     <string name="menu_controls_auto_fit">Automatische Positionierung</string>
     <string name="menu_controls_auto_fit_dist">Automatischer Abstand zur Position</string>
@@ -925,6 +930,7 @@
     <string name="close">Schließen</string>
     <string name="menu_settings_item_bar_scale_width">Hotbar-Skalierung (Breite)</string>
     <string name="menu_settings_item_bar_scale_height">Hotbar-Skalierung (Höhe)</string>
+    <string name="menu_settings_controls_opacity">Deckkraft der Tasten</string>
     <string name="create_account_first">Bitte erstelle ein Spielkonto, bevor du das Spiel startest</string>
     <string name="version_list_refreshing">Remote-Versionsliste wird abgerufen…</string>
     <string name="renderer_source">Quelle:</string>

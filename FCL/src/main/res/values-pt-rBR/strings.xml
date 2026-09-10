@@ -304,6 +304,7 @@
     <string name="edit_button_text">Texto em exibição</string>
     <string name="edit_button_event_follow">Mover câmera com botão pressionado</string>
     <string name="edit_button_event_movable">Móvel</string>
+    <string name="edit_button_event_swipable">Deslize Encadeado</string>
     <string name="edit_button_event_press">Pressionar</string>
     <string name="edit_button_event_long_press">Press. Longo</string>
     <string name="edit_button_event_click">Clique</string>
@@ -327,6 +328,9 @@
     <string name="edit_direction_event_left">Tecla para esquerda</string>
     <string name="edit_direction_event_right">Tecla para direita</string>
     <string name="edit_direction_event_follow">Directional dinâmico (Apenas para joystick)</string>
+    <string name="edit_direction_event_dead_zone">Zona Morta</string>
+    <string name="edit_direction_event_can_lock">Trava de Avanço</string>
+    <string name="edit_direction_event_lock_threshold">Limiar de Travamento</string>
     <string name="edit_direction_event_follow_fix">Fixado</string>
     <string name="edit_direction_event_follow_center">Centro segue o dedo</string>
     <string name="edit_direction_event_follow_always">Todas as partes seguem o dedo</string>
@@ -454,6 +458,7 @@
     <string name="menu_controls_current">Controle atual</string>
     <string name="menu_controls_edit_mode">Modo de edição</string>
     <string name="menu_controls_show_boundary">Mostrar limites</string>
+    <string name="menu_controls_edit_hint">Toque para selecionar, arraste para mover, arraste as alças dos cantos para redimensionar</string>
     <string name="menu_controls_hide_all">Esconder botões</string>
     <string name="menu_controls_auto_fit">Encaixe automático</string>
     <string name="menu_controls_auto_fit_dist">Distância do encaixe</string>
@@ -519,6 +524,7 @@
     <string name="menu_settings_item_bar_scale">Escala da hotbar</string>
     <string name="menu_settings_item_bar_scale_width">Escala da hotbar (largura)</string>
     <string name="menu_settings_item_bar_scale_height">Escala da hotbar (altura)</string>
+    <string name="menu_settings_controls_opacity">Opacidade dos Controles</string>
     <string name="menu_settings_show_log">Mostrar log</string>
     <string name="message_cancelled">Operação foi cancelada</string>
     <string name="message_copy">Copiado com sucesso!</string>

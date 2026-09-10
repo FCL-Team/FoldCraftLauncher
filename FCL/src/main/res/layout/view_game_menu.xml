@@ -8,7 +8,9 @@
     <RelativeLayout
         android:id="@+id/base_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <com.tungsten.fcl.control.view.TouchPad
             android:id="@+id/touch_pad"

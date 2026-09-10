@@ -19,8 +19,8 @@ import com.tungsten.fcllibrary.component.view.FCLTextView
 /** 左菜单条目标签，交互回调按此分发 */
 enum class LeftMenuTag {
     EDIT_MODE, SHOW_BOUNDARY, HIDE_ALL, AUTO_FIT, AUTO_FIT_DIST,
-    CURRENT_CONTROLLER, CURRENT_VIEW_GROUP,
-    MANAGE_VIEW_GROUPS, ADD_BUTTON, ADD_DIRECTION, MANAGE_BUTTON_STYLE, MANAGE_DIRECTION_STYLE
+    CURRENT_CONTROLLER,
+    ADD_BUTTON, ADD_DIRECTION, MANAGE_BUTTON_STYLE, MANAGE_DIRECTION_STYLE
 }
 
 /**
@@ -59,8 +59,6 @@ class LeftMenuAdapter(
     private fun buildRows(): List<Row> {
         val controllers = Controllers.getControllers()
         val currentController = gameMenu.controller
-        val currentViewGroup = gameMenu.viewGroup
-        val viewGroups = currentController?.viewGroups() ?: emptyList()
         var rows = listOf(
             Row.SpinnerRow(
                 R.string.menu_controls_current,
@@ -77,13 +75,6 @@ class LeftMenuAdapter(
         )
         if (gameMenu.isEditMode) {
             rows = rows + listOf(
-                Row.SpinnerRow(
-                    R.string.menu_controls_current_view_group,
-                    viewGroups.map { it.name },
-                    currentViewGroup?.let { viewGroups.indexOf(it).coerceAtLeast(0) } ?: 0,
-                    LeftMenuTag.CURRENT_VIEW_GROUP
-                ),
-                Row.ButtonRow(R.string.menu_controls_groups, listOf(R.string.menu_controls_manage to LeftMenuTag.MANAGE_VIEW_GROUPS)),
                 Row.ButtonRow(R.string.menu_controls_add_button, listOf(R.string.menu_controls_add_view_button to LeftMenuTag.ADD_BUTTON)),
                 Row.ButtonRow(R.string.menu_controls_add_direction, listOf(R.string.menu_controls_add_view_button to LeftMenuTag.ADD_DIRECTION)),
                 Row.ButtonRow(R.string.menu_controls_button_style, listOf(R.string.menu_controls_manage to LeftMenuTag.MANAGE_BUTTON_STYLE)),
@@ -173,11 +164,7 @@ class LeftMenuAdapter(
     private fun bindButton(holder: Holder, row: Row.ButtonRow) {
         val binding = ItemMenuButtonBinding.bind(holder.itemView)
         binding.label.text = context.getString(row.labelRes)
-        listOf(
-            Triple(binding.button1, 0, LeftMenuTag.MANAGE_VIEW_GROUPS),
-            Triple(binding.button2, 1, LeftMenuTag.MANAGE_VIEW_GROUPS),
-            Triple(binding.button3, 2, LeftMenuTag.MANAGE_VIEW_GROUPS)
-        ).forEach { (button, index, _) ->
+        listOf(binding.button1 to 0, binding.button2 to 1, binding.button3 to 2).forEach { (button, index) ->
             if (index < row.buttons.size) {
                 val (textRes, tag) = row.buttons[index]
                 button.text = context.getString(textRes)
@@ -200,10 +187,6 @@ class LeftMenuAdapter(
         spinner.setSelection(row.selection)
         spinner.setOnItemSelectedListener { position, _ ->
             listener.onSpinnerSelect(row.tag, position)
-        }
-        // 视图组尚未选中时（如切换控制器后）主动选中当前项，与原 refreshViewGroupList 的默认选中行为一致
-        if (row.tag == LeftMenuTag.CURRENT_VIEW_GROUP && gameMenu.viewGroup == null && row.data.isNotEmpty()) {
-            listener.onSpinnerSelect(row.tag, spinner.getSelectedIndex())
         }
     }
 

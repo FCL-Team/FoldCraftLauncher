@@ -394,6 +394,7 @@
     <string name="edit_button_text">Displayed Text</string>
     <string name="edit_button_event_follow">Pointer Follows Finger</string>
     <string name="edit_button_event_movable">Movable</string>
+    <string name="edit_button_event_swipable">Swipe Link</string>
     <string name="edit_button_event_press">Press</string>
     <string name="edit_button_event_long_press">Long Press</string>
     <string name="edit_button_event_click">Click</string>
@@ -418,6 +419,9 @@
     <string name="edit_direction_event_left">Left Keycode</string>
     <string name="edit_direction_event_right">Right Keycode</string>
     <string name="edit_direction_event_follow">Follow Option (Only for rocker style)</string>
+    <string name="edit_direction_event_dead_zone">Dead Zone</string>
+    <string name="edit_direction_event_can_lock">Forward Lock</string>
+    <string name="edit_direction_event_lock_threshold">Lock Threshold</string>
     <string name="edit_direction_event_follow_fix">Fixed</string>
     <string name="edit_direction_event_follow_center">Center Follows Finger</string>
     <string name="edit_direction_event_follow_always">All Parts Follow Finger</string>
@@ -583,6 +587,7 @@
     <string name="menu_controls_current">Current Controller</string>
     <string name="menu_controls_edit_mode">Edit Mode</string>
     <string name="menu_controls_show_boundary">Show View Boundaries</string>
+    <string name="menu_controls_edit_hint">Tap to select, drag to move, drag the corner handles to resize</string>
     <string name="menu_controls_hide_all">Hide All Views</string>
     <string name="menu_controls_auto_fit">Auto Fit Position</string>
     <string name="menu_controls_auto_fit_dist">Auto Fit Position Distance</string>
@@ -670,6 +675,7 @@
     <string name="menu_settings_item_bar_scale">ItemBarScale</string>
     <string name="menu_settings_item_bar_scale_width">ItemBarScale (Width)</string>
     <string name="menu_settings_item_bar_scale_height">ItemBarScale (Height)</string>
+    <string name="menu_settings_controls_opacity">Controls Opacity</string>
     <string name="menu_settings_show_log">Show Log</string>
     <string name="menu_settings_show_log_auto">Show Log Automatically</string>
     <string name="menu_settings_performance_mode">Sustained Performance Mode</string>

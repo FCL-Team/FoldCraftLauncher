@@ -295,10 +295,13 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
             {
                 FCLSwitch pointerFollow = findEventView(R.id.pointer_follow);
                 FCLSwitch movable = findEventView(R.id.movable);
+                FCLSwitch swipable = findEventView(R.id.swipable);
                 pointerFollow.setChecked(data.getEvent().isPointerFollow());
                 movable.setChecked(data.getEvent().isMovable());
+                swipable.setChecked(data.getEvent().isSwipable());
                 FXUtils.bindBoolean(pointerFollow, data.getEvent().pointerFollowProperty());
                 FXUtils.bindBoolean(movable, data.getEvent().movableProperty());
+                FXUtils.bindBoolean(swipable, data.getEvent().swipableProperty());
 
                 FCLLinearLayout childContainer = findEventView(R.id.container);
 
@@ -631,6 +634,22 @@ public class EditViewDialog extends FCLDialog implements View.OnClickListener {
                         0 : (data.getEvent().getFollowOption() == DirectionEventData.FollowOption.CENTER_FOLLOW ?
                              1 : 2));
                 followOptionSpinner.setOnItemSelectedListener((index, item) -> data.getEvent().followOptionProperty().set(followOptions.get(index)));
+
+                FCLPreciseSeekBar deadZone = findEventView(R.id.dead_zone);
+                FCLTextView deadZoneText = findEventView(R.id.dead_zone_text);
+                deadZone.setProgress(data.getEvent().getDeadZone());
+                data.getEvent().deadZoneProperty().bindBidirectional(deadZone.progressProperty());
+                deadZoneText.stringProperty().bind(Bindings.createStringBinding(() -> (int) deadZone.getProgress() + " %", deadZone.progressProperty()));
+
+                FCLSwitch canLock = findEventView(R.id.can_lock);
+                canLock.setChecked(data.getEvent().isCanLock());
+                FXUtils.bindBoolean(canLock, data.getEvent().canLockProperty());
+
+                FCLPreciseSeekBar lockThreshold = findEventView(R.id.lock_threshold);
+                FCLTextView lockThresholdText = findEventView(R.id.lock_threshold_text);
+                lockThreshold.setProgress(data.getEvent().getLockThreshold());
+                data.getEvent().lockThresholdProperty().bindBidirectional(lockThreshold.progressProperty());
+                lockThresholdText.stringProperty().bind(Bindings.createStringBinding(() -> (int) lockThreshold.getProgress() + " %", lockThreshold.progressProperty()));
             }
 
             container.addView(infoLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

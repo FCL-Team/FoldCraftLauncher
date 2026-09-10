@@ -9,15 +9,19 @@ import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.util.getScreenHeight
 import com.mio.util.getScreenWidth
+import com.mio.ui.selectedCardBackground
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemMenuButtonBinding
 import com.tungsten.fcl.databinding.ItemMenuCategoryBinding
+import com.tungsten.fcl.databinding.ItemMenuControlGroupBinding
 import com.tungsten.fcl.databinding.ItemMenuSeekbarBinding
 import com.tungsten.fcl.databinding.ItemMenuSpinnerBinding
 import com.tungsten.fcl.databinding.ItemMenuSwitchBinding
 import com.tungsten.fcl.game.sdl.SdlSettings
 import com.tungsten.fcl.setting.MenuSetting
+import com.tungsten.fcl.control.data.ControlViewGroup
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
+import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLSpinner
 import com.tungsten.fcllibrary.component.view.FCLTextView
 
@@ -36,6 +40,7 @@ enum class RightMenuTag {
     // 功能
     LOCK_VIEW, HIDE_VIEW, SHOW_FPS, OPEN_MULTIPLAYER, OPEN_QUICK_INPUT, OPEN_SEND_KEY,
     SOFT_KEYBOARD_ADJUST, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, WINDOW_SCALE, CURSOR_OFFSET,
+    CONTROLS_OPACITY,
 
     // 手势
     DISABLE_GESTURE, GESTURE_MODE, DISABLE_LEFT_TOUCH,
@@ -55,7 +60,10 @@ enum class RightMenuTag {
     SHOW_MEMORY, PERFORMANCE_MODE, SHOW_LOG, AUTO_SHOW_LOG, FORCE_EXIT,
 
     // SDL
-    SDL_AUTO_SHOW_IME
+    SDL_AUTO_SHOW_IME,
+
+    // 编辑模式控件组面板
+    EDIT_GROUP, REMOVE_GROUP
 }
 
 /**
@@ -76,6 +84,21 @@ class RightMenuAdapter(
         fun onSwitchLongClick(tag: RightMenuTag)
         fun onSpinnerSelect(tag: RightMenuTag, position: Int)
         fun onSeekBarChange(tag: RightMenuTag, progress: Int)
+
+        /** 编辑模式控件组面板：点击组名切换当前编辑组 */
+        fun onEditGroupSelect(group: ControlViewGroup)
+
+        /** 编辑模式控件组面板：切换组在编辑画布的显示/隐藏（可多组同时显示） */
+        fun onEditGroupToggle(group: ControlViewGroup, visible: Boolean)
+
+        /** 编辑模式控件组面板：新建控件组 */
+        fun onEditGroupAdd()
+
+        /** 编辑模式控件组面板：编辑组属性（名称/初始可见性） */
+        fun onEditGroupEdit(group: ControlViewGroup)
+
+        /** 编辑模式控件组面板：删除组（含确认） */
+        fun onEditGroupRemove(group: ControlViewGroup)
     }
 
     private val menuSetting: MenuSetting get() = gameMenu.menuSetting
@@ -91,6 +114,7 @@ class RightMenuAdapter(
     private val typeButton = 2
     private val typeSpinner = 3
     private val typeSeekBar = 4
+    private val typeControlGroup = 5
 
     /** 当前所在二级分类，null 表示处于一级分类列表 */
     private var currentCategory: RightMenuCategory? = null
@@ -112,7 +136,12 @@ class RightMenuAdapter(
         notifyDataSetChanged()
     }
 
-    private fun buildRows(): List<Row> = when (currentCategory) {
+    private fun buildRows(): List<Row> {
+        // 编辑模式：右菜单整体替换为控件组管理面板（显示/隐藏、层级排序、切换编辑组）
+        if (gameMenu.isEditMode) {
+            return buildEditRows()
+        }
+        return when (currentCategory) {
         null -> listOf(
             Row.ButtonRow(
                 R.string.menu_settings_force_exit,
@@ -174,6 +203,10 @@ class RightMenuAdapter(
                 { menuSetting.itemBarHeight * 100 / screenHeight },
                 RightMenuTag.ITEM_BAR_HEIGHT,
                 "%"
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_controls_opacity, 100, 10,
+                { menuSetting.controlsOpacity }, RightMenuTag.CONTROLS_OPACITY, "%"
             ),
             Row.SeekBarRow(
                 R.string.settings_game_dimension, 300, 1,
@@ -321,9 +354,23 @@ class RightMenuAdapter(
             )
         )
     }
+    }
+
+    /** 编辑模式控件组面板：各组行（点击切组、开关显隐、编辑属性、删除），组行长按拖动排序 */
+    private fun buildEditRows(): List<Row> {
+        val groups = gameMenu.controller?.viewGroups() ?: emptyList()
+        return groups.map { group ->
+            Row.ControlGroupRow(group)
+        }
+    }
 
     private sealed class Row {
         data class CategoryRow(val category: RightMenuCategory) : Row()
+
+        /** 控件组行：组名（点击切换编辑组）+ 属性编辑 + 删除 + 显示开关；长按拖动调整渲染层级 */
+        data class ControlGroupRow(
+            val group: ControlViewGroup
+        ) : Row()
 
         data class SwitchRow(
             val labelRes: Int,
@@ -368,6 +415,7 @@ class RightMenuAdapter(
         is Row.ButtonRow -> typeButton
         is Row.SpinnerRow -> typeSpinner
         is Row.SeekBarRow -> typeSeekBar
+        is Row.ControlGroupRow -> typeControlGroup
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -377,6 +425,7 @@ class RightMenuAdapter(
             typeSwitch -> ItemMenuSwitchBinding.inflate(inflater, parent, false).root
             typeButton -> ItemMenuButtonBinding.inflate(inflater, parent, false).root
             typeSpinner -> ItemMenuSpinnerBinding.inflate(inflater, parent, false).root
+            typeControlGroup -> ItemMenuControlGroupBinding.inflate(inflater, parent, false).root
             else -> ItemMenuSeekbarBinding.inflate(inflater, parent, false).root
         }
         return Holder(view)
@@ -393,8 +442,36 @@ class RightMenuAdapter(
             is Row.ButtonRow -> bindButton(holder, row)
             is Row.SpinnerRow -> bindSpinner(holder, row)
             is Row.SeekBarRow -> bindSeekBar(holder, row)
+            is Row.ControlGroupRow -> bindControlGroup(holder, row)
         }
     }
+
+    /** 控件组行：当前编辑组主题色高亮，组名点击切换，开关控制编辑画布显隐，按钮编辑/删除属性 */
+    private fun bindControlGroup(holder: Holder, row: Row.ControlGroupRow) {
+        val binding = ItemMenuControlGroupBinding.bind(holder.itemView)
+        val isCurrent = row.group == gameMenu.viewGroup
+        binding.label.text = row.group.getName()
+        if (isCurrent) {
+            holder.itemView.background = selectedCardBackground(ThemeEngine.getTheme().getColor(), density)
+        }
+        binding.root.setOnClickListener { listener.onEditGroupSelect(row.group) }
+        binding.edit.setOnClickListener { listener.onEditGroupEdit(row.group) }
+        binding.delete.setOnClickListener { listener.onEditGroupRemove(row.group) }
+        binding.switchView.setOnCheckedChangeListener(null)
+        binding.switchView.isChecked = !gameMenu.isEditorGroupHidden(row.group)
+        // 当前编辑组始终显示，不允许隐藏
+        binding.switchView.isEnabled = !isCurrent
+        binding.switchView.setOnCheckedChangeListener { _, checked ->
+            listener.onEditGroupToggle(row.group, checked)
+        }
+    }
+
+    /** 该位置是否为控件组行（编辑模式列表全部为组行） */
+    fun isControlGroupPosition(position: Int): Boolean =
+        gameMenu.isEditMode && position in rows.indices
+
+    /** 控件组行位置转组列表索引 */
+    fun groupIndexOf(position: Int): Int = position
 
     private fun bindCategory(holder: Holder, row: Row.CategoryRow) {
         val binding = ItemMenuCategoryBinding.bind(holder.itemView)

@@ -345,6 +345,7 @@
     <string name="edit_button_text">显示的文本</string>
     <string name="edit_button_event_follow">指针跟随手指</string>
     <string name="edit_button_event_movable">可移动</string>
+    <string name="edit_button_event_swipable">滑动联动</string>
     <string name="edit_button_event_press">按压</string>
     <string name="edit_button_event_long_press">长按</string>
     <string name="edit_button_event_click">点击</string>
@@ -368,6 +369,9 @@
     <string name="edit_direction_event_left">左键值</string>
     <string name="edit_direction_event_right">右键值</string>
     <string name="edit_direction_event_follow">跟随设置（仅作用于摇杆样式）</string>
+    <string name="edit_direction_event_dead_zone">摇杆死区</string>
+    <string name="edit_direction_event_can_lock">前进锁</string>
+    <string name="edit_direction_event_lock_threshold">锁定阈值</string>
     <string name="edit_direction_event_follow_fix">固定的</string>
     <string name="edit_direction_event_follow_center">中心部位跟随手指</string>
     <string name="edit_direction_event_follow_always">完全跟随手指</string>
@@ -513,6 +517,7 @@
     <string name="menu_controls_current">当前布局方案</string>
     <string name="menu_controls_edit_mode">编辑模式</string>
     <string name="menu_controls_show_boundary">显示控件边缘</string>
+    <string name="menu_controls_edit_hint">轻点选中，拖动移动，拖动角手柄调整大小</string>
     <string name="menu_controls_hide_all">隐藏所有控件</string>
     <string name="menu_controls_auto_fit">自动吸附</string>
     <string name="menu_controls_auto_fit_dist">自动吸附间距</string>
@@ -596,6 +601,7 @@
     <string name="menu_settings_item_bar_scale">物品栏缩放</string>
     <string name="menu_settings_item_bar_scale_width">物品栏缩放（宽度）</string>
     <string name="menu_settings_item_bar_scale_height">物品栏缩放（高度）</string>
+    <string name="menu_settings_controls_opacity">控件不透明度</string>
     <string name="menu_settings_show_log">显示日志</string>
     <string name="menu_settings_show_log_auto">自动显示日志</string>
     <string name="menu_settings_performance_mode">持续性能模式</string>

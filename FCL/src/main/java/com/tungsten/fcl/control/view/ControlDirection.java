@@ -19,7 +19,6 @@ import android.widget.RelativeLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 
-import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
@@ -36,6 +35,7 @@ import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.UUID;
@@ -72,6 +72,43 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private static final double ANGLE_8D_OF_7P = 337.5;
 
     private BooleanProperty visibilityProperty;
+
+    private boolean ghost = false;
+
+    @Override
+    public void setGhost(boolean ghost) {
+        this.ghost = ghost;
+        updateAlpha();
+    }
+
+    @Override
+    public boolean isGhost() {
+        return ghost;
+    }
+
+    /** alpha 合并优先级：一键隐藏 > 编辑参考组 > 全局不透明度 */
+    private void updateAlpha() {
+        if (menu != null) {
+            setAlpha(menu.getViewManager().resolveAlpha(this));
+        }
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+        if (selected) {
+            // 线框与手柄跟随主题色
+            int color = ThemeEngine.getInstance().getTheme().getColor();
+            selectedPaint.setColor(color);
+            handlePaint.setColor(color);
+        }
+        invalidate();
+    }
+
+    @Override
+    public boolean isSelected() {
+        return selected;
+    }
 
     private final BooleanProperty parentVisibilityProperty = new SimpleBooleanProperty(this, "parentVisibility", true);
 
@@ -117,6 +154,11 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         boundaryPaint.setColor(Color.RED);
         boundaryPaint.setStyle(Paint.Style.STROKE);
         boundaryPaint.setStrokeWidth(3);
+        selectedPaint.setAntiAlias(true);
+        selectedPaint.setStyle(Paint.Style.STROKE);
+        selectedPaint.setStrokeWidth(4);
+        handlePaint.setAntiAlias(true);
+        handlePaint.setStyle(Paint.Style.FILL);
         screenWidth = AndroidUtilKt.getScreenWidth();
         screenHeight = AndroidUtilKt.getScreenHeight();
 
@@ -140,11 +182,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 cancelAllEvent();
             }
         });
-        alphaListener = invalidate -> Schedulers.androidUIThread().execute(() -> {
-            if (menu != null) {
-                setAlpha(menu.isHideAllViews() ? 0 : 1);
-            }
-        });
+        alphaListener = invalidate -> Schedulers.androidUIThread().execute(this::updateAlpha);
 
         post(() -> {
             notifyData();
@@ -158,7 +196,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             getData().addListener(notifyListener);
             if (menu != null) {
                 menu.showViewBoundariesProperty().addListener(boundaryListener);
-                setAlpha(menu.isHideAllViews() ? 0 : 1);
+                updateAlpha();
                 menu.hideAllViewsProperty().addListener(alphaListener);
             }
             if (listener != null) {
@@ -252,7 +290,10 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         // Visibility
         if (!displayMode && menu != null) {
             visibilityProperty().unbind();
-            if (menu.isEditMode()) {
+            if (ghost) {
+                // 编辑参考组控件始终可见
+                visibilityProperty().set(true);
+            } else if (menu.isEditMode()) {
                 visibilityProperty().bind(Bindings.createBooleanBinding(() -> menu.getViewGroup() != null && menu.getViewGroup().getViewData().directionList().stream().anyMatch(it -> it.getId().equals(getData().getId())),
                         menu.editModeProperty(), menu.viewGroupProperty()));
             } else {
@@ -294,14 +335,12 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
     private GradientDrawable drawableNormal;
     private GradientDrawable drawablePressed;
+    private GradientDrawable drawableArea;
+    private GradientDrawable drawableRocker;
 
     private void refreshStyle(ControlDirectionData data) {
         int viewSize = getSize();
         if (data.getStyle().getStyleType() == ControlDirectionStyle.Type.BUTTON) {
-            int size = (viewSize * (1000 - (2 * getData().getStyle().getButtonStyle().getInterval()))) / 3000;
-            int p0 = 0;
-            int p1 = size + ((viewSize * getData().getStyle().getButtonStyle().getInterval()) / 1000);
-            int p2 = viewSize - size;
             drawableNormal = new GradientDrawable();
             drawableNormal.setCornerRadius(ConvertUtils.dip2px(getContext(), data.getStyle().getButtonStyle().getCornerRadius() / 10f));
             drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), data.getStyle().getButtonStyle().getStrokeWidth() / 10f), data.getStyle().getButtonStyle().getStrokeColor());
@@ -313,11 +352,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             removeAllViews();
             for (AppCompatButton b : buttons) {
                 addView(b);
-                ViewGroup.LayoutParams layoutParams = b.getLayoutParams();
-                layoutParams.width = size;
-                layoutParams.height = size;
                 b.setClickable(false);
-                b.setLayoutParams(layoutParams);
                 b.setGravity(Gravity.CENTER);
                 b.setPadding(0, 0, 0, 0);
                 b.setAllCaps(false);
@@ -325,15 +360,7 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 b.setTextColor(data.getStyle().getButtonStyle().getTextColor());
                 b.setBackground(drawableNormal);
             }
-            setButtonPosition(centerBtn, p1, p1);
-            setButtonPosition(upBtn, p1, p0);
-            setButtonPosition(downBtn, p1, p2);
-            setButtonPosition(leftBtn, p0, p1);
-            setButtonPosition(rightBtn, p2, p1);
-            setButtonPosition(upLeftBtn, p0, p0);
-            setButtonPosition(upRightBtn, p2, p0);
-            setButtonPosition(downLeftBtn, p0, p2);
-            setButtonPosition(downRightBtn, p2, p2);
+            layoutButtonChildren(viewSize);
             centerBtn.setText("◆");
             upBtn.setText("▲");
             downBtn.setText("▼");
@@ -348,25 +375,53 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             downLeftBtn.setVisibility(GONE);
             downRightBtn.setVisibility(GONE);
         } else {
-            rockerSize = (viewSize * getData().getStyle().getRockerStyle().getRockerSize()) / 1000;
-            GradientDrawable drawableArea = new GradientDrawable();
-            drawableArea.setCornerRadius((float) (viewSize * data.getStyle().getRockerStyle().getBgCornerRadius()) / 1000);
+            drawableArea = new GradientDrawable();
             drawableArea.setStroke(ConvertUtils.dip2px(getContext(), data.getStyle().getRockerStyle().getBgStrokeWidth() / 10f), data.getStyle().getRockerStyle().getBgStrokeColor());
             drawableArea.setColor(data.getStyle().getRockerStyle().getBgFillColor());
-            GradientDrawable drawableRocker = new GradientDrawable();
-            drawableRocker.setCornerRadius((float) (rockerSize * data.getStyle().getRockerStyle().getRockerCornerRadius()) / 1000);
+            drawableRocker = new GradientDrawable();
             drawableRocker.setStroke(ConvertUtils.dip2px(getContext(), data.getStyle().getRockerStyle().getRockerStrokeWidth() / 10f), data.getStyle().getRockerStyle().getRockerStrokeColor());
             drawableRocker.setColor(data.getStyle().getRockerStyle().getRockerFillColor());
             removeAllViews();
             addView(area, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            addView(rocker, new LayoutParams(rockerSize, rockerSize));
+            addView(rocker, new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             area.setClickable(false);
             rocker.setClickable(false);
             area.setBackground(drawableArea);
             rocker.setBackground(drawableRocker);
-            setButtonPosition(area, 0, 0);
-            setButtonPosition(rocker, (viewSize / 2) - (rockerSize / 2), (viewSize / 2) - (rockerSize / 2));
+            layoutRockerChildren(viewSize);
         }
+    }
+
+    /** 按指定尺寸摆放九宫格方向按钮（样式刷新与缩放实时预览共用） */
+    private void layoutButtonChildren(int viewSize) {
+        int size = (viewSize * (1000 - (2 * getData().getStyle().getButtonStyle().getInterval()))) / 3000;
+        int p1 = size + ((viewSize * getData().getStyle().getButtonStyle().getInterval()) / 1000);
+        int p2 = viewSize - size;
+        for (AppCompatButton b : buttons) {
+            ViewGroup.LayoutParams layoutParams = b.getLayoutParams();
+            layoutParams.width = size;
+            layoutParams.height = size;
+            b.setLayoutParams(layoutParams);
+        }
+        setButtonPosition(centerBtn, p1, p1);
+        setButtonPosition(upBtn, p1, 0);
+        setButtonPosition(downBtn, p1, p2);
+        setButtonPosition(leftBtn, 0, p1);
+        setButtonPosition(rightBtn, p2, p1);
+        setButtonPosition(upLeftBtn, 0, 0);
+        setButtonPosition(upRightBtn, p2, 0);
+        setButtonPosition(downLeftBtn, 0, p2);
+        setButtonPosition(downRightBtn, p2, p2);
+    }
+
+    /** 按指定尺寸摆放摇杆背景与杆体，圆角按千分比依赖尺寸需同步更新（样式刷新与缩放实时预览共用） */
+    private void layoutRockerChildren(int viewSize) {
+        rockerSize = (viewSize * getData().getStyle().getRockerStyle().getRockerSize()) / 1000;
+        drawableArea.setCornerRadius((float) (viewSize * getData().getStyle().getRockerStyle().getBgCornerRadius()) / 1000);
+        drawableRocker.setCornerRadius((float) (rockerSize * getData().getStyle().getRockerStyle().getRockerCornerRadius()) / 1000);
+        rocker.setLayoutParams(new LayoutParams(rockerSize, rockerSize));
+        setButtonPosition(area, 0, 0);
+        setButtonPosition(rocker, (viewSize / 2) - (rockerSize / 2), (viewSize / 2) - (rockerSize / 2));
     }
 
     private void setButtonPosition(AppCompatButton button, int x, int y) {
@@ -390,21 +445,32 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     public void requestLayout() {
         super.requestLayout();
         post(() -> {
-            measure(MeasureSpec.makeMeasureSpec(getSize(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(getSize(), MeasureSpec.EXACTLY));
-            layout(getLeft(), getTop(), getRight(), getBottom());
+            // 缩放期间数据尚未写回，按缩放中的像素尺寸测量并同步 frame
+            int target = resizingSize >= 0 ? resizingSize : getSize();
+            measure(MeasureSpec.makeMeasureSpec(target, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(target, MeasureSpec.EXACTLY));
+            layout(getLeft(), getTop(), getLeft() + target, getTop() + target);
         });
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (menu != null && menu.isShowViewBoundaries() && !displayMode) {
+        if (menu != null && menu.isShowViewBoundaries() && !displayMode && !ghost) {
             boundaryPath.moveTo(0, 0);
             boundaryPath.lineTo(getSize(), 0);
             boundaryPath.lineTo(getSize(), getSize());
             boundaryPath.lineTo(0, getSize());
             boundaryPath.lineTo(0, 0);
             canvas.drawPath(boundaryPath, boundaryPaint);
+        }
+        if (selected && menu != null && menu.isEditMode() && !displayMode) {
+            // 用实际布局尺寸绘制；选中框外扩间隔，手柄画在控件内角（与命中区重合）
+            float gap = ConvertUtils.dip2px(getContext(), SELECT_GAP_DP);
+            float visual = ConvertUtils.dip2px(getContext(), HANDLE_VISUAL_DP);
+            int size = getWidth();
+            canvas.drawRect(-gap, -gap, size + gap, size + gap, selectedPaint);
+            canvas.drawRect(0, 0, visual, visual, handlePaint);
+            canvas.drawRect(size - visual, size - visual, size, size, handlePaint);
         }
     }
 
@@ -419,6 +485,30 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private boolean startClick = false;
     private boolean startRecord = false;
 
+    // 前进锁：lockArmed 为推杆满足锁定条件（正北且超过阈值），UP 时进入 forwardLocked 保持前进
+    private boolean lockArmed = false;
+    private boolean forwardLocked = false;
+
+    // 编辑模式选中态与双角手柄缩放：手柄画在控件内角（命中区与视觉重合，仅手柄可缩放），选中框外扩间隔
+    private static final float SELECT_GAP_DP = 4f;
+    private static final float HANDLE_VISUAL_DP = 12f;
+    private static final float HANDLE_TOUCH_DP = HANDLE_VISUAL_DP;
+    private boolean selected = false;
+    private boolean resizing = false;
+    private boolean resizeFromTopLeft = false;
+    private float resizeStartX;
+    private float resizeStartY;
+    private int resizeStartSize;
+    // 缩放位移用屏幕坐标：拖左上手柄时 view 自身移动，view 坐标会形成正反馈抖动
+    private float downRawX;
+    private float downRawY;
+
+    /** 缩放中的临时像素尺寸（requestLayout 测量优先使用），-1 表示未在缩放 */
+    private int resizingSize = -1;
+
+    private final Paint selectedPaint = new Paint();
+    private final Paint handlePaint = new Paint();
+
     private final Handler handler = new Handler();
 
     private void deleteView() {
@@ -430,6 +520,9 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (ghost) {
+            return true;
+        }
         if (menu != null && menu.isEditMode()) {
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
@@ -438,51 +531,81 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                     positionX = getX();
                     positionY = getY();
                     downTime = System.currentTimeMillis();
+                    downRawX = event.getRawX();
+                    downRawY = event.getRawY();
+                    // 按下点落在缩放手柄上：本次手势为缩放而非移动
+                    resizeFromTopLeft = inTopLeftHandle(event.getX(), event.getY());
+                    resizing = resizeFromTopLeft || inBottomRightHandle(event.getX(), event.getY());
+                    if (resizing) {
+                        resizeStartX = getX();
+                        resizeStartY = getY();
+                        resizeStartSize = getSize();
+                    }
+                    menu.getViewManager().hideEditBar();
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    int deltaX = (int) ((event.getX() - downX) * menu.getMenuSetting().getMouseSensitivity());
-                    int deltaY = (int) ((event.getY() - downY) * menu.getMenuSetting().getMouseSensitivity());
-                    float targetX = Math.max(0, Math.min(screenWidth - getSize(), getX() + deltaX));
-                    float targetY = Math.max(0, Math.min(screenHeight - getSize(), getY() + deltaY));
-                    setX(targetX);
-                    setY(targetY);
-                    autoFitPosition();
+                    if (resizing) {
+                        float dx = event.getRawX() - downRawX;
+                        float dy = event.getRawY() - downRawY;
+                        // 方向键强制等比：左上手柄取较小位移（向外拖为负，取负后尺寸增大），右下手柄取较大位移
+                        int delta = (int) (resizeFromTopLeft ? -Math.min(dx, dy) : Math.max(dx, dy));
+                        resizingSize = Math.max(ConvertUtils.dip2px(getContext(), 5), resizeStartSize + delta);
+                        if (resizeFromTopLeft) {
+                            // 右下角锚定
+                            setX(resizeStartX + resizeStartSize - resizingSize);
+                            setY(resizeStartY + resizeStartSize - resizingSize);
+                        }
+                        setSize(resizingSize);
+                        // 实时重排内部控件（九宫格/摇杆按尺寸绝对定位，容器变化不会自动跟随）
+                        if (getData().getStyle().getStyleType() == ControlDirectionStyle.Type.BUTTON) {
+                            layoutButtonChildren(resizingSize);
+                        } else {
+                            layoutRockerChildren(resizingSize);
+                        }
+                    } else {
+                        // 拖动基准与吸附解耦：期望位置每帧由手指屏幕坐标独立计算，
+                        // 吸附修正不参与下一帧基准，避免"吸附→弹回"的位置抖动
+                        float desiredX = positionX + (float) ((event.getRawX() - downRawX) * menu.getMenuSetting().getMouseSensitivity());
+                        float desiredY = positionY + (float) ((event.getRawY() - downRawY) * menu.getMenuSetting().getMouseSensitivity());
+                        float[] p = menu.getViewManager().snapPosition(this, desiredX, desiredY);
+                        setX(p[0]);
+                        setY(p[1]);
+                    }
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    removeLine(0);
-                    removeLine(1);
+                    menu.getTouchPad().removeLine(0);
+                    menu.getTouchPad().removeLine(1);
+                    if (resizing) {
+                        resizing = false;
+                        if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                            // 缩放结束：把最终像素尺寸与位置写回数据（位置与视觉一致，避免刷新后跳变）
+                            writeBackResizeSize();
+                        } else {
+                            // 手势中断：未写回数据，按数据恢复
+                            resizingSize = -1;
+                            notifyData();
+                        }
+                        menu.getViewManager().showEditBar(this);
+                        break;
+                    }
                     if (System.currentTimeMillis() - downTime <= 100
                             && Math.abs(event.getX() - downX) <= 10
                             && Math.abs(event.getY() - downY) <= 10) {
                         setX(positionX);
                         setY(positionY);
-                        EditViewDialog dialog = new EditViewDialog(getContext(), getData().clone(), menu, new EditViewDialog.Callback() {
-                            @Override
-                            public void onPositive(CustomControl view) {
-                                ControlDirectionData newData = ((ControlDirectionData) view).clone();
-                                getData().setBaseInfo(newData.getBaseInfo());
-                                getData().setStyle(newData.getStyle());
-                                getData().setEvent(newData.getEvent());
-                                menu.getViewManager().saveController();
-                            }
-
-                            @Override
-                            public void onClone(CustomControl view) {
-                                menu.getViewManager().addView(view);
-                            }
-
-                            @Override
-                            public void onDelete() {
-                                menu.getViewManager().removeView(getData());
-                            }
-                        }, true);
-                        dialog.show();
+                        // 轻点切换选中：已选中（操作栏显示中）时取消选中，未选中时选中
+                        if (selected) {
+                            menu.getViewManager().clearSelection();
+                        } else {
+                            menu.getViewManager().selectView(this);
+                        }
                     } else {
                         getData().getBaseInfo().setXPosition(Math.round((1000 * getX()) / (screenWidth - getSize())));
                         getData().getBaseInfo().setYPosition(Math.round((1000 * getY()) / (screenHeight - getSize())));
                         menu.getViewManager().saveController();
                     }
+                    menu.getViewManager().showEditBar(this);
                     break;
             }
         } else if (menu != null && !menu.isEditMode()) {
@@ -529,6 +652,12 @@ public class ControlDirection extends RelativeLayout implements CustomView {
             } else {
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
+                        if (forwardLocked) {
+                            // 解除前进锁：释放方向键并复位杆体，随后正常处理本次触摸
+                            forwardLocked = false;
+                            applyRockerLockVisual(false);
+                            cancelAllEvent();
+                        }
                         if (getData().getEvent().getFollowOption() == DirectionEventData.FollowOption.FOLLOW ||
                                 (getData().getEvent().getFollowOption() == DirectionEventData.FollowOption.CENTER_FOLLOW
                                         && event.getX() >= (float) ((getSize() / 2) - (rockerSize / 2))
@@ -579,6 +708,15 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                                 }
                             }
                         }
+                        if (event.getActionMasked() == MotionEvent.ACTION_UP && lockArmed && !forwardLocked) {
+                            // 进入前进锁：保持方向键按下，杆体留在当前位置等待再次触摸解除
+                            lockArmed = false;
+                            forwardLocked = true;
+                            applyRockerLockVisual(true);
+                            break;
+                        }
+                        lockArmed = false;
+                        forwardLocked = false;
                         cancelAllEvent();
                         break;
                 }
@@ -589,91 +727,51 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         return true;
     }
 
-    private void showLine(int orientation, int pref, int self) {
-        if (menu == null)
-            return;
-
-        menu.getTouchPad().drawLine(orientation, pref, self);
+    /** 触点是否落在左上/右下缩放手柄的命中区域（区域覆盖控件内侧角） */
+    private boolean inTopLeftHandle(float x, float y) {
+        if (!selected) {
+            return false;
+        }
+        int touch = ConvertUtils.dip2px(getContext(), HANDLE_TOUCH_DP);
+        return x <= touch && y <= touch;
     }
 
-    private void removeLine(int orientation) {
-        if (menu == null)
-            return;
-
-        menu.getTouchPad().removeLine(orientation);
+    private boolean inBottomRightHandle(float x, float y) {
+        if (!selected) {
+            return false;
+        }
+        int touch = ConvertUtils.dip2px(getContext(), HANDLE_TOUCH_DP);
+        return x >= getWidth() - touch && y >= getHeight() - touch;
     }
 
-    private void autoFitPosition() {
-        if (menu == null || !menu.getMenuSetting().isAutoFit())
-            return;
-
-        ViewGroup viewGroup = (ViewGroup) getParent();
-
-        int dist = ConvertUtils.dip2px(getContext(), menu.getMenuSetting().getAutoFitDist());
-        final int autoFitDist = Math.max(dist, ConvertUtils.dip2px(getContext(), 2));
-
-        boolean[] xyPref = {false, false};
-        int[] prefXY = {0, 0};
-        int[] selfXY = {0, 0};
-        int[] xyDist = {autoFitDist, autoFitDist};
-        int left = (int) getX();
-        int right = (int) (getX() + getWidth());
-        int up = (int) getY();
-        int down = (int) (getY() + getHeight());
-        int[] posArr = {left, right, up, down};
-
-        for (int i = 0; i < viewGroup.getChildCount(); i++) {
-            if (viewGroup.getChildAt(i).getVisibility() == VISIBLE) {
-                View button = viewGroup.getChildAt(i);
-                if (button == this || (!(button instanceof ControlButton) && !(button instanceof ControlDirection))) {
-                    continue;
-                }
-                //buttonLeft, buttonRight, buttonUp, buttonDown
-                int[] buttonPosArr = {
-                        (int) button.getX(),
-                        (int) (button.getX() + button.getWidth()),
-                        (int) button.getY(),
-                        (int) (button.getY() + button.getHeight())
-                };
-                /*
-                left - buttonLeft, left - buttonRight
-                right - buttonRight, right - buttonLeft
-                up - buttonUp, up - buttonDown
-                down - buttonDown, down - buttonUp
-                */
-                int flag = -1;
-                for (int j = 0; j < posArr.length; j++) {
-                    flag *= -1;
-                    int xyIndex = j / 2 % 2;
-                    if (Math.abs(posArr[j] - buttonPosArr[j]) < xyDist[xyIndex]) {
-                        xyPref[xyIndex] = true;
-                        prefXY[xyIndex] = buttonPosArr[j];
-                        xyDist[xyIndex] = posArr[j] - buttonPosArr[j];
-                        selfXY[xyIndex] = posArr[j] - xyDist[xyIndex];
-                    }
-                    int buttonDist = posArr[j] - buttonPosArr[j + flag];
-                    if (flag * buttonDist >= 0 && flag * buttonDist < xyDist[xyIndex]) {
-                        xyPref[xyIndex] = true;
-                        prefXY[xyIndex] = buttonPosArr[j + flag];
-                        xyDist[xyIndex] = buttonDist - flag * dist;
-                        selfXY[xyIndex] = posArr[j] - xyDist[xyIndex];
-                    }
-                }
-            }
-        }
-
-        if (xyPref[0]) {
-            setX(left - xyDist[0]);
-            showLine(0, prefXY[0], selfXY[0]);
+    /** 缩放结束：把最终像素尺寸与当前位置写回宽高同值，并刷新视图 */
+    private void writeBackResizeSize() {
+        BaseInfoData baseInfo = getData().getBaseInfo();
+        int pixel = Math.max(ConvertUtils.dip2px(getContext(), 5), getWidth());
+        // 位置夹到屏内后与尺寸一起写回，保证刷新后视觉位置不变
+        float x = Math.max(0, Math.min(screenWidth - pixel, getX()));
+        float y = Math.max(0, Math.min(screenHeight - pixel, getY()));
+        setX(x);
+        setY(y);
+        if (baseInfo.getSizeType() == BaseInfoData.SizeType.ABSOLUTE) {
+            int dp = Math.max(5, Math.round(pixel / getResources().getDisplayMetrics().density));
+            baseInfo.setAbsoluteWidth(dp);
+            baseInfo.setAbsoluteHeight(dp);
         } else {
-            removeLine(0);
+            int size = pixelToPermille(pixel, baseInfo.getPercentageWidth().getReference());
+            baseInfo.getPercentageWidth().setSize(size);
+            baseInfo.getPercentageHeight().setSize(size);
         }
-        if (xyPref[1]) {
-            setY(up - xyDist[1]);
-            showLine(1, prefXY[1], selfXY[1]);
-        } else {
-            removeLine(1);
-        }
+        baseInfo.setXPosition(Math.round((1000 * x) / (screenWidth - pixel)));
+        baseInfo.setYPosition(Math.round((1000 * y) / (screenHeight - pixel)));
+        resizingSize = -1;
+        notifyData();
+        menu.getViewManager().saveController();
+    }
+
+    private int pixelToPermille(int pixel, BaseInfoData.PercentageSize.Reference reference) {
+        int base = reference == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ? screenWidth : screenHeight;
+        return Math.max(1, Math.min(1000, Math.round(pixel * 1000f / base)));
     }
 
     private void handleButtonEvent(int x, int y) {
@@ -714,9 +812,51 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         int maxDistance = (getSize() / 2) - (rockerSize / 2);
         Point centerPoint = new Point(getSize() / 2, getSize() / 2);
         Point touchPoint = new Point(x, y);
+        // 死区：位移比例不足视为未推动，杆体回中并释放全部方向
+        int deadZone = getData().getEvent().getDeadZone();
+        if (deadZone > 0) {
+            float lenX = touchPoint.x - centerPoint.x;
+            float lenY = touchPoint.y - centerPoint.y;
+            float ratio = (float) Math.sqrt(lenX * lenX + lenY * lenY) / maxDistance * 100;
+            if (ratio < deadZone) {
+                lockArmed = false;
+                resetRockerToCenter();
+                return;
+            }
+        }
         Point position = getRockerPositionPoint(centerPoint, touchPoint, maxDistance);
         rocker.setX(position.x - (float) (rockerSize / 2));
         rocker.setY(position.y - (float) (rockerSize / 2));
+        // 前进锁武装判定：正北方向且位移达到阈值
+        if (getData().getEvent().isCanLock()) {
+            float lenX = touchPoint.x - centerPoint.x;
+            float lenY = touchPoint.y - centerPoint.y;
+            float ratio = (float) Math.sqrt(lenX * lenX + lenY * lenY) / maxDistance * 100;
+            lockArmed = tempDirection == Direction.DIRECTION_UP && ratio >= getData().getEvent().getLockThreshold();
+        } else {
+            lockArmed = false;
+        }
+    }
+
+    /** 杆体回中并释放全部方向键（死区或解除锁定时） */
+    private void resetRockerToCenter() {
+        if (tempDirection != Direction.DIRECTION_CENTER) {
+            tempDirection = Direction.DIRECTION_CENTER;
+            handleMoveEvent(false, false, false, false);
+        }
+        setButtonPosition(rocker, (getSize() / 2) - (rockerSize / 2), (getSize() / 2) - (rockerSize / 2));
+    }
+
+    /** 前进锁视觉提示：锁定时杆体描边变为主题色 */
+    private void applyRockerLockVisual(boolean locked) {
+        if (drawableRocker == null) {
+            return;
+        }
+        if (locked) {
+            drawableRocker.setStroke(ConvertUtils.dip2px(getContext(), 2), ThemeEngine.getInstance().getTheme().getColor());
+        } else {
+            drawableRocker.setStroke(ConvertUtils.dip2px(getContext(), getData().getStyle().getRockerStyle().getRockerStrokeWidth() / 10f), getData().getStyle().getRockerStyle().getRockerStrokeColor());
+        }
     }
 
     private Point getRockerPositionPoint(Point centerPoint, Point touchPoint, float maxDistance) {
@@ -871,6 +1011,9 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                 setButtonPosition(area, 0, 0);
                 setButtonPosition(rocker, (getSize() / 2) - (rockerSize / 2), (getSize() / 2) - (rockerSize / 2));
                 tempDirection = Direction.DIRECTION_CENTER;
+                lockArmed = false;
+                forwardLocked = false;
+                applyRockerLockVisual(false);
             }
             if (menu != null) {
                 for (Integer code : getData().getEvent().upKeycodeList()) {

@@ -231,6 +231,14 @@ class MenuSetting {
             changed()
         }
 
+    /** 游戏内控件整体不透明度（百分比 10–100） */
+    var controlsOpacity: Int = 100
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
     private val changeListeners = mutableListOf<Runnable>()
 
     /** 注册属性变化监听（替代原 fakefx property 监听，用于自动保存与页面刷新） */
@@ -285,6 +293,7 @@ class MenuSetting {
                 addProperty("windowScale", src.windowScale)
                 addProperty("cursorOffset", src.cursorOffset)
                 addProperty("gamepadDeadzone", src.gamepadDeadzone)
+                addProperty("controlsOpacity", src.controlsOpacity)
             }
         }
 
@@ -326,6 +335,7 @@ class MenuSetting {
                 ms.windowScale = json["windowScale"]?.asDouble ?: 1.0
                 ms.cursorOffset = json["cursorOffset"]?.asDouble ?: 0.0
                 ms.gamepadDeadzone = json["gamepadDeadzone"]?.asDouble ?: 0.2
+                ms.controlsOpacity = json["controlsOpacity"]?.asInt ?: 100
             }
         }
     }
