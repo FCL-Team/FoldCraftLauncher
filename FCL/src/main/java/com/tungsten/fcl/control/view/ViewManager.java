@@ -3,6 +3,7 @@ package com.tungsten.fcl.control.view;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.tungsten.fcl.R;
@@ -15,6 +16,7 @@ import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcllibrary.ui.ProgressDialog;
+import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -284,6 +286,88 @@ private long loadDialogShowTime = 0;
 
     public void saveController() {
         gameMenu.getController().saveToDisk();
+    }
+
+    /**
+     * 编辑拖动吸附：以期望位置为基准，在阈值内与兄弟控件的边缘/对边对齐并绘制参考线。
+     * 期望位置每帧由手指屏幕坐标独立计算，吸附修正不参与下一帧基准，
+     * 避免"吸附→弹回"的循环抖动。
+     *
+     * @return 修正后的 x/y
+     */
+    public float[] snapPosition(CustomView self, float desiredX, float desiredY) {
+        View view = (View) self;
+        int areaWidth = gameMenu.getBaseLayout().getWidth();
+        int areaHeight = gameMenu.getBaseLayout().getHeight();
+        float x = Math.max(0, Math.min(areaWidth - view.getWidth(), desiredX));
+        float y = Math.max(0, Math.min(areaHeight - view.getHeight(), desiredY));
+        if (!gameMenu.getMenuSetting().isAutoFit()) {
+            gameMenu.getTouchPad().removeLine(0);
+            gameMenu.getTouchPad().removeLine(1);
+            return new float[]{x, y};
+        }
+        float threshold = Math.max(
+                ConvertUtils.dip2px(gameMenu.getActivity(), gameMenu.getMenuSetting().getAutoFitDist()),
+                ConvertUtils.dip2px(gameMenu.getActivity(), 2));
+
+        float bestX = threshold;
+        float bestY = threshold;
+        float lineX = 0;
+        float lineY = 0;
+        float selfEdgeX = 0;
+        float selfEdgeY = 0;
+        boolean hasX = false;
+        boolean hasY = false;
+        ViewGroup parent = gameMenu.getBaseLayout();
+        for (int i = 0; i < parent.getChildCount(); i++) {
+            View child = parent.getChildAt(i);
+            if (child.getVisibility() != View.VISIBLE
+                    || child == self
+                    || (!(child instanceof ControlButton) && !(child instanceof ControlDirection))
+                    || ((CustomView) child).isGhost()) {
+                continue;
+            }
+            // x 轴：自身左/右边与目标左/右边（含贴齐）取最近吸附线
+            float[] linesX = {child.getX(), child.getX() + child.getWidth()};
+            float[] edgesX = {x, x + view.getWidth()};
+            for (float edge : edgesX) {
+                for (float line : linesX) {
+                    float d = Math.abs(line - edge);
+                    if (d <= bestX) {
+                        bestX = d;
+                        hasX = true;
+                        lineX = line;
+                        selfEdgeX = edge;
+                    }
+                }
+            }
+            float[] linesY = {child.getY(), child.getY() + child.getHeight()};
+            float[] edgesY = {y, y + view.getHeight()};
+            for (float edge : edgesY) {
+                for (float line : linesY) {
+                    float d = Math.abs(line - edge);
+                    if (d <= bestY) {
+                        bestY = d;
+                        hasY = true;
+                        lineY = line;
+                        selfEdgeY = edge;
+                    }
+                }
+            }
+        }
+        if (hasX) {
+            x += lineX - selfEdgeX;
+            gameMenu.getTouchPad().drawLine(0, Math.round(lineX), Math.round(selfEdgeX));
+        } else {
+            gameMenu.getTouchPad().removeLine(0);
+        }
+        if (hasY) {
+            y += lineY - selfEdgeY;
+            gameMenu.getTouchPad().drawLine(1, Math.round(lineY), Math.round(selfEdgeY));
+        } else {
+            gameMenu.getTouchPad().removeLine(1);
+        }
+        return new float[]{x, y};
     }
 
     /** 计算控件合成透明度：一键隐藏 > 参考组 > 全局不透明度 */

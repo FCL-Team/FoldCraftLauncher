@@ -563,19 +563,19 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                             layoutRockerChildren(resizingSize);
                         }
                     } else {
-                        int deltaX = (int) ((event.getX() - downX) * menu.getMenuSetting().getMouseSensitivity());
-                        int deltaY = (int) ((event.getY() - downY) * menu.getMenuSetting().getMouseSensitivity());
-                        float targetX = Math.max(0, Math.min(screenWidth - getSize(), getX() + deltaX));
-                        float targetY = Math.max(0, Math.min(screenHeight - getSize(), getY() + deltaY));
-                        setX(targetX);
-                        setY(targetY);
-                        autoFitPosition();
+                        // 拖动基准与吸附解耦：期望位置每帧由手指屏幕坐标独立计算，
+                        // 吸附修正不参与下一帧基准，避免"吸附→弹回"的位置抖动
+                        float desiredX = positionX + (float) ((event.getRawX() - downRawX) * menu.getMenuSetting().getMouseSensitivity());
+                        float desiredY = positionY + (float) ((event.getRawY() - downRawY) * menu.getMenuSetting().getMouseSensitivity());
+                        float[] p = menu.getViewManager().snapPosition(this, desiredX, desiredY);
+                        setX(p[0]);
+                        setY(p[1]);
                     }
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    removeLine(0);
-                    removeLine(1);
+                    menu.getTouchPad().removeLine(0);
+                    menu.getTouchPad().removeLine(1);
                     if (resizing) {
                         resizing = false;
                         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
@@ -727,20 +727,6 @@ public class ControlDirection extends RelativeLayout implements CustomView {
         return true;
     }
 
-    private void showLine(int orientation, int pref, int self) {
-        if (menu == null)
-            return;
-
-        menu.getTouchPad().drawLine(orientation, pref, self);
-    }
-
-    private void removeLine(int orientation) {
-        if (menu == null)
-            return;
-
-        menu.getTouchPad().removeLine(orientation);
-    }
-
     /** 触点是否落在左上/右下缩放手柄的命中区域（区域覆盖控件内侧角） */
     private boolean inTopLeftHandle(float x, float y) {
         if (!selected) {
@@ -786,83 +772,6 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     private int pixelToPermille(int pixel, BaseInfoData.PercentageSize.Reference reference) {
         int base = reference == BaseInfoData.PercentageSize.Reference.SCREEN_WIDTH ? screenWidth : screenHeight;
         return Math.max(1, Math.min(1000, Math.round(pixel * 1000f / base)));
-    }
-
-    private void autoFitPosition() {
-        if (menu == null || !menu.getMenuSetting().isAutoFit())
-            return;
-
-        ViewGroup viewGroup = (ViewGroup) getParent();
-
-        int dist = ConvertUtils.dip2px(getContext(), menu.getMenuSetting().getAutoFitDist());
-        final int autoFitDist = Math.max(dist, ConvertUtils.dip2px(getContext(), 2));
-
-        boolean[] xyPref = {false, false};
-        int[] prefXY = {0, 0};
-        int[] selfXY = {0, 0};
-        int[] xyDist = {autoFitDist, autoFitDist};
-        int left = (int) getX();
-        int right = (int) (getX() + getWidth());
-        int up = (int) getY();
-        int down = (int) (getY() + getHeight());
-        int[] posArr = {left, right, up, down};
-
-        for (int i = 0; i < viewGroup.getChildCount(); i++) {
-            if (viewGroup.getChildAt(i).getVisibility() == VISIBLE) {
-                View button = viewGroup.getChildAt(i);
-                if (button == this || (!(button instanceof ControlButton) && !(button instanceof ControlDirection))) {
-                    continue;
-                }
-                // 参考组控件仅作视觉参考，不作为吸附目标
-                if (((CustomView) button).isGhost()) {
-                    continue;
-                }
-                //buttonLeft, buttonRight, buttonUp, buttonDown
-                int[] buttonPosArr = {
-                        (int) button.getX(),
-                        (int) (button.getX() + button.getWidth()),
-                        (int) button.getY(),
-                        (int) (button.getY() + button.getHeight())
-                };
-                /*
-                left - buttonLeft, left - buttonRight
-                right - buttonRight, right - buttonLeft
-                up - buttonUp, up - buttonDown
-                down - buttonDown, down - buttonUp
-                */
-                int flag = -1;
-                for (int j = 0; j < posArr.length; j++) {
-                    flag *= -1;
-                    int xyIndex = j / 2 % 2;
-                    if (Math.abs(posArr[j] - buttonPosArr[j]) < xyDist[xyIndex]) {
-                        xyPref[xyIndex] = true;
-                        prefXY[xyIndex] = buttonPosArr[j];
-                        xyDist[xyIndex] = posArr[j] - buttonPosArr[j];
-                        selfXY[xyIndex] = posArr[j] - xyDist[xyIndex];
-                    }
-                    int buttonDist = posArr[j] - buttonPosArr[j + flag];
-                    if (flag * buttonDist >= 0 && flag * buttonDist < xyDist[xyIndex]) {
-                        xyPref[xyIndex] = true;
-                        prefXY[xyIndex] = buttonPosArr[j + flag];
-                        xyDist[xyIndex] = buttonDist - flag * dist;
-                        selfXY[xyIndex] = posArr[j] - xyDist[xyIndex];
-                    }
-                }
-            }
-        }
-
-        if (xyPref[0]) {
-            setX(left - xyDist[0]);
-            showLine(0, prefXY[0], selfXY[0]);
-        } else {
-            removeLine(0);
-        }
-        if (xyPref[1]) {
-            setY(up - xyDist[1]);
-            showLine(1, prefXY[1], selfXY[1]);
-        } else {
-            removeLine(1);
-        }
     }
 
     private void handleButtonEvent(int x, int y) {
