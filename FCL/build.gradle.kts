@@ -193,7 +193,8 @@ androidComponents {
         }
 
         // LWJGL natives 打包在 lwjgl-*-natives aar 的 assets/app_runtime/lwjgl/<版本>/natives/<abi> 下，
-        // 不走 AGP 的 abiFilters，需在 mergeAssets 后手动按架构删除其他 ABI 的 natives 目录。
+        // JNA natives 在 assets/app_runtime/jna/<版本>/natives/<abi> 下，
+        // 均不走 AGP 的 abiFilters，需在 mergeAssets 后手动按架构删除其他 ABI 的 natives 目录。
         val variantName = variant.name.replaceFirstChar { it.uppercaseChar() }
         afterEvaluate {
             val mergeAssets =
@@ -220,6 +221,18 @@ androidComponents {
                         ?: emptyList()
                     lwjglVersions.forEach { version ->
                         val nativesDir = File(assetsDir, "app_runtime/lwjgl/$version/natives")
+                        if (nativesDir.isDirectory) {
+                            nativesDir.listFiles()?.forEach { dir ->
+                                if (dir.isDirectory && dir.name != abi) {
+                                    logger.lifecycle("删除非目标架构 natives: $dir")
+                                    dir.deleteRecursively()
+                                }
+                            }
+                        }
+                    }
+                    // JNA natives 在 assets/app_runtime/jna/<版本>/natives/<abi> 下，同样按架构裁剪
+                    File(assetsDir, "app_runtime/jna").listFiles()?.forEach { versionDir ->
+                        val nativesDir = File(versionDir, "natives")
                         if (nativesDir.isDirectory) {
                             nativesDir.listFiles()?.forEach { dir ->
                                 if (dir.isDirectory && dir.name != abi) {
