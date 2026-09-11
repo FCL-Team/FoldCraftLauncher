@@ -24,6 +24,7 @@ import com.tungsten.fclcore.fakefx.beans.property.IntegerPropertyBase
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import kotlin.math.roundToInt
 
 /** 数值滑条：数值文本随滑块移动绘制，点按数值弹出输入对话框精确设值 */
 class FCLNumberSeekBar @JvmOverloads constructor(
@@ -37,6 +38,7 @@ class FCLNumberSeekBar @JvmOverloads constructor(
     private var progressProperty: IntegerProperty? = null
 
     private var suffix: String = ""
+    private var scale = 1
     private var thumbDrawable: ShapeDrawable? = null
 
     /** 数值文本画笔，颜色与进度条主题色对比（autoTint） */
@@ -51,15 +53,15 @@ class FCLNumberSeekBar @JvmOverloads constructor(
     private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(event: MotionEvent): Boolean {
             // 热区与绘制的文本区域一致（两端钳制偏移后的位置）
-            val text = "$progress$suffix"
+            val text = displayText(progress)
             val textWidth = textPaint.measureText(text)
             val centerX = computeTextCenterX(textWidth)
             if (event.x >= centerX - textWidth / 2f && event.x <= centerX + textWidth / 2f) {
                 val dialog = EditDialog(context) { s ->
-                    // 非数字或越界输入直接忽略
-                    s.toIntOrNull()?.takeIf { it in min..max }?.let { progress = it }
+                    // 非数字或越界输入直接忽略；带缩放时输入为显示值，换算回实际进度
+                    s.toFloatOrNull()?.let { (it * scale).roundToInt() }?.takeIf { it in min..max }?.let { progress = it }
                 }
-                dialog.appendTitle("($min ~ $max)")
+                dialog.appendTitle("(${displayValue(min)} ~ ${displayValue(max)})")
                 dialog.getEditText().inputType = EditorInfo.TYPE_NUMBER_FLAG_DECIMAL
                 dialog.show()
                 return true
@@ -91,12 +93,25 @@ class FCLNumberSeekBar @JvmOverloads constructor(
         textPaint.color = theme.autoTint
     }
 
-    /** 动态设置数值后缀（% / MB 等），触发 thumb 重建 */
+    /** 动态设置数值后缀（% / dp 等），触发 thumb 重建 */
     fun setSuffix(suffix: String) {
         this.suffix = suffix
         thumbDrawable = null
         invalidate()
     }
+
+    /** 设置数值缩放：显示值 = 进度 / scale（进度以实际值 10 倍存储时传 10），点按输入按显示值自动换算 */
+    fun setValueScale(scale: Int) {
+        this.scale = scale
+        thumbDrawable = null
+        invalidate()
+    }
+
+    /** 进度换算为显示值文本：scale=1 显示原值，否则带一位小数（如 875 → 87.5） */
+    private fun displayValue(value: Int): String =
+        if (scale == 1) "$value" else (value / scale.toFloat()).toString()
+
+    private fun displayText(value: Int): String = displayValue(value) + suffix
 
     /** 挂载拖动监听：仅用户操作时同步进度属性，程序性变化（setMax/setMin 造成的进度钳制）不进入属性，避免误触发监听 */
     fun addProgressListener() {
@@ -210,7 +225,7 @@ class FCLNumberSeekBar @JvmOverloads constructor(
         super.onDraw(canvas)
         textPaint.textSize = height / 1.5f
         ensureThumb()
-        val text = "$progress$suffix"
+        val text = displayText(progress)
         val textWidth = textPaint.measureText(text)
         val textY = height / 2f - (textPaint.descent() + textPaint.ascent()) / 2f
         // 数值文本居中绘制在滑块处（CENTER 对齐），贴近两端时会超出布局被裁剪，
@@ -244,7 +259,7 @@ class FCLNumberSeekBar @JvmOverloads constructor(
         return centerX
     }
 
-    private fun maxText(): String = "$max$suffix"
+    private fun maxText(): String = displayText(max)
 
     /** thumb 为透明胶囊（宽度容纳最大数值文本），仅承载滑块定位 */
     private fun ensureThumb() {
