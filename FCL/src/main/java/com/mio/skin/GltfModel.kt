@@ -431,7 +431,7 @@ class GltfModel private constructor() {
                 readIndices(accessors, prim.getInt("indices"), buffer, views)
             )
             if (mesh.name?.endsWith("_Layer") == true) {
-                mesh.layerDefinition = layerDefinition(mesh.name!!, isSlim)
+                mesh.layerDefinition = layerDefinition(mesh.name, isSlim)
             }
             for (k in 0 until 3) {
                 var axisMin = Float.MAX_VALUE

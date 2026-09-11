@@ -303,7 +303,7 @@ object CcEvents {
                 substitutions.add(
                     substitution(
                         ctx,
-                        CcJson.obj("type" to CcJson.str(etype!!), "key" to CcJson.str(rawKey)),
+                        CcJson.obj("type" to CcJson.str(etype), "key" to CcJson.str(rawKey)),
                         CcJson.obj("type" to CcJson.str("no_op"), "key" to CcJson.str(targetId)),
                         "Layer already ${if (etype == "show_layer") "visible" else "hidden"} in the simulated ZL state; skipped FCL toggle",
                         "layers",

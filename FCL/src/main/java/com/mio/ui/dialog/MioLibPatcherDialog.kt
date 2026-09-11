@@ -27,9 +27,9 @@ class MioLibPatcherDialog(
 
     private val binding = DialogMiolibpatcherBinding.inflate(layoutInflater)
 
-    private lateinit var alc10Switch: FCLSwitch
-    private lateinit var sableSwitch: FCLSwitch
-    private lateinit var asmSwitch: FCLSwitch
+    private var alc10Switch: FCLSwitch
+    private var sableSwitch: FCLSwitch
+    private var asmSwitch: FCLSwitch
 
     init {
         val point = Point()
