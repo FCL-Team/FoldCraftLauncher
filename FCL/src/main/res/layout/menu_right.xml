@@ -6,44 +6,75 @@
     android:background="@drawable/bg_game_menu"
     android:clickable="true"
     android:focusable="true"
-    android:padding="12dp">
+    android:paddingBottom="12dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp">
 
-    <!-- 菜单标题：一级显示"Settings"，二级显示当前分类名 -->
+    <!-- 分类标签栏：顶部图标切换分类，下方列表直接显示所选分类的设置项。
+         抽屉内宽约 261dp，6 个 Tab 用 fixed+fill 均分（约 43dp/个），保证一屏全部可见 -->
+    <com.tungsten.fcllibrary.component.view.FCLTabLayout
+        android:id="@+id/menu_tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabUnboundedRipple="false">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:icon="@drawable/ic_dashboard_filled" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:icon="@drawable/ic_touch_app_filled" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:icon="@drawable/ic_mouse_filled" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:icon="@drawable/ic_sports_esports_filled" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:icon="@drawable/ic_mobile_rotate_filled" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:icon="@drawable/ic_terminal_outlined" />
+
+    </com.tungsten.fcllibrary.component.view.FCLTabLayout>
+
+    <!-- 编辑模式标题：右菜单整体替换为控件组面板时显示。
+         串在 menu_tabs 下方：编辑模式 tabs GONE 塌缩到顶部后标题自然顶上去，列表始终锚定标题底部不重叠 -->
     <com.tungsten.fcllibrary.component.view.FCLTextView
         android:id="@+id/menu_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:singleLine="true"
-        android:text="@string/menu_settings"
+        android:text="@string/menu_controls_groups"
         android:textSize="14sp"
-        app:auto_text_tint="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/menu_back"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- 二级菜单返回按钮，仅进入分类后可见 -->
-    <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:id="@+id/menu_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        android:paddingStart="4dp"
-        android:paddingEnd="8dp"
-        android:singleLine="true"
-        android:text="←"
-        android:textSize="16sp"
         android:visibility="gone"
         app:auto_text_tint="true"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/menu_tabs" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/right_menu_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="6dp"
         app:layout_constraintBottom_toTopOf="@id/add_group_button"
         app:layout_constraintTop_toBottomOf="@id/menu_title" />
 

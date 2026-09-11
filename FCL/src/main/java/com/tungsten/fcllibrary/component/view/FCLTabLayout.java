@@ -35,6 +35,11 @@ public class FCLTabLayout extends TabLayout {
                     ThemeEngine.getInstance().getTheme().getDkColor(),
                     followTheme ? ThemeEngine.getInstance().getTheme().getAutoTint() : Color.GRAY
             };
+            // 图标 Tab 与界面文字同色系：选中为对比色，未选中为半透明对比色（当前仅游戏菜单使用图标 Tab）
+            int[] iconColor = {
+                    ThemeEngine.getInstance().getTheme().getAutoTint(),
+                    ThemeEngine.getInstance().getTheme().getAutoHintTint()
+            };
             int[][] bgState = {
                     {
 
@@ -45,7 +50,7 @@ public class FCLTabLayout extends TabLayout {
             };
             setSelectedTabIndicatorColor(ThemeEngine.getInstance().getTheme().getDkColor());
             setTabTextColors(new ColorStateList(state, color));
-            setTabIconTint(new ColorStateList(state, color));
+            setTabIconTint(new ColorStateList(state, iconColor));
             if (followTheme) {
                 setBackgroundTintList(new ColorStateList(bgState, bgColor));
             }

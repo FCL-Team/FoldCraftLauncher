@@ -12,7 +12,6 @@ import com.mio.util.getScreenWidth
 import com.mio.ui.selectedCardBackground
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemMenuButtonBinding
-import com.tungsten.fcl.databinding.ItemMenuCategoryBinding
 import com.tungsten.fcl.databinding.ItemMenuControlGroupBinding
 import com.tungsten.fcl.databinding.ItemMenuSeekbarBinding
 import com.tungsten.fcl.databinding.ItemMenuSpinnerBinding
@@ -25,7 +24,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLSpinner
 import com.tungsten.fcllibrary.component.view.FCLTextView
 
-/** 右菜单一级分类 */
+/** 右菜单分类，与右菜单顶部标签栏一一对应 */
 enum class RightMenuCategory(@param:StringRes val titleRes: Int) {
     FUNCTION(R.string.menu_settings_function),
     GESTURE(R.string.menu_settings_gesture),
@@ -40,7 +39,6 @@ enum class RightMenuTag {
     // 功能
     LOCK_VIEW, HIDE_VIEW, SHOW_FPS, OPEN_MULTIPLAYER, OPEN_QUICK_INPUT, OPEN_SEND_KEY,
     SOFT_KEYBOARD_ADJUST, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, WINDOW_SCALE, CURSOR_OFFSET,
-    CONTROLS_OPACITY,
 
     // 手势
     DISABLE_GESTURE, GESTURE_MODE, DISABLE_LEFT_TOUCH,
@@ -67,8 +65,9 @@ enum class RightMenuTag {
 }
 
 /**
- * 右菜单两级 RecyclerView 适配器。
- * 一级为分类列表，点击分类后切换到该分类下的功能项列表（二级），回调分发与设置页适配器一致。
+ * 右菜单 RecyclerView 适配器。
+ * 分类由菜单顶部标签栏切换，适配器只负责渲染当前分类的功能项列表；
+ * 编辑模式下整体替换为控件组管理面板，回调分发与设置页适配器一致。
  */
 class RightMenuAdapter(
     private val context: Context,
@@ -78,7 +77,6 @@ class RightMenuAdapter(
 
     /** 交互回调，由 GameMenu 实现并分派到原菜单逻辑 */
     interface Listener {
-        fun onCategoryClick(category: RightMenuCategory)
         fun onButtonClick(tag: RightMenuTag)
         fun onSwitchToggle(tag: RightMenuTag, checked: Boolean)
         fun onSwitchLongClick(tag: RightMenuTag)
@@ -109,24 +107,18 @@ class RightMenuAdapter(
         context.getSharedPreferences("third_party", Context.MODE_PRIVATE)
             .getBoolean("terracotta", false)
 
-    private val typeCategory = 0
     private val typeSwitch = 1
     private val typeButton = 2
     private val typeSpinner = 3
     private val typeSeekBar = 4
     private val typeControlGroup = 5
 
-    /** 当前所在二级分类，null 表示处于一级分类列表 */
-    private var currentCategory: RightMenuCategory? = null
+    /** 当前显示的分类，由顶部标签栏切换 */
+    private var currentCategory: RightMenuCategory = RightMenuCategory.FUNCTION
     private var rows: List<Row> = emptyList()
 
     fun showCategory(category: RightMenuCategory) {
         currentCategory = category
-        rebuild()
-    }
-
-    fun showCategories() {
-        currentCategory = null
         rebuild()
     }
 
@@ -142,23 +134,10 @@ class RightMenuAdapter(
             return buildEditRows()
         }
         return when (currentCategory) {
-        null -> listOf(
+        RightMenuCategory.FUNCTION -> listOfNotNull(
             Row.ButtonRow(
                 R.string.menu_settings_force_exit,
                 listOf(R.string.menu_settings_force_exit_button to RightMenuTag.FORCE_EXIT)
-            )
-        ) + RightMenuCategory.entries.map { Row.CategoryRow(it) }
-
-        RightMenuCategory.FUNCTION -> listOfNotNull(
-            Row.SwitchRow(
-                R.string.menu_settings_lock_view,
-                { menuSetting.isLockMenuView },
-                RightMenuTag.LOCK_VIEW
-            ),
-            Row.SwitchRow(
-                R.string.menu_settings_hide_view,
-                { menuSetting.isHideMenuView },
-                RightMenuTag.HIDE_VIEW
             ),
             Row.SwitchRow(
                 R.string.menu_settings_show_fps,
@@ -193,22 +172,6 @@ class RightMenuAdapter(
                 RightMenuTag.SDL_AUTO_SHOW_IME
             ),
             Row.SeekBarRow(
-                R.string.menu_settings_item_bar_scale_width, 100, 0,
-                { menuSetting.itemBarWidth * 100 / screenWidth }, RightMenuTag.ITEM_BAR_WIDTH, "%"
-            ),
-            Row.SeekBarRow(
-                R.string.menu_settings_item_bar_scale_height,
-                100,
-                0,
-                { menuSetting.itemBarHeight * 100 / screenHeight },
-                RightMenuTag.ITEM_BAR_HEIGHT,
-                "%"
-            ),
-            Row.SeekBarRow(
-                R.string.menu_settings_controls_opacity, 100, 10,
-                { menuSetting.controlsOpacity }, RightMenuTag.CONTROLS_OPACITY, "%"
-            ),
-            Row.SeekBarRow(
                 R.string.settings_game_dimension, 300, 1,
                 { (menuSetting.windowScale * 100).toInt() }, RightMenuTag.WINDOW_SCALE, "%"
             )
@@ -232,6 +195,18 @@ class RightMenuAdapter(
                 R.string.menu_settings_disable_left_touch,
                 { menuSetting.isDisableLeftTouch },
                 RightMenuTag.DISABLE_LEFT_TOUCH
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_item_bar_scale_width, 100, 0,
+                { menuSetting.itemBarWidth * 100 / screenWidth }, RightMenuTag.ITEM_BAR_WIDTH, "%"
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_item_bar_scale_height,
+                100,
+                0,
+                { menuSetting.itemBarHeight * 100 / screenHeight },
+                RightMenuTag.ITEM_BAR_HEIGHT,
+                "%"
             )
         )
 
@@ -332,6 +307,16 @@ class RightMenuAdapter(
 
         RightMenuCategory.DEBUG -> listOf(
             Row.SwitchRow(
+                R.string.menu_settings_lock_view,
+                { menuSetting.isLockMenuView },
+                RightMenuTag.LOCK_VIEW
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_hide_view,
+                { menuSetting.isHideMenuView },
+                RightMenuTag.HIDE_VIEW
+            ),
+            Row.SwitchRow(
                 R.string.menu_settings_show_memory,
                 { menuSetting.isShowMemory },
                 RightMenuTag.SHOW_MEMORY,
@@ -365,8 +350,6 @@ class RightMenuAdapter(
     }
 
     private sealed class Row {
-        data class CategoryRow(val category: RightMenuCategory) : Row()
-
         /** 控件组行：组名（点击切换编辑组）+ 属性编辑 + 删除 + 显示开关；长按拖动调整渲染层级 */
         data class ControlGroupRow(
             val group: ControlViewGroup
@@ -410,7 +393,6 @@ class RightMenuAdapter(
     override fun getItemCount(): Int = rows.size
 
     override fun getItemViewType(position: Int): Int = when (rows[position]) {
-        is Row.CategoryRow -> typeCategory
         is Row.SwitchRow -> typeSwitch
         is Row.ButtonRow -> typeButton
         is Row.SpinnerRow -> typeSpinner
@@ -421,7 +403,6 @@ class RightMenuAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflater = LayoutInflater.from(parent.context)
         val view = when (viewType) {
-            typeCategory -> ItemMenuCategoryBinding.inflate(inflater, parent, false).root
             typeSwitch -> ItemMenuSwitchBinding.inflate(inflater, parent, false).root
             typeButton -> ItemMenuButtonBinding.inflate(inflater, parent, false).root
             typeSpinner -> ItemMenuSpinnerBinding.inflate(inflater, parent, false).root
@@ -437,7 +418,6 @@ class RightMenuAdapter(
         holder.itemView.background = menuCardBackground(density)
         holder.itemView.findViewById<FCLTextView>(R.id.description)?.visibility = View.GONE
         when (row) {
-            is Row.CategoryRow -> bindCategory(holder, row)
             is Row.SwitchRow -> bindSwitch(holder, row)
             is Row.ButtonRow -> bindButton(holder, row)
             is Row.SpinnerRow -> bindSpinner(holder, row)
@@ -472,12 +452,6 @@ class RightMenuAdapter(
 
     /** 控件组行位置转组列表索引 */
     fun groupIndexOf(position: Int): Int = position
-
-    private fun bindCategory(holder: Holder, row: Row.CategoryRow) {
-        val binding = ItemMenuCategoryBinding.bind(holder.itemView)
-        binding.label.text = context.getString(row.category.titleRes)
-        holder.itemView.setOnClickListener { listener.onCategoryClick(row.category) }
-    }
 
     private fun bindSwitch(holder: Holder, row: Row.SwitchRow) {
         val binding = ItemMenuSwitchBinding.bind(holder.itemView)

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 /** 菜单条目卡片背景：半透明深色，圆角与左/右菜单抽屉背景均可区分 */
 fun menuCardBackground(density: Float): GradientDrawable = GradientDrawable().apply {
     cornerRadius = 10 * density
-    setColor(ColorUtils.setAlphaComponent(Color.BLACK, 0x14))
+    setColor(ColorUtils.setAlphaComponent(Color.WHITE, 10))
 }
 
 /** 菜单条目顶部间距，卡片之间留白 */

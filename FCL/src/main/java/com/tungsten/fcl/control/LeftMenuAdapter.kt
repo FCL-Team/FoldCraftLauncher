@@ -18,7 +18,7 @@ import com.tungsten.fcllibrary.component.view.FCLTextView
 
 /** 左菜单条目标签，交互回调按此分发 */
 enum class LeftMenuTag {
-    EDIT_MODE, SHOW_BOUNDARY, HIDE_ALL, AUTO_FIT, AUTO_FIT_DIST,
+    EDIT_MODE, SHOW_BOUNDARY, CONTROLS_OPACITY, HIDE_ALL, AUTO_FIT, AUTO_FIT_DIST,
     CURRENT_CONTROLLER,
     ADD_BUTTON, ADD_DIRECTION, MANAGE_BUTTON_STYLE, MANAGE_DIRECTION_STYLE
 }
@@ -68,6 +68,8 @@ class LeftMenuAdapter(
             ),
             Row.SwitchRow(R.string.menu_controls_edit_mode, { gameMenu.isEditMode }, LeftMenuTag.EDIT_MODE),
             Row.SwitchRow(R.string.menu_controls_show_boundary, { gameMenu.isShowViewBoundaries }, LeftMenuTag.SHOW_BOUNDARY),
+            Row.SeekBarRow(R.string.menu_settings_controls_opacity, 100, 10,
+                { gameMenu.menuSetting.controlsOpacity }, LeftMenuTag.CONTROLS_OPACITY, "%"),
             Row.SwitchRow(R.string.menu_controls_hide_all, { gameMenu.isHideAllViews }, LeftMenuTag.HIDE_ALL),
             Row.SwitchRow(R.string.menu_controls_auto_fit, { gameMenu.menuSetting.isAutoFit }, LeftMenuTag.AUTO_FIT),
             Row.SeekBarRow(R.string.menu_controls_auto_fit_dist, 10, 0,
@@ -141,7 +143,7 @@ class LeftMenuAdapter(
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val row = rows[position]
         // 条目卡片背景与右菜单一致：半透明深色，暗色下仅微亮避免刺眼
-        holder.itemView.setBackground(menuCardBackground(density))
+        holder.itemView.background = menuCardBackground(density)
         holder.itemView.findViewById<FCLTextView>(R.id.description)?.visibility = View.GONE
         when (row) {
             is Row.SwitchRow -> bindSwitch(holder, row)
