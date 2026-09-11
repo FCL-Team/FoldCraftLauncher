@@ -46,6 +46,7 @@ internal class EditDirectionDetails(
         val sizeType = infoBinding.sizeType as FCLSpinner<String>
         setupVisibilitySpinner(visibility)
         setupSizeTypeSpinner(sizeType)
+        setupReferenceSpinner(infoBinding.sizeReference as FCLSpinner<String>, baseInfo.percentageWidth)
         bindNumberSeekBar(infoBinding.xPosition, baseInfo.xPositionProperty())
         bindNumberSeekBar(infoBinding.yPosition, baseInfo.yPositionProperty())
         bindSizeSeekBar(
@@ -72,6 +73,7 @@ internal class EditDirectionDetails(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun setupEvent() {
         selectKeycodes(eventBinding.up, { data.event.upKeycodeList() }) { data.event.setUpKeycode(it) }
         selectKeycodes(eventBinding.down, { data.event.downKeycodeList() }) { data.event.setDownKeycode(it) }

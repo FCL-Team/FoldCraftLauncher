@@ -43,10 +43,12 @@ class EditViewDialog(
         EditDirectionDetails(context, menu, cloneView as ControlDirectionData)
     }
 
-    private lateinit var binding: DialogEditViewBinding
+    private var binding: DialogEditViewBinding
 
     init {
         setCancelable(false)
+        // 游戏内悬浮面板：与游戏菜单一致的半透明背景
+        window?.setBackgroundDrawableResource(R.drawable.bg_game_menu)
         window?.setLayout(ConvertUtils.dip2px(context, 500f), ViewGroup.LayoutParams.MATCH_PARENT)
         binding = DialogEditViewBinding.inflate(layoutInflater)
         setContentView(binding.root)

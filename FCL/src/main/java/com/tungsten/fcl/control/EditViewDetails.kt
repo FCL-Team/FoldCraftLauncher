@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.View
 import com.tungsten.fcl.R
 import com.tungsten.fcl.control.data.BaseInfoData
+import com.tungsten.fcl.control.data.BaseInfoData.PercentageSize
 import com.tungsten.fcl.control.data.BaseInfoData.SizeType
 import com.tungsten.fcl.control.data.BaseInfoData.VisibilityType
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty
@@ -43,6 +44,19 @@ internal abstract class EditViewDetails(
         )
         spinner.setSelection(types.indexOf(baseInfo.sizeType))
         spinner.setOnItemSelectedListener { index, _ -> baseInfo.sizeTypeProperty().set(types[index]) }
+    }
+
+    /** 参考轴行：按屏幕宽 / 高 */
+    protected fun setupReferenceSpinner(spinner: FCLSpinner<String>, percentageSize: PercentageSize) {
+        val references = listOf(PercentageSize.Reference.SCREEN_WIDTH, PercentageSize.Reference.SCREEN_HEIGHT)
+        spinner.setItems(
+            listOf(
+                context.getString(R.string.view_info_reference_width),
+                context.getString(R.string.view_info_reference_height)
+            )
+        )
+        spinner.setSelection(references.indexOf(percentageSize.reference))
+        spinner.setOnItemSelectedListener { index, _ -> percentageSize.referenceProperty().set(references[index]) }
     }
 
     /** 数值滑条与数据属性双向绑定（量程 / 后缀 / 缩放由布局声明） */

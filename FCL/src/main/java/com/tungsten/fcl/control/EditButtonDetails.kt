@@ -6,6 +6,7 @@ import android.view.View
 import com.google.android.material.tabs.TabLayout
 import com.mio.util.getScreenWidth
 import com.mio.util.getScreenHeight
+import com.tungsten.fcl.control.data.BaseInfoData
 import com.tungsten.fcl.control.data.ButtonEventData
 import com.tungsten.fcl.control.data.ButtonStyles
 import com.tungsten.fcl.control.data.ControlButtonData
@@ -26,7 +27,7 @@ internal class EditButtonDetails(
     private val data: ControlButtonData,
 ) : EditViewDetails(context, menu) {
 
-    override val baseInfo get() = data.baseInfo
+    override val baseInfo: BaseInfoData get() = data.baseInfo
 
     private val infoBinding = ViewEditButtonInfoBinding.inflate(LayoutInflater.from(context))
     private val eventBinding = ViewEditButtonEventBinding.inflate(LayoutInflater.from(context))
@@ -52,6 +53,8 @@ internal class EditButtonDetails(
 
         setupVisibilitySpinner(visibility)
         setupSizeTypeSpinner(sizeType)
+        setupReferenceSpinner(infoBinding.widthReference as FCLSpinner<String>, baseInfo.percentageWidth)
+        setupReferenceSpinner(infoBinding.heightReference as FCLSpinner<String>, baseInfo.percentageHeight)
         bindNumberSeekBar(infoBinding.xPosition, baseInfo.xPositionProperty())
         bindNumberSeekBar(infoBinding.yPosition, baseInfo.yPositionProperty())
         bindSizeSeekBar(
