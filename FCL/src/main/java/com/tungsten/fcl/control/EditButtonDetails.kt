@@ -70,7 +70,7 @@ internal class EditButtonDetails(
         infoBinding.style.setOnClickListener {
             val target = ButtonStyles.findStyleByName(data.style.name)
             ButtonStyleDialog(context, true, target) { style ->
-                data.setStyle(style)
+                data.style = style
                 infoBinding.styleText.text = style.name
             }.apply { setGameMenu(menu) }.show()
         }
@@ -101,6 +101,8 @@ internal class EditButtonDetails(
         children.forEachIndexed { index, child -> setupEventChild(child, events[index]) }
 
         eventBinding.container.addView(children[0].root)
+        // 与游戏菜单条目一致的卡片背景
+        eventBinding.tabLayout.background = menuCardBackground(context.resources.displayMetrics.density)
         eventBinding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 eventBinding.container.removeAllViews()
@@ -134,7 +136,10 @@ internal class EditButtonDetails(
             event.outputTextProperty().bind(outputText.stringProperty())
 
             keycode.setOnClickListener {
-                SelectKeycodeDialog(context, event.outputKeycodesList(), false, true).show()
+                SelectKeycodeDialog(context, event.outputKeycodesList(),
+                    singleSelection = false,
+                    mouse = true
+                ).show()
             }
             bindGroup.setOnClickListener {
                 val selected = FXCollections.observableArrayList<ControlViewGroup>().apply {

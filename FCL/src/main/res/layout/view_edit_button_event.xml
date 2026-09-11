@@ -104,7 +104,6 @@
     <com.tungsten.fcllibrary.component.view.FCLTabLayout
         android:layout_marginTop="10dp"
         android:id="@+id/tab_layout"
-        android:background="@android:color/transparent"
         app:tabTextAppearance="@style/TabTextAppearance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
