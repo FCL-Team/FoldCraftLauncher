@@ -309,7 +309,8 @@ private long loadDialogShowTime = 0;
     }
 
     /**
-     * 编辑拖动吸附：以期望位置为基准，在阈值内与兄弟控件的边缘/对边对齐并绘制参考线。
+     * 编辑拖动吸附：以期望位置为基准，在阈值内与兄弟控件对齐并绘制参考线。
+     * 同边对齐（左↔左、右↔右等）吸附为贴齐；邻接对齐（左右相邻、上下相邻）吸附保持吸附间距的间隔。
      * 期望位置每帧由手指屏幕坐标独立计算，吸附修正不参与下一帧基准，
      * 避免"吸附→弹回"的循环抖动。
      *
@@ -347,31 +348,36 @@ private long loadDialogShowTime = 0;
                     || ((CustomView) child).isGhost()) {
                 continue;
             }
-            // x 轴：自身左/右边与目标左/右边（含贴齐）取最近吸附线
-            float[] linesX = {child.getX(), child.getX() + child.getWidth()};
-            float[] edgesX = {x, x + view.getWidth()};
-            for (float edge : edgesX) {
-                for (float line : linesX) {
-                    float d = Math.abs(line - edge);
-                    if (d <= bestX) {
-                        bestX = d;
-                        hasX = true;
-                        lineX = line;
-                        selfEdgeX = edge;
-                    }
+            // x 轴吸附线：同边对齐（左↔左、右↔右）贴齐，邻接对齐（自身左↔目标右、自身右↔目标左）保持 threshold 间隔
+            float selfLeft = x;
+            float selfRight = x + view.getWidth();
+            float childLeft = child.getX();
+            float childRight = child.getX() + child.getWidth();
+            float[] linesX = {childLeft, childRight + threshold, childRight, childLeft - threshold};
+            float[] edgesX = {selfLeft, selfLeft, selfRight, selfRight};
+            for (int k = 0; k < linesX.length; k++) {
+                float d = Math.abs(linesX[k] - edgesX[k]);
+                if (d <= bestX) {
+                    bestX = d;
+                    hasX = true;
+                    lineX = linesX[k];
+                    selfEdgeX = edgesX[k];
                 }
             }
-            float[] linesY = {child.getY(), child.getY() + child.getHeight()};
-            float[] edgesY = {y, y + view.getHeight()};
-            for (float edge : edgesY) {
-                for (float line : linesY) {
-                    float d = Math.abs(line - edge);
-                    if (d <= bestY) {
-                        bestY = d;
-                        hasY = true;
-                        lineY = line;
-                        selfEdgeY = edge;
-                    }
+            // y 轴吸附线：同边对齐贴齐，邻接对齐（自身上↔目标下、自身下↔目标上）保持 threshold 间隔
+            float selfTop = y;
+            float selfBottom = y + view.getHeight();
+            float childTop = child.getY();
+            float childBottom = child.getY() + child.getHeight();
+            float[] linesY = {childTop, childBottom + threshold, childBottom, childTop - threshold};
+            float[] edgesY = {selfTop, selfTop, selfBottom, selfBottom};
+            for (int k = 0; k < linesY.length; k++) {
+                float d = Math.abs(linesY[k] - edgesY[k]);
+                if (d <= bestY) {
+                    bestY = d;
+                    hasY = true;
+                    lineY = linesY[k];
+                    selfEdgeY = edgesY[k];
                 }
             }
         }
