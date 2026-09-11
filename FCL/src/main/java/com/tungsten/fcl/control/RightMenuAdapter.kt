@@ -89,6 +89,9 @@ class RightMenuAdapter(
         /** 编辑模式控件组面板：切换组在编辑画布的显示/隐藏（可多组同时显示） */
         fun onEditGroupToggle(group: ControlViewGroup, visible: Boolean)
 
+        /** 编辑模式控件组面板：复制控件组（含全部控件，控件 id 重新生成） */
+        fun onEditGroupCopy(group: ControlViewGroup)
+
         /** 编辑模式控件组面板：新建控件组 */
         fun onEditGroupAdd()
 
@@ -435,6 +438,7 @@ class RightMenuAdapter(
             holder.itemView.background = selectedCardBackground(ThemeEngine.getTheme().getColor(), density)
         }
         binding.root.setOnClickListener { listener.onEditGroupSelect(row.group) }
+        binding.copy.setOnClickListener { listener.onEditGroupCopy(row.group) }
         binding.edit.setOnClickListener { listener.onEditGroupEdit(row.group) }
         binding.delete.setOnClickListener { listener.onEditGroupRemove(row.group) }
         binding.switchView.setOnCheckedChangeListener(null)

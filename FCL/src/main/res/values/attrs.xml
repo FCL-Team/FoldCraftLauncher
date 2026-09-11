@@ -54,6 +54,7 @@
     </declare-styleable>
     <declare-styleable name="FCLTabLayout">
         <attr name="follow_theme" format="boolean" />
+        <attr name="auto_text_tint" />
     </declare-styleable>
     <declare-styleable name="FCLPreciseSeekBar">
         <attr name="auto_button_tint" format="boolean" />

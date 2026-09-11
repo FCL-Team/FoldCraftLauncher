@@ -133,7 +133,7 @@ class RendererEnvDialog(
             when (spec.type) {
                 EnvType.SELECTABLE -> result[spec.key] = EnvValue(
                     enabled = switches[spec.key]?.isChecked,
-                    value = spinners[spec.key]?.getSelectedItem()?.toString()
+                    value = spinners[spec.key]?.getSelectedItem()
                 )
 
                 EnvType.CUSTOMIZABLE -> result[spec.key] = EnvValue(

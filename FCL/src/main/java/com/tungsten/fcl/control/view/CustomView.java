@@ -10,7 +10,7 @@ public interface CustomView {
     String getViewId();
 
     /**
-     * 标记为编辑模式参考组控件：半透明显示、不响应触摸、不参与吸附
+     * 标记为编辑模式参考组控件：半透明显示、不响应触摸、参与拖动吸附
      */
     void setGhost(boolean ghost);
     boolean isGhost();

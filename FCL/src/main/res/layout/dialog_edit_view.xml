@@ -10,6 +10,7 @@
         android:singleLine="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:auto_text_tint="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -43,7 +44,7 @@
                     android:id="@+id/info"
                     android:layout_centerInParent="true"
                     android:src="@drawable/ic_baseline_settings_24"
-                    android:tint="@android:color/darker_gray"/>
+                    app:auto_tint="true"/>
 
             </RelativeLayout>
 
@@ -58,7 +59,7 @@
                     android:id="@+id/event"
                     android:layout_centerInParent="true"
                     android:src="@drawable/ic_baseline_keyboard_24"
-                    android:tint="@android:color/darker_gray"/>
+                    app:auto_tint="true"/>
 
             </RelativeLayout>
 

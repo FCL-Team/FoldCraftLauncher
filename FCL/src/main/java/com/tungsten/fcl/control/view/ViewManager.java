@@ -108,6 +108,26 @@ private long loadDialogShowTime = 0;
         });
     }
 
+    /**
+     * 编辑确认后重新定位操作栏：数据更新经异步链刷新控件（监听投递 → view.post 定位 → 布局），
+     * 立即定位会读到旧坐标，须等控件下一次布局完成后再定位
+     */
+    private void positionEditBarAfterUpdate(CustomView view) {
+        View target = (View) view;
+        View.OnLayoutChangeListener listener = new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int l, int t, int r, int b, int ol, int ot, int or, int ob) {
+                target.removeOnLayoutChangeListener(this);
+                target.post(() -> {
+                    if (selectedView == view) {
+                        positionEditBar(view);
+                    }
+                });
+            }
+        };
+        target.addOnLayoutChangeListener(listener);
+    }
+
     private void setupEditBar() {
         editBar = new ControlEditBar(gameMenu.getActivity());
         // 远高于按键的 z 序，低于菜单悬浮球
@@ -154,7 +174,7 @@ private long loadDialogShowTime = 0;
                     button.getData().setEvent(newData.getEvent());
                     saveController();
                     if (selectedView == button) {
-                        positionEditBar(button);
+                        positionEditBarAfterUpdate(button);
                     }
                 }
 
@@ -180,7 +200,7 @@ private long loadDialogShowTime = 0;
                     direction.getData().setEvent(newData.getEvent());
                     saveController();
                     if (selectedView == direction) {
-                        positionEditBar(direction);
+                        positionEditBarAfterUpdate(direction);
                     }
                 }
 
@@ -289,7 +309,8 @@ private long loadDialogShowTime = 0;
     }
 
     /**
-     * 编辑拖动吸附：以期望位置为基准，在阈值内与兄弟控件的边缘/对边对齐并绘制参考线。
+     * 编辑拖动吸附：以期望位置为基准，在阈值内与兄弟控件对齐并绘制参考线。
+     * 同边对齐（左↔左、右↔右等）吸附为贴齐；邻接对齐（左右相邻、上下相邻）吸附保持吸附间距的间隔。
      * 期望位置每帧由手指屏幕坐标独立计算，吸附修正不参与下一帧基准，
      * 避免"吸附→弹回"的循环抖动。
      *
@@ -321,37 +342,41 @@ private long loadDialogShowTime = 0;
         ViewGroup parent = gameMenu.getBaseLayout();
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
-            if (child.getVisibility() != View.VISIBLE
-                    || child == self
-                    || (!(child instanceof ControlButton) && !(child instanceof ControlDirection))
-                    || ((CustomView) child).isGhost()) {
+            // 参考组（编辑面板主动开启显示的其他控件组）控件同样参与吸附；未显示的组不在画布上
+            if (child == self
+                    || (!(child instanceof ControlButton) && !(child instanceof ControlDirection))) {
                 continue;
             }
-            // x 轴：自身左/右边与目标左/右边（含贴齐）取最近吸附线
-            float[] linesX = {child.getX(), child.getX() + child.getWidth()};
-            float[] edgesX = {x, x + view.getWidth()};
-            for (float edge : edgesX) {
-                for (float line : linesX) {
-                    float d = Math.abs(line - edge);
-                    if (d <= bestX) {
-                        bestX = d;
-                        hasX = true;
-                        lineX = line;
-                        selfEdgeX = edge;
-                    }
+            // x 轴吸附线：同边对齐（左↔左、右↔右）贴齐，邻接对齐（自身左↔目标右、自身右↔目标左）保持 threshold 间隔
+            float selfLeft = x;
+            float selfRight = x + view.getWidth();
+            float childLeft = child.getX();
+            float childRight = child.getX() + child.getWidth();
+            float[] linesX = {childLeft, childRight + threshold, childRight, childLeft - threshold};
+            float[] edgesX = {selfLeft, selfLeft, selfRight, selfRight};
+            for (int k = 0; k < linesX.length; k++) {
+                float d = Math.abs(linesX[k] - edgesX[k]);
+                if (d <= bestX) {
+                    bestX = d;
+                    hasX = true;
+                    lineX = linesX[k];
+                    selfEdgeX = edgesX[k];
                 }
             }
-            float[] linesY = {child.getY(), child.getY() + child.getHeight()};
-            float[] edgesY = {y, y + view.getHeight()};
-            for (float edge : edgesY) {
-                for (float line : linesY) {
-                    float d = Math.abs(line - edge);
-                    if (d <= bestY) {
-                        bestY = d;
-                        hasY = true;
-                        lineY = line;
-                        selfEdgeY = edge;
-                    }
+            // y 轴吸附线：同边对齐贴齐，邻接对齐（自身上↔目标下、自身下↔目标上）保持 threshold 间隔
+            float selfTop = y;
+            float selfBottom = y + view.getHeight();
+            float childTop = child.getY();
+            float childBottom = child.getY() + child.getHeight();
+            float[] linesY = {childTop, childBottom + threshold, childBottom, childTop - threshold};
+            float[] edgesY = {selfTop, selfTop, selfBottom, selfBottom};
+            for (int k = 0; k < linesY.length; k++) {
+                float d = Math.abs(linesY[k] - edgesY[k]);
+                if (d <= bestY) {
+                    bestY = d;
+                    hasY = true;
+                    lineY = linesY[k];
+                    selfEdgeY = edgesY[k];
                 }
             }
         }

@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:textSize="11sp"
         android:text="@string/edit_view_event"
+        app:auto_text_tint="true"
         android:singleLine="true"/>
 
     <View
@@ -30,6 +31,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_direction_event_up"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -61,6 +63,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_direction_event_down"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -92,6 +95,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_direction_event_left"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -123,6 +127,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_direction_event_right"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -154,6 +159,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_direction_event_sneak"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -180,6 +186,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_direction_event_sneak_code"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -211,6 +218,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_direction_event_follow"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -219,7 +227,6 @@
             android:layout_weight="1"/>
 
         <com.tungsten.fcllibrary.component.view.FCLSpinner
-        app:auto_text_tint="false"
             android:id="@+id/follow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -238,6 +245,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_direction_event_dead_zone"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -245,21 +253,14 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
+        <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
             android:id="@+id/dead_zone"
-            app:min_value="0"
-            app:max_value="90"
+            android:min="0"
+            android:max="90"
+            app:suffix="%"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
-
-        <com.tungsten.fcllibrary.component.view.FCLTextView
-            android:gravity="end"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:id="@+id/dead_zone_text"/>
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
@@ -274,6 +275,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_direction_event_can_lock"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -300,6 +302,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_direction_event_lock_threshold"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -307,21 +310,14 @@
             android:layout_height="0dp"
             android:layout_weight="1"/>
 
-        <com.tungsten.fcllibrary.component.view.FCLPreciseSeekBar
+        <com.tungsten.fcllibrary.component.view.FCLNumberSeekBar
             android:id="@+id/lock_threshold"
-            app:min_value="10"
-            app:max_value="90"
+            android:min="10"
+            android:max="90"
+            app:suffix="%"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
-
-        <com.tungsten.fcllibrary.component.view.FCLTextView
-            android:gravity="end"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:id="@+id/lock_threshold_text"/>
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 

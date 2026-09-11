@@ -286,6 +286,31 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     }
 
     /**
+     * 复制控件组：完整克隆按键与方向键数据（控件 id 重新生成），
+     * 新组插入源组之后并立即在编辑画布显示
+     */
+    private void copyViewGroup(@NonNull ControlViewGroup group) {
+        ControlViewGroup copy = new ControlViewGroup(UUID.randomUUID().toString());
+        copy.setName(group.getName() + getActivity().getString(R.string.menu_control_view_group_copy_suffix));
+        copy.setVisibility(group.getVisibility());
+        ControlViewGroup.ViewData viewData = new ControlViewGroup.ViewData();
+        for (ControlButtonData button : group.getViewData().buttonList()) {
+            viewData.buttonList().add(button.clone());
+        }
+        for (ControlDirectionData direction : group.getViewData().directionList()) {
+            viewData.directionList().add(direction.clone());
+        }
+        copy.setViewData(viewData);
+        copy.setDataLoaded(true);
+        List<ControlViewGroup> groups = getController().viewGroups();
+        groups.add(groups.indexOf(group) + 1, copy);
+        // 副本在编辑画布立即显示
+        setEditorGroupHidden(copy, false);
+        rightMenuAdapter.rebuild();
+        viewManager.initializeController();
+    }
+
+    /**
      * 新建控件组（右侧面板"添加控件组"）
      */
     private void addEditGroup() {
@@ -496,6 +521,23 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             public void onEditGroupToggle(@NonNull ControlViewGroup group, boolean visible) {
                 setEditorGroupHidden(group, !visible);
                 viewManager.initializeController();
+            }
+
+            @Override
+            public void onEditGroupCopy(@NonNull ControlViewGroup group) {
+                // 轻量加载的组先补全 viewData 再整体克隆
+                Controllers.loadViewGroup(getController(), group, new Controllers.ViewGroupLoadCallback() {
+                    @Override
+                    public void onLoaded(ControlViewGroup loaded) {
+                        copyViewGroup(loaded);
+                    }
+
+                    @Override
+                    public void onFailed(Throwable e) {
+                        Logging.LOG.log(Level.SEVERE, "Failed to copy view group", e);
+                        Toast.makeText(getActivity(), getActivity().getString(R.string.menu_control_view_group_copy_failed), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
