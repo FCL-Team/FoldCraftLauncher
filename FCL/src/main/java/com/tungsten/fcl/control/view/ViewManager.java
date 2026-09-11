@@ -342,10 +342,9 @@ private long loadDialogShowTime = 0;
         ViewGroup parent = gameMenu.getBaseLayout();
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
-            if (child.getVisibility() != View.VISIBLE
-                    || child == self
-                    || (!(child instanceof ControlButton) && !(child instanceof ControlDirection))
-                    || ((CustomView) child).isGhost()) {
+            // 参考组（编辑面板主动开启显示的其他控件组）控件同样参与吸附；未显示的组不在画布上
+            if (child == self
+                    || (!(child instanceof ControlButton) && !(child instanceof ControlDirection))) {
                 continue;
             }
             // x 轴吸附线：同边对齐（左↔左、右↔右）贴齐，邻接对齐（自身左↔目标右、自身右↔目标左）保持 threshold 间隔
