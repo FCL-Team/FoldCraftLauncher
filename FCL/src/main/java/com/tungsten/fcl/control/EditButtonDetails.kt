@@ -55,8 +55,8 @@ internal class EditButtonDetails(
         setupSizeTypeSpinner(sizeType)
         setupReferenceSpinner(infoBinding.widthReference as FCLSpinner<String>, baseInfo.percentageWidth)
         setupReferenceSpinner(infoBinding.heightReference as FCLSpinner<String>, baseInfo.percentageHeight)
-        bindNumberSeekBar(infoBinding.xPosition, baseInfo.xPositionProperty())
-        bindNumberSeekBar(infoBinding.yPosition, baseInfo.yPositionProperty())
+        bindNumberSeekBar(infoBinding.xPosition, baseInfo.xPositionProperty(), scale = 10)
+        bindNumberSeekBar(infoBinding.yPosition, baseInfo.yPositionProperty(), scale = 10)
         bindSizeSeekBar(
             infoBinding.width, baseInfo.percentageWidth.sizeProperty(), baseInfo.absoluteWidthProperty(),
             ConvertUtils.px2dip(context, getScreenWidth().toFloat()), infoBinding.widthReferenceLayout

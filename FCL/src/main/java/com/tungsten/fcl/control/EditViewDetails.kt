@@ -59,8 +59,9 @@ internal abstract class EditViewDetails(
         spinner.setOnItemSelectedListener { index, _ -> percentageSize.referenceProperty().set(references[index]) }
     }
 
-    /** 数值滑条与数据属性双向绑定（量程 / 后缀 / 缩放由布局声明） */
-    protected fun bindNumberSeekBar(bar: FCLNumberSeekBar, property: IntegerProperty) {
+    /** 数值滑条与数据属性双向绑定（量程 / 后缀由布局声明；进度按实际值 10 倍存储时 scale 传 10） */
+    protected fun bindNumberSeekBar(bar: FCLNumberSeekBar, property: IntegerProperty, scale: Int = 1) {
+        bar.setValueScale(scale)
         bar.addProgressListener()
         bar.setProgress(property.get())
         bar.progressProperty().bindBidirectional(property)
