@@ -346,6 +346,7 @@
     <string name="edit_button_event_follow">指针跟随手指</string>
     <string name="edit_button_event_movable">可移动</string>
     <string name="edit_button_event_swipable">滑动联动</string>
+    <string name="edit_button_event_tabs_hint">按键可同时支持以下四种触发方式，切换标签分别配置。</string>
     <string name="edit_button_event_press">按压</string>
     <string name="edit_button_event_long_press">长按</string>
     <string name="edit_button_event_click">点击</string>

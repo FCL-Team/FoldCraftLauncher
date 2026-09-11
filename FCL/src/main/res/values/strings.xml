@@ -395,6 +395,7 @@
     <string name="edit_button_event_follow">Pointer Follows Finger</string>
     <string name="edit_button_event_movable">Movable</string>
     <string name="edit_button_event_swipable">Swipe Link</string>
+    <string name="edit_button_event_tabs_hint">The button supports all four trigger types at the same time. Switch the tabs below to configure each one.</string>
     <string name="edit_button_event_press">Press</string>
     <string name="edit_button_event_long_press">Long Press</string>
     <string name="edit_button_event_click">Click</string>

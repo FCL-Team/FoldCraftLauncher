@@ -101,9 +101,18 @@
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-    <com.tungsten.fcllibrary.component.view.FCLTabLayout
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:text="@string/edit_button_event_tabs_hint"
+        android:textSize="11sp"
+        app:auto_text_tint="true"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLTabLayout
+        android:layout_marginTop="6dp"
         android:id="@+id/tab_layout"
+        app:auto_text_tint="true"
         app:tabTextAppearance="@style/TabTextAppearance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
