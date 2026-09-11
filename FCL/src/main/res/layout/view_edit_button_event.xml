@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:textSize="11sp"
         android:text="@string/edit_view_event"
+        app:auto_text_tint="true"
         android:singleLine="true"/>
 
     <View
@@ -30,6 +31,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_button_event_follow"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -56,6 +58,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_button_event_movable"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -82,6 +85,7 @@
             android:layout_height="wrap_content"
             android:text="@string/edit_button_event_swipable"
             android:layout_gravity="center"
+            app:auto_text_tint="true"
             android:singleLine="true"/>
 
         <View
@@ -100,6 +104,7 @@
     <com.tungsten.fcllibrary.component.view.FCLTabLayout
         android:layout_marginTop="10dp"
         android:id="@+id/tab_layout"
+        android:background="@android:color/transparent"
         app:tabTextAppearance="@style/TabTextAppearance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
