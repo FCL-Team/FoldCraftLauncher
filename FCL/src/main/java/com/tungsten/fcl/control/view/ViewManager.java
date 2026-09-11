@@ -108,6 +108,26 @@ private long loadDialogShowTime = 0;
         });
     }
 
+    /**
+     * 编辑确认后重新定位操作栏：数据更新经异步链刷新控件（监听投递 → view.post 定位 → 布局），
+     * 立即定位会读到旧坐标，须等控件下一次布局完成后再定位
+     */
+    private void positionEditBarAfterUpdate(CustomView view) {
+        View target = (View) view;
+        View.OnLayoutChangeListener listener = new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int l, int t, int r, int b, int ol, int ot, int or, int ob) {
+                target.removeOnLayoutChangeListener(this);
+                target.post(() -> {
+                    if (selectedView == view) {
+                        positionEditBar(view);
+                    }
+                });
+            }
+        };
+        target.addOnLayoutChangeListener(listener);
+    }
+
     private void setupEditBar() {
         editBar = new ControlEditBar(gameMenu.getActivity());
         // 远高于按键的 z 序，低于菜单悬浮球
@@ -154,7 +174,7 @@ private long loadDialogShowTime = 0;
                     button.getData().setEvent(newData.getEvent());
                     saveController();
                     if (selectedView == button) {
-                        positionEditBar(button);
+                        positionEditBarAfterUpdate(button);
                     }
                 }
 
@@ -180,7 +200,7 @@ private long loadDialogShowTime = 0;
                     direction.getData().setEvent(newData.getEvent());
                     saveController();
                     if (selectedView == direction) {
-                        positionEditBar(direction);
+                        positionEditBarAfterUpdate(direction);
                     }
                 }
 
