@@ -20,6 +20,15 @@
         app:auto_text_tint="true" />
 
     <com.tungsten.fcllibrary.component.view.FCLImageButton
+        android:id="@+id/copy"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_baseline_content_copy_24"
+        android:contentDescription="@string/menu_control_view_group_copy"
+        app:auto_tint="true" />
+
+    <com.tungsten.fcllibrary.component.view.FCLImageButton
         android:id="@+id/edit"
         android:layout_width="40dp"
         android:layout_height="40dp"
