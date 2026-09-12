@@ -15,7 +15,7 @@ import com.mio.ui.adapter.ViewHolder
 import com.mio.util.AnimUtil
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemRemoteVersionBinding
-import com.tungsten.fclcore.download.RemoteVersion
+import com.tungsten.fclcore.download.ComponentRemoteVersion
 import com.tungsten.fclcore.download.fabric.FabricAPIRemoteVersion
 import com.tungsten.fclcore.download.fabric.FabricRemoteVersion
 import com.tungsten.fclcore.download.forge.ForgeRemoteVersion
@@ -30,7 +30,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.LocaleUtils
 import com.mio.util.openLink
 
-class RemoteVersionListAdapter(val context: Context, private val list: ArrayList<RemoteVersion>, private val listener: OnRemoteVersionSelectListener) :
+class RemoteVersionListAdapter(val context: Context, private val list: ArrayList<ComponentRemoteVersion>, private val listener: OnRemoteVersionSelectListener) :
     RecyclerView.Adapter<ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -50,7 +50,7 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
         position: Int
     ) {
         val binding = ItemRemoteVersionBinding.bind(holder.itemView)
-        val remoteVersion: RemoteVersion = list[position]
+        val remoteVersion: ComponentRemoteVersion = list[position]
         binding.root.setOnClickListener {
             listener.onSelect(
                 remoteVersion
@@ -72,7 +72,7 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
             context,
             remoteVersion.releaseDate
         )
-        if (remoteVersion is GameRemoteVersion && (remoteVersion.versionType == RemoteVersion.Type.RELEASE || remoteVersion.versionType == RemoteVersion.Type.SNAPSHOT || remoteVersion.versionType == RemoteVersion.Type.UNOBFUSCATED)) {
+        if (remoteVersion is GameRemoteVersion && (remoteVersion.versionType == ComponentRemoteVersion.Type.RELEASE || remoteVersion.versionType == ComponentRemoteVersion.Type.SNAPSHOT || remoteVersion.versionType == ComponentRemoteVersion.Type.UNOBFUSCATED)) {
             binding.wiki.setVisibility(View.VISIBLE)
             val wikiUrlSuffix: String =
                 getWikiUrlSuffix(context, remoteVersion.gameVersion)
@@ -119,7 +119,7 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
 
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    private fun getIcon(remoteVersion: RemoteVersion?): Drawable? {
+    private fun getIcon(remoteVersion: ComponentRemoteVersion?): Drawable? {
         when (remoteVersion) {
             is LiteLoaderRemoteVersion -> return AppCompatResources.getDrawable(
                 context,
@@ -153,12 +153,12 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
 
             is GameRemoteVersion -> {
                 when (remoteVersion.versionType) {
-                    RemoteVersion.Type.RELEASE -> return AppCompatResources.getDrawable(
+                    ComponentRemoteVersion.Type.RELEASE -> return AppCompatResources.getDrawable(
                         context,
                         R.drawable.img_grass
                     )
 
-                    RemoteVersion.Type.PENDING, RemoteVersion.Type.UNOBFUSCATED, RemoteVersion.Type.SNAPSHOT -> {
+                    ComponentRemoteVersion.Type.PENDING, ComponentRemoteVersion.Type.UNOBFUSCATED, ComponentRemoteVersion.Type.SNAPSHOT -> {
                         if (GameVersionNumber.asGameVersion(remoteVersion.gameVersion)
                                 .isAprilFools()
                         ) {
@@ -177,11 +177,11 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
         }
     }
 
-    private fun getTag(remoteVersion: RemoteVersion): String? {
+    private fun getTag(remoteVersion: ComponentRemoteVersion): String? {
         return if (remoteVersion is GameRemoteVersion) {
             when (remoteVersion.versionType) {
-                RemoteVersion.Type.RELEASE -> context.getString(R.string.version_game_release)
-                RemoteVersion.Type.UNOBFUSCATED, RemoteVersion.Type.PENDING, RemoteVersion.Type.SNAPSHOT -> context.getString(
+                ComponentRemoteVersion.Type.RELEASE -> context.getString(R.string.version_game_release)
+                ComponentRemoteVersion.Type.UNOBFUSCATED, ComponentRemoteVersion.Type.PENDING, ComponentRemoteVersion.Type.SNAPSHOT -> context.getString(
                     R.string.version_game_snapshot
                 )
 
@@ -251,6 +251,6 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
     }
 
     interface OnRemoteVersionSelectListener {
-        fun onSelect(remoteVersion: RemoteVersion)
+        fun onSelect(remoteVersion: ComponentRemoteVersion)
     }
 }

@@ -27,6 +27,8 @@ import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.google.gson.reflect.TypeToken;
+import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 public final class GetTask extends FetchTask<String> {
@@ -89,6 +91,14 @@ public final class GetTask extends FetchTask<String> {
                 }
             }
         };
+    }
+
+    public <T> Task<T> thenGetJsonAsync(Class<T> type) {
+        return thenGetJsonAsync(TypeToken.get(type));
+    }
+
+    public <T> Task<T> thenGetJsonAsync(TypeToken<T> type) {
+        return thenApplyAsync(jsonString -> JsonUtils.fromNonNullJson(jsonString, type));
     }
 
 }

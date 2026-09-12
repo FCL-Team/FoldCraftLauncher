@@ -51,9 +51,9 @@ public class DefaultGameBuilder extends GameBuilder {
             stages.add(String.format("fcl.install.%s:%s", entry.getKey(), entry.getValue()));
         }
 
-        for (RemoteVersion remoteVersion : remoteVersions) {
+        for (ComponentRemoteVersion remoteVersion : remoteVersions) {
             libraryTask = libraryTask.thenComposeAsync(version -> dependencyManager.installLibraryAsync(version, remoteVersion));
-            stages.add(String.format("fcl.install.%s:%s", remoteVersion.getLibraryId(), remoteVersion.getSelfVersion()));
+            stages.add(String.format("fcl.install.%s:%s", remoteVersion.getComponentType().getPatchId(), remoteVersion.getSelfVersion()));
         }
 
         return libraryTask.thenComposeAsync(dependencyManager.getGameRepository()::saveAsync).whenComplete(exception -> {

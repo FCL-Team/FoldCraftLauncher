@@ -1,6 +1,6 @@
 /*
  * Hello Minecraft! Launcher
- * Copyright (C) 2020  huangyuhui <huanghongxun2008@126.com> and contributors
+ * Copyright (C) 2022  huangyuhui <huanghongxun2008@126.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.tungsten.fclcore.download.fabric;
+package com.tungsten.fclcore.download.legacyfabric;
 
 import com.tungsten.fclcore.download.ComponentVersionList;
 import com.tungsten.fclcore.download.DownloadProvider;
@@ -28,14 +28,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jetbrains.annotations.Nullable;
-
-import static com.tungsten.fclcore.util.gson.JsonUtils.listTypeOf;
-
-public final class FabricVersionList extends ComponentVersionList<FabricRemoteVersion> {
+public final class LegacyFabricVersionList extends ComponentVersionList<LegacyFabricRemoteVersion> {
     private final DownloadProvider downloadProvider;
 
-    public FabricVersionList(DownloadProvider downloadProvider) {
+    public LegacyFabricVersionList(DownloadProvider downloadProvider) {
         this.downloadProvider = downloadProvider;
     }
 
@@ -53,27 +49,36 @@ public final class FabricVersionList extends ComponentVersionList<FabricRemoteVe
             lock.writeLock().lock();
 
             try {
-                for (String gameVersion : gameVersions)
-                    for (String loaderVersion : loaderVersions)
-                        versions.put(gameVersion, new FabricRemoteVersion(gameVersion, loaderVersion,
-                                Collections.singletonList(getLaunchMetaUrl(gameVersion, loaderVersion))));
+                for (String metaGameVersion : gameVersions) {
+                    String gameVersion = normalizeVersion(metaGameVersion);
+                    for (String loaderVersion : loaderVersions) {
+                        versions.put(gameVersion, new LegacyFabricRemoteVersion(gameVersion, loaderVersion,
+                                Collections.singletonList(getLaunchMetaUrl(metaGameVersion, loaderVersion))));
+                    }
+                }
             } finally {
                 lock.writeLock().unlock();
             }
         });
     }
 
-    private static final String LOADER_META_URL = "https://meta.fabricmc.net/v2/versions/loader";
-    private static final String GAME_META_URL = "https://meta.fabricmc.net/v2/versions/game";
+    private static final String LOADER_META_URL = "https://meta.legacyfabric.net/v2/versions/loader";
+    private static final String GAME_META_URL = "https://meta.legacyfabric.net/v2/versions/game";
 
     private List<String> getGameVersions(String metaUrl) throws IOException {
         String json = NetworkUtils.doGet(downloadProvider.injectURLWithCandidates(metaUrl));
-        return JsonUtils.GSON.fromJson(json, listTypeOf(GameVersion.class))
+        return JsonUtils.GSON.<List<GameVersion>>fromJson(json, JsonUtils.listTypeOf(GameVersion.class))
                 .stream().map(GameVersion::getVersion).collect(Collectors.toList());
     }
 
+    private static String normalizeVersion(String version) {
+        return version.startsWith("2point0_")
+                ? "2.0_" + version.substring("2point0_".length())
+                : version;
+    }
+
     private static String getLaunchMetaUrl(String gameVersion, String loaderVersion) {
-        return "https://meta.fabricmc.net/v2/versions/loader/" + gameVersion + "/" + loaderVersion;
+        return String.format("https://meta.legacyfabric.net/v2/versions/loader/%s/%s", gameVersion, loaderVersion);
     }
 
     private static class GameVersion {
@@ -95,7 +100,6 @@ public final class FabricVersionList extends ComponentVersionList<FabricRemoteVe
             return version;
         }
 
-        @Nullable
         public String getMaven() {
             return maven;
         }

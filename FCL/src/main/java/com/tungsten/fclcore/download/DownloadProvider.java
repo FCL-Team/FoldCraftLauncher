@@ -17,25 +17,22 @@
  */
 package com.tungsten.fclcore.download;
 
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import java.net.URL;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * The service provider that provides Minecraft online file downloads.
  */
 public interface DownloadProvider {
 
-    String getVersionListURL();
+    List<URL> getVersionListURLs();
 
-    String getAssetBaseURL();
-
-    default List<URL> getAssetObjectCandidates(String assetObjectLocation) {
-        return Collections.singletonList(NetworkUtils.toURL(getAssetBaseURL() + assetObjectLocation));
-    }
+    List<URL> getAssetObjectCandidates(String assetObjectLocation);
 
     /**
      * Inject into original URL provided by Mojang and Forge.
@@ -62,17 +59,21 @@ public interface DownloadProvider {
     }
 
     default List<URL> injectURLsWithCandidates(List<String> urls) {
-        return urls.stream().flatMap(url -> injectURLWithCandidates(url).stream()).collect(Collectors.toList());
+        LinkedHashSet<URL> result = new LinkedHashSet<>();
+        for (String url : urls) {
+            result.addAll(injectURLWithCandidates(url));
+        }
+        return List.copyOf(result);
     }
 
     /**
      * the specific version list that this download provider provides. i.e. "fabric", "forge", "liteloader", "game", "optifine"
      *
-     * @param id the id of specific version list that this download provider provides. i.e. "fabric", "forge", "liteloader", "game", "optifine"
+     * @param componentType the component type of specific version list that this download provider provides. i.e. "fabric", "forge", "liteloader", "game", "optifine"
      * @return the version list
      * @throws IllegalArgumentException if the version list does not exist
      */
-    VersionList<?> getVersionListById(String id);
+    ComponentVersionList<?> getVersionList(GameComponentType componentType);
 
     /**
      * The maximum download concurrency that this download provider supports.

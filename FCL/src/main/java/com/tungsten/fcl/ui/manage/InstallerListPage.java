@@ -21,7 +21,7 @@ import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.download.RemoteVersion;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
 import com.tungsten.fclcore.event.Event;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Schedulers;
@@ -210,13 +210,13 @@ public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadab
         parent.addView(view);
     }
 
-    private void finish(Profile profile, RemoteVersion remoteVersion) {
+    private void finish(Profile profile, ComponentRemoteVersion remoteVersion) {
         // We remove library but not save it,
         // so if installation failed will not break down current version.
         Task<Version> ret = Task.supplyAsync(() -> version);
         List<String> stages = new ArrayList<>();
         ret = ret.thenComposeAsync(version -> profile.getDependency(DownloadProviders.getDownloadProvider()).installLibraryAsync(version, remoteVersion));
-        stages.add(String.format("fcl.install.%s:%s", remoteVersion.getLibraryId(), remoteVersion.getSelfVersion()));
+        stages.add(String.format("fcl.install.%s:%s", remoteVersion.getComponentType().getPatchId(), remoteVersion.getSelfVersion()));
 
         Task<?> task = ret.thenComposeAsync(profile.getRepository()::saveAsync).thenComposeAsync(profile.getRepository().refreshVersionsAsync()).withStagesHint(stages);
 

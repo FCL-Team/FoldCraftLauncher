@@ -17,6 +17,7 @@
  */
 package com.tungsten.fclcore.download;
 
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
@@ -89,13 +90,13 @@ public interface DependencyManager {
      * @param libraryVersion the remote version of being installed library.
      * @return the task to install the specific library.
      */
-    Task<?> installLibraryAsync(Version baseVersion, RemoteVersion libraryVersion);
+    Task<?> installLibraryAsync(Version baseVersion, ComponentRemoteVersion libraryVersion);
 
     /**
      * Get registered version list.
      *
-     * @param id the id of version list. i.e. game, forge, liteloader, optifine
+     * @param componentType the component type of version list. i.e. game, forge, liteloader, optifine
      * @throws IllegalArgumentException if the version list of specific id is not found.
      */
-    VersionList<?> getVersionList(String id);
+    ComponentVersionList<?> getVersionList(GameComponentType componentType);
 }

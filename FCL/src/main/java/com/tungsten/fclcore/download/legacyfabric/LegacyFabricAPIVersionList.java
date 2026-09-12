@@ -1,6 +1,6 @@
 /*
  * Hello Minecraft! Launcher
- * Copyright (C) 2020  huangyuhui <huanghongxun2008@126.com> and contributors
+ * Copyright (C) 2022  huangyuhui <huanghongxun2008@126.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.tungsten.fclcore.download.quilt;
+package com.tungsten.fclcore.download.legacyfabric;
 
 import com.tungsten.fclcore.download.ComponentVersionList;
 import com.tungsten.fclcore.download.DownloadProvider;
@@ -26,11 +26,11 @@ import com.tungsten.fclcore.util.Lang;
 
 import java.util.Collections;
 
-public class QuiltAPIVersionList extends ComponentVersionList<QuiltAPIRemoteVersion> {
+public class LegacyFabricAPIVersionList extends ComponentVersionList<LegacyFabricAPIRemoteVersion> {
 
     private final DownloadProvider downloadProvider;
 
-    public QuiltAPIVersionList(DownloadProvider downloadProvider) {
+    public LegacyFabricAPIVersionList(DownloadProvider downloadProvider) {
         this.downloadProvider = downloadProvider;
     }
 
@@ -42,9 +42,9 @@ public class QuiltAPIVersionList extends ComponentVersionList<QuiltAPIRemoteVers
     @Override
     public Task<?> refreshAsync() {
         return Task.runAsync(() -> {
-            for (RemoteMod.Version modVersion : Lang.toIterable(ModrinthRemoteModRepository.MODS.getRemoteVersionsById("qsl"))) {
+            for (RemoteMod.Version modVersion : Lang.toIterable(ModrinthRemoteModRepository.MODS.getRemoteVersionsById("legacy-fabric-api"))) {
                 for (String gameVersion : modVersion.gameVersions()) {
-                    versions.put(gameVersion, new QuiltAPIRemoteVersion(gameVersion, modVersion.version(), modVersion.name(), modVersion.datePublished(), modVersion,
+                    versions.put(gameVersion, new LegacyFabricAPIRemoteVersion(gameVersion, modVersion.version(), modVersion.name(), modVersion.datePublished(), modVersion,
                             Collections.singletonList(modVersion.file().url())));
                 }
             }

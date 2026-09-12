@@ -29,7 +29,7 @@ public abstract class GameBuilder {
     protected String name = "";
     protected String gameVersion = "";
     protected final Map<String, String> toolVersions = new HashMap<>();
-    protected final Set<RemoteVersion> remoteVersions = new HashSet<>();
+    protected final Set<ComponentRemoteVersion> remoteVersions = new HashSet<>();
 
     public String getName() {
         return name;
@@ -62,7 +62,7 @@ public abstract class GameBuilder {
         return this;
     }
 
-    public GameBuilder version(RemoteVersion remoteVersion) {
+    public GameBuilder version(ComponentRemoteVersion remoteVersion) {
         remoteVersions.add(remoteVersion);
         return this;
     }

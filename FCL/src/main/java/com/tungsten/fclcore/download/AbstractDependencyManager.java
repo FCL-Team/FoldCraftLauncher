@@ -17,6 +17,8 @@
  */
 package com.tungsten.fclcore.download;
 
+import com.tungsten.fclcore.game.GameComponentType;
+
 public abstract class AbstractDependencyManager implements DependencyManager {
 
     public abstract DownloadProvider getDownloadProvider();
@@ -25,7 +27,7 @@ public abstract class AbstractDependencyManager implements DependencyManager {
     public abstract DefaultCacheRepository getCacheRepository();
 
     @Override
-    public VersionList<?> getVersionList(String id) {
-        return getDownloadProvider().getVersionListById(id);
+    public ComponentVersionList<?> getVersionList(GameComponentType componentType) {
+        return getDownloadProvider().getVersionList(componentType);
     }
 }
