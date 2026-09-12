@@ -14,6 +14,7 @@
 #include "utils.h"
 #include <androidnsbypass/nsbypass.h>
 #include "global_state.h"
+#include "log.h"
 
 typedef int (*Main_Function_t)(int, char**);
 typedef void (*android_update_LD_LIBRARY_PATH_t)(const char*);
@@ -158,9 +159,9 @@ JNIEXPORT jlong JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_dlopen(JNI
 
     char * error = dlerror();
     if(error != NULL && handle == NULL) {
-        __android_log_print(ANDROID_LOG_ERROR, "FCL", "DLOPEN: loading %s (error = %s)", lib_name, error);
+        FCL_LOG("DLOPEN: loading %s (error = %s)", lib_name, error);
     } else {
-        __android_log_print(ANDROID_LOG_INFO, "FCL", "DLOPEN: loading %s", lib_name);
+        FCL_LOG("DLOPEN: loading %s", lib_name);
     }
 
     (*env)->ReleaseStringUTFChars(env, name, lib_name);
