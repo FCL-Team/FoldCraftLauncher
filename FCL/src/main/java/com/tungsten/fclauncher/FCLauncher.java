@@ -187,7 +187,8 @@ public class FCLauncher {
             }
             a = a.replace("${natives_directory}", libraryPath);
             config.getRenderer();
-            args[i] = a.replace("${gl_lib_name}", config.getRenderer().getGLPath());
+            args[i] = a.replace("${gl_lib_name}", config.getRenderer().getGLPath())
+                    .replace("${egl_lib_name}", config.getRenderer().getEGLPath());
         }
         return args;
     }
