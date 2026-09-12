@@ -806,6 +806,8 @@
     <string name="mods_mcmod_page">MCMOD 页面</string>
     <string name="mods_mcmod_search">在 MCMOD 搜索</string>
     <string name="mods_modrinth">Modrinth</string>
+    <string name="mods_aggregate">聚合搜索</string>
+    <string name="search_aggregate_partial">无法连接到 %1$s，当前仅显示 %2$s 的搜索结果，可能不全</string>
     <string name="mods_name">名称</string>
     <string name="mods_not_modded">你必须先安装一个模组加载器（Fabric，Forge 或者 LiteLoader）以管理你的模组！</string>
     <string name="message_broken_mods">检测到以下损坏的模组文件，是否删除？\n%s</string>

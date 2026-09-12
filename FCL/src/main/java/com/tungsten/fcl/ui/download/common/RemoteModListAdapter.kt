@@ -3,10 +3,14 @@ package com.tungsten.fcl.ui.download.common
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.lifecycleScope
@@ -23,9 +27,11 @@ import com.tungsten.fcl.ui.download.DownloadUI
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.RemoteMod
+import com.tungsten.fclcore.mod.curse.CurseAddon
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -87,7 +93,7 @@ class RemoteModListAdapter(
         val ids = mutableListOf<String?>()
         for (localModFile in modFiles) {
             try {
-                val remoteVersionOptional = downloadPage.getRepository()
+                val remoteVersionOptional = downloadPage
                     .getRemoteVersionByLocalFile(localModFile, localModFile.file)
                 remoteVersionOptional.ifPresent {
                     localModFile.remoteVersion = it
@@ -160,12 +166,21 @@ class RemoteModListAdapter(
             .into(binding.icon)
         binding.title.text = buildTitle(remoteMod)
         val categories = remoteMod.categories.stream()
-            .map { downloadPage.getLocalizedCategory(it) }
+            .map { downloadPage.getLocalizedCategory(remoteMod, it) }
             .collect(
                 Collectors.toList()
             ).joinToString("   ")
-        val tag = StringUtils.removeSuffix(categories, "   ")
-        binding.tag.text = tag
+        binding.tag.text = StringUtils.removeSuffix(categories, "   ")
+        // 聚合模式在标题行末尾显示来源徽标（平台 LOGO + 平台名的主题次色胶囊），单源模式隐藏
+        val sourceLabel = downloadPage.getSourceLabel(remoteMod)
+        binding.sourceBadge.visibility = if (sourceLabel.isEmpty()) View.GONE else View.VISIBLE
+        if (sourceLabel.isNotEmpty()) {
+            binding.sourceBadge.text = sourceLabel
+            // 注册换肤回调：主题（含次要色）修改后已加载的条目同步变色；
+            // 同一 view 重复注册会覆盖旧回调，复用绑定不同条目时以最后一次为准
+            ThemeEngine.getInstance()
+                .registerEvent(binding.sourceBadge) { applySourceBadgeStyle(binding.sourceBadge, remoteMod) }
+        }
         binding.description.text = remoteMod.description
         binding.downloadCount.text = remoteMod.downloadCount.format(context)
         playTranslationX(
@@ -201,6 +216,28 @@ class RemoteModListAdapter(
         } else {
             title
         }
+    }
+
+    /** 来源徽标配色：主题次色实底 + 亮度对比色文字与平台 LOGO（换肤回调与首次 bind 共用） */
+    private fun applySourceBadgeStyle(badge: FCLTextView, remoteMod: RemoteMod) {
+        val color = ThemeEngine.getInstance().getTheme().getColor2()
+        val contentColor =
+            if (ColorUtils.calculateLuminance(color) >= 0.5f) Color.BLACK else Color.WHITE
+        val background = GradientDrawable()
+        background.shape = GradientDrawable.RECTANGLE
+        background.cornerRadius = context.resources.displayMetrics.density * 16
+        background.setColor(color)
+        val logo = ContextCompat.getDrawable(
+            context,
+            if (remoteMod.data is CurseAddon) R.drawable.img_platform_curseforge else R.drawable.img_platform_modrinth
+        )!!
+        logo.mutate().setTint(contentColor)
+        // PNG 原图 102×102，compound drawable 不缩放，须显式 bounds（与 Zalith 的 iconSize 12dp 一致）
+        val logoSize = (context.resources.displayMetrics.density * 12).toInt()
+        logo.setBounds(0, 0, logoSize, logoSize)
+        badge.background = background
+        badge.setTextColor(contentColor)
+        badge.setCompoundDrawablesRelative(logo, null, null, null)
     }
 
     override fun getItemCount(): Int {
