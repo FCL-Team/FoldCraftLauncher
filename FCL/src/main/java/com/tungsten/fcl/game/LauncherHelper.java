@@ -70,6 +70,7 @@ import com.tungsten.fclcore.download.game.GameVerificationFixTask;
 import com.tungsten.fclcore.download.game.LibraryDownloadException;
 import com.tungsten.fclcore.game.JavaVersion;
 import com.tungsten.fclcore.game.LaunchOptions;
+import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModpackCompletionException;
@@ -213,13 +214,28 @@ public final class LauncherHelper {
                                     authInfo,
                                     launchOptions
                             );
-                            version.get().getLibraries().forEach(library -> {
-                                if (library.getName().startsWith("net.java.dev.jna:jna:")) {
-                                    launcher.setJnaVersion(library.getVersion());
-                                } else if (library.getName().startsWith("org.lwjgl.lwjgl:lwjgl:") || library.getName().startsWith("org.lwjgl:lwjgl:")) {
-                                    launcher.setLwjglVersion(library.getVersion());
+                            String jnaVersion = null;
+                            String lwjglVersion = null;
+                            VersionNumber lwjglMax = null;
+                            for (Library library : version.get().getLibraries()) {
+                                String name = library.getName();
+                                if (name.startsWith("net.java.dev.jna:jna:")) {
+                                    jnaVersion = library.getVersion();
+                                } else if (name.startsWith("org.lwjgl.lwjgl:lwjgl:") || name.startsWith("org.lwjgl:lwjgl:")) {
+                                    // 新旧 LWJGL 声明可能并存(如 lwj3ify 的 3.x 与基础版本的 2.x),取最高版本
+                                    VersionNumber current = VersionNumber.asVersion(library.getVersion());
+                                    if (lwjglMax == null || current.compareTo(lwjglMax) > 0) {
+                                        lwjglMax = current;
+                                        lwjglVersion = library.getVersion();
+                                    }
                                 }
-                            });
+                            }
+                            if (jnaVersion != null) {
+                                launcher.setJnaVersion(jnaVersion);
+                            }
+                            if (lwjglVersion != null) {
+                                launcher.setLwjglVersion(lwjglVersion);
+                            }
                             return launcher;
                         }).thenComposeAsync(launcher -> { // launcher is prev task's result
                             return Task.supplyAsync(launcher::launch);
