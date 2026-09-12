@@ -23,6 +23,8 @@ import com.tungsten.fclcore.task.Task;
 import java.net.URL;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * 以稳定引用代理当前下载源，设置变更时热替换内部实现，消费方无需重新获取。
@@ -30,6 +32,11 @@ import java.util.Objects;
 public final class DownloadProviderWrapper implements DownloadProvider {
 
     private volatile DownloadProvider provider;
+
+    /**
+     * 同一组件类型的代理版本列表必须复用同一实例，否则刷新合并与读取会落在不同实例上。
+     */
+    private final ConcurrentMap<GameComponentType, ComponentVersionList<?>> versionLists = new ConcurrentHashMap<>();
 
     public DownloadProviderWrapper(DownloadProvider provider) {
         this.provider = provider;
@@ -70,7 +77,7 @@ public final class DownloadProviderWrapper implements DownloadProvider {
 
     @Override
     public ComponentVersionList<?> getVersionList(GameComponentType componentType) {
-        return new ComponentVersionList<>() {
+        return versionLists.computeIfAbsent(componentType, it -> new ComponentVersionList<>() {
             @Override
             public boolean hasType() {
                 return getProvider().getVersionList(componentType).hasType();
@@ -93,7 +100,7 @@ public final class DownloadProviderWrapper implements DownloadProvider {
                             }
                         });
             }
-        };
+        });
     }
 
     @Override
