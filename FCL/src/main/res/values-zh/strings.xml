@@ -814,6 +814,13 @@
     <string name="favorite_added">已收藏</string>
     <string name="favorite_removed">已取消收藏</string>
     <string name="favorite_open_failed">打开收藏失败，请检查网络后重试。</string>
+    <string name="favorite_filter_all">全部</string>
+    <string name="favorite_download_all">一键下载模组</string>
+    <string name="favorite_batch_no_version">未选择游戏版本，无法一键下载</string>
+    <string name="favorite_batch_no_mods">收藏中没有模组</string>
+    <string name="favorite_batch_failed">一键下载失败，请重试</string>
+    <string name="favorite_batch_none_matched">收藏的模组均不匹配当前版本或加载器</string>
+    <string name="favorite_batch_skipped_note">跳过 %d 个模组（无匹配的版本或加载器）</string>
     <string name="mods_name">名称</string>
     <string name="mods_not_modded">你必须先安装一个模组加载器（Fabric，Forge 或者 LiteLoader）以管理你的模组！</string>
     <string name="message_broken_mods">检测到以下损坏的模组文件，是否删除？\n%s</string>

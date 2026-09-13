@@ -8,14 +8,106 @@
     android:paddingEnd="10dp"
     android:paddingBottom="10dp">
 
+    <!-- 分类过滤 + 一键下载工具条 -->
+    <LinearLayout
+        android:id="@+id/filter_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <HorizontalScrollView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:overScrollMode="never"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/chip_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:singleLine="true"
+                    android:text="@string/favorite_filter_all"
+                    app:ripple="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/chip_mod"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:singleLine="true"
+                    android:text="@string/mods"
+                    app:ripple="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/chip_modpack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:singleLine="true"
+                    android:text="@string/modpack"
+                    app:ripple="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/chip_resourcepack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:singleLine="true"
+                    android:text="@string/resourcepack"
+                    app:ripple="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/chip_shaderpack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:singleLine="true"
+                    android:text="@string/shaderpack"
+                    app:ripple="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/chip_world"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@string/world"
+                    app:ripple="true" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/btn_download_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:singleLine="true"
+            android:text="@string/favorite_download_all"
+            app:ripple="true" />
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/filter_bar" />
 
     <!-- 空状态：展示收藏功能的使用方法 -->
     <androidx.appcompat.widget.LinearLayoutCompat

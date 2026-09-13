@@ -903,6 +903,13 @@
     <string name="favorite_added">Added to favorites</string>
     <string name="favorite_removed">Removed from favorites</string>
     <string name="favorite_open_failed">Failed to open favorite. Please check your network and try again.</string>
+    <string name="favorite_filter_all">All</string>
+    <string name="favorite_download_all">Download mods</string>
+    <string name="favorite_batch_no_version">No game version selected, cannot batch download.</string>
+    <string name="favorite_batch_no_mods">No mods in favorites.</string>
+    <string name="favorite_batch_failed">Batch download failed. Please try again.</string>
+    <string name="favorite_batch_none_matched">No favorited mods match the current version/loader.</string>
+    <string name="favorite_batch_skipped_note">Skipped %d mod(s) with no matching version/loader.</string>
     <string name="mods_name">Name</string>
     <string name="mods_not_modded">You must install a mod loader (Fabric, Forge or LiteLoader) first to manage your mods!</string>
     <string name="message_broken_mods">The following mod files are corrupted. Do you want to delete them?\n%s</string>
