@@ -2,10 +2,18 @@ package com.tungsten.fcl.ui.download.favorite
 
 import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.RippleDrawable
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
@@ -50,10 +58,18 @@ class FavoritePage(
     private lateinit var adapter: FavoriteAdapter
     private lateinit var allFavorites: List<DownloadFavoriteEntity>
     private var filterType: RemoteModRepository.Type? = null
-    private lateinit var filterOptionRows: List<Pair<FCLTextView, RemoteModRepository.Type?>>
+    private lateinit var filterOptionRows: List<FilterOptionRow>
 
     /** 详情拉取/批量下载进行中，防止重复点击 */
     private var loading = false
+
+    /** 左侧类别筛选行：行视图 + 标签 + 数量徽标 + 对应类别（null 为全部） */
+    private data class FilterOptionRow(
+        val root: ConstraintLayout,
+        val label: FCLTextView,
+        val count: FCLTextView,
+        val type: RemoteModRepository.Type?,
+    )
 
     init {
         // init 块属于主构造器（可访问构造参数），执行于超类构造之后；lateinit 无初始化器，赋值不会被覆盖
@@ -76,7 +92,7 @@ class FavoritePage(
         }
     }
 
-    /** 类别筛选：选项直接展开在左侧面板（面板区域较大，无需下拉），选中项主题色高亮 */
+    /** 类别筛选：选项以卡片行直接展开在左侧面板，选中项主题次色实底，右侧显示各类别数量 */
     private fun setupFilter(binding: PageDownloadFavoriteBinding) {
         val options = listOf(
             context.getString(R.string.favorite_filter_all) to null,
@@ -87,43 +103,97 @@ class FavoritePage(
             context.getString(R.string.world) to RemoteModRepository.Type.WORLD,
         )
         val density = context.resources.displayMetrics.density
-        filterOptionRows = options.map { (label, type) ->
-            val view = FCLTextView(context).apply {
-                text = label
-                textSize = 14f
-                setPadding(0, (density * 8).toInt(), 0, (density * 8).toInt())
+        val rows = options.map { (label, type) ->
+            val row = ConstraintLayout(context).apply {
+                setPadding(
+                    (density * 10).toInt(), (density * 8).toInt(),
+                    (density * 10).toInt(), (density * 8).toInt()
+                )
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply { bottomMargin = (density * 5).toInt() }
                 setOnClickListener {
                     if (filterType != type) {
                         filterType = type
-                        refreshFilterOptionStates()
                         applyFilter()
                     }
                 }
             }
-            // 主题变化时刷新选中高亮
-            ThemeEngine.getInstance().registerEvent(view) { applyFilterOptionStyle(view, type) }
-            binding.filterOptions.addView(view)
-            view to type
+            val labelView = FCLTextView(context).apply {
+                text = label
+                textSize = 14f
+                layoutParams = ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+                    topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
+                }
+            }
+            val countView = FCLTextView(context).apply {
+                textSize = 12f
+                layoutParams = ConstraintLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+                    topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
+                    marginStart = (density * 8).toInt()
+                }
+            }
+            row.addView(labelView)
+            row.addView(countView)
+            FilterOptionRow(row, labelView, countView, type)
+        }
+        // 先赋值再注册主题回调：registerEvent 注册后会立即执行一次回调，
+        // 回调读取 filterOptionRows，必须已完成赋值（此前在 map 内注册导致未初始化崩溃）
+        filterOptionRows = rows
+        rows.forEach {
+            ThemeEngine.getInstance().registerEvent(it.root) { refreshFilterOptionStates() }
+            binding.filterOptions.addView(it.root)
         }
         refreshFilterOptionStates()
         // 面板背景独立着色为主题浅色（mutate 避免污染共享 drawable），与条目卡片一致且随主题联动
         applyPanelBackground()
+        ThemeEngine.getInstance().registerEvent(binding.filterPanel) { applyPanelBackground() }
     }
 
     private fun refreshFilterOptionStates() {
-        filterOptionRows.forEach { (view, type) -> applyFilterOptionStyle(view, type) }
-    }
-
-    private fun applyFilterOptionStyle(view: FCLTextView, type: RemoteModRepository.Type?) {
         val theme = ThemeEngine.getInstance().getTheme()
-        if (type == filterType) {
-            view.setTextColor(theme.color2)
-            view.setTypeface(Typeface.DEFAULT_BOLD)
-        } else {
-            view.setTextColor(theme.autoTint)
-            view.setTypeface(Typeface.DEFAULT)
+        val density = context.resources.displayMetrics.density
+        // 首帧（onCreate 内同步 collect）之前 allFavorites 尚未就绪，数量随后 applyFilter 刷新
+        val countsReady = ::allFavorites.isInitialized
+        filterOptionRows.forEach { row ->
+            val selected = row.type == filterType
+            val count = if (countsReady) countFor(row.type) else 0
+            // 高亮沿用 TabLayout 的选中语言：主题色暗变体（dkColor）实底 + 自动对比色文字
+            val contentColor = theme.autoTint
+            val pill = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = density * 10
+                setColor(if (selected) theme.dkColor else Color.TRANSPARENT)
+            }
+            row.root.background = RippleDrawable(
+                ColorStateList.valueOf(ColorUtils.setAlphaComponent(theme.autoTint, 40)),
+                pill,
+                null
+            )
+            row.label.setTextColor(contentColor)
+            row.label.setTypeface(if (selected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT)
+            row.count.setTextColor(ColorUtils.setAlphaComponent(contentColor, if (selected) 230 else 170))
+            row.count.text = count.toString()
+            row.count.visibility = if (countsReady && count > 0) View.VISIBLE else View.GONE
         }
     }
+
+    private fun countFor(type: RemoteModRepository.Type?): Int =
+        if (type == null) allFavorites.size else allFavorites.count { it.type == type.name }
+
+    private fun contrastOf(color: Int): Int =
+        if (ColorUtils.calculateLuminance(color) >= 0.5f) Color.BLACK else Color.WHITE
 
     private fun applyPanelBackground() {
         // 与条目卡片（FCLConstraintLayout auto_tint）完全相同的着色路径：白底 + 主题浅色 tint
@@ -133,6 +203,7 @@ class FavoritePage(
     }
 
     private fun applyFilter() {
+        refreshFilterOptionStates()
         val type = filterType
         val filtered = if (type == null) allFavorites else allFavorites.filter { it.type == type.name }
         adapter.submit(filtered)
