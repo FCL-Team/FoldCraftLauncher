@@ -138,9 +138,9 @@ class FavoritePage(
     }
 
     /**
-     * 一键下载全部收藏模组：按当前游戏版本与加载器匹配各模组的最新版本，
-     * 逐个走 downloadWithDependencies（解析 REQUIRED 前置、已安装去重、入队下载面板）。
-     * 无匹配版本/加载器的模组跳过并汇总提示。
+     * 一键下载全部收藏模组：先弹对话框后台解析（按当前游戏版本与加载器匹配各模组最新版本），
+     * 解析完成转为勾选列表由用户选择，确认后经 downloadWithDependencies 同款批量流程
+     * 下载（解析 REQUIRED 前置、已安装去重、入队下载面板）；无匹配的模组在对话框底部汇总提示。
      */
     private fun startBatchDownload() {
         if (loading) return
@@ -156,7 +156,9 @@ class FavoritePage(
             return
         }
         loading = true
-        binding.progress.visibility = View.VISIBLE
+        val dialog = FavoriteBatchDialog(context)
+        dialog.showParsing()
+        dialog.show()
         Task.supplyAsync {
             val analyzer = LibraryAnalyzer.analyze(
                 profile.repository.getResolvedPreservingPatchesVersion(selected),
@@ -164,7 +166,7 @@ class FavoritePage(
             )
             val mcv = analyzer.getVersion(LibraryAnalyzer.LibraryType.MINECRAFT).orElse("")
             val loaders: Set<ModLoaderType> = analyzer.modLoaders
-            val picks = mutableListOf<RemoteMod.Version>()
+            val entries = mutableListOf<FavoriteBatchDialog.Entry>()
             val skipped = mutableListOf<String>()
             for (favorite in mods) {
                 try {
@@ -178,7 +180,7 @@ class FavoritePage(
                         .filter { v -> loaders.isEmpty() || v.loaders.any { it in loaders } }
                         .maxByOrNull { it.datePublished?.toEpochMilli() ?: 0L }
                     if (match != null) {
-                        picks.add(match)
+                        entries.add(FavoriteBatchDialog.Entry(favorite.title, match))
                     } else {
                         skipped.add(favorite.title)
                     }
@@ -186,22 +188,44 @@ class FavoritePage(
                     skipped.add(favorite.title)
                 }
             }
-            Pair(picks, skipped)
+            Pair(entries, skipped)
         }.whenComplete(Schedulers.androidUIThread()) { result, exception ->
             loading = false
-            binding.progress.visibility = View.GONE
             if (exception != null || result == null) {
+                if (dialog.isShowing) dialog.dismiss()
                 Toast.makeText(context, context.getString(R.string.favorite_batch_failed), Toast.LENGTH_SHORT).show()
                 return@whenComplete
             }
-            val (picks, skipped) = result
-            if (picks.isEmpty()) {
+            val (entries, skipped) = result
+            // 解析期间用户已关闭对话框：不再弹出结果
+            if (!dialog.isShowing) return@whenComplete
+            if (entries.isEmpty()) {
+                dialog.dismiss()
                 Toast.makeText(context, context.getString(R.string.favorite_batch_none_matched), Toast.LENGTH_SHORT).show()
-            } else {
-                picks.forEach { downloadPage.downloadWithDependencies(context, profile, selected, it, "mods") }
+                return@whenComplete
             }
-            if (skipped.isNotEmpty()) {
-                Toast.makeText(context, context.getString(R.string.favorite_batch_skipped_note, skipped.size), Toast.LENGTH_SHORT).show()
+            dialog.showResult(entries, skipped) { selectedVersions ->
+                downloadPage.downloadModsBatch(context, profile, selected, selectedVersions, "mods") { queued, installedSkipped, failed ->
+                    when {
+                        queued > 0 -> Toast.makeText(
+                            context,
+                            context.getString(R.string.favorite_batch_queued, queued),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        installedSkipped > 0 && failed == 0 -> Toast.makeText(
+                            context,
+                            context.getString(R.string.mods_already_installed),
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        else -> Toast.makeText(
+                            context,
+                            context.getString(R.string.favorite_batch_failed),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }.start()
     }

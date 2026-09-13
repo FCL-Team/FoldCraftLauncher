@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="400dp"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="10dp">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/title"
+        android:text="@string/favorite_download_all"
+        android:textSize="16sp"
+        android:singleLine="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.5" />
+
+    <!-- 解析阶段：进度 + 提示 -->
+    <LinearLayout
+        android:id="@+id/parsing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/positive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title">
+
+        <com.tungsten.fcllibrary.component.view.FCLProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/favorite_batch_parsing"
+            android:textSize="14sp"
+            app:auto_text_tint="true" />
+
+    </LinearLayout>
+
+    <!-- 结果阶段：可勾选的模组列表 -->
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:scrollbars="none"
+        android:visibility="gone"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@+id/skipped_note"
+        app:layout_constraintHeight_max="360dp"
+        app:layout_constraintTop_toBottomOf="@+id/title">
+
+        <LinearLayout
+            android:id="@+id/list_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </ScrollView>
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/skipped_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:singleLine="true"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:auto_text_tint="true"
+        app:layout_constraintBottom_toTopOf="@+id/positive"
+        app:layout_constraintTop_toBottomOf="@+id/scroll" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/positive"
+        android:text="@string/favorite_batch_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:ripple="true" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/negative"
+        android:text="@string/dialog_negative"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:ripple="true" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
