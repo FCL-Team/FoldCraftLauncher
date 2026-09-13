@@ -33,11 +33,13 @@
                 android:text="@string/mods_category"
                 app:auto_text_tint="true" />
 
-            <com.tungsten.fcllibrary.component.view.FCLSpinner
-                android:id="@+id/filter"
+            <!-- 直接展开的类别选项（选中项主题色高亮），左侧面板较大无需下拉 -->
+            <LinearLayout
+                android:id="@+id/filter_options"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:orientation="vertical" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

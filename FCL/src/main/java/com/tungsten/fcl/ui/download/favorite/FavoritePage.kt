@@ -1,10 +1,15 @@
 package com.tungsten.fcl.ui.download.favorite
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Typeface
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.mio.data.FavoriteManager
 import com.mio.data.favorite.DownloadFavoriteEntity
 import com.tungsten.fcl.R
@@ -45,6 +50,7 @@ class FavoritePage(
     private lateinit var adapter: FavoriteAdapter
     private lateinit var allFavorites: List<DownloadFavoriteEntity>
     private var filterType: RemoteModRepository.Type? = null
+    private lateinit var filterOptionRows: List<Pair<FCLTextView, RemoteModRepository.Type?>>
 
     /** 详情拉取/批量下载进行中，防止重复点击 */
     private var loading = false
@@ -70,7 +76,7 @@ class FavoritePage(
         }
     }
 
-    /** 类别筛选：与搜索页的下拉控件同构，全部/模组/整合包/资源包/光影/世界 */
+    /** 类别筛选：选项直接展开在左侧面板（面板区域较大，无需下拉），选中项主题色高亮 */
     private fun setupFilter(binding: PageDownloadFavoriteBinding) {
         val options = listOf(
             context.getString(R.string.favorite_filter_all) to null,
@@ -80,12 +86,50 @@ class FavoritePage(
             context.getString(R.string.shaderpack) to RemoteModRepository.Type.SHADER_PACK,
             context.getString(R.string.world) to RemoteModRepository.Type.WORLD,
         )
-        binding.filter.setItems(options.map { it.first })
-        binding.filter.setSelection(0)
-        binding.filter.setOnItemSelectedListener { index, _ ->
-            filterType = options[index].second
-            applyFilter()
+        val density = context.resources.displayMetrics.density
+        filterOptionRows = options.map { (label, type) ->
+            val view = FCLTextView(context).apply {
+                text = label
+                textSize = 14f
+                setPadding(0, (density * 8).toInt(), 0, (density * 8).toInt())
+                setOnClickListener {
+                    if (filterType != type) {
+                        filterType = type
+                        refreshFilterOptionStates()
+                        applyFilter()
+                    }
+                }
+            }
+            // 主题变化时刷新选中高亮
+            ThemeEngine.getInstance().registerEvent(view) { applyFilterOptionStyle(view, type) }
+            binding.filterOptions.addView(view)
+            view to type
         }
+        refreshFilterOptionStates()
+        // 面板背景独立着色为主题浅色（mutate 避免污染共享 drawable），与条目卡片一致且随主题联动
+        applyPanelBackground()
+    }
+
+    private fun refreshFilterOptionStates() {
+        filterOptionRows.forEach { (view, type) -> applyFilterOptionStyle(view, type) }
+    }
+
+    private fun applyFilterOptionStyle(view: FCLTextView, type: RemoteModRepository.Type?) {
+        val theme = ThemeEngine.getInstance().getTheme()
+        if (type == filterType) {
+            view.setTextColor(theme.color2)
+            view.setTypeface(Typeface.DEFAULT_BOLD)
+        } else {
+            view.setTextColor(theme.autoTint)
+            view.setTypeface(Typeface.DEFAULT)
+        }
+    }
+
+    private fun applyPanelBackground() {
+        // 与条目卡片（FCLConstraintLayout auto_tint）完全相同的着色路径：白底 + 主题浅色 tint
+        binding.filterPanel.setBackgroundResource(R.drawable.bg_container_white)
+        binding.filterPanel.backgroundTintList =
+            ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().ltColor)
     }
 
     private fun applyFilter() {
