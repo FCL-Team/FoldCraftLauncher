@@ -81,6 +81,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.tungsten.fcllibrary.component.view.FCLImageView
+            android:id="@+id/empty_icon"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:alpha="0.6"
@@ -94,7 +95,7 @@
             android:singleLine="true"
             android:text="@string/favorite_empty_title"
             android:textSize="16sp"
-            app:auto_text_tint="true" />
+            app:use_theme_color="true" />
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
             android:layout_width="wrap_content"
@@ -103,7 +104,7 @@
             android:lineSpacingExtra="6dp"
             android:text="@string/favorite_empty_guide"
             android:textSize="13sp"
-            app:auto_text_tint="true" />
+            app:use_theme_color="true" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -84,6 +84,10 @@ class FavoritePage(
         binding.list.adapter = adapter
         setupFilter(binding)
         binding.btnDownloadAll.setOnClickListener { startBatchDownload() }
+        // 空状态图标与文字一致使用次要主题色（随主题联动）
+        ThemeEngine.getInstance().registerEvent(binding.emptyIcon) {
+            binding.emptyIcon.setColorFilter(ThemeEngine.getInstance().getTheme().getColor2())
+        }
         MainActivity.getInstance().lifecycleScope.launch {
             FavoriteManager.favorites.collect { favorites ->
                 allFavorites = favorites
@@ -123,6 +127,8 @@ class FavoritePage(
             val labelView = FCLTextView(context).apply {
                 text = label
                 textSize = 14f
+                // 文字色随主题（autoTint），与搜索页面板标签一致
+                setAutoTint(true)
                 layoutParams = ConstraintLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
@@ -134,6 +140,7 @@ class FavoritePage(
             }
             val countView = FCLTextView(context).apply {
                 textSize = 12f
+                setAutoTint(true)
                 layoutParams = ConstraintLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
