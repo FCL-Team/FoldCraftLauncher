@@ -94,6 +94,11 @@ class FavoriteAdapter(
             .into(binding.icon)
         binding.title.text = favorite.title
         binding.typeTag.text = typeLabel(favorite.type)
+        // 类别为次级信息，用提示色弱化显示（随主题联动）
+        binding.typeTag.setTextColor(ThemeEngine.getInstance().getTheme().autoHintTint)
+        ThemeEngine.getInstance().registerEvent(binding.typeTag) {
+            binding.typeTag.setTextColor(ThemeEngine.getInstance().getTheme().autoHintTint)
+        }
         // 来源徽标（平台 LOGO + 平台名的主题次色胶囊）
         val curseforge = favorite.source == FavoriteManager.SOURCE_CURSEFORGE
         binding.sourceBadge.text = context.getString(if (curseforge) R.string.mods_curseforge else R.string.mods_modrinth)

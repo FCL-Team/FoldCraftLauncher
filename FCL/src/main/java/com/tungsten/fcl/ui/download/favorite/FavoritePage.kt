@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.download.favorite
 
 import android.content.Context
-import android.graphics.Typeface
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -46,7 +45,6 @@ class FavoritePage(
     private lateinit var adapter: FavoriteAdapter
     private lateinit var allFavorites: List<DownloadFavoriteEntity>
     private var filterType: RemoteModRepository.Type? = null
-    private lateinit var filterChips: List<Pair<FCLButton, RemoteModRepository.Type?>>
 
     /** 详情拉取/批量下载进行中，防止重复点击 */
     private var loading = false
@@ -62,7 +60,7 @@ class FavoritePage(
         adapter = FavoriteAdapter(context, this)
         binding.list.layoutManager = LinearLayoutManager(context)
         binding.list.adapter = adapter
-        setupFilterBar(binding)
+        setupFilter(binding)
         binding.btnDownloadAll.setOnClickListener { startBatchDownload() }
         MainActivity.getInstance().lifecycleScope.launch {
             FavoriteManager.favorites.collect { favorites ->
@@ -72,34 +70,21 @@ class FavoritePage(
         }
     }
 
-    private fun setupFilterBar(binding: PageDownloadFavoriteBinding) {
-        val chips = listOf(
-            binding.chipAll to null,
-            binding.chipMod to RemoteModRepository.Type.MOD,
-            binding.chipModpack to RemoteModRepository.Type.MODPACK,
-            binding.chipResourcepack to RemoteModRepository.Type.RESOURCE_PACK,
-            binding.chipShaderpack to RemoteModRepository.Type.SHADER_PACK,
-            binding.chipWorld to RemoteModRepository.Type.WORLD,
+    /** 类别筛选：与搜索页的下拉控件同构，全部/模组/整合包/资源包/光影/世界 */
+    private fun setupFilter(binding: PageDownloadFavoriteBinding) {
+        val options = listOf(
+            context.getString(R.string.favorite_filter_all) to null,
+            context.getString(R.string.mods) to RemoteModRepository.Type.MOD,
+            context.getString(R.string.modpack) to RemoteModRepository.Type.MODPACK,
+            context.getString(R.string.resourcepack) to RemoteModRepository.Type.RESOURCE_PACK,
+            context.getString(R.string.shaderpack) to RemoteModRepository.Type.SHADER_PACK,
+            context.getString(R.string.world) to RemoteModRepository.Type.WORLD,
         )
-        filterChips = chips
-        chips.forEach { (button, type) ->
-            button.setOnClickListener {
-                if (filterType != type) {
-                    filterType = type
-                    updateChipStates()
-                    applyFilter()
-                }
-            }
-        }
-        updateChipStates()
-    }
-
-    private fun updateChipStates() {
-        // 浅色主题下半透明按钮的边框几乎不可见，叠加粗体强化选中态对比
-        filterChips.forEach { (button, type) ->
-            val selected = type == filterType
-            button.alpha = if (selected) 1f else 0.35f
-            button.setTypeface(if (selected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT)
+        binding.filter.setItems(options.map { it.first })
+        binding.filter.setSelection(0)
+        binding.filter.setOnItemSelectedListener { index, _ ->
+            filterType = options[index].second
+            applyFilter()
         }
     }
 

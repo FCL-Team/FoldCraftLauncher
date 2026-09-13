@@ -4,110 +4,66 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="10dp"
-    android:paddingTop="5dp"
-    android:paddingEnd="10dp"
-    android:paddingBottom="10dp">
+    android:paddingTop="10dp"
+    android:paddingEnd="10dp">
 
-    <!-- 分类过滤 + 一键下载工具条 -->
-    <LinearLayout
-        android:id="@+id/filter_bar"
+    <!-- 左侧筛选面板：与搜索页的搜索面板同构（类别下拉 + 沉底操作按钮） -->
+    <ScrollView
+        android:id="@+id/filter_panel"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_container_white"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toTopOf="@id/btn_download_all"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.3">
 
-        <HorizontalScrollView
-            android:layout_width="0dp"
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:overScrollMode="never"
-            android:scrollbars="none">
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <LinearLayout
+            <com.tungsten.fcllibrary.component.view.FCLTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:singleLine="true"
+                android:text="@string/mods_category"
+                app:auto_text_tint="true" />
 
-                <com.tungsten.fcllibrary.component.view.FCLButton
-                    android:id="@+id/chip_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:singleLine="true"
-                    android:text="@string/favorite_filter_all"
-                    app:ripple="true" />
+            <com.tungsten.fcllibrary.component.view.FCLSpinner
+                android:id="@+id/filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
 
-                <com.tungsten.fcllibrary.component.view.FCLButton
-                    android:id="@+id/chip_mod"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:singleLine="true"
-                    android:text="@string/mods"
-                    app:ripple="true" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <com.tungsten.fcllibrary.component.view.FCLButton
-                    android:id="@+id/chip_modpack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:singleLine="true"
-                    android:text="@string/modpack"
-                    app:ripple="true" />
+    </ScrollView>
 
-                <com.tungsten.fcllibrary.component.view.FCLButton
-                    android:id="@+id/chip_resourcepack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:singleLine="true"
-                    android:text="@string/resourcepack"
-                    app:ripple="true" />
-
-                <com.tungsten.fcllibrary.component.view.FCLButton
-                    android:id="@+id/chip_shaderpack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    android:singleLine="true"
-                    android:text="@string/shaderpack"
-                    app:ripple="true" />
-
-                <com.tungsten.fcllibrary.component.view.FCLButton
-                    android:id="@+id/chip_world"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:text="@string/world"
-                    app:ripple="true" />
-
-            </LinearLayout>
-
-        </HorizontalScrollView>
-
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/btn_download_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:singleLine="true"
-            android:text="@string/favorite_download_all"
-            app:ripple="true" />
-
-    </LinearLayout>
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/btn_download_all"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:singleLine="true"
+        android:text="@string/favorite_download_all"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.3"
+        app:ripple="true" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filter_bar" />
+        app:layout_constraintStart_toEndOf="@id/filter_panel"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- 空状态：展示收藏功能的使用方法 -->
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -119,7 +75,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/filter_panel"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.tungsten.fcllibrary.component.view.FCLImageView
@@ -142,7 +98,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:gravity="start"
             android:lineSpacingExtra="6dp"
             android:text="@string/favorite_empty_guide"
             android:textSize="13sp"
@@ -157,7 +112,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/filter_panel"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
