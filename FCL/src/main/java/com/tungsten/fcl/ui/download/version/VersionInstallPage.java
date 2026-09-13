@@ -12,8 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.ui.UIManager;
-import com.tungsten.fclcore.download.RemoteVersion;
-import com.tungsten.fclcore.download.VersionList;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.download.ComponentVersionList;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.versioning.GameVersionNumber;
@@ -80,8 +81,8 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
         refreshList();
     }
 
-    private List<RemoteVersion> loadVersions() {
-        return DownloadProviders.getDownloadProvider().getVersionListById("game").getVersions("").stream()
+    private List<ComponentRemoteVersion> loadVersions() {
+        return DownloadProviders.getDownloadProvider().getVersionList(GameComponentType.GAME).getVersions("").stream()
                 .filter(it -> switch (it.getVersionType()) {
                     case RELEASE -> checkRelease.isChecked();
                     case PENDING, UNOBFUSCATED, SNAPSHOT -> {
@@ -103,8 +104,8 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
     }
 
     public void refreshDisplayVersions() {
-        List<RemoteVersion> items = loadVersions();
-        RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), (ArrayList<RemoteVersion>) items, listener);
+        List<ComponentRemoteVersion> items = loadVersions();
+        RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), new ArrayList<>(items), listener);
         recyclerView.setAdapter(adapter);
     }
 
@@ -114,37 +115,34 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
         progressBar.setVisibility(View.VISIBLE);
         refresh.setEnabled(false);
         search.setText("");
-        VersionList<?> currentVersionList = DownloadProviders.getDownloadProvider().getVersionListById("game");
-        currentVersionList.refreshAsync("").whenComplete((result, exception) -> {
-            if (exception == null) {
-                List<RemoteVersion> items = loadVersions();
+        ComponentVersionList<?> currentVersionList = DownloadProviders.getDownloadProvider().getVersionList(GameComponentType.GAME);
+        currentVersionList.refreshAsync("")
+                .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+                    if (exception == null) {
+                        List<ComponentRemoteVersion> items = loadVersions();
 
-                Schedulers.androidUIThread().execute(() -> {
-                    if (items.isEmpty()) {
-                        checkRelease.setChecked(true);
-                        checkSnapShot.setChecked(true);
-                        checkOld.setChecked(true);
+                        if (items.isEmpty()) {
+                            checkRelease.setChecked(true);
+                            checkSnapShot.setChecked(true);
+                            checkOld.setChecked(true);
+                        } else {
+                            RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), new ArrayList<>(items), listener);
+                            recyclerView.setAdapter(adapter);
+                        }
+                        recyclerView.setVisibility(View.VISIBLE);
+                        failedRefresh.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        refresh.setEnabled(true);
                     } else {
-                        RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), (ArrayList<RemoteVersion>) items, listener);
-                        recyclerView.setAdapter(adapter);
+                        LOG.log(Level.WARNING, "Failed to fetch versions list", exception);
+                        recyclerView.setVisibility(View.GONE);
+                        failedRefresh.setVisibility(View.VISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                        refresh.setEnabled(true);
                     }
-                    recyclerView.setVisibility(View.VISIBLE);
-                    failedRefresh.setVisibility(View.GONE);
-                    progressBar.setVisibility(View.GONE);
-                    refresh.setEnabled(true);
-                });
-            } else {
-                LOG.log(Level.WARNING, "Failed to fetch versions list", exception);
-                Schedulers.androidUIThread().execute(() -> {
-                    recyclerView.setVisibility(View.GONE);
-                    failedRefresh.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                    refresh.setEnabled(true);
-                });
-            }
 
-            System.gc();
-        });
+                    System.gc();
+                }).start();
     }
 
     @Override

@@ -179,6 +179,7 @@ public class DefaultLauncher {
         res.addDefault("-Dos.name=", "Linux");
         res.addDefault("-Dos.version=Android-", Build.VERSION.RELEASE);
         res.addDefault("-Dorg.lwjgl.opengl.libname=", "${gl_lib_name}");
+        res.addDefault("-Dorg.lwjgl.egl.libname=", "${egl_lib_name}");
         res.addDefault("-Dorg.lwjgl.openal.libname=", context.getApplicationInfo().nativeLibraryDir + "/libopenal.so");
         res.addDefault("-Dorg.lwjgl.freetype.libname=", FCLPath.LWJGL_DIR + "/" + lwjglVersion + "/natives/" + Architecture.archAsStringAndroid(Architecture.getDeviceArchitecture()) + "/libfreetype.so");
         res.addDefault("-Dorg.lwjgl.librarypath=", FCLPath.LWJGL_DIR + "/" + lwjglVersion + "/natives/" + Architecture.archAsStringAndroid(Architecture.getDeviceArchitecture()));

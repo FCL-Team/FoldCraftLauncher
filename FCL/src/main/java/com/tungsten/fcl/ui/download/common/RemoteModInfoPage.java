@@ -84,7 +84,8 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         super(context, id, R.layout.page_download_addon_info);
 
         this.page = page;
-        this.repository = page.repository;
+        // 聚合搜索的列表混合两源条目，按条目自身来源取仓库；单源模式即当前仓库
+        this.repository = page.repositoryFor(addon);
         this.addon = addon;
         this.translations = ModTranslations.getTranslationsByRepositoryType(repository.getType());
         this.callback = callback;
@@ -98,11 +99,12 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         mcmod.setVisibility(mod == null ? View.GONE : View.VISIBLE);
         name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : addon.getTitle());
         description.setText(addon.getDescription());
-        List<String> categories = addon.getCategories().stream().map(page::getLocalizedCategory).collect(Collectors.toList());
+        List<String> categories = addon.getCategories().stream().map(it -> page.getLocalizedCategory(addon, it)).collect(Collectors.toList());
         StringBuilder stringBuilder = new StringBuilder();
         categories.forEach(it -> stringBuilder.append(it).append("   "));
         String tag = StringUtils.removeSuffix(stringBuilder.toString(), "   ");
-        this.tag.setText(tag);
+        String sourceLabel = page.getSourceLabel(addon);
+        this.tag.setText(sourceLabel.isEmpty() ? tag : sourceLabel + " · " + tag);
 
         loadModVersions();
         loadScreenshots();

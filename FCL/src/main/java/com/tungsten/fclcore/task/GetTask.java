@@ -27,6 +27,9 @@ import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.google.gson.JsonParseException;
+import com.google.gson.reflect.TypeToken;
+import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 
 public final class GetTask extends FetchTask<String> {
@@ -89,6 +92,25 @@ public final class GetTask extends FetchTask<String> {
                 }
             }
         };
+    }
+
+    public <T> Task<T> thenGetJsonAsync(Class<T> type) {
+        return thenGetJsonAsync(TypeToken.get(type));
+    }
+
+    public <T> Task<T> thenGetJsonAsync(TypeToken<T> type) {
+        return thenApplyAsync(jsonString -> {
+            try {
+                return JsonUtils.fromNonNullJson(jsonString, type);
+            } catch (JsonParseException e) {
+                // 响应内容解析失败说明正文不完整或已损坏（如传输中被截断后连同 ETag 一起写入缓存），
+                // 移除对应缓存条目，下次强制重新下载
+                for (URL url : urls) {
+                    repository.removeRemoteEntry(url.toString());
+                }
+                throw e;
+            }
+        });
     }
 
 }

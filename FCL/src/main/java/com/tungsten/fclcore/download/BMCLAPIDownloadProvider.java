@@ -24,14 +24,20 @@ import com.tungsten.fclcore.download.fabric.FabricAPIVersionList;
 import com.tungsten.fclcore.download.fabric.FabricVersionList;
 import com.tungsten.fclcore.download.forge.ForgeBMCLVersionList;
 import com.tungsten.fclcore.download.game.GameVersionList;
+import com.tungsten.fclcore.download.legacyfabric.LegacyFabricAPIVersionList;
+import com.tungsten.fclcore.download.legacyfabric.LegacyFabricVersionList;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderBMCLVersionList;
 import com.tungsten.fclcore.download.neoforge.NeoForgeBMCLVersionList;
 import com.tungsten.fclcore.download.optifine.OptiFineBMCLVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltAPIVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltVersionList;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.util.Pair;
+import com.tungsten.fclcore.util.io.NetworkUtils;
 
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public final class BMCLAPIDownloadProvider implements DownloadProvider {
@@ -41,12 +47,15 @@ public final class BMCLAPIDownloadProvider implements DownloadProvider {
     private final FabricAPIVersionList fabricApi;
     private final ForgeBMCLVersionList forge;
     private final CleanroomVersionList cleanroom;
+    private final LegacyFabricVersionList legacyFabric;
+    private final LegacyFabricAPIVersionList legacyFabricApi;
     private final NeoForgeBMCLVersionList neoforge;
     private final LiteLoaderBMCLVersionList liteLoader;
     private final OptiFineBMCLVersionList optifine;
     private final QuiltVersionList quilt;
     private final QuiltAPIVersionList quiltApi;
     private final List<Pair<String, String>> replacement;
+    private final List<Pair<String, String>> fallbackReplacement;
 
     public BMCLAPIDownloadProvider(String apiRoot) {
         this.apiRoot = apiRoot;
@@ -60,6 +69,9 @@ public final class BMCLAPIDownloadProvider implements DownloadProvider {
         this.optifine = new OptiFineBMCLVersionList(apiRoot);
         this.quilt = new QuiltVersionList(this);
         this.quiltApi = new QuiltAPIVersionList(this);
+        this.legacyFabric = new LegacyFabricVersionList(this);
+        this.legacyFabricApi = new LegacyFabricAPIVersionList(this);
+
         this.replacement = Arrays.asList(
                 pair("https://bmclapi2.bangbang93.com", apiRoot),
                 pair("https://launchermeta.mojang.com", apiRoot),
@@ -79,7 +91,11 @@ public final class BMCLAPIDownloadProvider implements DownloadProvider {
                 pair("https://repo1.maven.org/maven2", "https://mirrors.cloud.tencent.com/nexus/repository/maven-public"),
                 pair("https://repo.maven.apache.org/maven2", "https://mirrors.cloud.tencent.com/nexus/repository/maven-public"),
                 pair("https://hmcl.glavo.site/metadata/cleanroom", "https://alist.8mi.tech/d/mirror/HMCL-Metadata/Auto/cleanroom"),
-                pair("https://zkitefly.github.io/unlisted-versions-of-minecraft", "https://alist.8mi.tech/d/mirror/unlisted-versions-of-minecraft/Auto"),
+                pair("https://hmcl.glavo.site/metadata/fmllibs", "https://alist.8mi.tech/d/mirror/HMCL-Metadata/Auto/fmllibs"),
+                pair("https://zkitefly.github.io/unlisted-versions-of-minecraft", "https://alist.8mi.tech/d/mirror/unlisted-versions-of-minecraft/Auto")
+        );
+
+        this.fallbackReplacement = Arrays.asList(
                 // https://github.com/mcmod-info-mirror/mcim-rust-api
                 pair("https://api.modrinth.com", "https://mod.mcimirror.top/modrinth"),
                 pair("https://cdn.modrinth.com", "https://mod.mcimirror.top"),
@@ -93,52 +109,77 @@ public final class BMCLAPIDownloadProvider implements DownloadProvider {
     }
 
     @Override
-    public String getVersionListURL() {
-        return apiRoot + "/mc/game/version_manifest.json";
+    public List<URL> getVersionListURLs() {
+        return Collections.singletonList(NetworkUtils.toURL(apiRoot + "/mc/game/version_manifest.json"));
     }
 
     @Override
-    public String getAssetBaseURL() {
-        return apiRoot + "/assets/";
+    public List<URL> getAssetObjectCandidates(String assetObjectLocation) {
+        return Collections.singletonList(NetworkUtils.toURL(apiRoot + "/assets/" + assetObjectLocation));
     }
 
     @Override
-    public VersionList<?> getVersionListById(String id) {
-        switch (id) {
-            case "game":
+    public ComponentVersionList<?> getVersionList(GameComponentType componentType) {
+        switch (componentType) {
+            case GAME:
                 return game;
-            case "fabric":
+            case FABRIC:
                 return fabric;
-            case "fabric-api":
+            case FABRIC_API:
                 return fabricApi;
-            case "forge":
+            case FORGE:
                 return forge;
-            case "cleanroom":
+            case CLEANROOM:
                 return cleanroom;
-            case "neoforge":
+            case NEO_FORGE:
                 return neoforge;
-            case "liteloader":
+            case LITELOADER:
                 return liteLoader;
-            case "optifine":
+            case OPTIFINE:
                 return optifine;
-            case "quilt":
+            case QUILT:
                 return quilt;
-            case "quilt-api":
+            case QUILT_API:
                 return quiltApi;
+            case LEGACY_FABRIC:
+                return legacyFabric;
+            case LEGACY_FABRIC_API:
+                return legacyFabricApi;
             default:
-                throw new IllegalArgumentException("Unrecognized version list id: " + id);
+                throw new IllegalArgumentException("Unrecognized component type: " + componentType);
         }
     }
 
-    @Override
-    public String injectURL(String baseURL) {
+    private static String injectURL(List<Pair<String, String>> replacement, String baseURL) {
         for (Pair<String, String> pair : replacement) {
             if (baseURL.startsWith(pair.getKey())) {
                 return pair.getValue() + baseURL.substring(pair.getKey().length());
             }
         }
-
         return baseURL;
+    }
+
+    @Override
+    public String injectURL(String baseURL) {
+        return injectURL(replacement, baseURL);
+    }
+
+    @Override
+    public List<URL> injectURLWithCandidates(String baseURL) {
+        String injected = injectURL(replacement, baseURL);
+        if (injected.equals(baseURL)) {
+            String fallbackInjected = injectURL(fallbackReplacement, baseURL);
+            if (fallbackInjected.equals(baseURL)) {
+                return Collections.singletonList(NetworkUtils.toURL(baseURL));
+            } else {
+                return Arrays.asList(
+                        NetworkUtils.toURL(baseURL),
+                        NetworkUtils.toURL(fallbackInjected)
+                );
+            }
+        } else {
+            return Collections.singletonList(NetworkUtils.toURL(injected));
+        }
     }
 
     @Override

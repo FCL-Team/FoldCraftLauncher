@@ -18,16 +18,16 @@
 package com.tungsten.fclcore.download.liteloader;
 
 import com.tungsten.fclcore.download.BMCLAPIDownloadProvider;
-import com.tungsten.fclcore.download.RemoteVersion;
-import com.tungsten.fclcore.download.VersionList;
-import com.tungsten.fclcore.util.Pair;
-import com.tungsten.fclcore.util.io.HttpRequest;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.download.ComponentVersionList;
+import com.tungsten.fclcore.task.GetTask;
+import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
 
-public final class LiteLoaderBMCLVersionList extends VersionList<LiteLoaderRemoteVersion> {
+public final class LiteLoaderBMCLVersionList extends ComponentVersionList<LiteLoaderRemoteVersion> {
     private final BMCLAPIDownloadProvider downloadProvider;
 
     public LiteLoaderBMCLVersionList(BMCLAPIDownloadProvider downloadProvider) {
@@ -51,23 +51,23 @@ public final class LiteLoaderBMCLVersionList extends VersionList<LiteLoaderRemot
     }
 
     @Override
-    public CompletableFuture<?> refreshAsync() {
+    public Task<?> refreshAsync() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public CompletableFuture<?> refreshAsync(String gameVersion) {
-        return HttpRequest.GET(
-                        downloadProvider.injectURL("https://bmclapi2.bangbang93.com/liteloader/list"), Pair.pair("mcversion", gameVersion)
-                )
-                .getJsonAsync(LiteLoaderBMCLVersion.class)
-                .thenAccept(v -> {
+    public Task<?> refreshAsync(String gameVersion) {
+        return new GetTask(NetworkUtils.toURL(NetworkUtils.withQuery(
+                        downloadProvider.getApiRoot() + "/liteloader/list", Collections.singletonMap("mcversion", gameVersion))))
+                .thenApplyAsync(json -> JsonUtils.fromMaybeMalformedJson(json, LiteLoaderBMCLVersion.class))
+                .thenAcceptAsync(v -> {
                     lock.writeLock().lock();
                     try {
                         versions.clear();
-
+                        if (v == null)
+                            return;
                         versions.put(gameVersion, new LiteLoaderRemoteVersion(
-                                gameVersion, v.version, RemoteVersion.Type.UNCATEGORIZED,
+                                gameVersion, v.version, ComponentRemoteVersion.Type.UNCATEGORIZED,
                                 Collections.singletonList(NetworkUtils.withQuery(
                                         downloadProvider.injectURL("https://bmclapi2.bangbang93.com/liteloader/download"),
                                         Collections.singletonMap("version", v.version)

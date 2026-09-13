@@ -18,14 +18,14 @@
 package com.tungsten.fclcore.download.quilt;
 
 import com.tungsten.fclcore.download.DefaultDependencyManager;
-import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.download.RemoteVersion;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
 
 import java.util.List;
 
-public class QuiltRemoteVersion extends RemoteVersion {
+public class QuiltRemoteVersion extends ComponentRemoteVersion {
     /**
      * Constructor.
      *
@@ -34,7 +34,7 @@ public class QuiltRemoteVersion extends RemoteVersion {
      * @param urls        the installer or universal jar original URL.
      */
     QuiltRemoteVersion(String gameVersion, String selfVersion, List<String> urls) {
-        super(LibraryAnalyzer.LibraryType.QUILT.getPatchId(), gameVersion, selfVersion, null, urls);
+        super(GameComponentType.QUILT, gameVersion, selfVersion, null, urls);
     }
 
     @Override
