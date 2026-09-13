@@ -169,12 +169,12 @@ class FavoritePage(
         filterOptionRows.forEach { row ->
             val selected = row.type == filterType
             val count = if (countsReady) countFor(row.type) else 0
-            // 高亮沿用 TabLayout 的选中语言：主题色暗变体（dkColor）实底 + 自动对比色文字
+            // 选中项使用主要主题色实底（getColor 按当前亮暗模式动态取色）+ 自动对比色文字
             val contentColor = theme.autoTint
             val pill = GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
                 cornerRadius = density * 10
-                setColor(if (selected) theme.dkColor else Color.TRANSPARENT)
+                setColor(if (selected) theme.getColor() else Color.TRANSPARENT)
             }
             row.root.background = RippleDrawable(
                 ColorStateList.valueOf(ColorUtils.setAlphaComponent(theme.autoTint, 40)),
