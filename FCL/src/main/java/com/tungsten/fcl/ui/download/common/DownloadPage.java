@@ -976,38 +976,46 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     }
 
     /**
-     * 批量一键下载：逐个解析 REQUIRED 前置闭包（后台），全部文件按文件名去重后统一入队；
-     * 已安装的本体/前置跳过；完成后在 UI 线程回调入队统计
+     * 批量一键下载：逐个解析 REQUIRED 前置闭包，全部文件按文件名去重后统一入队；
+     * 已安装的本体/前置跳过；完成后在 UI 线程回调入队统计。
+     * 解析阶段本身作为下载面板条目展示（带逐模组进度），解析完成后条目移除、下载任务入列
      */
     public void downloadModsBatch(Context context, Profile profile, @Nullable String version, List<RemoteMod.Version> files, String subdirectoryName, @Nullable BatchDownloadCallback callback) {
         if (version == null) version = profile.getSelectedVersion();
         Path runDirectory = profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
         Path modsDirectory = runDirectory.resolve(subdirectoryName);
-        Task.supplyAsync(() -> {
-            List<RemoteMod.Version> toSubmit = new ArrayList<>();
-            Set<String> queued = new HashSet<>();
-            int installedSkipped = 0;
-            List<String> failedTitles = new ArrayList<>();
-            for (RemoteMod.Version file : files) {
-                try {
-                    ModDependenciesResolver.Result result = ModDependenciesResolver.resolve(file, modsDirectory, file.self().getType().getRemoteModRepository());
-                    if (!result.rootInstalled() && queued.add(file.file().filename())) {
-                        toSubmit.add(file);
-                    } else if (result.rootInstalled()) {
-                        installedSkipped++;
-                    }
-                    for (ModDependenciesResolver.ResolvedDependency dep : result.dependencies()) {
-                        if (queued.add(dep.version().file().filename())) {
-                            toSubmit.add(dep.version());
+        Task<BatchDownloadPlan> resolveTask = new Task<BatchDownloadPlan>() {
+            @Override
+            public void execute() throws Exception {
+                List<RemoteMod.Version> toSubmit = new ArrayList<>();
+                Set<String> queued = new HashSet<>();
+                int installedSkipped = 0;
+                List<String> failedTitles = new ArrayList<>();
+                updateProgress(0, files.size());
+                for (int index = 0; index < files.size(); index++) {
+                    RemoteMod.Version file = files.get(index);
+                    try {
+                        ModDependenciesResolver.Result result = ModDependenciesResolver.resolve(file, modsDirectory, file.self().getType().getRemoteModRepository());
+                        if (!result.rootInstalled() && queued.add(file.file().filename())) {
+                            toSubmit.add(file);
+                        } else if (result.rootInstalled()) {
+                            installedSkipped++;
                         }
+                        for (ModDependenciesResolver.ResolvedDependency dep : result.dependencies()) {
+                            if (queued.add(dep.version().file().filename())) {
+                                toSubmit.add(dep.version());
+                            }
+                        }
+                        failedTitles.addAll(result.failedTitles());
+                    } catch (Exception e) {
+                        failedTitles.add(file.name());
                     }
-                    failedTitles.addAll(result.failedTitles());
-                } catch (Exception e) {
-                    failedTitles.add(file.name());
+                    updateProgress(index + 1, files.size());
                 }
+                setResult(new BatchDownloadPlan(toSubmit, installedSkipped, failedTitles));
             }
-            return new BatchDownloadPlan(toSubmit, installedSkipped, failedTitles);
-        }).whenComplete(Schedulers.androidUIThread(), (plan, exception) -> {
+        };
+        TaskExecutor executor = resolveTask.whenComplete(Schedulers.androidUIThread(), (plan, exception) -> {
             if (exception != null || plan == null) {
                 if (callback != null) callback.onQueued(0, 0, files.size());
                 return;
@@ -1016,7 +1024,9 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                 submitModDownload(context, file.file().filename(), file, modsDirectory);
             }
             if (callback != null) callback.onQueued(plan.toSubmit().size(), plan.installedSkipped(), plan.failedTitles().size());
-        }).start();
+        }).executor();
+        DownloadManager.submit(context.getString(R.string.mods_batch_resolving), resolveTask, executor);
+        executor.start();
     }
 
     /**

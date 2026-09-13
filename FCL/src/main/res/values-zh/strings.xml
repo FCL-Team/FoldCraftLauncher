@@ -824,6 +824,7 @@
     <string name="favorite_batch_parsing">正在解析可下载的模组...</string>
     <string name="favorite_batch_download">下载</string>
     <string name="favorite_batch_queued">已加入下载队列 %d 个文件</string>
+    <string name="mods_batch_resolving">解析模组前置依赖</string>
     <string name="mods_name">名称</string>
     <string name="mods_not_modded">你必须先安装一个模组加载器（Fabric，Forge 或者 LiteLoader）以管理你的模组！</string>
     <string name="message_broken_mods">检测到以下损坏的模组文件，是否删除？\n%s</string>
