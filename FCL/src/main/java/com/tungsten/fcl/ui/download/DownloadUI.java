@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 
 import androidx.annotation.NonNull;
 
@@ -42,7 +41,6 @@ public class DownloadUI extends FCLCommonUI {
     public FCLTabLayout tabLayout;
     public FCLUILayout container;
 
-    private HorizontalScrollView tabScroll;
     private FrameLayout contentContainer;
     private FrameLayout overlay;
 
@@ -61,22 +59,19 @@ public class DownloadUI extends FCLCommonUI {
     public void onCreate() {
         super.onCreate();
         tabLayout = findViewById(R.id.tab_layout);
-        tabScroll = findViewById(R.id.tab_scroll);
         container = findViewById(R.id.container);
 
         // 页签栏整体不可聚焦：触屏场景页签无需焦点，避免焦点重分配把焦点落到页签上
-        tabScroll.setFocusable(false);
         tabLayout.setFocusable(false);
         ViewGroup tabIndicator = (ViewGroup) tabLayout.getChildAt(0);
         for (int i = 0; i < tabIndicator.getChildCount(); i++) {
             tabIndicator.getChildAt(i).setFocusable(false);
         }
-        // 临时页（详情页等）打开会引发 ViewPager2 页面重测量/布局抖动，tab_scroll 宽度
-        // 瞬态变化（实测 1316↔1884）会把滚动位置 clamp 到错误值，选中页签滚出视野；
-        // 宽度变化落定后把选中页签重新滚入视野自愈
-        tabScroll.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+        // 临时页（详情页等）打开会引发 ViewPager2 页面重测量/布局抖动，TabLayout 宽度瞬态变化
+        // 会把内部滚动位置 clamp 到错误值，选中页签滚出视野；宽度变化落定后重新滚到选中页签自愈
+        tabLayout.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
             if (right - left != oldRight - oldLeft) {
-                scrollTabIntoView(tabLayout.getSelectedTabPosition());
+                scrollSelectedTabIntoView();
             }
         });
 
@@ -104,7 +99,6 @@ public class DownloadUI extends FCLCommonUI {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 switchTab(tab.getPosition());
-                scrollTabIntoView(tab.getPosition());
             }
 
             @Override
@@ -212,24 +206,22 @@ public class DownloadUI extends FCLCommonUI {
      * 供外部跳转（如模组管理页）：切换到指定下载模式并显示下载页
      */
     public void showDownloadPage(int pageId) {
-        int position = pageIdToTabPosition(pageId);
-        TabLayout.Tab tab = tabLayout.getTabAt(position);
+        TabLayout.Tab tab = tabLayout.getTabAt(pageIdToTabPosition(pageId));
         if (tab != null) {
             tab.select();
-            scrollTabIntoView(position);
         }
     }
 
     /**
-     * 页签可能溢出 tabScroll 视口（7 个页签较窄屏放不下），选中后把该页签滚入可见区域
+     * 把选中页签滚回视野（选中页签可能溢出视口，如临时页打开引发的布局抖动之后）。
+     * TabLayout 自身滚动能力由其 HorizontalScrollView 基类提供，setScrollPosition 即其滚动接口
      */
-    private void scrollTabIntoView(int position) {
-        if (tabScroll == null) return;
-        ViewGroup indicator = (ViewGroup) tabLayout.getChildAt(0);
-        if (position >= indicator.getChildCount()) return;
-        View tabView = indicator.getChildAt(position);
-        tabScroll.post(() -> tabScroll.smoothScrollTo(
-                Math.max(0, tabView.getLeft() + tabView.getWidth() / 2 - tabScroll.getWidth() / 2), 0));
+    private void scrollSelectedTabIntoView() {
+        int position = tabLayout.getSelectedTabPosition();
+        if (position < 0 || position >= tabLayout.getTabCount()) {
+            return;
+        }
+        tabLayout.setScrollPosition(position, 0f, true);
     }
 
     public DownloadPage getDownloadPage() {
