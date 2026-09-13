@@ -14,5 +14,6 @@ void create_chmod_hooks(bytehook_hook_all_t bytehook_hook_all_p);
 void create_sdl_hooks(bytehook_hook_all_t bytehook_hook_all_p);
 void create_sdl_dlopen_hooks(bytehook_hook_all_t bytehook_hook_all_p);
 void *sdlDlsymProxy(const char *symbol, void *real);
+struct SDL_Window *sdlHookGetPrimaryWindow(void);
 
 #endif //POJAVLAUNCHER_NATIVE_HOOKS_H

@@ -55,8 +55,6 @@ import java.util.stream.Stream;
 public final class DownloadProviders {
     private DownloadProviders() {}
 
-    private static DownloadProvider currentDownloadProvider;
-
     public static final Map<String, DownloadProvider> providersById;
     public static final Map<String, DownloadProvider> rawProviders;
     private static final AdaptedDownloadProvider fileDownloadProvider = new AdaptedDownloadProvider();
@@ -95,14 +93,11 @@ public final class DownloadProviders {
     }
 
     static void init() {
+        // versionListSource 无效时纠正为默认值；下载源的获取在 getDownloadProvider 侧惰性查表
         FXUtils.onChangeAndOperate(config().versionListSourceProperty(), versionListSource -> {
             if (!providersById.containsKey(versionListSource)) {
                 config().setVersionListSource(DEFAULT_PROVIDER_ID);
-                return;
             }
-
-            currentDownloadProvider = Optional.ofNullable(providersById.get(versionListSource))
-                    .orElse(providersById.get(DEFAULT_PROVIDER_ID));
         });
 
         if (!rawProviders.containsKey(config().getDownloadType())) {
@@ -138,7 +133,11 @@ public final class DownloadProviders {
      * Get current primary preferred download provider
      */
     public static DownloadProvider getDownloadProvider() {
-        return config().isAutoChooseDownloadType() ? currentDownloadProvider : fileDownloadProvider;
+        if (!config().isAutoChooseDownloadType()) {
+            return fileDownloadProvider;
+        }
+        // 惰性查表：后台线程可能在初始化回调赋值前调用，缓存字段会拿到 null
+        return getDownloadProviderByPrimaryId(config().getVersionListSource());
     }
 
     public static String localizeErrorMessage(Context context, Throwable exception) {

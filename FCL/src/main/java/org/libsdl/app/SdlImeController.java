@@ -45,12 +45,19 @@ final class SdlImeController {
     private static SDLDummyEdit mEdit;
     private static boolean mTextInputActive;
     private static boolean mKeyboardShown;
+    // 游戏侧通道关闭时由启动器显式唤起输入法代开的 native 文本输入通道
+    private static boolean mForcedByLauncher;
 
     private SdlImeController() {
     }
 
     static boolean isTextInputActive() {
         return mTextInputActive;
+    }
+
+    /** 文本输入通道是否可接收输入（含启动器代开的通道） */
+    static boolean isInputAccepted() {
+        return mTextInputActive || mForcedByLauncher;
     }
 
     static boolean isEditAvailable() {
@@ -71,6 +78,7 @@ final class SdlImeController {
         }
         mTextInputActive = false;
         mKeyboardShown = false;
+        mForcedByLauncher = false;
     }
 
     static void requestShow(Source source) {
@@ -90,7 +98,7 @@ final class SdlImeController {
         if (source == Source.GAME) {
             mTextInputActive = false;
         }
-        post(SdlImeController::doHide);
+        post(() -> doHide(source));
     }
 
     /**
@@ -131,14 +139,17 @@ final class SdlImeController {
             return;
         }
 
-        // SDL 文本输入通道关闭后，任何启动器侧请求都不允许唤起对游戏打字的软键盘
-        if (source != Source.GAME && !mTextInputActive) {
-            Log.w(TAG, "IME: show by " + source + " rejected, SDL text input channel is closed");
-            forceHideIme();
-            return;
-        }
         if (source == Source.GAME) {
             TouchCharInput.disableActiveInput();
+        } else if (!mTextInputActive && !mForcedByLauncher) {
+            // 游戏侧文本输入通道关闭（如模组自绘输入界面会主动关闭通道）时，
+            // 启动器显式唤起输入法需代为激活 native 通道，否则输入文本无法送达游戏
+            if (!SdlBridge.setNativeTextInputActive(true)) {
+                Log.w(TAG, "IME: show by " + source + " rejected, native text input unavailable");
+                return;
+            }
+            mForcedByLauncher = true;
+            Log.i(TAG, "IME: native text input force-activated by " + source);
         }
 
         // 自动弹出被关闭时延迟落编辑视图，但焦点落在隐藏编辑器上会让后续实体键盘输入触发软键盘
@@ -205,10 +216,15 @@ final class SdlImeController {
         return params;
     }
 
-    private static void doHide() {
+    private static void doHide(Source source) {
+        if (mForcedByLauncher && source != Source.GAME) {
+            // 还原启动器代开的 native 通道（游戏自行关闭时已无需重复操作）
+            SdlBridge.setNativeTextInputActive(false);
+        }
+        mForcedByLauncher = false;
+
         if (mEdit == null) {
             Log.i(TAG, "IME: no text edit available, hide ignored");
-            SdlBridge.requestComposeFocus();
             return;
         }
         forceHideIme();
@@ -218,7 +234,7 @@ final class SdlImeController {
             SDLActivity.onNativeScreenKeyboardHidden();
         }
 
-        if (!mTextInputActive) {
+        if (!isInputAccepted()) {
             // 部分 IME 会在隐藏后延迟回弹，通道关闭时追加一次压制
             SDLActivity.commandHandler.postDelayed(SdlImeController::recheckHidden, 300);
         }
@@ -243,11 +259,10 @@ final class SdlImeController {
             InputMethodManager imm = (InputMethodManager) SDLActivity.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(layout.getWindowToken(), 0);
         }
-        SdlBridge.requestComposeFocus();
     }
 
     private static boolean isUnwantedImeVisible() {
-        if (!SdlBridge.getSdlEnabled() || mTextInputActive) {
+        if (!SdlBridge.getSdlEnabled() || isInputAccepted()) {
             return false;
         }
         return mEdit != null && mEdit.hasFocus();
