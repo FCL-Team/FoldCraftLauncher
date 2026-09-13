@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.mio.data.FavoriteManager
@@ -30,10 +31,20 @@ class FavoriteAdapter(
     /** 当前已左滑打开菜单的 item（互斥：打开新的前先关旧的） */
     private var openMenuLayout: SwipeMenuLayout? = null
 
+    /** 数据更新：DiffUtil 差量刷新，增删带动画，未变化条目不重绑（避免图标重载闪烁） */
     fun submit(items: List<DownloadFavoriteEntity>) {
+        val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = list.size
+            override fun getNewListSize(): Int = items.size
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                list[oldItemPosition].id == items[newItemPosition].id
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
+                list[oldItemPosition] == items[newItemPosition]
+        })
         list.clear()
         list.addAll(items)
-        notifyDataSetChanged()
+        result.dispatchUpdatesTo(this)
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {

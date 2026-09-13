@@ -58,6 +58,9 @@ class RemoteModListAdapter(
     /** 收藏状态收集任务（adapter 挂到 RecyclerView 时启动，分离时取消） */
     private var favoriteJob: Job? = null
 
+    /** 上次收集到的收藏 id 集合，用于差量计算受影响的条目位置 */
+    private var boundFavoriteIds: Set<String> = emptySet()
+
     init {
         MainActivity.getInstance().lifecycleScope.launch {
             withContext(Dispatchers.Default) {
@@ -120,6 +123,9 @@ class RemoteModListAdapter(
         /** payload：仅刷新"已安装"标记，重绑时跳过图片加载与入场动画 */
         const val PAYLOAD_INSTALLED = 1
 
+        /** payload：仅刷新收藏星形图标，重绑时跳过图片加载与入场动画 */
+        const val PAYLOAD_FAVORITE = 2
+
         /** 缓存占位位图（内容只读，多视图共享安全），避免每次 bind 重新分配与绘制 */
         private var placeholderBitmap: Bitmap? = null
     }
@@ -152,9 +158,23 @@ class RemoteModListAdapter(
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        // 收藏状态变化时刷新列表（含收藏页等其他入口的增删）
+        // 收藏状态变化时仅局部刷新受影响条目（notifyDataSetChanged 会整表重绑，
+        // 重播全部条目的入场动画并重载图片，点击收藏时列表明显闪烁）
         favoriteJob = MainActivity.getInstance().lifecycleScope.launch {
-            FavoriteManager.favorites.collect { notifyDataSetChanged() }
+            FavoriteManager.favorites.collect { favorites ->
+                val newIds = favorites.map { it.id }.toSet()
+                val oldIds = boundFavoriteIds
+                boundFavoriteIds = newIds
+                val toggled = (newIds - oldIds) + (oldIds - newIds)
+                if (toggled.isEmpty()) return@collect
+                for (position in list.indices) {
+                    val mod = list[position]
+                    val id = FavoriteManager.idOf(FavoriteManager.sourceOf(mod), mod.modID)
+                    if (id in toggled) {
+                        notifyItemChanged(position, PAYLOAD_FAVORITE)
+                    }
+                }
+            }
         }
         // 列表滚动时收起已打开的左滑菜单
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -255,9 +275,19 @@ class RemoteModListAdapter(
             super.onBindViewHolder(holder, position, payloads)
             return
         }
-        // 已安装标记刷新：只更新标题，不重播入场动画、不重载图片
+        // 局部刷新：已安装标记只更新标题，收藏状态只更新星形图标，
+        // 均不重播入场动画、不重载图片
         val binding = ItemRemoteModBinding.bind(holder.itemView)
-        binding.title.text = buildTitle(list[position])
+        val remoteMod = list.getOrNull(position) ?: return
+        if (payloads.contains(PAYLOAD_INSTALLED)) {
+            binding.title.text = buildTitle(remoteMod)
+        }
+        if (payloads.contains(PAYLOAD_FAVORITE)) {
+            val id = FavoriteManager.idOf(FavoriteManager.sourceOf(remoteMod), remoteMod.modID)
+            binding.btnFavorite.setImageResource(
+                if (FavoriteManager.isFavorited(id)) R.drawable.ic_star_filled else R.drawable.ic_star_outline
+            )
+        }
     }
 
     private fun buildTitle(remoteMod: RemoteMod): String {
