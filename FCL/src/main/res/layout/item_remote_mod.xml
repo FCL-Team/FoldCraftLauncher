@@ -7,7 +7,7 @@
     android:layout_marginBottom="10dp">
 
     <!-- 左滑菜单层（靠右垫底）：收藏按钮，后续新增操作往此层加 -->
-    <LinearLayout
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
         android:id="@+id/swipe_menu"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -17,7 +17,7 @@
         android:orientation="horizontal"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        app:auto_tint="true">
+        app:auto_linear_background_tint="true">
 
         <com.tungsten.fcllibrary.component.view.FCLImageButton
             android:id="@+id/btn_favorite"
@@ -25,11 +25,9 @@
             android:layout_height="40dp"
             android:padding="8dp"
             android:src="@drawable/ic_star_outline"
-            app:auto_src_tint="true"
-            app:ripple="true"
-            tools:src="@drawable/ic_star_filled" />
+            app:auto_tint="true" />
 
-    </LinearLayout>
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
     <com.tungsten.fcllibrary.component.view.FCLConstraintLayout
         android:id="@+id/parent"

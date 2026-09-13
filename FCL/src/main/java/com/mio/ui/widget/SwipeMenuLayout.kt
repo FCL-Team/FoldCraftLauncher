@@ -33,6 +33,13 @@ class SwipeMenuLayout @JvmOverloads constructor(
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
     private val minFlingVelocity = ViewConfiguration.get(context).scaledMinimumFlingVelocity
 
+    /** 打开状态下内容层与菜单层之间的间隔 */
+    private val menuGap = resources.displayMetrics.density * 8f
+
+    /** 菜单完全打开时内容层的位移目标 */
+    private val openOffset: Float
+        get() = if (menuWidth <= 0) 0f else -(menuWidth + menuGap)
+
     private var velocityTracker: VelocityTracker? = null
     private var downX = 0f
     private var downY = 0f
@@ -62,7 +69,7 @@ class SwipeMenuLayout @JvmOverloads constructor(
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         // 重布局后把内容层位置夹回有效区间（回收复用/动画中途布局的情况）
-        contentView?.let { it.translationX = if (menuOpen) -menuWidth.toFloat() else 0f }
+        contentView?.let { it.translationX = if (menuOpen) openOffset else 0f }
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
@@ -131,21 +138,19 @@ class SwipeMenuLayout @JvmOverloads constructor(
         return true
     }
 
-    private fun clampTranslation(offset: Float): Float {
-        val width = menuWidth.toFloat()
-        return if (width <= 0f) 0f else offset.coerceIn(-width, 0f)
-    }
+    private fun clampTranslation(offset: Float): Float =
+        if (openOffset >= 0f) 0f else offset.coerceIn(openOffset, 0f)
 
     private fun settle(velocityX: Float) {
         val open = when {
             abs(velocityX) > minFlingVelocity -> velocityX < 0
-            else -> -(contentView?.translationX ?: 0f) > menuWidth / 2f
+            else -> -(contentView?.translationX ?: 0f) > -openOffset / 2f
         }
-        animateTo(if (open) -menuWidth.toFloat() else 0f)
+        animateTo(if (open) openOffset else 0f)
     }
 
     fun openMenu() {
-        animateTo(-menuWidth.toFloat())
+        animateTo(openOffset)
     }
 
     fun closeMenu() {
