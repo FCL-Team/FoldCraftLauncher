@@ -17,12 +17,14 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdatomic.h>
+#include <stdbool.h>
 #include <math.h>
 #include <android/log.h>
 
 #include "environ/environ.h"
 #include "log.h"
 #include "jvm_hooks/jvm_hooks.h"
+#include "native_hooks/native_hooks.h"
 #include "utils.h"
 
 #define EVENT_TYPE_CHAR 1000
@@ -428,6 +430,62 @@ Java_com_tungsten_fcl_game_sdl_SdlBridge_initializeControllerSubsystems(__attrib
     // SDL3: SDL_INIT_GAMEPAD=0x2000 | SDL_INIT_JOYSTICK=0x200 | SDL_INIT_EVENTS=0x4000
     SDL_Init(0x2000u | 0x200u | 0x4000u);
     __android_log_print(ANDROID_LOG_INFO, "FCL", "initializeControllerSubsystems: SDL controller subsystems initialized");
+}
+
+// --- SDL 文本输入通道（启动器代管，供启动器侧显式唤起输入法） ---
+
+typedef struct SDL_Window SDL_Window;
+typedef uint32_t SDL_PropertiesID;
+typedef void (*SDL_MainThreadCallback)(void *userdata);
+typedef bool (*sdlStartTextInput_t)(SDL_Window *, SDL_PropertiesID);
+typedef bool (*sdlStopTextInput_t)(SDL_Window *);
+typedef bool (*sdlRunOnMainThread_t)(SDL_MainThreadCallback, void *, bool);
+
+static void sdlTextInputMainThreadCallback(void *userdata) {
+    void *handle = dlopen("libSDL3.so", RTLD_NOW);
+    if (handle == NULL) return;
+    SDL_Window *window = sdlHookGetPrimaryWindow();
+    if (window == NULL) return;
+    if (userdata != NULL) {
+        sdlStartTextInput_t start = (sdlStartTextInput_t) dlsym(handle, "SDL_StartTextInput");
+        if (start != NULL) start(window, 0);
+        else __android_log_print(ANDROID_LOG_ERROR, "FCL", "sdlTextInputMainThreadCallback: SDL_StartTextInput not found");
+    } else {
+        sdlStopTextInput_t stop = (sdlStopTextInput_t) dlsym(handle, "SDL_StopTextInput");
+        if (stop != NULL) stop(window);
+        else __android_log_print(ANDROID_LOG_ERROR, "FCL", "sdlTextInputMainThreadCallback: SDL_StopTextInput not found");
+    }
+}
+
+JNIEXPORT jboolean JNICALL
+Java_com_tungsten_fcl_game_sdl_SdlBridge_isSdlRenderActive(__attribute__((unused)) JNIEnv* env, __attribute__((unused)) jclass clazz) {
+    // SDL 渲染路径以首个 SDL 窗口创建为标志；仅手柄子系统初始化 SDL（MC 26.2 挂 Controlify）时无窗口
+    return sdlHookGetPrimaryWindow() != NULL ? JNI_TRUE : JNI_FALSE;
+}
+
+JNIEXPORT jboolean JNICALL
+Java_com_tungsten_fcl_game_sdl_SdlBridge_setNativeTextInputActive(__attribute__((unused)) JNIEnv* env, __attribute__((unused)) jclass clazz, jboolean active) {
+    if (sdlHookGetPrimaryWindow() == NULL) {
+        __android_log_print(ANDROID_LOG_WARN, "FCL", "setNativeTextInputActive: no SDL window (SDL render path inactive)");
+        return JNI_FALSE;
+    }
+    void *handle = dlopen("libSDL3.so", RTLD_NOW);
+    if (handle == NULL) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "setNativeTextInputActive: libSDL3.so dlopen failed");
+        return JNI_FALSE;
+    }
+    sdlRunOnMainThread_t runOnMain = (sdlRunOnMainThread_t) dlsym(handle, "SDL_RunOnMainThread");
+    if (runOnMain == NULL) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "setNativeTextInputActive: SDL_RunOnMainThread not found");
+        return JNI_FALSE;
+    }
+    // SDL3 文本输入 API 要求主线程，经 SDL_RunOnMainThread 投递；不等待完成，激活结果由
+    // SDL 回调 showTextInput 异步镜像回 Java 层
+    bool result = runOnMain(sdlTextInputMainThreadCallback, (void *) (intptr_t) (active ? 1 : 0), JNI_FALSE);
+    if (!result) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "setNativeTextInputActive: SDL_RunOnMainThread dispatch failed");
+    }
+    return result ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT jobject JNICALL
