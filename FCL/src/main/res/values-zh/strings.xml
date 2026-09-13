@@ -808,6 +808,12 @@
     <string name="mods_modrinth">Modrinth</string>
     <string name="mods_aggregate">聚合搜索</string>
     <string name="search_aggregate_partial">无法连接到 %1$s，当前仅显示 %2$s 的搜索结果，可能不全</string>
+    <string name="favorites">收藏</string>
+    <string name="favorite_empty_title">暂无收藏</string>
+    <string name="favorite_empty_guide">1. 在搜索结果上向左滑动条目，打开操作菜单\n2. 点击菜单中的星形按钮，收藏 CurseForge / Modrinth 资源\n3. 收藏内容保存在此处，点击条目可直接进入对应下载页</string>
+    <string name="favorite_added">已收藏</string>
+    <string name="favorite_removed">已取消收藏</string>
+    <string name="favorite_open_failed">打开收藏失败，请检查网络后重试。</string>
     <string name="mods_name">名称</string>
     <string name="mods_not_modded">你必须先安装一个模组加载器（Fabric，Forge 或者 LiteLoader）以管理你的模组！</string>
     <string name="message_broken_mods">检测到以下损坏的模组文件，是否删除？\n%s</string>

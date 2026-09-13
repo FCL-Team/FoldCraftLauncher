@@ -2,14 +2,18 @@ package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.material.tabs.TabLayout;
+import com.mio.data.FavoriteManager;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.download.common.DownloadPage;
 import com.tungsten.fcl.ui.download.common.RemoteModInfoPage;
+import com.tungsten.fcl.ui.download.favorite.FavoritePage;
 import com.tungsten.fcl.ui.download.version.VersionInstallPage;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
@@ -31,17 +35,20 @@ public class DownloadUI extends FCLCommonUI {
     public static final int PAGE_ID_DOWNLOAD_RESOURCE_PACK = 15013;
     public static final int PAGE_ID_DOWNLOAD_WORLD = 15014;
     public static final int PAGE_ID_DOWNLOAD_SHADER_PACK = 15015;
+    public static final int PAGE_ID_DOWNLOAD_FAVORITE = 15016;
 
     private static final int TEMP_PAGE_ANIM_DURATION = 200;
 
     public FCLTabLayout tabLayout;
     public FCLUILayout container;
 
+    private HorizontalScrollView tabScroll;
     private FrameLayout contentContainer;
     private FrameLayout overlay;
 
     private VersionInstallPage versionInstallPage;
     private DownloadPage downloadPage;
+    private FavoritePage favoritePage;
 
     private final ArrayList<FCLPage> tempPageStack = new ArrayList<>();
     private int currentPageId = PAGE_ID_DOWNLOAD_GAME;
@@ -54,16 +61,37 @@ public class DownloadUI extends FCLCommonUI {
     public void onCreate() {
         super.onCreate();
         tabLayout = findViewById(R.id.tab_layout);
+        tabScroll = findViewById(R.id.tab_scroll);
         container = findViewById(R.id.container);
 
-        // 内容层：游戏安装页 + 共享下载页
+        // 页签栏整体不可聚焦：触屏场景页签无需焦点，避免焦点重分配把焦点落到页签上
+        tabScroll.setFocusable(false);
+        tabLayout.setFocusable(false);
+        ViewGroup tabIndicator = (ViewGroup) tabLayout.getChildAt(0);
+        for (int i = 0; i < tabIndicator.getChildCount(); i++) {
+            tabIndicator.getChildAt(i).setFocusable(false);
+        }
+        // 临时页（详情页等）打开会引发 ViewPager2 页面重测量/布局抖动，tab_scroll 宽度
+        // 瞬态变化（实测 1316↔1884）会把滚动位置 clamp 到错误值，选中页签滚出视野；
+        // 宽度变化落定后把选中页签重新滚入视野自愈
+        tabScroll.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+            if (right - left != oldRight - oldLeft) {
+                scrollTabIntoView(tabLayout.getSelectedTabPosition());
+            }
+        });
+
+        // 内容层：游戏安装页 + 共享下载页 + 收藏页
         contentContainer = new FrameLayout(getContext());
         container.addView(contentContainer, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        FavoriteManager.init(getContext());
         versionInstallPage = new VersionInstallPage(getContext(), PAGE_ID_DOWNLOAD_GAME);
         downloadPage = new DownloadPage(getContext());
+        favoritePage = new FavoritePage(getContext(), PAGE_ID_DOWNLOAD_FAVORITE, downloadPage);
         contentContainer.addView(versionInstallPage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         contentContainer.addView(downloadPage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        contentContainer.addView(favoritePage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         downloadPage.getContentView().setVisibility(View.GONE);
+        favoritePage.getContentView().setVisibility(View.GONE);
 
         // 临时页覆盖层
         overlay = new FrameLayout(getContext());
@@ -76,6 +104,7 @@ public class DownloadUI extends FCLCommonUI {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 switchTab(tab.getPosition());
+                scrollTabIntoView(tab.getPosition());
             }
 
             @Override
@@ -116,13 +145,22 @@ public class DownloadUI extends FCLCommonUI {
             currentPageId = PAGE_ID_DOWNLOAD_GAME;
             versionInstallPage.getContentView().setVisibility(View.VISIBLE);
             downloadPage.getContentView().setVisibility(View.GONE);
+            favoritePage.getContentView().setVisibility(View.GONE);
             playEnterAnimation(versionInstallPage.getContentView());
+        } else if (position == 6) {
+            if (currentPageId == PAGE_ID_DOWNLOAD_FAVORITE) return;
+            currentPageId = PAGE_ID_DOWNLOAD_FAVORITE;
+            favoritePage.getContentView().setVisibility(View.VISIBLE);
+            downloadPage.getContentView().setVisibility(View.GONE);
+            versionInstallPage.getContentView().setVisibility(View.GONE);
+            playEnterAnimation(favoritePage.getContentView());
         } else {
             int pageId = tabPositionToPageId(position);
             if (currentPageId == pageId) return;
             currentPageId = pageId;
             downloadPage.getContentView().setVisibility(View.VISIBLE);
             versionInstallPage.getContentView().setVisibility(View.GONE);
+            favoritePage.getContentView().setVisibility(View.GONE);
             downloadPage.switchType(pageId);
             // 5 个下载模式页共用同一视图，内容更新后播放过渡动画（游戏页 ↔ 模式页、模式页之间均适用）
             playEnterAnimation(downloadPage.getContentView());
@@ -135,6 +173,7 @@ public class DownloadUI extends FCLCommonUI {
             case 2 -> PAGE_ID_DOWNLOAD_MOD;
             case 3 -> PAGE_ID_DOWNLOAD_RESOURCE_PACK;
             case 4 -> PAGE_ID_DOWNLOAD_WORLD;
+            case 6 -> PAGE_ID_DOWNLOAD_FAVORITE;
             default -> PAGE_ID_DOWNLOAD_SHADER_PACK;
         };
     }
@@ -145,6 +184,7 @@ public class DownloadUI extends FCLCommonUI {
             case PAGE_ID_DOWNLOAD_MOD -> 2;
             case PAGE_ID_DOWNLOAD_RESOURCE_PACK -> 3;
             case PAGE_ID_DOWNLOAD_WORLD -> 4;
+            case PAGE_ID_DOWNLOAD_FAVORITE -> 6;
             default -> 5;
         };
     }
@@ -172,10 +212,24 @@ public class DownloadUI extends FCLCommonUI {
      * 供外部跳转（如模组管理页）：切换到指定下载模式并显示下载页
      */
     public void showDownloadPage(int pageId) {
-        TabLayout.Tab tab = tabLayout.getTabAt(pageIdToTabPosition(pageId));
+        int position = pageIdToTabPosition(pageId);
+        TabLayout.Tab tab = tabLayout.getTabAt(position);
         if (tab != null) {
             tab.select();
+            scrollTabIntoView(position);
         }
+    }
+
+    /**
+     * 页签可能溢出 tabScroll 视口（7 个页签较窄屏放不下），选中后把该页签滚入可见区域
+     */
+    private void scrollTabIntoView(int position) {
+        if (tabScroll == null) return;
+        ViewGroup indicator = (ViewGroup) tabLayout.getChildAt(0);
+        if (position >= indicator.getChildCount()) return;
+        View tabView = indicator.getChildAt(position);
+        tabScroll.post(() -> tabScroll.smoothScrollTo(
+                Math.max(0, tabView.getLeft() + tabView.getWidth() / 2 - tabScroll.getWidth() / 2), 0));
     }
 
     public DownloadPage getDownloadPage() {

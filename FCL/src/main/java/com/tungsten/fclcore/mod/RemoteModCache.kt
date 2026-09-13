@@ -1,6 +1,7 @@
 package com.tungsten.fclcore.mod
 
-import android.database.sqlite.SQLiteDatabase
+import androidx.room.Room
+import com.tungsten.fcl.FCLApp
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.util.Logging.LOG
 import com.tungsten.fclcore.util.gson.JsonUtils
@@ -11,7 +12,7 @@ import java.util.logging.Level
 
 /**
  * 模组仓库（CurseForge / Modrinth）远程查询结果缓存。
- * SQLite key-value 存储（files/cache/mod_repository_cache.db），条目按需读写，
+ * Room key-value 存储（数据库 mod_repository_cache.db），条目按需读写，
  * 无全量加载与全量重写。缓存 API 响应的原始 JSON，命中时由调用方重新走
  * toVersion()/toMod() 转换，减少重复网络请求。
  * json 为 NULL 的条目表示"负缓存"（远程确认未命中，如自制 mod 的指纹），同样防止反复白查。
@@ -35,32 +36,19 @@ object RemoteModCache {
     private const val MAX_TOTAL_BYTES = 10L * 1024 * 1024
     private const val MAX_ENTRY_BYTES = 2L * 1024 * 1024
 
-    private const val TABLE = "cache"
-
     @Volatile
-    private var db: SQLiteDatabase? = null
+    private var database: ModCacheDatabase? = null
 
     private val dbLock = Any()
 
-    // 存 files 目录：CACHE_DIR 会被周期性清理，指纹类永久缓存会被误删
-    private fun dbFile(): File = File(File(FCLPath.FILES_DIR, "cache"), "mod_repository_cache.db")
-
-    private fun db(): SQLiteDatabase {
-        db?.let { return it }
+    private fun db(): ModCacheDatabase {
+        database?.let { return it }
         synchronized(dbLock) {
-            db?.let { return it }
-            val file = dbFile()
-            file.parentFile?.mkdirs()
-            // 旧版单 JSON 文件缓存不迁移（缓存可重建），直接删除
-            File(file.parentFile, "mod_repository_cache.json").delete()
-            return SQLiteDatabase.openOrCreateDatabase(file, null).also {
-                it.execSQL(
-                    "CREATE TABLE IF NOT EXISTS $TABLE (" +
-                            "key TEXT PRIMARY KEY NOT NULL, time INTEGER NOT NULL, " +
-                            "ttl INTEGER NOT NULL, json TEXT)"
-                )
-                db = it
-            }
+            database?.let { return it }
+            // 旧版缓存（原生 SQLite / 单 JSON 文件，存于 files/cache/）不迁移（缓存可重建），直接删除
+            File(FCLPath.FILES_DIR, "cache").deleteRecursively()
+            return Room.databaseBuilder(FCLApp.getAppContext(), ModCacheDatabase::class.java, "mod_repository_cache.db")
+                .build().also { database = it }
         }
     }
 
@@ -91,35 +79,21 @@ object RemoteModCache {
         return result
     }
 
-    /** 清空并删除缓存库（设置页"清除模组缓存"入口调用，须在后台线程） */
+    /** 清空全部缓存条目（设置页"清除模组缓存"入口调用，须在后台线程） */
     @JvmStatic
     fun clear() {
         synchronized(dbLock) {
-            db?.let {
-                it.close()
-                db = null
-            }
-            val file = dbFile()
-            file.delete()
-            File(file.parentFile, file.name + "-journal").delete()
+            database?.clearAllTables()
         }
     }
 
     /** 命中且未过期时返回缓存值（value 为 null 即负缓存命中），未命中或已过期返回 null；命中刷新 time 实现 LRU */
     private fun lookup(key: String, type: Type): Hit? {
-        val d = db()
-        var time = 0L
-        var ttl = 0L
-        var json: String? = null
-        d.query(TABLE, arrayOf("time", "ttl", "json"), "key = ?", arrayOf(key), null, null, null).use { c ->
-            if (!c.moveToFirst()) return null
-            time = c.getLong(0)
-            ttl = c.getLong(1)
-            if (!c.isNull(2)) json = c.getString(2)
-        }
-        if (ttl != TTL_PERMANENT && System.currentTimeMillis() - time >= ttl) return null
-        d.execSQL("UPDATE $TABLE SET time = ? WHERE key = ?", arrayOf<Any>(System.currentTimeMillis(), key))
-        return Hit(json?.let { JsonUtils.GSON.fromJson<Any>(it, type) })
+        val dao = db().modCacheDao()
+        val entry = dao.lookup(key) ?: return null
+        if (entry.ttl != TTL_PERMANENT && System.currentTimeMillis() - entry.time >= entry.ttl) return null
+        dao.touch(key, System.currentTimeMillis())
+        return Hit(entry.json?.let { JsonUtils.GSON.fromJson<Any>(it, type) })
     }
 
     private class Hit(val value: Any?)
@@ -130,49 +104,30 @@ object RemoteModCache {
             return
         }
         val d = db()
-        d.beginTransaction()
-        try {
-            d.execSQL(
-                "INSERT OR REPLACE INTO $TABLE (key, time, ttl, json) VALUES (?, ?, ?, ?)",
-                arrayOf<Any?>(key, System.currentTimeMillis(), ttl, json)
-            )
-            evict(d)
-            d.setTransactionSuccessful()
-        } finally {
-            d.endTransaction()
+        val dao = d.modCacheDao()
+        d.runInTransaction {
+            dao.upsert(ModCacheEntity(key = key, time = System.currentTimeMillis(), ttl = ttl, json = json))
+            evict(dao)
         }
     }
 
     /** 清理已过期条目；条数与总字节双限制，超限按 time 淘汰最旧（调用方持事务） */
-    private fun evict(d: SQLiteDatabase) {
+    private fun evict(dao: ModCacheDao) {
         val now = System.currentTimeMillis()
-        // delete 的参数按 TEXT 绑定，与 INTEGER 列比较需 CAST（否则 INTEGER 恒小于 TEXT，会误删全部）
-        d.delete(TABLE, "ttl != 0 AND time + ttl <= CAST(? AS INTEGER)", arrayOf(now.toString()))
-        var count = count(d)
-        var totalBytes = totalBytes(d)
+        dao.deleteExpired(now)
+        var count = dao.count()
+        var totalBytes = dao.totalBytes()
         if (count <= MAX_ENTRIES && totalBytes <= MAX_TOTAL_BYTES) return
         // 从最旧开始淘汰，剩余条目满足双限制即止
         val toDelete = ArrayList<String>()
-        d.query(TABLE, arrayOf("key", "json"), null, null, null, null, "time ASC").use { c ->
-            while (c.moveToNext()) {
-                if (count <= MAX_ENTRIES && totalBytes <= MAX_TOTAL_BYTES) break
-                totalBytes -= if (c.isNull(1)) 0 else c.getString(1).length
-                count--
-                toDelete.add(c.getString(0))
-            }
+        for (entry in dao.oldestFirst()) {
+            if (count <= MAX_ENTRIES && totalBytes <= MAX_TOTAL_BYTES) break
+            totalBytes -= entry.json?.length ?: 0
+            count--
+            toDelete.add(entry.key)
         }
-        toDelete.forEach { d.delete(TABLE, "key = ?", arrayOf(it)) }
+        if (toDelete.isNotEmpty()) {
+            dao.deleteKeys(toDelete)
+        }
     }
-
-    private fun count(d: SQLiteDatabase): Int =
-        d.rawQuery("SELECT COUNT(*) FROM $TABLE", null).use { c ->
-            c.moveToFirst()
-            c.getInt(0)
-        }
-
-    private fun totalBytes(d: SQLiteDatabase): Long =
-        d.rawQuery("SELECT COALESCE(SUM(LENGTH(json)), 0) FROM $TABLE", null).use { c ->
-            c.moveToFirst()
-            c.getLong(0)
-        }
 }

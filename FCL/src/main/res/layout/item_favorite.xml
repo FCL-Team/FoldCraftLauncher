@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp">
 
-    <!-- 左滑菜单层（靠右垫底）：收藏按钮，后续新增操作往此层加 -->
+    <!-- 左滑菜单层（靠右垫底）：取消收藏按钮，后续新增操作往此层加 -->
     <LinearLayout
         android:id="@+id/swipe_menu"
         android:layout_width="wrap_content"
@@ -20,14 +20,13 @@
         app:auto_tint="true">
 
         <com.tungsten.fcllibrary.component.view.FCLImageButton
-            android:id="@+id/btn_favorite"
+            android:id="@+id/btn_remove_favorite"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:padding="8dp"
-            android:src="@drawable/ic_star_outline"
+            android:src="@drawable/ic_baseline_delete_24"
             app:auto_src_tint="true"
-            app:ripple="true"
-            tools:src="@drawable/ic_star_filled" />
+            app:ripple="true" />
 
     </LinearLayout>
 
@@ -43,7 +42,6 @@
         android:stateListAnimator="@xml/anim_scale"
         app:auto_tint="true">
 
-        <!-- 内部线性排列：减少 ConstraintLayout 约束求解开销（列表高频 measure） -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -83,8 +81,9 @@
                         app:auto_text_tint="true"
                         tools:text="Title" />
 
+                    <!-- 资源类别（模组/整合包/资源包/光影包/世界） -->
                     <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:id="@+id/tag"
+                        android:id="@+id/type_tag"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
@@ -98,9 +97,9 @@
                         android:singleLine="true"
                         android:textSize="11sp"
                         app:auto_text_tint="true"
-                        tools:text="Tag Tag Tag" />
+                        tools:text="Mod" />
 
-                    <!-- 来源徽标（平台 LOGO + 平台名，聚合模式显示），样式与位置参考 Zalith 的 PlatformIdentifier -->
+                    <!-- 来源徽标（平台 LOGO + 平台名），样式与搜索结果列表一致 -->
                     <com.tungsten.fcllibrary.component.view.FCLTextView
                         android:id="@+id/source_badge"
                         android:layout_width="wrap_content"
@@ -114,9 +113,7 @@
                         android:paddingBottom="2dp"
                         android:singleLine="true"
                         android:textSize="10sp"
-                        android:visibility="gone"
-                        tools:text="CurseForge"
-                        tools:visibility="visible" />
+                        tools:text="CurseForge" />
                 </LinearLayout>
 
                 <LinearLayout

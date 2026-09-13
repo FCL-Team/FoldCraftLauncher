@@ -387,13 +387,16 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     }
 
     /**
-     * 条目对应的仓库：聚合模式按条目自身来源路由，其余模式返回当前仓库
+     * 条目对应的仓库：始终按条目自身来源路由。单源模式下搜索条目来源与所选下载源一致，
+     * 返回当前仓库（行为不变）；收藏页跳转等外部入口传入的条目来源可能与当前下载源不同，
+     * 此时路由到条目自身来源的仓库才正确
      */
     RemoteModRepository repositoryFor(RemoteMod mod) {
-        if (isAggregate()) {
-            return mod.getData() instanceof CurseAddon ? aggregateCurseRepository : aggregateModrinthRepository;
+        boolean curse = mod.getData() instanceof CurseAddon;
+        if (!isAggregate() && curse != isModrinthSourceSelected()) {
+            return repository;
         }
-        return repository;
+        return curse ? aggregateCurseRepository : aggregateModrinthRepository;
     }
 
     /** 聚合模式下条目的来源标注（CurseForge/Modrinth 平台名），单源模式返回空串 */
@@ -1102,10 +1105,19 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         return AndroidUtilKt.getLocalizedText(getContext(), "curse_category_" + category);
     }
 
-    /** 条目分类的本地化名：聚合模式按条目自身平台选键前缀，其余模式按当前下载源 */
+    /** 条目分类的本地化名：按条目自身平台选键前缀（单源模式条目来源即所选下载源，行为不变） */
     protected String getLocalizedCategory(RemoteMod mod, String category) {
-        boolean modrinth = isAggregate() ? !(mod.getData() instanceof CurseAddon) : isModrinthSourceSelected();
+        boolean modrinth = !(mod.getData() instanceof CurseAddon);
         return getLocalizedCategory(category, modrinth);
+    }
+
+    /**
+     * 打开条目详情页（不改下载源选择，供收藏页等外部入口跳转）；
+     * 调用前需确保页面模式与条目类别一致（见 switchType），保证下载回调落到正确目录
+     */
+    public void openModDetail(RemoteMod mod) {
+        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, this, mod, callback);
+        UIManager.getInstance().getDownloadUI().showTempPage(page);
     }
 
     public void jumpToModPage(RemoteMod mod) {
