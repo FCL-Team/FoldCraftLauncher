@@ -1,5 +1,77 @@
 # Changelog
 
+## [1.3.3.2] - 2026-09-13
+
+### 中文
+
+#### ✨ 新功能
+
+1. **游戏内复述功能恢复（TTS）**：libflite 桥接安卓系统 TTS，游戏复述改走系统语音引擎
+2. **原生 JSound**：原生 libjsound.so 桥接 OpenAL，一套源码服务 jre8/17/21/25，修复 Forge 加载器下 Java Sound 失效
+3. **控制布局编辑与运行时增强**：控件双角手柄缩放、悬浮操作栏、控件组管理面板与控件组复制、滑动链、摇杆死区与前进锁、全局控件不透明度
+4. **控件编辑器重构为 Kotlin**：全面对齐游戏菜单视觉，修复吸附与编辑条问题，新增控件组复制
+5. **游戏内右菜单重构**：顶部图标 Tab 直接显示分类内容；物品栏缩放移入手势页、控件不透明度移入左菜单、锁定/隐藏控件移入调试页
+6. **渲染器版本上限调整**：判断/展示双轨版本号与 26.3 版本目录，修正各渲染器版本适配情况
+
+#### ⚡ 优化
+
+1. **解除帧率锁定**：游戏帧率不再锁定屏幕刷新率，启动时向系统投票设备最高刷新率；关闭垂直同步时交换间隔强制置 0 并切入 BufferQueue 异步模式
+2. **JNA natives 分架构打包**：去 zip 化，改为分架构 natives 目录并随 APK 架构裁剪打包
+3. **FCLNumberSeekBar 重构为 Kotlin**：轨道加粗为胶囊条、数值文本去除底衬，修复两端点击热区与显示位置不一致
+4. **皮肤模型细节**：缩小腰部接缝间隙
+5. **下载管理面板样式调整**
+
+#### 🐛 修复
+
+1. 修复游戏内无法解析 SRV 记录的问题
+2. 修复使用 zink 启动 26.3+ 时无法自动回退 Vulkan
+3. 修复 lwjgl-sdl 并入合并产物后与 Forge 模块解析的 split package 冲突
+4. 修复插件卸载缺少 REQUEST_DELETE_PACKAGES 权限导致系统卸载器立即退出
+5. 修复模组更新保留旧版本时切换后崩溃
+6. 修复熄屏状态下打开启动器可能崩溃
+7. 修复主题色带透明度时 ltColor/dkColor 透明度不跟随
+8. 修复 ViewPager2 布局时误清输入框焦点导致的输入异常（FCLEditText 增加焦点恢复守卫）
+9. 修复下载模组列表已安装标记不实时刷新：扫描完成后通知列表、下载成功回调触发重检、payload 局部绑定避免动画重播
+
+#### 🔧 其他
+
+1. 更新多语言翻译
+
+### English
+
+#### ✨ New Features
+
+1. **In-game narration restored (TTS)**: libflite now bridges Android system TTS, so game narration uses the system speech engine
+2. **Native JSound**: Native libjsound.so bridging OpenAL, one set of sources serving jre8/17/21/25, fixing Java Sound failures under the Forge loader
+3. **Control layout editing and runtime enhancements**: Dual-corner handle scaling, floating action bar, control group management panel with group duplication, sliding chains, joystick dead zone and forward lock, global control opacity
+4. **Control editor rewritten in Kotlin**: Fully aligned with the in-game menu visuals, fixed snapping and editing bar issues, added control group duplication
+5. **In-game right menu rework**: Top icon tabs now show category content directly; hotbar scale moved to the gestures page, control opacity to the left menu, and lock/hide controls to the debug page
+6. **Renderer version limits adjusted**: Dual-track version numbers for checking/display plus a 26.3 version catalog, with renderer compatibility corrected
+
+#### ⚡ Improvements
+
+1. **Frame rate unlocked**: The game frame rate is no longer locked to the screen refresh rate — the launcher votes for the device's maximum refresh rate at startup; with vsync off the swap interval is forced to 0 and the BufferQueue switches to async mode
+2. **Per-ABI JNA natives packaging**: De-zipped, switched to per-ABI natives directories pruned together with the APK architecture
+3. **FCLNumberSeekBar rewritten in Kotlin**: Track thickened into a capsule bar, value text background removed, and mismatched edge click hotspots/display positions fixed
+4. **Skin model detail**: Narrowed the waist seam gap
+5. **Download manager panel style refresh**
+
+#### 🐛 Bug Fixes
+
+1. Fixed SRV record resolution failing in game
+2. Fixed failing to fall back to Vulkan when launching 26.3+ with zink
+3. Fixed the split package conflict between the merged lwjgl-sdl artifact and Forge module resolution
+4. Fixed plugin uninstall exiting immediately due to the missing REQUEST_DELETE_PACKAGES permission
+5. Fixed a crash when switching mods kept as old versions after an update
+6. Fixed a possible crash when opening the launcher while the screen is off
+7. Fixed ltColor/dkColor alpha not following when the theme color has transparency
+8. Fixed input anomalies caused by ViewPager2 layout clearing EditText focus (FCLEditText now guards focus restoration)
+9. Fixed installed badges in the mod download list not refreshing in real time: the list is notified after scanning, download success callbacks trigger a re-check, and payload-based partial binding avoids animation replays
+
+#### 🔧 Other
+
+1. Updated translations
+
 ## [1.3.3.1] - 2026-09-08
 
 ### 中文
