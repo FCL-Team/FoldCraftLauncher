@@ -1,11 +1,11 @@
 package com.tungsten.fcllibrary.component.view
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.ShapeDrawable
 import android.graphics.drawable.shapes.OvalShape
 import android.util.AttributeSet
@@ -26,7 +26,7 @@ import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import kotlin.math.roundToInt
 
-/** 数值滑条：数值文本随滑块移动绘制，点按数值弹出输入对话框精确设值 */
+/** 数值滑条：轨道在数值文本两侧断开且断口圆角，点按数值弹出输入对话框精确设值 */
 class FCLNumberSeekBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -48,11 +48,24 @@ class FCLNumberSeekBar @JvmOverloads constructor(
         textAlign = Paint.Align.CENTER
     }
 
+    /** 填充段画笔（文本左侧轨道段），颜色为主题色（dkColor） */
+    private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ThemeEngine.getTheme().dkColor
+    }
+
+    /** 未填充段画笔（文本右侧轨道段），颜色为弱化对比色 */
+    private val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = ThemeEngine.getTheme().autoHintTint
+    }
+
     private val textBounds = Rect()
+
+    private val barRect = RectF()
 
     private val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
         override fun onSingleTapUp(event: MotionEvent): Boolean {
             // 热区与绘制的文本区域一致（两端钳制偏移后的位置）
+            textPaint.textSize = height / 1.5f
             val text = displayText(progress)
             val textWidth = textPaint.measureText(text)
             val centerX = computeTextCenterX(textWidth)
@@ -71,7 +84,7 @@ class FCLNumberSeekBar @JvmOverloads constructor(
     })
 
     init {
-        // 加粗胶囊轨道（bg_number_seekbar_track），颜色走 progressBackground/ProgressTintList 主题着色
+        // 透明占位轨道（bg_number_seekbar_track）：屏蔽样式默认材质轨道，视觉由本控件自绘
         progressDrawable = AppCompatResources.getDrawable(context, R.drawable.bg_number_seekbar_track)
         if (attrs != null) {
             context.withStyledAttributes(attrs, R.styleable.FCLNumberSeekBar) {
@@ -84,13 +97,9 @@ class FCLNumberSeekBar @JvmOverloads constructor(
     /** 主题刷新回调（registerEvent 注册，主题变化时全量执行） */
     private fun refreshTheme() {
         val theme = ThemeEngine.getTheme()
-        val state = arrayOf(intArrayOf())
-        val color = intArrayOf(theme.dkColor)
-        thumbTintList = ColorStateList(state, color)
-        progressTintList = ColorStateList(state, color)
-        // 未填充轨道用弱化对比色，与提示文字同色系
-        progressBackgroundTintList = ColorStateList(state, intArrayOf(theme.autoHintTint))
         textPaint.color = theme.autoTint
+        fillPaint.color = theme.dkColor
+        trackPaint.color = theme.autoHintTint
     }
 
     /** 动态设置数值后缀（% / dp 等），触发 thumb 重建 */
@@ -229,8 +238,22 @@ class FCLNumberSeekBar @JvmOverloads constructor(
         val textWidth = textPaint.measureText(text)
         val textY = height / 2f - (textPaint.descent() + textPaint.ascent()) / 2f
         // 数值文本居中绘制在滑块处（CENTER 对齐），贴近两端时会超出布局被裁剪，
-        // 中心点钳制使文本完整落在 padding 范围内（点击热区走同一函数保持一致）
+        // 中心点钳制使文本完整落在 padding 范围内（点击热区与轨道断口走同一函数保持一致）
         val centerX = computeTextCenterX(textWidth)
+        // 轨道自绘：8dp 胶囊条在文本两侧断开，断口圆角朝向文本
+        val barHeight = 8f * resources.displayMetrics.density
+        val barTop = (height - barHeight) / 2f
+        val barRadius = barHeight / 2f
+        val textLeft = centerX - textWidth / 2f
+        val textRight = centerX + textWidth / 2f
+        if (textLeft > paddingStart) {
+            barRect.set(paddingStart.toFloat(), barTop, textLeft, barTop + barHeight)
+            canvas.drawRoundRect(barRect, barRadius, barRadius, fillPaint)
+        }
+        if (width - paddingEnd > textRight) {
+            barRect.set(textRight, barTop, width - paddingEnd.toFloat(), barTop + barHeight)
+            canvas.drawRoundRect(barRect, barRadius, barRadius, trackPaint)
+        }
         canvas.drawText(text, centerX, textY, textPaint)
     }
 

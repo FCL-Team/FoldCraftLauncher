@@ -1,27 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- FCLNumberSeekBar 加粗轨道：背景槽与填充段均为固定厚度胶囊条，颜色由代码按主题着色 -->
+<!-- FCLNumberSeekBar 透明占位轨道：屏蔽样式默认的材质轨道，
+     视觉全部由 FCLNumberSeekBar 自绘（左右两段胶囊条在数值文本两侧断开，断口圆角） -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@android:id/background"
-        android:height="8dp"
-        android:gravity="center_vertical">
+    <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <corners android:radius="4dp" />
-            <solid android:color="#FFFFFF" />
+            <solid android:color="@android:color/transparent" />
         </shape>
-    </item>
-
-    <item
-        android:id="@android:id/progress"
-        android:height="8dp"
-        android:gravity="center_vertical">
-        <clip>
-            <shape android:shape="rectangle">
-                <corners android:radius="4dp" />
-                <solid android:color="#FFFFFF" />
-            </shape>
-        </clip>
     </item>
 
 </layer-list>

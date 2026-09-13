@@ -93,8 +93,10 @@ public class TouchCharInput extends androidx.appcompat.widget.AppCompatEditText 
      * Toggle on and off the soft keyboard, depending of the state
      */
     public void switchKeyboardState() {
-        // SDL 集成启用时由 SDL 输入框接管（字符经 SDLInputConnection 直达 SDL 原生文本事件）
-        if (SdlBridge.getSdlEnabled()) {
+        // 仅当游戏运行在 SDL 渲染路径（MC 26.3+）时由 SDL 输入框接管；
+        // 仅手柄子系统初始化 SDL 时（如 MC 26.2 挂 Controlify）游戏输入仍走 GLFW 桥，
+        // 委托给 SDL 通道只会被拒绝，须回落到启动器侧输入
+        if (SdlBridge.getSdlEnabled() && SdlBridge.isSdlRenderActive()) {
             if (SDLActivity.isSDLEditKeyboardShown()) {
                 SDLActivity.disableSDLEditKeyboard();
             } else {
