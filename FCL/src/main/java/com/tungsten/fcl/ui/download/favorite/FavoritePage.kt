@@ -40,9 +40,9 @@ import kotlinx.coroutines.launch
 import java.util.stream.Collectors
 
 /**
- * 收藏页：展示 CurseForge / Modrinth 资源收藏，支持按资源类别过滤、
- * 一键下载全部收藏模组（匹配当前游戏版本与加载器，经 downloadWithDependencies 解析前置依赖），
- * 左滑取消收藏，点击条目重新拉取详情并进入对应下载页（临时页栈）。
+ * 收藏页：展示 CurseForge / Modrinth 资源收藏，支持按资源类别与自定义分组交叉过滤、
+ * 一键下载当前筛选下的全部收藏模组（匹配当前游戏版本与加载器，经 downloadWithDependencies 解析前置依赖），
+ * 左滑取消收藏/修改分组，点击条目重新拉取详情并进入对应下载页（临时页栈）。
  * 注意：FCLPage 构造器在子类字段赋值前回调 onCreate，故字段均在 onCreate 内初始化。
  */
 class FavoritePage(
@@ -58,17 +58,23 @@ class FavoritePage(
     private lateinit var adapter: FavoriteAdapter
     private lateinit var allFavorites: List<DownloadFavoriteEntity>
     private var filterType: RemoteModRepository.Type? = null
+
+    /** 分组筛选：null 为全部，否则为 favorite_groups.groupId */
+    private var filterGroup: String? = null
     private lateinit var filterOptionRows: List<FilterOptionRow>
+    private lateinit var groupOptionRows: List<FilterOptionRow>
 
     /** 详情拉取/批量下载进行中，防止重复点击 */
     private var loading = false
 
-    /** 左侧类别筛选行：行视图 + 标签 + 数量徽标 + 对应类别（null 为全部） */
+    /** 左侧筛选行：行视图 + 标签 + 数量徽标；type/groupId 为对应筛选维度（null 为全部），action 行仅触发操作不参与筛选 */
     private data class FilterOptionRow(
         val root: ConstraintLayout,
         val label: FCLTextView,
         val count: FCLTextView,
-        val type: RemoteModRepository.Type?,
+        val type: RemoteModRepository.Type? = null,
+        val groupId: String? = null,
+        val action: Boolean = false,
     )
 
     init {
@@ -106,98 +112,177 @@ class FavoritePage(
             context.getString(R.string.shaderpack) to RemoteModRepository.Type.SHADER_PACK,
             context.getString(R.string.world) to RemoteModRepository.Type.WORLD,
         )
-        val density = context.resources.displayMetrics.density
         val rows = options.map { (label, type) ->
-            val row = ConstraintLayout(context).apply {
-                setPadding(
-                    (density * 10).toInt(), (density * 8).toInt(),
-                    (density * 10).toInt(), (density * 8).toInt()
-                )
-                layoutParams = LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply { bottomMargin = (density * 5).toInt() }
-                setOnClickListener {
-                    if (filterType != type) {
-                        filterType = type
-                        applyFilter()
-                    }
+            buildFilterRow(label, type) {
+                if (filterType != type) {
+                    filterType = type
+                    applyFilter()
                 }
             }
-            val labelView = FCLTextView(context).apply {
-                text = label
-                textSize = 14f
-                // 文字色随主题（autoTint），与搜索页面板标签一致
-                setAutoTint(true)
-                layoutParams = ConstraintLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-                    topToTop = ConstraintLayout.LayoutParams.PARENT_ID
-                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            }
-            val countView = FCLTextView(context).apply {
-                textSize = 12f
-                setAutoTint(true)
-                layoutParams = ConstraintLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-                    topToTop = ConstraintLayout.LayoutParams.PARENT_ID
-                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
-                    marginStart = (density * 8).toInt()
-                }
-            }
-            row.addView(labelView)
-            row.addView(countView)
-            FilterOptionRow(row, labelView, countView, type)
         }
-        // 先赋值再注册主题回调：registerEvent 注册后会立即执行一次回调，
-        // 回调读取 filterOptionRows，必须已完成赋值（此前在 map 内注册导致未初始化崩溃）
+        // 先赋值再注册主题回调：registerEvent 注册后会立即执行一次回调，回调读取
+        // filterOptionRows / groupOptionRows，两者必须已完成赋值（超类构造期间属性初始化器
+        // 尚未执行，读普通 var 得到 null、读 lateinit 抛未初始化异常）
         filterOptionRows = rows
+        rebuildGroupRows(binding)
         rows.forEach {
             ThemeEngine.getInstance().registerEvent(it.root) { refreshFilterOptionStates() }
             binding.filterOptions.addView(it.root)
         }
-        refreshFilterOptionStates()
         // 面板背景独立着色为主题浅色（mutate 避免污染共享 drawable），与条目卡片一致且随主题联动
         applyPanelBackground()
         ThemeEngine.getInstance().registerEvent(binding.filterPanel) { applyPanelBackground() }
-    }
-
-    private fun refreshFilterOptionStates() {
-        val theme = ThemeEngine.getInstance().getTheme()
-        val density = context.resources.displayMetrics.density
-        // 首帧（onCreate 内同步 collect）之前 allFavorites 尚未就绪，数量随后 applyFilter 刷新
-        val countsReady = ::allFavorites.isInitialized
-        filterOptionRows.forEach { row ->
-            val selected = row.type == filterType
-            val count = if (countsReady) countFor(row.type) else 0
-            // 选中项使用主要主题色实底（getColor 按当前亮暗模式动态取色）+ 自动对比色文字
-            val contentColor = theme.autoTint
-            val pill = GradientDrawable().apply {
-                shape = GradientDrawable.RECTANGLE
-                cornerRadius = density * 10
-                setColor(if (selected) theme.getColor() else Color.TRANSPARENT)
+        // 分组增删改（含管理对话框内操作）时重建分组筛选区；被删分组的筛选状态复位为全部
+        MainActivity.getInstance().lifecycleScope.launch {
+            FavoriteManager.groups.collect { groups ->
+                if (filterGroup != null && groups.none { it.groupId == filterGroup }) {
+                    filterGroup = null
+                }
+                rebuildGroupRows(binding)
+                applyFilter()
             }
-            row.root.background = RippleDrawable(
-                ColorStateList.valueOf(ColorUtils.setAlphaComponent(theme.autoTint, 40)),
-                pill,
-                null
-            )
-            row.label.setTextColor(contentColor)
-            row.label.setTypeface(if (selected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT)
-            row.count.setTextColor(ColorUtils.setAlphaComponent(contentColor, if (selected) 230 else 170))
-            row.count.text = count.toString()
-            row.count.visibility = if (countsReady && count > 0) View.VISIBLE else View.GONE
         }
     }
 
-    private fun countFor(type: RemoteModRepository.Type?): Int =
-        if (type == null) allFavorites.size else allFavorites.count { it.type == type.name }
+    /** 分组筛选区：全部 + 各分组 + 管理分组入口，随分组变化整体重建 */
+    private fun rebuildGroupRows(binding: PageDownloadFavoriteBinding) {
+        binding.groupOptions.removeAllViews()
+        val options: List<Pair<String, String?>> = listOf(context.getString(R.string.favorite_filter_all) to null) +
+            FavoriteManager.groups.value.map { it.name to it.groupId }
+        val rows = options.map { (label, groupId) ->
+            buildFilterRow(label, groupId = groupId) {
+                if (filterGroup != groupId) {
+                    filterGroup = groupId
+                    applyFilter()
+                }
+            }
+        }
+        val manageRow = buildFilterRow(context.getString(R.string.favorite_group_manage), action = true) {
+            GroupManageDialog(context).show()
+        }
+        groupOptionRows = rows + manageRow
+        groupOptionRows.forEach {
+            ThemeEngine.getInstance().registerEvent(it.root) { refreshFilterOptionStates() }
+            binding.groupOptions.addView(it.root)
+        }
+        refreshFilterOptionStates()
+    }
+
+    /** 构建一行筛选选项：卡片行 + 标签 + 数量徽标 */
+    private fun buildFilterRow(
+        label: String,
+        type: RemoteModRepository.Type? = null,
+        groupId: String? = null,
+        action: Boolean = false,
+        onClick: () -> Unit,
+    ): FilterOptionRow {
+        val density = context.resources.displayMetrics.density
+        val row = ConstraintLayout(context).apply {
+            setPadding(
+                (density * 10).toInt(), (density * 8).toInt(),
+                (density * 10).toInt(), (density * 8).toInt()
+            )
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply { bottomMargin = (density * 5).toInt() }
+            setOnClickListener { onClick() }
+        }
+        val labelView = FCLTextView(context).apply {
+            text = label
+            textSize = 14f
+            // 文字色随主题（autoTint），与搜索页面板标签一致
+            setAutoTint(true)
+            layoutParams = ConstraintLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+                topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
+            }
+        }
+        val countView = FCLTextView(context).apply {
+            textSize = 12f
+            setAutoTint(true)
+            layoutParams = ConstraintLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            ).apply {
+                endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+                topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+                bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
+                marginStart = (density * 8).toInt()
+            }
+        }
+        row.addView(labelView)
+        row.addView(countView)
+        return FilterOptionRow(row, labelView, countView, type, groupId, action)
+    }
+
+    private fun refreshFilterOptionStates() {
+        // 首帧（onCreate 内同步 collect）之前 allFavorites 尚未就绪，数量随后 applyFilter 刷新
+        val countsReady = ::allFavorites.isInitialized
+        filterOptionRows.forEach { row ->
+            styleRow(row, row.type == filterType, if (countsReady) countForType(row.type) else 0, countsReady)
+        }
+        groupOptionRows.forEach { row ->
+            if (row.action) {
+                styleRow(row, selected = false, count = 0, countsReady = false)
+            } else {
+                styleRow(row, row.groupId == filterGroup, if (countsReady) countForGroup(row.groupId) else 0, countsReady)
+            }
+        }
+    }
+
+    /** 选中项使用主要主题色实底（getColor 按当前亮暗模式动态取色）+ 自动对比色文字 */
+    private fun styleRow(row: FilterOptionRow, selected: Boolean, count: Int, countsReady: Boolean) {
+        val theme = ThemeEngine.getInstance().getTheme()
+        val density = context.resources.displayMetrics.density
+        val contentColor = theme.autoTint
+        val pill = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = density * 10
+            setColor(if (selected) theme.getColor() else Color.TRANSPARENT)
+        }
+        row.root.background = RippleDrawable(
+            ColorStateList.valueOf(ColorUtils.setAlphaComponent(theme.autoTint, 40)),
+            pill,
+            null
+        )
+        row.label.setTextColor(contentColor)
+        row.label.setTypeface(if (selected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT)
+        row.count.setTextColor(ColorUtils.setAlphaComponent(contentColor, if (selected) 230 else 170))
+        row.count.text = count.toString()
+        row.count.visibility = if (countsReady && count > 0) View.VISIBLE else View.GONE
+    }
+
+    /** 数量徽标：类别行按当前分组过滤后计数 */
+    private fun countForType(type: RemoteModRepository.Type?): Int = when (type) {
+        null -> allFavorites.count { matchesGroup(it) }
+        else -> allFavorites.count { it.type == type.name && matchesGroup(it) }
+    }
+
+    /** 数量徽标：分组行按当前类别过滤后计数 */
+    private fun countForGroup(groupId: String?): Int = when (groupId) {
+        null -> allFavorites.count { matchesType(it) }
+        else -> allFavorites.count { groupId in it.groups && matchesType(it) }
+    }
+
+    private fun matchesType(favorite: DownloadFavoriteEntity): Boolean {
+        val type = filterType
+        return type == null || favorite.type == type.name
+    }
+
+    private fun matchesGroup(favorite: DownloadFavoriteEntity): Boolean {
+        val group = filterGroup
+        return group == null || group in favorite.groups
+    }
+
+    /** 当前筛选（类别 × 分组）下的收藏条目；分组收集器首拍可能早于收藏收集器赋值 */
+    private fun currentFiltered(): List<DownloadFavoriteEntity> =
+        if (!::allFavorites.isInitialized) emptyList()
+        else allFavorites.filter { matchesType(it) && matchesGroup(it) }
 
     private fun contrastOf(color: Int): Int =
         if (ColorUtils.calculateLuminance(color) >= 0.5f) Color.BLACK else Color.WHITE
@@ -211,8 +296,7 @@ class FavoritePage(
 
     private fun applyFilter() {
         refreshFilterOptionStates()
-        val type = filterType
-        val filtered = if (type == null) allFavorites else allFavorites.filter { it.type == type.name }
+        val filtered = currentFiltered()
         adapter.submit(filtered)
         binding.emptyView.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
     }
@@ -245,7 +329,7 @@ class FavoritePage(
     }
 
     /**
-     * 一键下载全部收藏模组：先弹对话框后台解析（按当前游戏版本与加载器匹配各模组最新版本），
+     * 一键下载当前筛选（类别 × 分组）下的收藏模组：先弹对话框后台解析（按当前游戏版本与加载器匹配各模组最新版本），
      * 解析完成转为勾选列表由用户选择，确认后经 downloadWithDependencies 同款批量流程
      * 下载（解析 REQUIRED 前置、已安装去重、入队下载面板）；无匹配的模组在对话框底部汇总提示。
      */
@@ -257,7 +341,7 @@ class FavoritePage(
             Toast.makeText(context, context.getString(R.string.favorite_batch_no_version), Toast.LENGTH_SHORT).show()
             return
         }
-        val mods = allFavorites.filter { it.type == RemoteModRepository.Type.MOD.name }
+        val mods = currentFiltered().filter { it.type == RemoteModRepository.Type.MOD.name }
         if (mods.isEmpty()) {
             Toast.makeText(context, context.getString(R.string.favorite_batch_no_mods), Toast.LENGTH_SHORT).show()
             return

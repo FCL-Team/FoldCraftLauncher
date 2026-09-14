@@ -25,6 +25,7 @@ import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemRemoteModBinding
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.download.DownloadUI
+import com.tungsten.fcl.ui.download.favorite.GroupSelectionDialog
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.RemoteMod
@@ -215,19 +216,37 @@ class RemoteModListAdapter(
                 remoteMod
             )
         }
-        // 左滑菜单收藏按钮：按当前收藏状态显示实心/描边星形
+        // 左滑菜单收藏按钮：按当前收藏状态显示实心/描边星形；
+        // 未收藏时先弹分组多选（可空确认），已收藏时点按直接取消收藏
         val favoriteEntity = FavoriteManager.fromRemoteMod(remoteMod, favoriteType())
         binding.btnFavorite.setImageResource(
             if (FavoriteManager.isFavorited(favoriteEntity.id)) R.drawable.ic_star_filled else R.drawable.ic_star_outline
         )
         binding.btnFavorite.setOnClickListener {
-            MainActivity.getInstance().lifecycleScope.launch {
-                val added = FavoriteManager.toggle(favoriteEntity)
-                Toast.makeText(
+            if (FavoriteManager.isFavorited(favoriteEntity.id)) {
+                MainActivity.getInstance().lifecycleScope.launch {
+                    FavoriteManager.toggle(favoriteEntity)
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.favorite_removed),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
+                GroupSelectionDialog(
                     context,
-                    context.getString(if (added) R.string.favorite_added else R.string.favorite_removed),
-                    Toast.LENGTH_SHORT
-                ).show()
+                    context.getString(R.string.favorite_group_select),
+                    emptySet()
+                ) { groupIds ->
+                    MainActivity.getInstance().lifecycleScope.launch {
+                        FavoriteManager.toggle(favoriteEntity, groupIds)
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.favorite_added),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }.show()
             }
         }
         // 固定 90×90 占位（与 override 后图片内在尺寸一致）：图片加载完成替换时

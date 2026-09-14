@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.download.favorite
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -18,9 +19,10 @@ import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemFavoriteBinding
 import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-/** 收藏列表适配器：左滑取消收藏，点击条目进入对应资源详情页 */
+/** 收藏列表适配器：左滑修改分组/取消收藏，点击条目进入对应资源详情页 */
 class FavoriteAdapter(
     private val context: Context,
     private val page: FavoritePage,
@@ -30,6 +32,9 @@ class FavoriteAdapter(
 
     /** 当前已左滑打开菜单的 item（互斥：打开新的前先关旧的） */
     private var openMenuLayout: SwipeMenuLayout? = null
+
+    /** 分组定义收集任务（挂到 RecyclerView 时启动，分离时取消） */
+    private var groupJob: Job? = null
 
     /** 数据更新：DiffUtil 差量刷新，增删带动画，未变化条目不重绑（避免图标重载闪烁） */
     fun submit(items: List<DownloadFavoriteEntity>) {
@@ -56,6 +61,15 @@ class FavoriteAdapter(
                 }
             }
         })
+        // 分组定义变化（重命名等）时条目上的分组名需要刷新：低频操作，直接全量重绑
+        groupJob = MainActivity.getInstance().lifecycleScope.launch {
+            FavoriteManager.groups.collect { notifyDataSetChanged() }
+        }
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        groupJob?.cancel()
+        groupJob = null
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -88,6 +102,18 @@ class FavoriteAdapter(
                 Toast.makeText(context, context.getString(R.string.favorite_removed), Toast.LENGTH_SHORT).show()
             }
         }
+        // 修改所属分组：弹出多选对话框（预勾选当前分组），确认后写库并经 Flow 回推差量刷新
+        binding.btnEditGroup.setOnClickListener {
+            GroupSelectionDialog(
+                context,
+                context.getString(R.string.favorite_group_edit),
+                favorite.groups.toSet()
+            ) { groupIds ->
+                MainActivity.getInstance().lifecycleScope.launch {
+                    FavoriteManager.setGroups(favorite.id, groupIds)
+                }
+            }.show()
+        }
         Glide.with(binding.icon)
             .load(favorite.iconUrl)
             .placeholder(R.drawable.ic_cube)
@@ -105,6 +131,16 @@ class FavoriteAdapter(
         ThemeEngine.getInstance().registerEvent(binding.sourceBadge) { applySourceBadgeStyle(binding.sourceBadge, curseforge) }
         binding.description.text = favorite.description
         binding.downloadCount.text = favorite.downloadCount.toString()
+        // 所属分组标签：与类别一致用提示色弱化显示（随主题联动）
+        val groupNames = favorite.groups.mapNotNull { id ->
+            FavoriteManager.groups.value.firstOrNull { it.groupId == id }?.name
+        }
+        binding.groupTag.visibility = if (groupNames.isEmpty()) View.GONE else View.VISIBLE
+        binding.groupTag.text = groupNames.joinToString(" · ")
+        binding.groupTag.setTextColor(ThemeEngine.getInstance().getTheme().autoHintTint)
+        ThemeEngine.getInstance().registerEvent(binding.groupTag) {
+            binding.groupTag.setTextColor(ThemeEngine.getInstance().getTheme().autoHintTint)
+        }
     }
 
     override fun getItemCount(): Int = list.size

@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="10dp">
 
-    <!-- 左滑菜单层（靠右垫底）：取消收藏按钮，后续新增操作往此层加 -->
+    <!-- 左滑菜单层（靠右垫底）：修改分组 + 取消收藏按钮，后续新增操作往此层加 -->
     <com.tungsten.fcllibrary.component.view.FCLLinearLayout
         android:id="@+id/swipe_menu"
         android:layout_width="wrap_content"
@@ -18,6 +18,14 @@
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         app:auto_linear_background_tint="true">
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/btn_edit_group"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_baseline_folder_24"
+            app:auto_tint="true" />
 
         <com.tungsten.fcllibrary.component.view.FCLImageButton
             android:id="@+id/btn_remove_favorite"
@@ -116,7 +124,7 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -139,14 +147,28 @@
 
                     <com.tungsten.fcllibrary.component.view.FCLTextView
                         android:id="@+id/description"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textSize="12sp"
+                        app:auto_text_tint="true"
+                        tools:text="Description" />
+
+                    <!-- 所属分组名列表（· 分隔），无分组时隐藏 -->
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:id="@+id/group_tag"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
                         android:ellipsize="end"
                         android:singleLine="true"
                         android:textSize="12sp"
+                        android:visibility="gone"
                         app:auto_text_tint="true"
-                        tools:text="Description" />
+                        tools:text="Group · Group2" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

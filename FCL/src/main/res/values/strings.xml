@@ -913,6 +913,15 @@
     <string name="favorite_batch_parsing">Resolving downloadable mods...</string>
     <string name="favorite_batch_download">Download</string>
     <string name="favorite_batch_queued">Queued %d file(s) for download</string>
+    <string name="favorite_group">Groups</string>
+    <string name="favorite_group_select">Select groups</string>
+    <string name="favorite_group_edit">Edit groups</string>
+    <string name="favorite_group_new">New group</string>
+    <string name="favorite_group_manage">Manage groups</string>
+    <string name="favorite_group_none">No groups yet. Create one below.</string>
+    <string name="favorite_group_rename">Rename</string>
+    <string name="favorite_group_delete_confirm">Delete group "%1$s"? Favorites in it are kept.</string>
+    <string name="favorite_group_exists">A group with this name already exists</string>
     <string name="mods_batch_resolving">Resolving mod dependencies</string>
     <string name="mods_name">Name</string>
     <string name="mods_not_modded">You must install a mod loader (Fabric, Forge or LiteLoader) first to manage your mods!</string>

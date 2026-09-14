@@ -11,8 +11,8 @@ interface DownloadFavoriteDao {
     @Query("SELECT * FROM download_favorites ORDER BY favoriteTime DESC")
     fun observeAll(): Flow<List<DownloadFavoriteEntity>>
 
-    @Query("SELECT * FROM download_favorites WHERE id = :id")
-    fun getById(id: String): DownloadFavoriteEntity?
+    @Query("SELECT * FROM download_favorites")
+    suspend fun getAll(): List<DownloadFavoriteEntity>
 
     @Upsert
     suspend fun upsert(entity: DownloadFavoriteEntity)

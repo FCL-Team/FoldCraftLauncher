@@ -37,4 +37,7 @@ data class DownloadFavoriteEntity(
     val categories: List<String>,
     @ColumnInfo(name = "favoriteTime")
     val favoriteTime: Long,
+    /** 所属自定义分组 id 列表（favorite_groups.groupId），可属于多个分组 */
+    @ColumnInfo(name = "groups")
+    val groups: List<String> = emptyList(),
 )

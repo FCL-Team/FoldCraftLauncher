@@ -41,6 +41,22 @@
                 android:layout_marginTop="10dp"
                 android:orientation="vertical" />
 
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:singleLine="true"
+                android:text="@string/favorite_group"
+                app:auto_text_tint="true" />
+
+            <!-- 分组筛选选项 + 管理分组入口（行随分组增删改动态重建） -->
+            <LinearLayout
+                android:id="@+id/group_options"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical" />
+
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </ScrollView>
