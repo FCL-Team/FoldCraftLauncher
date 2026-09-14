@@ -21,7 +21,7 @@ class FavoriteBatchDialog(context: Context) : FCLDialog(context) {
     /** 一条可下载的收藏模组：展示名 + 匹配到的版本 */
     data class Entry(val title: String, val version: RemoteMod.Version)
 
-    private lateinit var binding: DialogFavoriteBatchBinding
+    private val binding: DialogFavoriteBatchBinding
     private val entries = mutableListOf<Entry>()
     private var onDownload: ((List<RemoteMod.Version>) -> Unit)? = null
 

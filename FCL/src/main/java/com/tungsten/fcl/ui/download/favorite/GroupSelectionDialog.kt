@@ -24,7 +24,7 @@ class GroupSelectionDialog(
     private val onConfirm: (List<String>) -> Unit,
 ) : FCLDialog(context) {
 
-    private lateinit var binding: DialogGroupSelectionBinding
+    private val binding: DialogGroupSelectionBinding
     private val checked = checkedGroupIds.toMutableSet()
 
     init {

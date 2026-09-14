@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
  */
 class GroupManageDialog(context: Context) : FCLDialog(context) {
 
-    private lateinit var binding: DialogGroupManageBinding
+    private val binding: DialogGroupManageBinding
 
     init {
         setCancelable(true)

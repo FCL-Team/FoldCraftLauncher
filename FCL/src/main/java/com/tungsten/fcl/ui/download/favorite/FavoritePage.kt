@@ -54,7 +54,7 @@ class FavoritePage(
     // FCLPage 在超类构造期间回调 onCreate，属性初始化器要等构造完成才执行、会覆盖 onCreate 的赋值，
     // 因此字段一律 lateinit（无初始化器、赋值后保留），仅真正需要空默认的可变标志用普通 var
     private lateinit var binding: PageDownloadFavoriteBinding
-    private lateinit var downloadPage: DownloadPage
+    private val downloadPage: DownloadPage
     private lateinit var adapter: FavoriteAdapter
     private lateinit var allFavorites: List<DownloadFavoriteEntity>
     private var filterType: RemoteModRepository.Type? = null
@@ -77,8 +77,8 @@ class FavoritePage(
     )
 
     init {
-        // init 块属于主构造器（可访问构造参数），执行于超类构造之后；lateinit 无初始化器，赋值不会被覆盖
-        this.downloadPage = page
+        // init 块属于主构造器（可访问构造参数），执行于超类构造之后；val 无初始化器，赋值不会被覆盖
+        downloadPage = page
     }
 
     override fun onCreate() {
