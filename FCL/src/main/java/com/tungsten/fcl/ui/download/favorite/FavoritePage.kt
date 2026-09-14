@@ -189,7 +189,8 @@ class FavoritePage(
             text = label
             textSize = 14f
             // 文字色随主题（autoTint），与搜索页面板标签一致
-            setAutoTint(true)
+            // 注：不能用 autoTint = true 属性语法，FCLTextView 的同名私有字段会让 Kotlin 解析失败
+            isAutoTint = true
             layoutParams = ConstraintLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -244,7 +245,7 @@ class FavoritePage(
             null
         )
         row.label.setTextColor(contentColor)
-        row.label.setTypeface(if (selected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT)
+        row.label.typeface = if (selected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
         row.count.setTextColor(ColorUtils.setAlphaComponent(contentColor, if (selected) 230 else 170))
         row.count.text = count.toString()
         row.count.visibility = if (countsReady && count > 0) View.VISIBLE else View.GONE
