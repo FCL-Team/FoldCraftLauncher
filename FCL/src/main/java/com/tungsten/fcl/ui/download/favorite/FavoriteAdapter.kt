@@ -38,6 +38,10 @@ class FavoriteAdapter(
 
     /** 数据更新：DiffUtil 差量刷新，增删带动画，未变化条目不重绑（避免图标重载闪烁） */
     fun submit(items: List<DownloadFavoriteEntity>) {
+        // 筛选切换可能移除"菜单打开中"的条目，其 ViewHolder 会经 Recycler 缓存原样复用
+        // （复用不重绑），把打开状态带回列表；数据刷新时统一收起
+        openMenuLayout?.closeMenu()
+        openMenuLayout = null
         val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int = list.size
             override fun getNewListSize(): Int = items.size
