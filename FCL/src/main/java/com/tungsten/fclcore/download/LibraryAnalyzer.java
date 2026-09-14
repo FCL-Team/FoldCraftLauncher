@@ -170,13 +170,20 @@ public final class LibraryAnalyzer implements Iterable<LibraryAnalyzer.LibraryMa
     public static boolean isModded(VersionProvider provider, Version version) {
         Version resolvedVersion = version.resolve(provider);
         String mainClass = resolvedVersion.getMainClass();
-        return mainClass != null && (LAUNCH_WRAPPER_MAIN.equals(mainClass)
+        if (mainClass != null && (LAUNCH_WRAPPER_MAIN.equals(mainClass)
                 || mainClass.startsWith("net.minecraftforge")
                 || mainClass.startsWith("net.neoforged")
                 || mainClass.startsWith("top.outlands") //Cleanroom
                 || mainClass.startsWith("net.fabricmc")
                 || mainClass.startsWith("org.quiltmc")
-                || mainClass.startsWith("cpw.mods"));
+                // lwj3ify (RetroFuturaBootstrap)
+                || mainClass.startsWith("com.gtnewhorizons.retrofuturabootstrap")
+                || mainClass.startsWith("cpw.mods"))) {
+            return true;
+        }
+        // MultiMC 整合包合成补丁的入口由组件决定,一律视为 modded
+        List<Version> patches = resolvedVersion.getPatches();
+        return patches != null && patches.stream().anyMatch(patch -> "multimc".equals(patch.getId()));
     }
 
     public Set<ModLoaderType> getModLoaders() {

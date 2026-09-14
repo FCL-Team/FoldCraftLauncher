@@ -23,7 +23,6 @@ import com.tungsten.fclcore.util.Constants;
 import com.tungsten.fclcore.util.ToStringBuilder;
 import com.tungsten.fclcore.util.gson.TolerableValidationException;
 import com.tungsten.fclcore.util.gson.Validation;
-import com.tungsten.fclcore.util.platform.OperatingSystem;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -42,7 +41,7 @@ public class Library implements Comparable<Library>, Validation {
     private final String url;
     private final LibrariesDownloadInfo downloads;
     private final ExtractRules extract;
-    private final Map<OperatingSystem, String> natives;
+    private final Map<String, String> natives;
     private final List<CompatibilityRule> rules;
     private final List<String> checksums;
 
@@ -60,7 +59,7 @@ public class Library implements Comparable<Library>, Validation {
         this(artifact, url, downloads, null, null, null, null, null, null);
     }
 
-    public Library(Artifact artifact, String url, LibrariesDownloadInfo downloads, List<String> checksums, ExtractRules extract, Map<OperatingSystem, String> natives, List<CompatibilityRule> rules, String hint, String filename) {
+    public Library(Artifact artifact, String url, LibrariesDownloadInfo downloads, List<String> checksums, ExtractRules extract, Map<String, String> natives, List<CompatibilityRule> rules, String hint, String filename) {
         this.artifact = artifact;
         this.url = url;
         this.downloads = downloads;
@@ -70,6 +69,10 @@ public class Library implements Comparable<Library>, Validation {
         this.checksums = checksums;
         this.hint = hint;
         this.fileName = filename;
+    }
+
+    public Artifact getArtifact() {
+        return artifact;
     }
 
     public String getGroupId() {
@@ -201,6 +204,13 @@ public class Library implements Comparable<Library>, Validation {
 
     public Library setClassifier(String classifier) {
         return new Library(artifact.setClassifier(classifier), url, downloads, checksums, extract, natives, rules, hint, fileName);
+    }
+
+    /**
+     * 去除 hint、filename 等社区扩展字段后的副本,按标准 maven 布局定位。
+     */
+    public Library withoutCommunityFields() {
+        return new Library(artifact, url, downloads, checksums, extract, natives, rules, null, null);
     }
 
     @Override
