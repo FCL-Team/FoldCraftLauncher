@@ -17,24 +17,22 @@
  */
 package com.tungsten.fclcore.download.neoforge;
 
-import static com.tungsten.fclcore.util.Lang.wrap;
-
 import com.google.gson.JsonParseException;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.reflect.TypeToken;
-import com.tungsten.fclcore.download.VersionList;
-import com.tungsten.fclcore.util.Lang;
-import com.tungsten.fclcore.util.StringUtils;
+import com.tungsten.fclcore.download.ComponentVersionList;
+import com.tungsten.fclcore.task.GetTask;
+import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.gson.Validation;
-import com.tungsten.fclcore.util.io.HttpRequest;
-import com.tungsten.fclcore.util.versioning.VersionNumber;
+import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
-public final class NeoForgeBMCLVersionList extends VersionList<NeoForgeRemoteVersion> {
+import static com.tungsten.fclcore.util.gson.JsonUtils.listTypeOf;
+
+public final class NeoForgeBMCLVersionList extends ComponentVersionList<NeoForgeRemoteVersion> {
     private final String apiRoot;
 
     /**
@@ -50,12 +48,7 @@ public final class NeoForgeBMCLVersionList extends VersionList<NeoForgeRemoteVer
     }
 
     @Override
-    public CompletableFuture<?> loadAsync() {
-        throw new UnsupportedOperationException("NeoForgeBMCLVersionList does not support loading the entire NeoForge remote version list.");
-    }
-
-    @Override
-    public CompletableFuture<?> refreshAsync() {
+    public Task<?> refreshAsync() {
         throw new UnsupportedOperationException("NeoForgeBMCLVersionList does not support loading the entire NeoForge remote version list.");
     }
 
@@ -68,10 +61,9 @@ public final class NeoForgeBMCLVersionList extends VersionList<NeoForgeRemoteVer
     }
 
     @Override
-    public CompletableFuture<?> refreshAsync(String gameVersion) {
-        return CompletableFuture.completedFuture((Void) null)
-                .thenApplyAsync(wrap(unused -> HttpRequest.GET(apiRoot + "/neoforge/list/" + gameVersion).<List<NeoForgeVersion>>getJson(new TypeToken<List<NeoForgeVersion>>() {
-                }.getType())))
+    public Task<?> refreshAsync(String gameVersion) {
+        return new GetTask(NetworkUtils.toURL(apiRoot + "/neoforge/list/" + gameVersion))
+                .thenGetJsonAsync(listTypeOf(NeoForgeVersion.class))
                 .thenAcceptAsync(neoForgeVersions -> {
                     lock.writeLock().lock();
 
@@ -97,6 +89,10 @@ public final class NeoForgeBMCLVersionList extends VersionList<NeoForgeRemoteVer
 
         @SerializedName("mcversion")
         private final String mcVersion;
+
+        public NeoForgeVersion() {
+            this(null, null, null);
+        }
 
         public NeoForgeVersion(String rawVersion, String version, String mcVersion) {
             this.rawVersion = rawVersion;

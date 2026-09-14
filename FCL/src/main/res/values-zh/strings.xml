@@ -806,6 +806,8 @@
     <string name="mods_mcmod_page">MCMOD 页面</string>
     <string name="mods_mcmod_search">在 MCMOD 搜索</string>
     <string name="mods_modrinth">Modrinth</string>
+    <string name="mods_aggregate">聚合搜索</string>
+    <string name="search_aggregate_partial">无法连接到 %1$s，当前仅显示 %2$s 的搜索结果，可能不全</string>
     <string name="mods_name">名称</string>
     <string name="mods_not_modded">你必须先安装一个模组加载器（Fabric，Forge 或者 LiteLoader）以管理你的模组！</string>
     <string name="message_broken_mods">检测到以下损坏的模组文件，是否删除？\n%s</string>
@@ -893,8 +895,14 @@
     <string name="settings_launcher_download_threads_desc">设置下载并发线程数</string>
     <string name="settings_launcher_download_threads_auto">自动选择并发数</string>
     <string name="settings_launcher_download_source">下载源</string>
-    <string name="settings_launcher_download_source_desc">选择下载源，自动选择时按版本自动匹配</string>
+    <string name="settings_launcher_download_source_desc">分别选择版本列表与文件下载的偏好来源</string>
+    <string name="settings_launcher_download_source_version_list">版本列表源</string>
+    <string name="settings_launcher_download_source_file">文件下载源</string>
     <string name="settings_launcher_download_source_auto">自动选择下载源</string>
+    <string name="download_source_default">自动（按网络环境选择）</string>
+    <string name="download_source_official">官方源</string>
+    <string name="download_source_mirror">镜像源</string>
+    <string name="exception_dns_pollution">SSL 连接失败，可能是 DNS 污染所致。</string>
     <string name="settings_launcher_mod_cache">模组缓存</string>
     <string name="settings_launcher_mod_cache_clear">清除</string>
     <string name="settings_launcher_mod_cache_desc">清除 CurseForge / Modrinth 的查询结果缓存，清除后将重新联网获取</string>

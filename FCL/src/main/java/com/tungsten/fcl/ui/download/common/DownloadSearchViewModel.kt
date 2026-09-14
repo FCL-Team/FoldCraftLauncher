@@ -19,8 +19,9 @@ class DownloadSearchViewModel : ViewModel() {
         var searchFilter: String = ""
         @JvmField
         var userGameVersion: String? = null
+        /** 分类筛选：本地化模式为 DownloadCategory（统一表），世界模式为 RemoteModRepository.Category（CF 原生树） */
         @JvmField
-        var category: RemoteModRepository.Category? = null
+        var category: Any? = null
         @JvmField
         var sortType: RemoteModRepository.SortType = RemoteModRepository.SortType.POPULARITY
         @JvmField

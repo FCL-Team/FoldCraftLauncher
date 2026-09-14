@@ -32,6 +32,10 @@ public enum OperatingSystem {
      */
     LINUX("linux"),
     /**
+     * FreeBSD.
+     */
+    FREEBSD("freebsd"),
+    /**
      * Mac OS X.
      */
     OSX("osx"),

@@ -25,7 +25,7 @@ import com.tungsten.fclcore.download.ArtifactMalformedException;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.GameBuilder;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.download.RemoteVersion;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
 import com.tungsten.fclcore.download.UnsupportedInstallationException;
 import com.tungsten.fclcore.download.VersionMismatchException;
 import com.tungsten.fclcore.download.game.GameAssetIndexDownloadTask;
@@ -57,7 +57,7 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
 
     private final String gameVersion;
     private InstallerItem.InstallerItemGroup group;
-    private final Map<String, RemoteVersion> map = new HashMap<>();
+    private final Map<String, ComponentRemoteVersion> map = new HashMap<>();
 
     private LinearLayoutCompat nameBar;
 
@@ -194,7 +194,7 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
                 builder.name(name);
                 builder.gameVersion(gameVersion);
 
-                for (Map.Entry<String, RemoteVersion> entry : map.entrySet()) {
+                for (Map.Entry<String, ComponentRemoteVersion> entry : map.entrySet()) {
                     if (!LibraryAnalyzer.LibraryType.MINECRAFT.getPatchId().equals(entry.getKey())) {
                         builder.version(entry.getValue());
                     }

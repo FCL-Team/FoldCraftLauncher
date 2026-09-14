@@ -18,17 +18,16 @@
 package com.tungsten.fclcore.download.forge;
 
 import static com.tungsten.fclcore.util.Lang.mapOf;
-import static com.tungsten.fclcore.util.Lang.wrap;
 import static com.tungsten.fclcore.util.Logging.LOG;
 import static com.tungsten.fclcore.util.Pair.pair;
 
 import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
-import com.tungsten.fclcore.download.VersionList;
+import com.tungsten.fclcore.download.ComponentVersionList;
+import com.tungsten.fclcore.task.GetTask;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.Validation;
-import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import org.jetbrains.annotations.NotNull;
@@ -40,10 +39,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-public final class ForgeBMCLVersionList extends VersionList<ForgeRemoteVersion> {
+import static com.tungsten.fclcore.util.gson.JsonUtils.listTypeOf;
+
+public final class ForgeBMCLVersionList extends ComponentVersionList<ForgeRemoteVersion> {
     private final String apiRoot;
 
     /**
@@ -59,12 +59,7 @@ public final class ForgeBMCLVersionList extends VersionList<ForgeRemoteVersion> 
     }
 
     @Override
-    public CompletableFuture<?> loadAsync() {
-        throw new UnsupportedOperationException("ForgeBMCLVersionList does not support loading the entire Forge remote version list.");
-    }
-
-    @Override
-    public CompletableFuture<?> refreshAsync() {
+    public Task<?> refreshAsync() {
         throw new UnsupportedOperationException("ForgeBMCLVersionList does not support loading the entire Forge remote version list.");
     }
 
@@ -84,12 +79,11 @@ public final class ForgeBMCLVersionList extends VersionList<ForgeRemoteVersion> 
     }
 
     @Override
-    public CompletableFuture<?> refreshAsync(String gameVersion) {
+    public Task<?> refreshAsync(String gameVersion) {
         String lookupVersion = toLookupVersion(gameVersion);
 
-        return CompletableFuture.completedFuture(null)
-                .thenApplyAsync(wrap(unused -> HttpRequest.GET(apiRoot + "/forge/minecraft/" + lookupVersion).<List<ForgeVersion>>getJson(new TypeToken<List<ForgeVersion>>() {
-                }.getType())))
+        return new GetTask(NetworkUtils.toURL(apiRoot + "/forge/minecraft/" + lookupVersion))
+                .thenGetJsonAsync(listTypeOf(ForgeVersion.class))
                 .thenAcceptAsync(forgeVersions -> {
                     lock.writeLock().lock();
 

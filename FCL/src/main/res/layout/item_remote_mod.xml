@@ -33,13 +33,14 @@
             tools:src="@drawable/ic_cube" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -55,10 +56,11 @@
 
                 <com.tungsten.fcllibrary.component.view.FCLTextView
                     android:id="@+id/tag"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="10dp"
+                    android:layout_weight="1"
                     android:ellipsize="end"
                     android:paddingStart="4dp"
                     android:paddingTop="2dp"
@@ -68,6 +70,24 @@
                     android:textSize="11sp"
                     app:auto_text_tint="true"
                     tools:text="Tag Tag Tag" />
+
+                <!-- 来源徽标（平台 LOGO + 平台名，聚合模式显示），样式与位置参考 Zalith 的 PlatformIdentifier -->
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/source_badge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="6dp"
+                    android:drawablePadding="2dp"
+                    android:paddingStart="4dp"
+                    android:paddingTop="2dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="2dp"
+                    android:singleLine="true"
+                    android:textSize="10sp"
+                    android:visibility="gone"
+                    tools:text="CurseForge"
+                    tools:visibility="visible" />
             </LinearLayout>
 
             <LinearLayout

@@ -17,21 +17,21 @@
  */
 package com.tungsten.fclcore.download.forge;
 
+import com.tungsten.fclcore.download.ComponentVersionList;
 import com.tungsten.fclcore.download.DownloadProvider;
-import com.tungsten.fclcore.download.VersionList;
+import com.tungsten.fclcore.task.GetTask;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.StringUtils;
-import com.tungsten.fclcore.util.io.HttpRequest;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
-public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
+public final class ForgeVersionList extends ComponentVersionList<ForgeRemoteVersion> {
     private final DownloadProvider downloadProvider;
 
     public ForgeVersionList(DownloadProvider downloadProvider) {
@@ -52,8 +52,9 @@ public final class ForgeVersionList extends VersionList<ForgeRemoteVersion> {
     }
 
     @Override
-    public CompletableFuture<?> refreshAsync() {
-        return HttpRequest.GET(FORGE_LIST).getJsonAsync(ForgeVersionRoot.class)
+    public Task<?> refreshAsync() {
+        return new GetTask(downloadProvider.injectURLWithCandidates(FORGE_LIST))
+                .thenGetJsonAsync(ForgeVersionRoot.class)
                 .thenAcceptAsync(root -> {
                     lock.writeLock().lock();
 

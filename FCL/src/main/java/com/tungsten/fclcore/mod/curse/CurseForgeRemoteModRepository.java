@@ -177,19 +177,42 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
         }
 
         StringUtils.LevCalculator levCalculator = new StringUtils.LevCalculator();
+        String normalizedSearchFilter = normalizeRelevanceKey(lowerCaseSearchFilter);
 
         return new SearchResult(response.data().stream().map(CurseAddon::toMod).map(remoteMod -> {
-            String lowerCaseResult = remoteMod.getTitle().toLowerCase();
-            int diff = levCalculator.calc(lowerCaseSearchFilter, lowerCaseResult);
-
-            for (String s : StringUtils.tokenize(lowerCaseResult)) {
-                if (searchFilterWords.containsKey(s)) {
-                    diff -= WORD_PERFECT_MATCH_WEIGHT * searchFilterWords.get(s) * s.length();
+            String lowerCaseResult = remoteMod.getTitle().toLowerCase(Locale.ROOT);
+            String normalizedResult = normalizeRelevanceKey(lowerCaseResult);
+            int score;
+            if (normalizedResult.equals(normalizedSearchFilter)) {
+                // 归一化后完全一致（忽略空格/标点/大小写，如 dragonminez ↔ DragonMine Z）
+                score = 3_000_000;
+            } else if (normalizedResult.startsWith(normalizedSearchFilter)) {
+                // 归一化前缀命中：同档分相同，稳定排序保持 API 原序（默认热度序），正主通常热度最高
+                score = 2_000_000;
+            } else {
+                // 其余按归一化 Levenshtein 距离（越小越相关）；
+                // 名称分词与查询词完全一致的进一步提前（词长越长、出现次数越多提前越多）
+                int diff = levCalculator.calc(normalizedSearchFilter, normalizedResult);
+                for (String s : StringUtils.tokenize(lowerCaseResult)) {
+                    if (searchFilterWords.containsKey(s)) {
+                        diff -= WORD_PERFECT_MATCH_WEIGHT * searchFilterWords.get(s) * s.length();
+                    }
                 }
+                score = -diff;
             }
+            return pair(remoteMod, score);
+        }).sorted(Comparator.comparingInt((Pair<RemoteMod, Integer> p) -> p.getValue()).reversed()).map(Pair::getKey), response.data().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
+    }
 
-            return pair(remoteMod, diff);
-        }).sorted(Comparator.comparingInt(Pair::getValue)).map(Pair::getKey), response.data().stream().map(CurseAddon::toMod), calculateTotalPages(response, pageSize));
+    /** 归一化为仅含字母数字的小写串，用于忽略空格/标点/大小写差异的匹配比较 */
+    private static String normalizeRelevanceKey(String s) {
+        StringBuilder result = new StringBuilder(s.length());
+        for (char c : s.toCharArray()) {
+            if (Character.isLetterOrDigit(c)) {
+                result.append(Character.toLowerCase(c));
+            }
+        }
+        return result.toString();
     }
 
     /**

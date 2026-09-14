@@ -19,17 +19,17 @@ package com.tungsten.fclcore.download.cleanroom;
  */
 
 import com.tungsten.fclcore.download.DefaultDependencyManager;
-import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.download.RemoteVersion;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
 
 import java.time.Instant;
 import java.util.List;
 
-public class CleanroomRemoteVersion extends RemoteVersion {
+public class CleanroomRemoteVersion extends ComponentRemoteVersion {
     public CleanroomRemoteVersion(String gameVersion, String selfVersion, Instant releaseDate, List<String> url) {
-        super(LibraryAnalyzer.LibraryType.CLEANROOM.getPatchId(), gameVersion, selfVersion, releaseDate, url);
+        super(GameComponentType.CLEANROOM, gameVersion, selfVersion, releaseDate, url);
     }
 
     @Override

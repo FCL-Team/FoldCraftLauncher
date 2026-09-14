@@ -17,9 +17,11 @@
  */
 package com.tungsten.fclcore.download.liteloader;
 
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.download.ComponentVersionList;
 import com.tungsten.fclcore.download.DownloadProvider;
-import com.tungsten.fclcore.download.RemoteVersion;
-import com.tungsten.fclcore.download.VersionList;
+import com.tungsten.fclcore.task.GetTask;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.io.HttpRequest;
 
 import org.jsoup.Jsoup;
@@ -30,9 +32,8 @@ import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 
-public final class LiteLoaderVersionList extends VersionList<LiteLoaderRemoteVersion> {
+public final class LiteLoaderVersionList extends ComponentVersionList<LiteLoaderRemoteVersion> {
 
     private final DownloadProvider downloadProvider;
 
@@ -48,8 +49,9 @@ public final class LiteLoaderVersionList extends VersionList<LiteLoaderRemoteVer
     public static final String LITELOADER_LIST = "https://dl.liteloader.com/versions/versions.json";
 
     @Override
-    public CompletableFuture<?> refreshAsync(String gameVersion) {
-        return HttpRequest.GET(downloadProvider.injectURL(LITELOADER_LIST)).getJsonAsync(LiteLoaderVersionsRoot.class)
+    public Task<?> refreshAsync(String gameVersion) {
+        return new GetTask(downloadProvider.injectURLWithCandidates(LITELOADER_LIST))
+                .thenGetJsonAsync(LiteLoaderVersionsRoot.class)
                 .thenAcceptAsync(root -> {
                     LiteLoaderGameVersions versions = root.getVersions().get(gameVersion);
                     if (versions == null) {
@@ -83,7 +85,7 @@ public final class LiteLoaderVersionList extends VersionList<LiteLoaderRemoteVer
     }
 
     @Override
-    public CompletableFuture<?> refreshAsync() {
+    public Task<?> refreshAsync() {
         throw new UnsupportedOperationException();
     }
 
@@ -95,7 +97,7 @@ public final class LiteLoaderVersionList extends VersionList<LiteLoaderRemoteVer
                 continue;
 
             versions.put(gameVersion, new LiteLoaderRemoteVersion(
-                    gameVersion, v.getVersion(), RemoteVersion.Type.RELEASE,
+                    gameVersion, v.getVersion(), ComponentRemoteVersion.Type.RELEASE,
                     Collections.singletonList(repository.getUrl() + "com/mumfrey/liteloader/" + gameVersion + "/" + v.getFile()),
                     v.getTweakClass(), v.getLibraries()
             ));
@@ -113,7 +115,7 @@ public final class LiteLoaderVersionList extends VersionList<LiteLoaderRemoteVer
         String buildNumber = Objects.requireNonNull(document.select("buildNumber"), "buildNumber").text();
 
         return new LiteLoaderRemoteVersion(
-                gameVersion, timestamp + "-" + buildNumber, RemoteVersion.Type.SNAPSHOT,
+                gameVersion, timestamp + "-" + buildNumber, ComponentRemoteVersion.Type.SNAPSHOT,
                 Collections.singletonList(String.format(SNAPSHOT_FILE, gameVersion, gameVersion, timestamp, buildNumber)),
                 v.getTweakClass(), v.getLibraries()
         );

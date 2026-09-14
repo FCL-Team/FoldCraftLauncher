@@ -32,6 +32,11 @@ data class Renderer(
         return "$path/$glName"
     }
 
+    fun getEGLPath(): String {
+        if (path.isEmpty()) return eglName
+        return "$path/$eglName"
+    }
+
     fun isEqual(id: String): Boolean {
         return this.id == id
     }

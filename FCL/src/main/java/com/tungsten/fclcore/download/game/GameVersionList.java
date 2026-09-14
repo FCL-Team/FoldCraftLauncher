@@ -19,19 +19,19 @@ package com.tungsten.fclcore.download.game;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
+import com.tungsten.fclcore.download.ComponentVersionList;
 import com.tungsten.fclcore.download.DownloadProvider;
-import com.tungsten.fclcore.download.VersionList;
+import com.tungsten.fclcore.task.GetTask;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
-import com.tungsten.fclcore.util.io.HttpRequest;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-public final class GameVersionList extends VersionList<GameRemoteVersion> {
+public final class GameVersionList extends ComponentVersionList<GameRemoteVersion> {
     private final DownloadProvider downloadProvider;
 
     public GameVersionList(DownloadProvider downloadProvider) {
@@ -49,8 +49,8 @@ public final class GameVersionList extends VersionList<GameRemoteVersion> {
     }
 
     @Override
-    public CompletableFuture<?> refreshAsync() {
-        return HttpRequest.GET(downloadProvider.getVersionListURL()).getJsonAsync(GameRemoteVersions.class)
+    public Task<?> refreshAsync() {
+        return new GetTask(downloadProvider.getVersionListURLs()).thenGetJsonAsync(GameRemoteVersions.class)
                 .thenAcceptAsync(root -> {
                     GameRemoteVersions unlistedVersions = null;
                     try (Reader input = new InputStreamReader(

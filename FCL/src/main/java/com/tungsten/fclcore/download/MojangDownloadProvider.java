@@ -22,11 +22,19 @@ import com.tungsten.fclcore.download.fabric.FabricAPIVersionList;
 import com.tungsten.fclcore.download.fabric.FabricVersionList;
 import com.tungsten.fclcore.download.forge.ForgeVersionList;
 import com.tungsten.fclcore.download.game.GameVersionList;
+import com.tungsten.fclcore.download.legacyfabric.LegacyFabricAPIVersionList;
+import com.tungsten.fclcore.download.legacyfabric.LegacyFabricVersionList;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderVersionList;
 import com.tungsten.fclcore.download.neoforge.NeoForgeOfficialVersionList;
-import com.tungsten.fclcore.download.optifine.OptiFine302VersionList;
+import com.tungsten.fclcore.download.optifine.OptiFineBMCLVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltAPIVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltVersionList;
+import com.tungsten.fclcore.game.GameComponentType;
+import com.tungsten.fclcore.util.io.NetworkUtils;
+
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @see <a href="http://wiki.vg">http://wiki.vg</a>
@@ -39,60 +47,69 @@ public class MojangDownloadProvider implements DownloadProvider {
     private final CleanroomVersionList cleanroom;
     private final NeoForgeOfficialVersionList neoforge;
     private final LiteLoaderVersionList liteLoader;
-    private final OptiFine302VersionList optifine;
+    private final OptiFineBMCLVersionList optifine;
     private final QuiltVersionList quilt;
     private final QuiltAPIVersionList quiltApi;
+    private final LegacyFabricVersionList legacyFabric;
+    private final LegacyFabricAPIVersionList legacyFabricApi;
 
     public MojangDownloadProvider() {
+        // If there is no official download channel available, fallback to BMCLAPI.
         String apiRoot = "https://bmclapi2.bangbang93.com";
 
         this.game = new GameVersionList(this);
         this.fabric = new FabricVersionList(this);
         this.fabricApi = new FabricAPIVersionList(this);
         this.forge = new ForgeVersionList(this);
-        this.cleanroom = new CleanroomVersionList(this);
         this.neoforge = new NeoForgeOfficialVersionList(this);
+        this.cleanroom = new CleanroomVersionList(this);
         this.liteLoader = new LiteLoaderVersionList(this);
-        this.optifine = new OptiFine302VersionList("https://hmcl-dev.github.io/metadata/optifine/");
+        this.optifine = new OptiFineBMCLVersionList(apiRoot);
         this.quilt = new QuiltVersionList(this);
         this.quiltApi = new QuiltAPIVersionList(this);
+        this.legacyFabric = new LegacyFabricVersionList(this);
+        this.legacyFabricApi = new LegacyFabricAPIVersionList(this);
     }
 
     @Override
-    public String getVersionListURL() {
-        return "https://piston-meta.mojang.com/mc/game/version_manifest.json";
+    public List<URL> getVersionListURLs() {
+        return Collections.singletonList(NetworkUtils.toURL("https://piston-meta.mojang.com/mc/game/version_manifest.json"));
     }
 
     @Override
-    public String getAssetBaseURL() {
-        return "https://resources.download.minecraft.net/";
+    public List<URL> getAssetObjectCandidates(String assetObjectLocation) {
+        return Collections.singletonList(NetworkUtils.toURL("https://resources.download.minecraft.net/" + assetObjectLocation));
     }
 
     @Override
-    public VersionList<?> getVersionListById(String id) {
-        switch (id) {
-            case "game":
+    public ComponentVersionList<?> getVersionList(GameComponentType componentType) {
+        switch (componentType) {
+            case GAME:
                 return game;
-            case "fabric":
+            case FABRIC:
                 return fabric;
-            case "fabric-api":
+            case FABRIC_API:
                 return fabricApi;
-            case "forge":
+            case FORGE:
                 return forge;
-            case "cleanroom":
+            case CLEANROOM:
                 return cleanroom;
-            case "neoforge":
+            case NEO_FORGE:
                 return neoforge;
-            case "liteloader":
+            case LITELOADER:
                 return liteLoader;
-            case "optifine":
+            case OPTIFINE:
                 return optifine;
-            case "quilt":
+            case QUILT:
                 return quilt;
-            case "quilt-api":
+            case QUILT_API:
                 return quiltApi;
+            case LEGACY_FABRIC:
+                return legacyFabric;
+            case LEGACY_FABRIC_API:
+                return legacyFabricApi;
             default:
-                throw new IllegalArgumentException("Unrecognized version list id: " + id);
+                throw new IllegalArgumentException("Unrecognized component type: " + componentType);
         }
     }
 

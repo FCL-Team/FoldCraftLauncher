@@ -18,8 +18,8 @@
 package com.tungsten.fclcore.download.game;
 
 import com.tungsten.fclcore.download.DefaultDependencyManager;
-import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.download.RemoteVersion;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.game.ReleaseType;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
@@ -28,12 +28,12 @@ import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import java.time.Instant;
 import java.util.List;
 
-public final class GameRemoteVersion extends RemoteVersion {
+public final class GameRemoteVersion extends ComponentRemoteVersion {
 
     private final ReleaseType type;
 
     public GameRemoteVersion(String gameVersion, String selfVersion, List<String> url, ReleaseType type, Instant releaseDate) {
-        super(LibraryAnalyzer.LibraryType.MINECRAFT.getPatchId(), gameVersion, selfVersion, releaseDate, getReleaseType(type), url);
+        super(GameComponentType.GAME, gameVersion, selfVersion, releaseDate, getReleaseType(type), url);
         this.type = type;
     }
 
@@ -47,7 +47,7 @@ public final class GameRemoteVersion extends RemoteVersion {
     }
 
     @Override
-    public int compareTo(RemoteVersion o) {
+    public int compareTo(ComponentRemoteVersion o) {
         if (!(o instanceof GameRemoteVersion))
             return 0;
         int dateCompare = o.getReleaseDate().compareTo(getReleaseDate());

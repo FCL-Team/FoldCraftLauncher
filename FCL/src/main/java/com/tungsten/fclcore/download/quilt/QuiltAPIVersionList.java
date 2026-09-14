@@ -17,18 +17,16 @@
  */
 package com.tungsten.fclcore.download.quilt;
 
-import static com.tungsten.fclcore.util.Lang.wrap;
-
+import com.tungsten.fclcore.download.ComponentVersionList;
 import com.tungsten.fclcore.download.DownloadProvider;
-import com.tungsten.fclcore.download.VersionList;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository;
+import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.Lang;
 
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
 
-public class QuiltAPIVersionList extends VersionList<QuiltAPIRemoteVersion> {
+public class QuiltAPIVersionList extends ComponentVersionList<QuiltAPIRemoteVersion> {
 
     private final DownloadProvider downloadProvider;
 
@@ -42,14 +40,14 @@ public class QuiltAPIVersionList extends VersionList<QuiltAPIRemoteVersion> {
     }
 
     @Override
-    public CompletableFuture<?> refreshAsync() {
-        return CompletableFuture.runAsync(wrap(() -> {
+    public Task<?> refreshAsync() {
+        return Task.runAsync(() -> {
             for (RemoteMod.Version modVersion : Lang.toIterable(ModrinthRemoteModRepository.MODS.getRemoteVersionsById("qsl"))) {
                 for (String gameVersion : modVersion.gameVersions()) {
                     versions.put(gameVersion, new QuiltAPIRemoteVersion(gameVersion, modVersion.version(), modVersion.name(), modVersion.datePublished(), modVersion,
                             Collections.singletonList(modVersion.file().url())));
                 }
             }
-        }));
+        });
     }
 }

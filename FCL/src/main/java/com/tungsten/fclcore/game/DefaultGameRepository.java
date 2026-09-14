@@ -95,10 +95,13 @@ public class DefaultGameRepository implements GameRepository {
 
     @Override
     public File getLibraryFile(Version version, Library lib) {
-        if ("local".equals(lib.getHint()) && lib.getFileName() != null)
-            return new File(getVersionRoot(version.getId()), "libraries/" + lib.getFileName());
-        else
+        if ("local".equals(lib.getHint())) {
+            if (lib.getFileName() != null)
+                return new File(getVersionRoot(version.getId()), "libraries/" + lib.getFileName());
+            return new File(getVersionRoot(version.getId()), "libraries/" + lib.getArtifact().getFileName());
+        } else {
             return new File(getLibrariesDirectory(version), lib.getPath());
+        }
     }
 
     public Path getArtifactFile(Version version, Artifact artifact) {

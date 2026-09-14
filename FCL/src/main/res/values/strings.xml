@@ -895,6 +895,8 @@
     <string name="mods_mcmod_page">MCMOD Page</string>
     <string name="mods_mcmod_search">Search in MCMOD</string>
     <string name="mods_modrinth">Modrinth</string>
+    <string name="mods_aggregate">Aggregated</string>
+    <string name="search_aggregate_partial">Failed to connect to %1$s, currently only showing results from %2$s. Results may be incomplete.</string>
     <string name="mods_name">Name</string>
     <string name="mods_not_modded">You must install a mod loader (Fabric, Forge or LiteLoader) first to manage your mods!</string>
     <string name="message_broken_mods">The following mod files are corrupted. Do you want to delete them?\n%s</string>
@@ -1001,8 +1003,14 @@
     <string name="settings_launcher_download_threads_desc">Set the number of concurrent download threads.</string>
     <string name="settings_launcher_download_threads_auto">Automatically Determine</string>
     <string name="settings_launcher_download_source">Download Source</string>
-    <string name="settings_launcher_download_source_desc">Choose the download source. Auto mode matches per version.</string>
+    <string name="settings_launcher_download_source_desc">Choose the preferred source for version lists and file downloads.</string>
+    <string name="settings_launcher_download_source_version_list">Version List Source</string>
+    <string name="settings_launcher_download_source_file">File Download Source</string>
     <string name="settings_launcher_download_source_auto">Auto Choose Download Mirror</string>
+    <string name="download_source_default">Auto (matches your network)</string>
+    <string name="download_source_official">Official</string>
+    <string name="download_source_mirror">Mirror</string>
+    <string name="exception_dns_pollution">SSL connection failed, possibly due to DNS pollution.</string>
     <string name="settings_launcher_mod_cache">Mod Cache</string>
     <string name="settings_launcher_mod_cache_clear">Clear</string>
     <string name="settings_launcher_mod_cache_desc">Clear cached CurseForge / Modrinth query results.</string>
