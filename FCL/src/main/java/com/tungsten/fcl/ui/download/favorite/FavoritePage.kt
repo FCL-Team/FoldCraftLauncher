@@ -202,7 +202,7 @@ class FavoritePage(
         }
         val countView = FCLTextView(context).apply {
             textSize = 12f
-            setAutoTint(true)
+            isAutoTint = true
             layoutParams = ConstraintLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
