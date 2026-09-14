@@ -17,6 +17,7 @@
  */
 package com.tungsten.fclcore.download;
 
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.ToStringBuilder;
@@ -30,9 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * The remote version.
  */
-public class RemoteVersion implements Comparable<RemoteVersion> {
+public abstract class ComponentRemoteVersion implements Comparable<ComponentRemoteVersion> {
 
-    private final String libraryId;
+    private final GameComponentType componentType;
     private final String gameVersion;
     private final String selfVersion;
     private final Instant releaseDate;
@@ -46,8 +47,8 @@ public class RemoteVersion implements Comparable<RemoteVersion> {
      * @param selfVersion the version string of the remote version.
      * @param urls        the installer or universal jar original URL.
      */
-    public RemoteVersion(String libraryId, String gameVersion, String selfVersion, Instant releaseDate, List<String> urls) {
-        this(libraryId, gameVersion, selfVersion, releaseDate, Type.UNCATEGORIZED, urls);
+    public ComponentRemoteVersion(GameComponentType componentType, String gameVersion, String selfVersion, Instant releaseDate, List<String> urls) {
+        this(componentType, gameVersion, selfVersion, releaseDate, Type.UNCATEGORIZED, urls);
     }
 
     /**
@@ -57,8 +58,8 @@ public class RemoteVersion implements Comparable<RemoteVersion> {
      * @param selfVersion the version string of the remote version.
      * @param urls        the installer or universal jar URL.
      */
-    public RemoteVersion(String libraryId, String gameVersion, String selfVersion, Instant releaseDate, Type type, List<String> urls) {
-        this.libraryId = Objects.requireNonNull(libraryId);
+    public ComponentRemoteVersion(GameComponentType componentType, String gameVersion, String selfVersion, Instant releaseDate, Type type, List<String> urls) {
+        this.componentType = Objects.requireNonNull(componentType);
         this.gameVersion = Objects.requireNonNull(gameVersion);
         this.selfVersion = Objects.requireNonNull(selfVersion);
         this.releaseDate = releaseDate;
@@ -66,8 +67,8 @@ public class RemoteVersion implements Comparable<RemoteVersion> {
         this.type = Objects.requireNonNull(type);
     }
 
-    public String getLibraryId() {
-        return libraryId;
+    public GameComponentType getComponentType() {
+        return componentType;
     }
 
     public String getGameVersion() {
@@ -100,7 +101,7 @@ public class RemoteVersion implements Comparable<RemoteVersion> {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof RemoteVersion && Objects.equals(selfVersion, ((RemoteVersion) obj).selfVersion);
+        return obj instanceof ComponentRemoteVersion && Objects.equals(selfVersion, ((ComponentRemoteVersion) obj).selfVersion);
     }
 
     @Override
@@ -124,7 +125,7 @@ public class RemoteVersion implements Comparable<RemoteVersion> {
     private static final ConcurrentHashMap<String, VersionNumber> VERSION_NUMBER_CACHE = new ConcurrentHashMap<>();
 
     @Override
-    public int compareTo(RemoteVersion o) {
+    public int compareTo(ComponentRemoteVersion o) {
         // newer versions are smaller than older versions
         return VERSION_NUMBER_CACHE.computeIfAbsent(o.selfVersion, VersionNumber::asVersion)
                 .compareTo(VERSION_NUMBER_CACHE.computeIfAbsent(selfVersion, VersionNumber::asVersion));

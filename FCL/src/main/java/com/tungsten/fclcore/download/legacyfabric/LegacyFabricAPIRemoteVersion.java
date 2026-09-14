@@ -1,6 +1,6 @@
 /*
  * Hello Minecraft! Launcher
- * Copyright (C) 2020  huangyuhui <huanghongxun2008@126.com> and contributors
+ * Copyright (C) 2022  huangyuhui <huanghongxun2008@126.com> and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +15,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.tungsten.fclcore.download.quilt;
+package com.tungsten.fclcore.download.legacyfabric;
 
-import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.game.Version;
+import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.task.Task;
 
+import java.time.Instant;
 import java.util.List;
 
-public class QuiltRemoteVersion extends ComponentRemoteVersion {
+public class LegacyFabricAPIRemoteVersion extends ComponentRemoteVersion {
+    private final String fullVersion;
+    private final RemoteMod.Version version;
+
     /**
      * Constructor.
      *
@@ -33,12 +38,30 @@ public class QuiltRemoteVersion extends ComponentRemoteVersion {
      * @param selfVersion the version string of the remote version.
      * @param urls        the installer or universal jar original URL.
      */
-    QuiltRemoteVersion(String gameVersion, String selfVersion, List<String> urls) {
-        super(GameComponentType.QUILT, gameVersion, selfVersion, null, urls);
+    LegacyFabricAPIRemoteVersion(String gameVersion, String selfVersion, String fullVersion, Instant datePublished, RemoteMod.Version version, List<String> urls) {
+        super(GameComponentType.LEGACY_FABRIC_API, gameVersion, selfVersion, datePublished, urls);
+
+        this.fullVersion = fullVersion;
+        this.version = version;
+    }
+
+    @Override
+    public String getFullVersion() {
+        return fullVersion;
+    }
+
+    public RemoteMod.Version getVersion() {
+        return version;
     }
 
     @Override
     public Task<Version> getInstallTask(DefaultDependencyManager dependencyManager, Version baseVersion) {
-        return new QuiltInstallTask(dependencyManager, baseVersion, this);
+        return new LegacyFabricAPIInstallTask(dependencyManager, baseVersion, this);
+    }
+
+    @Override
+    public int compareTo(ComponentRemoteVersion o) {
+        if (!(o instanceof LegacyFabricAPIRemoteVersion)) return 0;
+        return -this.getReleaseDate().compareTo(o.getReleaseDate());
     }
 }

@@ -18,15 +18,15 @@
 package com.tungsten.fclcore.download.forge;
 
 import com.tungsten.fclcore.download.DefaultDependencyManager;
-import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.download.RemoteVersion;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
 
 import java.time.Instant;
 import java.util.List;
 
-public class ForgeRemoteVersion extends RemoteVersion {
+public class ForgeRemoteVersion extends ComponentRemoteVersion {
     /**
      * Constructor.
      *
@@ -35,7 +35,7 @@ public class ForgeRemoteVersion extends RemoteVersion {
      * @param url         the installer or universal jar original URL.
      */
     public ForgeRemoteVersion(String gameVersion, String selfVersion, Instant releaseDate, List<String> url) {
-        super(LibraryAnalyzer.LibraryType.FORGE.getPatchId(), gameVersion, selfVersion, releaseDate, url);
+        super(GameComponentType.FORGE, gameVersion, selfVersion, releaseDate, url);
     }
 
     @Override

@@ -20,6 +20,9 @@ package com.tungsten.fcl.setting;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.annotations.SerializedName;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorServer;
@@ -72,7 +75,71 @@ public final class Config implements Cloneable, Observable {
         }
         Config instance = new Config();
         PropertyUtils.copyProperties(loaded, instance);
+        migrateDownloadSource(json, instance);
         return instance;
+    }
+
+    /**
+     * 旧版配置迁移：downloadType("mojang"/"bmclapi")、autoChooseDownloadType、versionListSource
+     * ("official"/"balanced"/"mirror") → versionListSource/fileDownloadSource(DEFAULT/OFFICIAL/MIRROR)。
+     * 新格式字段已是枚举名时保持不动。
+     */
+    private static void migrateDownloadSource(String json, Config config) {
+        JsonElement root;
+        try {
+            root = JsonParser.parseString(json);
+        } catch (JsonParseException | IllegalStateException e) {
+            return;
+        }
+        if (!root.isJsonObject()) {
+            return;
+        }
+        JsonObject oldConfig = root.getAsJsonObject();
+
+        String versionListSource = oldConfig.has("versionListSource") && oldConfig.get("versionListSource").isJsonPrimitive()
+                ? oldConfig.get("versionListSource").getAsString()
+                : null;
+        if (versionListSource != null && !isSourceName(versionListSource)) {
+            config.setVersionListSource(normalizeLegacySource(versionListSource));
+        }
+
+        // 新格式 fileDownloadSource 已存在时不迁移
+        if (oldConfig.has("fileDownloadSource")) {
+            return;
+        }
+
+        String fileDownloadSource;
+        if (oldConfig.has("autoChooseDownloadType") && oldConfig.get("autoChooseDownloadType").isJsonPrimitive()
+                && !oldConfig.get("autoChooseDownloadType").getAsBoolean()) {
+            // 旧版手动选择文件下载源
+            String downloadType = oldConfig.has("downloadType") && oldConfig.get("downloadType").isJsonPrimitive()
+                    ? oldConfig.get("downloadType").getAsString()
+                    : null;
+            fileDownloadSource = "bmclapi".equals(downloadType)
+                    ? DownloadSource.MIRROR.name()
+                    : DownloadSource.OFFICIAL.name();
+        } else if (versionListSource != null && !isSourceName(versionListSource)) {
+            // 旧版自动模式跟随版本列表源
+            fileDownloadSource = normalizeLegacySource(versionListSource);
+        } else {
+            fileDownloadSource = DownloadSource.DEFAULT.name();
+        }
+        config.setFileDownloadSource(fileDownloadSource);
+    }
+
+    private static boolean isSourceName(String value) {
+        return DownloadSource.DEFAULT.name().equals(value)
+                || DownloadSource.OFFICIAL.name().equals(value)
+                || DownloadSource.MIRROR.name().equals(value);
+    }
+
+    private static String normalizeLegacySource(String legacy) {
+        if ("official".equals(legacy)) {
+            return DownloadSource.OFFICIAL.name();
+        } else if ("mirror".equals(legacy)) {
+            return DownloadSource.MIRROR.name();
+        }
+        return DownloadSource.DEFAULT.name();
     }
 
     @SerializedName("last")
@@ -87,14 +154,11 @@ public final class Config implements Cloneable, Observable {
     @SerializedName("downloadThreads")
     private IntegerProperty downloadThreads = new SimpleIntegerProperty(64);
 
-    @SerializedName("downloadType")
-    private StringProperty downloadType = new SimpleStringProperty(DownloadProviders.DEFAULT_RAW_PROVIDER_ID);
-
-    @SerializedName("autoChooseDownloadType")
-    private BooleanProperty autoChooseDownloadType = new SimpleBooleanProperty(true);
+    @SerializedName("fileDownloadSource")
+    private StringProperty fileDownloadSource = new SimpleStringProperty(DownloadSource.DEFAULT.name());
 
     @SerializedName("versionListSource")
-    private StringProperty versionListSource = new SimpleStringProperty("balanced");
+    private StringProperty versionListSource = new SimpleStringProperty(DownloadSource.DEFAULT.name());
 
     @SerializedName("configurations")
     private SimpleMapProperty<String, Profile> configurations = new SimpleMapProperty<>(FXCollections.observableMap(new TreeMap<>()));
@@ -204,28 +268,16 @@ public final class Config implements Cloneable, Observable {
         this.downloadThreads.set(downloadThreads);
     }
 
-    public String getDownloadType() {
-        return downloadType.get();
+    public String getFileDownloadSource() {
+        return fileDownloadSource.get();
     }
 
-    public void setDownloadType(String downloadType) {
-        this.downloadType.set(downloadType);
+    public void setFileDownloadSource(String fileDownloadSource) {
+        this.fileDownloadSource.set(fileDownloadSource);
     }
 
-    public StringProperty downloadTypeProperty() {
-        return downloadType;
-    }
-
-    public boolean isAutoChooseDownloadType() {
-        return autoChooseDownloadType.get();
-    }
-
-    public BooleanProperty autoChooseDownloadTypeProperty() {
-        return autoChooseDownloadType;
-    }
-
-    public void setAutoChooseDownloadType(boolean autoChooseDownloadType) {
-        this.autoChooseDownloadType.set(autoChooseDownloadType);
+    public StringProperty fileDownloadSourceProperty() {
+        return fileDownloadSource;
     }
 
     public String getVersionListSource() {

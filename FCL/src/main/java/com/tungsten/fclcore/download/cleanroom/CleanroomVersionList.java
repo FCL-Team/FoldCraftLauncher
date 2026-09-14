@@ -18,18 +18,15 @@ package com.tungsten.fclcore.download.cleanroom;
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import static com.tungsten.fclcore.util.Lang.wrap;
-
+import com.tungsten.fclcore.download.ComponentVersionList;
 import com.tungsten.fclcore.download.DownloadProvider;
-import com.tungsten.fclcore.download.VersionList;
 import com.tungsten.fclcore.task.GetTask;
-import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.task.Task;
 
 import java.time.Instant;
 import java.util.Collections;
-import java.util.concurrent.CompletableFuture;
 
-public final class CleanroomVersionList extends VersionList<CleanroomRemoteVersion> {
+public final class CleanroomVersionList extends ComponentVersionList<CleanroomRemoteVersion> {
     private final DownloadProvider downloadProvider;
     private static final String LOADER_LIST_URL = "https://hmcl.glavo.site/metadata/cleanroom/index.json";
     private static final String INSTALLER_URL = "https://hmcl.glavo.site/metadata/cleanroom/files/cleanroom-%s-installer.jar";
@@ -44,14 +41,9 @@ public final class CleanroomVersionList extends VersionList<CleanroomRemoteVersi
     }
 
     @Override
-    public CompletableFuture<?> refreshAsync() {
-        return CompletableFuture.completedFuture((Void) null)
-                .thenApplyAsync(wrap(unused -> {
-                    GetTask task = new GetTask(downloadProvider.injectURLWithCandidates(LOADER_LIST_URL));
-                    task.execute();
-                    String result = task.getResult();
-                    return JsonUtils.GSON.fromJson(result, ReleaseResult[].class);
-                }))
+    public Task<?> refreshAsync() {
+        return new GetTask(downloadProvider.injectURLWithCandidates(LOADER_LIST_URL))
+                .thenGetJsonAsync(ReleaseResult[].class)
                 .thenAcceptAsync(results -> {
                     lock.writeLock().lock();
 

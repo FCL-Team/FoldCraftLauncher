@@ -1,16 +1,16 @@
 package com.tungsten.fclcore.download.neoforge;
 
 import com.tungsten.fclcore.download.DefaultDependencyManager;
-import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.download.RemoteVersion;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
 
 import java.util.List;
 
-public class NeoForgeRemoteVersion extends RemoteVersion {
+public class NeoForgeRemoteVersion extends ComponentRemoteVersion {
     public NeoForgeRemoteVersion(String gameVersion, String selfVersion, List<String> urls) {
-        super(LibraryAnalyzer.LibraryType.NEO_FORGE.getPatchId(), gameVersion, selfVersion, null, getType(selfVersion), urls);
+        super(GameComponentType.NEO_FORGE, gameVersion, selfVersion, null, getType(selfVersion), urls);
     }
 
     @Override

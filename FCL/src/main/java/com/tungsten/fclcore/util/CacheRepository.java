@@ -182,7 +182,10 @@ public class CacheRepository {
     }
 
     public void removeRemoteEntry(URLConnection conn) {
-        String url = conn.getURL().toString();
+        removeRemoteEntry(conn.getURL().toString());
+    }
+
+    public void removeRemoteEntry(String url) {
         lock.readLock().lock();
         try {
             index.remove(url);

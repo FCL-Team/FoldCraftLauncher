@@ -28,6 +28,7 @@ import com.tungsten.fclcore.download.neoforge.NeoForgeInstallTask;
 import com.tungsten.fclcore.download.optifine.OptiFineInstallTask;
 import com.tungsten.fclcore.game.Artifact;
 import com.tungsten.fclcore.game.DefaultGameRepository;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
@@ -148,9 +149,12 @@ public class DefaultDependencyManager extends AbstractDependencyManager {
     public Task<Version> installLibraryAsync(String gameVersion, Version baseVersion, String libraryId, String libraryVersion) {
         if (baseVersion.isResolved()) throw new IllegalArgumentException("Version should not be resolved");
 
-        VersionList<?> versionList = getVersionList(libraryId);
+        GameComponentType componentType = GameComponentType.fromPatchId(libraryId);
+        if (componentType == null)
+            throw new IllegalArgumentException("Unrecognized component type: " + libraryId);
+        ComponentVersionList<?> versionList = getVersionList(componentType);
         // 命名该任务使其在任务列表可见，否则联网刷新版本列表期间对话框长时间无任何输出
-        return Task.fromCompletableFuture(versionList.loadAsync(gameVersion))
+        return versionList.loadAsync(gameVersion)
                 .setName(FCLApp.getAppContext().getString(R.string.version_list_refreshing))
                 .thenComposeAsync(() -> installLibraryAsync(baseVersion, versionList.getVersion(gameVersion, libraryVersion)
                         .orElseThrow(() -> new IOException("Remote library " + libraryId + " has no version " + libraryVersion))))
@@ -158,12 +162,12 @@ public class DefaultDependencyManager extends AbstractDependencyManager {
     }
 
     @Override
-    public Task<Version> installLibraryAsync(Version baseVersion, RemoteVersion libraryVersion) {
+    public Task<Version> installLibraryAsync(Version baseVersion, ComponentRemoteVersion libraryVersion) {
         if (baseVersion.isResolved()) throw new IllegalArgumentException("Version should not be resolved");
 
         AtomicReference<Version> removedLibraryVersion = new AtomicReference<>();
 
-        return removeLibraryAsync(baseVersion.resolvePreservingPatches(repository), libraryVersion.getLibraryId())
+        return removeLibraryAsync(baseVersion.resolvePreservingPatches(repository), libraryVersion.getComponentType().getPatchId())
                 .thenComposeAsync(version -> {
                     removedLibraryVersion.set(version);
                     return libraryVersion.getInstallTask(this, version);
@@ -175,7 +179,7 @@ public class DefaultDependencyManager extends AbstractDependencyManager {
                         return removedLibraryVersion.get().addPatch(patch);
                     }
                 })
-                .withStage(String.format("fcl.install.%s:%s", libraryVersion.getLibraryId(), libraryVersion.getSelfVersion()));
+                .withStage(String.format("fcl.install.%s:%s", libraryVersion.getComponentType().getPatchId(), libraryVersion.getSelfVersion()));
     }
 
     public Task<Version> installLibraryAsync(Version oldVersion, Path installer) {

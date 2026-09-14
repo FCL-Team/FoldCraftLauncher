@@ -18,8 +18,8 @@
 package com.tungsten.fclcore.download.liteloader;
 
 import com.tungsten.fclcore.download.DefaultDependencyManager;
-import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.download.RemoteVersion;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.task.Task;
@@ -27,7 +27,7 @@ import com.tungsten.fclcore.task.Task;
 import java.util.Collection;
 import java.util.List;
 
-public class LiteLoaderRemoteVersion extends RemoteVersion {
+public class LiteLoaderRemoteVersion extends ComponentRemoteVersion {
     private final String tweakClass;
     private final Collection<Library> libraries;
 
@@ -39,7 +39,7 @@ public class LiteLoaderRemoteVersion extends RemoteVersion {
      * @param urls        the installer or universal jar original URL.
      */
     LiteLoaderRemoteVersion(String gameVersion, String selfVersion, Type type, List<String> urls, String tweakClass, Collection<Library> libraries) {
-        super(LibraryAnalyzer.LibraryType.LITELOADER.getPatchId(), gameVersion, selfVersion, null, type, urls);
+        super(GameComponentType.LITELOADER, gameVersion, selfVersion, null, type, urls);
 
         this.tweakClass = tweakClass;
         this.libraries = libraries;

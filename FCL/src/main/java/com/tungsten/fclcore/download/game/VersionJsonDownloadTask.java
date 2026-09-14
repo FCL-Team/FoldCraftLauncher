@@ -19,9 +19,10 @@ package com.tungsten.fclcore.download.game;
 
 import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
+import com.tungsten.fclcore.download.ComponentRemoteVersion;
+import com.tungsten.fclcore.download.ComponentVersionList;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
-import com.tungsten.fclcore.download.RemoteVersion;
-import com.tungsten.fclcore.download.VersionList;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.task.GetTask;
 import com.tungsten.fclcore.task.Task;
 
@@ -35,18 +36,18 @@ public final class VersionJsonDownloadTask extends Task<String> {
     private final DefaultDependencyManager dependencyManager;
     private final List<Task<?>> dependents = new ArrayList<>(1);
     private final List<Task<?>> dependencies = new ArrayList<>(1);
-    private final VersionList<?> gameVersionList;
+    private final ComponentVersionList<?> gameVersionList;
 
     public VersionJsonDownloadTask(String gameVersion, DefaultDependencyManager dependencyManager) {
         this.gameVersion = gameVersion;
         this.dependencyManager = dependencyManager;
-        this.gameVersionList = dependencyManager.getVersionList("game");
+        this.gameVersionList = dependencyManager.getVersionList(GameComponentType.GAME);
 
         // 命名该任务使其在任务列表可见，否则联网刷新版本列表期间对话框长时间无任何输出
-        dependents.add(Task.fromCompletableFuture(gameVersionList.loadAsync(gameVersion))
+        dependents.add(gameVersionList.loadAsync(gameVersion)
                 .setName(FCLApp.getAppContext().getString(R.string.version_list_refreshing)));
 
-        setSignificance(TaskSignificance.MODERATE);
+        setSignificance(Task.TaskSignificance.MODERATE);
     }
 
     @Override
@@ -61,7 +62,7 @@ public final class VersionJsonDownloadTask extends Task<String> {
 
     @Override
     public void execute() throws IOException {
-        RemoteVersion remoteVersion = gameVersionList.getVersion(gameVersion, gameVersion)
+        ComponentRemoteVersion remoteVersion = gameVersionList.getVersion(gameVersion, gameVersion)
                 .orElseThrow(() -> new IOException("Cannot find specific version " + gameVersion + " in remote repository"));
         dependencies.add(new GetTask(dependencyManager.getDownloadProvider().injectURLsWithCandidates(remoteVersion.getUrls())).storeTo(this::setResult));
     }
