@@ -563,8 +563,7 @@ static void proxy_SDL_UnloadObject(void *handle) {
 }
 
 /** customDlsym 出口：把 SDL 符号解析换成 dlsym 层代理；返回 NULL 表示不拦截 */
-void *sdlDlsymProxy(const char *symbol, void *real) {
-    if (strcmp(symbol, "SDL_InitSubSystem") == 0) {
+void *sdlDlsymProxy(const char *symbol, void *real) {    if (strcmp(symbol, "SDL_InitSubSystem") == 0) {
         if (realSdlInitSubSystem == NULL) realSdlInitSubSystem = (sdlInitSubSystem_t) real;
         return (void *) proxy_SDL_InitSubSystem;
     }
@@ -603,4 +602,8 @@ void *sdlDlsymProxy(const char *symbol, void *real) {
         return (void *) proxy_SDL_UnloadObject;
     }
     return NULL;
+}
+
+SDL_Window *sdlHookGetPrimaryWindow(void) {
+    return sPrimaryWindow;
 }

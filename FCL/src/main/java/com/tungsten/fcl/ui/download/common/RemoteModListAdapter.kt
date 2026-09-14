@@ -18,6 +18,7 @@ import com.mio.data.FavoriteManager
 import com.mio.ui.adapter.ViewHolder
 import com.mio.ui.widget.SwipeMenuLayout
 import com.mio.util.AnimUtil.Companion.playTranslationX
+import com.mio.util.applySourceBadgeStyle
 import com.mio.util.format
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
@@ -254,7 +255,9 @@ class RemoteModListAdapter(
             // 注册换肤回调：主题（含次要色）修改后已加载的条目同步变色；
             // 同一 view 重复注册会覆盖旧回调，复用绑定不同条目时以最后一次为准
             ThemeEngine.getInstance()
-                .registerEvent(binding.sourceBadge) { applySourceBadgeStyle(binding.sourceBadge, remoteMod) }
+                .registerEvent(binding.sourceBadge) {
+                    applySourceBadgeStyle(binding.sourceBadge, remoteMod.data is CurseAddon)
+                }
         }
         binding.description.text = remoteMod.description
         binding.downloadCount.text = remoteMod.downloadCount.format(context)
@@ -310,11 +313,6 @@ class RemoteModListAdapter(
         DownloadUI.PAGE_ID_DOWNLOAD_SHADER_PACK -> RemoteModRepository.Type.SHADER_PACK
         DownloadUI.PAGE_ID_DOWNLOAD_WORLD -> RemoteModRepository.Type.WORLD
         else -> RemoteModRepository.Type.MOD
-    }
-
-    /** 来源徽标配色：主题次色实底 + 亮度对比色文字与平台 LOGO（换肤回调与首次 bind 共用） */
-    private fun applySourceBadgeStyle(badge: FCLTextView, remoteMod: RemoteMod) {
-        com.mio.util.applySourceBadgeStyle(badge, remoteMod.data is CurseAddon)
     }
 
     override fun getItemCount(): Int {

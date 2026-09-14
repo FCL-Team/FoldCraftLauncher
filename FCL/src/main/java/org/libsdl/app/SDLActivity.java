@@ -1548,8 +1548,8 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             onNativeKeyDown(keyCode);
 
-            //仅当 SDL 文本输入通道激活时才合成文本，通道关闭时按键按事件原样上交
-            if (isTextInputEvent(event) && SdlImeController.isTextInputActive()) {
+            //仅当 SDL 文本输入通道可接收输入时才合成文本，通道关闭时按键按事件原样上交
+            if (isTextInputEvent(event) && SdlImeController.isInputAccepted()) {
                 if (ic != null) {
                     ic.commitText(String.valueOf((char) event.getUnicodeChar()), 1);
                 } else {
