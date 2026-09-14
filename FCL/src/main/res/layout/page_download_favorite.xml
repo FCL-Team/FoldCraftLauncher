@@ -41,13 +41,32 @@
                 android:layout_marginTop="10dp"
                 android:orientation="vertical" />
 
-            <com.tungsten.fcllibrary.component.view.FCLTextView
-                android:layout_width="wrap_content"
+            <!-- 分组区头：标题 + 管理分组入口（扳手图标） -->
+            <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:singleLine="true"
-                android:text="@string/favorite_group"
-                app:auto_text_tint="true" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:singleLine="true"
+                    android:text="@string/favorite_group"
+                    app:auto_text_tint="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLImageButton
+                    android:id="@+id/btn_manage_groups"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="@string/favorite_group_manage"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_baseline_build_24"
+                    app:auto_tint="true" />
+
+            </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
             <!-- 分组筛选选项 + 管理分组入口（行随分组增删改动态重建） -->
             <LinearLayout

@@ -67,14 +67,13 @@ class FavoritePage(
     /** 详情拉取/批量下载进行中，防止重复点击 */
     private var loading = false
 
-    /** 左侧筛选行：行视图 + 标签 + 数量徽标；type/groupId 为对应筛选维度（null 为全部），action 行仅触发操作不参与筛选 */
+    /** 左侧筛选行：行视图 + 标签 + 数量徽标；type/groupId 为对应筛选维度（null 为全部） */
     private data class FilterOptionRow(
         val root: ConstraintLayout,
         val label: FCLTextView,
         val count: FCLTextView,
         val type: RemoteModRepository.Type? = null,
         val groupId: String? = null,
-        val action: Boolean = false,
     )
 
     init {
@@ -125,6 +124,8 @@ class FavoritePage(
         // 尚未执行，读普通 var 得到 null、读 lateinit 抛未初始化异常）
         filterOptionRows = rows
         rebuildGroupRows(binding)
+        // 管理分组入口：分组区头右侧的扳手图标
+        binding.btnManageGroups.setOnClickListener { GroupManageDialog(context).show() }
         rows.forEach {
             ThemeEngine.getInstance().registerEvent(it.root) { refreshFilterOptionStates() }
             binding.filterOptions.addView(it.root)
@@ -144,7 +145,7 @@ class FavoritePage(
         }
     }
 
-    /** 分组筛选区：全部 + 各分组 + 管理分组入口，随分组变化整体重建 */
+    /** 分组筛选区：全部 + 各分组，随分组变化整体重建（管理入口在区头图标上） */
     private fun rebuildGroupRows(binding: PageDownloadFavoriteBinding) {
         binding.groupOptions.removeAllViews()
         val options: List<Pair<String, String?>> = listOf(context.getString(R.string.favorite_filter_all) to null) +
@@ -157,10 +158,7 @@ class FavoritePage(
                 }
             }
         }
-        val manageRow = buildFilterRow(context.getString(R.string.favorite_group_manage), action = true) {
-            GroupManageDialog(context).show()
-        }
-        groupOptionRows = rows + manageRow
+        groupOptionRows = rows
         groupOptionRows.forEach {
             ThemeEngine.getInstance().registerEvent(it.root) { refreshFilterOptionStates() }
             binding.groupOptions.addView(it.root)
@@ -173,7 +171,6 @@ class FavoritePage(
         label: String,
         type: RemoteModRepository.Type? = null,
         groupId: String? = null,
-        action: Boolean = false,
         onClick: () -> Unit,
     ): FilterOptionRow {
         val density = context.resources.displayMetrics.density
@@ -217,7 +214,7 @@ class FavoritePage(
         }
         row.addView(labelView)
         row.addView(countView)
-        return FilterOptionRow(row, labelView, countView, type, groupId, action)
+        return FilterOptionRow(row, labelView, countView, type, groupId)
     }
 
     private fun refreshFilterOptionStates() {
@@ -227,11 +224,7 @@ class FavoritePage(
             styleRow(row, row.type == filterType, if (countsReady) countForType(row.type) else 0, countsReady)
         }
         groupOptionRows.forEach { row ->
-            if (row.action) {
-                styleRow(row, selected = false, count = 0, countsReady = false)
-            } else {
-                styleRow(row, row.groupId == filterGroup, if (countsReady) countForGroup(row.groupId) else 0, countsReady)
-            }
+            styleRow(row, row.groupId == filterGroup, if (countsReady) countForGroup(row.groupId) else 0, countsReady)
         }
     }
 
