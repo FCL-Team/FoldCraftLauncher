@@ -59,8 +59,8 @@
 
                 <com.tungsten.fcllibrary.component.view.FCLImageButton
                     android:id="@+id/btn_manage_groups"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:contentDescription="@string/favorite_group_manage"
                     android:src="@drawable/ic_baseline_build_24"
                     app:auto_tint="true" />
