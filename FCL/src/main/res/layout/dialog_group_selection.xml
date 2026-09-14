@@ -39,6 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
+        android:layout_marginBottom="5dp"
         android:text="@string/favorite_group_select_hint"
         android:textSize="12sp"
         android:visibility="gone"
@@ -53,7 +54,8 @@
         android:layout_height="wrap_content"
         android:text="@string/favorite_group_new"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintEnd_toStartOf="@+id/positive"
+        app:layout_constraintStart_toEndOf="@+id/negative" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/positive"
@@ -69,7 +71,6 @@
         android:layout_height="wrap_content"
         android:text="@string/dialog_negative"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/positive"
-        app:layout_constraintStart_toEndOf="@+id/btn_new" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
