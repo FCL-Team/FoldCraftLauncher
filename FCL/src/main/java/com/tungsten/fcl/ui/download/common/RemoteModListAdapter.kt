@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide
 import com.mio.data.FavoriteManager
 import com.mio.ui.adapter.ViewHolder
 import com.mio.ui.widget.SwipeMenuLayout
+import com.mio.ui.widget.closeSwipeMenuOnOutsideTouch
 import com.mio.util.AnimUtil.Companion.playTranslationX
 import com.mio.util.applySourceBadgeStyle
 import com.mio.util.format
@@ -178,7 +179,7 @@ class RemoteModListAdapter(
                 }
             }
         }
-        // 列表滚动时收起已打开的左滑菜单
+        // 列表滚动时收起已打开的左滑菜单；点击菜单外区域同样收起
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(rv: RecyclerView, newState: Int) {
                 if (newState != RecyclerView.SCROLL_STATE_IDLE) {
@@ -186,6 +187,7 @@ class RemoteModListAdapter(
                 }
             }
         })
+        recyclerView.closeSwipeMenuOnOutsideTouch { openMenuLayout }
     }
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {

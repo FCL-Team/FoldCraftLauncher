@@ -13,6 +13,7 @@ import com.mio.data.FavoriteManager
 import com.mio.data.favorite.DownloadFavoriteEntity
 import com.mio.ui.adapter.ViewHolder
 import com.mio.ui.widget.SwipeMenuLayout
+import com.mio.ui.widget.closeSwipeMenuOnOutsideTouch
 import com.mio.util.applySourceBadgeStyle
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
@@ -57,7 +58,7 @@ class FavoriteAdapter(
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        // 列表滚动时收起已打开的左滑菜单
+        // 列表滚动时收起已打开的左滑菜单；点击菜单外区域同样收起
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(rv: RecyclerView, newState: Int) {
                 if (newState != RecyclerView.SCROLL_STATE_IDLE) {
@@ -65,6 +66,7 @@ class FavoriteAdapter(
                 }
             }
         })
+        recyclerView.closeSwipeMenuOnOutsideTouch { openMenuLayout }
         // 分组定义变化（重命名等）时条目上的分组名需要刷新：低频操作，直接全量重绑
         groupJob = MainActivity.getInstance().lifecycleScope.launch {
             FavoriteManager.groups.collect { notifyDataSetChanged() }

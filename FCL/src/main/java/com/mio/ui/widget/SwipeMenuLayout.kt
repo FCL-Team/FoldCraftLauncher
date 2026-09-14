@@ -9,6 +9,7 @@ import android.view.VelocityTracker
 import android.view.View
 import android.view.ViewConfiguration
 import android.widget.FrameLayout
+import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
 /**
@@ -190,4 +191,26 @@ class SwipeMenuLayout @JvmOverloads constructor(
         velocityTracker?.recycle()
         velocityTracker = null
     }
+}
+
+/**
+ * 点击打开菜单所在条目以外的区域时自动关闭菜单，并消费该次点击防止误触其他条目；
+ * 点击菜单所在条目本身（内容区关闭菜单、菜单按钮触发操作）仍由 SwipeMenuLayout 自行处理。
+ * [getOpenMenu] 返回当前打开菜单的条目（互斥管理，同一列表至多一个），无打开菜单时返回 null。
+ */
+fun RecyclerView.closeSwipeMenuOnOutsideTouch(getOpenMenu: () -> SwipeMenuLayout?) {
+    addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+        override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+            if (e.actionMasked != MotionEvent.ACTION_DOWN) return false
+            val menu = getOpenMenu() ?: return false
+            if (!menu.isMenuOpen()) return false
+            val position = IntArray(2)
+            menu.getLocationOnScreen(position)
+            val inside = e.rawX >= position[0] && e.rawX < position[0] + menu.width &&
+                e.rawY >= position[1] && e.rawY < position[1] + menu.height
+            if (inside) return false
+            menu.closeMenu()
+            return true
+        }
+    })
 }
