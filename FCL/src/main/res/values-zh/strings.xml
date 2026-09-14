@@ -830,6 +830,7 @@
     <string name="favorite_group_new">新建分组</string>
     <string name="favorite_group_manage">管理分组</string>
     <string name="favorite_group_none">暂无分组，点击下方新建</string>
+    <string name="favorite_group_select_hint">分组仅用于归类，可不选直接确认收藏；也可先新建分组</string>
     <string name="favorite_group_rename">重命名</string>
     <string name="favorite_group_delete_confirm">删除分组"%1$s"？其中的收藏条目会保留</string>
     <string name="favorite_group_exists">同名分组已存在</string>

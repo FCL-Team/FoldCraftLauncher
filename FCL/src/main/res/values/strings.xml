@@ -919,6 +919,7 @@
     <string name="favorite_group_new">New group</string>
     <string name="favorite_group_manage">Manage groups</string>
     <string name="favorite_group_none">No groups yet. Create one below.</string>
+    <string name="favorite_group_select_hint">Groups are optional. Confirm to favorite without one, or create a group first.</string>
     <string name="favorite_group_rename">Rename</string>
     <string name="favorite_group_delete_confirm">Delete group "%1$s"? Favorites in it are kept.</string>
     <string name="favorite_group_exists">A group with this name already exists</string>
