@@ -14,6 +14,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.UUID
 
 /**
@@ -41,6 +43,9 @@ object FavoriteManager {
 
     @Volatile
     private var favoriteIds: Set<String> = emptySet()
+
+    /** 分组新建/重命名的并发互斥：双击确认等场景下同名查重与写入串行化，避免重复创建 */
+    private val groupMutex = Mutex()
 
     /** 幂等初始化：启动 Room Flow 收集，在下载 UI 创建时调用 */
     @JvmStatic
@@ -89,7 +94,7 @@ object FavoriteManager {
     }
 
     /** 新建分组（同名复用既有分组），返回分组实体 */
-    suspend fun createGroup(name: String): FavoriteGroupEntity {
+    suspend fun createGroup(name: String): FavoriteGroupEntity = groupMutex.withLock {
         val trimmed = name.trim()
         _groups.value.firstOrNull { it.name == trimmed }?.let { return it }
         val group = FavoriteGroupEntity(
@@ -99,18 +104,18 @@ object FavoriteManager {
         )
         FavoriteDatabase.getInstance(FCLApp.getAppContext()).favoriteGroupDao().upsert(group)
         _groups.value = _groups.value + group
-        return group
+        group
     }
 
     /** 重命名分组，重名时放弃返回 false */
-    suspend fun renameGroup(groupId: String, newName: String): Boolean {
+    suspend fun renameGroup(groupId: String, newName: String): Boolean = groupMutex.withLock {
         val trimmed = newName.trim()
-        if (_groups.value.any { it.name == trimmed && it.groupId != groupId }) return false
-        val group = _groups.value.firstOrNull { it.groupId == groupId } ?: return false
+        if (_groups.value.any { it.name == trimmed && it.groupId != groupId }) return@withLock false
+        val group = _groups.value.firstOrNull { it.groupId == groupId } ?: return@withLock false
         val renamed = group.copy(name = trimmed)
         FavoriteDatabase.getInstance(FCLApp.getAppContext()).favoriteGroupDao().upsert(renamed)
         _groups.value = _groups.value.map { if (it.groupId == groupId) renamed else it }
-        return true
+        true
     }
 
     /** 删除分组：仅摘除收藏条目上的分组标记，不取消收藏 */
