@@ -472,6 +472,10 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                 ThemeEngine.getInstance().setAnimationSpeed(progress);
                 ThemeData.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
                 break;
+            case SEEKBAR_COLOR_ALPHA:
+                ThemeEngine.getInstance().applyColorAlpha(progress);
+                ThemeData.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
+                break;
             case SEEKBAR_VIBRATION:
                 sharedPreferences.edit().putInt("vibrationDuration", progress).apply();
                 break;

@@ -73,6 +73,7 @@ enum class LauncherSettingTag {
     // SeekBar 行
     SEEKBAR_VIDEO_VOLUME,
     SEEKBAR_ANIMATION_SPEED,
+    SEEKBAR_COLOR_ALPHA,
     SEEKBAR_VIBRATION,
     SEEKBAR_THREADS,
 
@@ -210,6 +211,13 @@ class LauncherSettingAdapter(
                     Triple(ICON_SET, R.string.button_set, LauncherSettingTag.THEME_COLOR2_DARK_SET)
                 ),
                 R.string.settings_launcher_theme2_dark_desc,
+                group = SettingGroup.Theme
+            ),
+            Row.SeekBarRow(
+                R.string.settings_launcher_color_alpha, 255, 0,
+                { ThemeEngine.getInstance().getTheme().colorAlpha },
+                LauncherSettingTag.SEEKBAR_COLOR_ALPHA,
+                descriptionRes = R.string.settings_launcher_color_alpha_desc,
                 group = SettingGroup.Theme
             ),
             Row.ButtonRow(

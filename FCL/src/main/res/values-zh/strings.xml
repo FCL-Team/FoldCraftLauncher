@@ -926,6 +926,8 @@
     <string name="settings_launcher_theme2_desc">自定义启动器辅助色（浅色主题）</string>
     <string name="settings_launcher_theme2_dark">次要主题色</string>
     <string name="settings_launcher_theme2_dark_desc">自定义启动器辅助色（深色主题）</string>
+    <string name="settings_launcher_color_alpha">主题色透明度</string>
+    <string name="settings_launcher_color_alpha_desc">主题派生色（卡片、按压态等）的透明度，独立于主要主题色。0 完全透明，255 完全不透明</string>
     <string name="settings_launcher_theme_fetch_background">从背景图片提取</string>
     <string name="settings_launcher_background_lt">亮色模式启动器背景图片</string>
     <string name="settings_launcher_background_lt_desc">自定义浅色主题的背景图片，最大分辨率5120x5120</string>
