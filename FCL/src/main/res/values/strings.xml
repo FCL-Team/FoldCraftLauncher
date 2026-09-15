@@ -920,6 +920,7 @@
     <string name="favorite_group_manage">Manage groups</string>
     <string name="favorite_group_none">No groups yet. Create one below.</string>
     <string name="favorite_selected_count">%d selected</string>
+    <string name="favorite_invert_select">Invert</string>
     <string name="favorite_remove_selected">Remove</string>
     <string name="favorite_multi_remove_confirm">Remove %d selected favorites?</string>
     <string name="favorite_group_select_hint">Groups are optional. Confirm to favorite without one, or create a group first.</string>

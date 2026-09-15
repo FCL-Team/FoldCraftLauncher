@@ -93,6 +93,7 @@ class FavoritePage(
         binding.btnDownloadAll.setOnClickListener { startBatchDownload() }
         // 多选操作栏
         binding.btnSelectAll.setOnClickListener { adapter.selectAll() }
+        binding.btnInvertSelect.setOnClickListener { adapter.invertSelect() }
         binding.btnExitSelect.setOnClickListener { adapter.exitMultiSelect() }
         binding.btnSelectGroup.setOnClickListener { selectGroupForSelected() }
         binding.btnRemoveSelected.setOnClickListener { confirmRemoveSelected() }

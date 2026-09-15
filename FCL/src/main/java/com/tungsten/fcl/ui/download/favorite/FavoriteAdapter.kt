@@ -76,6 +76,15 @@ class FavoriteAdapter(
         notifyState()
     }
 
+    /** 反选：已选的取消、未选的选中 */
+    fun invertSelect() {
+        for (item in list) {
+            if (item.id in selectedIds) selectedIds.remove(item.id) else selectedIds.add(item.id)
+        }
+        notifyDataSetChanged()
+        notifyState()
+    }
+
     private fun toggleSelect(id: String) {
         if (id in selectedIds) selectedIds.remove(id) else selectedIds.add(id)
         notifyDataSetChanged()
