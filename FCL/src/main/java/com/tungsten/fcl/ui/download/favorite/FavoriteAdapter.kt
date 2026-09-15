@@ -42,8 +42,8 @@ class FavoriteAdapter(
     var isMultiSelectMode = false
         private set
 
-    /** 多选状态回调：(是否处于多选模式, 已选数量)，页面据此显隐操作栏与更新计数 */
-    var onMultiSelectStateChanged: ((Boolean, Int) -> Unit)? = null
+    /** 多选状态回调：(是否处于多选模式)，页面据此显隐操作栏 */
+    var onMultiSelectStateChanged: ((Boolean) -> Unit)? = null
 
     /** 当前选中的收藏条目 id */
     fun getSelectedIds(): Set<String> = selectedIds.toSet()
@@ -92,7 +92,7 @@ class FavoriteAdapter(
     }
 
     private fun notifyState() {
-        onMultiSelectStateChanged?.invoke(isMultiSelectMode, selectedIds.size)
+        onMultiSelectStateChanged?.invoke(isMultiSelectMode)
     }
 
     /** 数据更新：DiffUtil 差量刷新，增删带动画，未变化条目不重绑（避免图标重载闪烁） */

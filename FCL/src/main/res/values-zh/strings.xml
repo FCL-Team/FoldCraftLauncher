@@ -830,7 +830,6 @@
     <string name="favorite_group_new">新建分组</string>
     <string name="favorite_group_manage">管理分组</string>
     <string name="favorite_group_none">暂无分组，点击下方新建</string>
-    <string name="favorite_selected_count">已选 %d 项</string>
     <string name="favorite_invert_select">反选</string>
     <string name="favorite_remove_selected">取消收藏</string>
     <string name="favorite_multi_remove_confirm">取消收藏选中的 %d 项？</string>

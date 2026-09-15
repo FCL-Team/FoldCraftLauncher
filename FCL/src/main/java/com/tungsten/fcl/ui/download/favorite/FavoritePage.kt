@@ -86,7 +86,7 @@ class FavoritePage(
         super.onCreate()
         binding = PageDownloadFavoriteBinding.bind(contentView)
         adapter = FavoriteAdapter(context, this)
-        adapter.onMultiSelectStateChanged = { active, count -> updateMultiSelectBar(active, count) }
+        adapter.onMultiSelectStateChanged = { active -> updateMultiSelectBar(active) }
         binding.list.layoutManager = LinearLayoutManager(context)
         binding.list.adapter = adapter
         setupFilter(binding)
@@ -109,13 +109,10 @@ class FavoritePage(
         }
     }
 
-    /** 多选操作栏：显隐与计数跟随适配器状态；多选时隐藏一键下载按钮避免拥挤 */
-    private fun updateMultiSelectBar(active: Boolean, count: Int) {
+    /** 多选操作栏：显隐跟随适配器状态；多选时隐藏一键下载按钮避免拥挤 */
+    private fun updateMultiSelectBar(active: Boolean) {
         binding.multiSelectBar.visibility = if (active) View.VISIBLE else View.GONE
         binding.btnDownloadAll.visibility = if (active) View.GONE else View.VISIBLE
-        if (active) {
-            binding.selectedCount.text = context.getString(R.string.favorite_selected_count, count)
-        }
     }
 
     /** 批量修改分组：预勾选所有选中条目的公共分组，确认后整体覆盖 */

@@ -97,7 +97,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="10dp"
-        app:layout_constraintBottom_toTopOf="@id/multi_select_bar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/filter_panel"
         app:layout_constraintTop_toTopOf="parent" />
@@ -159,7 +159,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/bg_container_white"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="10dp"
@@ -167,18 +166,11 @@
         android:paddingEnd="10dp"
         android:paddingBottom="6dp"
         android:visibility="gone"
-        app:auto_linear_background_tint="true"
+        android:alpha="0.7"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="@id/list">
 
-        <com.tungsten.fcllibrary.component.view.FCLTextView
-            android:id="@+id/selected_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:textSize="13sp"
-            app:auto_text_tint="true" />
 
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/btn_select_all"
@@ -219,12 +211,6 @@
             android:layout_marginStart="8dp"
             android:text="@string/dialog_negative"
             app:ripple="true" />
-
-        <!-- 占位：按钮靠左排列，避开右侧悬浮信息面板 -->
-        <View
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" />
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
