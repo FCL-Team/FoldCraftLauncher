@@ -37,12 +37,63 @@ class FavoriteAdapter(
     /** 分组定义收集任务（挂到 RecyclerView 时启动，分离时取消） */
     private var groupJob: Job? = null
 
+    /** 多选模式：长按条目进入，点击条目切换选中；由收藏页操作栏执行批量操作 */
+    private val selectedIds = mutableSetOf<String>()
+    var isMultiSelectMode = false
+        private set
+
+    /** 多选状态回调：(是否处于多选模式, 已选数量)，页面据此显隐操作栏与更新计数 */
+    var onMultiSelectStateChanged: ((Boolean, Int) -> Unit)? = null
+
+    /** 当前选中的收藏条目 id */
+    fun getSelectedIds(): Set<String> = selectedIds.toSet()
+
+    /** 进入多选模式并选中首个条目 */
+    fun enterMultiSelect(firstId: String) {
+        if (isMultiSelectMode) return
+        isMultiSelectMode = true
+        openMenuLayout?.closeMenu()
+        openMenuLayout = null
+        selectedIds.add(firstId)
+        notifyDataSetChanged()
+        notifyState()
+    }
+
+    /** 退出多选模式并清空选中 */
+    fun exitMultiSelect() {
+        if (!isMultiSelectMode) return
+        isMultiSelectMode = false
+        selectedIds.clear()
+        notifyDataSetChanged()
+        notifyState()
+    }
+
+    /** 全选当前列表条目 */
+    fun selectAll() {
+        selectedIds.clear()
+        selectedIds.addAll(list.map { it.id })
+        notifyDataSetChanged()
+        notifyState()
+    }
+
+    private fun toggleSelect(id: String) {
+        if (id in selectedIds) selectedIds.remove(id) else selectedIds.add(id)
+        notifyDataSetChanged()
+        notifyState()
+    }
+
+    private fun notifyState() {
+        onMultiSelectStateChanged?.invoke(isMultiSelectMode, selectedIds.size)
+    }
+
     /** 数据更新：DiffUtil 差量刷新，增删带动画，未变化条目不重绑（避免图标重载闪烁） */
     fun submit(items: List<DownloadFavoriteEntity>) {
         // 筛选切换可能移除"菜单打开中"的条目，其 ViewHolder 会经 Recycler 缓存原样复用
         // （复用不重绑），把打开状态带回列表；数据刷新时统一收起
         openMenuLayout?.closeMenu()
         openMenuLayout = null
+        // 数据刷新后清理已不在列表中的选中项（多选模式保持）
+        selectedIds.retainAll(items.map { it.id }.toSet())
         val result = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int = list.size
             override fun getNewListSize(): Int = items.size
@@ -99,29 +150,42 @@ class FavoriteAdapter(
                 }
             }
         }
-        binding.parent.setOnClickListener {
-            page.openFavorite(favorite)
-        }
-        binding.btnRemoveFavorite.setOnClickListener {
-            // 触发动作后立即收起菜单
-            binding.root.closeMenu()
-            MainActivity.getInstance().lifecycleScope.launch {
-                FavoriteManager.toggle(favorite)
-                Toast.makeText(context, context.getString(R.string.favorite_removed), Toast.LENGTH_SHORT).show()
+        if (isMultiSelectMode) {
+            // 多选模式：勾选框展示选中态，点击/长按切换选中，左滑菜单与详情跳转停用
+            binding.selectCheck.visibility = View.VISIBLE
+            binding.selectCheck.isChecked = favorite.id in selectedIds
+            binding.parent.setOnClickListener { toggleSelect(favorite.id) }
+            binding.parent.setOnLongClickListener { toggleSelect(favorite.id); true }
+            binding.btnRemoveFavorite.setOnClickListener(null)
+            binding.btnEditGroup.setOnClickListener(null)
+        } else {
+            binding.selectCheck.visibility = View.GONE
+            binding.parent.setOnClickListener {
+                page.openFavorite(favorite)
             }
-        }
-        // 修改所属分组：弹出多选对话框（预勾选当前分组），确认后写库并经 Flow 回推差量刷新
-        binding.btnEditGroup.setOnClickListener {
-            binding.root.closeMenu()
-            GroupSelectionDialog(
-                context,
-                context.getString(R.string.favorite_group_edit),
-                favorite.groups.toSet()
-            ) { groupIds ->
+            // 长按进入多选模式并选中该条目
+            binding.parent.setOnLongClickListener { enterMultiSelect(favorite.id); true }
+            binding.btnRemoveFavorite.setOnClickListener {
+                // 触发动作后立即收起菜单
+                binding.root.closeMenu()
                 MainActivity.getInstance().lifecycleScope.launch {
-                    FavoriteManager.setGroups(favorite.id, groupIds)
+                    FavoriteManager.toggle(favorite)
+                    Toast.makeText(context, context.getString(R.string.favorite_removed), Toast.LENGTH_SHORT).show()
                 }
-            }.show()
+            }
+            // 修改所属分组：弹出多选对话框（预勾选当前分组），确认后写库并经 Flow 回推差量刷新
+            binding.btnEditGroup.setOnClickListener {
+                binding.root.closeMenu()
+                GroupSelectionDialog(
+                    context,
+                    context.getString(R.string.favorite_group_edit),
+                    favorite.groups.toSet()
+                ) { groupIds ->
+                    MainActivity.getInstance().lifecycleScope.launch {
+                        FavoriteManager.setGroups(favorite.id, groupIds)
+                    }
+                }.show()
+            }
         }
         Glide.with(binding.icon)
             .load(favorite.iconUrl)

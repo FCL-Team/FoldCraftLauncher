@@ -91,6 +91,7 @@
         app:layout_constraintWidth_percent="0.3"
         app:ripple="true" />
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="0dp"
@@ -151,5 +152,68 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/filter_panel"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 多选模式操作栏（多选时横跨全宽，替代一键下载按钮） -->
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:id="@+id/multi_select_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_container_white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingTop="6dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="6dp"
+        android:visibility="gone"
+        app:auto_linear_background_tint="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/selected_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:textSize="13sp"
+            app:auto_text_tint="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/btn_select_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_select_all"
+            app:ripple="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/btn_select_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/favorite_group_edit"
+            app:ripple="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/btn_remove_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/favorite_remove_selected"
+            app:ripple="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/btn_exit_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_negative"
+            app:ripple="true" />
+
+        <!-- 占位：按钮靠左排列，避开右侧悬浮信息面板 -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -134,6 +134,22 @@ object FavoriteManager {
         }
     }
 
+    /** 批量取消收藏 */
+    suspend fun removeFavorites(favoriteIds: Collection<String>) {
+        val dao = FavoriteDatabase.getInstance(FCLApp.getAppContext()).downloadFavoriteDao()
+        favoriteIds.forEach { dao.deleteById(it) }
+        applyList(_favorites.value.filterNot { it.id in favoriteIds })
+    }
+
+    /** 批量设置收藏条目所属分组（覆盖原分组） */
+    suspend fun setGroupsBulk(favoriteIds: Collection<String>, groupIds: List<String>) {
+        val db = FavoriteDatabase.getInstance(FCLApp.getAppContext())
+        val idSet = favoriteIds.toSet()
+        val updated = _favorites.value.map { if (it.id in idSet) it.copy(groups = groupIds) else it }
+        updated.filter { it.id in idSet }.forEach { db.downloadFavoriteDao().upsert(it) }
+        applyList(updated)
+    }
+
     private fun applyList(list: List<DownloadFavoriteEntity>) {
         favoriteIds = list.map { it.id }.toSet()
         _favorites.value = list

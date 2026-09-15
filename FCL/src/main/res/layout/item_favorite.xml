@@ -59,6 +59,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <!-- 多选模式的勾选框（仅多选模式显示，点击条目切换选中） -->
+            <com.tungsten.fcllibrary.component.view.FCLCheckBox
+                android:id="@+id/select_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:visibility="gone" />
+
             <com.tungsten.fcllibrary.component.view.FCLImageView
                 android:id="@+id/icon"
                 android:layout_width="30dp"

@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.mio.data.FavoriteManager
@@ -85,10 +86,16 @@ class FavoritePage(
         super.onCreate()
         binding = PageDownloadFavoriteBinding.bind(contentView)
         adapter = FavoriteAdapter(context, this)
+        adapter.onMultiSelectStateChanged = { active, count -> updateMultiSelectBar(active, count) }
         binding.list.layoutManager = LinearLayoutManager(context)
         binding.list.adapter = adapter
         setupFilter(binding)
         binding.btnDownloadAll.setOnClickListener { startBatchDownload() }
+        // 多选操作栏
+        binding.btnSelectAll.setOnClickListener { adapter.selectAll() }
+        binding.btnExitSelect.setOnClickListener { adapter.exitMultiSelect() }
+        binding.btnSelectGroup.setOnClickListener { selectGroupForSelected() }
+        binding.btnRemoveSelected.setOnClickListener { confirmRemoveSelected() }
         // 空状态图标与文字一致使用次要主题色（随主题联动）
         ThemeEngine.getInstance().registerEvent(binding.emptyIcon) {
             binding.emptyIcon.setColorFilter(ThemeEngine.getInstance().getTheme().getColor2())
@@ -99,6 +106,52 @@ class FavoritePage(
                 applyFilter()
             }
         }
+    }
+
+    /** 多选操作栏：显隐与计数跟随适配器状态；多选时隐藏一键下载按钮避免拥挤 */
+    private fun updateMultiSelectBar(active: Boolean, count: Int) {
+        binding.multiSelectBar.visibility = if (active) View.VISIBLE else View.GONE
+        binding.btnDownloadAll.visibility = if (active) View.GONE else View.VISIBLE
+        if (active) {
+            binding.selectedCount.text = context.getString(R.string.favorite_selected_count, count)
+        }
+    }
+
+    /** 批量修改分组：预勾选所有选中条目的公共分组，确认后整体覆盖 */
+    private fun selectGroupForSelected() {
+        val ids = adapter.getSelectedIds()
+        if (ids.isEmpty()) return
+        val favorites = FavoriteManager.favorites.value.filter { it.id in ids }
+        val common = FavoriteManager.groups.value.map { it.groupId }
+            .filter { g -> favorites.all { g in it.groups } }
+        GroupSelectionDialog(
+            context,
+            context.getString(R.string.favorite_group_edit),
+            common.toSet()
+        ) { groupIds ->
+            MainActivity.getInstance().lifecycleScope.launch {
+                FavoriteManager.setGroupsBulk(ids, groupIds)
+                adapter.exitMultiSelect()
+            }
+        }.show()
+    }
+
+    /** 批量取消收藏：确认后移除选中条目并退出多选 */
+    private fun confirmRemoveSelected() {
+        val ids = adapter.getSelectedIds()
+        if (ids.isEmpty()) return
+        FCLAlertDialog.Builder(context)
+            .setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+            .setMessage(context.getString(R.string.favorite_multi_remove_confirm, ids.size))
+            .setPositiveButton {
+                MainActivity.getInstance().lifecycleScope.launch {
+                    FavoriteManager.removeFavorites(ids)
+                    adapter.exitMultiSelect()
+                }
+            }
+            .setNegativeButton(null)
+            .create()
+            .show()
     }
 
     /** 类别筛选：选项以卡片行直接展开在左侧面板，选中项主题次色实底，右侧显示各类别数量 */
