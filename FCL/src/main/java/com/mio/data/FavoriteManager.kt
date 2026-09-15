@@ -68,6 +68,7 @@ object FavoriteManager {
         }
     }
 
+    @JvmStatic
     fun isFavorited(id: String): Boolean = favoriteIds.contains(id)
 
     /** 切换收藏状态，返回切换后是否已收藏；收藏时可携带所属分组 */
@@ -142,13 +143,16 @@ object FavoriteManager {
     const val SOURCE_MODRINTH = "MODRINTH"
 
     /** 条目 id：平台前缀 + 平台侧项目 id */
+    @JvmStatic
     fun idOf(source: String, modId: String): String = "$source:$modId"
 
     /** 条目平台：与 DownloadPage.repositoryFor 同一约定（data 非 CurseAddon 即 Modrinth） */
+    @JvmStatic
     fun sourceOf(mod: RemoteMod): String =
         if (mod.data is CurseAddon) SOURCE_CURSEFORGE else SOURCE_MODRINTH
 
     /** 搜索结果条目 → 收藏实体（favoriteTime 由 toggle 时写入） */
+    @JvmStatic
     fun fromRemoteMod(mod: RemoteMod, type: RemoteModRepository.Type): DownloadFavoriteEntity {
         val source = sourceOf(mod)
         return DownloadFavoriteEntity(

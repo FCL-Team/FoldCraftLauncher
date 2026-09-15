@@ -10,12 +10,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.mio.data.FavoriteManager;
+import com.mio.data.favorite.DownloadFavoriteEntity;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.DownloadUI;
+import com.tungsten.fcl.ui.download.favorite.FavoriteActionsKt;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.mod.LocalModFile;
@@ -67,6 +70,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
     private FCLTextView description;
     private FCLTextView mcmod;
     private FCLImageButton website;
+    private FCLImageButton favorite;
     private FCLProgressBar screenshotLoading;
     private FCLImageView screenshotRetry;
     private FCLTextView screenshotNoResult;
@@ -122,6 +126,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         description = findViewById(R.id.description);
         mcmod = findViewById(R.id.mcmod);
         website = findViewById(R.id.website);
+        favorite = findViewById(R.id.favorite);
         screenshotView = findViewById(R.id.screenshot_recyclerView);
         screenshotLoading = findViewById(R.id.screenshot_loading);
         screenshotRetry = findViewById(R.id.screenshot_retry);
@@ -131,6 +136,8 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         retry.setOnClickListener(this);
         mcmod.setOnClickListener(this);
         website.setOnClickListener(this);
+        favorite.setOnClickListener(this);
+        refreshFavoriteIcon();
 
         ThemeEngine.getInstance().registerEvent(versionListView, () -> versionListView.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
 
@@ -304,6 +311,8 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
 
     @Override
     public Task<?> refresh(Object... param) {
+        // 页面重新可见时校准收藏星形（其他页面的收藏变化不触发本页回调）
+        refreshFavoriteIcon();
         return null;
     }
 
@@ -325,5 +334,34 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         if (v == screenshotRetry) {
             loadScreenshots();
         }
+        if (v == favorite) {
+            // 收藏状态实际变更后（协程内）再刷新星形图标
+            DownloadFavoriteEntity entity = FavoriteManager.fromRemoteMod(addon, favoriteType());
+            FavoriteActionsKt.handleFavoriteClick(getContext(), entity, () -> {
+                FavoriteActionsKt.bindFavoriteIcon(favorite, entity.getId());
+                return kotlin.Unit.INSTANCE;
+            });
+        }
+    }
+
+    /** 详情页收藏实体对应的资源类别：与打开此详情的下载页模式一致 */
+    private RemoteModRepository.Type favoriteType() {
+        switch (page.getPageId()) {
+            case DownloadUI.PAGE_ID_DOWNLOAD_MODPACK:
+                return RemoteModRepository.Type.MODPACK;
+            case DownloadUI.PAGE_ID_DOWNLOAD_RESOURCE_PACK:
+                return RemoteModRepository.Type.RESOURCE_PACK;
+            case DownloadUI.PAGE_ID_DOWNLOAD_SHADER_PACK:
+                return RemoteModRepository.Type.SHADER_PACK;
+            case DownloadUI.PAGE_ID_DOWNLOAD_WORLD:
+                return RemoteModRepository.Type.WORLD;
+            default:
+                return RemoteModRepository.Type.MOD;
+        }
+    }
+
+    private void refreshFavoriteIcon() {
+        DownloadFavoriteEntity entity = FavoriteManager.fromRemoteMod(addon, favoriteType());
+        FavoriteActionsKt.bindFavoriteIcon(favorite, entity.getId());
     }
 }

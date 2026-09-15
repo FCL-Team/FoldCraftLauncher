@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
@@ -26,7 +25,8 @@ import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemRemoteModBinding
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.download.DownloadUI
-import com.tungsten.fcl.ui.download.favorite.GroupSelectionDialog
+import com.tungsten.fcl.ui.download.favorite.bindFavoriteIcon
+import com.tungsten.fcl.ui.download.favorite.handleFavoriteClick
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.RemoteMod
@@ -218,40 +218,13 @@ class RemoteModListAdapter(
                 remoteMod
             )
         }
-        // 左滑菜单收藏按钮：按当前收藏状态显示实心/描边星形；
-        // 未收藏时先弹分组多选（可空确认），已收藏时点按直接取消收藏
+        // 左滑菜单收藏按钮：已收藏实心星形（点击取消），未收藏描边（点击弹分组选择后收藏）
         val favoriteEntity = FavoriteManager.fromRemoteMod(remoteMod, favoriteType())
-        binding.btnFavorite.setImageResource(
-            if (FavoriteManager.isFavorited(favoriteEntity.id)) R.drawable.ic_star_filled else R.drawable.ic_star_outline
-        )
+        bindFavoriteIcon(binding.btnFavorite, favoriteEntity.id)
         binding.btnFavorite.setOnClickListener {
             // 触发动作后立即收起菜单
             binding.root.closeMenu()
-            if (FavoriteManager.isFavorited(favoriteEntity.id)) {
-                MainActivity.getInstance().lifecycleScope.launch {
-                    FavoriteManager.toggle(favoriteEntity)
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.favorite_removed),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            } else {
-                GroupSelectionDialog(
-                    context,
-                    context.getString(R.string.favorite_group_select),
-                    emptySet()
-                ) { groupIds ->
-                    MainActivity.getInstance().lifecycleScope.launch {
-                        FavoriteManager.toggle(favoriteEntity, groupIds)
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.favorite_added),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }.show()
-            }
+            handleFavoriteClick(context, favoriteEntity)
         }
         // 固定 90×90 占位（与 override 后图片内在尺寸一致）：图片加载完成替换时
         // drawable 内在尺寸不变，不触发 requestLayout，避免列表全局重排导致
@@ -310,9 +283,7 @@ class RemoteModListAdapter(
         }
         if (payloads.contains(PAYLOAD_FAVORITE)) {
             val id = FavoriteManager.idOf(FavoriteManager.sourceOf(remoteMod), remoteMod.modID)
-            binding.btnFavorite.setImageResource(
-                if (FavoriteManager.isFavorited(id)) R.drawable.ic_star_filled else R.drawable.ic_star_outline
-            )
+            bindFavoriteIcon(binding.btnFavorite, id)
         }
     }
 
