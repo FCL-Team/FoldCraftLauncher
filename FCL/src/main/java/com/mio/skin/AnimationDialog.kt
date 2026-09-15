@@ -56,6 +56,8 @@ class AnimationDialog(
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         params.topMargin = (6 * density).toInt()
+        params.marginStart = (6 * density).toInt()
+        params.marginEnd = (6 * density).toInt()
         return params
     }
 
