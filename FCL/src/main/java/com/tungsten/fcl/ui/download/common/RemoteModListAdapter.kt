@@ -225,6 +225,8 @@ class RemoteModListAdapter(
             if (FavoriteManager.isFavorited(favoriteEntity.id)) R.drawable.ic_star_filled else R.drawable.ic_star_outline
         )
         binding.btnFavorite.setOnClickListener {
+            // 触发动作后立即收起菜单
+            binding.root.closeMenu()
             if (FavoriteManager.isFavorited(favoriteEntity.id)) {
                 MainActivity.getInstance().lifecycleScope.launch {
                     FavoriteManager.toggle(favoriteEntity)

@@ -103,6 +103,8 @@ class FavoriteAdapter(
             page.openFavorite(favorite)
         }
         binding.btnRemoveFavorite.setOnClickListener {
+            // 触发动作后立即收起菜单
+            binding.root.closeMenu()
             MainActivity.getInstance().lifecycleScope.launch {
                 FavoriteManager.toggle(favorite)
                 Toast.makeText(context, context.getString(R.string.favorite_removed), Toast.LENGTH_SHORT).show()
@@ -110,6 +112,7 @@ class FavoriteAdapter(
         }
         // 修改所属分组：弹出多选对话框（预勾选当前分组），确认后写库并经 Flow 回推差量刷新
         binding.btnEditGroup.setOnClickListener {
+            binding.root.closeMenu()
             GroupSelectionDialog(
                 context,
                 context.getString(R.string.favorite_group_edit),
