@@ -2,12 +2,11 @@
 <com.tungsten.fcllibrary.component.view.FCLLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="3dp"
+    android:layout_marginVertical="2dp"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingStart="10dp"
-    android:paddingTop="6dp"
-    android:paddingEnd="6dp"
-    android:paddingBottom="6dp"
+    android:padding="6dp"
     android:stateListAnimator="@xml/anim_scale">
 
     <com.tungsten.fcllibrary.component.view.FCLTextView

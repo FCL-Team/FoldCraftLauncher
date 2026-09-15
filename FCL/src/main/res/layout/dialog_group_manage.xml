@@ -21,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@+id/hint"
         app:layout_constraintHeight_max="360dp"
@@ -38,7 +39,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_new"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scroll" />
+        app:layout_constraintTop_toBottomOf="@+id/list_container" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/btn_new"
