@@ -291,11 +291,24 @@ static void custom_SDL_UnloadObject_Func(void *handle) {
 
 // 首个成功创建的 SDL 窗口，后续创建请求将重定向到它
 static SDL_Window *sPrimaryWindow = NULL;
+// Each reused window owns an extra reference; keep the original alive until all are released.
+static size_t sPrimaryWindowExtraRefs = 0;
+
+static bool releasePrimaryWindow(SDL_Window *window) {
+    if (window == sPrimaryWindow) {
+        if (sPrimaryWindowExtraRefs > 0) {
+            --sPrimaryWindowExtraRefs;
+            return false;
+        }
+        sPrimaryWindow = NULL;
+    }
+    return true;
+}
 
 static void custom_SDL_DestroyWindow_Func(SDL_Window *window) {
-    // 主窗口销毁后清除记录，后续创建请求恢复正常创建流程
-    if (window == sPrimaryWindow) sPrimaryWindow = NULL;
-    BYTEHOOK_CALL_PREV(custom_SDL_DestroyWindow_Func, SDL_DestroyWindow_t, window);
+    if (releasePrimaryWindow(window)) {
+        BYTEHOOK_CALL_PREV(custom_SDL_DestroyWindow_Func, SDL_DestroyWindow_t, window);
+    }
     BYTEHOOK_POP_STACK();
 }
 
@@ -367,6 +380,7 @@ static void forceEglProfileEs(void) {
 // 前者由 Android Surface 决定（创建时即取 Surface 尺寸，与请求值无关）
 // 后者由 SDL_ORIENTATIONS hint 统一控制。
 static SDL_Window *reusePrimaryWindow(void) {
+    ++sPrimaryWindowExtraRefs;
     LOG_TO_I("SDL_Hook: reusing primary window %p", sPrimaryWindow);
     return sPrimaryWindow;
 }
@@ -495,8 +509,7 @@ static SDL_Window *proxy_SDL_CreateWindowWithProperties(uint32_t props) {
 }
 
 static void proxy_SDL_DestroyWindow(SDL_Window *window) {
-    if (window == sPrimaryWindow) sPrimaryWindow = NULL;
-    realSdlDestroyWindow(window);
+    if (releasePrimaryWindow(window)) realSdlDestroyWindow(window);
 }
 
 static SDL_Window *proxy_SDL_GetWindowFromEvent(const void *event) {
