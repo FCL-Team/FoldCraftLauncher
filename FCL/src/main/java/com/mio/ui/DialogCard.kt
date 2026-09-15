@@ -13,8 +13,13 @@ fun dialogCardBackground(context: Context, density: Float): GradientDrawable =
     GradientDrawable().apply {
         cornerRadius = 10 * density
         val dark = ThemeEngine.isNightMode(context)
-        setColor(if (dark) "#323232".toColorInt() else "#FAFAFA".toColorInt())
+        setColor(if (dark) "#323232".toColorInt() else "#F8F8F8".toColorInt())
     }
+
+/** 条目卡片投影：使用 DialogCard 背景的条目统一调用，形成轻浮起效果 */
+fun applyCardElevation(view: View, density: Float) {
+    view.elevation = 3f * density
+}
 
 /** 对话框内选中条目背景：主题色半透明圆角底（与 AnimationDialog 选中行一致） */
 fun selectedCardBackground(themeColor: Int, density: Float): GradientDrawable =
@@ -34,6 +39,7 @@ fun applySelectableItemStyle(
     selected: Boolean,
     density: Float
 ) {
+    applyCardElevation(root, density)
     root.background = dialogCardBackground(context, density)
     check?.visibility = View.GONE
     if (selected) {

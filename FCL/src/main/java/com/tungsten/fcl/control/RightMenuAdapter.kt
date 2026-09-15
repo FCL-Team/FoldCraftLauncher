@@ -9,6 +9,7 @@ import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.util.getScreenHeight
 import com.mio.util.getScreenWidth
+import com.mio.ui.applyCardElevation
 import com.mio.ui.selectedCardBackground
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemMenuButtonBinding
@@ -432,6 +433,7 @@ class RightMenuAdapter(
     /** 控件组行：当前编辑组主题色高亮，组名点击切换，开关控制编辑画布显隐，按钮编辑/删除属性 */
     private fun bindControlGroup(holder: Holder, row: Row.ControlGroupRow) {
         val binding = ItemMenuControlGroupBinding.bind(holder.itemView)
+        applyCardElevation(holder.itemView, density)
         val isCurrent = row.group == gameMenu.viewGroup
         binding.label.text = row.group.getName()
         if (isCurrent) {
