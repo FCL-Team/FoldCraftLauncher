@@ -20,6 +20,7 @@ import com.tungsten.fcl.databinding.ItemCharacterBinding
 import com.tungsten.fcl.databinding.ViewCreateAccountExternalBinding
 import com.tungsten.fcl.databinding.ViewCreateAccountMicrosoftBinding
 import com.tungsten.fcl.databinding.ViewCreateAccountOfflineBinding
+import com.tungsten.fcl.game.OAuthServer
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.setting.ConfigHolder.config
@@ -148,6 +149,8 @@ class CreateAccountDialog : FCLDialog, View.OnClickListener {
                 binding.login.isEnabled = true
                 binding.cancel.isEnabled = true
                 microsoft?.hideProgress()
+                // 登录流程已终结（成功/失败/取消），通知内嵌登录页自行关闭
+                Accounts.OAUTH_CALLBACK.onLoginFinished.fireEvent(OAuthServer.LoginFinishedEvent(this))
                 if (exception == null) {
                     Accounts.addAccount(account)
                     Accounts.setSelectedAccount(account)

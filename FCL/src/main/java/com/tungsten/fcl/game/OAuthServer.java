@@ -125,6 +125,7 @@ public final class OAuthServer extends NanoHTTPD implements OAuth.Session {
     public static class Factory implements OAuth.Callback {
         public final EventManager<GrantDeviceCodeEvent> onGrantDeviceCode = new EventManager<>();
         public final EventManager<OpenBrowserEvent> onOpenBrowser = new EventManager<>();
+        public final EventManager<LoginFinishedEvent> onLoginFinished = new EventManager<>();
 
         @Override
         public OAuth.Session startServer() throws IOException, AuthenticationException {
@@ -201,6 +202,12 @@ public final class OAuthServer extends NanoHTTPD implements OAuth.Session {
 
         public String getUrl() {
             return url;
+        }
+    }
+
+    public static class LoginFinishedEvent extends Event {
+        public LoginFinishedEvent(Object source) {
+            super(source);
         }
     }
 

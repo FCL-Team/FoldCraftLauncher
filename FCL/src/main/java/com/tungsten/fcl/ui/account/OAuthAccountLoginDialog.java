@@ -117,9 +117,12 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
                         }
                         positive.setEnabled(true);
                         negative.setEnabled(true);
+                        // 登录流程已终结（成功/失败），通知内嵌登录页自行关闭
+                        Accounts.OAUTH_CALLBACK.onLoginFinished.fireEvent(new OAuthServer.LoginFinishedEvent(this));
                     }).start();
         }
         if (view == negative) {
+            Accounts.OAUTH_CALLBACK.onLoginFinished.fireEvent(new OAuthServer.LoginFinishedEvent(this));
             failed.run();
             dismiss();
         }

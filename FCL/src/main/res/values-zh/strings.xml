@@ -91,6 +91,7 @@
     <string name="account_methods_microsoft_error_add_family_probably">请检查并确保年龄设置大于 18 岁。</string>
     <string name="account_methods_microsoft_close_page">Microsoft 账户登录完成</string>
     <string name="account_methods_microsoft_hint">请点击“登录”按钮，稍后将自动复制一段代码，在打开的浏览器页面中输入复制的代码并完成登录过程。</string>
+    <string name="account_login_external_browser_hint">提示：长按“登录”按钮可改用外部浏览器打开登录页面。</string>
     <string name="account_login_refresh">重新登录</string>
     <string name="account_login_refresh_microsoft_hint">由于账号授权无效，需要重新登录您的微软账号\n请点击“确认”按钮，稍后将自动复制一段代码，在打开的浏览器页面中输入复制的代码并完成登录过程。</string>
     <string name="login_state_microsoft_wait_browser">等待在浏览器中完成授权…</string>
