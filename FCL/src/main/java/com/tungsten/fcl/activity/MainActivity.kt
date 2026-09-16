@@ -707,12 +707,23 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             }
             if (view === goSetting) {
                 val profile = Profiles.getSelectedProfile()
+                // 菜单项已处于选中态时 setSelected(true) 不再触发 onSelect，需兜底完成切页
                 if (profile.versionSetting.isUsesGlobal) {
                     setting.isSelected = true
+                    if (uiManager.currentUI !== uiManager.settingUI) {
+                        title.setTextWithAnim(getString(R.string.setting))
+                        uiManager.switchUI(uiManager.settingUI)
+                    }
                     val tab = uiManager.settingUI.tabLayout.getTabAt(0)
                     uiManager.settingUI.tabLayout.selectTab(tab)
                 } else {
                     manage.isSelected = true
+                    if (uiManager.currentUI !== uiManager.manageUI) {
+                        title.setTextWithAnim(getString(R.string.manage))
+                        // 走到该分支说明选中版本存在独立设置，selectedVersion 必不为 null
+                        uiManager.manageUI.setVersion(profile.selectedVersion!!, profile)
+                        uiManager.switchUI(uiManager.manageUI)
+                    }
                     val tab = uiManager.manageUI.tabLayout.getTabAt(0)
                     uiManager.manageUI.tabLayout.selectTab(tab)
                 }
