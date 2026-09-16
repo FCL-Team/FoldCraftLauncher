@@ -440,7 +440,6 @@ class VersionSettingAdapter(
         val binding = ItemVersionSettingMemoryBinding.bind(holder.itemView)
         val totalMemory = MemoryUtils.getTotalDeviceMemory(context)
         val freeMemory = MemoryUtils.getFreeDeviceMemory(context)
-        binding.barMemory.max = totalMemory
         binding.memoryBar.max = totalMemory
 
         // 勾选框/滑条变化时重算进度条与文本（原 fakefx 绑定表达式的等价逻辑）
@@ -476,7 +475,9 @@ class VersionSettingAdapter(
 
         binding.checkAutoAllocate.setOnCheckedChangeListener(null)
         binding.checkAutoAllocate.isChecked = versionSetting.isAutoMemory
+        // 先摘监听再设 max/progress：setMax 对越界进度的钳制会同步回调 onProgressChanged
         binding.barMemory.setOnSeekBarChangeListener(null)
+        binding.barMemory.max = totalMemory
         binding.barMemory.progress = versionSetting.maxMemory
         binding.checkAutoAllocate.setOnCheckedChangeListener { _, checked ->
             versionSetting.isAutoMemory = checked
