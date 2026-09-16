@@ -8,8 +8,9 @@ import kotlin.math.min
 
 /**
  * 体素化第二层网格（复刻 3D Skin Layers 的 SolidPixelWrapper，同 Axolotl 实现）：
- * 第二层每个不透明像素生成一个六面贴图的真实立方体，相邻不透明体素之间做面剔除，
- * 替换 GLTF 的零厚度面片层，使第二层边缘实心化。
+ * 第二层每个全不透明像素（alpha=255）生成一个六面贴图的真实立方体，相邻不透明
+ * 体素之间做面剔除，替换 GLTF 的零厚度面片层，使第二层边缘实心化；
+ * 半透明像素不体素化，由 GLTF 面片呈现（体素立方体间带重叠，半透明时会二次混合成条纹）。
  *
  * 体素构建于网格局部空间（与 GLTF 网格顶点同空间，Blockbench 的 Y 向下约定，
  * 面命名沿用 3D Skin Layers：down/up/north/south/west/east，UV 锚点记录时对
@@ -181,7 +182,7 @@ class SolidSkinLayer {
         if (u < 0 || v < 0 || u >= bitmapWidth || v * bitmapWidth + u >= pixels.size) {
             return false
         }
-        return pixels[v * bitmapWidth + u] ushr 24 >= ALPHA_THRESHOLD
+        return pixels[v * bitmapWidth + u] ushr 24 == OPAQUE_ALPHA
     }
 
     /** 生成一个体素的可见面（相邻体素不透明时剔除该面） */
@@ -338,8 +339,8 @@ class SolidSkinLayer {
     companion object {
         private const val TEXTURE_SIZE = 64f
 
-        // 与片元着色器 alpha<0.1 丢弃阈值一致
-        private const val ALPHA_THRESHOLD = 26
+        /** 体素化仅收全不透明像素：半透明像素回落零厚度面片，避免重叠立方体二次混合成条纹 */
+        private const val OPAQUE_ALPHA = 255
 
         // 面序号（3D Skin Layers 的模型空间面命名）
         private const val DOWN = 0
