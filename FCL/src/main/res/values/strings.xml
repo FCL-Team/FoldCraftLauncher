@@ -1075,6 +1075,8 @@
     <string name="settings_launcher_theme2_desc">Customize the secondary color (light theme).</string>
     <string name="settings_launcher_theme2_dark">Secondary Theme Color</string>
     <string name="settings_launcher_theme2_dark_desc">Customize the secondary color (dark theme).</string>
+    <string name="settings_launcher_color_alpha">Color Opacity</string>
+    <string name="settings_launcher_color_alpha_desc">Opacity of theme-derived colors (cards, pressed states, etc.), independent of the main color. 0 = fully transparent, 255 = fully opaque.</string>
     <string name="settings_launcher_theme_fetch_background">Extract from background image</string>
     <string name="settings_launcher_background_lt">Light Mode Launcher Background</string>
     <string name="settings_launcher_background_lt_desc">Customize the background image of the light theme. Maximum resolution: 5120x5120.</string>

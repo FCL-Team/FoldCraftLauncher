@@ -195,12 +195,14 @@ class LeftMenuAdapter(
     private fun bindSeekBar(holder: Holder, row: Row.SeekBarRow) {
         val binding = ItemMenuSeekbarBinding.bind(holder.itemView)
         binding.label.text = context.getString(row.labelRes)
+        // 先摘旧监听再设属性：setMax/setMin 的越界钳制与 setProgress 都会同步 property，
+        // 旧监听会把新行的数值误写进上一行的设置项；属性对齐后再挂新监听
+        holder.progressListener?.let { binding.seekBar.progressProperty().removeListener(it) }
+        binding.seekBar.addProgressListener()
         binding.seekBar.max = row.max
         binding.seekBar.min = row.min
-        row.suffix?.let { binding.seekBar.setSuffix(it) }
-        binding.seekBar.addProgressListener()
-        holder.progressListener?.let { binding.seekBar.progressProperty().removeListener(it) }
-        binding.seekBar.progressProperty().set(row.value())
+        binding.seekBar.setSuffix(row.suffix.orEmpty())
+        binding.seekBar.progress = row.value()
         val progressListener = InvalidationListener {
             listener.onSeekBarChange(row.tag, binding.seekBar.progressProperty().get())
         }

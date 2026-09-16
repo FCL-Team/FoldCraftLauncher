@@ -4,28 +4,31 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.edit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.JavaManager
 import com.mio.ui.adapter.ManageJavaItemAdapter
 import com.mio.ui.adapter.SpacingItemDecoration
+import com.mio.util.checkElfIsAndroid
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.DialogManageJavaBinding
+import com.tungsten.fcl.game.JarExecutorHelper
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.game.JavaVersion
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.io.FileUtils
+import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.io.File
 import java.io.InputStream
 import java.util.concurrent.CompletableFuture
-import com.mio.util.checkElfIsAndroid
 
 @SuppressLint("NotifyDataSetChanged")
-class JavaManageDialog(context: Context, val currentJava: String? = null, val onSelected: (String) -> Unit) : FCLDialog(context) {
+class JavaManageDialog(context: Context, currentJava: String? = null, val onSelected: (String) -> Unit) : FCLDialog(context) {
     private val versionList = mutableListOf<JavaVersion>()
     private var isLoading = false
     private val binding: DialogManageJavaBinding
@@ -64,6 +67,43 @@ class JavaManageDialog(context: Context, val currentJava: String? = null, val on
             if (isLoading) return@setOnClickListener
             onSelected.invoke("Auto")
             dismiss()
+        }
+        // 执行 Jar 文件：点击选择文件执行，长按输入自定义命令行参数直接执行
+        binding.jarExecute.setOnClickListener {
+            if (isLoading) return@setOnClickListener
+            val prefs = context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
+            if (prefs.getBoolean("showJarExecutorWarnDialog", true)) {
+                FCLAlertDialog.Builder(context)
+                    .setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+                    .setMessage(context.getString(R.string.jar_executor_warn))
+                    .setPositiveButton {
+                        prefs.edit { putBoolean("showJarExecutorWarnDialog", false) }
+                    }
+                    .setNegativeButton(null)
+                    .create()
+                    .show()
+            } else {
+                JarExecutorHelper.start(MainActivity.getInstance())
+            }
+        }
+        binding.jarExecute.setOnLongClickListener {
+            if (isLoading) return@setOnLongClickListener true
+            val dialog = EditDialog(context, "") { args ->
+                JarExecutorHelper.exec(
+                    MainActivity.getInstance(),
+                    null,
+                    JarExecutorHelper.getJava(null),
+                    args
+                )
+            }
+            dialog.setTitle(R.string.jar_execute_custom_args)
+            dialog.getEditText().apply {
+                hint = "-jar xxx"
+                setLines(1)
+                maxLines = 1
+            }
+            dialog.show()
+            true
         }
         binding.importJava.setOnClickListener {
             if (isLoading) return@setOnClickListener
@@ -183,7 +223,7 @@ class JavaManageDialog(context: Context, val currentJava: String? = null, val on
                 .setAlertLevel(
                     FCLAlertDialog.AlertLevel.ALERT
                 )
-                .setNegativeButton(context.getString(com.tungsten.fcl.R.string.dialog_positive)) {
+                .setNegativeButton(context.getString(R.string.dialog_positive)) {
 
                 }
                 .create()

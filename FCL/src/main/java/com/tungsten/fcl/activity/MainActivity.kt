@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -29,6 +28,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.graphics.toColorInt
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
@@ -46,10 +46,8 @@ import com.mio.util.GuideUtil.Companion.guideTarget
 import com.mio.util.ImageUtil
 import com.mio.util.getLocalizedText
 import com.mio.util.hasStringId
-import com.mio.util.showWarningDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
-import com.tungsten.fcl.game.JarExecutorHelper
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.setting.ConfigHolder
@@ -78,7 +76,6 @@ import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.util.Logging.LOG
 import com.tungsten.fclcore.util.fakefx.BindingMapping
 import com.tungsten.fcllibrary.component.FCLActivity
-import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLPage
@@ -200,29 +197,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 }
 
                 account.setOnClickListener(this@MainActivity)
-                version.setOnClickListener(this@MainActivity)
+                versionCard.setOnClickListener(this@MainActivity)
                 goSetting.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
                     RendererSelectDialog(this@MainActivity, false) {
                         onClick(view)
-                    }.show()
-                    true
-                }
-                jar.setOnClickListener(this@MainActivity)
-                jar.setOnLongClickListener {
-                    EditDialog(this@MainActivity) {
-                        JarExecutorHelper.exec(
-                            this@MainActivity,
-                            null,
-                            JarExecutorHelper.getJava(null),
-                            it
-                        )
-                    }.apply {
-                        setTitle(R.string.jar_execute_custom_args)
-                        binding.editText.hint = "-jar xxx"
-                        binding.editText.setLines(1)
-                        binding.editText.maxLines = 1
                     }.show()
                     true
                 }
@@ -625,7 +605,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         if (downloadPanelOpen) return
         binding.apply {
             val menuReady = rightMenu.visibility == View.VISIBLE &&
-                rightMenuContent.height > 0 && downloadPanel.height > 0
+                    rightMenuContent.height > 0 && downloadPanel.height > 0
             if (!menuReady) {
                 // 菜单隐藏或首帧未布局（如通知冷启动）：面板直接作为列内容（随菜单）出现
                 rightMenuContent.visibility = View.INVISIBLE
@@ -657,7 +637,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         if (!downloadPanelOpen) return
         binding.apply {
             val menuReady = rightMenu.visibility == View.VISIBLE &&
-                rightMenuContent.height > 0 && downloadPanel.height > 0
+                    rightMenuContent.height > 0 && downloadPanel.height > 0
             if (!menuReady) {
                 // 菜单隐藏或尚未布局：直接静态恢复内容
                 downloadPanel.apply { visibility = View.INVISIBLE; translationY = 0f }
@@ -700,25 +680,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 title.setTextWithAnim(getString(R.string.account))
                 uiManager.switchUI(uiManager.accountUI)
             }
-            if (view === version && uiManager.currentUI !== uiManager.versionUI) {
+            if (view === versionCard && uiManager.currentUI !== uiManager.versionUI) {
                 refreshMenuView(null)
                 title.setTextWithAnim(getString(R.string.version))
                 uiManager.switchUI(uiManager.versionUI)
             }
             if (view === back) {
                 uiManager.onBackPressed()
-            }
-            if (view === jar) {
-                if (sharedPreferences.getBoolean("showJarExecutorWarnDialog", true)) {
-                    showWarningDialog(this@MainActivity, getString(R.string.jar_executor_warn)) {
-                        sharedPreferences.edit {
-                            putBoolean("showJarExecutorWarnDialog", false)
-                        }
-                    }
-                    return
-                }
-                jar.isSelected = false
-                JarExecutorHelper.start(this@MainActivity)
             }
             if (view === start) {
                 if (!Controllers.isInitialized()) {
@@ -739,12 +707,23 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             }
             if (view === goSetting) {
                 val profile = Profiles.getSelectedProfile()
+                // 菜单项已处于选中态时 setSelected(true) 不再触发 onSelect，需兜底完成切页
                 if (profile.versionSetting.isUsesGlobal) {
                     setting.isSelected = true
+                    if (uiManager.currentUI !== uiManager.settingUI) {
+                        title.setTextWithAnim(getString(R.string.setting))
+                        uiManager.switchUI(uiManager.settingUI)
+                    }
                     val tab = uiManager.settingUI.tabLayout.getTabAt(0)
                     uiManager.settingUI.tabLayout.selectTab(tab)
                 } else {
                     manage.isSelected = true
+                    if (uiManager.currentUI !== uiManager.manageUI) {
+                        title.setTextWithAnim(getString(R.string.manage))
+                        // 走到该分支说明选中版本存在独立设置，selectedVersion 必不为 null
+                        uiManager.manageUI.setVersion(profile.selectedVersion!!, profile)
+                        uiManager.switchUI(uiManager.manageUI)
+                    }
                     val tab = uiManager.manageUI.tabLayout.getTabAt(0)
                     uiManager.manageUI.tabLayout.selectTab(tab)
                 }
@@ -853,7 +832,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     binding.versionProgress.visibility = View.GONE
                     binding.versionName.text = version
                     binding.versionName.isSelected = true
-//                    binding.versionHint.text = libraries.toString()
+                    binding.versionHint.text = libraries
+                    binding.versionHint.isVisible = true
                     binding.icon.setBackgroundDrawable(drawable)
                 }
             }
@@ -861,6 +841,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             isVersionLoading = false
             binding.versionProgress.visibility = View.GONE
             binding.versionName.text = getString(R.string.version_no_version)
+            binding.versionHint.isVisible = false
             binding.icon.setBackgroundDrawable(
                 AppCompatResources.getDrawable(
                     this,
@@ -896,19 +877,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         if (isDestroyed || isFinishing) return
         binding.apply {
             start.background = createBackground()
-            createBackground().apply {
-                version.background = this
-                jar.background = this
-            }
-            version.backgroundTintList =
-                ColorStateList.valueOf(ThemeEngine.getInstance().getTheme().getColor2()).apply {
-                    version.backgroundTintList = this
-                    jar.backgroundTintList = this
-                }
-            version.setTextColor(ThemeEngine.getInstance().getTheme().getColor2())
-            jar.setTextColor(ThemeEngine.getInstance().getTheme().getColor2())
         }
-
     }
 
     private fun createBackground(): GradientDrawable {
@@ -943,7 +912,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 it.interpolator(BounceInterpolator()).start()
             }
             AnimUtil.playTranslationY(
-                listOf(start, version, jar),
+                listOf(start, versionCard),
                 speed * 100L,
                 -200f,
                 0f

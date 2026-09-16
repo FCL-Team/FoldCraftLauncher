@@ -36,12 +36,21 @@
         app:layout_constraintTop_toBottomOf="@id/text" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/jar_execute"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/jar_execute"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/import_java"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:text="@string/import_java"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/jar_execute" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/auto_select"

@@ -73,6 +73,7 @@ enum class LauncherSettingTag {
     // SeekBar 行
     SEEKBAR_VIDEO_VOLUME,
     SEEKBAR_ANIMATION_SPEED,
+    SEEKBAR_COLOR_ALPHA,
     SEEKBAR_VIBRATION,
     SEEKBAR_THREADS,
 
@@ -210,6 +211,13 @@ class LauncherSettingAdapter(
                     Triple(ICON_SET, R.string.button_set, LauncherSettingTag.THEME_COLOR2_DARK_SET)
                 ),
                 R.string.settings_launcher_theme2_dark_desc,
+                group = SettingGroup.Theme
+            ),
+            Row.SeekBarRow(
+                R.string.settings_launcher_color_alpha, 255, 0,
+                { ThemeEngine.getInstance().getTheme().colorAlpha },
+                LauncherSettingTag.SEEKBAR_COLOR_ALPHA,
+                descriptionRes = R.string.settings_launcher_color_alpha_desc,
                 group = SettingGroup.Theme
             ),
             Row.ButtonRow(
@@ -576,10 +584,12 @@ class LauncherSettingAdapter(
     private fun bindSeekBar(holder: Holder, row: Row.SeekBarRow) {
         val binding = ItemLauncherSettingSeekbarBinding.bind(holder.itemView)
         binding.label.text = context.getString(row.labelRes)
+        // 先摘监听再设属性：setMax/setMin 对越界进度的钳制会同步回调 onProgressChanged，
+        // 旧监听仍持有上一行的 tag，会把钳制值写进上一行对应的设置项
+        binding.seekBar.setOnSeekBarChangeListener(null)
         binding.seekBar.max = row.max
         binding.seekBar.min = row.min
-        row.suffix?.let { binding.seekBar.setSuffix(it) }
-        binding.seekBar.setOnSeekBarChangeListener(null)
+        binding.seekBar.setSuffix(row.suffix.orEmpty())
         binding.seekBar.progress = row.value()
         binding.seekBar.setOnSeekBarChangeListener(object :
             android.widget.SeekBar.OnSeekBarChangeListener {

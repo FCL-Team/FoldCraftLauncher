@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.JsonParseException
+import com.mio.cache.VersionCache
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.PageVersionListBinding
@@ -22,6 +23,7 @@ import com.tungsten.fclcore.game.Version
 import com.tungsten.fclcore.mod.ModpackConfiguration
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
+import com.tungsten.fclcore.util.versioning.GameVersionNumber
 import com.tungsten.fcllibrary.component.ui.FCLPage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,12 +40,14 @@ import kotlin.io.path.isRegularFile
 import com.mio.util.getLocalizedText
 import com.mio.util.hasStringId
 
-class VersionListPage(context: Context?, id: Int) : FCLPage(context, id, R.layout.page_version_list),
+class VersionListPage(context: Context?, id: Int) :
+    FCLPage(context, id, R.layout.page_version_list),
     View.OnClickListener {
     private lateinit var binding: PageVersionListBinding
     private var adapter: VersionListAdapter? = null
-    private lateinit var children: MutableList<VersionListItem>
+    private lateinit var children: List<VersionListItem>
     private var textWatcher: TextWatcher? = null
+    private var searchWatcherAttached = false
     private var highlightedProfile: Profile? = null
     private var versionHighlightListener: Runnable? = null
     private var loadJob: Job? = null
@@ -65,7 +69,7 @@ class VersionListPage(context: Context?, id: Int) : FCLPage(context, id, R.layou
                     unregisterVersionsListener(it)
                     registerVersionsListener(it)
                 }
-                // 切换 Profile 时重载版本列表（不依赖刷新事件）
+                // 版本刷新事件走监听器；首次 attach 与切换 Profile 由 collect 首值承担，避免双重加载
                 profileCollectJob = activity.lifecycleScope.launch {
                     Profiles.selectedProfile.collect { profile ->
                         if (profile != null) loadVersions(profile)
@@ -183,133 +187,194 @@ class VersionListPage(context: Context?, id: Int) : FCLPage(context, id, R.layou
         job = MainActivity.getInstance().lifecycleScope.launch {
             binding.category.selectTab(binding.category.getTabAt(0))
             binding.search.removeTextChangedListener(textWatcher)
+            searchWatcherAttached = false
             binding.search.setText("")
             binding.refresh.isEnabled = false
-            binding.layout.visibility = View.GONE
-            binding.progress.visibility = View.VISIBLE
             if (profile == getSelectedProfile()) {
                 val repository = profile.repository
-                val result = withContext(Dispatchers.IO) {
-                    repository.displayVersions
-                        .parallel()
-                        .map { version: Version ->
-                            ensureActive()
-                            val game = profile.repository.getGameVersion(version.id)
-                            // 一次解析，analyzer 与图标判断复用（getVersionIconImage 不再重复 resolve）
-                            val resolved =
-                                profile.repository.getResolvedPreservingPatchesVersion(version.id)
-                            val libraries =
-                                StringBuilder(game.orElse(context.getString(R.string.message_unknown)))
-                            val analyzer = LibraryAnalyzer.analyze(resolved, game.orElse(null))
-                            for (mark in analyzer) {
-                                ensureActive()
-                                val libraryId = mark.libraryId
-                                val libraryVersion = mark.libraryVersion
-                                if (libraryId == LibraryAnalyzer.LibraryType.MINECRAFT.patchId) continue
-                                if (hasStringId(
-                                        context,
-                                        "install_installer_" + libraryId.replace("-", "_")
-                                    )
-                                ) {
-                                    libraries.append(", ").append(
-                                        getLocalizedText(
-                                            context,
-                                            "install_installer_" + libraryId.replace("-", "_")
-                                        )
-                                    )
-                                    if (libraryVersion != null) libraries.append(": ").append(
-                                        libraryVersion.replace(
-                                            ("(?i)$libraryId").toRegex(),
-                                            ""
-                                        )
-                                    )
-                                }
-                            }
-                            var tag: String? = null
-                            try {
-                                val config: ModpackConfiguration<*>? =
-                                    profile.repository.readModpackConfiguration<Any?>(
-                                        version.id
-                                    )
-                                if (config != null) tag = config.version
-                            } catch (e: IOException) {
-                                Logging.LOG.log(
-                                    Level.WARNING,
-                                    "Failed to read modpack configuration from $version",
-                                    e
-                                )
-                            } catch (e: JsonParseException) {
-                                Logging.LOG.log(
-                                    Level.WARNING,
-                                    "Failed to read modpack configuration from $version",
-                                    e
-                                )
-                            }
-                            val icon = repository.getVersionIconImage(analyzer, version.id)
-                            // Mod 数统计在 IO 线程并行流里完成（避免滑动时主线程目录 IO）；
-                            // use 关闭 DirectoryStream，否则文件描述符泄漏（CloseGuard 报资源未关闭）
-                            val modCount = runCatching {
-                                Files.list(repository.getModsDirectory(version.id)).use { stream ->
-                                    stream.filter { it.isRegularFile() }.count().toInt()
-                                }
-                            }.getOrNull() ?: 0
-                            return@map VersionListItem(
-                                profile,
-                                version.id,
-                                libraries.toString(),
-                                tag,
-                                icon,
-                                modCount
-                            )
-                        }
-                        .collect(Collectors.toList())
+                val ids = withContext(Dispatchers.IO) {
+                    repository.displayVersions.map { it.id }.collect(Collectors.toList())
                 }
+                // 命中会话级快照时跳过进度条即时渲染，最新数据随后台刷新覆盖
+                // （快照在创建时排序，绘制与后续 sameEntries 比较共用同一份，避免顺序不一致误判为数据变化）
+                val snapshotMap = VersionCache.get(profile)
+                val snapshot = sortEntries(ids.mapNotNull { snapshotMap[it] })
+                if (snapshot.isNotEmpty()) {
+                    showVersions(profile, snapshot)
+                } else {
+                    binding.layout.visibility = View.GONE
+                    binding.progress.visibility = View.VISIBLE
+                }
+                registerHighlightListener(profile)
+                val entries = computeEntries(profile)
                 // 加载期间可能已切换 profile 或重新加载，放弃过期结果
                 if (loadJob !== job) return@launch
-                children = result
-                if (profile == getSelectedProfile()) {
-                    if (adapter == null) {
-                        adapter = VersionListAdapter(
-                            context,
-                            children
-                        )
-                        binding.versionList.adapter = adapter
-                        binding.versionList.layoutManager = LinearLayoutManager(context)
-                    } else {
-                        adapter!!.updateVersionList(children)
-                    }
-                    binding.refresh.isEnabled = true
-                    if (children.isNotEmpty()) {
-                        binding.layout.visibility = View.VISIBLE
-                    }
-                    binding.progress.visibility = View.GONE
-                    binding.search.addTextChangedListener(textWatcher)
-                    val selected = children.find { it.selectedProperty().get() }
-                    if (selected != null) {
-                        binding.versionList.scrollToPosition(children.indexOf(selected))
-                    }
-                }
-                // 版本选中高亮：监听 profile 版本变化时更新（替代 fakefx bind）
-                versionHighlightListener?.let { highlightedProfile?.removeSelectedVersionListener(it) }
-                val highlightListener = Runnable {
-                    children.forEach { item ->
-                        item.selectedProperty().set(profile.selectedVersion == item.version)
-                    }
-                }
-                versionHighlightListener = highlightListener
-                highlightedProfile = profile
-                profile.addSelectedVersionListener(highlightListener)
-                children.forEach { item ->
-                    item.selectedProperty().set(profile.selectedVersion == item.version)
+                VersionCache.put(profile, entries)
+                val sorted = sortEntries(entries)
+                // 与快照一致时跳过重绘，避免列表无意义地重放入场动画
+                if (snapshot.isEmpty() || !sameEntries(snapshot, sorted)) {
+                    showVersions(profile, sorted)
                 }
             }
         }
         loadJob = job
     }
 
+    /**
+     * 在主线程应用一批版本条目：刷新适配器、恢复搜索框过滤、滚动到选中版本
+     */
+    private fun showVersions(profile: Profile, entries: List<VersionCache.Entry>) {
+        children = entries.map {
+            VersionListItem(profile, it.id, it.libraries, it.tag, it.newIcon(), it.modCount)
+        }
+        if (adapter == null) {
+            adapter = VersionListAdapter(context, children)
+            binding.versionList.adapter = adapter
+            binding.versionList.layoutManager = LinearLayoutManager(context)
+        } else {
+            adapter!!.updateVersionList(children)
+        }
+        binding.refresh.isEnabled = true
+        if (children.isNotEmpty()) {
+            binding.layout.visibility = View.VISIBLE
+        }
+        binding.progress.visibility = View.GONE
+        if (!searchWatcherAttached) {
+            binding.search.addTextChangedListener(textWatcher)
+            searchWatcherAttached = true
+        }
+        val selected = children.find { it.selectedProperty().get() }
+        if (selected != null) {
+            binding.versionList.scrollToPosition(children.indexOf(selected))
+        }
+    }
+
+    /**
+     * 在 IO 线程并行计算各版本的派生数据（组件摘要、整合包标签、图标、Mod 数、真实游戏版本）
+     */
+    private suspend fun computeEntries(profile: Profile): List<VersionCache.Entry> =
+        withContext(Dispatchers.IO) {
+            val repository = profile.repository
+            repository.displayVersions
+                .parallel()
+                .map { version: Version ->
+                    ensureActive()
+                    val game = profile.repository.getGameVersion(version.id)
+                    // 一次解析，analyzer 与图标判断复用（getVersionIconImage 不再重复 resolve）
+                    val resolved =
+                        profile.repository.getResolvedPreservingPatchesVersion(version.id)
+                    val libraries =
+                        StringBuilder(game.orElse(context.getString(R.string.message_unknown)))
+                    val analyzer = LibraryAnalyzer.analyze(resolved, game.orElse(null))
+                    for (mark in analyzer) {
+                        ensureActive()
+                        val libraryId = mark.libraryId
+                        val libraryVersion = mark.libraryVersion
+                        if (libraryId == LibraryAnalyzer.LibraryType.MINECRAFT.patchId) continue
+                        if (hasStringId(
+                                context,
+                                "install_installer_" + libraryId.replace("-", "_")
+                            )
+                        ) {
+                            libraries.append(", ").append(
+                                getLocalizedText(
+                                    context,
+                                    "install_installer_" + libraryId.replace("-", "_")
+                                )
+                            )
+                            if (libraryVersion != null) libraries.append(": ").append(
+                                libraryVersion.replace(
+                                    ("(?i)$libraryId").toRegex(),
+                                    ""
+                                )
+                            )
+                        }
+                    }
+                    var tag: String? = null
+                    try {
+                        val config: ModpackConfiguration<*>? =
+                            profile.repository.readModpackConfiguration<Any?>(
+                                version.id
+                            )
+                        if (config != null) tag = config.version
+                    } catch (e: IOException) {
+                        Logging.LOG.log(
+                            Level.WARNING,
+                            "Failed to read modpack configuration from $version",
+                            e
+                        )
+                    } catch (e: JsonParseException) {
+                        Logging.LOG.log(
+                            Level.WARNING,
+                            "Failed to read modpack configuration from $version",
+                            e
+                        )
+                    }
+                    val icon = repository.getVersionIconImage(analyzer, version.id)
+                    val iconKey = repository.getVersionIconFile(version.id).lastModified()
+                    // Mod 数统计在 IO 线程并行流里完成（避免滑动时主线程目录 IO）；
+                    // use 关闭 DirectoryStream，否则文件描述符泄漏（CloseGuard 报资源未关闭）
+                    val modCount = runCatching {
+                        Files.list(repository.getModsDirectory(version.id)).use { stream ->
+                            stream.filter { it.isRegularFile() }.count().toInt()
+                        }
+                    }.getOrNull() ?: 0
+                    VersionCache.Entry(
+                        version.id,
+                        GameVersionNumber.asGameVersion(game),
+                        libraries.toString(),
+                        tag,
+                        icon.constantState!!,
+                        modCount,
+                        iconKey
+                    )
+                }
+                .collect(Collectors.toList())
+        }
+
+    /**
+     * 按真实游戏版本从大到小排序（GameVersionNumber 比较，无法识别的版本排在最后），同版本时按 id 倒序保持稳定
+     */
+    private fun sortEntries(entries: List<VersionCache.Entry>): List<VersionCache.Entry> {
+        return entries.sortedWith(
+            compareByDescending<VersionCache.Entry> { it.gameVersion }
+                .thenByDescending { it.id }
+        )
+    }
+
+    private fun sameEntries(
+        a: List<VersionCache.Entry>,
+        b: List<VersionCache.Entry>
+    ): Boolean {
+        if (a.size != b.size) return false
+        return a.zip(b).all { (x, y) ->
+            x.id == y.id && x.libraries == y.libraries && x.tag == y.tag
+                    && x.modCount == y.modCount && x.iconKey == y.iconKey
+        }
+    }
+
+    /**
+     * 版本选中高亮：监听 profile 版本变化时更新（替代 fakefx bind）
+     */
+    private fun registerHighlightListener(profile: Profile) {
+        versionHighlightListener?.let { highlightedProfile?.removeSelectedVersionListener(it) }
+        val highlightListener = Runnable {
+            if (!::children.isInitialized) return@Runnable
+            children.forEach { item ->
+                item.selectedProperty().set(profile.selectedVersion == item.version)
+            }
+        }
+        versionHighlightListener = highlightListener
+        highlightedProfile = profile
+        profile.addSelectedVersionListener(highlightListener)
+    }
+
     override fun onClick(view: View?) {
         if (view === binding.refresh) {
-            getSelectedProfile().repository.refreshVersionsAsync().start()
+            val profile = getSelectedProfile()
+            // 强制刷新：失效快照缓存，刷新完成的事件回调走冷加载（显示进度条并全量重绘）
+            VersionCache.invalidate(profile)
+            profile.repository.refreshVersionsAsync().start()
         }
         if (view === binding.newProfile) {
             val dialog = AddProfileDialog(context)

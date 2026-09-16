@@ -48,8 +48,6 @@ class VersionSetting : Cloneable {
      * 1. Global settings.
      * 2. Version settings.
      * If a version claims that it uses global settings, its version setting will be disabled.
-     *
-     * Defaults false because if one version uses global first, custom version file will not be generated.
      */
     var isUsesGlobal: Boolean = true
         set(value) {
@@ -312,7 +310,7 @@ class VersionSetting : Cloneable {
             )
             if (maxMemoryN <= 0) maxMemoryN = MemoryUtils.findBestRAMAllocation(FCLApp.getAppContext())
             return VersionSetting().also { vs ->
-                vs.isUsesGlobal = json["usesGlobal"]?.asBoolean ?: false
+                vs.isUsesGlobal = json["usesGlobal"]?.asBoolean ?: true
                 vs.javaArgs = json["javaArgs"]?.asString ?: ""
                 vs.minecraftArgs = json["minecraftArgs"]?.asString ?: ""
                 vs.maxMemory = maxMemoryN
