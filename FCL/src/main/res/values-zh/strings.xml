@@ -1296,4 +1296,8 @@
     <string name="animation_idle_variant_1">待机变体 1</string>
     <string name="animation_idle_variant_2">待机变体 2</string>
     <string name="animation_idle_variant_3">待机变体 3</string>
+    <string name="quark_promo_title">支持 FCL</string>
+    <string name="quark_promo_message">这是你第 %1$d 次启动游戏！\n\n如果 FCL 对你有帮助，欢迎动动手指打开夸克网盘，注册或登录后点击保存到网盘（不用下载），就是对我们最大的支持，十分感谢～</string>
+    <string name="quark_promo_open">打开夸克网盘</string>
+    <string name="quark_promo_start">开始游戏</string>
 </resources>

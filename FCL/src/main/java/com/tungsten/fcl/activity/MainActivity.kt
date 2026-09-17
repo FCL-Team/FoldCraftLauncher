@@ -35,6 +35,7 @@ import androidx.lifecycle.lifecycleScope
 import com.mio.download.DownloadManager
 import com.mio.manager.RendererManager
 import com.mio.plugin.DriverPlugin
+import com.mio.promo.QuarkPromo
 import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
@@ -695,15 +696,17 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         .interpolator(OvershootInterpolator()).start()
                     return
                 }
-                val selectedProfile = Profiles.getSelectedProfile()
-                DriverPlugin.selected = runCatching {
-                    DriverPlugin.driverList.find {
-                        it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
-                    }
-                }.getOrNull() ?: DriverPlugin.driverList[0]
-                refreshScreenSize()
-                DisplayUtil.refreshDisplayMetrics(this@MainActivity)
-                Versions.launch(this@MainActivity, selectedProfile)
+                QuarkPromo.interceptLaunch(this@MainActivity) {
+                    val selectedProfile = Profiles.getSelectedProfile()
+                    DriverPlugin.selected = runCatching {
+                        DriverPlugin.driverList.find {
+                            it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
+                        }
+                    }.getOrNull() ?: DriverPlugin.driverList[0]
+                    refreshScreenSize()
+                    DisplayUtil.refreshDisplayMetrics(this@MainActivity)
+                    Versions.launch(this@MainActivity, selectedProfile)
+                }
             }
             if (view === goSetting) {
                 val profile = Profiles.getSelectedProfile()

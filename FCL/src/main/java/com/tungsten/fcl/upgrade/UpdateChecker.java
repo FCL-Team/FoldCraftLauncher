@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
+import com.mio.promo.QuarkPromo;
 import com.tungsten.fcl.R;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -16,6 +17,7 @@ import com.tungsten.fclcore.util.io.NetworkUtils;
 import com.tungsten.fcllibrary.util.LocaleUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class UpdateChecker {
 
@@ -57,6 +59,10 @@ public class UpdateChecker {
             }
             String res = NetworkUtils.doGet(NetworkUtils.toURL(LocaleUtils.isChinese(context) ? UPDATE_CHECK_URL_CN : UPDATE_CHECK_URL));
             ArrayList<RemoteVersion> versions = JsonUtils.GSON.fromJson(res, new TypeToken<ArrayList<RemoteVersion>>(){}.getType());
+            // 顺带缓存最新网盘链接，供夸克网盘推广弹窗使用；拉取失败不会走到这里，沿用本地缓存
+            versions.stream()
+                    .max(Comparator.comparingInt(RemoteVersion::getVersionCode))
+                    .ifPresent(version -> QuarkPromo.updateNetdiskUrl(context, version.getNetdiskUrl()));
             for (RemoteVersion version : versions) {
                 if (version.getVersionCode() > getCurrentVersionCode(context)) {
                     if (showBeta || !version.isBeta()) {
