@@ -47,8 +47,9 @@ class EditViewDialog(
 
     init {
         setCancelable(false)
-        // 游戏内悬浮面板：与游戏菜单一致的半透明背景
-        window?.setBackgroundDrawableResource(R.drawable.bg_game_menu)
+        // 游戏内悬浮面板：游戏菜单配色 + 与 dialog_background 相同的 10dp inset，
+        // 全高窗口靠背景内缩留出与屏幕边缘的间隔
+        window?.setBackgroundDrawableResource(R.drawable.bg_game_menu_inset)
         window?.setLayout(ConvertUtils.dip2px(context, 500f), ViewGroup.LayoutParams.MATCH_PARENT)
         binding = DialogEditViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
