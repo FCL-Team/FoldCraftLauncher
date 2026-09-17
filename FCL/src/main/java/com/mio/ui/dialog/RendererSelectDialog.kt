@@ -35,10 +35,11 @@ class RendererSelectDialog(
         val binding = DialogRendererSelectBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.title.text = context.getString(R.string.settings_fcl_renderer)
+        val currentId = currentRendererId()
         val adapter = RendererSelectItemAdapter(
             context,
             RendererManager.rendererList,
-            currentRendererId()
+            currentId
         ) { renderer ->
             val versionSetting =
                 if (isGlobal) Profiles.getSelectedProfile().globalVersionSetting else Profiles.getSelectedProfile().versionSetting
@@ -51,6 +52,11 @@ class RendererSelectDialog(
             SpacingItemDecoration(ConvertUtils.dip2px(context, 10f))
         )
         binding.recyclerView.adapter = adapter
+        // 打开时定位到当前选中的渲染器（首次布局前调用，LayoutManager 会从该位置开始布局）
+        val selectedIndex = RendererManager.rendererList.indexOfFirst { it.id == currentId }
+        if (selectedIndex > 0) {
+            binding.recyclerView.scrollToPosition(selectedIndex)
+        }
         binding.refresh.setOnClickListener {
             RendererManager.refresh(context)
             // rendererList 是同一实例被 clear 后重填，直接全量刷新
