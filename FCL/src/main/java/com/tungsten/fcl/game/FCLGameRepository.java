@@ -31,15 +31,14 @@ import androidx.appcompat.content.res.AppCompatResources;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.mio.manager.RendererManager;
+import com.mio.util.AndroidUtilKt;
 import com.mio.util.LauncherUtilKt;
 import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.VersionSetting;
-import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.event.Event;
@@ -53,7 +52,6 @@ import com.tungsten.fclcore.game.VersionNotFoundException;
 import com.tungsten.fclcore.mod.ModAdviser;
 import com.tungsten.fclcore.mod.Modpack;
 import com.tungsten.fclcore.mod.ModpackConfiguration;
-import com.tungsten.fclcore.mod.ModpackProvider;
 import com.tungsten.fclcore.util.Lang;
 import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
@@ -363,7 +361,18 @@ public class FCLGameRepository extends DefaultGameRepository {
     private static final Map<Integer, Drawable.ConstantState> DRAWABLE_CACHE = new ConcurrentHashMap<>();
 
     private Drawable getDrawable(int id) {
-        return DRAWABLE_CACHE.computeIfAbsent(id, k -> AppCompatResources.getDrawable(FCLApp.getAppContext(), k).getConstantState()).newDrawable();
+        return Objects.requireNonNull(DRAWABLE_CACHE.computeIfAbsent(id, k -> {
+            // 禁用解码时的密度预缩放，保留像素风图标的原始像素，缩放统一推迟到绘制阶段
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            opts.inScaled = false;
+            Bitmap bitmap = BitmapFactory.decodeResource(FCLApp.getAppContext().getResources(), k, opts);
+            if (bitmap != null) {
+                BitmapDrawable drawable = new BitmapDrawable(FCLApp.getAppContext().getResources(), bitmap);
+                drawable.getPaint().setFilterBitmap(bitmap.getWidth() > PIXEL_ICON_MAX_SIZE || bitmap.getHeight() > PIXEL_ICON_MAX_SIZE);
+                return drawable.getConstantState();
+            }
+            return Objects.requireNonNull(AppCompatResources.getDrawable(FCLApp.getAppContext(), k)).getConstantState();
+        })).newDrawable();
     }
 
     public void saveVersionSetting(String id) {
