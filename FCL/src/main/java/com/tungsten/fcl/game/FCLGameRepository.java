@@ -22,6 +22,8 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -316,14 +318,25 @@ public class FCLGameRepository extends DefaultGameRepository {
     }
 
     /**
+     * 自定义图标 icon.png 的像素风尺寸上限：不超过该尺寸的图标按像素风处理，
+     * 放大绘制用最近邻插值保持像素锐利，否则保留默认双线性避免高分辨率图标缩小走样
+     */
+    private static final int PIXEL_ICON_MAX_SIZE = 128;
+
+    /**
      * 使用已有的库分析结果判断图标（避免列表加载时重复 analyze）
      */
     @SuppressLint("UseCompatLoadingForDrawables")
     public Drawable getVersionIconImage(LibraryAnalyzer analyze, String id) {
         File iconFile = getVersionIconFile(id);
-        if (iconFile.exists())
-            return BitmapDrawable.createFromPath(iconFile.getAbsolutePath());
-        else {
+        if (iconFile.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(iconFile.getAbsolutePath());
+            if (bitmap == null)
+                return getDrawable(R.drawable.img_grass);
+            BitmapDrawable drawable = new BitmapDrawable(FCLApp.getAppContext().getResources(), bitmap);
+            drawable.getPaint().setFilterBitmap(bitmap.getWidth() > PIXEL_ICON_MAX_SIZE || bitmap.getHeight() > PIXEL_ICON_MAX_SIZE);
+            return drawable;
+        } else {
             if (analyze.has(LibraryAnalyzer.LibraryType.FORGE))
                 return getDrawable(R.drawable.img_forge);
             else if (analyze.has(LibraryAnalyzer.LibraryType.CLEANROOM))
