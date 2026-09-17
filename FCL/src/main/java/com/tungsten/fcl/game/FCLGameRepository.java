@@ -27,14 +27,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-import androidx.appcompat.content.res.AppCompatResources;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.mio.manager.RendererManager;
 import com.mio.util.AndroidUtilKt;
 import com.mio.util.LauncherUtilKt;
+import com.mio.util.PixelIconKt;
 import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
@@ -316,12 +315,6 @@ public class FCLGameRepository extends DefaultGameRepository {
     }
 
     /**
-     * 自定义图标 icon.png 的像素风尺寸上限：不超过该尺寸的图标按像素风处理，
-     * 放大绘制用最近邻插值保持像素锐利，否则保留默认双线性避免高分辨率图标缩小走样
-     */
-    private static final int PIXEL_ICON_MAX_SIZE = 128;
-
-    /**
      * 使用已有的库分析结果判断图标（避免列表加载时重复 analyze）
      */
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -332,7 +325,7 @@ public class FCLGameRepository extends DefaultGameRepository {
             if (bitmap == null)
                 return getDrawable(R.drawable.img_grass);
             BitmapDrawable drawable = new BitmapDrawable(FCLApp.getAppContext().getResources(), bitmap);
-            drawable.getPaint().setFilterBitmap(bitmap.getWidth() > PIXEL_ICON_MAX_SIZE || bitmap.getHeight() > PIXEL_ICON_MAX_SIZE);
+            PixelIconKt.applyPixelFilter(drawable, bitmap);
             return drawable;
         } else {
             if (analyze.has(LibraryAnalyzer.LibraryType.FORGE))
@@ -354,25 +347,8 @@ public class FCLGameRepository extends DefaultGameRepository {
         }
     }
 
-    /**
-     * 图标资源状态缓存：newDrawable 每次返回独立实例，避免共享 Drawable 的 bounds 被
-     * 其他控件（如版本列表 item 设置 background）修改后互相污染（主界面 icon 放大显示不完全）
-     */
-    private static final Map<Integer, Drawable.ConstantState> DRAWABLE_CACHE = new ConcurrentHashMap<>();
-
     private Drawable getDrawable(int id) {
-        return Objects.requireNonNull(DRAWABLE_CACHE.computeIfAbsent(id, k -> {
-            // 禁用解码时的密度预缩放，保留像素风图标的原始像素，缩放统一推迟到绘制阶段
-            BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inScaled = false;
-            Bitmap bitmap = BitmapFactory.decodeResource(FCLApp.getAppContext().getResources(), k, opts);
-            if (bitmap != null) {
-                BitmapDrawable drawable = new BitmapDrawable(FCLApp.getAppContext().getResources(), bitmap);
-                drawable.getPaint().setFilterBitmap(bitmap.getWidth() > PIXEL_ICON_MAX_SIZE || bitmap.getHeight() > PIXEL_ICON_MAX_SIZE);
-                return drawable.getConstantState();
-            }
-            return Objects.requireNonNull(AppCompatResources.getDrawable(FCLApp.getAppContext(), k)).getConstantState();
-        })).newDrawable();
+        return PixelIconKt.pixelAwareIcon(FCLApp.getAppContext(), id);
     }
 
     public void saveVersionSetting(String id) {

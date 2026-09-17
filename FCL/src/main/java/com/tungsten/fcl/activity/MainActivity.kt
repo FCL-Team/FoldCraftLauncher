@@ -22,7 +22,6 @@ import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -46,6 +45,7 @@ import com.mio.util.GuideUtil.Companion.guideTarget
 import com.mio.util.ImageUtil
 import com.mio.util.getLocalizedText
 import com.mio.util.hasStringId
+import com.mio.util.pixelAwareIcon
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.TexturesLoader
@@ -842,12 +842,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             binding.versionProgress.visibility = View.GONE
             binding.versionName.text = getString(R.string.version_no_version)
             binding.versionHint.isVisible = false
-            binding.icon.setBackgroundDrawable(
-                AppCompatResources.getDrawable(
-                    this,
-                    R.drawable.img_grass
-                )
-            )
+            binding.icon.setBackgroundDrawable(pixelAwareIcon(this, R.drawable.img_grass))
         }
     }
 

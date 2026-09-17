@@ -17,10 +17,12 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.annotation.DrawableRes;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
 import com.mio.util.AndroidUtilKt;
+import com.mio.util.PixelIconKt;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
@@ -63,7 +65,7 @@ public class InstallerItem {
         this.context = context;
         this.id = id.getPatchId();
         this.name = AndroidUtilKt.getLocalizedText(context, "install_installer_" + id.getPatchId().replace(".", "_").replace("-", "_"));
-        this.icon = getDrawable(context, id);
+        this.icon = PixelIconKt.pixelAwareIcon(context, getIconRes(id));
     }
 
     public String getLibraryId() {
@@ -84,27 +86,27 @@ public class InstallerItem {
         this.removable.set(removable);
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    private Drawable getDrawable(Context context, LibraryAnalyzer.LibraryType id) {
+    @DrawableRes
+    private int getIconRes(LibraryAnalyzer.LibraryType id) {
         switch (id) {
             case FORGE:
-                return context.getDrawable(R.drawable.img_forge);
+                return R.drawable.img_forge;
             case CLEANROOM:
-                return context.getDrawable(R.drawable.img_cleanroom);
+                return R.drawable.img_cleanroom;
             case NEO_FORGE:
-                return context.getDrawable(R.drawable.img_neoforge);
+                return R.drawable.img_neoforge;
             case LITELOADER:
-                return context.getDrawable(R.drawable.img_chicken);
+                return R.drawable.img_chicken;
             case OPTIFINE:
-                return context.getDrawable(R.drawable.img_optifine);
+                return R.drawable.img_optifine;
             case FABRIC:
             case FABRIC_API:
-                return context.getDrawable(R.drawable.img_fabric);
+                return R.drawable.img_fabric;
             case QUILT:
             case QUILT_API:
-                return context.getDrawable(R.drawable.img_quilt);
+                return R.drawable.img_quilt;
             default:
-                return context.getDrawable(R.drawable.img_grass);
+                return R.drawable.img_grass;
         }
     }
 

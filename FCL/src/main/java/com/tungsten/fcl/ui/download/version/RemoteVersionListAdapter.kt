@@ -1,6 +1,5 @@
 package com.tungsten.fcl.ui.download.version
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import android.content.res.ColorStateList
@@ -13,6 +12,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.ui.adapter.ViewHolder
 import com.mio.util.AnimUtil
+import com.mio.util.pixelAwareIcon
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemRemoteVersionBinding
 import com.tungsten.fclcore.download.ComponentRemoteVersion
@@ -118,61 +118,39 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
     }
 
 
-    @SuppressLint("UseCompatLoadingForDrawables")
     private fun getIcon(remoteVersion: ComponentRemoteVersion?): Drawable? {
         when (remoteVersion) {
-            is LiteLoaderRemoteVersion -> return AppCompatResources.getDrawable(
-                context,
-                R.drawable.img_chicken
-            )
+            is LiteLoaderRemoteVersion -> return pixelAwareIcon(context, R.drawable.img_chicken)
 
-            is OptiFineRemoteVersion -> return AppCompatResources.getDrawable(
-                context,
-                R.drawable.img_optifine
-            )
+            is OptiFineRemoteVersion -> return pixelAwareIcon(context, R.drawable.img_optifine)
 
-            is ForgeRemoteVersion -> return AppCompatResources.getDrawable(
-                context,
-                R.drawable.img_forge
-            )
+            is ForgeRemoteVersion -> return pixelAwareIcon(context, R.drawable.img_forge)
 
-            is NeoForgeRemoteVersion -> return AppCompatResources.getDrawable(
-                context,
-                R.drawable.img_neoforge
-            )
+            is NeoForgeRemoteVersion -> return pixelAwareIcon(context, R.drawable.img_neoforge)
 
-            is FabricRemoteVersion, is FabricAPIRemoteVersion -> return AppCompatResources.getDrawable(
-                context,
-                R.drawable.img_fabric
-            )
+            is FabricRemoteVersion, is FabricAPIRemoteVersion -> return pixelAwareIcon(context, R.drawable.img_fabric)
 
-            is QuiltRemoteVersion, is QuiltAPIRemoteVersion -> return AppCompatResources.getDrawable(
-                context,
-                R.drawable.img_quilt
-            )
+            is QuiltRemoteVersion, is QuiltAPIRemoteVersion -> return pixelAwareIcon(context, R.drawable.img_quilt)
 
             is GameRemoteVersion -> {
                 when (remoteVersion.versionType) {
-                    ComponentRemoteVersion.Type.RELEASE -> return AppCompatResources.getDrawable(
-                        context,
-                        R.drawable.img_grass
-                    )
+                    ComponentRemoteVersion.Type.RELEASE -> return pixelAwareIcon(context, R.drawable.img_grass)
 
                     ComponentRemoteVersion.Type.PENDING, ComponentRemoteVersion.Type.UNOBFUSCATED, ComponentRemoteVersion.Type.SNAPSHOT -> {
                         if (GameVersionNumber.asGameVersion(remoteVersion.gameVersion)
                                 .isAprilFools()
                         ) {
-                            return AppCompatResources.getDrawable(context, R.drawable.april_fools)
+                            return pixelAwareIcon(context, R.drawable.april_fools)
                         }
-                        return AppCompatResources.getDrawable(context, R.drawable.img_command)
+                        return pixelAwareIcon(context, R.drawable.img_command)
                     }
 
-                    else -> return AppCompatResources.getDrawable(context, R.drawable.img_craft_table)
+                    else -> return pixelAwareIcon(context, R.drawable.img_craft_table)
                 }
             }
 
             else -> {
-                return AppCompatResources.getDrawable(context, R.drawable.img_grass)
+                return pixelAwareIcon(context, R.drawable.img_grass)
             }
         }
     }
