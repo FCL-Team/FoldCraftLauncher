@@ -39,21 +39,25 @@ object SkinAnimations {
         entries.drop(1).filter { it.id.startsWith("idle_sub") }.map { it.id }
 }
 
-/** 恢复上次选择的动画（异步读取，读取完成后切换） */
-fun Context.restoreSkinAnimation(renderer: SkinRenderer) {
+/** 恢复上次选择的动画与 3D 皮肤层开关（异步读取，读取完成后应用） */
+fun Context.restoreSkinSettings(renderer: SkinRenderer) {
     if (this !is LifecycleOwner) return
     lifecycleScope.launch {
-        val id = skinAnimationDataStore.data.first().animationId
-        renderer.playAnimation(SkinAnimations.validId(id))
+        val setting = skinAnimationDataStore.data.first()
+        renderer.playAnimation(SkinAnimations.validId(setting.animationId))
+        renderer.solidLayerEnabled = setting.solidLayerEnabled
     }
 }
 
-/** 保存当前动画为下次启动的选择 */
-fun Context.saveSkinAnimation(renderer: SkinRenderer) {
+/** 保存当前动画与 3D 皮肤层开关为下次启动的选择 */
+fun Context.saveSkinSettings(renderer: SkinRenderer) {
     if (this !is LifecycleOwner) return
     lifecycleScope.launch {
         skinAnimationDataStore.updateData {
-            SkinAnimationSetting(animationId = renderer.animationId)
+            SkinAnimationSetting(
+                animationId = renderer.animationId,
+                solidLayerEnabled = renderer.solidLayerEnabled
+            )
         }
     }
 }

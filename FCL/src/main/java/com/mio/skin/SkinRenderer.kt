@@ -35,8 +35,16 @@ class SkinRenderer(context: Context) {
     var animationId: String = SkinAnimations.DEFAULT_ID
         private set
 
+    /** 体素化 3D 皮肤层开关（任意线程可写、渲染线程读），关闭时第二层回落零厚度面片 */
+    @Volatile
+    var solidLayerEnabled = true
+        set(value) {
+            field = value
+            model.setSolidLayerEnabled(value)
+        }
+
     init {
-        // 默认播放待机（账户弹窗等不调用 restoreSkinAnimation 的场景也有动画）
+        // 默认播放待机（账户弹窗等不调用 restoreSkinSettings 的场景也有动画）
         model.playAnimation(animationId)
     }
 

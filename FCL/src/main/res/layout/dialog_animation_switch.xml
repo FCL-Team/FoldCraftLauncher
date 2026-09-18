@@ -15,9 +15,40 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:singleLine="true"
-            android:text="@string/animation_select"
+            android:text="@string/skin_settings"
             android:textSize="16sp"
             android:textStyle="bold" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/solid_layer_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="12dp">
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="@string/skin_solid_layer"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <com.tungsten.fcllibrary.component.view.FCLSwitch
+                android:id="@+id/solid_layer_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/container"

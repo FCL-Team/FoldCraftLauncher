@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.appcompat.widget.LinearLayoutCompat
 import com.mio.ui.applySelectableItemStyle
+import com.mio.ui.dialogCardBackground
 import com.mio.util.getScreenWidth
 import com.tungsten.fcl.databinding.DialogAnimationSwitchBinding
 import com.tungsten.fcl.databinding.ItemAnimationBinding
@@ -16,13 +17,21 @@ fun interface OnAnimationSelectedListener {
     fun onSelected(clipId: String)
 }
 
+/** 3D 皮肤层开关回调（SAM 接口，便于 Java 侧 lambda 调用），参数为新的开关状态 */
+fun interface OnSolidLayerToggledListener {
+    fun onToggled(enabled: Boolean)
+}
+
 /**
- * 动画切换弹窗：列出全部支持的动画并标记当前项，点击即切换并关闭。
+ * 皮肤模型设置弹窗：顶部 3D 皮肤层开关，下方列出全部支持的动画并标记当前项；
+ * 点动画条目即切换并关闭，开关切换即时生效且保持弹窗打开。
  */
 class AnimationDialog(
     context: Context,
     private val currentId: String?,
-    private val onSelected: OnAnimationSelectedListener
+    private val solidLayerEnabled: Boolean,
+    private val onSelected: OnAnimationSelectedListener,
+    private val onSolidLayerToggled: OnSolidLayerToggledListener
 ) : FCLDialog(context) {
 
     private val binding = DialogAnimationSwitchBinding.inflate(layoutInflater)
@@ -31,6 +40,13 @@ class AnimationDialog(
     init {
         setContentView(binding.root)
         setCancelable(true)
+
+        binding.solidLayerSwitch.isChecked = solidLayerEnabled
+        binding.solidLayerRow.background = dialogCardBackground(context, density)
+        binding.solidLayerRow.setOnClickListener { binding.solidLayerSwitch.toggle() }
+        binding.solidLayerSwitch.setOnCheckedChangeListener { _, checked ->
+            onSolidLayerToggled.onToggled(checked)
+        }
 
         SkinAnimations.entries.forEach { entry ->
             val selected = entry.id == currentId

@@ -208,6 +208,9 @@ class GltfModel private constructor() {
 
     // ---- 对外 API ----
 
+    /** 体素化第二层开关：关闭时 *_Layer 网格回落零厚度面片（渲染线程读写） */
+    var solidLayerEnabled = true
+
     fun findClip(id: String): GltfClip? = clips.firstOrNull { it.name == id }
 
     /** 当前 clip 的播放时间（无 clip 时为 0） */
@@ -250,7 +253,8 @@ class GltfModel private constructor() {
     /** 按 material 分组绘制：capeOnly=true 画披风网格，false 画其余（皮肤）网格。
      * 分两遍：第一遍画基础网格与全不透明体素立方体（正常深度写入）；第二遍对已体素化
      * 部件回落绘制零厚度面片呈现半透明像素，期间关闭深度写入（不遮挡披风等后续透明
-     * 混合）并把深度比较收紧为 GL_LESS（面片位于体素表面内侧，深度量化同值时不盖染立方体） */
+     * 混合）并把深度比较收紧为 GL_LESS（面片位于体素表面内侧，深度量化同值时不盖染立方体）。
+     * [solidLayerEnabled] 关闭时第一遍全部回落面片，第二遍整遍跳过（面片不可二次绘制） */
     fun draw(
         positionLocation: Int,
         texCoordLocation: Int,
@@ -263,7 +267,7 @@ class GltfModel private constructor() {
         capeOnly: Boolean
     ) {
         drawMeshes(mvpBase, modelBase, capeOnly) { mesh, mvp, normalMatrix ->
-            val layer = if (capeOnly) null else mesh.solidLayer
+            val layer = if (capeOnly || !solidLayerEnabled) null else mesh.solidLayer
             if (layer != null) {
                 layer.draw(
                     positionLocation, texCoordLocation, normalLocation, lightMixLocation,
@@ -276,18 +280,20 @@ class GltfModel private constructor() {
                 )
             }
         }
-        GLES20.glDepthMask(false)
-        GLES20.glDepthFunc(GLES20.GL_LESS)
-        drawMeshes(mvpBase, modelBase, capeOnly) { mesh, mvp, normalMatrix ->
-            if (!capeOnly && mesh.solidLayer != null) {
-                mesh.draw(
-                    positionLocation, texCoordLocation, normalLocation, lightMixLocation,
-                    mvpMatrixLocation, normalMatrixLocation, mvp, normalMatrix
-                )
+        if (solidLayerEnabled) {
+            GLES20.glDepthMask(false)
+            GLES20.glDepthFunc(GLES20.GL_LESS)
+            drawMeshes(mvpBase, modelBase, capeOnly) { mesh, mvp, normalMatrix ->
+                if (!capeOnly && mesh.solidLayer != null) {
+                    mesh.draw(
+                        positionLocation, texCoordLocation, normalLocation, lightMixLocation,
+                        mvpMatrixLocation, normalMatrixLocation, mvp, normalMatrix
+                    )
+                }
             }
+            GLES20.glDepthFunc(GLES20.GL_LEQUAL)
+            GLES20.glDepthMask(true)
         }
-        GLES20.glDepthFunc(GLES20.GL_LEQUAL)
-        GLES20.glDepthMask(true)
     }
 
     private fun drawMeshes(
