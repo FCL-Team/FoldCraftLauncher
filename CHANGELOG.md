@@ -1,5 +1,65 @@
 # Changelog
 
+## [1.3.3.3] - 2026-09-18
+
+### 中文
+
+#### ✨ 新功能
+
+1. **下载页聚合搜索**：CurseForge 与 Modrinth 双源并行搜索，结果交错合并并按标识/标题归一化去重，单源失败时自动降级只显示可用来源
+2. **MultiMC 整合包导入**：同步上游 HMCL 实现，支持 natives 字符串键、本地库文件名推导、minecraftArguments 兼容等适配，可导入 lwj3ify 等特殊实例
+3. **FCL 弹窗彩蛋**：点击启动游戏按保底概率触发
+
+#### ⚡ 优化
+
+1. **下载源体系跟进上游重构**：DownloadProvider 全链路对齐上游 HMCL，URL/URI 与组件类型模型精简
+2. **版本列表会话级快照缓存**：命中快照即时显示、后台重算覆盖，切换页面不再等待；排序改用 GameVersionNumber 真实游戏版本号降序，手动刷新强制失效缓存
+3. **主界面右菜单布局调整**：执行 Jar 功能移入 Java 管理对话框，右菜单更聚焦版本与账户
+4. **渲染器选择体验**：对话框打开时自动定位到当前选中的渲染器
+5. **FCLNumberSeekBar 轨道自绘**：数值文本两侧断开并圆角收口，视觉更完整
+6. **主题派生色透明度独立设置**：主色全透明时背景不再不可见
+7. **版本图标像素感知加载**：按图标尺寸切换缩放插值（小图最近邻、大图双线性），禁用密度预缩放解码，安装器、下载页等全部加载点统一，像素风图标放大不再发糊；更换 NeoForge 版本图标
+
+#### 🐛 修复
+
+1. 修复 SDL 复用窗口被提前销毁导致游戏崩溃
+2. 修复 Controlify 环境无法呼出软键盘：SDL 输入法按渲染路径分流，仅 SDL 渲染激活时走 SDL 通道，其余回落原路径
+3. 微软登录体验修复：登录结束或设备码轮询成功后自动关闭内嵌登录页，返回键直接退出不回退网页；修复 OAuth 事件监听残留导致堆叠多个登录页
+4. 修复多任务返回后导航栏常驻遮挡底部按钮（对话框重获焦点时恢复沉浸标志）；编辑控件对话框背景补 10dp inset 恢复屏幕边缘间隔
+5. 修复皮肤半透明像素体素化重叠产生的大量条纹，半透明回落零厚度面片呈现
+6. 修复 SeekBar 行复用时 max/min 钳制回调误写数据
+7. 修复下载源空缓存在后台线程早读导致的崩溃（DownloadProviders 改惰性查表）
+8. 修复 goSetting 菜单已选中时不触发切页；usesGlobal 反序列化缺省值改为 true
+
+### English
+
+#### ✨ New Features
+
+1. **Aggregated search on the download page**: CurseForge and Modrinth are searched in parallel, results are interleaved and deduplicated by normalized identifier/title, and a failing source degrades gracefully to the other
+2. **MultiMC modpack import**: Synced from upstream HMCL, with adaptations for string-keyed natives, local library filename derivation, and minecraftArguments compatibility — imports special instances such as lwj3ify
+3. **FCL easter egg dialog**: Triggered with a pity probability when launching the game
+
+#### ⚡ Improvements
+
+1. **Download provider system follows the upstream refactor**: The full DownloadProvider chain is aligned with upstream HMCL, with a leaner URL/URI and component-type model
+2. **Session-level version list snapshot cache**: A cache hit shows instantly while recomputation runs in the background, so switching pages no longer waits; sorting now uses real game version numbers (GameVersionNumber) in descending order, and manual refresh invalidates the cache
+3. **Main screen right menu layout reworked**: "Execute Jar" moved into the Java management dialog, keeping the right menu focused on versions and accounts
+4. **Renderer selection UX**: The dialog now auto-scrolls to the currently selected renderer when opened
+5. **Self-drawn FCLNumberSeekBar track**: The track breaks and rounds around the value text for a cleaner look
+6. **Separate theme derived-color alpha setting**: The background no longer disappears when the theme color is fully transparent
+7. **Pixel-aware version icon loading**: Scaling interpolation switches by icon size (nearest-neighbor for small icons, bilinear for large ones), density pre-scaling decoding is disabled, and all loading points (installer, download pages, etc.) are unified — pixel-art icons stay sharp when scaled up; the NeoForge version icon was replaced
+
+#### 🐛 Bug Fixes
+
+1. Fixed game crashes caused by SDL reused windows being destroyed early
+2. Fixed the soft keyboard not opening with Controlify: SDL IME now routes by render path — the SDL channel is used only when SDL rendering is active, otherwise it falls back to the original path
+3. Microsoft login fixes: the embedded login page now closes automatically when login finishes or device-code polling succeeds, and Back exits directly instead of navigating back through web pages; fixed stacked login pages caused by leaked OAuth event listeners
+4. Fixed the navigation bar staying on top and covering bottom buttons after returning from multitasking (immersive flags are restored when dialogs regain focus); the control edit dialog background gains a 10dp inset to restore screen-edge spacing
+5. Fixed heavy striping from overlapping semi-transparent voxels in skins — translucency now falls back to zero-thickness faces
+6. Fixed SeekBar row reuse writing wrong data through max/min clamping callbacks
+7. Fixed background crashes from an early read of the empty download-provider cache (DownloadProviders now uses lazy lookup)
+8. Fixed goSetting not switching pages when already selected; the usesGlobal deserialization default is now true
+
 ## [1.3.3.2] - 2026-09-13
 
 ### 中文

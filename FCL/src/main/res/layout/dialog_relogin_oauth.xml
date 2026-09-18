@@ -35,6 +35,13 @@
                 android:text="@string/account_login_refresh_microsoft_hint"
                 android:textSize="13sp"/>
 
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/account_login_external_browser_hint"
+                android:textSize="13sp"/>
+
             <include
                 android:id="@+id/login_progress"
                 android:visibility="gone"

@@ -22,7 +22,6 @@ import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -36,6 +35,7 @@ import androidx.lifecycle.lifecycleScope
 import com.mio.download.DownloadManager
 import com.mio.manager.RendererManager
 import com.mio.plugin.DriverPlugin
+import com.mio.promo.QuarkPromo
 import com.mio.ui.dialog.RendererSelectDialog
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
@@ -46,6 +46,7 @@ import com.mio.util.GuideUtil.Companion.guideTarget
 import com.mio.util.ImageUtil
 import com.mio.util.getLocalizedText
 import com.mio.util.hasStringId
+import com.mio.util.pixelAwareIcon
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ActivityMainBinding
 import com.tungsten.fcl.game.TexturesLoader
@@ -695,15 +696,17 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         .interpolator(OvershootInterpolator()).start()
                     return
                 }
-                val selectedProfile = Profiles.getSelectedProfile()
-                DriverPlugin.selected = runCatching {
-                    DriverPlugin.driverList.find {
-                        it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
-                    }
-                }.getOrNull() ?: DriverPlugin.driverList[0]
-                refreshScreenSize()
-                DisplayUtil.refreshDisplayMetrics(this@MainActivity)
-                Versions.launch(this@MainActivity, selectedProfile)
+                QuarkPromo.interceptLaunch(this@MainActivity) {
+                    val selectedProfile = Profiles.getSelectedProfile()
+                    DriverPlugin.selected = runCatching {
+                        DriverPlugin.driverList.find {
+                            it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
+                        }
+                    }.getOrNull() ?: DriverPlugin.driverList[0]
+                    refreshScreenSize()
+                    DisplayUtil.refreshDisplayMetrics(this@MainActivity)
+                    Versions.launch(this@MainActivity, selectedProfile)
+                }
             }
             if (view === goSetting) {
                 val profile = Profiles.getSelectedProfile()
@@ -842,12 +845,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             binding.versionProgress.visibility = View.GONE
             binding.versionName.text = getString(R.string.version_no_version)
             binding.versionHint.isVisible = false
-            binding.icon.setBackgroundDrawable(
-                AppCompatResources.getDrawable(
-                    this,
-                    R.drawable.img_grass
-                )
-            )
+            binding.icon.setBackgroundDrawable(pixelAwareIcon(this, R.drawable.img_grass))
         }
     }
 

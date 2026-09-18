@@ -124,7 +124,9 @@ public final class OAuthServer extends NanoHTTPD implements OAuth.Session {
 
     public static class Factory implements OAuth.Callback {
         public final EventManager<GrantDeviceCodeEvent> onGrantDeviceCode = new EventManager<>();
+        public final EventManager<LoginCompletedDeviceCodeEvent> onLoginCompletedDeviceCode = new EventManager<>();
         public final EventManager<OpenBrowserEvent> onOpenBrowser = new EventManager<>();
+        public final EventManager<LoginFinishedEvent> onLoginFinished = new EventManager<>();
 
         @Override
         public OAuth.Session startServer() throws IOException, AuthenticationException {
@@ -151,7 +153,14 @@ public final class OAuthServer extends NanoHTTPD implements OAuth.Session {
         }
 
         @Override
+        public void loginCompletedDeviceCode() {
+            onLoginCompletedDeviceCode.fireEvent(new LoginCompletedDeviceCodeEvent(this));
+        }
+
+        @Override
         public void openBrowser(String url) {
+            // 不要给验证页拼 otc 参数自动填充授权码：该链路（login.live.com/oauth20_remoteconnect.srf?otc=）
+            // 会因第一方应用预授权校验直接报 invalid_request，手动输码路径不受影响
             lastlyOpenedURL = url;
             onOpenBrowser.fireEvent(new OpenBrowserEvent(this, url));
         }
@@ -201,6 +210,18 @@ public final class OAuthServer extends NanoHTTPD implements OAuth.Session {
 
         public String getUrl() {
             return url;
+        }
+    }
+
+    public static class LoginFinishedEvent extends Event {
+        public LoginFinishedEvent(Object source) {
+            super(source);
+        }
+    }
+
+    public static class LoginCompletedDeviceCodeEvent extends Event {
+        public LoginCompletedDeviceCodeEvent(Object source) {
+            super(source);
         }
     }
 

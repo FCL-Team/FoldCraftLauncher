@@ -153,6 +153,8 @@ public class OAuth {
                 continue;
             }
 
+            options.callback.loginCompletedDeviceCode();
+
             return new Result(tokenResponse.accessToken, tokenResponse.refreshToken);
         }
     }
@@ -244,6 +246,11 @@ public class OAuth {
         Session startServer() throws IOException, AuthenticationException;
 
         void grantDeviceCode(String userCode, String verificationURI);
+
+        /**
+         * 设备码轮询拿到 token 时触发，此时浏览器侧认证已完成，可据此关闭登录页
+         */
+        void loginCompletedDeviceCode();
 
         /**
          * Open browser

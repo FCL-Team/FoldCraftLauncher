@@ -14,6 +14,8 @@ import android.opengl.EGL14
 import android.opengl.EGLConfig
 import android.opengl.GLES20
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.PowerManager
 import android.provider.OpenableColumns
 import android.view.MotionEvent
@@ -169,11 +171,13 @@ fun openLink(context: Context, link: String) {
 }
 
 fun openLinkWithBuiltinWebView(context: Context, link: String) {
-    val intent = Intent(context, WebActivity::class.java)
-    val bundle = Bundle()
-    bundle.putString("url", link)
-    intent.putExtras(bundle)
-    context.startActivity(intent)
+    val intent = Intent(context, WebActivity::class.java).apply {
+        putExtras(Bundle().apply { putString("url", link) })
+        // 复用已打开的登录页，避免事件重复触发时堆叠多个实例
+        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+    }
+    // 调用方多为 OAuth 后台线程，统一切到主线程启动页面
+    Handler(Looper.getMainLooper()).post { context.startActivity(intent) }
 }
 
 fun copyText(context: Context, text: String) {

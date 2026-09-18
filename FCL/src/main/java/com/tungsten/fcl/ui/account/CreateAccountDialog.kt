@@ -20,11 +20,11 @@ import com.tungsten.fcl.databinding.ItemCharacterBinding
 import com.tungsten.fcl.databinding.ViewCreateAccountExternalBinding
 import com.tungsten.fcl.databinding.ViewCreateAccountMicrosoftBinding
 import com.tungsten.fcl.databinding.ViewCreateAccountOfflineBinding
+import com.tungsten.fcl.game.OAuthServer
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fcl.setting.Accounts
 import com.tungsten.fcl.setting.ConfigHolder.config
 import com.tungsten.fcl.ui.UIManager
-import com.tungsten.fcl.util.WeakListenerHolder
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.AccountFactory
 import com.tungsten.fclcore.auth.CharacterSelector
@@ -48,6 +48,7 @@ import com.tungsten.fcllibrary.component.view.FCLImageButton
 import com.tungsten.fcllibrary.util.ConvertUtils
 import java.util.concurrent.CancellationException
 import java.util.concurrent.CountDownLatch
+import java.util.function.Consumer
 import java.util.regex.Pattern
 
 /**
@@ -148,6 +149,8 @@ class CreateAccountDialog : FCLDialog, View.OnClickListener {
                 binding.login.isEnabled = true
                 binding.cancel.isEnabled = true
                 microsoft?.hideProgress()
+                // 登录流程已终结（成功/失败/取消），通知内嵌登录页自行关闭
+                Accounts.OAUTH_CALLBACK.onLoginFinished.fireEvent(OAuthServer.LoginFinishedEvent(this))
                 if (exception == null) {
                     Accounts.addAccount(account)
                     Accounts.setSelectedAccount(account)
@@ -195,6 +198,11 @@ class CreateAccountDialog : FCLDialog, View.OnClickListener {
             it.cancel()
         }
         dismiss()
+    }
+
+    override fun dismiss() {
+        (details as? MicrosoftDetails)?.release()
+        super.dismiss()
     }
 
     override fun onClick(view: View) {
@@ -247,7 +255,6 @@ private class OfflineDetails(private val context: Context) : Details {
 private class MicrosoftDetails(private val context: Context) : Details {
 
     private val binding = ViewCreateAccountMicrosoftBinding.inflate(LayoutInflater.from(context))
-    private val holder = WeakListenerHolder()
     private val handler = Handler(Looper.getMainLooper())
 
     /** 登录进度回调：后台线程的阶段通知经主线程调度刷新到内嵌进度行 */
@@ -256,23 +263,31 @@ private class MicrosoftDetails(private val context: Context) : Details {
 
     var useExternalBrowser = false
 
+    // 强引用注册（register），对话框关闭时经 release() 注销，避免残留监听重复打开登录页
+    private val deviceCodeListener = Consumer { event: OAuthServer.GrantDeviceCodeEvent? ->
+        event?.let {
+            handler.post {
+                copyText(context, it.userCode)
+                showProgress(context.getString(R.string.login_state_microsoft_wait_browser))
+            }
+        }
+    }
+    private val openBrowserListener = Consumer { event: OAuthServer.OpenBrowserEvent ->
+        if (useExternalBrowser) {
+            openLink(context, event.url)
+        } else {
+            openLinkWithBuiltinWebView(context, event.url)
+        }
+    }
+
     init {
-        // 设备码请求发出后立即复制到剪贴板，方便用户在浏览器中粘贴
-        holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak { event ->
-            event?.let {
-                handler.post {
-                    copyText(context, it.userCode)
-                    showProgress(context.getString(R.string.login_state_microsoft_wait_browser))
-                }
-            }
-        })
-        holder.add(Accounts.OAUTH_CALLBACK.onOpenBrowser.registerWeak { event ->
-            if (useExternalBrowser) {
-                openLink(context, event.url)
-            } else {
-                openLinkWithBuiltinWebView(context, event.url)
-            }
-        })
+        Accounts.OAUTH_CALLBACK.onGrantDeviceCode.register(deviceCodeListener)
+        Accounts.OAUTH_CALLBACK.onOpenBrowser.register(openBrowserListener)
+    }
+
+    fun release() {
+        Accounts.OAUTH_CALLBACK.onGrantDeviceCode.unregister(deviceCodeListener)
+        Accounts.OAUTH_CALLBACK.onOpenBrowser.unregister(openBrowserListener)
     }
 
     fun showProgress(text: String) {

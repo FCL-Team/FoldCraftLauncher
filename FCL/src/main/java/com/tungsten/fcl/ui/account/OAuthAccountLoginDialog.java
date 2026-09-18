@@ -13,7 +13,6 @@ import com.tungsten.fcl.setting.Accounts;
 import com.mio.util.AndroidUtilKt;
 import com.mio.util.LoginStageTextBinder;
 import com.tungsten.fcl.util.FXUtils;
-import com.tungsten.fcl.util.WeakListenerHolder;
 import com.tungsten.fclcore.auth.AuthInfo;
 import com.tungsten.fclcore.auth.OAuthAccount;
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount;
@@ -44,8 +43,16 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
     private final Runnable failed;
     private final ObjectProperty<OAuthServer.GrantDeviceCodeEvent> deviceCode = new SimpleObjectProperty<>();
 
-    private final WeakListenerHolder holder = new WeakListenerHolder();
+    // 强引用注册（register），dismiss 时注销，避免对话框关闭后残留监听重复打开登录页
+    private final Consumer<OAuthServer.GrantDeviceCodeEvent> deviceCodeListener = deviceCode::set;
     private boolean useExternalBrowser = false;
+    private final Consumer<OAuthServer.OpenBrowserEvent> openBrowserListener = event -> {
+        if (useExternalBrowser) {
+            AndroidUtilKt.openLink(getContext(), event.getUrl());
+        } else {
+            AndroidUtilKt.openLinkWithBuiltinWebView(getContext(), event.getUrl());
+        }
+    };
 
     public OAuthAccountLoginDialog(@NonNull Context context, OAuthAccount account, Consumer<AuthInfo> success, Runnable failed) {
         super(context);
@@ -61,14 +68,8 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
                 AndroidUtilKt.copyText(getContext(), deviceCode.getUserCode());
             }
         }));
-        holder.add(Accounts.OAUTH_CALLBACK.onGrantDeviceCode.registerWeak(deviceCode::set));
-        holder.add(Accounts.OAUTH_CALLBACK.onOpenBrowser.registerWeak(event -> {
-            if (useExternalBrowser) {
-                AndroidUtilKt.openLink(context, event.getUrl());
-            } else {
-                AndroidUtilKt.openLinkWithBuiltinWebView(context, event.getUrl());
-            }
-        }));
+        Accounts.OAUTH_CALLBACK.onGrantDeviceCode.register(deviceCodeListener);
+        Accounts.OAUTH_CALLBACK.onOpenBrowser.register(openBrowserListener);
 
         positive = findViewById(R.id.login);
         negative = findViewById(R.id.cancel);
@@ -83,6 +84,13 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
             onClick(positive);
             return true;
         });
+    }
+
+    @Override
+    public void dismiss() {
+        Accounts.OAUTH_CALLBACK.onGrantDeviceCode.unregister(deviceCodeListener);
+        Accounts.OAUTH_CALLBACK.onOpenBrowser.unregister(openBrowserListener);
+        super.dismiss();
     }
 
     @Override
@@ -117,9 +125,12 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
                         }
                         positive.setEnabled(true);
                         negative.setEnabled(true);
+                        // 登录流程已终结（成功/失败），通知内嵌登录页自行关闭
+                        Accounts.OAUTH_CALLBACK.onLoginFinished.fireEvent(new OAuthServer.LoginFinishedEvent(this));
                     }).start();
         }
         if (view == negative) {
+            Accounts.OAUTH_CALLBACK.onLoginFinished.fireEvent(new OAuthServer.LoginFinishedEvent(this));
             failed.run();
             dismiss();
         }

@@ -9,9 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.manager.RendererManager.getRenderer
+import com.mio.util.pixelAwareIcon
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemVersionSettingEditBinding
 import com.tungsten.fcl.databinding.ItemVersionSettingIconBinding
@@ -499,10 +499,7 @@ class VersionSettingAdapter(
     private fun bindIcon(holder: Holder, row: Row.IconRow) {
         val binding = ItemVersionSettingIconBinding.bind(holder.itemView)
         binding.icon.setImageDrawable(
-            iconDrawable ?: ContextCompat.getDrawable(
-                context,
-                R.drawable.img_grass
-            )
+            iconDrawable ?: pixelAwareIcon(context, R.drawable.img_grass)
         )
         binding.buttonEdit.setOnClickListener { listener.onButtonClick(VersionSettingTag.EDIT_ICON) }
         binding.buttonDelete.setOnClickListener { listener.onButtonClick(VersionSettingTag.DELETE_ICON) }
