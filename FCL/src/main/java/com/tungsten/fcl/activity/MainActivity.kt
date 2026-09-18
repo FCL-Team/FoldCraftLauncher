@@ -199,7 +199,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
                 account.setOnClickListener(this@MainActivity)
                 versionCard.setOnClickListener(this@MainActivity)
-                goSetting.setOnClickListener(this@MainActivity)
+                switchVersion.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
                     RendererSelectDialog(this@MainActivity, false) {
@@ -681,7 +681,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 title.setTextWithAnim(getString(R.string.account))
                 uiManager.switchUI(uiManager.accountUI)
             }
-            if (view === versionCard && uiManager.currentUI !== uiManager.versionUI) {
+            if (view === versionCard) {
+                openInstanceSettings()
+            }
+            if (view === switchVersion && uiManager.currentUI !== uiManager.versionUI) {
                 refreshMenuView(null)
                 title.setTextWithAnim(getString(R.string.version))
                 uiManager.switchUI(uiManager.versionUI)
@@ -708,28 +711,32 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     Versions.launch(this@MainActivity, selectedProfile)
                 }
             }
-            if (view === goSetting) {
-                val profile = Profiles.getSelectedProfile()
-                // 菜单项已处于选中态时 setSelected(true) 不再触发 onSelect，需兜底完成切页
-                if (profile.versionSetting.isUsesGlobal) {
-                    setting.isSelected = true
-                    if (uiManager.currentUI !== uiManager.settingUI) {
-                        title.setTextWithAnim(getString(R.string.setting))
-                        uiManager.switchUI(uiManager.settingUI)
-                    }
-                    val tab = uiManager.settingUI.tabLayout.getTabAt(0)
-                    uiManager.settingUI.tabLayout.selectTab(tab)
-                } else {
-                    manage.isSelected = true
-                    if (uiManager.currentUI !== uiManager.manageUI) {
-                        title.setTextWithAnim(getString(R.string.manage))
-                        // 走到该分支说明选中版本存在独立设置，selectedVersion 必不为 null
-                        uiManager.manageUI.setVersion(profile.selectedVersion!!, profile)
-                        uiManager.switchUI(uiManager.manageUI)
-                    }
-                    val tab = uiManager.manageUI.tabLayout.getTabAt(0)
-                    uiManager.manageUI.tabLayout.selectTab(tab)
+        }
+    }
+
+    /** 打开当前实例的设置页：使用全局设置时进入启动器设置，否则进入该版本的独立设置 */
+    private fun openInstanceSettings() {
+        binding.apply {
+            val profile = Profiles.getSelectedProfile()
+            // 菜单项已处于选中态时 setSelected(true) 不再触发 onSelect，需兜底完成切页
+            if (profile.versionSetting.isUsesGlobal) {
+                setting.isSelected = true
+                if (uiManager.currentUI !== uiManager.settingUI) {
+                    title.setTextWithAnim(getString(R.string.setting))
+                    uiManager.switchUI(uiManager.settingUI)
                 }
+                val tab = uiManager.settingUI.tabLayout.getTabAt(0)
+                uiManager.settingUI.tabLayout.selectTab(tab)
+            } else {
+                manage.isSelected = true
+                if (uiManager.currentUI !== uiManager.manageUI) {
+                    title.setTextWithAnim(getString(R.string.manage))
+                    // 走到该分支说明选中版本存在独立设置，selectedVersion 必不为 null
+                    uiManager.manageUI.setVersion(profile.selectedVersion!!, profile)
+                    uiManager.switchUI(uiManager.manageUI)
+                }
+                val tab = uiManager.manageUI.tabLayout.getTabAt(0)
+                uiManager.manageUI.tabLayout.selectTab(tab)
             }
         }
     }
