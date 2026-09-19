@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.ksp) apply false
 }
 
 // AGP 8.13 捆绑的 D8/R8 8.13.19 只支持到 Kotlin 2.3，

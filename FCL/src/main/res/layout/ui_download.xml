@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <!-- tabMode=scrollable：TabLayout 自身即 HorizontalScrollView，页签溢出时可拖动滚动，选中的页签自动滚入视野 -->
     <com.tungsten.fcllibrary.component.view.FCLTabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
@@ -15,7 +16,7 @@
         app:follow_theme="true"
         app:layout_constraintTop_toTopOf="parent"
         app:tabInlineLabel="true"
-        app:tabMode="auto"
+        app:tabMode="scrollable"
         app:tabTextAppearance="@style/TabTextAppearance"
         app:tabUnboundedRipple="false">
 
@@ -54,6 +55,12 @@
             android:layout_height="match_parent"
             android:icon="@drawable/ic_baseline_palette_24"
             android:text="@string/shaderpack" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:icon="@drawable/ic_star_outline"
+            android:text="@string/favorites" />
 
     </com.tungsten.fcllibrary.component.view.FCLTabLayout>
 

@@ -81,6 +81,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -387,13 +388,16 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     }
 
     /**
-     * 条目对应的仓库：聚合模式按条目自身来源路由，其余模式返回当前仓库
+     * 条目对应的仓库：始终按条目自身来源路由。单源模式下搜索条目来源与所选下载源一致，
+     * 返回当前仓库（行为不变）；收藏页跳转等外部入口传入的条目来源可能与当前下载源不同，
+     * 此时路由到条目自身来源的仓库才正确
      */
     RemoteModRepository repositoryFor(RemoteMod mod) {
-        if (isAggregate()) {
-            return mod.getData() instanceof CurseAddon ? aggregateCurseRepository : aggregateModrinthRepository;
+        boolean curse = mod.getData() instanceof CurseAddon;
+        if (!isAggregate() && curse != isModrinthSourceSelected()) {
+            return repository;
         }
-        return repository;
+        return curse ? aggregateCurseRepository : aggregateModrinthRepository;
     }
 
     /** 聚合模式下条目的来源标注（CurseForge/Modrinth 平台名），单源模式返回空串 */
@@ -963,6 +967,68 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         executor.start();
     }
 
+    /** 批量下载计划：去重后待入队的文件、因已安装跳过的模组数、解析失败的模组名 */
+    public record BatchDownloadPlan(List<RemoteMod.Version> toSubmit, int installedSkipped, List<String> failedTitles) {}
+
+    /** 批量下载入队完成回调（UI 线程）：queuedCount 为实际入队文件数 */
+    public interface BatchDownloadCallback {
+        void onQueued(int queuedCount, int installedSkipped, int failedCount);
+    }
+
+    /**
+     * 批量一键下载：逐个解析 REQUIRED 前置闭包，全部文件按文件名去重后统一入队；
+     * 已安装的本体/前置跳过；完成后在 UI 线程回调入队统计。
+     * 解析阶段本身作为下载面板条目展示（带逐模组进度），解析完成后条目移除、下载任务入列
+     */
+    public void downloadModsBatch(Context context, Profile profile, @Nullable String version, List<RemoteMod.Version> files, String subdirectoryName, @Nullable BatchDownloadCallback callback) {
+        if (version == null) version = profile.getSelectedVersion();
+        Path runDirectory = profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
+        Path modsDirectory = runDirectory.resolve(subdirectoryName);
+        Task<BatchDownloadPlan> resolveTask = new Task<BatchDownloadPlan>() {
+            @Override
+            public void execute() throws Exception {
+                List<RemoteMod.Version> toSubmit = new ArrayList<>();
+                Set<String> queued = new HashSet<>();
+                int installedSkipped = 0;
+                List<String> failedTitles = new ArrayList<>();
+                updateProgress(0, files.size());
+                for (int index = 0; index < files.size(); index++) {
+                    RemoteMod.Version file = files.get(index);
+                    try {
+                        ModDependenciesResolver.Result result = ModDependenciesResolver.resolve(file, modsDirectory, file.self().getType().getRemoteModRepository());
+                        if (!result.rootInstalled() && queued.add(file.file().filename())) {
+                            toSubmit.add(file);
+                        } else if (result.rootInstalled()) {
+                            installedSkipped++;
+                        }
+                        for (ModDependenciesResolver.ResolvedDependency dep : result.dependencies()) {
+                            if (queued.add(dep.version().file().filename())) {
+                                toSubmit.add(dep.version());
+                            }
+                        }
+                        failedTitles.addAll(result.failedTitles());
+                    } catch (Exception e) {
+                        failedTitles.add(file.name());
+                    }
+                    updateProgress(index + 1, files.size());
+                }
+                setResult(new BatchDownloadPlan(toSubmit, installedSkipped, failedTitles));
+            }
+        };
+        TaskExecutor executor = resolveTask.whenComplete(Schedulers.androidUIThread(), (plan, exception) -> {
+            if (exception != null || plan == null) {
+                if (callback != null) callback.onQueued(0, 0, files.size());
+                return;
+            }
+            for (RemoteMod.Version file : plan.toSubmit()) {
+                submitModDownload(context, file.file().filename(), file, modsDirectory);
+            }
+            if (callback != null) callback.onQueued(plan.toSubmit().size(), plan.installedSkipped(), plan.failedTitles().size());
+        }).executor();
+        DownloadManager.submit(context.getString(R.string.mods_batch_resolving), resolveTask, executor);
+        executor.start();
+    }
+
     /**
      * 本地已安装模组变化后刷新列表"已安装"标记（adapter 内部有变化检测，重复调用无害）
      */
@@ -1102,10 +1168,19 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         return AndroidUtilKt.getLocalizedText(getContext(), "curse_category_" + category);
     }
 
-    /** 条目分类的本地化名：聚合模式按条目自身平台选键前缀，其余模式按当前下载源 */
+    /** 条目分类的本地化名：按条目自身平台选键前缀（单源模式条目来源即所选下载源，行为不变） */
     protected String getLocalizedCategory(RemoteMod mod, String category) {
-        boolean modrinth = isAggregate() ? !(mod.getData() instanceof CurseAddon) : isModrinthSourceSelected();
+        boolean modrinth = !(mod.getData() instanceof CurseAddon);
         return getLocalizedCategory(category, modrinth);
+    }
+
+    /**
+     * 打开条目详情页（不改下载源选择，供收藏页等外部入口跳转）；
+     * 调用前需确保页面模式与条目类别一致（见 switchType），保证下载回调落到正确目录
+     */
+    public void openModDetail(RemoteMod mod) {
+        RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, this, mod, callback);
+        UIManager.getInstance().getDownloadUI().showTempPage(page);
     }
 
     public void jumpToModPage(RemoteMod mod) {
