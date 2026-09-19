@@ -248,8 +248,8 @@
 
                 <com.tungsten.fcllibrary.component.view.FCLImageButton
                     android:id="@+id/switch_version"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
                     android:contentDescription="@string/version"
                     android:src="@drawable/ic_baseline_swap_vert_24"
                     app:layout_constraintBottom_toBottomOf="parent"

@@ -58,7 +58,10 @@ import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
 import com.tungsten.fcl.ui.main.MainUI
+import com.tungsten.fcl.ui.version.VersionQuickSwitchPopup
 import com.tungsten.fcl.ui.version.Versions
+import com.tungsten.fcl.ui.version.computeVersionEntries
+import com.tungsten.fcl.ui.version.sortVersionEntries
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -200,6 +203,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 account.setOnClickListener(this@MainActivity)
                 versionCard.setOnClickListener(this@MainActivity)
                 switchVersion.setOnClickListener(this@MainActivity)
+                switchVersion.setOnLongClickListener {
+                    showQuickVersionSwitch()
+                    true
+                }
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
                     RendererSelectDialog(this@MainActivity, false) {
@@ -693,23 +700,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 uiManager.onBackPressed()
             }
             if (view === start) {
-                if (!Controllers.isInitialized()) {
-                    title.setTextWithAnim(getString(R.string.message_loading_controllers))
-                    AnimUtil.playTranslationX(start, 700, 0f, 50f, -50f, 50f, -50f, 0f)
-                        .interpolator(OvershootInterpolator()).start()
-                    return
-                }
-                QuarkPromo.interceptLaunch(this@MainActivity) {
-                    val selectedProfile = Profiles.getSelectedProfile()
-                    DriverPlugin.selected = runCatching {
-                        DriverPlugin.driverList.find {
-                            it.driver == selectedProfile.getVersionSetting(selectedProfile.selectedVersion).driver
-                        }
-                    }.getOrNull() ?: DriverPlugin.driverList[0]
-                    refreshScreenSize()
-                    DisplayUtil.refreshDisplayMetrics(this@MainActivity)
-                    Versions.launch(this@MainActivity, selectedProfile)
-                }
+                launchVersion(Profiles.getSelectedProfile(), null)
             }
         }
     }
@@ -738,6 +729,49 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 val tab = uiManager.manageUI.tabLayout.getTabAt(0)
                 uiManager.manageUI.tabLayout.selectTab(tab)
             }
+        }
+    }
+
+    /** 启动指定实例；versionId 为 null 时启动当前选中实例（与启动按钮行为一致） */
+    private fun launchVersion(profile: Profile, versionId: String?) {
+        if (!Controllers.isInitialized()) {
+            binding.title.setTextWithAnim(getString(R.string.message_loading_controllers))
+            AnimUtil.playTranslationX(binding.start, 700, 0f, 50f, -50f, 50f, -50f, 0f)
+                .interpolator(OvershootInterpolator()).start()
+            return
+        }
+        QuarkPromo.interceptLaunch(this) {
+            val id = versionId ?: profile.selectedVersion
+            DriverPlugin.selected = runCatching {
+                DriverPlugin.driverList.find {
+                    it.driver == profile.getVersionSetting(id).driver
+                }
+            }.getOrNull() ?: DriverPlugin.driverList[0]
+            refreshScreenSize()
+            DisplayUtil.refreshDisplayMetrics(this)
+            if (id != null) {
+                Versions.launch(this, profile, id)
+            } else {
+                Versions.launch(this, profile)
+            }
+        }
+    }
+
+    /** 长按切换实例按钮：弹出下拉小窗口，可快速切换选中实例或直接启动指定实例 */
+    private fun showQuickVersionSwitch() {
+        val profile = Profiles.getSelectedProfile()
+        lifecycleScope.launch {
+            // 版本派生数据（图标、MC/加载器版本）在 IO 线程并行计算，结果回主线程弹窗
+            val entries = sortVersionEntries(computeVersionEntries(this@MainActivity, profile))
+            if (entries.isEmpty()) return@launch
+            VersionQuickSwitchPopup(
+                this@MainActivity,
+                binding.versionCard,
+                profile,
+                entries,
+                onSwitch = { profile.selectedVersion = it },
+                onLaunch = { launchVersion(profile, it) }
+            ).show()
         }
     }
 
