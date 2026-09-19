@@ -198,6 +198,9 @@ class GltfModel private constructor() {
     private val drawOrder = ArrayList<Node>()
     private val clips = ArrayList<GltfClip>()
 
+    /** 当前已应用到 LIFT_NODES 的总抬高量（0 = 未分离） */
+    private var appliedLift = 0f
+
     private var currentClip: GltfClip? = null
     private var time = 0f
 
@@ -210,6 +213,16 @@ class GltfModel private constructor() {
 
     /** 体素化第二层开关：关闭时 *_Layer 网格回落零厚度面片（渲染线程读写） */
     var solidLayerEnabled = true
+
+    /** 身体与腿部分离开关：关闭时上身与腿部贴合，腰部接缝可能闪烁（渲染线程读写） */
+    var upperBodySeparated = true
+        set(value) {
+            if (field == value) {
+                return
+            }
+            field = value
+            applyUpperBodyLift()
+        }
 
     fun findClip(id: String): GltfClip? = clips.firstOrNull { it.name == id }
 
@@ -343,6 +356,24 @@ class GltfModel private constructor() {
 
     // ---- 姿势与绘制辅助 ----
 
+    /** 按分离开关重设上身部件 rest 抬高量，随后重新居中并恢复 rest 姿势 */
+    private fun applyUpperBodyLift() {
+        val lift = if (upperBodySeparated) UPPER_BODY_LIFT else 0f
+        if (lift == appliedLift) {
+            return
+        }
+        val delta = lift - appliedLift
+        appliedLift = lift
+        for (node in nodes) {
+            if (node.name in LIFT_NODES) {
+                node.restTranslation[1] += delta
+                node.rebuildLocalMatrix()
+            }
+        }
+        centerModel()
+        nodes.forEach { it.resetPose() }
+    }
+
     private fun computeWorldMatrices() {
         for (root in rootNodes) {
             computeWorldRecursive(root, IDENTITY_MATRIX)
@@ -421,15 +452,10 @@ class GltfModel private constructor() {
             }
         }
 
-        // rest 局部矩阵 → 部件抬高 → 绘制顺序 → 以原点为中心 → 运行时姿势初始化
+        // rest 局部矩阵 → 绘制顺序 → 部件抬高（含重新居中） → 运行时姿势初始化
         nodes.forEach { it.rebuildLocalMatrix() }
-        nodes.forEach { node ->
-            if (node.name in LIFT_NODES) {
-                node.restTranslation[1] += UPPER_BODY_LIFT
-            }
-        }
         collectDrawOrder(rootNodes)
-        centerModel()
+        applyUpperBodyLift()
         nodes.forEach { it.resetPose() }
     }
 
@@ -581,6 +607,7 @@ class GltfModel private constructor() {
          * 非腿部部件相对腿部的抬高量（像素）：抬高用于分隔腰部共面接缝防闪烁，
          * 但待机动画躯干下沉 0.64px、变体腿部前缘抬升 0.17px，取值过小会在动画中
          * 重新贴面——该值保证基础待机全程不接触，变体仅余瞬时擦过。
+         * 由 [upperBodySeparated] 开关控制，关闭时抬高量为 0。
          */
         private const val UPPER_BODY_LIFT = 0.75f
 

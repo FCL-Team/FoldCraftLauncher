@@ -1335,6 +1335,7 @@
     <string name="version_list_refreshing">正在获取远程版本列表…</string>
     <string name="skin_settings">皮肤设置</string>
     <string name="skin_solid_layer">3D 皮肤层</string>
+    <string name="skin_body_separation">身体与腿部分离</string>
     <string name="animation_idle">待机</string>
     <string name="animation_idle_variant_1">待机变体 1</string>
     <string name="animation_idle_variant_2">待机变体 2</string>

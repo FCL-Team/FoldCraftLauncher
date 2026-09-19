@@ -1474,6 +1474,7 @@
     <string name="version_list_refreshing">Fetching remote version list…</string>
     <string name="skin_settings">Skin Settings</string>
     <string name="skin_solid_layer">3D Skin Layer</string>
+    <string name="skin_body_separation">Separate Body and Legs</string>
     <string name="animation_idle">Idle</string>
     <string name="animation_idle_variant_1">Idle variant 1</string>
     <string name="animation_idle_variant_2">Idle variant 2</string>

@@ -22,6 +22,7 @@ val Context.skinAnimationDataStore: DataStore<SkinAnimationSetting> by dataStore
 data class SkinAnimationSetting(
     val animationId: String = "walking",
     val solidLayerEnabled: Boolean = true,
+    val upperBodySeparated: Boolean = true,
 )
 
 object SkinAnimationSettingSerializer : Serializer<SkinAnimationSetting> {

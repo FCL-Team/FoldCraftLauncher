@@ -51,6 +51,37 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/body_separation_row"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="14dp"
+            android:paddingTop="12dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="12dp">
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="@string/skin_body_separation"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <com.tungsten.fcllibrary.component.view.FCLSwitch
+                android:id="@+id/body_separation_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
