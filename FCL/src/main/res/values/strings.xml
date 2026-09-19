@@ -952,6 +952,19 @@
 
     <string name="resourcepack">Resource Packs</string>
 
+    <string name="resourcepack_manage">Resource Packs</string>
+    <string name="resourcepack_add">Import resource pack</string>
+    <string name="resourcepack_invalid">Invalid</string>
+    <string name="resourcepack_rename_exists">A resource pack with the same name already exists</string>
+    <string name="resourcepack_add_success">Imported resource pack %s.</string>
+    <string name="resourcepack_add_failed">Failed to import resource pack %s.</string>
+    <string name="resourcepack_info_type">Type: %s</string>
+    <string name="resourcepack_info_type_folder">Folder</string>
+    <string name="resourcepack_info_type_zip">Zip archive</string>
+    <string name="resourcepack_info_file_name">File name: %s</string>
+    <string name="resourcepack_info_file_size">Size: %s</string>
+    <string name="resourcepack_info_format">Pack format: %s</string>
+
     <string name="search">Search</string>
     <string name="search_hint_chinese">Search queries support both Chinese and English</string>
     <string name="search_hint_english">Only English is supported</string>

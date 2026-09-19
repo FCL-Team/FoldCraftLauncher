@@ -14,6 +14,7 @@
         android:layout_marginTop="10dp"
         app:tabUnboundedRipple="false"
         app:tabGravity="fill"
+        app:tabMode="auto"
         app:follow_theme="true"
         app:tabTextAppearance="@style/TabTextAppearance"
         app:layout_constraintTop_toTopOf="parent">
@@ -42,6 +43,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/world_manage"/>
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/resourcepack_manage"/>
 
     </com.tungsten.fcllibrary.component.view.FCLTabLayout>
 
