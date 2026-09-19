@@ -19,6 +19,7 @@ import com.tungsten.fcl.setting.GameOption;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
+import com.tungsten.fclauncher.keycodes.EfficientAndroidLWJGLKeycode;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 
@@ -130,7 +131,16 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     public void sendChar(char keyChar) {
         if (menu.getBridge() != null) {
-            menu.getBridge().pushEventChar(keyChar);
+            // 按键与字符成对发送：lwjglx 系 LWJGL2 兼容层将字母等 keydown 暂存，
+            // 待 charMods 事件合并后才投给游戏，只发字符无法驱动按键绑定
+            int androidKeycode = EfficientAndroidLWJGLKeycode.getAndroidKeycode(keyChar);
+            int keycode = AndroidKeycodeMap.convertKeycode(androidKeycode);
+            if (keycode != FCLKeycodes.KEY_UNKNOWN) {
+                menu.getBridge().pushEventKey(keycode, keyChar, true);
+                menu.getBridge().pushEventKey(keycode, keyChar, false);
+            } else {
+                menu.getBridge().pushEventChar(keyChar);
+            }
         }
     }
 
