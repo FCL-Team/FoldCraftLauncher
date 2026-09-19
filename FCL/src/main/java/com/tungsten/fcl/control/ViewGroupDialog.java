@@ -73,6 +73,8 @@ public class ViewGroupDialog extends FCLDialog implements View.OnClickListener {
                 ControlViewGroup viewGroup = new ControlViewGroup(UUID.randomUUID().toString());
                 viewGroup.setName(name);
                 viewGroup.setVisibility(visibility);
+                // 内存新建的组按键数据天然完整，无需从磁盘补全；不标记会因按需加载失败而无法添加按键
+                viewGroup.setDataLoaded(true);
                 gameMenu.getController().addViewGroup(viewGroup);
                 refreshList(select);
             });
