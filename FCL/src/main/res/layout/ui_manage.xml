@@ -14,6 +14,7 @@
         android:layout_marginTop="10dp"
         app:tabUnboundedRipple="false"
         app:tabGravity="fill"
+        app:tabInlineLabel="true"
         app:tabMode="auto"
         app:follow_theme="true"
         app:tabTextAppearance="@style/TabTextAppearance"
@@ -22,31 +23,37 @@
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:icon="@drawable/ic_baseline_tune_24"
             android:text="@string/settings_game"/>
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:icon="@drawable/ic_baseline_build_24"
             android:text="@string/manage"/>
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:icon="@drawable/ic_baseline_download_24"
             android:text="@string/settings_tabs_installers"/>
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:icon="@drawable/ic_cube"
             android:text="@string/mods_manage"/>
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:icon="@drawable/ic_baseline_earth_24"
             android:text="@string/world_manage"/>
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:icon="@drawable/ic_baseline_texture_24"
             android:text="@string/resourcepack_manage"/>
 
     </com.tungsten.fcllibrary.component.view.FCLTabLayout>
