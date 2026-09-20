@@ -154,8 +154,6 @@ class ModChecker(val context: Context, val version: String) {
                 }
 
                 "lwjgl3ify" -> {
-                    // GTNH 等整合包依赖 lwjgl3ify，需要 Java 17+；启动器会自动合并 RFB 版本 JSON，
-                    // 但若用户手动指定了 jre8 则无法启动，这里给出提示
                     val javaName = Profiles.getSelectedProfile()
                         .getVersionSetting(Profiles.getSelectedVersion()).java
                     if (javaName.equals("jre8", ignoreCase = true)) {

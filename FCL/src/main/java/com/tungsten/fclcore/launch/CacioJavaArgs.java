@@ -8,13 +8,6 @@ import java.util.Objects;
 
 /**
  * Cacio（Java AWT 模拟环境）JVM 参数组装，供游戏与 Jar 执行器启动共用
- * <p>
- * 注意：caciocavallo17 资产必须使用 1.18-SNAPSHOT（assets/app_runtime/caciocavallo17，
- * 与 Amethyst 同款），不能升级到 1.19.1+：1.19.1 的 CTCGraphicsEnvironment 构造函数
- * 调用 sun.java2d.SurfaceManagerFactory.setInstance，而该类自 JDK 24 起已被移除，
- * 会导致 CTCGraphicsEnvironment 在 JDK25 上构造抛 NoSuchMethodError，
- * 被 GraphicsEnvironment.createGE 静默吞掉后回退 headless 环境，
- * 最终所有依赖 java.awt.Font 的 mod（如 GTNH 的 Malisis' Doors）在启动时崩溃。
  */
 public final class CacioJavaArgs {
 

@@ -174,11 +174,7 @@ public class FCLGameRepository extends DefaultGameRepository {
         }
     }
 
-    /**
-     * 重新从磁盘读取版本 JSON 并同步内存缓存（含已解析版本缓存）。
-     * 供 Lwjgl3ifyPatcher 在启动前改写版本文件后调用，保证后续
-     * getVersion / checkModLoader 等读到的是改写后的版本。
-     */
+    //重新从磁盘读取版本 JSON 并同步内存缓存（含已解析版本缓存）。
     public void reloadVersionFromDisk(String id) {
         resolvedVersionCache.remove(id);
         try {
