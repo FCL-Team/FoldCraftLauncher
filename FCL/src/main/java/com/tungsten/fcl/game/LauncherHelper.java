@@ -73,6 +73,7 @@ import com.tungsten.fclcore.game.LaunchOptions;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.mod.LocalModFile;
+import com.tungsten.fclcore.mod.ModManager;
 import com.tungsten.fclcore.mod.ModpackCompletionException;
 import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.mod.ModpackProvider;
@@ -245,7 +246,7 @@ public final class LauncherHelper {
                         .thenComposeAsync(fclBridge -> {
                             Renderer renderer = RendererManager.getRenderer(repository.getVersionSetting(selectedVersion).getRenderer());
                             fclBridge.setRenderer(renderer.getName());
-                            return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""));
+                            return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""), repository, selectedVersion);
                         }).thenComposeAsync(fclBridge -> checkNativeLibPlugin(fclBridge, repository.getGameVersion(selectedVersion).orElse("")))
                         .thenComposeAsync(fclBridge -> {
                             boolean skip = repository.getVersionSetting(selectedVersion).isNotCheckMod();
@@ -392,8 +393,24 @@ public final class LauncherHelper {
         });
     }
 
-    private Task<FCLBridge> checkRenderer(FCLBridge bridge, Renderer renderer, String version) {
+    private Task<FCLBridge> checkRenderer(FCLBridge bridge, Renderer renderer, String version, FCLGameRepository repository, String versionId) {
         return Task.composeAsync(() -> {
+            try {
+                ModManager modManager = repository.getModManager(versionId);
+                boolean hasAngelica = false;
+                boolean hasLwjgl3ify = false;
+                for (LocalModFile mod : modManager.getMods()) {
+                    String id = mod.getId();
+                    if ("angelica".equals(id)) hasAngelica = true;
+                    if ("lwjgl3ify".equals(id)) hasLwjgl3ify = true;
+                }
+                if (hasAngelica && hasLwjgl3ify) {
+                    LOG.log(Level.INFO, "Angelica + lwjgl3ify detected, skip renderer version warning");
+                    return Task.completed(bridge);
+                }
+            } catch (Throwable e) {
+                LOG.log(Level.WARNING, "Failed to scan mods for renderer check", e);
+            }
             try {
                 CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
                 if (!version.isEmpty()) {
