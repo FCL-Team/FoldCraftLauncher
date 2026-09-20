@@ -6,6 +6,7 @@ import com.mio.plugin.FFmpegPlugin
 import com.mio.plugin.NativeLibPlugin
 import com.mio.util.getElfArchFromZip
 import com.tungsten.fcl.R
+import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclcore.mod.LocalModFile
@@ -150,6 +151,16 @@ class ModChecker(val context: Context, val version: String) {
                             mod.file.toFile().name
                         )
                     )
+                }
+
+                "lwjgl3ify" -> {
+                    // GTNH 等整合包依赖 lwjgl3ify，需要 Java 17+；启动器会自动合并 RFB 版本 JSON，
+                    // 但若用户手动指定了 jre8 则无法启动，这里给出提示
+                    val javaName = Profiles.getSelectedProfile()
+                        .getVersionSetting(Profiles.getSelectedVersion()).java
+                    if (javaName.equals("jre8", ignoreCase = true)) {
+                        throw ModCheckException(context.getString(R.string.mod_check_lwjgl3ify))
+                    }
                 }
             }
         }.exceptionOrNull()

@@ -33,6 +33,7 @@ import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -116,6 +117,23 @@ public class MojangDownloadProvider implements DownloadProvider {
     @Override
     public String injectURL(String baseURL) {
         return baseURL;
+    }
+
+    /**
+     * libraries.minecraft.net 不托管部分第三方构件（如 1.7.10 Forge 的 Scala/Akka 依赖、
+     * GTNH 的 lwjgl3ify forgePatches），在纯官方源模式下追加镜像与 Maven Central 候选，
+     * 避免单一 404 直接导致启动中断。
+     */
+    @Override
+    public List<URL> injectURLWithCandidates(String baseURL) {
+        if (baseURL.startsWith("https://libraries.minecraft.net/")) {
+            String path = baseURL.substring("https://libraries.minecraft.net/".length());
+            return Arrays.asList(
+                    NetworkUtils.toURL(baseURL),
+                    NetworkUtils.toURL("https://bmclapi2.bangbang93.com/maven/" + path),
+                    NetworkUtils.toURL("https://repo1.maven.org/maven2/" + path));
+        }
+        return DownloadProvider.super.injectURLWithCandidates(baseURL);
     }
 
     @Override
