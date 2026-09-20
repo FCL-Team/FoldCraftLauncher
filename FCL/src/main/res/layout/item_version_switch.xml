@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?><!-- 版本快速切换弹窗条目：图标 + 版本名 + 右侧启动按钮，卡片背景与选中高亮由代码统一设置 -->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="3dp"
+    android:layout_marginVertical="3dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingStart="10dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="6dp"
+    android:paddingBottom="8dp">
+
+    <com.tungsten.fcllibrary.component.view.FCLImageView
+        android:id="@+id/icon"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/launch"
+        app:layout_constraintStart_toEndOf="@id/icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.tungsten.fcllibrary.component.view.FCLImageButton
+        android:id="@+id/launch"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:contentDescription="@string/launch"
+        android:src="@drawable/ic_start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:no_padding="true"
+        app:use_theme_color="true" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
