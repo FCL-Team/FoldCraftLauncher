@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
+import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
@@ -62,13 +63,18 @@ public final class Lwjgl3ifyPatcher {
                                      @NotNull AtomicReference<Version> versionRef) {
         try {
             Version current = versionRef.get();
-            List<File> jars = findLwjgl3ifyJars(new File(repository.getRunDirectory(versionId), "mods"));
-            if (jars.isEmpty()) return;
-
-            File lwjgl3ifyJar = jars.get(0);
-            if (jars.size() > 1) {
-                LOG.log(Level.WARNING, "Multiple lwjgl3ify jars found in mods folder, using " + lwjgl3ifyJar.getName());
+            // 采用 FCL 的 mod 列表检查（按 mcmod.info 的 modid 识别，与游戏实际加载一致，改名不影响）
+            LocalModFile lwjgl3ifyMod = null;
+            for (LocalModFile mod : repository.getModManager(versionId).getMods()) {
+                if (!"lwjgl3ify".equals(mod.getId()) || !mod.isActive()) continue;
+                if (lwjgl3ifyMod == null || VersionNumber.asVersion(mod.getVersion())
+                        .compareTo(VersionNumber.asVersion(lwjgl3ifyMod.getVersion())) > 0) {
+                    lwjgl3ifyMod = mod; // 存在多个时取版本号最高的一个
+                }
             }
+            if (lwjgl3ifyMod == null) return;
+            File lwjgl3ifyJar = lwjgl3ifyMod.getFile().toFile();
+            LOG.log(Level.INFO, "Detected lwjgl3ify " + lwjgl3ifyMod.getVersion() + " in mods folder");
 
             Version embedded = readEmbeddedVersionJson(lwjgl3ifyJar);
             if (embedded == null) {
@@ -77,6 +83,7 @@ public final class Lwjgl3ifyPatcher {
             }
 
             ensureForgePatchesFile(repository, embedded, current, lwjgl3ifyJar);
+            ensureLwjgl3ifyConfig(new File(repository.getRunDirectory(versionId), "config"));
 
             if (isPatchedWith(current, embedded)) {
                 // 已合并过同一版本，但需确保磁盘 JSON 不含 resolved 版本残留的 root/patches 字段，
@@ -204,6 +211,34 @@ public final class Lwjgl3ifyPatcher {
     }
 
     /**
+     * 确保实例 config/lwjgl3ify.cfg 关闭 linuxCreateAppDesktopEntry：
+     * lwjgl3ify 默认会在首次初始化时向 XDG_DATA_HOME（或 ~/.local/share）写入桌面快捷方式，
+     * Android 上两者均不存在，会抛 RuntimeException 杀死 RFB 主线程导致游戏静默退出
+     * （GTNH 官方包自带此配置，自组包需要补上）。
+     * cfg 不存在则写最小模板；已存在但缺该键则在文件尾追加（CarbonConfig 按段名合并）；
+     * 已含该键则不动。
+     */
+    private static void ensureLwjgl3ifyConfig(File configDir) {
+        try {
+            if (!configDir.isDirectory() && !configDir.mkdirs()) return;
+            File cfg = new File(configDir, "lwjgl3ify.cfg");
+            final String entry = "B:linuxCreateAppDesktopEntry=false";
+            if (!cfg.isFile()) {
+                FileUtils.writeText(cfg, "# Configuration file\n\nwindow {\n    " + entry + "\n}\n");
+                LOG.log(Level.INFO, "Created lwjgl3ify.cfg with linuxCreateAppDesktopEntry=false");
+                return;
+            }
+            String text = FileUtils.readText(cfg);
+            if (!text.contains("linuxCreateAppDesktopEntry")) {
+                FileUtils.writeText(cfg, text + "\nwindow {\n    " + entry + "\n}\n");
+                LOG.log(Level.INFO, "Appended linuxCreateAppDesktopEntry=false to lwjgl3ify.cfg");
+            }
+        } catch (IOException e) {
+            LOG.log(Level.WARNING, "Failed to ensure lwjgl3ify.cfg", e);
+        }
+    }
+
+    /**
      * 当前版本是否已经合并过同版本的 lwjgl3ify version.json。
      */
     private static boolean isPatchedWith(Version current, Version embedded) {
@@ -224,29 +259,6 @@ public final class Lwjgl3ifyPatcher {
                 .findFirst().orElse(null);
     }
 
-    private static List<File> findLwjgl3ifyJars(File modsDir) {
-        List<File> result = new ArrayList<>();
-        File[] files = modsDir.listFiles(file -> file.isFile() && file.getName().toLowerCase().endsWith(".jar"));
-        if (files == null) return result;
-        for (File file : files) {
-            if (file.getName().toLowerCase().startsWith("lwjgl3ify-")) {
-                result.add(file);
-            }
-        }
-        // 存在多个时取版本号最高的一个
-        result.sort((a, b) -> VersionNumber.asVersion(versionFromFileName(b))
-                .compareTo(VersionNumber.asVersion(versionFromFileName(a))));
-        return result;
-    }
-
-    private static String versionFromFileName(File jar) {
-        String name = jar.getName();
-        String lower = name.toLowerCase();
-        if (lower.startsWith("lwjgl3ify-") && lower.endsWith(".jar")) {
-            return name.substring("lwjgl3ify-".length(), name.length() - ".jar".length());
-        }
-        return "0.0";
-    }
 
     /**
      * 首次合并前备份原版本 JSON（仅当备份不存在时创建，不覆盖已有备份），
