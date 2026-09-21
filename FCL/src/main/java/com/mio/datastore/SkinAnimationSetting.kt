@@ -19,7 +19,11 @@ val Context.skinAnimationDataStore: DataStore<SkinAnimationSetting> by dataStore
 
 @OptIn(kotlinx.serialization.InternalSerializationApi::class)
 @Serializable
-data class SkinAnimationSetting(val animationId: String = "walking")
+data class SkinAnimationSetting(
+    val animationId: String = "walking",
+    val solidLayerEnabled: Boolean = true,
+    val upperBodySeparated: Boolean = true,
+)
 
 object SkinAnimationSettingSerializer : Serializer<SkinAnimationSetting> {
     override val defaultValue: SkinAnimationSetting

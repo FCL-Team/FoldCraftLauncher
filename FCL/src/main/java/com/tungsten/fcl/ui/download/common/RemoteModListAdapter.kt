@@ -3,30 +3,34 @@ package com.tungsten.fcl.ui.download.common
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.mio.data.FavoriteManager
 import com.mio.ui.adapter.ViewHolder
+import com.mio.ui.widget.SwipeMenuLayout
+import com.mio.ui.widget.closeSwipeMenuOnOutsideTouch
 import com.mio.util.AnimUtil.Companion.playTranslationX
+import com.mio.util.applySourceBadgeStyle
 import com.mio.util.format
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemRemoteModBinding
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.download.DownloadUI
+import com.tungsten.fcl.ui.download.favorite.bindFavoriteIcon
+import com.tungsten.fcl.ui.download.favorite.handleFavoriteClick
 import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.RemoteMod
+import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.mod.curse.CurseAddon
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
@@ -34,6 +38,7 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -49,6 +54,15 @@ class RemoteModListAdapter(
 ) : RecyclerView.Adapter<ViewHolder>() {
     private val modIdList: MutableList<String?> = ArrayList()
     private val scanMutex = Mutex()
+
+    /** 当前已左滑打开菜单的 item（互斥：打开新的前先关旧的） */
+    private var openMenuLayout: SwipeMenuLayout? = null
+
+    /** 收藏状态收集任务（adapter 挂到 RecyclerView 时启动，分离时取消） */
+    private var favoriteJob: Job? = null
+
+    /** 上次收集到的收藏 id 集合，用于差量计算受影响的条目位置 */
+    private var boundFavoriteIds: Set<String> = emptySet()
 
     init {
         MainActivity.getInstance().lifecycleScope.launch {
@@ -112,6 +126,9 @@ class RemoteModListAdapter(
         /** payload：仅刷新"已安装"标记，重绑时跳过图片加载与入场动画 */
         const val PAYLOAD_INSTALLED = 1
 
+        /** payload：仅刷新收藏星形图标，重绑时跳过图片加载与入场动画 */
+        const val PAYLOAD_FAVORITE = 2
+
         /** 缓存占位位图（内容只读，多视图共享安全），避免每次 bind 重新分配与绘制 */
         private var placeholderBitmap: Bitmap? = null
     }
@@ -143,16 +160,71 @@ class RemoteModListAdapter(
         )
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        // 收藏状态变化时仅局部刷新受影响条目（notifyDataSetChanged 会整表重绑，
+        // 重播全部条目的入场动画并重载图片，点击收藏时列表明显闪烁）
+        favoriteJob = MainActivity.getInstance().lifecycleScope.launch {
+            FavoriteManager.favorites.collect { favorites ->
+                val newIds = favorites.map { it.id }.toSet()
+                val oldIds = boundFavoriteIds
+                boundFavoriteIds = newIds
+                val toggled = (newIds - oldIds) + (oldIds - newIds)
+                if (toggled.isEmpty()) return@collect
+                for (position in list.indices) {
+                    val mod = list[position]
+                    val id = FavoriteManager.idOf(FavoriteManager.sourceOf(mod), mod.modID)
+                    if (id in toggled) {
+                        notifyItemChanged(position, PAYLOAD_FAVORITE)
+                    }
+                }
+            }
+        }
+        // 列表滚动时收起已打开的左滑菜单；点击菜单外区域同样收起
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(rv: RecyclerView, newState: Int) {
+                if (newState != RecyclerView.SCROLL_STATE_IDLE) {
+                    openMenuLayout?.closeMenu()
+                }
+            }
+        })
+        recyclerView.closeSwipeMenuOnOutsideTouch { openMenuLayout }
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        favoriteJob?.cancel()
+        favoriteJob = null
+    }
+
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int
     ) {
         val binding = ItemRemoteModBinding.bind(holder.itemView)
         val remoteMod = list[position]
+        binding.root.onMenuStateChangeListener = object : SwipeMenuLayout.OnMenuStateChangeListener {
+            override fun onMenuOpened() {
+                openMenuLayout?.let { if (it !== binding.root) it.closeMenu() }
+                openMenuLayout = binding.root
+            }
+
+            override fun onMenuClosed() {
+                if (openMenuLayout === binding.root) {
+                    openMenuLayout = null
+                }
+            }
+        }
         binding.parent.setOnClickListener {
             callback.onItemSelect(
                 remoteMod
             )
+        }
+        // 左滑菜单收藏按钮：已收藏实心星形（点击取消），未收藏描边（点击弹分组选择后收藏）
+        val favoriteEntity = FavoriteManager.fromRemoteMod(remoteMod, favoriteType())
+        bindFavoriteIcon(binding.btnFavorite, favoriteEntity.id)
+        binding.btnFavorite.setOnClickListener {
+            // 触发动作后立即收起菜单
+            binding.root.closeMenu()
+            handleFavoriteClick(context, favoriteEntity)
         }
         // 固定 90×90 占位（与 override 后图片内在尺寸一致）：图片加载完成替换时
         // drawable 内在尺寸不变，不触发 requestLayout，避免列表全局重排导致
@@ -179,7 +251,9 @@ class RemoteModListAdapter(
             // 注册换肤回调：主题（含次要色）修改后已加载的条目同步变色；
             // 同一 view 重复注册会覆盖旧回调，复用绑定不同条目时以最后一次为准
             ThemeEngine.getInstance()
-                .registerEvent(binding.sourceBadge) { applySourceBadgeStyle(binding.sourceBadge, remoteMod) }
+                .registerEvent(binding.sourceBadge) {
+                    applySourceBadgeStyle(binding.sourceBadge, remoteMod.data is CurseAddon)
+                }
         }
         binding.description.text = remoteMod.description
         binding.downloadCount.text = remoteMod.downloadCount.format(context)
@@ -200,9 +274,17 @@ class RemoteModListAdapter(
             super.onBindViewHolder(holder, position, payloads)
             return
         }
-        // 已安装标记刷新：只更新标题，不重播入场动画、不重载图片
+        // 局部刷新：已安装标记只更新标题，收藏状态只更新星形图标，
+        // 均不重播入场动画、不重载图片
         val binding = ItemRemoteModBinding.bind(holder.itemView)
-        binding.title.text = buildTitle(list[position])
+        val remoteMod = list.getOrNull(position) ?: return
+        if (payloads.contains(PAYLOAD_INSTALLED)) {
+            binding.title.text = buildTitle(remoteMod)
+        }
+        if (payloads.contains(PAYLOAD_FAVORITE)) {
+            val id = FavoriteManager.idOf(FavoriteManager.sourceOf(remoteMod), remoteMod.modID)
+            bindFavoriteIcon(binding.btnFavorite, id)
+        }
     }
 
     private fun buildTitle(remoteMod: RemoteMod): String {
@@ -218,26 +300,13 @@ class RemoteModListAdapter(
         }
     }
 
-    /** 来源徽标配色：主题次色实底 + 亮度对比色文字与平台 LOGO（换肤回调与首次 bind 共用） */
-    private fun applySourceBadgeStyle(badge: FCLTextView, remoteMod: RemoteMod) {
-        val color = ThemeEngine.getInstance().getTheme().getColor2()
-        val contentColor =
-            if (ColorUtils.calculateLuminance(color) >= 0.5f) Color.BLACK else Color.WHITE
-        val background = GradientDrawable()
-        background.shape = GradientDrawable.RECTANGLE
-        background.cornerRadius = context.resources.displayMetrics.density * 16
-        background.setColor(color)
-        val logo = ContextCompat.getDrawable(
-            context,
-            if (remoteMod.data is CurseAddon) R.drawable.img_platform_curseforge else R.drawable.img_platform_modrinth
-        )!!
-        logo.mutate().setTint(contentColor)
-        // PNG 原图 102×102，compound drawable 不缩放，须显式 bounds（与 Zalith 的 iconSize 12dp 一致）
-        val logoSize = (context.resources.displayMetrics.density * 12).toInt()
-        logo.setBounds(0, 0, logoSize, logoSize)
-        badge.background = background
-        badge.setTextColor(contentColor)
-        badge.setCompoundDrawablesRelative(logo, null, null, null)
+    /** 当前页模式对应的资源类别（收藏实体用；注意 RESOURCE_PACK/SHADER_PACK 不能用 repository.getType()，其被固定为 MOD） */
+    private fun favoriteType(): RemoteModRepository.Type = when (downloadPage.pageId) {
+        DownloadUI.PAGE_ID_DOWNLOAD_MODPACK -> RemoteModRepository.Type.MODPACK
+        DownloadUI.PAGE_ID_DOWNLOAD_RESOURCE_PACK -> RemoteModRepository.Type.RESOURCE_PACK
+        DownloadUI.PAGE_ID_DOWNLOAD_SHADER_PACK -> RemoteModRepository.Type.SHADER_PACK
+        DownloadUI.PAGE_ID_DOWNLOAD_WORLD -> RemoteModRepository.Type.WORLD
+        else -> RemoteModRepository.Type.MOD
     }
 
     override fun getItemCount(): Int {

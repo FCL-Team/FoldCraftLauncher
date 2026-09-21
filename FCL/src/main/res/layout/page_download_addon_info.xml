@@ -118,6 +118,17 @@
                 app:auto_tint="true"
                 app:no_padding="true" />
 
+            <com.tungsten.fcllibrary.component.view.FCLImageButton
+                android:id="@+id/favorite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="10dp"
+                android:contentDescription="@string/favorites"
+                android:src="@drawable/ic_star_outline"
+                app:auto_tint="true"
+                app:no_padding="true" />
+
         </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
         <com.tungsten.fcllibrary.component.view.FCLLinearLayout

@@ -188,7 +188,7 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- 版本卡片：图标 + 版本名 + 组件摘要，点击卡片进入版本设置，右侧箭头切换版本 -->
+            <!-- 版本卡片：图标 + 版本名 + 组件摘要，点击进入版本选择，齿轮进入版本设置 -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/version_card"
                 android:layout_width="0dp"
@@ -224,7 +224,7 @@
                     android:singleLine="true"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    app:layout_constraintEnd_toStartOf="@id/switch_version"
+                    app:layout_constraintEnd_toStartOf="@id/go_setting"
                     app:layout_constraintStart_toEndOf="@id/icon"
                     app:layout_constraintTop_toTopOf="parent"
                     app:use_theme_color="true"
@@ -240,18 +240,17 @@
                     android:textSize="11sp"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/switch_version"
+                    app:layout_constraintEnd_toStartOf="@id/go_setting"
                     app:layout_constraintStart_toEndOf="@id/icon"
                     app:layout_constraintTop_toBottomOf="@id/version_name"
                     app:use_theme_color="true"
                     tools:text="1.21.1, Forge:47.2.0" />
 
                 <com.tungsten.fcllibrary.component.view.FCLImageButton
-                    android:id="@+id/switch_version"
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
-                    android:contentDescription="@string/version"
-                    android:src="@drawable/ic_baseline_swap_vert_24"
+                    android:id="@+id/go_setting"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_baseline_settings_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

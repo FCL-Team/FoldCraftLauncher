@@ -21,27 +21,33 @@
             android:layout_marginTop="10dp"
             app:tabUnboundedRipple="false"
             app:tabGravity="fill"
+            app:tabInlineLabel="true"
+            app:tabMode="auto"
             app:follow_theme="true"
             app:tabTextAppearance="@style/TabTextAppearance">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:icon="@drawable/ic_baseline_tune_24"
                 android:text="@string/settings_type_global_manage"/>
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:icon="@drawable/ic_baseline_settings_24"
                 android:text="@string/settings_launcher"/>
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:icon="@drawable/ic_outline_extension_24"
                 android:text="@string/settings_plugin"/>
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:icon="@drawable/ic_baseline_info_24"
                 android:text="@string/about"/>
 
         </com.tungsten.fcllibrary.component.view.FCLTabLayout>

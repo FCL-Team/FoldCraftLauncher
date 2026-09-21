@@ -13,8 +13,8 @@ import com.mio.skin.SkinRenderer;
 import com.mio.skin.SkinTextureLoader;
 import com.mio.skin.SkinViewer;
 
-import static com.mio.skin.SkinAnimationsKt.restoreSkinAnimation;
-import static com.mio.skin.SkinAnimationsKt.saveSkinAnimation;
+import static com.mio.skin.SkinAnimationsKt.restoreSkinSettings;
+import static com.mio.skin.SkinAnimationsKt.saveSkinSettings;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Accounts;
 import com.tungsten.fclcore.auth.Account;
@@ -74,15 +74,21 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
         skinViewer.setRenderer(renderer, 5f);
         skinLoader = new SkinTextureLoader(renderer);
         skinLoader.load(Accounts.getSelectedAccount(), false);
-        // 恢复上次选择的动画
-        restoreSkinAnimation(getContext(), renderer);
-        // 双击模型弹出动画切换窗口
+        // 恢复上次选择的动画与 3D 皮肤层开关
+        restoreSkinSettings(getContext(), renderer);
+        // 双击模型弹出皮肤模型设置窗口
         skinViewer.setOnDoubleClick(() -> {
             Context context = getContext();
             if (context instanceof Activity && !((Activity) context).isDestroyed() && !((Activity) context).isFinishing()) {
-                new AnimationDialog(context, renderer.getAnimationId(), clipId -> {
+                new AnimationDialog(context, renderer.getAnimationId(), renderer.getSolidLayerEnabled(), renderer.getUpperBodySeparated(), clipId -> {
                     renderer.playAnimation(clipId);
-                    saveSkinAnimation(context, renderer);
+                    saveSkinSettings(context, renderer);
+                }, enabled -> {
+                    renderer.setSolidLayerEnabled(enabled);
+                    saveSkinSettings(context, renderer);
+                }, separated -> {
+                    renderer.setUpperBodySeparated(separated);
+                    saveSkinSettings(context, renderer);
                 }).show();
             }
         });

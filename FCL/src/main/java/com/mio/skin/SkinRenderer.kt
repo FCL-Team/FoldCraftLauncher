@@ -35,8 +35,24 @@ class SkinRenderer(context: Context) {
     var animationId: String = SkinAnimations.DEFAULT_ID
         private set
 
+    /** 体素化 3D 皮肤层开关（任意线程可写、渲染线程读），关闭时第二层回落零厚度面片 */
+    @Volatile
+    var solidLayerEnabled = true
+        set(value) {
+            field = value
+            model.setSolidLayerEnabled(value)
+        }
+
+    /** 身体与腿部分离开关（任意线程可写、渲染线程读），关闭时上身与腿部贴合、腰部接缝可能闪烁 */
+    @Volatile
+    var upperBodySeparated = true
+        set(value) {
+            field = value
+            pendingSeparation = true
+        }
+
     init {
-        // 默认播放待机（账户弹窗等不调用 restoreSkinAnimation 的场景也有动画）
+        // 默认播放待机（账户弹窗等不调用 restoreSkinSettings 的场景也有动画）
         model.playAnimation(animationId)
     }
 
@@ -77,6 +93,10 @@ class SkinRenderer(context: Context) {
 
     @Volatile
     private var pendingHasUpdate = false
+
+    /** 分离开关待应用标志：rest 局部矩阵修改重，转交渲染线程消费避免与绘制竞争 */
+    @Volatile
+    private var pendingSeparation = false
 
     // ---- 对外 API（任意线程可调）----
 
@@ -212,6 +232,10 @@ class SkinRenderer(context: Context) {
     }
 
     private fun consumePendingUpdate() {
+        if (pendingSeparation) {
+            pendingSeparation = false
+            model.setUpperBodySeparated(upperBodySeparated)
+        }
         if (!pendingHasUpdate) {
             return
         }

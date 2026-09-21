@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.mio.ui.widget.SwipeMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp">
+
+    <!-- 左滑菜单层（靠右垫底）：修改分组 + 取消收藏按钮，后续新增操作往此层加 -->
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:id="@+id/swipe_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@drawable/bg_container_white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        app:auto_linear_background_tint="true">
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/btn_edit_group"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_baseline_folder_24"
+            app:auto_tint="true" />
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/btn_remove_favorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_baseline_delete_24"
+            app:auto_tint="true" />
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLConstraintLayout
+        android:id="@+id/parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_container_white_clickable"
+        android:paddingStart="10dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="8dp"
+        android:stateListAnimator="@xml/anim_scale"
+        app:auto_tint="true">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <!-- 多选模式的勾选框（仅多选模式显示，点击条目切换选中） -->
+            <com.tungsten.fcllibrary.component.view.FCLCheckBox
+                android:id="@+id/select_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:visibility="gone" />
+
+            <com.tungsten.fcllibrary.component.view.FCLImageView
+                android:id="@+id/icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                tools:src="@drawable/ic_cube" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <!-- 标题行：title 优先按内容宽、超长时压缩截断；类别标签占剩余区间截断；
+                     来源徽标固定行尾，不随标题/标签过长被挤出 -->
+                <com.tungsten.fcllibrary.component.view.FCLConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textSize="14sp"
+                        app:auto_text_tint="true"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/type_tag"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Title" />
+
+                    <!-- 资源类别（模组/整合包/资源包/光影包/世界） -->
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:id="@+id/type_tag"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:ellipsize="end"
+                        android:paddingStart="4dp"
+                        android:paddingTop="2dp"
+                        android:paddingEnd="4dp"
+                        android:paddingBottom="2dp"
+                        android:singleLine="true"
+                        android:textSize="11sp"
+                        app:auto_text_tint="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/source_badge"
+                        app:layout_constraintStart_toEndOf="@+id/title"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Mod" />
+
+                    <!-- 来源徽标（平台 LOGO + 平台名），样式与搜索结果列表一致 -->
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:id="@+id/source_badge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:drawablePadding="2dp"
+                        android:paddingStart="4dp"
+                        android:paddingTop="2dp"
+                        android:paddingEnd="4dp"
+                        android:paddingBottom="2dp"
+                        android:singleLine="true"
+                        android:textSize="10sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="CurseForge" />
+                </com.tungsten.fcllibrary.component.view.FCLConstraintLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.tungsten.fcllibrary.component.view.FCLImageView
+                        android:id="@+id/icon_download"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:src="@drawable/ic_baseline_download_24"
+                        app:auto_src_tint="true" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:id="@+id/download_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:textSize="12sp"
+                        app:auto_text_tint="true"
+                        tools:text="114514" />
+
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:id="@+id/description"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textSize="12sp"
+                        app:auto_text_tint="true"
+                        tools:text="Description" />
+
+                    <!-- 所属分组名列表（· 分隔），无分组时隐藏 -->
+                    <com.tungsten.fcllibrary.component.view.FCLTextView
+                        android:id="@+id/group_tag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textSize="12sp"
+                        android:visibility="gone"
+                        app:auto_text_tint="true"
+                        tools:text="Group · Group2" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+    </com.tungsten.fcllibrary.component.view.FCLConstraintLayout>
+
+</com.mio.ui.widget.SwipeMenuLayout>

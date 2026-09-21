@@ -185,7 +185,7 @@ class VersionListPage(context: Context?, id: Int) :
                 // 命中会话级快照时跳过进度条即时渲染，最新数据随后台刷新覆盖
                 // （快照在创建时排序，绘制与后续 sameEntries 比较共用同一份，避免顺序不一致误判为数据变化）
                 val snapshotMap = VersionCache.get(profile)
-                val snapshot = sortVersionEntries(ids.mapNotNull { snapshotMap[it] })
+                val snapshot = sortEntries(ids.mapNotNull { snapshotMap[it] })
                 if (snapshot.isNotEmpty()) {
                     showVersions(profile, snapshot)
                 } else {
@@ -193,11 +193,11 @@ class VersionListPage(context: Context?, id: Int) :
                     binding.progress.visibility = View.VISIBLE
                 }
                 registerHighlightListener(profile)
-                val entries = computeVersionEntries(context, profile)
+                // 共享快照重算（写入 VersionCache，主界面快速切换弹窗同样读取）
+                val entries = VersionCache.refresh(profile)
                 // 加载期间可能已切换 profile 或重新加载，放弃过期结果
                 if (loadJob !== job) return@launch
-                VersionCache.put(profile, entries)
-                val sorted = sortVersionEntries(entries)
+                val sorted = sortEntries(entries)
                 // 与快照一致时跳过重绘，避免列表无意义地重放入场动画
                 if (snapshot.isEmpty() || !sameEntries(snapshot, sorted)) {
                     showVersions(profile, sorted)
@@ -234,6 +234,16 @@ class VersionListPage(context: Context?, id: Int) :
         if (selected != null) {
             binding.versionList.scrollToPosition(children.indexOf(selected))
         }
+    }
+
+    /**
+     * 按真实游戏版本从大到小排序（GameVersionNumber 比较，无法识别的版本排在最后），同版本时按 id 倒序保持稳定
+     */
+    private fun sortEntries(entries: List<VersionCache.Entry>): List<VersionCache.Entry> {
+        return entries.sortedWith(
+            compareByDescending<VersionCache.Entry> { it.gameVersion }
+                .thenByDescending { it.id }
+        )
     }
 
     private fun sameEntries(

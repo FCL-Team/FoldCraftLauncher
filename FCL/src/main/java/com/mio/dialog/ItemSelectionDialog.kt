@@ -96,7 +96,7 @@ class ItemSelectionDialog(
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
         )
         val headTailHeight = binding.root.measuredHeight
-        val spacing = ConvertUtils.dip2px(context, 12f)
+        val spacing = ConvertUtils.dip2px(context, 6f)
         val rowHeight = sample.measuredHeight.coerceAtLeast(ConvertUtils.dip2px(context, 48f))
         val contentHeight = items.size * rowHeight + (items.size - 1) * spacing
         val maxWindowHeight = ((if (small) 0.5f else 0.9f) * metrics.heightPixels).toInt()
@@ -108,7 +108,7 @@ class ItemSelectionDialog(
             dismiss()
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        binding.recyclerView.addItemDecoration(SpacingItemDecoration(ConvertUtils.dip2px(context, 12f)))
+        binding.recyclerView.addItemDecoration(SpacingItemDecoration(ConvertUtils.dip2px(context, 6f)))
         binding.cancel.setOnClickListener { dismiss() }
     }
 }

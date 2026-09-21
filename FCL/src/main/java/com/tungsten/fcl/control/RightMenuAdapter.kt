@@ -7,10 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.recyclerview.widget.RecyclerView
+import com.mio.ui.selectedCardBackground
 import com.mio.util.getScreenHeight
 import com.mio.util.getScreenWidth
-import com.mio.ui.selectedCardBackground
 import com.tungsten.fcl.R
+import com.tungsten.fcl.control.data.ControlViewGroup
 import com.tungsten.fcl.databinding.ItemMenuButtonBinding
 import com.tungsten.fcl.databinding.ItemMenuControlGroupBinding
 import com.tungsten.fcl.databinding.ItemMenuSeekbarBinding
@@ -18,7 +19,6 @@ import com.tungsten.fcl.databinding.ItemMenuSpinnerBinding
 import com.tungsten.fcl.databinding.ItemMenuSwitchBinding
 import com.tungsten.fcl.game.sdl.SdlSettings
 import com.tungsten.fcl.setting.MenuSetting
-import com.tungsten.fcl.control.data.ControlViewGroup
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLSpinner
@@ -433,7 +433,7 @@ class RightMenuAdapter(
     private fun bindControlGroup(holder: Holder, row: Row.ControlGroupRow) {
         val binding = ItemMenuControlGroupBinding.bind(holder.itemView)
         val isCurrent = row.group == gameMenu.viewGroup
-        binding.label.text = row.group.getName()
+        binding.label.text = row.group.name
         if (isCurrent) {
             holder.itemView.background = selectedCardBackground(ThemeEngine.getTheme().getColor(), density)
         }

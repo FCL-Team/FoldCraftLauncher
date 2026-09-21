@@ -27,7 +27,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.graphics.toColorInt
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
@@ -37,6 +36,7 @@ import com.mio.manager.RendererManager
 import com.mio.plugin.DriverPlugin
 import com.mio.promo.QuarkPromo
 import com.mio.ui.dialog.RendererSelectDialog
+import com.mio.ui.popup.VersionSwitchPopup
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
@@ -58,10 +58,7 @@ import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
 import com.tungsten.fcl.ui.main.MainUI
-import com.tungsten.fcl.ui.version.VersionQuickSwitchPopup
 import com.tungsten.fcl.ui.version.Versions
-import com.tungsten.fcl.ui.version.computeVersionEntries
-import com.tungsten.fcl.ui.version.sortVersionEntries
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -93,6 +90,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 import java.lang.ref.WeakReference
+import java.util.function.Consumer
 import java.util.logging.Level
 import java.util.stream.Stream
 import kotlin.math.abs
@@ -132,6 +130,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     /** 右列内容当前是否为下载面板（true 时波浪/账号等让位给任务列表） */
     private var downloadPanelOpen = false
+
+    /** 版本列表刷新监听（预热快速切换弹窗缓存），onDestroy 注销 */
+    private lateinit var preloadListener: Consumer<Profile>
 
     /** 是否有下载任务（收起面板时用于决定波浪指示器显隐） */
     private var hasTasks = false
@@ -202,11 +203,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
                 account.setOnClickListener(this@MainActivity)
                 versionCard.setOnClickListener(this@MainActivity)
-                switchVersion.setOnClickListener(this@MainActivity)
-                switchVersion.setOnLongClickListener {
-                    showQuickVersionSwitch()
+                // 长按版本卡片：就地弹出版本快速切换列表（点击条目切换版本，条目右侧按钮切换并启动）
+                versionCard.setOnLongClickListener {
+                    VersionSwitchPopup(this@MainActivity)
+                        .show(binding.versionCard, binding.rightMenu) { id -> launchVersion(id) }
                     true
                 }
+                goSetting.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
                     RendererSelectDialog(this@MainActivity, false) {
@@ -502,6 +505,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         ThemeEngine.getInstance().removeRefreshListener(themeRefreshListener)
+        if (::preloadListener.isInitialized) {
+            Profiles.unregisterVersionsListener(preloadListener)
+        }
         if (shouldPlayVideo()) {
             mediaPlayer = null
             binding.videoView.stopPlayback()
@@ -612,7 +618,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private fun openDownloadPanel() {
         if (downloadPanelOpen) return
         binding.apply {
-            val menuReady = rightMenu.visibility == View.VISIBLE &&
+            val menuReady = rightMenu.isVisible &&
                     rightMenuContent.height > 0 && downloadPanel.height > 0
             if (!menuReady) {
                 // 菜单隐藏或首帧未布局（如通知冷启动）：面板直接作为列内容（随菜单）出现
@@ -644,7 +650,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     private fun closeDownloadPanel() {
         if (!downloadPanelOpen) return
         binding.apply {
-            val menuReady = rightMenu.visibility == View.VISIBLE &&
+            val menuReady = rightMenu.isVisible &&
                     rightMenuContent.height > 0 && downloadPanel.height > 0
             if (!menuReady) {
                 // 菜单隐藏或尚未布局：直接静态恢复内容
@@ -688,10 +694,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 title.setTextWithAnim(getString(R.string.account))
                 uiManager.switchUI(uiManager.accountUI)
             }
-            if (view === versionCard) {
-                openInstanceSettings()
-            }
-            if (view === switchVersion && uiManager.currentUI !== uiManager.versionUI) {
+            if (view === versionCard && uiManager.currentUI !== uiManager.versionUI) {
                 refreshMenuView(null)
                 title.setTextWithAnim(getString(R.string.version))
                 uiManager.switchUI(uiManager.versionUI)
@@ -700,40 +703,39 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 uiManager.onBackPressed()
             }
             if (view === start) {
-                launchVersion(Profiles.getSelectedProfile(), null)
+                launchVersion(Profiles.getSelectedVersion())
+            }
+            if (view === goSetting) {
+                val profile = Profiles.getSelectedProfile()
+                // 菜单项已处于选中态时 setSelected(true) 不再触发 onSelect，需兜底完成切页
+                if (profile.versionSetting.isUsesGlobal) {
+                    setting.isSelected = true
+                    if (uiManager.currentUI !== uiManager.settingUI) {
+                        title.setTextWithAnim(getString(R.string.setting))
+                        uiManager.switchUI(uiManager.settingUI)
+                    }
+                    val tab = uiManager.settingUI.tabLayout.getTabAt(0)
+                    uiManager.settingUI.tabLayout.selectTab(tab)
+                } else {
+                    manage.isSelected = true
+                    if (uiManager.currentUI !== uiManager.manageUI) {
+                        title.setTextWithAnim(getString(R.string.manage))
+                        // 走到该分支说明选中版本存在独立设置，selectedVersion 必不为 null
+                        uiManager.manageUI.setVersion(profile.selectedVersion!!, profile)
+                        uiManager.switchUI(uiManager.manageUI)
+                    }
+                    val tab = uiManager.manageUI.tabLayout.getTabAt(0)
+                    uiManager.manageUI.tabLayout.selectTab(tab)
+                }
             }
         }
     }
 
-    /** 打开当前实例的设置页：使用全局设置时进入启动器设置，否则进入该版本的独立设置 */
-    private fun openInstanceSettings() {
-        binding.apply {
-            val profile = Profiles.getSelectedProfile()
-            // 菜单项已处于选中态时 setSelected(true) 不再触发 onSelect，需兜底完成切页
-            if (profile.versionSetting.isUsesGlobal) {
-                setting.isSelected = true
-                if (uiManager.currentUI !== uiManager.settingUI) {
-                    title.setTextWithAnim(getString(R.string.setting))
-                    uiManager.switchUI(uiManager.settingUI)
-                }
-                val tab = uiManager.settingUI.tabLayout.getTabAt(0)
-                uiManager.settingUI.tabLayout.selectTab(tab)
-            } else {
-                manage.isSelected = true
-                if (uiManager.currentUI !== uiManager.manageUI) {
-                    title.setTextWithAnim(getString(R.string.manage))
-                    // 走到该分支说明选中版本存在独立设置，selectedVersion 必不为 null
-                    uiManager.manageUI.setVersion(profile.selectedVersion!!, profile)
-                    uiManager.switchUI(uiManager.manageUI)
-                }
-                val tab = uiManager.manageUI.tabLayout.getTabAt(0)
-                uiManager.manageUI.tabLayout.selectTab(tab)
-            }
-        }
-    }
-
-    /** 启动指定实例；versionId 为 null 时启动当前选中实例（与启动按钮行为一致） */
-    private fun launchVersion(profile: Profile, versionId: String?) {
+    /**
+     * 启动指定版本（null 表示当前选中版本，与启动按钮一致）；
+     * 控制器未初始化时提示并晃动启动按钮
+     */
+    private fun launchVersion(versionId: String?) {
         if (!Controllers.isInitialized()) {
             binding.title.setTextWithAnim(getString(R.string.message_loading_controllers))
             AnimUtil.playTranslationX(binding.start, 700, 0f, 50f, -50f, 50f, -50f, 0f)
@@ -741,37 +743,15 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             return
         }
         QuarkPromo.interceptLaunch(this) {
-            val id = versionId ?: profile.selectedVersion
+            val selectedProfile = Profiles.getSelectedProfile()
             DriverPlugin.selected = runCatching {
                 DriverPlugin.driverList.find {
-                    it.driver == profile.getVersionSetting(id).driver
+                    it.driver == selectedProfile.getVersionSetting(versionId).driver
                 }
             }.getOrNull() ?: DriverPlugin.driverList[0]
             refreshScreenSize()
             DisplayUtil.refreshDisplayMetrics(this)
-            if (id != null) {
-                Versions.launch(this, profile, id)
-            } else {
-                Versions.launch(this, profile)
-            }
-        }
-    }
-
-    /** 长按切换实例按钮：弹出下拉小窗口，可快速切换选中实例或直接启动指定实例 */
-    private fun showQuickVersionSwitch() {
-        val profile = Profiles.getSelectedProfile()
-        lifecycleScope.launch {
-            // 版本派生数据（图标、MC/加载器版本）在 IO 线程并行计算，结果回主线程弹窗
-            val entries = sortVersionEntries(computeVersionEntries(this@MainActivity, profile))
-            if (entries.isEmpty()) return@launch
-            VersionQuickSwitchPopup(
-                this@MainActivity,
-                binding.versionCard,
-                profile,
-                entries,
-                onSwitch = { profile.selectedVersion = it },
-                onLaunch = { launchVersion(profile, it) }
-            ).show()
+            Versions.launch(this, selectedProfile, versionId)
         }
     }
 
@@ -897,6 +877,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 loadVersion(s)
             }
         }
+        // 启动即预热版本快照（内部等待版本仓库加载完成），主界面快速切换弹窗与版本列表页共享
+        VersionSwitchPopup.preload(this)
+        // 版本列表刷新完成（安装/删除版本）时重新预热
+        preloadListener = Consumer { VersionSwitchPopup.preload(this@MainActivity) }
+        Profiles.registerVersionsListener(preloadListener)
     }
 
     private fun accountSubtitle(context: Context, account: Account): ObservableValue<String> {

@@ -117,6 +117,18 @@ class GltfPlayerModel(context: Context) {
         )
     }
 
+    /** 切换体素化第二层开关（两实例同步，避免 slim 切换后状态不一致） */
+    fun setSolidLayerEnabled(enabled: Boolean) {
+        classic.solidLayerEnabled = enabled
+        slimModel.solidLayerEnabled = enabled
+    }
+
+    /** 切换身体与腿部分离（两实例同步，避免 slim 切换后状态不一致） */
+    fun setUpperBodySeparated(separated: Boolean) {
+        classic.upperBodySeparated = separated
+        slimModel.upperBodySeparated = separated
+    }
+
     /**
      * 用皮肤像素重建体素化第二层（仅渲染线程调用）。
      * 两个实例都重建，避免 slim 切换后体素层缺失而退回面片。

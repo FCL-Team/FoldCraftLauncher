@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?><!-- 版本快速切换弹窗容器：顶部与右侧贴边，左侧与底部留白给阴影绘制空间（防止被窗口边界裁剪），
+     内层卡片高度由代码按窗口尺寸设定（顶到屏幕顶、右贴屏幕右缘），列表撑满卡片滚动 -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alpha="0.75"
+    android:paddingStart="12dp"
+    android:paddingTop="0dp"
+    android:paddingEnd="0dp"
+    android:paddingBottom="0dp">
+
+    <FrameLayout
+        android:id="@+id/popup_card"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/dialog_background"
+        android:elevation="12dp"
+        tools:ignore="UselessParent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="2dp"
+            android:overScrollMode="never"
+            android:scrollbars="none" />
+
+        <com.tungsten.fcllibrary.component.view.FCLProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+</FrameLayout>
