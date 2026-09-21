@@ -66,28 +66,33 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <!-- 标题行：title 优先按内容宽、超长时压缩截断；tag 占剩余区间截断；
+                     来源徽标固定行尾，不随标题/标签过长被挤出 -->
+                <com.tungsten.fcllibrary.component.view.FCLConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
 
                     <com.tungsten.fcllibrary.component.view.FCLTextView
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:ellipsize="end"
                         android:singleLine="true"
                         android:textSize="14sp"
                         app:auto_text_tint="true"
+                        app:layout_constrainedWidth="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tag"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         tools:text="Title" />
 
                     <com.tungsten.fcllibrary.component.view.FCLTextView
                         android:id="@+id/tag"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
                         android:layout_marginStart="10dp"
-                        android:layout_weight="1"
                         android:ellipsize="end"
                         android:paddingStart="4dp"
                         android:paddingTop="2dp"
@@ -96,6 +101,10 @@
                         android:singleLine="true"
                         android:textSize="11sp"
                         app:auto_text_tint="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/source_badge"
+                        app:layout_constraintStart_toEndOf="@+id/title"
+                        app:layout_constraintTop_toTopOf="parent"
                         tools:text="Tag Tag Tag" />
 
                     <!-- 来源徽标（平台 LOGO + 平台名，聚合模式显示），样式与位置参考 Zalith 的 PlatformIdentifier -->
@@ -103,7 +112,6 @@
                         android:id="@+id/source_badge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
                         android:layout_marginStart="6dp"
                         android:drawablePadding="2dp"
                         android:paddingStart="4dp"
@@ -113,9 +121,12 @@
                         android:singleLine="true"
                         android:textSize="10sp"
                         android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
                         tools:text="CurseForge"
                         tools:visibility="visible" />
-                </LinearLayout>
+                </com.tungsten.fcllibrary.component.view.FCLConstraintLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
