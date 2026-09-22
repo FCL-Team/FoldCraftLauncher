@@ -335,16 +335,16 @@ public class ControlViewGroup implements Cloneable, Observable {
                 ArrayList<ControlButtonData> buttonList = new ArrayList<>();
                 JsonArray buttonArray = Optional.ofNullable(obj.get("buttonList")).map(JsonElement::getAsJsonArray).orElseGet(JsonArray::new);
                 for (JsonElement button : buttonArray) {
-                    if (button != null) {
+                    if (button.isJsonObject()) {
                         buttonList.add(new ControlButtonData.Serializer().deserialize(button, null, null));
-                    } else {
-                        throw new JsonParseException("ControlButtonData broken!");
                     }
                 }
                 data.setButtonList(FXCollections.observableList(buttonList));
                 ArrayList<ControlDirectionData> directionList = new ArrayList<>();
                 for (JsonElement direction : Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsJsonArray).orElseGet(JsonArray::new)) {
-                    directionList.add(new ControlDirectionData.Serializer().deserialize(direction, null, null));
+                    if (direction.isJsonObject()) {
+                        directionList.add(new ControlDirectionData.Serializer().deserialize(direction, null, null));
+                    }
                 }
                 data.setDirectionList(FXCollections.observableList(directionList));
 

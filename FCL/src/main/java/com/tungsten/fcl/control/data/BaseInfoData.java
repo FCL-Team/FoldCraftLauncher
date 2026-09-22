@@ -1,5 +1,6 @@
 package com.tungsten.fcl.control.data;
 
+import static com.tungsten.fcl.control.data.JsonElements.get;
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import com.google.gson.JsonDeserializationContext;
@@ -247,14 +248,14 @@ public class BaseInfoData implements Cloneable, Observable {
 
             BaseInfoData data = new BaseInfoData();
 
-            data.setVisibilityType(getVisibilityType(Optional.ofNullable(obj.get("visibilityType")).map(JsonElement::getAsString).orElse(VisibilityType.ALWAYS.toString())));
-            data.setXPosition(Optional.ofNullable(obj.get("xPosition")).map(JsonElement::getAsInt).orElse(0));
-            data.setYPosition(Optional.ofNullable(obj.get("yPosition")).map(JsonElement::getAsInt).orElse(0));
-            data.setSizeType(Optional.ofNullable(obj.get("sizeType")).map(JsonElement::getAsString).orElse(SizeType.PERCENTAGE.toString()).equals(SizeType.ABSOLUTE.toString()) ? SizeType.ABSOLUTE : SizeType.PERCENTAGE);
-            data.setAbsoluteWidth(Optional.ofNullable(obj.get("absoluteWidth")).map(JsonElement::getAsInt).orElse(50));
-            data.setAbsoluteHeight(Optional.ofNullable(obj.get("absoluteHeight")).map(JsonElement::getAsInt).orElse(50));
-            data.setPercentageWidth(Optional.ofNullable(obj.get("percentageWidth")).map(JsonElement::getAsJsonObject).map(percentageWidth -> new PercentageSize.Serializer().deserialize(percentageWidth, null, null)).orElseGet(PercentageSize::new));
-            data.setPercentageHeight(Optional.ofNullable(obj.get("percentageHeight")).map(JsonElement::getAsJsonObject).map(percentageHeight -> new PercentageSize.Serializer().deserialize(percentageHeight, null, null)).orElseGet(PercentageSize::new));
+            data.setVisibilityType(getVisibilityType(Optional.ofNullable(get(obj, "visibilityType")).map(JsonElement::getAsString).orElse(VisibilityType.ALWAYS.toString())));
+            data.setXPosition(Optional.ofNullable(get(obj, "xPosition")).map(JsonElement::getAsInt).orElse(0));
+            data.setYPosition(Optional.ofNullable(get(obj, "yPosition")).map(JsonElement::getAsInt).orElse(0));
+            data.setSizeType(Optional.ofNullable(get(obj, "sizeType")).map(JsonElement::getAsString).orElse(SizeType.PERCENTAGE.toString()).equals(SizeType.ABSOLUTE.toString()) ? SizeType.ABSOLUTE : SizeType.PERCENTAGE);
+            data.setAbsoluteWidth(Optional.ofNullable(get(obj, "absoluteWidth")).map(JsonElement::getAsInt).orElse(50));
+            data.setAbsoluteHeight(Optional.ofNullable(get(obj, "absoluteHeight")).map(JsonElement::getAsInt).orElse(50));
+            data.setPercentageWidth(Optional.ofNullable(get(obj, "percentageWidth")).map(JsonElement::getAsJsonObject).map(percentageWidth -> new PercentageSize.Serializer().deserialize(percentageWidth, null, null)).orElseGet(PercentageSize::new));
+            data.setPercentageHeight(Optional.ofNullable(get(obj, "percentageHeight")).map(JsonElement::getAsJsonObject).map(percentageHeight -> new PercentageSize.Serializer().deserialize(percentageHeight, null, null)).orElseGet(PercentageSize::new));
 
             return data;
         }
@@ -368,8 +369,8 @@ public class BaseInfoData implements Cloneable, Observable {
 
                 PercentageSize size = new PercentageSize();
 
-                size.setReference(Optional.ofNullable(obj.get("reference")).map(JsonElement::getAsString).orElse(Reference.SCREEN_WIDTH.toString()).equals(Reference.SCREEN_HEIGHT.toString()) ? Reference.SCREEN_HEIGHT : Reference.SCREEN_WIDTH);
-                size.setSize(Optional.ofNullable(obj.get("size")).map(JsonElement::getAsInt).orElse(50));
+                size.setReference(Optional.ofNullable(get(obj, "reference")).map(JsonElement::getAsString).orElse(Reference.SCREEN_WIDTH.toString()).equals(Reference.SCREEN_HEIGHT.toString()) ? Reference.SCREEN_HEIGHT : Reference.SCREEN_WIDTH);
+                size.setSize(Optional.ofNullable(get(obj, "size")).map(JsonElement::getAsInt).orElse(50));
 
                 return size;
             }

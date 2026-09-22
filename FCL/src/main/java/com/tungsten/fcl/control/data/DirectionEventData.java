@@ -1,5 +1,6 @@
 package com.tungsten.fcl.control.data;
 
+import static com.tungsten.fcl.control.data.JsonElements.get;
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import com.google.gson.JsonArray;
@@ -278,12 +279,12 @@ public class DirectionEventData implements Cloneable, Observable {
             deserializeKeycodeList(obj, "leftKeycode", data::setLeftKeycode, FCLKeycodes.KEY_A);
             deserializeKeycodeList(obj, "rightKeycode", data::setRightKeycode, FCLKeycodes.KEY_D);
 
-            data.setFollowOption(getFollowOption(Optional.ofNullable(obj.get("followOption")).map(JsonElement::getAsString).orElse(FollowOption.CENTER_FOLLOW.toString())));
-            data.setSneak(Optional.ofNullable(obj.get("sneak")).map(JsonElement::getAsBoolean).orElse(true));
-            data.setSneakKeycode(Optional.ofNullable(obj.get("sneakKeycode")).map(JsonElement::getAsInt).orElse(FCLKeycodes.KEY_LEFTSHIFT));
-            data.setDeadZone(Optional.ofNullable(obj.get("deadZone")).map(JsonElement::getAsInt).orElse(0));
-            data.setCanLock(Optional.ofNullable(obj.get("canLock")).map(JsonElement::getAsBoolean).orElse(false));
-            data.setLockThreshold(Optional.ofNullable(obj.get("lockThreshold")).map(JsonElement::getAsInt).orElse(30));
+            data.setFollowOption(getFollowOption(Optional.ofNullable(get(obj, "followOption")).map(JsonElement::getAsString).orElse(FollowOption.CENTER_FOLLOW.toString())));
+            data.setSneak(Optional.ofNullable(get(obj, "sneak")).map(JsonElement::getAsBoolean).orElse(true));
+            data.setSneakKeycode(Optional.ofNullable(get(obj, "sneakKeycode")).map(JsonElement::getAsInt).orElse(FCLKeycodes.KEY_LEFTSHIFT));
+            data.setDeadZone(Optional.ofNullable(get(obj, "deadZone")).map(JsonElement::getAsInt).orElse(0));
+            data.setCanLock(Optional.ofNullable(get(obj, "canLock")).map(JsonElement::getAsBoolean).orElse(false));
+            data.setLockThreshold(Optional.ofNullable(get(obj, "lockThreshold")).map(JsonElement::getAsInt).orElse(30));
 
             return data;
         }
@@ -292,11 +293,11 @@ public class DirectionEventData implements Cloneable, Observable {
          * 通用的方向键反序列化方法
          */
         private void deserializeKeycodeList(JsonObject obj, String keyName, java.util.function.Consumer<ObservableList<Integer>> setter, int defaultKeycode) {
-            JsonElement element = obj.get(keyName);
+            JsonElement element = get(obj, keyName);
             if (element != null && element.isJsonArray()) {
                 ArrayList<Integer> keycodes = new ArrayList<>();
                 for (JsonElement item : element.getAsJsonArray()) {
-                    keycodes.add(item.getAsInt());
+                    if (item.isJsonPrimitive()) keycodes.add(item.getAsInt());
                 }
                 setter.accept(FXCollections.observableList(keycodes));
             } else {

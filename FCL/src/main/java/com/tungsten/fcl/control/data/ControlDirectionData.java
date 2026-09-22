@@ -1,5 +1,6 @@
 package com.tungsten.fcl.control.data;
 
+import static com.tungsten.fcl.control.data.JsonElements.get;
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import com.google.gson.JsonDeserializationContext;
@@ -167,19 +168,20 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
                 return null;
             JsonObject obj = (JsonObject) json;
 
-            ControlDirectionData data = new ControlDirectionData(Optional.ofNullable(obj.get("id")).map(JsonElement::getAsString).orElse(UUID.randomUUID().toString()));
+            ControlDirectionData data = new ControlDirectionData(Optional.ofNullable(get(obj, "id")).map(JsonElement::getAsString).orElse(UUID.randomUUID().toString()));
 
             if (!DirectionStyles.isInitialized()) {
                 DirectionStyles.init();
             }
-            if (obj.get("style").toString().contains("\"name\"")) {
-                data.setStyle(new ControlDirectionStyle.Serializer().deserialize(obj.get("style"), null, null));
+            JsonElement style = get(obj, "style");
+            if (style != null && style.toString().contains("\"name\"")) {
+                data.setStyle(new ControlDirectionStyle.Serializer().deserialize(style, null, null));
                 DirectionStyles.addStyle(data.getStyle());
             } else {
-                data.setStyle(DirectionStyles.findStyleByName(obj.get("style").getAsString()));
+                data.setStyle(DirectionStyles.findStyleByName(style != null && style.isJsonPrimitive() ? style.getAsString() : ""));
             }
-            data.setBaseInfo(Optional.ofNullable(obj.get("baseInfo")).map(JsonElement::getAsJsonObject).map(baseInfo -> new BaseInfoData.Serializer().deserialize(baseInfo, null, null)).orElseGet(BaseInfoData::new));
-            data.setEvent(Optional.ofNullable(obj.get("event")).map(JsonElement::getAsJsonObject).map(event -> new DirectionEventData.Serializer().deserialize(event, null, null)).orElseGet(DirectionEventData::new));
+            data.setBaseInfo(Optional.ofNullable(get(obj, "baseInfo")).map(JsonElement::getAsJsonObject).map(baseInfo -> new BaseInfoData.Serializer().deserialize(baseInfo, null, null)).orElseGet(BaseInfoData::new));
+            data.setEvent(Optional.ofNullable(get(obj, "event")).map(JsonElement::getAsJsonObject).map(event -> new DirectionEventData.Serializer().deserialize(event, null, null)).orElseGet(DirectionEventData::new));
 
             return data;
         }

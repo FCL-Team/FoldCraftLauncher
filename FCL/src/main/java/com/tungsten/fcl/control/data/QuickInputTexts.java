@@ -70,7 +70,7 @@ public class QuickInputTexts {
                 if (element.isJsonArray()) {
                     ArrayList<String> list = new ArrayList<>();
                     for (JsonElement item : element.getAsJsonArray()) {
-                        list.add(item.getAsString());
+                        if (item.isJsonPrimitive()) list.add(item.getAsString());
                     }
                     return list;
                 }

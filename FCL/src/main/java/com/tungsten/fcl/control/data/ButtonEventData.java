@@ -1,5 +1,6 @@
 package com.tungsten.fcl.control.data;
 
+import static com.tungsten.fcl.control.data.JsonElements.get;
 import static com.tungsten.fcl.util.FXUtils.onInvalidating;
 
 import com.google.gson.JsonArray;
@@ -218,13 +219,13 @@ public class ButtonEventData implements Cloneable, Observable {
 
             ButtonEventData data = new ButtonEventData();
 
-            data.setPointerFollow(Optional.ofNullable(obj.get("pointerFollow")).map(JsonElement::getAsBoolean).orElse(false));
-            data.setMovable(Optional.ofNullable(obj.get("Movable")).map(JsonElement::getAsBoolean).orElse(false));
-            data.setSwipable(Optional.ofNullable(obj.get("swipable")).map(JsonElement::getAsBoolean).orElse(false));
-            data.setPressEvent(Optional.ofNullable(obj.get("pressEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
-            data.setLongPressEvent(Optional.ofNullable(obj.get("longPressEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
-            data.setClickEvent(Optional.ofNullable(obj.get("clickEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
-            data.setDoubleClickEvent(Optional.ofNullable(obj.get("doubleClickEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
+            data.setPointerFollow(Optional.ofNullable(get(obj, "pointerFollow")).map(JsonElement::getAsBoolean).orElse(false));
+            data.setMovable(Optional.ofNullable(get(obj, "Movable")).map(JsonElement::getAsBoolean).orElse(false));
+            data.setSwipable(Optional.ofNullable(get(obj, "swipable")).map(JsonElement::getAsBoolean).orElse(false));
+            data.setPressEvent(Optional.ofNullable(get(obj, "pressEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
+            data.setLongPressEvent(Optional.ofNullable(get(obj, "longPressEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
+            data.setClickEvent(Optional.ofNullable(get(obj, "clickEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
+            data.setDoubleClickEvent(Optional.ofNullable(get(obj, "doubleClickEvent")).map(JsonElement::getAsJsonObject).map(event -> new Event.Serializer().deserialize(event, null, null)).orElseGet(Event::new));
 
             return data;
         }
@@ -460,12 +461,12 @@ public class ButtonEventData implements Cloneable, Observable {
                 obj.addProperty("outputText", src.getOutputText());
                 JsonArray outputKeycodes = new JsonArray();
                 for (Integer code : src.outputKeycodesList()) {
-                    outputKeycodes.add(code);
+                    if (code != null) outputKeycodes.add(code);
                 }
                 obj.add("outputKeycodes", outputKeycodes);
                 JsonArray bindViewGroup = new JsonArray();
                 for (String group : src.bindViewGroupList()) {
-                    bindViewGroup.add(group);
+                    if (group != null) bindViewGroup.add(group);
                 }
                 obj.add("bindViewGroup", bindViewGroup);
 
@@ -480,22 +481,22 @@ public class ButtonEventData implements Cloneable, Observable {
 
                 Event event = new Event();
 
-                event.setAutoKeep(Optional.ofNullable(obj.get("autoKeep")).map(JsonElement::getAsBoolean).orElse(false));
-                event.setAutoClick(Optional.ofNullable(obj.get("autoClick")).map(JsonElement::getAsBoolean).orElse(false));
-                event.setOpenMenu(Optional.ofNullable(obj.get("openMenu")).map(JsonElement::getAsBoolean).orElse(false));
-                event.setSwitchTouchMode(Optional.ofNullable(obj.get("switchTouchMode")).map(JsonElement::getAsBoolean).orElse(false));
-                event.setSwitchMouseMode(Optional.ofNullable(obj.get("switchMouseMode")).map(JsonElement::getAsBoolean).orElse(false));
-                event.setInput(Optional.ofNullable(obj.get("input")).map(JsonElement::getAsBoolean).orElse(false));
-                event.setQuickInput(Optional.ofNullable(obj.get("quickInput")).map(JsonElement::getAsBoolean).orElse(false));
-                event.setOutputText(Optional.ofNullable(obj.get("outputText")).map(JsonElement::getAsString).orElse(""));
+                event.setAutoKeep(Optional.ofNullable(get(obj, "autoKeep")).map(JsonElement::getAsBoolean).orElse(false));
+                event.setAutoClick(Optional.ofNullable(get(obj, "autoClick")).map(JsonElement::getAsBoolean).orElse(false));
+                event.setOpenMenu(Optional.ofNullable(get(obj, "openMenu")).map(JsonElement::getAsBoolean).orElse(false));
+                event.setSwitchTouchMode(Optional.ofNullable(get(obj, "switchTouchMode")).map(JsonElement::getAsBoolean).orElse(false));
+                event.setSwitchMouseMode(Optional.ofNullable(get(obj, "switchMouseMode")).map(JsonElement::getAsBoolean).orElse(false));
+                event.setInput(Optional.ofNullable(get(obj, "input")).map(JsonElement::getAsBoolean).orElse(false));
+                event.setQuickInput(Optional.ofNullable(get(obj, "quickInput")).map(JsonElement::getAsBoolean).orElse(false));
+                event.setOutputText(Optional.ofNullable(get(obj, "outputText")).map(JsonElement::getAsString).orElse(""));
                 ArrayList<Integer> outputKeycodes = new ArrayList<>();
-                for (JsonElement element : Optional.ofNullable(obj.get("outputKeycodes")).map(JsonElement::getAsJsonArray).orElseGet(JsonArray::new)) {
-                    outputKeycodes.add(element.getAsInt());
+                for (JsonElement element : Optional.ofNullable(get(obj, "outputKeycodes")).map(JsonElement::getAsJsonArray).orElseGet(JsonArray::new)) {
+                    if (element.isJsonPrimitive()) outputKeycodes.add(element.getAsInt());
                 }
                 event.setOutputKeycodes(FXCollections.observableList(outputKeycodes));
                 ArrayList<String> bindViewGroup = new ArrayList<>();
-                for (JsonElement element : Optional.ofNullable(obj.get("bindViewGroup")).map(JsonElement::getAsJsonArray).orElseGet(JsonArray::new)) {
-                    bindViewGroup.add(element.getAsString());
+                for (JsonElement element : Optional.ofNullable(get(obj, "bindViewGroup")).map(JsonElement::getAsJsonArray).orElseGet(JsonArray::new)) {
+                    if (element.isJsonPrimitive()) bindViewGroup.add(element.getAsString());
                 }
                 event.setBindViewGroup(FXCollections.observableList(bindViewGroup));
 
