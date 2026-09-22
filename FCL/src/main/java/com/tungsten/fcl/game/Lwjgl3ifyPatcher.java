@@ -23,6 +23,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -240,8 +242,7 @@ public final class Lwjgl3ifyPatcher {
      * lwjgl3ify 默认会在首次初始化时向 XDG_DATA_HOME（或 ~/.local/share）写入桌面快捷方式，
      * Android 上两者均不存在，会抛 RuntimeException 杀死 RFB 主线程导致游戏静默退出
      * （GTNH 官方包自带此配置，自组包需要补上）。
-     * cfg 不存在则写最小模板；已存在但缺该键则在文件尾追加（CarbonConfig 按段名合并）；
-     * 已含该键则不动。
+     * 已有 cfg 但缺该键时优先插入已有 window 段内，无该段才在文件尾追加。
      */
     private static void ensureLwjgl3ifyConfig(File configDir) {
         try {
@@ -254,13 +255,32 @@ public final class Lwjgl3ifyPatcher {
                 return;
             }
             String text = FileUtils.readText(cfg);
-            if (!text.contains("linuxCreateAppDesktopEntry")) {
+            if (containsActiveLine(text, "linuxCreateAppDesktopEntry")) return;
+            int insertAt = -1;
+            Matcher window = Pattern.compile("(?m)^[ \t]*window\\s*\\{").matcher(text);
+            if (window.find()) {
+                int lineEnd = text.indexOf('\n', window.end());
+                if (lineEnd >= 0) insertAt = lineEnd;
+            }
+            if (insertAt >= 0) {
+                FileUtils.writeText(cfg, text.substring(0, insertAt) + "\n    " + entry + text.substring(insertAt));
+                LOG.log(Level.INFO, "Inserted linuxCreateAppDesktopEntry=false into existing window section of lwjgl3ify.cfg");
+            } else {
                 FileUtils.writeText(cfg, text + "\nwindow {\n    " + entry + "\n}\n");
-                LOG.log(Level.INFO, "Appended linuxCreateAppDesktopEntry=false to lwjgl3ify.cfg");
+                LOG.log(Level.INFO, "Appended window section with linuxCreateAppDesktopEntry=false to lwjgl3ify.cfg");
             }
         } catch (IOException e) {
             LOG.log(Level.WARNING, "Failed to ensure lwjgl3ify.cfg", e);
         }
+    }
+
+    /** 跳过 # 与 // 注释行后，文本中是否存在含 key 的行 */
+    private static boolean containsActiveLine(String text, String key) {
+        for (String line : text.split("\n", -1)) {
+            String trimmed = line.trim();
+            if (!trimmed.startsWith("#") && !trimmed.startsWith("//") && trimmed.contains(key)) return true;
+        }
+        return false;
     }
 
     /**
