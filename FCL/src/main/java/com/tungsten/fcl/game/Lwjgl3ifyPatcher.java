@@ -3,6 +3,7 @@ package com.tungsten.fcl.game;
 import static com.tungsten.fclcore.util.Logging.LOG;
 
 import com.google.gson.JsonObject;
+import com.tungsten.fclcore.download.MaintainTask;
 import com.tungsten.fclcore.game.Arguments;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
@@ -72,7 +73,11 @@ public final class Lwjgl3ifyPatcher {
                     lwjgl3ifyMod = mod; // 存在多个时取版本号最高的一个
                 }
             }
-            if (lwjgl3ifyMod == null) return;
+            if (lwjgl3ifyMod == null) {
+                // RFB 入口残留会让实例无法启动，从备份还原
+                restoreIfNeeded(repository, versionId, versionRef);
+                return;
+            }
             File lwjgl3ifyJar = lwjgl3ifyMod.getFile().toFile();
             LOG.log(Level.INFO, "Detected lwjgl3ify " + lwjgl3ifyMod.getVersion() + " in mods folder");
 
@@ -105,6 +110,26 @@ public final class Lwjgl3ifyPatcher {
         } catch (Throwable e) {
             // 兼容失败不应阻断正常启动流程
             LOG.log(Level.WARNING, "Failed to apply lwjgl3ify patch", e);
+        }
+    }
+
+    /**
+     * 版本仍为 RFB 入口且备份存在时，从备份还原版本 JSON。
+     * 还原后按启动链原有流程（resolve + MaintainTask.maintain）重建内存版本对象。
+     */
+    private static void restoreIfNeeded(FCLGameRepository repository, String versionId, AtomicReference<Version> versionRef) {
+        try {
+            File json = repository.getVersionJson(versionId);
+            File backup = new File(json.getParentFile(), json.getName() + ".before-lwjgl3ify");
+            if (!json.isFile() || !backup.isFile()) return;
+            Version disk = JsonUtils.fromNonNullJson(FileUtils.readText(json), Version.class);
+            if (disk.getMainClass() == null || !disk.getMainClass().startsWith(RFB_MAIN_CLASS_PREFIX)) return;
+            java.nio.file.Files.copy(backup.toPath(), json.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            repository.reloadVersionFromDisk(versionId);
+            versionRef.set(MaintainTask.maintain(repository, repository.getResolvedVersion(versionId)));
+            LOG.log(Level.INFO, "lwjgl3ify no longer present, restored version " + versionId + " from " + backup.getName());
+        } catch (Throwable e) {
+            LOG.log(Level.WARNING, "Failed to restore version json from lwjgl3ify backup", e);
         }
     }
 
