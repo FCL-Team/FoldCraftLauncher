@@ -14,6 +14,7 @@ class GuideUtil {
     companion object {
         const val TAG_GUIDE_THEME_2 = "theme2"
         const val TAG_GUIDE_SHARE_LOG = "share log"
+        const val TAG_GUIDE_VERSION_CARD = "version card"
         private val tagList = mutableListOf<String>()
         private val file = File(FCLPath.FILES_DIR + "/guide_tag.txt")
 

@@ -330,6 +330,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 uiLayout.postDelayed(1500) {
                     GuideUtil.show(
                         activity = this@MainActivity,
+                        GuideUtil.TAG_GUIDE_VERSION_CARD to versionCard.guideTarget(title = getString(R.string.guide_version_card)),
                         GuideUtil.TAG_GUIDE_THEME_2 to setting.guideTarget(title = getString(R.string.guide_theme2)),
                         GuideUtil.TAG_GUIDE_SHARE_LOG to home.guideTarget(title = getString(R.string.guide_share_log))
                     )
