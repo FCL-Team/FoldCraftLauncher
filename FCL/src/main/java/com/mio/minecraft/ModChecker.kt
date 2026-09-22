@@ -6,7 +6,6 @@ import com.mio.plugin.FFmpegPlugin
 import com.mio.plugin.NativeLibPlugin
 import com.mio.util.getElfArchFromZip
 import com.tungsten.fcl.R
-import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclcore.mod.LocalModFile
@@ -153,13 +152,6 @@ class ModChecker(val context: Context, val version: String) {
                     )
                 }
 
-                "lwjgl3ify" -> {
-                    val javaName = Profiles.getSelectedProfile()
-                        .getVersionSetting(Profiles.getSelectedVersion()).java
-                    if (javaName.equals("jre8", ignoreCase = true)) {
-                        throw ModCheckException(context.getString(R.string.mod_check_lwjgl3ify))
-                    }
-                }
             }
         }.exceptionOrNull()
         if (exception != null) {

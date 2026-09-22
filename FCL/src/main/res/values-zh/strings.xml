@@ -1259,7 +1259,6 @@
     <string name="mod_check_sodium">当前使用的GL4ES渲染器可能无法运行模组Sodium/Embeddium（%s），继续启动可能会导致游戏崩溃，建议下载并使用MobileGlues渲染器（https://github.com/MobileGL-Dev/MobileGlues-release/releases）。</string>
     <string name="mod_check_flashback">Flashback模组（%s）无法在安卓上运行。</string>
     <string name="mod_check_ixeris">Ixeris模组（%s）无法在FCL上正常运行。</string>
-    <string name="mod_check_lwjgl3ify">lwjgl3ify需要 Java 17 及以上运行。当前版本设置强制使用 Java 8，请将 Java 运行时切换为 Auto（jre17+），并确保分配至少 4GB 内存。</string>
     <string name="internal">内置的</string>
     <string name="import_java">导入Java</string>
     <string name="import_java_wrong_file">仅支持导入tar.xz文件。</string>

@@ -1392,7 +1392,6 @@
     <string name="mod_check_sodium">The currently used GL4ES renderer may not support the mods Sodium/Embeddium (%s). Continuing to launch could cause the game to crash. It is recommended to download and use the MobileGlues renderer instead (https://github.com/MobileGL-Dev/MobileGlues-release/releases).</string>
     <string name="mod_check_flashback">Flashback mod (%s) cannot work on Android.</string>
     <string name="mod_check_ixeris">Ixeris mod (%s) cannot work properly on FCL.</string>
-    <string name="mod_check_lwjgl3ify">lwjgl3ifyrequires Java 17 or newer. The current version setting forces Java 8, please switch Java Runtime to Auto (jre17+) and ensure at least 4GB of RAM.</string>
 
     <string name="internal">Internal</string>
     <string name="import_java">Import Java</string>
