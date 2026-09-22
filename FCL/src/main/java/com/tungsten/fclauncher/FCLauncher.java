@@ -193,17 +193,6 @@ public class FCLauncher {
         return args;
     }
 
-    /** 从最终启动参数中取出 --gameDir 的值（供 XDG 等环境变量定位实例目录） */
-    private static String resolveGameDir(String[] args) {
-        if (args == null) return null;
-        for (int i = 0; i < args.length - 1; i++) {
-            if ("--gameDir".equals(args[i]) && !args[i + 1].isEmpty()) {
-                return args[i + 1];
-            }
-        }
-        return null;
-    }
-
     /**
      * 实例是否运行 lwjgl3ify：以 config/lwjgl3ify.cfg 存在为准
      */
@@ -229,9 +218,9 @@ public class FCLauncher {
         // Native mod env var
         envMap.put("MOD_ANDROID_RUNTIME", FCLPath.MOD_RUNTIME_DIR == null ? "" : FCLPath.MOD_RUNTIME_DIR);
 
-        // XDG 数据目录兜底（仅 lwjgl3ify 实例注入）
-        String gameDir = resolveGameDir(config.getArgs());
-        if (gameDir != null && hasLwjgl3ify(new File(gameDir, "mods"))) {
+        // XDG 数据目录兜底（仅 lwjgl3ify 实例注入；workingDir 即 ${game_directory} 指向的实例目录）
+        File gameDir = new File(config.getWorkingDir());
+        if (hasLwjgl3ify(gameDir)) {
             File xdgDataHome = new File(gameDir, ".local/share");
             if (!xdgDataHome.isDirectory()) {
                 //noinspection ResultOfMethodCallIgnored
