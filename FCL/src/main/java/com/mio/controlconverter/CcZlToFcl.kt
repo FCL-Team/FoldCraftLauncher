@@ -164,6 +164,10 @@ object CcZlToFcl {
         if (CcUtils.pyTruthy(button.opt("isToggleable"))) {
             event.optObj("pressEvent")?.addProperty("autoKeep", true)
         }
+        // ZL 滑动联动按钮 -> FCL swipable；无事件的 isSwipple=true 是装饰按钮标记，不映射
+        if (clickEvents.any() && CcUtils.pyTruthy(button.opt("isSwipple"))) {
+            event.addProperty("swipable", true)
+        }
 
         val styleName = resolveZlButtonStyleName(button.opt("buttonStyle"), styleMap, "ZL Native Default")
         val text = CcUtils.textDefault(button.opt("text"))

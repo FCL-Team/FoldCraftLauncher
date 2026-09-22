@@ -175,6 +175,10 @@ object CcDirection {
             sizeDp = 200.0
         }
 
+        // FCL 的 deadZone/lockThreshold 为百分比 ×100 存储（0–90 / 0–100），ZL 为 0–1 比例
+        val deadZoneRatio = CcUtils.clampRange(event.opt("deadZone"), 0.0, 90.0, 0.0) / 100.0
+        val lockThreshold = CcUtils.clampRange(event.opt("lockThreshold"), 0.0, 100.0, 30.0) / 100.0
+
         val joystickObj = CcJson.obj(
             "uuid" to CcJson.str(ctx.shortId() + ctx.shortId().take(6)),
             "position" to CcJson.obj(
@@ -186,9 +190,9 @@ object CcDirection {
             "sizePercentage" to CcJson.inum(sizePercentage),
             "visibilityType" to CcJson.str(CcUtils.visibilityFclToZl(CcJson.toStringV(base.opt("visibilityType")))),
             "joystickStyleId" to CcJson.str(joystickStyleUuid),
-            "deadZoneRatio" to CcJson.pyNum(0.5),
-            "lockThreshold" to CcJson.pyNum(0.3),
-            "canLock" to CcJson.bool(true),
+            "deadZoneRatio" to CcJson.pyNum(deadZoneRatio),
+            "lockThreshold" to CcJson.pyNum(lockThreshold),
+            "canLock" to CcJson.bool(CcUtils.pyTruthy(event.opt("canLock"))),
             "triggerMode" to CcJson.str("drag"),
             "directionEvents" to CcJson.obj(
                 "north" to arrOfEvents(up),
@@ -290,6 +294,10 @@ object CcDirection {
                 "downKeycode" to arrOfNums(keycodesFor("south")),
                 "leftKeycode" to arrOfNums(keycodesFor("west")),
                 "rightKeycode" to arrOfNums(keycodesFor("east")),
+                // ZL 为 0–1 比例，FCL 为百分比 ×100；缺失时按 ZL 默认值
+                "deadZone" to CcJson.inum(CcUtils.pyRound(CcUtils.clampRange(joystick.opt("deadZoneRatio"), 0.0, 0.9, 0.5) * 100)),
+                "canLock" to CcJson.bool(CcUtils.pyTruthy(joystick.opt("canLock"))),
+                "lockThreshold" to CcJson.inum(CcUtils.pyRound(CcUtils.clampRange(joystick.opt("lockThreshold"), 0.0, 1.0, 0.3) * 100)),
             ),
             "style" to CcJson.str(styleName),
         )

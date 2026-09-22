@@ -359,6 +359,7 @@ object CcConstants {
     fun fclButtonEvent(): JsonObject = obj(
         "pointerFollow" to bool(false),
         "Movable" to bool(false),
+        "swipable" to bool(false),
         "pressEvent" to emptyFclEvent(),
         "longPressEvent" to emptyFclEvent(),
         "clickEvent" to emptyFclEvent(),

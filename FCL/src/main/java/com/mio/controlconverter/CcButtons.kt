@@ -50,6 +50,10 @@ object CcButtons {
             "visibilityType",
             CcJson.str(CcUtils.visibilityFclToZl(CcJson.toStringV(baseInfo.opt("visibilityType")))),
         )
+        // FCL 侧新开滑动联动时同步到 ZL；关闭不回退，避免影响装饰按钮的原有标记
+        if (CcUtils.pyTruthy(current.optObj("event")?.opt("swipable"))) {
+            restored.add("isSwipple", CcJson.bool(true))
+        }
         return restored
     }
 
@@ -228,7 +232,7 @@ object CcButtons {
             "textUnderline" to CcJson.bool(false),
             "visibilityType" to CcJson.str(CcUtils.visibilityFclToZl(CcJson.toStringV(baseInfo.opt("visibilityType")))),
             "clickEvents" to normalizedClickEvents.fold(com.google.gson.JsonArray()) { arr, e -> arr.add(e); arr },
-            "isSwipple" to CcJson.bool(isDecorative),
+            "isSwipple" to CcJson.bool(isDecorative || CcUtils.pyTruthy(eventRoot.opt("swipable"))),
             "isPenetrable" to CcJson.bool(isDecorative),
             "isToggleable" to CcJson.bool(canToggle),
         )

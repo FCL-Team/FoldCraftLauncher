@@ -35,6 +35,7 @@ object CcEvents {
         if (fclButtonHasPayload(button)) return false
         val eventRoot = button.optObj("event") ?: JsonObject()
         if (CcUtils.pyTruthy(eventRoot.opt("pointerFollow")) || CcUtils.pyTruthy(eventRoot.opt("Movable"))) return false
+        if (CcUtils.pyTruthy(eventRoot.opt("swipable"))) return false
         return true
     }
 
