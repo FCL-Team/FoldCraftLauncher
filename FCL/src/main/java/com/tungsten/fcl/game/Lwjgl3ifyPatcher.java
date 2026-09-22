@@ -9,6 +9,7 @@ import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.util.io.FileUtils;
+import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
@@ -83,13 +84,15 @@ public final class Lwjgl3ifyPatcher {
             File lwjgl3ifyJar = lwjgl3ifyMod.getFile().toFile();
             LOG.log(Level.INFO, "Detected lwjgl3ify " + lwjgl3ifyMod.getVersion() + " in mods folder");
 
-            Version embedded = readEmbeddedVersionJson(lwjgl3ifyJar);
-            if (embedded == null) {
-                LOG.log(Level.WARNING, lwjgl3ifyJar.getName() + " does not contain a valid lwjgl3ify relauncher version.json, skipping");
-                return;
+            Version embedded;
+            try (ZipFile zip = new ZipFile(lwjgl3ifyJar)) {
+                embedded = readEmbeddedVersionJson(zip);
+                if (embedded == null) {
+                    LOG.log(Level.WARNING, lwjgl3ifyJar.getName() + " does not contain a valid lwjgl3ify relauncher version.json, skipping");
+                    return;
+                }
+                ensureForgePatchesFile(repository, embedded, current, zip);
             }
-
-            ensureForgePatchesFile(repository, embedded, current, lwjgl3ifyJar);
             ensureLwjgl3ifyConfig(new File(repository.getRunDirectory(versionId), "config"));
 
             if (isPatchedWith(current, embedded)) {
@@ -198,32 +201,37 @@ public final class Lwjgl3ifyPatcher {
     }
 
     /**
-     * 优先从 lwjgl3ify jar 内嵌的 forgePatches.zip 还原库文件，避免依赖 GTNH Nexus。
+     * 优先从内嵌 forgePatches.zip 还原库文件，避免依赖 GTNH Nexus。
+     * 写临时文件后原子替换，中断不会留下截断的 jar 遮蔽重解压。
      */
-    private static void ensureForgePatchesFile(FCLGameRepository repository, Version embedded, Version version, File lwjgl3ifyJar) {
+    private static void ensureForgePatchesFile(FCLGameRepository repository, Version embedded, Version version, ZipFile zip) {
         findForgePatchesLibrary(embedded).ifPresent(library -> {
             File target = repository.getLibraryFile(version, library);
             if (target.isFile()) return;
-            try (ZipFile zip = new ZipFile(lwjgl3ifyJar)) {
-                ZipEntry entry = zip.getEntry(EMBEDDED_FORGE_PATCHES);
-                if (entry == null) {
-                    LOG.log(Level.WARNING, EMBEDDED_FORGE_PATCHES + " not found in " + lwjgl3ifyJar.getName());
-                    return;
-                }
-                File parent = target.getParentFile();
+            ZipEntry entry = zip.getEntry(EMBEDDED_FORGE_PATCHES);
+            if (entry == null) {
+                LOG.log(Level.WARNING, EMBEDDED_FORGE_PATCHES + " not found in " + zip.getName());
+                return;
+            }
+            File parent = target.getParentFile();
+            File temp = null;
+            try {
                 if (parent != null && !parent.isDirectory() && !parent.mkdirs()) {
                     throw new IOException("Cannot create directory " + parent);
                 }
-                try (InputStream is = zip.getInputStream(entry); OutputStream os = new FileOutputStream(target)) {
-                    byte[] buffer = new byte[8192];
-                    int length;
-                    while ((length = is.read(buffer)) > 0) {
-                        os.write(buffer, 0, length);
-                    }
+                temp = File.createTempFile(target.getName(), ".tmp", parent);
+                try (InputStream is = zip.getInputStream(entry); OutputStream os = new FileOutputStream(temp)) {
+                    IOUtils.copyTo(is, os);
                 }
+                java.nio.file.Files.move(temp.toPath(), target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                temp = null;
                 LOG.log(Level.INFO, "Extracted embedded forgePatches to " + target);
             } catch (IOException e) {
                 LOG.log(Level.WARNING, "Failed to extract embedded forgePatches, will download from " + GTNH_MAVEN, e);
+            } finally {
+                if (temp != null && temp.isFile() && !temp.delete()) {
+                    LOG.log(Level.WARNING, "Cannot delete temp file " + temp);
+                }
             }
         });
     }
@@ -353,14 +361,14 @@ public final class Lwjgl3ifyPatcher {
     }
 
     @Nullable
-    private static Version readEmbeddedVersionJson(File lwjgl3ifyJar) {
-        try (ZipFile zip = new ZipFile(lwjgl3ifyJar)) {
+    private static Version readEmbeddedVersionJson(ZipFile zip) {
+        try {
             ZipEntry entry = zip.getEntry(EMBEDDED_VERSION_JSON);
             if (entry == null) return null;
             String text = readText(zip.getInputStream(entry));
             return JsonUtils.fromNonNullJson(text, Version.class);
         } catch (IOException | com.google.gson.JsonParseException e) {
-            LOG.log(Level.WARNING, "Cannot read lwjgl3ify relauncher version.json from " + lwjgl3ifyJar, e);
+            LOG.log(Level.WARNING, "Cannot read lwjgl3ify relauncher version.json from " + zip.getName(), e);
             return null;
         }
     }
@@ -369,7 +377,7 @@ public final class Lwjgl3ifyPatcher {
         java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
         byte[] buffer = new byte[8192];
         int length;
-        while ((length = is.read(buffer)) > 0) {
+        while ((length = is.read(buffer)) != -1) {
             bos.write(buffer, 0, length);
         }
         is.close();
