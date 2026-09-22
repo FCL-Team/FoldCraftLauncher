@@ -40,11 +40,9 @@ import org.jetbrains.annotations.Nullable;
  * 启动前检测实例 mods 目录中的 lwjgl3ify，将这份 version.json 合并进实例版本并落盘，
  * 使其以 RFB 入口 + Java 17+ 启动，而不是原有的纯净 1.7.10 / Forge 版本。
  * <p>
- * 该 version.json 的库列表未携带下载地址（lwjgl3ify 官方源 libraries.minecraft.net
- * 与 Forge Maven 均不含 com.github.GTNewHorizons 构件），因此同时负责：
- * 1. 为 Forge/Scala/GTNH 系库重写 Maven 下载源；
- * 2. 优先从 lwjgl3ify jar 内嵌的 forgePatches.zip 还原
- *    com.github.GTNewHorizons:lwjgl3ify:*:forgePatches（离线可用）。
+ * 3.x 的内嵌 version.json 已为各库自带正确的下载地址；仅当个别库缺地址
+ * （旧版 lwjgl3ify）时按 groupId 重写 Maven 源兜底，并优先从 jar 内嵌的
+ * forgePatches.zip 还原 com.github.GTNewHorizons:lwjgl3ify:*:forgePatches（离线可用）。
  */
 public final class Lwjgl3ifyPatcher {
 
@@ -159,8 +157,8 @@ public final class Lwjgl3ifyPatcher {
     }
 
     /**
-     * 内嵌 version.json 的库没有下载地址，默认落在 libraries.minecraft.net，
-     * 而 Forge/Scala 与 GTNH 系构件并不存在于该源，需要重写为正确的 Maven 源。
+     * 为缺下载地址的库（旧版 lwjgl3ify）重写 Maven 源，
+     * 3.x 内嵌 json 已自带正确地址，此分支基本不触发。
      */
     private static List<Library> patchLibraryUrls(List<Library> libraries) {
         List<Library> result = new ArrayList<>(libraries.size());
@@ -338,7 +336,6 @@ public final class Lwjgl3ifyPatcher {
         JsonObject obj = JsonUtils.GSON.toJsonTree(version).getAsJsonObject();
         obj.remove("root");
         obj.remove("patches");
-        obj.remove("hidden");
         FileUtils.writeText(target, obj.toString());
     }
 
@@ -350,7 +347,7 @@ public final class Lwjgl3ifyPatcher {
             if (!target.isFile()) return;
             JsonObject obj = JsonUtils.GSON.fromJson(FileUtils.readText(target), JsonObject.class);
             if (obj == null) return;
-            boolean dirty = obj.remove("root") != null || obj.remove("patches") != null || obj.remove("hidden") != null;
+            boolean dirty = obj.remove("root") != null || obj.remove("patches") != null;
             if (dirty) {
                 FileUtils.writeText(target, obj.toString());
                 LOG.log(Level.INFO, "Cleaned resolved leftovers (root/patches) from " + target);
