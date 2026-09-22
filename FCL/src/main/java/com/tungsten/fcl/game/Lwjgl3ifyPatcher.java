@@ -57,23 +57,15 @@ public final class Lwjgl3ifyPatcher {
 
     /**
      * 在启动流程最早处调用（MaintainTask 之后、Java 选择与依赖补全之前）。
-     * 若实例的 mods 目录存在 lwjgl3ify 且其内嵌 version.json 符合 RFB 格式，
-     * 则改写版本 JSON 并同步内存中的版本对象。
+     * mods 为启动链已扫描的 mod 列表，null 时自行扫描。
      */
     public static void patchIfNeeded(@NotNull FCLGameRepository repository,
                                      @NotNull String versionId,
+                                     @Nullable List<LocalModFile> mods,
                                      @NotNull AtomicReference<Version> versionRef) {
         try {
             Version current = versionRef.get();
-            // 采用 FCL 的 mod 列表检查（按 mcmod.info 的 modid 识别，与游戏实际加载一致，改名不影响）
-            LocalModFile lwjgl3ifyMod = null;
-            for (LocalModFile mod : repository.getModManager(versionId).getMods()) {
-                if (!"lwjgl3ify".equals(mod.getId()) || !mod.isActive()) continue;
-                if (lwjgl3ifyMod == null || VersionNumber.asVersion(mod.getVersion())
-                        .compareTo(VersionNumber.asVersion(lwjgl3ifyMod.getVersion())) > 0) {
-                    lwjgl3ifyMod = mod; // 存在多个时取版本号最高的一个
-                }
-            }
+            LocalModFile lwjgl3ifyMod = findLwjgl3ifyMod(repository, versionId, mods);
             if (lwjgl3ifyMod == null) {
                 // RFB 入口残留会让实例无法启动，从备份还原
                 restoreIfNeeded(repository, versionId, versionRef);
@@ -134,6 +126,38 @@ public final class Lwjgl3ifyPatcher {
         } catch (Throwable e) {
             LOG.log(Level.WARNING, "Failed to restore version json from lwjgl3ify backup", e);
         }
+    }
+
+    /**
+     * 从 mod 列表中取启用且版本最高的 lwjgl3ify（按 mcmod.info 的 modid 识别，改名不影响）。
+     * mods 为 null 时回退自行扫描。
+     */
+    @Nullable
+    private static LocalModFile findLwjgl3ifyMod(FCLGameRepository repository, String versionId,
+                                                 @Nullable List<LocalModFile> mods) throws IOException {
+        if (mods == null) mods = repository.getModManager(versionId).getMods();
+        LocalModFile result = null;
+        for (LocalModFile mod : mods) {
+            if (!"lwjgl3ify".equals(mod.getId()) || !mod.isActive()) continue;
+            if (result == null || VersionNumber.asVersion(mod.getVersion())
+                    .compareTo(VersionNumber.asVersion(result.getVersion())) > 0) {
+                result = mod;
+            }
+        }
+        return result;
+    }
+
+    /** Angelica 与 lwjgl3ify 同时启用时跳过渲染器版本警告（1.7.10 走 LWJGL3 渲染路径） */
+    public static boolean shouldSkipRendererCheck(@Nullable List<LocalModFile> mods) {
+        if (mods == null) return false;
+        boolean hasAngelica = false, hasLwjgl3ify = false;
+        for (LocalModFile mod : mods) {
+            if (!mod.isActive()) continue;
+            String id = mod.getId();
+            if ("angelica".equals(id)) hasAngelica = true;
+            else if ("lwjgl3ify".equals(id)) hasLwjgl3ify = true;
+        }
+        return hasAngelica && hasLwjgl3ify;
     }
 
     @Nullable
