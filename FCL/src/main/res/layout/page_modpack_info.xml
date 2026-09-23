@@ -613,12 +613,14 @@
                         app:auto_edit_tint="true"/>
 
                     <com.tungsten.fcllibrary.component.view.FCLTextView
-                        android:layout_width="40dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=".zip"
                         android:singleLine="true"
                         android:layout_gravity="center"
                         android:gravity="end"
+                        android:layout_marginStart="8dp"
+                        android:id="@+id/file_extension"
                         app:auto_text_tint="true"
                         tools:ignore="HardcodedText"/>
 

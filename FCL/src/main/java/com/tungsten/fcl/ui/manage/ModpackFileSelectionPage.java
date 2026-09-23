@@ -244,7 +244,7 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             public void execute() throws Exception {
 
             }
-        };
+        }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
     private Task<?> exportAsMcbbs(ModpackExportInfo exportInfo, File modpackFile) {
@@ -260,7 +260,7 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             public Collection<Task<?>> getDependencies() {
                 return Collections.singleton(dependency);
             }
-        };
+        }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
     private Task<?> exportAsMultiMC(ModpackExportInfo exportInfo, File modpackFile) {
@@ -304,7 +304,7 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             public Collection<Task<?>> getDependencies() {
                 return Collections.singleton(dependency);
             }
-        };
+        }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
     private Task<?> exportAsServer(ModpackExportInfo exportInfo, File modpackFile) {
@@ -320,7 +320,7 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             public Collection<Task<?>> getDependencies() {
                 return Collections.singleton(dependency);
             }
-        };
+        }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
     private Task<?> exportAsCurseForge(ModpackExportInfo exportInfo, File modpackFile) {
@@ -336,7 +336,7 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             public Collection<Task<?>> getDependencies() {
                 return Collections.singleton(dependency);
             }
-        };
+        }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
     private Task<?> exportAsModrinth(ModpackExportInfo exportInfo, File modpackFile) {
@@ -352,7 +352,7 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             public Collection<Task<?>> getDependencies() {
                 return Collections.singleton(dependency);
             }
-        };
+        }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
     @Override

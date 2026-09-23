@@ -119,6 +119,8 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
         FCLSwitch forceUpdateSwitch = findViewById(R.id.force_update);
         FCLSwitch packCurseForgeSwitch = findViewById(R.id.pack_curseforge);
         FCLTextView pathText = findViewById(R.id.path_text);
+        FCLTextView extensionText = findViewById(R.id.file_extension);
+        extensionText.setText(ModpackTypeSelectionPage.getModpackFileExtension(type));
         pathButton = findViewById(R.id.path);
         FCLEditText fileNameText = findViewById(R.id.file_name);
         next = findViewById(R.id.next);
