@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1333,
-    "versionName": "1.3.3.3",
-    "date": "2026.09.18",
+    "versionCode": 1334,
+    "versionName": "1.3.3.4",
+    "date": "2026.09.23",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. The download page now supports aggregated CurseForge + Modrinth search with merged, deduplicated results; MultiMC modpack import is synced from upstream HMCL, and the download provider system follows the upstream refactor.\n2. Main screen right menu layout reworked; \"Execute Jar\" moved into the Java management dialog; the renderer selection dialog now auto-scrolls to the currently selected renderer.\n3. Added an FCL easter egg dialog, triggered with a pity probability when launching the game.\n4. Version lists now use a session-level snapshot cache for instant page switching; sorting uses real game version numbers in descending order, and manual refresh invalidates the cache.\n5. FCLNumberSeekBar track is now self-drawn, breaking and rounding around the value text; theme derived-color alpha became a separate setting, so the background no longer disappears when the theme color is fully transparent.\n6. Version icons now load pixel-aware everywhere, keeping low-resolution pixel-art icons sharp when scaled up; the NeoForge version icon was replaced.\n7. Fixed game crashes caused by SDL reused windows being destroyed early; SDL IME now routes by render path, so the soft keyboard works with Controlify.\n8. The embedded Microsoft login page now closes automatically on login completion, and Back exits directly; fixed stacked login pages caused by leaked OAuth listeners.\n9. Fixed the navigation bar staying on top and covering bottom buttons after returning from multitasking, skin translucency voxel stripes, SeekBar row reuse writing wrong data, background crashes from an empty download-provider cache, and goSetting not switching pages when already selected."
+        "text": "(Translated from Chinese by AI)\n1. The download page now supports favoriting resources with custom groups, group filtering, multi-select and one-tap batch download; a new resource pack management page supports enabling/disabling (writes options.txt), importing, renaming, multi-select deletion and search.\n2. Long-press the version card on the main screen to open a quick version switch menu sharing a snapshot with the version list page; a one-time guide hint for tapping the card was added.\n3. The skin model gained a 3D skin layer toggle (disabling it falls the second layer back to vanilla faces) and a body/leg separation toggle (the upper body then fits onto the legs).\n4. Manage and setting page tabs now show icons; FCLTabLayout shows indicator arrows at the corresponding edge when it can scroll left/right.\n5. The control converter added two-way mapping for swipe-chain linkage and joystick dead zone / forward-lock fields.\n6. Fixed Cleanroom letter keys and chat input not working, crashes when saving imported controller JSON containing nulls, being unable to add keys after creating a new control group, and the source badge being squeezed out on long download/favorite list titles."
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.下载页支持 CurseForge 与 Modrinth 聚合搜索，双源结果合并去重；同步上游 HMCL 的 MultiMC 整合包导入；下载源体系跟进上游重构\n2.主界面右菜单布局调整，执行 Jar 功能移入 Java 管理对话框；渲染器选择对话框打开时自动定位到当前选中的渲染器\n3.新增 FCL 弹窗彩蛋，点击启动游戏按保底概率触发\n4.版本列表接入会话级快照缓存，切换页面即显；排序改用真实游戏版本号降序，手动刷新强制失效缓存\n5.FCLNumberSeekBar 轨道改为自绘，数值文本两侧断开并圆角收口；主题派生色透明度改为独立设置项，主色全透明时背景不再不可见\n6.版本图标全面接入像素感知加载，低分辨率像素风图标放大不再发糊；更换 NeoForge 版本图标\n7.修复 SDL 复用窗口被提前销毁导致游戏崩溃；SDL 输入法按渲染路径分流，Controlify 环境可正常呼出软键盘\n8.微软登录结束时自动关闭内嵌登录页，返回键直接退出；修复 OAuth 事件监听残留导致堆叠多个登录页\n9.修复多任务返回后导航栏常驻遮挡底部按钮、皮肤半透明体素化条纹、SeekBar 行复用误写数据、下载源空缓存后台崩溃、goSetting 已选中不切页等问题"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.下载页新增资源收藏，支持自定义分组、分组筛选、多选与批量一键下载；新增资源包管理页，支持启用/禁用（写 options.txt）、导入、重命名、多选删除与搜索\n2.长按主界面版本卡片可弹出版本快速切换菜单，数据与版本列表页共享快照；新增点击版本卡片打开版本列表的引导提示（仅显示一次）\n3.皮肤模型新增 3D 皮肤层开关（禁用时第二层回落原版面片）与身体/腿部分离开关（关闭后上身贴合腿部）\n4.管理页与设置页 tab 添加图标；FCLTabLayout 可左右滑动时在对应边缘显示指示箭头\n5.控件转换器新增滑动联动与摇杆死区/前进锁字段的双向映射\n6.修复 Cleanroom 字母键与聊天输入失效、导入含 null 的控制器 JSON 保存时崩溃、新建控件组后无法添加按键、下载与收藏列表标题过长时来源徽标被挤出等问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/83b1738b7f9f",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.3.3/FCL-release-1.3.3.3-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/fb24013b273e",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.3.4/FCL-release-1.3.3.4-all.apk"
   }
 ]
