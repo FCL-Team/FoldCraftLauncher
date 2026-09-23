@@ -6,6 +6,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonObject;
 import com.tungsten.fclcore.download.MaintainTask;
 import com.tungsten.fclcore.game.Arguments;
+import com.tungsten.fclcore.game.GameJavaVersion;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.mod.LocalModFile;
@@ -55,6 +56,12 @@ public final class Lwjgl3ifyPatcher {
     public static final String FORGE_MAVEN = "https://maven.minecraftforge.net/";
     private static final String EMBEDDED_VERSION_JSON = "me/eigenraven/lwjgl3ify/relauncher/version.json";
     private static final String EMBEDDED_FORGE_PATCHES = "me/eigenraven/lwjgl3ify/relauncher/forgePatches.zip";
+    /**
+     * FCL 的 cacio（Java AWT 模拟环境）仅在 Java 17/21 上可用，Java 25 的 AWT 会回退
+     * headless 导致依赖字体测量的 mod（如 malisisdoors）崩溃；GTNH 内嵌 version.json
+     * 声明偏好 Java 25，合并时将 Java 版本要求约束到此上限，手动选择不受影响。
+     */
+    private static final int CACIO_COMPAT_MAX_MAJOR_VERSION = 21;
 
     private Lwjgl3ifyPatcher() {
     }
@@ -93,6 +100,8 @@ public final class Lwjgl3ifyPatcher {
                 // 已合并过同一版本，但需确保磁盘 JSON 不含 resolved 版本残留的 root/patches 字段，
                 // 否则 resolve() 会走合成根分支丢失 mainClass，导致 isModded 误判
                 cleanVersionJsonOnDisk(repository.getVersionJson(versionId));
+                // 旧版补丁产物可能已写入超出 cacio 兼容范围的 Java 版本要求，归一化
+                capDiskJavaVersionIfNeeded(repository, versionId, versionRef);
                 return;
             }
 
@@ -177,11 +186,38 @@ public final class Lwjgl3ifyPatcher {
                 .setArguments(arguments)
                 .setMainClass(mainClass);
         if (embedded.getJavaVersion() != null) {
-            result = result.setJavaVersion(embedded.getJavaVersion());
+            result = result.setJavaVersion(cappedJavaVersion(embedded.getJavaVersion()));
         }
         // 内嵌 version.json 的库列表即 1.7.10-Forge-lwjgl3ify 的完整闭包，整体替换
         result = result.setLibraries(patchLibraryUrls(embedded.getLibraries()));
         return result;
+    }
+
+    @NotNull
+    private static GameJavaVersion cappedJavaVersion(@NotNull GameJavaVersion javaVersion) {
+        if (javaVersion.getMajorVersion() <= CACIO_COMPAT_MAX_MAJOR_VERSION) return javaVersion;
+        return new GameJavaVersion(javaVersion.getComponent(), CACIO_COMPAT_MAX_MAJOR_VERSION);
+    }
+
+    /**
+     * 归一化已落盘补丁产物的 Java 版本要求：早期补丁可能已将 GTNH 声明的 Java 25
+     * 写入实例，超出 cacio 兼容范围时修正并同步内存版本对象。
+     */
+    private static void capDiskJavaVersionIfNeeded(FCLGameRepository repository, String versionId,
+                                                   @NotNull AtomicReference<Version> versionRef) {
+        try {
+            Version current = versionRef.get();
+            GameJavaVersion javaVersion = current.getJavaVersion();
+            if (javaVersion == null || javaVersion.getMajorVersion() <= CACIO_COMPAT_MAX_MAJOR_VERSION) return;
+            Version fixed = current.setJavaVersion(cappedJavaVersion(javaVersion));
+            writeCleanVersionJson(repository.getVersionJson(versionId), fixed);
+            repository.reloadVersionFromDisk(versionId);
+            versionRef.set(fixed);
+            LOG.log(Level.INFO, "Capped lwjgl3ify instance Java version " + javaVersion.getMajorVersion()
+                    + " -> " + fixed.getJavaVersion().getMajorVersion() + " (cacio compatibility)");
+        } catch (Throwable e) {
+            LOG.log(Level.WARNING, "Failed to cap lwjgl3ify instance Java version", e);
+        }
     }
 
     /**
