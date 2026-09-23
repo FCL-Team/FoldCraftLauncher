@@ -256,7 +256,7 @@ public final class LauncherHelper {
                             return checkModLoader(fclBridge, repository, scannedMods);
                         }).thenComposeAsync(fclBridge -> {
                             boolean skip = repository.getVersionSetting(selectedVersion).isNotCheckMod();
-                            return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""), skip);
+                            return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""), skip, scannedMods);
                         }).thenComposeAsync(fclBridge -> {
                             GameOption gameOption = new GameOption(repository.getRunDirectory(selectedVersion).getAbsolutePath());
                             gameOption.set("preferredGraphicsBackend", setting.getGraphicsBackend());
@@ -503,14 +503,19 @@ public final class LauncherHelper {
         });
     }
 
-    private Task<FCLBridge> checkMod(FCLBridge bridge, String version, boolean skip) {
+    private Task<FCLBridge> checkMod(FCLBridge bridge, String version, boolean skip, List<LocalModFile> mods) {
         return Task.composeAsync(() -> {
             try {
+                List<LocalModFile> modList = mods;
+                if (modList == null) {
+                    // 启动链扫描失败时回退为自行获取（getModManager 每次返回新实例，此处为全量重扫）
+                    modList = Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods();
+                }
                 StringBuilder modCheckerInfo = new StringBuilder();
                 StringBuilder modSummary = new StringBuilder();
                 ModChecker modChecker = new ModChecker(context, version);
                 int count = 0;
-                for (LocalModFile mod : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
+                for (LocalModFile mod : modList) {
                     if (!mod.isActive()) {
                         continue;
                     }
