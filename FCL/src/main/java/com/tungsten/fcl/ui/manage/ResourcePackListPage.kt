@@ -29,8 +29,8 @@ import java.util.Locale
 class ResourcePackListPage(context: Context?, id: Int) :
     FCLPage(context, id, R.layout.page_manage_resource_pack), VersionLoadable, View.OnClickListener {
 
-    private lateinit var binding: PageManageResourcePackBinding
-    private lateinit var adapter: ResourcePackListAdapter
+    private val binding: PageManageResourcePackBinding = PageManageResourcePackBinding.bind(contentView)
+    private val adapter: ResourcePackListAdapter
 
     private var profile: Profile? = null
     private var versionId: String? = null
@@ -40,7 +40,6 @@ class ResourcePackListPage(context: Context?, id: Int) :
     private var query: String = ""
 
     init {
-        binding = PageManageResourcePackBinding.bind(contentView)
         adapter = ResourcePackListAdapter(
             context!!,
             onSelectionChanged = { count -> switchLayout(count > 0) },
