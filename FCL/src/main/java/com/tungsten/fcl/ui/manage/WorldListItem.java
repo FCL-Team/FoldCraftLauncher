@@ -7,16 +7,22 @@ import static com.tungsten.fcllibrary.util.LocaleUtils.formatDateTime;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.widget.Toast;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
+import com.mio.util.DialogUtilKt;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleStringProperty;
 import com.tungsten.fclcore.fakefx.beans.property.StringProperty;
 import com.tungsten.fclcore.game.World;
-import com.tungsten.fclcore.util.io.FileUtils;
-import com.tungsten.fclcore.util.versioning.VersionNumber;
+import com.tungsten.fclcore.game.WorldLockedException;
+import com.tungsten.fclcore.task.Schedulers;
+import com.tungsten.fclcore.task.Task;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 
+import java.nio.file.Files;
 import java.time.Instant;
 
 public class WorldListItem {
@@ -25,6 +31,7 @@ public class WorldListItem {
     private final StringProperty title = new SimpleStringProperty();
     private final StringProperty subtitle = new SimpleStringProperty();
     private final World world;
+    private final Bitmap icon;
 
     public WorldListItem(Context context, Activity activity, World world) {
         this.context = context;
@@ -33,10 +40,11 @@ public class WorldListItem {
 
 
         this.world = world;
+        this.icon = world.getIcon();
 
         title.set(parseColorEscapes(world.getWorldName()));
 
-        subtitle.set(context.getString(R.string.world_description, world.getFileName(), formatDateTime(context, Instant.ofEpochMilli(world.getLastPlayed())), world.getGameVersion() == null ? context.getString(R.string.message_unknown) : world.getGameVersion()));
+        subtitle.set(context.getString(R.string.world_description, world.getFileName(), formatDateTime(context, Instant.ofEpochMilli(world.getLastPlayed())), world.getGameVersion() == null ? context.getString(R.string.message_unknown) : world.getGameVersion().toNormalizedString()));
     }
 
     public StringProperty titleProperty() {
@@ -45,6 +53,10 @@ public class WorldListItem {
 
     public StringProperty subtitleProperty() {
         return subtitle;
+    }
+
+    public Bitmap getIcon() {
+        return icon;
     }
 
     public void export() {
@@ -56,9 +68,7 @@ public class WorldListItem {
     }
 
     public void manageDatapacks() {
-        if (world.getGameVersion() == null || // old game will not write game version to level.dat
-                (VersionNumber.isIntVersionNumber(world.getGameVersion()) // we don't parse snapshot version
-                        && VersionNumber.asVersion(world.getGameVersion()).compareTo(VersionNumber.asVersion("1.13")) < 0)) {
+        if (!world.supportDataPacks()) {
             FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
             builder.setCancelable(false);
             builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
@@ -83,16 +93,45 @@ public class WorldListItem {
     public void delete() {
         new FCLAlertDialog.Builder(context)
                 .setMessage(context.getString(R.string.version_manage_remove_confirm, world.getWorldName()))
-                .setPositiveButton(() -> {
-                    try {
-                        FileUtils.forceDelete(world.getFile().toFile());
-                    } catch (Exception ignore) {
-                    }
-                    WorldListPage page = (WorldListPage) UIManager.getInstance().getManageUI().getPage(4);
-                    page.refresh();
-                })
+                .setPositiveButton(() -> Task.runAsync(Schedulers.io(), () -> world.delete())
+                        .whenComplete(Schedulers.androidUIThread(), exception -> {
+                            if (exception == null) {
+                                notifyChanged();
+                            } else if (exception instanceof WorldLockedException) {
+                                DialogUtilKt.showErrorDialog(context, context.getString(R.string.world_locked_failed));
+                            } else {
+                                DialogUtilKt.showErrorDialog(context, exception.toString());
+                            }
+                        }).start())
                 .setNegativeButton(null)
                 .create()
                 .show();
+    }
+
+    public void copy() {
+        EditDialog dialog = new EditDialog(context, world.getWorldName(), name -> {
+            if (Files.exists(world.getFile().resolveSibling(name))) {
+                DialogUtilKt.showErrorDialog(context, context.getString(R.string.world_import_already_exists));
+                return;
+            }
+            Task.runAsync(Schedulers.io(), () -> world.copy(name))
+                    .whenComplete(Schedulers.androidUIThread(), exception -> {
+                        if (exception == null) {
+                            Toast.makeText(context, R.string.message_success, Toast.LENGTH_SHORT).show();
+                            notifyChanged();
+                        } else if (exception instanceof WorldLockedException) {
+                            DialogUtilKt.showErrorDialog(context, context.getString(R.string.world_locked_failed));
+                        } else {
+                            DialogUtilKt.showErrorDialog(context, exception.toString());
+                        }
+                    }).start();
+        });
+        dialog.setTitle(R.string.world_duplicate);
+        dialog.show();
+    }
+
+    private void notifyChanged() {
+        WorldListPage page = (WorldListPage) UIManager.getInstance().getManageUI().getPage(4);
+        page.refresh();
     }
 }

@@ -15,6 +15,7 @@ nanohttpd = "2.3.1"
 commonsCompress = "1.26.0"
 xz = "1.9"
 opennbt = "1.5"
+lz4 = "1.10.4.1"
 gson = "2.10.1"
 appcompat = "1.7.0"
 viewpager2 = "1.1.0"
@@ -55,6 +56,7 @@ nanohttpd = { group = "org.nanohttpd", name = "nanohttpd", version.ref = "nanoht
 commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "commonsCompress" }
 xz = { group = "org.tukaani", name = "xz", version.ref = "xz" }
 opennbt = { group = "com.github.steveice10", name = "opennbt", version.ref = "opennbt" }
+lz4 = { group = "org.glavo", name = "lz4-java", version.ref = "lz4" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }

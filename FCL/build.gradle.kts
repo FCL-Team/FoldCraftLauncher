@@ -272,6 +272,7 @@ dependencies {
     implementation(libs.commons.compress)
     implementation(libs.xz)
     implementation(libs.opennbt)
+    implementation(libs.lz4)
     implementation(libs.gson)
     implementation(libs.tomlj)
     implementation(libs.constant.pool.scanner)

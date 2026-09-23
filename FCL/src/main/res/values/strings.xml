@@ -1310,6 +1310,7 @@
     <string name="world_datapack_1_13">Only Minecraft 1.13 or newer supports datapacks.</string>
     <string name="world_description">%s. Last played on %s. Game Version: %s.</string>
     <string name="world_download">Download a World</string>
+    <string name="world_duplicate">Copy World</string>
     <string name="world_export">Export World</string>
     <string name="world_export_title">Select a directory for this exported world</string>
     <string name="world_export_location">Export to</string>
@@ -1320,6 +1321,7 @@
     <string name="world_import_choose">Select the save archive you want to import</string>
     <string name="world_import_failed">Unable to import this world: %s</string>
     <string name="world_import_invalid">Unable to parse the save.</string>
+    <string name="world_locked_failed">This world is locked by the game or another launcher.</string>
     <string name="world_info_title">World %s - Information</string>
     <string name="world_info_basic">Basic Information</string>
     <string name="world_info_allow_cheats">Allow Cheats</string>
@@ -1338,6 +1340,7 @@
     <string name="world_info_player_game_type">Game Mode</string>
     <string name="world_info_player_game_type_adventure">Adventure</string>
     <string name="world_info_player_game_type_creative">Creative</string>
+    <string name="world_info_player_game_type_hardcore">Hardcore</string>
     <string name="world_info_player_game_type_spectator">Spectator</string>
     <string name="world_info_player_game_type_survival">Survival</string>
     <string name="world_info_player_health">Health</string>

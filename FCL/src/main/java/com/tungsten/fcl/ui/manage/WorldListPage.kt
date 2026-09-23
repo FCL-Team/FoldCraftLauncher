@@ -21,6 +21,7 @@ import com.tungsten.fclcore.fakefx.collections.FXCollections
 import com.tungsten.fclcore.game.World
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
+import com.tungsten.fclcore.util.versioning.GameVersionNumber
 import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.ui.FCLPage
@@ -62,9 +63,11 @@ class WorldListPage(context: Context?, id: Int) : FCLPage(context, id, R.layout.
         binding = PageManageWorldBinding.bind(contentView)
 
         showAll.addListener { _: Observable? ->
+            val selectedVersion = gameVersion?.let { GameVersionNumber.asGameVersion(it) }
             itemsProperty.setAll(
                 worlds.stream()
-                    .filter { world: World? -> isShowAll() || world!!.gameVersion == null || world.gameVersion == gameVersion }
+                    .filter { world: World? -> isShowAll() || world!!.gameVersion == null
+                            || (selectedVersion != null && world!!.gameVersion!!.compareTo(selectedVersion) == 0) }
                     .map { it: World? ->
                         WorldListItem(
                             context,
@@ -136,10 +139,13 @@ class WorldListPage(context: Context?, id: Int) : FCLPage(context, id, R.layout.
                 return@launch
             }
             setLoading(false)
+            worlds.clear()
             worlds.addAll(result)
+            val selectedVersion = gameVersion?.let { GameVersionNumber.asGameVersion(it) }
             itemsProperty.setAll(
                 result.stream()
-                    .filter { isShowAll() || it.gameVersion == null || it.gameVersion == gameVersion }
+                    .filter { isShowAll() || it.gameVersion == null
+                            || (selectedVersion != null && it.gameVersion!!.compareTo(selectedVersion) == 0) }
                     .map {
                         WorldListItem(
                             context,

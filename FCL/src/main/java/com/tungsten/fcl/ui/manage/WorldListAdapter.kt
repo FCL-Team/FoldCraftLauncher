@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.manage
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.ui.adapter.ViewHolder
@@ -47,10 +48,17 @@ class WorldListAdapter(private val context: Context) :
         val binding = ItemWorldBinding.bind(holder.itemView)
         val worldListItem = listProperty[position]
         binding.parent.setOnClickListener { worldListItem.showInfo() }
+        if (worldListItem.icon != null) {
+            binding.icon.visibility = View.VISIBLE
+            binding.icon.setImageBitmap(worldListItem.icon)
+        } else {
+            binding.icon.visibility = View.GONE
+        }
         binding.name.stringProperty().bind(worldListItem.titleProperty())
         binding.description.stringProperty().bind(worldListItem.subtitleProperty())
         binding.datapack.setOnClickListener { worldListItem.manageDatapacks() }
         binding.export.setOnClickListener { worldListItem.export() }
+        binding.copy.setOnClickListener { worldListItem.copy() }
         binding.delete.setOnClickListener { worldListItem.delete() }
     }
 
