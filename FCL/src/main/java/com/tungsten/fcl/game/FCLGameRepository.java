@@ -29,6 +29,7 @@ import android.graphics.drawable.Drawable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.mio.manager.RendererManager;
 import com.mio.util.AndroidUtilKt;
@@ -171,6 +172,18 @@ public class FCLGameRepository extends DefaultGameRepository {
                 FileUtils.writeText(file, PROFILE);
         } catch (IOException ex) {
             LOG.log(Level.WARNING, "Unable to create launcher_profiles.json, Forge/LiteLoader installer will not work.", ex);
+        }
+    }
+
+    //重新从磁盘读取版本 JSON 并同步内存缓存（含已解析版本缓存）。
+    public void reloadVersionFromDisk(String id) {
+        resolvedVersionCache.remove(id);
+        try {
+            File json = getVersionJson(id);
+            if (!json.exists()) return;
+            versions.put(id, readVersionJson(json));
+        } catch (IOException | JsonParseException e) {
+            LOG.log(Level.WARNING, "Failed to reload version json from disk: " + id, e);
         }
     }
 

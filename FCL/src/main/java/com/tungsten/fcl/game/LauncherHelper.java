@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.gson.GsonBuilder;
 import com.mio.JavaManager;
@@ -145,6 +146,10 @@ public final class LauncherHelper {
         FCLGameRepository repository = profile.getRepository();
         DefaultDependencyManager dependencyManager = profile.getDependency();
         AtomicReference<Version> version = new AtomicReference<>(MaintainTask.maintain(repository, repository.getResolvedVersion(selectedVersion)));
+        // 全量 mod 扫描一次，供 lwjgl3ify 补丁、modloader 与渲染器检查共用
+        List<LocalModFile> scannedMods = scanMods(repository, selectedVersion);
+        // GTNH/lwjgl3ify 兼容：mods 目录存在 lwjgl3ify 时改写版本 JSON，以 RFB + Java17+ 启动
+        Lwjgl3ifyPatcher.patchIfNeeded(repository, selectedVersion, scannedMods, version);
         Optional<String> gameVersion = repository.getGameVersion(version.get());
         boolean integrityCheck = repository.unmarkVersionLaunchedAbnormally(selectedVersion);
 
@@ -243,15 +248,15 @@ public final class LauncherHelper {
                         .thenComposeAsync(fclBridge -> {
                             Renderer renderer = RendererManager.getRenderer(repository.getVersionSetting(selectedVersion).getRenderer());
                             fclBridge.setRenderer(renderer.getName());
-                            return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""));
+                            return checkRenderer(fclBridge, renderer, repository.getGameVersion(selectedVersion).orElse(""), scannedMods);
                         }).thenComposeAsync(fclBridge -> checkNativeLibPlugin(fclBridge, repository.getGameVersion(selectedVersion).orElse("")))
                         .thenComposeAsync(fclBridge -> {
                             boolean skip = repository.getVersionSetting(selectedVersion).isNotCheckMod();
                             if (skip) return Task.supplyAsync(() -> fclBridge);
-                            return checkModLoader(fclBridge, repository);
+                            return checkModLoader(fclBridge, repository, scannedMods);
                         }).thenComposeAsync(fclBridge -> {
                             boolean skip = repository.getVersionSetting(selectedVersion).isNotCheckMod();
-                            return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""), skip);
+                            return checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""), skip, scannedMods);
                         }).thenComposeAsync(fclBridge -> {
                             GameOption gameOption = new GameOption(repository.getRunDirectory(selectedVersion).getAbsolutePath());
                             gameOption.set("preferredGraphicsBackend", setting.getGraphicsBackend());
@@ -390,8 +395,23 @@ public final class LauncherHelper {
         });
     }
 
-    private Task<FCLBridge> checkRenderer(FCLBridge bridge, Renderer renderer, String version) {
+    /** 全量扫描 mod 列表，失败返回 null（调用方按需回退） */
+    @Nullable
+    private static List<LocalModFile> scanMods(FCLGameRepository repository, String versionId) {
+        try {
+            return repository.getModManager(versionId).getMods();
+        } catch (IOException | RuntimeException e) {
+            LOG.log(Level.WARNING, "Failed to scan mods before launch", e);
+            return null;
+        }
+    }
+
+    private Task<FCLBridge> checkRenderer(FCLBridge bridge, Renderer renderer, String version, List<LocalModFile> mods) {
         return Task.composeAsync(() -> {
+            if (Lwjgl3ifyPatcher.shouldSkipRendererCheck(mods)) {
+                LOG.log(Level.INFO, "Angelica + lwjgl3ify detected, skip renderer version warning");
+                return Task.completed(bridge);
+            }
             try {
                 CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
                 if (!version.isEmpty()) {
@@ -455,13 +475,12 @@ public final class LauncherHelper {
         });
     }
 
-    private Task<FCLBridge> checkModLoader(FCLBridge bridge, FCLGameRepository repository) {
+    private Task<FCLBridge> checkModLoader(FCLBridge bridge, FCLGameRepository repository, List<LocalModFile> mods) {
         return Task.composeAsync(() -> {
             try {
                 CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
                 boolean modded = LibraryAnalyzer.isModded(repository, repository.getVersion(selectedVersion));
-                List<LocalModFile> mods = repository.getModManager(selectedVersion).getMods();
-                if (!mods.isEmpty() && !modded) {
+                if (mods != null && !mods.isEmpty() && !modded) {
                     Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
                             .setCancelable(false)
                             .setMessage(context.getString(R.string.message_check_has_modloader))
@@ -484,14 +503,19 @@ public final class LauncherHelper {
         });
     }
 
-    private Task<FCLBridge> checkMod(FCLBridge bridge, String version, boolean skip) {
+    private Task<FCLBridge> checkMod(FCLBridge bridge, String version, boolean skip, List<LocalModFile> mods) {
         return Task.composeAsync(() -> {
             try {
+                List<LocalModFile> modList = mods;
+                if (modList == null) {
+                    // 启动链扫描失败时回退为自行获取（getModManager 每次返回新实例，此处为全量重扫）
+                    modList = Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods();
+                }
                 StringBuilder modCheckerInfo = new StringBuilder();
                 StringBuilder modSummary = new StringBuilder();
                 ModChecker modChecker = new ModChecker(context, version);
                 int count = 0;
-                for (LocalModFile mod : Profiles.getSelectedProfile().getRepository().getModManager(Profiles.getSelectedVersion()).getMods()) {
+                for (LocalModFile mod : modList) {
                     if (!mod.isActive()) {
                         continue;
                     }
