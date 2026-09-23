@@ -1,5 +1,51 @@
 # Changelog
 
+## [1.3.3.4] - 2026-09-23
+
+### 中文
+
+#### ✨ 新功能
+
+1. **下载页资源收藏与分组**：下载列表左滑即可收藏资源，支持自定义分组（管理入口为分组区扳手图标）、分组筛选、多选与批量一键下载
+2. **资源包管理页**：管理页新增资源包 tab，支持启用/禁用（写 options.txt）、导入、重命名、多选删除与搜索
+3. **版本卡片快速切换**：长按主界面版本卡片弹出版本快速切换菜单（右侧启动按钮可直接切换并启动），数据与版本列表页共享会话快照；另新增首次使用的点击卡片引导提示（仅显示一次）
+4. **皮肤模型开关**：新增 3D 皮肤层开关，禁用时第二层回落原版面片，状态随动画一起持久化；新增身体与腿部分离开关，关闭后上身贴合腿部
+
+#### ⚡ 优化
+
+1. **管理页与设置页 tab 图标化**：tab 标题旁显示对应图标，视觉更直观
+2. **FCLTabLayout 滑动指示箭头**：tab 栏可左右滑动时在对应边缘显示指示箭头，提示还有未展示的内容
+3. **控件转换器字段同步**：滑动联动与摇杆死区/前进锁字段支持双向映射
+
+#### 🐛 修复
+
+1. 修复 Cleanroom 字母键与聊天输入失效：补齐按键与字符事件成对发送
+2. 修复导入含 null 的控制器 JSON 保存时崩溃：控件数据反序列化全链空安全加固
+3. 修复新建控件组后因数据未标记加载完成而无法添加按键
+4. 修复下载与收藏列表标题过长时来源徽标被挤出可视区：标题行改用 ConstraintLayout 保证徽标固定行尾
+
+### English
+
+#### ✨ New Features
+
+1. **Download page favorites and groups**: Swipe left on download list items to favorite resources, with custom groups (manage via the wrench icon in the group area), group filtering, multi-select and one-tap batch download
+2. **Resource pack management page**: A new resource pack tab in the manage page supports enabling/disabling (writes options.txt), importing, renaming, multi-select deletion and search
+3. **Quick version switch on the version card**: Long-press the version card on the main screen to open a quick version switch menu (the button on the right switches and launches directly); the data shares a session snapshot with the version list page. A one-time guide hint for tapping the card was also added
+4. **Skin model toggles**: A new 3D skin layer toggle — disabling it falls the second layer back to vanilla faces, with the state persisted alongside animations; a new body/leg separation toggle — when off, the upper body fits onto the legs
+
+#### ⚡ Improvements
+
+1. **Icons on manage and setting page tabs**: Tabs now show an icon next to the title for quicker recognition
+2. **FCLTabLayout scroll indicator arrows**: When the tab bar can scroll left/right, indicator arrows appear at the corresponding edge to hint at hidden content
+3. **Control converter field sync**: Swipe-chain linkage and joystick dead zone / forward-lock fields now support two-way mapping
+
+#### 🐛 Bug Fixes
+
+1. Fixed Cleanroom letter keys and chat input not working: key and character events are now sent in pairs
+2. Fixed crashes when saving imported controller JSON containing nulls: null-safety hardening across the whole control-data deserialization chain
+3. Fixed being unable to add keys after creating a new control group (the data was not marked as loaded)
+4. Fixed the source badge being squeezed out of view on long download/favorite list titles: the title row now uses ConstraintLayout to keep the badge pinned to the end of the line
+
 ## [1.3.3.3] - 2026-09-18
 
 ### 中文
