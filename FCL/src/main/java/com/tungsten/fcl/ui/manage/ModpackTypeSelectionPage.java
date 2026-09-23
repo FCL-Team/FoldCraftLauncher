@@ -7,7 +7,9 @@ import android.view.View;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fclcore.mod.ModpackExportInfo;
+import com.tungsten.fclcore.mod.curse.CurseForgeModpackExportTask;
 import com.tungsten.fclcore.mod.mcbbs.McbbsModpackExportTask;
+import com.tungsten.fclcore.mod.modrinth.ModrinthModpackExportTask;
 import com.tungsten.fclcore.mod.multimc.MultiMCModpackExportTask;
 import com.tungsten.fclcore.mod.server.ServerModpackExportTask;
 import com.tungsten.fclcore.task.Task;
@@ -23,6 +25,8 @@ public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickLis
     private FCLLinearLayout mcbbs;
     private FCLLinearLayout multimc;
     private FCLLinearLayout server;
+    private FCLLinearLayout curseforge;
+    private FCLLinearLayout modrinth;
 
     public ModpackTypeSelectionPage(Context context, int id, Profile profile, String version) {
         super(context, id, R.layout.page_modpack_type);
@@ -36,9 +40,13 @@ public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickLis
         mcbbs = findViewById(R.id.mcbbs);
         multimc = findViewById(R.id.multimc);
         server = findViewById(R.id.server);
+        curseforge = findViewById(R.id.curseforge);
+        modrinth = findViewById(R.id.modrinth);
         mcbbs.setOnClickListener(this);
         multimc.setOnClickListener(this);
         server.setOnClickListener(this);
+        curseforge.setOnClickListener(this);
+        modrinth.setOnClickListener(this);
     }
 
     @Override
@@ -63,6 +71,14 @@ public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickLis
             type = MODPACK_TYPE_SERVER;
             options = ServerModpackExportTask.OPTION;
         }
+        if (v == curseforge) {
+            type = MODPACK_TYPE_CURSEFORGE;
+            options = CurseForgeModpackExportTask.OPTION;
+        }
+        if (v == modrinth) {
+            type = MODPACK_TYPE_MODRINTH;
+            options = ModrinthModpackExportTask.OPTION;
+        }
         ModpackInfoPage page = new ModpackInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, profile, version, type, options);
         UIManager.getInstance().getManageUI().showTempPage(page);
     }
@@ -70,4 +86,13 @@ public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickLis
     public static final String MODPACK_TYPE_MCBBS = "mcbbs";
     public static final String MODPACK_TYPE_MULTIMC = "multimc";
     public static final String MODPACK_TYPE_SERVER = "server";
+    public static final String MODPACK_TYPE_CURSEFORGE = "curseforge";
+    public static final String MODPACK_TYPE_MODRINTH = "modrinth";
+
+    /**
+     * 返回导出文件的扩展名，Modrinth 整合包为 .mrpack，其余为 .zip。
+     */
+    public static String getModpackFileExtension(String type) {
+        return MODPACK_TYPE_MODRINTH.equals(type) ? ".mrpack" : ".zip";
+    }
 }
