@@ -110,6 +110,10 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     @SuppressWarnings("ConstantConditions")
     public void sendKeyEvent(int keycode, boolean press) {
+        sendKeyEvent(keycode, 0, press);
+    }
+
+    public void sendKeyEvent(int keycode, int keyChar, boolean press) {
         if (menu.getBridge() != null) {
             if (MOUSE_MAP.containsKey(keycode) && MOUSE_MAP.get(keycode) != null) {
                 menu.getBridge().pushEventMouseButton(MOUSE_MAP.get(keycode), press);
@@ -118,7 +122,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
                 if (code >= 0) {
                     CallbackBridge.setModifiers(code, press);
                 }
-                menu.getBridge().pushEventKey(keycode, 0, press);
+                menu.getBridge().pushEventKey(keycode, keyChar, press);
             }
         }
     }
@@ -290,10 +294,11 @@ public class FCLInput implements View.OnCapturedPointerListener {
         //keyboard
         if (fclKeycode == FCLKeycodes.KEY_UNKNOWN)
             return (event.getFlags() & KeyEvent.FLAG_FALLBACK) == KeyEvent.FLAG_FALLBACK;
-        sendKeyEvent(fclKeycode, event.getAction() == KeyEvent.ACTION_DOWN);
-        if (event.getAction() == KeyEvent.ACTION_DOWN && menu.getCursorMode() == FCLBridge.CursorEnabled) {
-            sendChar((char) (event.getUnicodeChar() != 0 ? event.getUnicodeChar() : '\u0000'));
-        }
+        boolean press = event.getAction() == KeyEvent.ACTION_DOWN;
+        // 物理键盘字符取自设备布局，随 keydown 一次性成对下发；不能再调 sendChar——
+        // 那是软键盘纯字符通道，会反查键码补发一对 keydown/keyup，与本按键叠加成双重输入
+        int keyChar = press && menu.getCursorMode() == FCLBridge.CursorEnabled ? event.getUnicodeChar() : 0;
+        sendKeyEvent(fclKeycode, keyChar, press);
         return true;
     }
 
