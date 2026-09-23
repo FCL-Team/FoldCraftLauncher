@@ -84,7 +84,13 @@ class ModrinthModpackExportTask(
 
         Zipper(modpackFile.toPath()).use { zip ->
             zip.putDirectory(runDirectory, "client-overrides") { path ->
-                Modpack.acceptFile(path, blackList, info.whitelist) && !matchedFiles.containsKey(path)
+                if (!Modpack.acceptFile(path, blackList, info.whitelist)) return@putDirectory false
+                if (matchedFiles.containsKey(path)) return@putDirectory false
+                // 禁用态文件已按去后缀路径写入索引，同样要排除
+                if (path.endsWith(ModManager.DISABLED_EXTENSION)
+                    && matchedFiles.containsKey(path.removeSuffix(ModManager.DISABLED_EXTENSION))
+                ) return@putDirectory false
+                true
             }
 
             val manifest = ModrinthManifest(
