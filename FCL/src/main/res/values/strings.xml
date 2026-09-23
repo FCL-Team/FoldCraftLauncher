@@ -754,6 +754,10 @@
     <string name="modpack_type_hmcl">HMCL Type</string>
     <string name="modpack_type_mcbbs_export">Can be imported by FCL, HMCL and MultiMC</string>
     <string name="modpack_type_modrinth">Modrinth</string>
+    <string name="modpack_type_modrinth_export">Can be imported by the Modrinth App and most launchers</string>
+    <string name="modpack_export_pack_curseforge">Include CurseForge remote resources in the pack</string>
+    <string name="modpack_type_curseforge">CurseForge</string>
+    <string name="modpack_type_curseforge_export">Can be imported by the CurseForge app and most launchers</string>
     <string name="modpack_type_multimc">MultiMC</string>
     <string name="modpack_type_multimc_export">Can be imported by FCL, HMCL and MultiMC</string>
     <string name="modpack_type_server">Auto-Update Modpack from Server</string>

@@ -45,7 +45,9 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -150,6 +152,32 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     }
                 });
         return mod == null ? Optional.empty() : mod.toVersion();
+    }
+
+    /**
+     * 批量按 SHA-1 反查 Modrinth 文件，返回 SHA-1 → 文件 的映射，用于整合包导出时补全下载地址与大小。
+     */
+    public static Map<String, ProjectVersionFile> matchFilesBySha1(Collection<String> sha1s) throws IOException {
+        if (sha1s.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, BulkFiles> response = HttpRequest.POST(PREFIX + "/v2/version_files")
+                .json(mapOf(pair("hashes", sha1s), pair("algorithm", "sha1")))
+                .getJson(new TypeToken<Map<String, BulkFiles>>() {
+                }.getType());
+
+        Map<String, ProjectVersionFile> result = new HashMap<>();
+        for (Map.Entry<String, BulkFiles> entry : response.entrySet()) {
+            List<ProjectVersionFile> files = entry.getValue().files();
+            if (files == null || files.isEmpty()) {
+                continue;
+            }
+            files.stream().filter(ProjectVersionFile::primary).findFirst()
+                    .or(() -> files.stream().findFirst())
+                    .ifPresent(file -> result.put(entry.getKey(), file));
+        }
+        return result;
     }
 
     @Override
@@ -412,6 +440,12 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
                     }).collect(Collectors.toList())
             ));
         }
+    }
+
+    /**
+     * @see <a href="https://docs.modrinth.com/operations/getversionfromhashes/">批量反查响应中的 Version 对象</a>
+     */
+    private record BulkFiles(List<ProjectVersionFile> files) {
     }
 
     public record ProjectVersionFile(Map<String, String> hashes, String url, String filename,

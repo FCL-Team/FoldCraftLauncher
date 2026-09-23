@@ -36,6 +36,7 @@ public class ModpackExportInfo {
 
     private boolean forceUpdate;
     private boolean packWithLauncher;
+    private boolean packCurseForge;
 
     private String fileApi;
     private int minMemory;
@@ -148,6 +149,18 @@ public class ModpackExportInfo {
         return this;
     }
 
+    /**
+     * 是否将 CurseForge 反查命中的远程资源并入导出的整合包。
+     */
+    public boolean isPackCurseForge() {
+        return packCurseForge;
+    }
+
+    public ModpackExportInfo setPackCurseForge(boolean packCurseForge) {
+        this.packCurseForge = packCurseForge;
+        return this;
+    }
+
     public int getMinMemory() {
         return minMemory;
     }
@@ -218,6 +231,7 @@ public class ModpackExportInfo {
         private boolean requireLaunchArguments;
         private boolean requireJavaArguments;
         private boolean requireOrigins;
+        private boolean requirePackCurseForge;
 
         public Options() {
         }
@@ -258,6 +272,10 @@ public class ModpackExportInfo {
             return requireOrigins;
         }
 
+        public boolean isRequirePackCurseForge() {
+            return requirePackCurseForge;
+        }
+
         public Options requireUrl() {
             requireUrl = true;
             return this;
@@ -296,6 +314,11 @@ public class ModpackExportInfo {
 
         public Options requireOrigins() {
             requireOrigins = true;
+            return this;
+        }
+
+        public Options requirePackCurseForge() {
+            requirePackCurseForge = true;
             return this;
         }
 
