@@ -2,6 +2,7 @@ package com.tungsten.fcl.game;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonObject;
 import com.tungsten.fclcore.download.MaintainTask;
 import com.tungsten.fclcore.game.Arguments;
@@ -13,11 +14,14 @@ import com.tungsten.fclcore.util.io.IOUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -119,7 +123,7 @@ public final class Lwjgl3ifyPatcher {
             if (!json.isFile() || !backup.isFile()) return;
             Version disk = JsonUtils.fromNonNullJson(FileUtils.readText(json), Version.class);
             if (disk.getMainClass() == null || !disk.getMainClass().startsWith(RFB_MAIN_CLASS_PREFIX)) return;
-            java.nio.file.Files.copy(backup.toPath(), json.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(backup.toPath(), json.toPath(), StandardCopyOption.REPLACE_EXISTING);
             repository.reloadVersionFromDisk(versionId);
             versionRef.set(MaintainTask.maintain(repository, repository.getResolvedVersion(versionId)));
             LOG.log(Level.INFO, "lwjgl3ify no longer present, restored version " + versionId + " from " + backup.getName());
@@ -245,7 +249,7 @@ public final class Lwjgl3ifyPatcher {
                 try (InputStream is = zip.getInputStream(entry); OutputStream os = new FileOutputStream(temp)) {
                     IOUtils.copyTo(is, os);
                 }
-                java.nio.file.Files.move(temp.toPath(), target.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                Files.move(temp.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 temp = null;
                 LOG.log(Level.INFO, "Extracted embedded forgePatches to " + target);
             } catch (IOException e) {
@@ -343,7 +347,7 @@ public final class Lwjgl3ifyPatcher {
         try {
             File backup = new File(target.getParentFile(), target.getName() + ".before-lwjgl3ify");
             if (target.isFile() && !backup.exists()) {
-                java.nio.file.Files.copy(target.toPath(), backup.toPath());
+                Files.copy(target.toPath(), backup.toPath());
                 LOG.log(Level.INFO, "Backed up original version json to " + backup.getName());
             }
         } catch (IOException e) {
@@ -376,7 +380,7 @@ public final class Lwjgl3ifyPatcher {
                 FileUtils.writeText(target, obj.toString());
                 LOG.log(Level.INFO, "Cleaned resolved leftovers (root/patches) from " + target);
             }
-        } catch (IOException | com.google.gson.JsonParseException e) {
+        } catch (IOException | JsonParseException e) {
             LOG.log(Level.WARNING, "Failed to clean version json " + target, e);
         }
     }
@@ -388,14 +392,14 @@ public final class Lwjgl3ifyPatcher {
             if (entry == null) return null;
             String text = readText(zip.getInputStream(entry));
             return JsonUtils.fromNonNullJson(text, Version.class);
-        } catch (IOException | com.google.gson.JsonParseException e) {
+        } catch (IOException | JsonParseException e) {
             LOG.log(Level.WARNING, "Cannot read lwjgl3ify relauncher version.json from " + zip.getName(), e);
             return null;
         }
     }
 
     private static String readText(InputStream is) throws IOException {
-        java.io.ByteArrayOutputStream bos = new java.io.ByteArrayOutputStream();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         byte[] buffer = new byte[8192];
         int length;
         while ((length = is.read(buffer)) != -1) {

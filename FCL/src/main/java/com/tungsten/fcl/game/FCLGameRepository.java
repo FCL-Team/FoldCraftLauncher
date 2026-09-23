@@ -29,6 +29,7 @@ import android.graphics.drawable.Drawable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.mio.manager.RendererManager;
 import com.mio.util.AndroidUtilKt;
@@ -181,7 +182,7 @@ public class FCLGameRepository extends DefaultGameRepository {
             File json = getVersionJson(id);
             if (!json.exists()) return;
             versions.put(id, readVersionJson(json));
-        } catch (IOException | com.google.gson.JsonParseException e) {
+        } catch (IOException | JsonParseException e) {
             LOG.log(Level.WARNING, "Failed to reload version json from disk: " + id, e);
         }
     }
