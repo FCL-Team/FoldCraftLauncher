@@ -151,7 +151,6 @@ class ModChecker(val context: Context, val version: String) {
                         )
                     )
                 }
-
             }
         }.exceptionOrNull()
         if (exception != null) {

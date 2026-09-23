@@ -328,9 +328,7 @@ public class DefaultLauncher {
                 res,
                 options.getWidth() + "x" + options.getHeight(),
                 "javax.swing.plaf.nimbus.NimbusLookAndFeel",
-                // cacio-tta 1.18 的 MANIFEST 自带 PreMain-Class（CTCPreloadAgent）；
-                // 1.19.1 起拆分的 cacio-agent 在 JDK25 上不可用，见 CacioJavaArgs 注释
-                FCLPath.CACIOCAVALLO_17_DIR + "/cacio-tta-1.18-SNAPSHOT.jar",
+                FCLPath.CACIOCAVALLO_17_DIR + "/cacio-agent.jar",
                 false,
                 javaVersion.getVersion() == JavaVersion.JAVA_VERSION_8
         );
