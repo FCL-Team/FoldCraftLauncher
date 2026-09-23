@@ -5,6 +5,7 @@ import static com.tungsten.fclcore.util.Logging.LOG;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
@@ -14,10 +15,9 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.mio.download.DownloadManager;
-
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.mio.download.DownloadManager;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.download.ControllerCategory;
 import com.tungsten.fcl.control.download.ControllerIndex;
@@ -72,7 +72,9 @@ public class ControllerRepoPage extends FCLPage implements View.OnClickListener,
     private AppCompatSpinner sourceSpinner;
     private AppCompatSpinner langSpinner;
     private FCLSpinner<String> categorySpinner;
-    /** 分类数据（与 spinner 显示的本地化文本按下标对应） */
+    /**
+     * 分类数据（与 spinner 显示的本地化文本按下标对应）
+     */
     private final ArrayList<ControllerCategory> categoryData = new ArrayList<>();
     private AppCompatSpinner deviceSpinner;
 
@@ -344,6 +346,14 @@ public class ControllerRepoPage extends FCLPage implements View.OnClickListener,
         progressBar = findViewById(R.id.progress);
         retry = findViewById(R.id.retry);
         retry.setOnClickListener(this);
+
+        nameEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                search();
+                return true;
+            }
+            return false;
+        });
 
         search();
         Controllers.addCallback(() -> checkUpdate(LocaleUtils.isChinese(getContext()) ? 1 : 0, false));
