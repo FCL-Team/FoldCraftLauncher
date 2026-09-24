@@ -224,7 +224,13 @@ void load_vulkan() {
 #endif
     }
     FCL_LOG("OSMDroid: loading vulkan regularly...");
-    void* vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
+    // 优先经 vkshim 包装加载：驱动缺失 VK_EXT_vertex_attribute_divisor 时由 shim
+    // 用 KHR/核心等价功能补齐，LWJGL 与 SDL 统一经 VULKAN_PTR 拿到包装后的加载器
+    void* vulkan_ptr = dlopen("libvkshim.so", RTLD_LAZY | RTLD_LOCAL);
+    if (vulkan_ptr == NULL) {
+        FCL_LOG("vkshim unavailable (%s), fallback to system loader", dlerror());
+        vulkan_ptr = dlopen("libvulkan.so", RTLD_LAZY | RTLD_LOCAL);
+    }
     FCL_LOG("OSMDroid: loaded vulkan, ptr=%p", vulkan_ptr);
     set_vulkan_ptr(vulkan_ptr);
 }

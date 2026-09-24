@@ -222,6 +222,21 @@ if (${ANDROID_ABI} STREQUAL "arm64-v8a")
     )
 endif ()
 
+# 模块：vkshim - 系统 Vulkan 加载器包装层
+# 驱动缺失 VK_EXT_vertex_attribute_divisor 时，用 VK_KHR_vertex_attribute_divisor
+# （或 Vulkan 1.3 核心等价功能）合成前者
+add_library(
+        vkshim
+        SHARED
+        driver_helper/vkshim/vkshim.c
+)
+
+target_link_libraries(
+        vkshim
+        PRIVATE
+        dl
+)
+
 # 模块：glxshim - 为 LWJGL 3.3.5 之前的版本提供 glXGetProcAddress 符号
 add_library(
         glxshim
