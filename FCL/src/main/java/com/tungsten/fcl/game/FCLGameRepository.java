@@ -58,6 +58,7 @@ import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fclcore.util.platform.MemoryUtils;
 import com.tungsten.fclcore.util.platform.OperatingSystem;
+import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 
 import org.jetbrains.annotations.Nullable;
@@ -356,8 +357,27 @@ public class FCLGameRepository extends DefaultGameRepository {
             else if (analyze.has(LibraryAnalyzer.LibraryType.QUILT))
                 return getDrawable(R.drawable.img_quilt);
             else
-                return getDrawable(R.drawable.img_grass);
+                return getVersionIconByGameVersion(id);
         }
+    }
+
+    /**
+     * 按游戏版本号推导原版图标：愚人节版、快照/预发布版（命令方块）、远古版本（工作台）或常规草方块
+     * <p>
+     * 参考 HMCLGameInstance（https://github.com/HMCL-dev/HMCL/blob/main/HMCL/src/main/java/org/jackhuang/hmcl/game/HMCLGameInstance.java）
+     */
+    private Drawable getVersionIconByGameVersion(String id) {
+        GameVersionNumber gameVersion = GameVersionNumber.asGameVersion(getGameVersion(id));
+        if (gameVersion.isAprilFools())
+            return getDrawable(R.drawable.april_fools);
+        else if (gameVersion instanceof GameVersionNumber.LegacySnapshot
+                || gameVersion instanceof GameVersionNumber.Release release
+                && release.getEaType() != GameVersionNumber.Release.ReleaseType.GA)
+            return getDrawable(R.drawable.img_command);
+        else if (gameVersion instanceof GameVersionNumber.Old)
+            return getDrawable(R.drawable.img_craft_table);
+        else
+            return getDrawable(R.drawable.img_grass);
     }
 
     private Drawable getDrawable(int id) {
