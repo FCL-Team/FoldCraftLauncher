@@ -964,6 +964,17 @@
     <string name="resourcepack_info_file_name">File name: %s</string>
     <string name="resourcepack_info_file_size">Size: %s</string>
     <string name="resourcepack_info_format">Pack format: %s</string>
+    <string name="shaderpack_manage">Shader Packs</string>
+    <string name="shaderpack_add">Import shader pack</string>
+    <string name="shaderpack_invalid">Invalid shader pack</string>
+    <string name="shaderpack_rename_exists">A shader pack with the same name already exists</string>
+    <string name="shaderpack_add_success">Imported shader pack %s.</string>
+    <string name="shaderpack_add_failed">Failed to import shader pack %s.</string>
+    <string name="shaderpack_info_type">Type: %s</string>
+    <string name="shaderpack_info_type_folder">Folder</string>
+    <string name="shaderpack_info_type_zip">Zip archive</string>
+    <string name="shaderpack_info_file_name">File name: %s</string>
+    <string name="shaderpack_info_file_size">Size: %s</string>
 
     <string name="search">Search</string>
     <string name="search_hint_chinese">Search queries support both Chinese and English</string>

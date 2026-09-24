@@ -871,6 +871,17 @@
     <string name="resourcepack_info_file_name">文件名：%s</string>
     <string name="resourcepack_info_file_size">大小：%s</string>
     <string name="resourcepack_info_format">格式版本：%s</string>
+    <string name="shaderpack_manage">光影</string>
+    <string name="shaderpack_add">导入光影</string>
+    <string name="shaderpack_invalid">无效光影包</string>
+    <string name="shaderpack_rename_exists">同名光影包已存在</string>
+    <string name="shaderpack_add_success">导入光影包 %s 成功</string>
+    <string name="shaderpack_add_failed">导入光影包 %s 失败</string>
+    <string name="shaderpack_info_type">类型：%s</string>
+    <string name="shaderpack_info_type_folder">文件夹</string>
+    <string name="shaderpack_info_type_zip">zip 压缩包</string>
+    <string name="shaderpack_info_file_name">文件名：%s</string>
+    <string name="shaderpack_info_file_size">大小：%s</string>
     <string name="search">搜索</string>
     <string name="search_hint_chinese">支持中英文搜索</string>
     <string name="search_hint_english">仅支持英文搜索</string>

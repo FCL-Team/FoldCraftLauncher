@@ -56,6 +56,12 @@
             android:icon="@drawable/ic_baseline_texture_24"
             android:text="@string/resourcepack_manage"/>
 
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:icon="@drawable/ic_baseline_palette_24"
+            android:text="@string/shaderpack_manage"/>
+
     </com.tungsten.fcllibrary.component.view.FCLTabLayout>
 
     <com.tungsten.fcllibrary.component.view.FCLUILayout

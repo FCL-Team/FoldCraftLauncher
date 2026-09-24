@@ -33,6 +33,7 @@ public class ManageUI extends FCLMultiPageUI {
     public static final int PAGE_ID_MANAGE_MOD = 15003;
     public static final int PAGE_ID_MANAGE_WORLD = 15004;
     public static final int PAGE_ID_MANAGE_RESOURCE_PACK = 15005;
+    public static final int PAGE_ID_MANAGE_SHADER_PACK = 15006;
 
     private final ObjectProperty<Profile.ProfileVersion> version = new SimpleObjectProperty<>();
     private final WeakListenerHolder listenerHolder = new WeakListenerHolder();
@@ -80,7 +81,7 @@ public class ManageUI extends FCLMultiPageUI {
 
     @Override
     public int getPageCount() {
-        return 6;
+        return 7;
     }
 
     @Override
@@ -95,6 +96,8 @@ public class ManageUI extends FCLMultiPageUI {
                     new WorldListPage(getContext(), PAGE_ID_MANAGE_WORLD);
             case 5 ->
                     new ResourcePackListPage(getContext(), PAGE_ID_MANAGE_RESOURCE_PACK);
+            case 6 ->
+                    new ShaderPackListPage(getContext(), PAGE_ID_MANAGE_SHADER_PACK);
             default ->
                     new VersionSettingPage(getContext(), PAGE_ID_MANAGE_SETTING, false);
         };
@@ -108,7 +111,8 @@ public class ManageUI extends FCLMultiPageUI {
                 getContext().getString(R.string.settings_tabs_installers),
                 getContext().getString(R.string.mods_manage),
                 getContext().getString(R.string.world_manage),
-                getContext().getString(R.string.resourcepack_manage)
+                getContext().getString(R.string.resourcepack_manage),
+                getContext().getString(R.string.shaderpack_manage)
         };
     }
 
@@ -177,6 +181,10 @@ public class ManageUI extends FCLMultiPageUI {
         FCLPage resourcePackPage = getPage(5);
         if (resourcePackPage instanceof VersionLoadable) {
             ((VersionLoadable) resourcePackPage).loadVersion(profile, version);
+        }
+        FCLPage shaderPackPage = getPage(6);
+        if (shaderPackPage instanceof VersionLoadable) {
+            ((VersionLoadable) shaderPackPage).loadVersion(profile, version);
         }
     }
 
