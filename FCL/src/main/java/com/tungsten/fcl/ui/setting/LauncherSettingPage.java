@@ -473,7 +473,8 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                 ThemeData.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
                 break;
             case SEEKBAR_COLOR_ALPHA:
-                ThemeEngine.getInstance().applyColorAlpha(progress);
+                // 界面按百分比显示，内部存 0-255 alpha
+                ThemeEngine.getInstance().applyColorAlpha(Math.round(progress * 2.55f));
                 ThemeData.saveTheme(getContext(), ThemeEngine.getInstance().getTheme());
                 break;
             case SEEKBAR_VIBRATION:

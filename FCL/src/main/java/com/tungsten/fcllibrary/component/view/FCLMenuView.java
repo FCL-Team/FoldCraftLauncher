@@ -29,16 +29,18 @@ public class FCLMenuView extends AppCompatImageButton {
             int[] colorNormal = {
                     ThemeEngine.getInstance().getTheme().getAutoTint()
             };
-            int[] colorSelected = {
-                    ThemeEngine.getInstance().getTheme().getDkColor()
-            };
             int[] colorRipple = {
                     ThemeEngine.getInstance().getTheme().getLtColor()
             };
-            setImageTintList(new ColorStateList(state, isSelected ? colorSelected : colorNormal));
+            setImageTintList(new ColorStateList(state, isSelected ? colorSelected() : colorNormal));
             RippleDrawable drawable = new RippleDrawable(new ColorStateList(state, colorRipple), null, null);
             drawable.setRadius(ConvertUtils.dip2px(getContext(), 20));
             setBackgroundDrawable(drawable);
+    }
+
+    /** 选中态色：dkColor 强制不透明，主题色透明度不影响菜单选中的可见性 */
+    private int[] colorSelected() {
+        return new int[]{ThemeEngine.getInstance().getTheme().getDkColor() | 0xFF000000};
     }
 
     private void init() {
@@ -68,10 +70,7 @@ public class FCLMenuView extends AppCompatImageButton {
         int[] colorNormal = {
                 ThemeEngine.getInstance().getTheme().getAutoTint()
         };
-        int[] colorSelected = {
-                ThemeEngine.getInstance().getTheme().getDkColor()
-        };
-        setImageTintList(new ColorStateList(state, isSelected ? colorSelected : colorNormal));
+        setImageTintList(new ColorStateList(state, isSelected ? colorSelected() : colorNormal));
         if (!oldSelect && selected && onSelectListener != null) {
             onSelectListener.onSelect(this);
         }

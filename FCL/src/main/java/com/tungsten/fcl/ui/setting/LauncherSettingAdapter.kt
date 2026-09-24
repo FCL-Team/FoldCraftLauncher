@@ -214,9 +214,10 @@ class LauncherSettingAdapter(
                 group = SettingGroup.Theme
             ),
             Row.SeekBarRow(
-                R.string.settings_launcher_color_alpha, 255, 0,
-                { ThemeEngine.getInstance().getTheme().colorAlpha },
-                LauncherSettingTag.SEEKBAR_COLOR_ALPHA,
+                R.string.settings_launcher_color_alpha, 100, 0,
+                // 内部存 0-255 alpha，界面按百分比显示
+                { (ThemeEngine.getInstance().getTheme().colorAlpha * 100 + 127) / 255 },
+                LauncherSettingTag.SEEKBAR_COLOR_ALPHA, "%",
                 descriptionRes = R.string.settings_launcher_color_alpha_desc,
                 group = SettingGroup.Theme
             ),
