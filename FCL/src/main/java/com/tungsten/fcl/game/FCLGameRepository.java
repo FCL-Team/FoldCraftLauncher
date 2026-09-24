@@ -354,6 +354,8 @@ public class FCLGameRepository extends DefaultGameRepository {
                 return getDrawable(R.drawable.img_optifine);
             else if (analyze.has(LibraryAnalyzer.LibraryType.FABRIC))
                 return getDrawable(R.drawable.img_fabric);
+            else if (analyze.has(LibraryAnalyzer.LibraryType.LEGACY_FABRIC))
+                return getDrawable(R.drawable.img_legacyfabric);
             else if (analyze.has(LibraryAnalyzer.LibraryType.QUILT))
                 return getDrawable(R.drawable.img_quilt);
             else

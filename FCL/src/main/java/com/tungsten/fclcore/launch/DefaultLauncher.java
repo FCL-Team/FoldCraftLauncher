@@ -456,7 +456,7 @@ public class DefaultLauncher {
                 analyzer.has(LibraryAnalyzer.LibraryType.NEO_FORGE),
                 analyzer.has(LibraryAnalyzer.LibraryType.OPTIFINE),
                 analyzer.has(LibraryAnalyzer.LibraryType.LITELOADER),
-                analyzer.has(LibraryAnalyzer.LibraryType.FABRIC),
+                analyzer.has(LibraryAnalyzer.LibraryType.FABRIC) || analyzer.has(LibraryAnalyzer.LibraryType.LEGACY_FABRIC),
                 analyzer.has(LibraryAnalyzer.LibraryType.QUILT)
         ));
         config.setLwjglVersion(lwjglVersion);

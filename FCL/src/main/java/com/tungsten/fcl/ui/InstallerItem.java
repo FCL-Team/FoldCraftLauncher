@@ -4,6 +4,8 @@ import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.CLEANROO
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FABRIC;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FABRIC_API;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.FORGE;
+import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.LEGACY_FABRIC;
+import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.LEGACY_FABRIC_API;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.LITELOADER;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.NEO_FORGE;
 import static com.tungsten.fclcore.download.LibraryAnalyzer.LibraryType.OPTIFINE;
@@ -102,6 +104,9 @@ public class InstallerItem {
             case FABRIC:
             case FABRIC_API:
                 return R.drawable.img_fabric;
+            case LEGACY_FABRIC:
+            case LEGACY_FABRIC_API:
+                return R.drawable.img_legacyfabric;
             case QUILT:
             case QUILT_API:
                 return R.drawable.img_quilt;
@@ -120,6 +125,8 @@ public class InstallerItem {
 
         public final InstallerItem fabric;
         public final InstallerItem fabricApi;
+        public final InstallerItem legacyFabric;
+        public final InstallerItem legacyFabricApi;
         public final InstallerItem forge;
         public final InstallerItem cleanroom;
         public final InstallerItem neoForge;
@@ -161,6 +168,8 @@ public class InstallerItem {
 
             fabric = new InstallerItem(context, FABRIC);
             fabricApi = new InstallerItem(context, FABRIC_API);
+            legacyFabric = new InstallerItem(context, LEGACY_FABRIC);
+            legacyFabricApi = new InstallerItem(context, LEGACY_FABRIC_API);
             forge = new InstallerItem(context, FORGE);
             cleanroom = new InstallerItem(context, CLEANROOM);
             neoForge = new InstallerItem(context, NEO_FORGE);
@@ -169,11 +178,12 @@ public class InstallerItem {
             quilt = new InstallerItem(context, QUILT);
             quiltApi = new InstallerItem(context, QUILT_API);
 
-            mutualIncompatible(forge, fabric, quilt, neoForge, cleanroom);
-            addIncompatibles(optiFine, fabric, quilt, neoForge, cleanroom);
-            addIncompatibles(liteLoader, fabric, quilt, neoForge, cleanroom);
-            addIncompatibles(fabricApi, forge, quiltApi, neoForge, liteLoader, optiFine, cleanroom);
-            addIncompatibles(quiltApi, forge, fabric, fabricApi, neoForge, liteLoader, optiFine, cleanroom);
+            mutualIncompatible(forge, fabric, quilt, neoForge, cleanroom, legacyFabric);
+            addIncompatibles(optiFine, fabric, quilt, neoForge, cleanroom, liteLoader, legacyFabric);
+            addIncompatibles(liteLoader, fabric, quilt, neoForge, cleanroom, legacyFabric);
+            addIncompatibles(fabricApi, forge, quiltApi, neoForge, liteLoader, optiFine, cleanroom, legacyFabric, legacyFabricApi);
+            addIncompatibles(quiltApi, forge, fabric, fabricApi, neoForge, liteLoader, optiFine, cleanroom, legacyFabric, legacyFabricApi);
+            addIncompatibles(legacyFabricApi, forge, fabric, fabricApi, neoForge, liteLoader, optiFine, cleanroom, quilt, quiltApi);
 
             InvalidationListener listener = o -> {
                 for (Map.Entry<InstallerItem, Set<InstallerItem>> entry : incompatibleMap.entrySet()) {
@@ -204,12 +214,17 @@ public class InstallerItem {
                 else return null;
             }, quilt.libraryVersion));
 
+            legacyFabricApi.dependencyName.bind(Bindings.createStringBinding(() -> {
+                if (legacyFabric.libraryVersion.get() == null) return LEGACY_FABRIC.getPatchId();
+                else return null;
+            }, legacyFabric.libraryVersion));
+
             if (gameVersion == null) {
-                this.libraries = new InstallerItem[]{forge, neoForge, liteLoader, optiFine, fabric, fabricApi, quilt, quiltApi, cleanroom};
+                this.libraries = new InstallerItem[]{forge, neoForge, liteLoader, optiFine, fabric, fabricApi, quilt, quiltApi, legacyFabric, legacyFabricApi, cleanroom};
             } else if (gameVersion.equals("1.12.2")) {
-                this.libraries = new InstallerItem[]{forge, cleanroom, liteLoader, optiFine};
-            } else if (GameVersionNumber.compare(gameVersion, "1.13") < 0) {
-                this.libraries = new InstallerItem[]{forge, liteLoader, optiFine};
+                this.libraries = new InstallerItem[]{forge, cleanroom, liteLoader, legacyFabric, legacyFabricApi, optiFine};
+            } else if (GameVersionNumber.compare(gameVersion, "1.13.2") <= 0) {
+                this.libraries = new InstallerItem[]{forge, liteLoader, optiFine, legacyFabric, legacyFabricApi};
             } else {
                 this.libraries = new InstallerItem[]{forge, neoForge, optiFine, fabric, fabricApi, quilt, quiltApi};
             }

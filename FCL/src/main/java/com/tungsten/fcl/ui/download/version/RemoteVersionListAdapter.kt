@@ -20,6 +20,8 @@ import com.tungsten.fclcore.download.fabric.FabricAPIRemoteVersion
 import com.tungsten.fclcore.download.fabric.FabricRemoteVersion
 import com.tungsten.fclcore.download.forge.ForgeRemoteVersion
 import com.tungsten.fclcore.download.game.GameRemoteVersion
+import com.tungsten.fclcore.download.legacyfabric.LegacyFabricAPIRemoteVersion
+import com.tungsten.fclcore.download.legacyfabric.LegacyFabricRemoteVersion
 import com.tungsten.fclcore.download.liteloader.LiteLoaderRemoteVersion
 import com.tungsten.fclcore.download.neoforge.NeoForgeRemoteVersion
 import com.tungsten.fclcore.download.optifine.OptiFineRemoteVersion
@@ -85,7 +87,7 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
         } else {
             binding.wiki.setVisibility(View.GONE)
         }
-        if ((remoteVersion !is GameRemoteVersion) && (remoteVersion !is FabricAPIRemoteVersion) && (remoteVersion !is QuiltAPIRemoteVersion)) {
+        if ((remoteVersion !is GameRemoteVersion) && (remoteVersion !is FabricAPIRemoteVersion) && (remoteVersion !is QuiltAPIRemoteVersion) && (remoteVersion !is LegacyFabricAPIRemoteVersion)) {
             binding.save.setVisibility(View.VISIBLE)
             binding.save.setOnClickListener {
                 val urls = remoteVersion.urls
@@ -129,6 +131,8 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
             is NeoForgeRemoteVersion -> return pixelAwareIcon(context, R.drawable.img_neoforge)
 
             is FabricRemoteVersion, is FabricAPIRemoteVersion -> return pixelAwareIcon(context, R.drawable.img_fabric)
+
+            is LegacyFabricRemoteVersion, is LegacyFabricAPIRemoteVersion -> return pixelAwareIcon(context, R.drawable.img_legacyfabric)
 
             is QuiltRemoteVersion, is QuiltAPIRemoteVersion -> return pixelAwareIcon(context, R.drawable.img_quilt)
 

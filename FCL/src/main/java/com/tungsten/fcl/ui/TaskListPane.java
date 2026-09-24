@@ -19,6 +19,8 @@ import com.tungsten.fclcore.download.forge.ForgeNewInstallTask;
 import com.tungsten.fclcore.download.forge.ForgeOldInstallTask;
 import com.tungsten.fclcore.download.game.GameAssetDownloadTask;
 import com.tungsten.fclcore.download.game.GameInstallTask;
+import com.tungsten.fclcore.download.legacyfabric.LegacyFabricAPIInstallTask;
+import com.tungsten.fclcore.download.legacyfabric.LegacyFabricInstallTask;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderInstallTask;
 import com.tungsten.fclcore.download.neoforge.NeoForgeInstallTask;
 import com.tungsten.fclcore.download.neoforge.NeoForgeOldInstallTask;
@@ -140,6 +142,10 @@ public final class TaskListPane extends FCLAdapter {
                     task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_fabric)));
                 } else if (task instanceof FabricAPIInstallTask) {
                     task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_fabric_api)));
+                } else if (task instanceof LegacyFabricInstallTask) {
+                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_legacyfabric)));
+                } else if (task instanceof LegacyFabricAPIInstallTask) {
+                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_legacyfabric_api)));
                 } else if (task instanceof CurseCompletionTask || task instanceof ModrinthCompletionTask || task instanceof ServerModpackCompletionTask || task instanceof McbbsModpackCompletionTask) {
                     task.setName(getContext().getString(R.string.modpack_completion));
                 } else if (task instanceof ModpackInstallTask) {

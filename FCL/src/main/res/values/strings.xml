@@ -543,6 +543,9 @@
     <string name="install_installer_game" translatable="false">Minecraft</string>
     <string name="install_installer_incompatible">Incompatible with %s</string>
     <string name="install_installer_install">Install %s</string>
+    <string name="install_installer_legacyfabric" translatable="false">Legacy Fabric</string>
+    <string name="install_installer_legacyfabric_api" translatable="false">Legacy Fabric API</string>
+    <string name="install_installer_legacyfabric_api_warning">Warning: Legacy Fabric API is a mod, and will be installed into the mod directory of the game instance. Please do not change the working directory of the game, or the Legacy Fabric API will not work. If you do want to change these settings, you should reinstall it.</string>
     <string name="install_installer_install_offline">Install/Update from Local File</string>
     <string name="install_installer_install_offline_extension">Forge/OptiFine installer</string>
     <string name="installer_running_processor">Running installer (Java %s)…</string>

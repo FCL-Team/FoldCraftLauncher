@@ -114,11 +114,14 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
             String libraryId = library.getLibraryId();
             if (libraryId.equals("game")) continue;
             library.action.set(() -> {
-                if (LibraryAnalyzer.LibraryType.FABRIC_API.getPatchId().equals(libraryId)) {
+                if (LibraryAnalyzer.LibraryType.FABRIC_API.getPatchId().equals(libraryId)
+                        || LibraryAnalyzer.LibraryType.LEGACY_FABRIC_API.getPatchId().equals(libraryId)) {
                     FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
                     builder.setCancelable(false);
                     builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-                    builder.setMessage(getContext().getString(R.string.install_installer_fabric_api_warning));
+                    builder.setMessage(getContext().getString(LibraryAnalyzer.LibraryType.LEGACY_FABRIC_API.getPatchId().equals(libraryId)
+                            ? R.string.install_installer_legacyfabric_api_warning
+                            : R.string.install_installer_fabric_api_warning));
                     builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                     builder.create().show();
                 }
@@ -164,6 +167,7 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
             case NEO_FORGE -> getContext().getString(R.string.install_installer_neoforge);
             case CLEANROOM -> getContext().getString(R.string.install_installer_cleanroom);
             case FABRIC -> getContext().getString(R.string.install_installer_fabric);
+            case LEGACY_FABRIC -> getContext().getString(R.string.install_installer_legacyfabric);
             case LITELOADER -> getContext().getString(R.string.install_installer_liteloader);
             case QUILT -> getContext().getString(R.string.install_installer_quilt);
             case OPTIFINE -> getContext().getString(R.string.install_installer_optifine);
