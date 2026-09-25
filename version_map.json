@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1334,
-    "versionName": "1.3.3.4",
-    "date": "2026.09.23",
+    "versionCode": 1335,
+    "versionName": "1.3.3.5",
+    "date": "2026.09.25",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. The download page now supports favoriting resources with custom groups, group filtering, multi-select and one-tap batch download; a new resource pack management page supports enabling/disabling (writes options.txt), importing, renaming, multi-select deletion and search.\n2. Long-press the version card on the main screen to open a quick version switch menu sharing a snapshot with the version list page; a one-time guide hint for tapping the card was added.\n3. The skin model gained a 3D skin layer toggle (disabling it falls the second layer back to vanilla faces) and a body/leg separation toggle (the upper body then fits onto the legs).\n4. Manage and setting page tabs now show icons; FCLTabLayout shows indicator arrows at the corresponding edge when it can scroll left/right.\n5. The control converter added two-way mapping for swipe-chain linkage and joystick dead zone / forward-lock fields.\n6. Fixed Cleanroom letter keys and chat input not working, crashes when saving imported controller JSON containing nulls, being unable to add keys after creating a new control group, and the source badge being squeezed out on long download/favorite list titles."
+        "text": "(Translated from Chinese by AI)\n1. Added lwjgl3ify compatibility — GT New Horizons (MC 1.7.10 + lwjgl3ify/RFB, Java 17+) now works out of the box; Legacy Fabric / Legacy Fabric API loader installation was synced from upstream HMCL.\n2. World save capabilities synced from upstream HMCL: world list entries now show world icons with a copy-world action, and the new 26.1 save format is supported (external world_gen_settings / player data / difficulty settings, etc.).\n3. A new shader pack management tab was added to the manage page, supporting import, rename, search, multi-select deletion and more (enabling/disabling is left to in-game shader mods such as Iris/OptiFine).\n4. Version icon recognition synced from upstream: snapshots and pre-release versions now show a command block icon.\n5. Theme color transparency is now shown as a percentage, and the menu selection color is no longer affected by theme transparency.\n6. Fixed AWT falling back to headless on jre25 (cacio17 updated to a JDK 25 fixed build), duplicated input with external physical keyboards, and a crash when pressing enter in the controller repository search box on custom ROMs."
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.下载页新增资源收藏，支持自定义分组、分组筛选、多选与批量一键下载；新增资源包管理页，支持启用/禁用（写 options.txt）、导入、重命名、多选删除与搜索\n2.长按主界面版本卡片可弹出版本快速切换菜单，数据与版本列表页共享快照；新增点击版本卡片打开版本列表的引导提示（仅显示一次）\n3.皮肤模型新增 3D 皮肤层开关（禁用时第二层回落原版面片）与身体/腿部分离开关（关闭后上身贴合腿部）\n4.管理页与设置页 tab 添加图标；FCLTabLayout 可左右滑动时在对应边缘显示指示箭头\n5.控件转换器新增滑动联动与摇杆死区/前进锁字段的双向映射\n6.修复 Cleanroom 字母键与聊天输入失效、导入含 null 的控制器 JSON 保存时崩溃、新建控件组后无法添加按键、下载与收藏列表标题过长时来源徽标被挤出等问题"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增 lwjgl3ify 兼容，开箱即玩 GT New Horizons（MC 1.7.10 + lwjgl3ify/RFB，Java 17+）；同步上游 HMCL 的 Legacy Fabric / Legacy Fabric API 加载器安装\n2.世界存档能力同步上游 HMCL：世界列表新增世界图标与复制世界入口，支持 26.1 新存档格式（世界生成设置与玩家数据外置、难度设置等）\n3.管理页新增光影管理 tab，支持光影包导入、重命名、搜索、多选删除等（启用/禁用由游戏内光影模组完成）\n4.版本图标识别同步上游：快照与预发布版显示命令方块图标\n5.主题色透明度改为百分比显示，菜单选中色不受主题透明度影响\n6.修复 jre25 下 AWT 回退 headless（cacio17 更新至 jdk25 修复版构建）、外接物理键盘输入重复、定制 ROM 上控制器仓库搜索框回车崩溃等问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/fb24013b273e",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.3.4/FCL-release-1.3.3.4-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/9bf724d26b57",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.3.5/FCL-release-1.3.3.5-all.apk"
   }
 ]
