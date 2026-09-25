@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
@@ -242,9 +243,13 @@ class GuideOverlayView private constructor(context: Context) : FrameLayout(conte
     private fun refreshThemeColors() {
         val theme = ThemeEngine.getTheme()
         strokePaint.color = theme.opaqueLtColor
-        descView.setTextColor(theme.autoTint)
-        stepView.setTextColor(theme.autoHintTint)
-        skipButton.setTextColor(theme.autoHintTint)
+        // 气泡为固定底色（亮近白/暗深灰），文字按亮暗模式取反差色；
+        // autoTint 与主题主色对比，浅色气泡上会得到白色文字导致看不清
+        val dark = ThemeEngine.isNightMode(context)
+        descView.setTextColor(if (dark) Color.WHITE else Color.BLACK)
+        val hintColor = if (dark) 0x99FFFFFF.toInt() else 0x99000000.toInt()
+        stepView.setTextColor(hintColor)
+        skipButton.setTextColor(hintColor)
         nextButton.setTextColor(theme.opaqueColor)
         bubble.background = dialogCardBackground(context, resources.displayMetrics.density)
     }
