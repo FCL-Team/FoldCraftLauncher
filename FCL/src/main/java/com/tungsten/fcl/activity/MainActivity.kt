@@ -327,14 +327,26 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 setupAccountDisplay()
                 setupVersionDisplay()
                 playAnim()
-                // 引导在入场动画播完后弹出；动画时长随 animationSpeed 缩放，最末组延迟 700ms
+                // 引导在入场动画播完后弹出；动画时长随 animationSpeed 缩放，最末组延迟 700ms。
+                // 顺序按视觉动线：右侧（账户/版本卡片/启动）→ 左侧菜单自上而下；
+                // account 步骤仅在没有账户时展示（添加过账户的用户无需引导）
                 val animationSpeed = ThemeEngine.getInstance().getTheme().animationSpeed
                 uiLayout.postDelayed((animationSpeed + 7) * 100L) {
                     GuideUtil.show(
                         activity = this@MainActivity,
-                        GuideStep(GuideUtil.TAG_GUIDE_VERSION_CARD, versionCard, getString(R.string.guide_version_card)),
-                        GuideStep(GuideUtil.TAG_GUIDE_THEME_2, setting, getString(R.string.guide_theme2)),
-                        GuideStep(GuideUtil.TAG_GUIDE_SHARE_LOG, home, getString(R.string.guide_share_log)),
+                        *buildList {
+                            if (Accounts.getAccounts().isEmpty()) {
+                                add(GuideStep(GuideUtil.TAG_GUIDE_ACCOUNT, account, getString(R.string.guide_account)))
+                            }
+                            add(GuideStep(GuideUtil.TAG_GUIDE_VERSION_CARD, versionCard, getString(R.string.guide_version_card)))
+                            add(GuideStep(GuideUtil.TAG_GUIDE_START, start, getString(R.string.guide_start)))
+                            add(GuideStep(GuideUtil.TAG_GUIDE_MANAGE, manage, getString(R.string.guide_manage)))
+                            add(GuideStep(GuideUtil.TAG_GUIDE_DOWNLOAD, download, getString(R.string.guide_download)))
+                            add(GuideStep(GuideUtil.TAG_GUIDE_CONTROLLER, controller, getString(R.string.guide_controller)))
+                            add(GuideStep(GuideUtil.TAG_GUIDE_MULTIPLAYER, multiplayer, getString(R.string.guide_multiplayer)))
+                            add(GuideStep(GuideUtil.TAG_GUIDE_THEME_2, setting, getString(R.string.guide_theme2)))
+                            add(GuideStep(GuideUtil.TAG_GUIDE_SHARE_LOG, home, getString(R.string.guide_share_log)))
+                        }.toTypedArray()
                     )
                 }
             }

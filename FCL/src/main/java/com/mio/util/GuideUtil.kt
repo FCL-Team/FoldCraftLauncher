@@ -24,9 +24,15 @@ data class GuideStep(val tag: String, val target: View, val text: String)
  * 跳过操作会记录剩余全部步骤，避免再次打扰。
  */
 object GuideUtil {
+    const val TAG_GUIDE_ACCOUNT = "account"
+    const val TAG_GUIDE_VERSION_CARD = "version card"
+    const val TAG_GUIDE_START = "start"
+    const val TAG_GUIDE_MANAGE = "manage"
+    const val TAG_GUIDE_DOWNLOAD = "download"
+    const val TAG_GUIDE_CONTROLLER = "controller"
+    const val TAG_GUIDE_MULTIPLAYER = "multiplayer"
     const val TAG_GUIDE_THEME_2 = "theme2"
     const val TAG_GUIDE_SHARE_LOG = "share log"
-    const val TAG_GUIDE_VERSION_CARD = "version card"
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
