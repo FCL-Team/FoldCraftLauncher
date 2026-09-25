@@ -110,9 +110,9 @@ class SkinRenderer(context: Context) {
     }
 
     /**
-     * 更新皮肤纹理并显式指定模型（[slim] 覆盖图像自动检测）。
+     * 更新皮肤纹理并指定模型：[slim] 非空时覆盖图像自动检测，为空时从皮肤图像检测。
      */
-    fun updateTexture(skin: Bitmap?, cape: Bitmap?, slim: Boolean) {
+    fun updateTexture(skin: Bitmap?, cape: Bitmap?, slim: Boolean?) {
         texture = arrayOf(skin, cape)
         scheduleTextureUpdate(skin, cape, slim)
     }

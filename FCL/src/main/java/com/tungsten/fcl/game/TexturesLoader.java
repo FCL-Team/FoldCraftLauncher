@@ -268,15 +268,42 @@ public final class TexturesLoader {
     }
 
     /**
+     * 账户皮肤与披风的加载结果。[model] 为账户提供的皮肤模型类型，无明确指定时为 null，
+     * 由调用方回退到皮肤图像检测。
+     */
+    public record SkinAndCape(Bitmap skin, Bitmap cape, TextureModel model) {
+    }
+
+    /**
+     * 解析账户提供的皮肤模型类型。离线账户取其显式配置（未配置皮肤时按 UUID 奇偶取官方默认分配）；
+     * 微软/外置登录账户取皮肤纹理元数据中的 model 字段。
+     */
+    private static TextureModel accountModel(Account account, Optional<Map<TextureType, Texture>> textures) {
+        if (account instanceof OfflineAccount) {
+            Skin skin = ((OfflineAccount) account).getSkin();
+            return skin == null || skin.type() == Skin.Type.DEFAULT
+                    ? TextureModel.detectUUID(account.getUUID())
+                    : skin.textureModel();
+        }
+        return textures.flatMap(it -> Optional.ofNullable(it.get(TextureType.SKIN)))
+                .map(Texture::getMetadata)
+                .filter(metadata -> metadata != null && metadata.containsKey("model"))
+                .map(TextureModel::detectModelName)
+                .orElse(null);
+    }
+
+    /**
      * 同步加载账户皮肤与披风（在 IO 线程调用）。
      * 供 SkinTextureLoader 的回调式加载使用，兜底行为与 textureBinding 一致：加载失败返回默认皮肤。
      */
-    public static Bitmap[] loadSkinAndCape(Account account) {
+    public static SkinAndCape loadSkinAndCape(Account account) {
         Bitmap defaultSkin = getDefaultSkin(TextureModel.detectUUID(account.getUUID())).image();
         Bitmap finalSkin = defaultSkin;
         Bitmap finalCape = null;
+        TextureModel model = null;
         try {
             Optional<Map<TextureType, Texture>> textures = account.getTextures().get();
+            model = accountModel(account, textures);
             if (textures.isPresent()) {
                 Texture skin = textures.get().get(TextureType.SKIN);
                 Texture cape = textures.get().get(TextureType.CAPE);
@@ -295,7 +322,7 @@ public final class TexturesLoader {
         } catch (Exception e) {
             LOG.log(Level.WARNING, "Failed to load texture, using default", e);
         }
-        return new Bitmap[]{finalSkin, finalCape};
+        return new SkinAndCape(finalSkin, finalCape, model);
     }
 
     public static ObjectBinding<Bitmap[]> textureBinding(Account account) {
