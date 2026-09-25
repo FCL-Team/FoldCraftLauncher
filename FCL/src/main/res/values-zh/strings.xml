@@ -145,6 +145,7 @@
     <string name="button_mouse_left">鼠标左键</string>
     <string name="button_mouse_right">鼠标右键</string>
     <string name="button_next">下一步</string>
+    <string name="button_done">完成</string>
     <string name="button_paste">粘贴</string>
     <string name="button_prev">上一步</string>
     <string name="button_remove">删除</string>

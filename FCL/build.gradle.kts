@@ -267,7 +267,6 @@ dependencies {
     implementation(project(":Terracotta"))
     implementation(libs.commons.io)
     implementation(libs.jelf)
-    implementation(libs.taptargetview)
     implementation(libs.nanohttpd)
     implementation(libs.commons.compress)
     implementation(libs.xz)

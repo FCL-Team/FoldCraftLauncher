@@ -172,6 +172,7 @@
     <string name="button_mouse_left">Mouse Left</string>
     <string name="button_mouse_right">Mouse Right</string>
     <string name="button_next">Next</string>
+    <string name="button_done">Done</string>
     <string name="button_paste">Paste</string>
     <string name="button_prev">Prev</string>
     <string name="button_remove">Remove</string>

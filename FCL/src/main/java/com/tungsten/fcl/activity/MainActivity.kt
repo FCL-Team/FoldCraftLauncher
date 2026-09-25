@@ -41,8 +41,8 @@ import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
 import com.mio.util.DisplayUtil
+import com.mio.util.GuideStep
 import com.mio.util.GuideUtil
-import com.mio.util.GuideUtil.Companion.guideTarget
 import com.mio.util.ImageUtil
 import com.mio.util.getLocalizedText
 import com.mio.util.hasStringId
@@ -327,12 +327,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 setupAccountDisplay()
                 setupVersionDisplay()
                 playAnim()
-                uiLayout.postDelayed(1500) {
+                // 引导在入场动画播完后弹出；动画时长随 animationSpeed 缩放，最末组延迟 700ms
+                val animationSpeed = ThemeEngine.getInstance().getTheme().animationSpeed
+                uiLayout.postDelayed((animationSpeed + 7) * 100L) {
                     GuideUtil.show(
                         activity = this@MainActivity,
-                        GuideUtil.TAG_GUIDE_VERSION_CARD to versionCard.guideTarget(title = getString(R.string.guide_version_card)),
-                        GuideUtil.TAG_GUIDE_THEME_2 to setting.guideTarget(title = getString(R.string.guide_theme2)),
-                        GuideUtil.TAG_GUIDE_SHARE_LOG to home.guideTarget(title = getString(R.string.guide_share_log))
+                        GuideStep(GuideUtil.TAG_GUIDE_VERSION_CARD, versionCard, getString(R.string.guide_version_card)),
+                        GuideStep(GuideUtil.TAG_GUIDE_THEME_2, setting, getString(R.string.guide_theme2)),
+                        GuideStep(GuideUtil.TAG_GUIDE_SHARE_LOG, home, getString(R.string.guide_share_log)),
                     )
                 }
             }
