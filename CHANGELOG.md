@@ -1,5 +1,49 @@
 # Changelog
 
+## [1.3.3.5] - 2026-09-25
+
+### 中文
+
+#### ✨ 新功能
+
+1. **兼容 lwjgl3ify，开箱即玩 GT New Horizons**：自动检测 mods 目录中的 lwjgl3ify 并合并内嵌 relauncher 配置（RetroFuturaBootstrap 主类、Java 版本要求、全套 --add-opens 参数与依赖闭包），合并幂等、lwjgl3ify 升级后自动重新合并，首次合并前自动备份原版本 JSON；内嵌库按来源重写 Maven 下载地址，forgePatches 构件从 jar 内离线还原；自动关闭桌面快捷方式生成，避免在 Android 上静默退出；版本设置强制 jre8 时提示切换 Auto 并建议 ≥4GB 内存
+2. **Legacy Fabric 加载器安装**：同步上游 HMCL，安装页新增 Legacy Fabric / Legacy Fabric API 条目，与 Fabric 按是否存在 net.legacyfabric 库互斥区分，兼容矩阵、依赖绑定与版本区间对齐上游；启动链路将 legacyfabric 归入 fabric 体系
+3. **世界存档能力同步上游**：世界列表条目新增世界图标与复制世界入口；支持 26.1 新存档格式（世界生成设置与玩家数据外置文件、难度设置等新字段）；新增 session.lock 锁检测，世界被占用时给出提示；NBT 读取支持 GZip / LZ4 Block 压缩自动检测
+4. **光影管理 tab**：管理页新增光影管理，扫描版本 shaderpacks 目录的 zip 与文件夹形式光影包，支持导入、搜索过滤、多选删除、长按重命名与详情弹窗，可跳转下载页光影 tab；启停由游戏内光影模组（Iris/OptiFine 等）完成
+5. **版本图标识别同步上游**：快照与预发布版显示命令方块图标
+
+#### ⚡ 优化
+
+1. **主题色透明度百分比显示**：透明度设置改以百分比呈现，更直观；FCLMenuView 选中色不再受主题透明度影响
+2. 精简资源包页属性初始化与世界列表过滤判空
+
+#### 🐛 修复
+
+1. 修复 jre25 下 AWT 回退 headless：cacio17 更新至 jdk25 修复版构建，依赖 java.awt.Font 的模组不再启动即崩
+2. 修复外接物理键盘输入重复：物理键盘字符随按键一次性下发
+3. 修复定制 ROM 上控制器仓库搜索框回车崩溃：补 imeOptions 搜索动作
+
+### English
+
+#### ✨ New Features
+
+1. **lwjgl3ify compatibility — GT New Horizons out of the box**: lwjgl3ify jars in the mods folder are detected automatically and their embedded relauncher config (RetroFuturaBootstrap main class, Java version requirement, the full --add-opens set and dependency closure) is merged into the instance version idempotently — re-merged after lwjgl3ify upgrades, with the original version JSON backed up before the first merge; embedded libraries get rewritten Maven sources, and the forgePatches artifact is restored offline from the jar; desktop-entry creation is disabled automatically to prevent silent exits on Android; a hint to switch to Auto (with ≥4GB RAM recommended) is shown when jre8 is forced
+2. **Legacy Fabric loader installation**: Synced from upstream HMCL — the install page gained Legacy Fabric / Legacy Fabric API entries, mutually exclusive with Fabric by the presence of net.legacyfabric libraries, with the compatibility matrix, dependency bindings and version ranges aligned upstream; the launch chain routes legacyfabric through the fabric system
+3. **World save capabilities synced from upstream**: World list entries now show world icons and a copy-world action; the new 26.1 save format is supported (external world-gen settings and player data files, new fields such as difficulty settings); session.lock detection warns when a world is in use; NBT reading auto-detects GZip / LZ4 Block compression
+4. **Shader pack management tab**: The manage page gained a shader tab that scans the version's shaderpacks folder (zip files and folders), supporting import, search filtering, multi-select deletion, long-press rename and a detail dialog, with a shortcut to the download page's shader tab; enabling/disabling is left to in-game shader mods (Iris/OptiFine, etc.)
+5. **Version icon recognition synced from upstream**: Snapshots and pre-release versions now show a command block icon
+
+#### ⚡ Improvements
+
+1. **Theme color transparency shown as a percentage**: More intuitive than raw values; the FCLMenuView selection color is no longer affected by theme transparency
+2. Simplified resource pack page property initialization and world list filtering null checks
+
+#### 🐛 Bug Fixes
+
+1. Fixed AWT falling back to headless on jre25: cacio17 updated to a JDK 25 fixed build, so mods depending on java.awt.Font no longer crash on launch
+2. Fixed duplicated input with external physical keyboards: physical keyboard characters are now sent together with key events in one pass
+3. Fixed a crash when pressing enter in the controller repository search box on custom ROMs: an imeOptions search action was added
+
 ## [1.3.3.4] - 2026-09-23
 
 ### 中文
