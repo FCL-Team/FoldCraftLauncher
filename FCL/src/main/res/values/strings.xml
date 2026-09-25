@@ -1385,11 +1385,11 @@
     <string name="guide_share_log">Long press here to share the game log (latest_game.log).</string>
     <string name="guide_version_card">Tap the version card to open the version list and manage your versions.</string>
     <string name="guide_account">No account yet? Tap here to add one.</string>
-    <string name="guide_start">Tap here to launch the selected version.</string>
+    <string name="guide_start">Tap to launch the selected version, long-press to select the renderer.</string>
     <string name="guide_manage">Manage game files, mods, saves and resource packs.</string>
     <string name="guide_download">Download game versions, mods, modpacks and resource packs.</string>
     <string name="guide_controller">Configure on-screen buttons and gamepad mapping.</string>
-    <string name="guide_multiplayer">Play together with friends over LAN.</string>
+    <string name="guide_multiplayer">Play remotely with friends via Terracotta.</string>
     <string name="joystick_l">Left joystick</string>
     <string name="gamepad_dpad">DPAD</string>
     <string name="gamepad_button_binding">Gamepad button binding</string>
