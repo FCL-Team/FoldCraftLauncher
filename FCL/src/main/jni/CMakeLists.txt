@@ -189,6 +189,39 @@ if (${ANDROID_ABI} STREQUAL "arm64-v8a")
     )
 endif ()
 
+# 模块：vulkan_check - Vulkan 设备能力检测
+# dlopen 系统 libvulkan 或经 liblinkerhook 加载 Turnip 驱动后枚举物理设备，
+# 读取 apiVersion/扩展/特性供启动器评估 MC Vulkan 后端支持情况
+add_library(
+        vulkan_check
+        SHARED
+        vulkan_check/vulkan_checker.c
+)
+
+target_include_directories(
+        vulkan_check
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/androidnsbypass/include
+)
+
+target_link_libraries(
+        vulkan_check
+        PRIVATE
+        androidnsbypass
+        log
+        dl
+)
+
+# 仅在arm64-v8a架构下链接EGL和GLESv2（Adreno 探测需要）
+if (${ANDROID_ABI} STREQUAL "arm64-v8a")
+    target_link_libraries(
+            vulkan_check
+            PRIVATE
+            EGL
+            GLESv2
+    )
+endif ()
+
 # 模块：glxshim - 为 LWJGL 3.3.5 之前的版本提供 glXGetProcAddress 符号
 add_library(
         glxshim

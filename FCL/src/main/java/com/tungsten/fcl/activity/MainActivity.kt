@@ -31,11 +31,17 @@ import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
 import androidx.lifecycle.lifecycleScope
+import com.mio.device.VulkanCapabilities
+import com.mio.device.VulkanCheckManager
+import com.mio.device.VulkanEnsureResult
+import com.mio.device.normalizeMcVersion
+import com.mio.device.supportFor
 import com.mio.download.DownloadManager
 import com.mio.manager.RendererManager
 import com.mio.plugin.DriverPlugin
 import com.mio.promo.QuarkPromo
 import com.mio.ui.dialog.RendererSelectDialog
+import com.mio.ui.dialog.VulkanCheckDialog
 import com.mio.ui.popup.VersionSwitchPopup
 import com.mio.util.AnimUtil
 import com.mio.util.AnimUtil.Companion.interpolator
@@ -752,8 +758,118 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             }.getOrNull() ?: DriverPlugin.driverList[0]
             refreshScreenSize()
             DisplayUtil.refreshDisplayMetrics(this)
-            Versions.launch(this, selectedProfile, versionId)
+            checkVulkanThenLaunch(selectedProfile, versionId)
         }
+    }
+
+    /**
+     * 启动前校验 26.2+（带 Vulkan 渲染后端）版本的设备支持情况：
+     * 缓存判定支持则直接启动，无缓存时询问是否检测，不支持时按版本警告或阻止
+     */
+    private fun checkVulkanThenLaunch(profile: Profile, versionId: String?) {
+        lifecycleScope.launch {
+            val launchId = versionId ?: Profiles.getSelectedVersion()
+            val gameVersion = withContext(Dispatchers.IO) {
+                launchId?.let {
+                    runCatching { profile.repository.getGameVersion(it).orElse(null) }.getOrNull()
+                }
+            }
+            if (gameVersion == null || !VulkanCheckManager.hasVulkanBackend(gameVersion)) {
+                doLaunchVersion(profile, versionId)
+                return@launch
+            }
+            val versionSetting = profile.getVersionSetting(launchId)
+            val useTurnip = !versionSetting.isVKDriverSystem
+            val driverPath = if (useTurnip) {
+                (DriverPlugin.driverList.find { it.driver == versionSetting.driver }
+                    ?: DriverPlugin.driverList[0]).path
+            } else null
+            when (VulkanCheckManager.ensureSupported(gameVersion, useTurnip, driverPath)) {
+                VulkanEnsureResult.SUPPORTED -> doLaunchVersion(profile, versionId)
+                VulkanEnsureResult.NEED_CHECK ->
+                    promptVulkanCheck(gameVersion, useTurnip, driverPath, profile, versionId)
+                VulkanEnsureResult.UNSUPPORTED ->
+                    runVulkanCheckAndDecide(gameVersion, useTurnip, driverPath, profile, versionId)
+            }
+        }
+    }
+
+    /** 无有效检测结果时询问用户是否立即检测；取消则不检测直接启动 */
+    private fun promptVulkanCheck(
+        gameVersion: String,
+        useTurnip: Boolean,
+        driverPath: String?,
+        profile: Profile,
+        versionId: String?
+    ) {
+        val builder = FCLAlertDialog.Builder(this)
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+        builder.setMessage(getString(R.string.vulkan_check_launch_tip))
+        builder.setPositiveButton(getString(R.string.dialog_positive)) {
+            lifecycleScope.launch {
+                runVulkanCheckAndDecide(gameVersion, useTurnip, driverPath, profile, versionId)
+            }
+        }
+        builder.setNegativeButton { doLaunchVersion(profile, versionId) }
+        builder.create().show()
+    }
+
+    /** 执行检测并弹出结果对话框，用户确认后按支持情况继续启动 */
+    private suspend fun runVulkanCheckAndDecide(
+        gameVersion: String,
+        useTurnip: Boolean,
+        driverPath: String?,
+        profile: Profile,
+        versionId: String?
+    ) {
+        val capabilities = withContext(Dispatchers.IO) {
+            VulkanCheckManager.check(useTurnip, driverPath)
+        }
+        val driverName = DriverPlugin.driverList.find { it.path == driverPath }?.driver
+        VulkanCheckDialog(this, capabilities, useTurnip, driverName) {
+            decideVulkanLaunch(gameVersion, capabilities, profile, versionId)
+        }.show()
+    }
+
+    /** 检测后不满足依赖时：26.3+ 强制 Vulkan 的版本阻止启动，其余版本警告后允许继续 */
+    private fun decideVulkanLaunch(
+        gameVersion: String,
+        capabilities: VulkanCapabilities?,
+        profile: Profile,
+        versionId: String?
+    ) {
+        val mcVersion = normalizeMcVersion(gameVersion)
+        val support = capabilities?.supportFor(mcVersion)
+        if (support?.isSupported == true) {
+            doLaunchVersion(profile, versionId)
+            return
+        }
+        val missing = support?.missingRequired
+            ?.joinToString("\n") { "· ${it.dependency.name}" }
+            .orEmpty()
+        val mandatory = VulkanCheckManager.isVulkanMandatory(gameVersion)
+        val builder = FCLAlertDialog.Builder(this)
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+        builder.setMessage(
+            getString(
+                if (mandatory) R.string.vulkan_check_launch_unsupported
+                else R.string.vulkan_check_launch_warning,
+                missing
+            )
+        )
+        if (mandatory) {
+            builder.setPositiveButton(getString(R.string.dialog_positive), null)
+        } else {
+            builder.setPositiveButton(getString(R.string.vulkan_check_launch_continue)) {
+                doLaunchVersion(profile, versionId)
+            }
+            builder.setNegativeButton { }
+        }
+        builder.create().show()
+    }
+
+    private fun doLaunchVersion(profile: Profile, versionId: String?) {
+        Versions.launch(this, profile, versionId)
     }
 
     private fun setupAccountDisplay() {

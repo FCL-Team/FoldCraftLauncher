@@ -1256,6 +1256,32 @@
     <string name="joystick_r">右摇杆</string>
     <string name="message_vulkan_driver_system">警告：使用系统Vulkan驱动可能获得更好的性能，但也可能因兼容性问题导致崩溃！</string>
     <string name="message_loading_controllers">正在加载自定义按键，请等待...</string>
+
+    <string name="settings_fcl_vulkan_check">检测 Vulkan</string>
+    <string name="settings_fcl_vulkan_check_desc">检测设备是否支持 Minecraft 26.2 及以后版本所需的 Vulkan 渲染后端。</string>
+    <string name="settings_fcl_vulkan_check_not_checked">未检测</string>
+    <string name="vulkan_check_title">Vulkan 支持检测</string>
+    <string name="vulkan_check_running">正在检测 Vulkan 支持情况…</string>
+    <string name="vulkan_check_failed">Vulkan 检测失败：设备可能不支持 Vulkan，或驱动加载失败。</string>
+    <string name="vulkan_check_support_all">设备支持 Minecraft %s 及以后版本所需的全部 Vulkan 特性。</string>
+    <string name="vulkan_check_support_none">设备不满足任何 Minecraft 版本的 Vulkan 要求。</string>
+    <string name="vulkan_check_support_partial">设备仅支持部分 Minecraft 版本的 Vulkan 后端。</string>
+    <string name="vulkan_check_versions">版本区间支持情况</string>
+    <string name="vulkan_check_version_range">Minecraft %s：</string>
+    <string name="vulkan_check_profile_support">支持</string>
+    <string name="vulkan_check_profile_unsupport">不支持</string>
+    <string name="vulkan_check_version">Vulkan 版本：%s</string>
+    <string name="vulkan_check_turnip">驱动：%s</string>
+    <string name="vulkan_check_driver_system">系统驱动</string>
+    <string name="vulkan_check_extensions">扩展支持</string>
+    <string name="vulkan_check_features">特性支持</string>
+    <string name="vulkan_check_item_name_missing">%s（缺失）</string>
+    <string name="vulkan_check_dep_required">必需：%s</string>
+    <string name="vulkan_check_dep_optional">可选：%s</string>
+    <string name="vulkan_check_launch_tip">该版本带有 Vulkan 渲染后端，是否立即检测设备支持情况？</string>
+    <string name="vulkan_check_launch_unsupported">设备不满足该版本的 Vulkan 要求，无法启动：\n%s</string>
+    <string name="vulkan_check_launch_warning">设备不完全满足该版本的 Vulkan 要求，游戏内 Vulkan 渲染可能无法使用：\n%s</string>
+    <string name="vulkan_check_launch_continue">仍要启动</string>
     <string name="wiki_game">https://zh.minecraft.wiki/w/Special:Search?search=%s&amp;variant=zh-cn</string>
     <string name="wiki_game_search">Java版%s</string>
     <string name="installed">已安装</string>
