@@ -1254,10 +1254,10 @@
     <string name="guide_share_log">长按这里分享游戏日志（latest_game.log）。</string>
     <string name="guide_version_card">点击版本卡片打开版本列表，管理你的版本。</string>
     <string name="guide_account">还没有账户？点击这里添加。</string>
-    <string name="guide_start">点击启动选中的版本，长按选择渲染器。</string>
-    <string name="guide_manage">管理游戏文件、模组、存档与资源包。</string>
-    <string name="guide_download">下载游戏版本、模组、整合包与资源包。</string>
-    <string name="guide_controller">配置虚拟按键与手柄映射。</string>
+    <string name="guide_start">点击启动选中的版本，长按可以选择指定渲染器然后直接启动。</string>
+    <string name="guide_manage">调整游戏设置，管理游戏文件、模组、存档与资源包等。</string>
+    <string name="guide_download">下载游戏版本、模组、整合包与资源包等。</string>
+    <string name="guide_controller">配置或是下载虚拟按键。</string>
     <string name="guide_multiplayer">通过陶瓦（Terracotta）与好友远程联机。</string>
     <string name="menu_settings_gamepad_button_binding">按键绑定</string>
     <string name="menu_settings_gamepad_open_button">打开</string>
