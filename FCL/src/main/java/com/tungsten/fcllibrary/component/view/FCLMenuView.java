@@ -38,9 +38,9 @@ public class FCLMenuView extends AppCompatImageButton {
             setBackgroundDrawable(drawable);
     }
 
-    /** 选中态色：dkColor 强制不透明，主题色透明度不影响菜单选中的可见性 */
+    /** 选中态色：dkColor 不透明形态，主题色透明度不影响菜单选中的可见性 */
     private int[] colorSelected() {
-        return new int[]{ThemeEngine.getInstance().getTheme().getDkColor() | 0xFF000000};
+        return new int[]{ThemeEngine.getInstance().getTheme().getOpaqueDkColor()};
     }
 
     private void init() {
