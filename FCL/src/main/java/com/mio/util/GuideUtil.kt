@@ -14,9 +14,24 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * 一步功能引导：tag 用于防重复弹出，target 为高亮目标控件，text 为气泡描述文案
+ * 功能引导标识：每个引导步骤一个 object，类名即持久化标识
  */
-data class GuideStep(val tag: String, val target: View, val text: String)
+sealed interface GuideTag {
+    data object Account : GuideTag
+    data object VersionCard : GuideTag
+    data object Start : GuideTag
+    data object Manage : GuideTag
+    data object Download : GuideTag
+    data object Controller : GuideTag
+    data object Multiplayer : GuideTag
+    data object Theme2 : GuideTag
+    data object ShareLog : GuideTag
+}
+
+/**
+ * 一步功能引导：tag 为引导标识，target 为高亮目标控件，text 为气泡描述文案
+ */
+data class GuideStep(val tag: GuideTag, val target: View, val text: String)
 
 /**
  * 功能引导入口：按传入顺序逐步展示全屏引导遮罩，已展示过的 tag 自动过滤
@@ -24,23 +39,16 @@ data class GuideStep(val tag: String, val target: View, val text: String)
  * 跳过操作会记录剩余全部步骤，避免再次打扰。
  */
 object GuideUtil {
-    const val TAG_GUIDE_ACCOUNT = "account"
-    const val TAG_GUIDE_VERSION_CARD = "version card"
-    const val TAG_GUIDE_START = "start"
-    const val TAG_GUIDE_MANAGE = "manage"
-    const val TAG_GUIDE_DOWNLOAD = "download"
-    const val TAG_GUIDE_CONTROLLER = "controller"
-    const val TAG_GUIDE_MULTIPLAYER = "multiplayer"
-    const val TAG_GUIDE_THEME_2 = "theme2"
-    const val TAG_GUIDE_SHARE_LOG = "share log"
-
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    private val GuideTag.id: String
+        get() = this::class.simpleName.orEmpty()
 
     fun show(activity: Activity, vararg steps: GuideStep) {
         val dataStore = activity.applicationContext.guideDataStore
         scope.launch {
             val shown = dataStore.data.first().shownTags.toSet()
-            val pending = steps.filter { it.tag !in shown }
+            val pending = steps.filter { it.tag.id !in shown }
             if (pending.isEmpty()) return@launch
             withContext(Dispatchers.Main) {
                 GuideOverlayView.show(
@@ -53,9 +61,9 @@ object GuideUtil {
         }
     }
 
-    private fun markShown(dataStore: DataStore<GuidePreference>, tags: List<String>) {
+    private fun markShown(dataStore: DataStore<GuidePreference>, tags: List<GuideTag>) {
         scope.launch {
-            dataStore.updateData { it.copy(shownTags = (it.shownTags + tags).distinct()) }
+            dataStore.updateData { it.copy(shownTags = (it.shownTags + tags.map { tag -> tag.id }).distinct()) }
         }
     }
 }

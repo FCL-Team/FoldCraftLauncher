@@ -42,6 +42,7 @@ import com.mio.util.AnimUtil.Companion.interpolator
 import com.mio.util.AnimUtil.Companion.startAfter
 import com.mio.util.DisplayUtil
 import com.mio.util.GuideStep
+import com.mio.util.GuideTag
 import com.mio.util.GuideUtil
 import com.mio.util.ImageUtil
 import com.mio.util.getLocalizedText
@@ -336,16 +337,16 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         activity = this@MainActivity,
                         *buildList {
                             if (Accounts.getAccounts().isEmpty()) {
-                                add(GuideStep(GuideUtil.TAG_GUIDE_ACCOUNT, account, getString(R.string.guide_account)))
+                                add(GuideStep(GuideTag.Account, account, getString(R.string.guide_account)))
                             }
-                            add(GuideStep(GuideUtil.TAG_GUIDE_VERSION_CARD, versionCard, getString(R.string.guide_version_card)))
-                            add(GuideStep(GuideUtil.TAG_GUIDE_START, start, getString(R.string.guide_start)))
-                            add(GuideStep(GuideUtil.TAG_GUIDE_MANAGE, manage, getString(R.string.guide_manage)))
-                            add(GuideStep(GuideUtil.TAG_GUIDE_DOWNLOAD, download, getString(R.string.guide_download)))
-                            add(GuideStep(GuideUtil.TAG_GUIDE_CONTROLLER, controller, getString(R.string.guide_controller)))
-                            add(GuideStep(GuideUtil.TAG_GUIDE_MULTIPLAYER, multiplayer, getString(R.string.guide_multiplayer)))
-                            add(GuideStep(GuideUtil.TAG_GUIDE_THEME_2, setting, getString(R.string.guide_theme2)))
-                            add(GuideStep(GuideUtil.TAG_GUIDE_SHARE_LOG, home, getString(R.string.guide_share_log)))
+                            add(GuideStep(GuideTag.VersionCard, versionCard, getString(R.string.guide_version_card)))
+                            add(GuideStep(GuideTag.Start, start, getString(R.string.guide_start)))
+                            add(GuideStep(GuideTag.Manage, manage, getString(R.string.guide_manage)))
+                            add(GuideStep(GuideTag.Download, download, getString(R.string.guide_download)))
+                            add(GuideStep(GuideTag.Controller, controller, getString(R.string.guide_controller)))
+                            add(GuideStep(GuideTag.Multiplayer, multiplayer, getString(R.string.guide_multiplayer)))
+                            add(GuideStep(GuideTag.Theme2, setting, getString(R.string.guide_theme2)))
+                            add(GuideStep(GuideTag.ShareLog, home, getString(R.string.guide_share_log)))
                         }.toTypedArray()
                     )
                 }

@@ -16,7 +16,7 @@ import java.io.OutputStream
 
 /**
  * 功能引导持久化数据（DataStore）：
- * @param shownTags 已展示过的引导标识列表，避免引导重复弹出
+ * @param shownTags 已展示过的引导标识列表（GuideTag 的类名），避免引导重复弹出
  */
 @Serializable
 data class GuidePreference(
