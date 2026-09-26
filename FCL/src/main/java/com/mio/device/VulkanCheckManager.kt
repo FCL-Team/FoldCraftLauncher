@@ -22,6 +22,8 @@ data class VulkanCheckRecord(
     val driverPath: String,
     /** 检测到的 Vulkan 版本字符串（如 "1.3.2"），检测失败时为空 */
     val apiVersion: String = "",
+    /** 设备缺失 EXT divisor 但提供 KHR 扩展，可经 vkshim 合成（仅系统驱动路径生效） */
+    val needsDivisorShim: Boolean = false,
     /** 设备可支持的 Minecraft 版本范围，[Range.until] 为排他上界，null 表示无上界 */
     val supportedRanges: List<Range> = emptyList(),
     val version: Int = 0,
@@ -60,6 +62,18 @@ object VulkanCheckManager {
     /** 首个强制 Vulkan 渲染的 Minecraft 版本，自此版本起缺失依赖时无法启动 */
     private const val VULKAN_MANDATORY_VERSION = "26.3"
 
+    private const val EXT_VERTEX_ATTRIBUTE_DIVISOR = "VK_EXT_vertex_attribute_divisor"
+    private const val KHR_VERTEX_ATTRIBUTE_DIVISOR = "VK_KHR_vertex_attribute_divisor"
+
+    /**
+     * 当前驱动状态下是否应经 vkshim 合成 EXT divisor 扩展；
+     * 由最近一次检测/缓存读取刷新，启动组装环境变量时读取。
+     * shim 仅包装系统 Vulkan 加载器，Turnip 驱动路径不经过它
+     */
+    @Volatile
+    var needsDivisorShim: Boolean = false
+        private set
+
     /**
      * 版本是否带有 Vulkan 渲染后端（26.2 起，快照/pre/rc 归一化后判断）
      */
@@ -84,19 +98,28 @@ object VulkanCheckManager {
             withContext(Dispatchers.IO) {
                 val cacheDir = File(FCLApp.getAppContext().cacheDir, "vulkan_check")
                 val capabilities = VulkanChecker.checkCapabilities(useTurnip, driverPath, cacheDir)
+                val needsShim = capabilities != null && !useTurnip &&
+                        EXT_VERTEX_ATTRIBUTE_DIVISOR !in capabilities.extensions &&
+                        KHR_VERTEX_ATTRIBUTE_DIVISOR in capabilities.extensions
+                needsDivisorShim = needsShim
+                // shim 生效后游戏可见的扩展列表含合成的 EXT，依赖评估按补齐后的状态进行
+                val effective = if (needsShim && capabilities != null) {
+                    capabilities.copy(extensions = capabilities.extensions + EXT_VERTEX_ATTRIBUTE_DIVISOR)
+                } else capabilities
                 saveRecord(
                     VulkanCheckRecord(
                         useTurnip = useTurnip,
                         driverPath = if (useTurnip) driverPath.orEmpty() else "",
-                        apiVersion = capabilities?.versionString.orEmpty(),
-                        supportedRanges = capabilities?.profileSupport()
+                        apiVersion = effective?.versionString.orEmpty(),
+                        needsDivisorShim = needsShim,
+                        supportedRanges = effective?.profileSupport()
                             ?.filter { it.supported }
                             ?.map { VulkanCheckRecord.Range(since = it.since, until = it.until) }
                             ?: emptyList(),
                         version = VulkanRequirements.VULKAN_REQUIREMENTS_VERSION
                     )
                 )
-                capabilities
+                effective
             }
         }
     }
@@ -111,7 +134,12 @@ object VulkanCheckManager {
             //检测器版本、驱动状态一致时设备能力不变，直接按已支持的版本范围判定
             last.version == VulkanRequirements.VULKAN_REQUIREMENTS_VERSION &&
                     last.useTurnip == useTurnip && last.driverPath == path
-        } ?: return VulkanEnsureResult.NEED_CHECK
+        } ?: run {
+            //无与当前驱动状态一致的记录，shim 门控回到安全侧（不启用）
+            needsDivisorShim = false
+            return VulkanEnsureResult.NEED_CHECK
+        }
+        needsDivisorShim = record.needsDivisorShim
         return if (record.isSupported(mcVersion)) VulkanEnsureResult.SUPPORTED else VulkanEnsureResult.UNSUPPORTED
     }
 

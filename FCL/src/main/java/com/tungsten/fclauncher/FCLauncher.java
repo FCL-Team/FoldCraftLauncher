@@ -14,6 +14,7 @@ import android.system.Os;
 import android.util.ArrayMap;
 
 import com.mio.data.Renderer;
+import com.mio.device.VulkanCheckManager;
 import com.mio.plugin.DriverPlugin;
 import com.mio.plugin.FFmpegPlugin;
 import com.mio.plugin.NativeLibPlugin;
@@ -241,6 +242,11 @@ public class FCLauncher {
         }
         if (config.getUseVKDriverSystem()) {
             envMap.put("VULKAN_DRIVER_SYSTEM", "1");
+        }
+        // 检测判定设备缺失 VK_EXT_vertex_attribute_divisor 且提供 KHR 扩展时，
+        // 经 vkshim 包装系统 Vulkan 加载器，用 KHR 合成 EXT
+        if (VulkanCheckManager.INSTANCE.getNeedsDivisorShim()) {
+            envMap.put("VKSHIM_ENABLE", "1");
         }
     }
 

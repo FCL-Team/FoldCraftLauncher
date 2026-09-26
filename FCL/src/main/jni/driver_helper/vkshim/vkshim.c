@@ -1,6 +1,7 @@
 // vkshim —— 系统 Vulkan 加载器包装层。
-// 驱动缺失 VK_EXT_vertex_attribute_divisor 但提供 VK_KHR_vertex_attribute_divisor
-// （或 Vulkan 1.3 同名核心功能）时，用后者合成前者：
+// 启动器检测到驱动缺失 VK_EXT_vertex_attribute_divisor 但提供
+// VK_KHR_vertex_attribute_divisor 时（VKSHIM_ENABLE=1）才经本层加载：
+// 用 KHR 合成 EXT：
 //   1. vkEnumerateDeviceExtensionProperties 补报 EXT 扩展；
 //   2. vkCreateDevice 把启用列表里的 EXT 换成 KHR；EXT v1/v2 应用不传 features 结构，
 //      而 KHR/核心把 divisor 用法门控在其后，链上缺位时补写一个全开节点；
@@ -131,16 +132,11 @@ static struct driver_mode compute_driver_mode(VkPhysicalDevice physicalDevice) {
     free(list);
 
     if (hasExt) return mode;
+    // 仅在驱动声明 KHR 扩展时合成；经启动器检测门控后本函数只应在该形态下被启用，
+    // 无 KHR 扩展名的设备（含仅 Vulkan 1.3 核心功能者）不做合成
     if (hasKHR) {
         mode.translate = true;
         mode.add_khr = true;
-        return mode;
-    }
-    // 无 KHR 扩展名时退回 Vulkan 1.3 核心功能（核心结构沿用 KHR 的 sType 与布局）
-    if (real.get_physical_device_properties != NULL) {
-        VkPhysicalDeviceProperties properties;
-        real.get_physical_device_properties(physicalDevice, &properties);
-        if (properties.apiVersion >= VK_API_VERSION_1_3) mode.translate = true;
     }
     return mode;
 }
