@@ -98,11 +98,11 @@ public class FCLBridge {
     public native int[] renderAWTScreenFrame();
 
     /**
-     * 枚举游戏 JVM 内可见的 AWT 顶层窗口
+     * 取一份游戏 JVM 内 AWT 虚拟屏快照
      *
-     * @return [screenWidth, screenHeight, x1, y1, w1, h1, x2, ...]，无可见窗口或运行时 JVM 未就绪时返回 null
+     * @return [screenWidth, screenHeight, count, x1, y1, w1, h1, ..., rgb...]，无可见窗口时返回 null
      */
-    public native int[] nativeGetAWTWindowRects();
+    public native int[] nativePollAwtFrame();
 
     /**
      * 在游戏 JVM 内弹出 Swing 消息对话框，阻塞至用户关闭

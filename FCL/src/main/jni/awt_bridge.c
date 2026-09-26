@@ -33,27 +33,37 @@ jmethodID method_PutClipboardData;
 jclass class_CTCClipboard = NULL;
 jmethodID method_SystemClipboardDataReceived = NULL;
 
-// 游戏内 AWT 窗口 overlay：窗口枚举与虚拟屏尺寸
-static jclass class_Window = NULL;
-static jclass class_Rect = NULL;
-static jclass class_Toolkit = NULL;
-static jclass class_Dimension = NULL;
-static jmethodID method_GetWindows = NULL;
-static jmethodID method_IsVisible = NULL;
-static jmethodID method_WindowGetBounds = NULL;
-static jmethodID constructor_Rect = NULL;
-static jfieldID field_rectX = NULL;
-static jfieldID field_rectY = NULL;
-static jfieldID field_rectWidth = NULL;
-static jfieldID field_rectHeight = NULL;
-static jmethodID method_GetDefaultToolkit = NULL;
-static jmethodID method_GetScreenSize = NULL;
-static jfieldID field_dimWidth = NULL;
-static jfieldID field_dimHeight = NULL;
+// 游戏内 AWT 窗口 overlay：Swing 测试对话框（经 bootclasspath 上的 AwtHelper 在 EDT 弹出）
+static jclass class_AwtHelper = NULL;
+static jmethodID method_HelperShowMessageDialog = NULL;
+static jmethodID method_HelperDumpAllStacks = NULL;
+static jmethodID method_HelperPollAwtScreen = NULL;
 
-// 游戏内 AWT 窗口 overlay：Swing 测试对话框
-static jclass class_JOptionPane = NULL;
-static jmethodID method_ShowMessageDialog = NULL;
+// AwtHelper 的懒加载（方法缺失时返回 0 并清理异常）
+static jboolean ensureAwtHelper(JNIEnv *rt) {
+    if (method_HelperPollAwtScreen != NULL) {
+        return JNI_TRUE;
+    }
+    jclass helperClass = (*rt)->FindClass(rt, "com/tungsten/fcl/awt/AwtHelper");
+    if (helperClass == NULL) {
+        FCL_LOG("[AWT] AwtHelper not found (bootclasspath jar missing?)");
+        (*rt)->ExceptionDescribe(rt);
+        (*rt)->ExceptionClear(rt);
+        return JNI_FALSE;
+    }
+    class_AwtHelper = (*rt)->NewGlobalRef(rt, helperClass);
+    method_HelperShowMessageDialog = (*rt)->GetStaticMethodID(rt, class_AwtHelper, "showMessageDialog",
+                                                              "(Ljava/lang/String;Ljava/lang/String;)V");
+    method_HelperDumpAllStacks = (*rt)->GetStaticMethodID(rt, class_AwtHelper, "dumpAllStacks", "()V");
+    method_HelperPollAwtScreen = (*rt)->GetStaticMethodID(rt, class_AwtHelper, "pollAwtScreen", "()[I");
+    if (method_HelperShowMessageDialog == NULL || method_HelperDumpAllStacks == NULL || method_HelperPollAwtScreen == NULL) {
+        FCL_LOG("[AWT] AwtHelper methods not found");
+        (*rt)->ExceptionDescribe(rt);
+        (*rt)->ExceptionClear(rt);
+        return JNI_FALSE;
+    }
+    return JNI_TRUE;
+}
 
 // 运行时 JVM 指针获取：JNI_OnLoad 要等 cacio 初始化（首个 AWT 窗口）才触发，
 // 游戏启动后即可经 libjvm 的 JNI_GetCreatedJavaVMs 主动取到
@@ -84,8 +94,17 @@ static void *openLoadedLib(const char *name) {
     return handle;
 }
 
+static jboolean vmReadyLogged = JNI_FALSE;
+
 static void ensureRuntimeJavaVM(void) {
-    if (runtimeJavaVMPtr != NULL || dalvikJavaVMPtr == NULL) {
+    if (runtimeJavaVMPtr != NULL) {
+        if (vmReadyLogged == JNI_FALSE) {
+            vmReadyLogged = JNI_TRUE;
+            FCL_LOG("[AWT] runtime JVM ready");
+        }
+        return;
+    }
+    if (dalvikJavaVMPtr == NULL) {
         return;
     }
     if (getCreatedJavaVMsFunc == NULL) {
@@ -110,6 +129,7 @@ static void ensureRuntimeJavaVM(void) {
         for (jsize i = 0; i < count; i++) {
             if (vms[i] != NULL && vms[i] != dalvikJavaVMPtr) {
                 runtimeJavaVMPtr = vms[i];
+                vmReadyLogged = JNI_TRUE;
                 FCL_LOG("[AWT] runtime JVM located (%d vms)", count);
                 break;
             }
@@ -333,130 +353,39 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeMoveW
 }
 
 /**
- * 枚举游戏 JVM 内可见的 AWT 顶层窗口
+ * 取一份游戏 JVM 内 AWT 虚拟屏快照
  *
- * @return [screenWidth, screenHeight, x1, y1, w1, h1, x2, ...]，无可见窗口或运行时 JVM 未就绪时返回 NULL
+ * @return [screenWidth, screenHeight, count, x1, y1, w1, h1, ..., rgb...]，无可见窗口时返回 null
  */
 JNIEXPORT jintArray JNICALL
-Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeGetAWTWindowRects(JNIEnv *env, jclass clazz) {
+Java_com_tungsten_fclauncher_bridge_FCLBridge_nativePollAwtFrame(JNIEnv *env, jclass clazz) {
     ensureRuntimeJavaVM();
     if (runtimeJavaVMPtr == NULL) {
         return NULL;
     }
     JNIEnv *rt = NULL;
     (*runtimeJavaVMPtr)->AttachCurrentThread(runtimeJavaVMPtr, &rt, NULL);
-
-    if (method_GetWindows == NULL) {
-        jclass windowClass = (*rt)->FindClass(rt, "java/awt/Window");
-        jclass rectClass = (*rt)->FindClass(rt, "java/awt/Rectangle");
-        if (windowClass == NULL || rectClass == NULL) {
-            (*rt)->ExceptionClear(rt);
-            return NULL;
-        }
-        class_Window = (*rt)->NewGlobalRef(rt, windowClass);
-        class_Rect = (*rt)->NewGlobalRef(rt, rectClass);
-        method_GetWindows = (*rt)->GetStaticMethodID(rt, class_Window, "getWindows", "()[Ljava/awt/Window;");
-        method_IsVisible = (*rt)->GetMethodID(rt, class_Window, "isVisible", "()Z");
-        method_WindowGetBounds = (*rt)->GetMethodID(rt, class_Window, "getBounds", "(Ljava/awt/Rectangle;)Ljava/awt/Rectangle;");
-        constructor_Rect = (*rt)->GetMethodID(rt, class_Rect, "<init>", "()V");
-        field_rectX = (*rt)->GetFieldID(rt, class_Rect, "x", "I");
-        field_rectY = (*rt)->GetFieldID(rt, class_Rect, "y", "I");
-        field_rectWidth = (*rt)->GetFieldID(rt, class_Rect, "width", "I");
-        field_rectHeight = (*rt)->GetFieldID(rt, class_Rect, "height", "I");
-        if (method_GetWindows == NULL || method_IsVisible == NULL || method_WindowGetBounds == NULL
-            || constructor_Rect == NULL || field_rectX == NULL || field_rectY == NULL
-            || field_rectWidth == NULL || field_rectHeight == NULL) {
-            (*rt)->ExceptionClear(rt);
-            return NULL;
-        }
+    if (ensureAwtHelper(rt) != JNI_TRUE) {
+        return NULL;
     }
-
-    jobjectArray windows = (jobjectArray) (*rt)->CallStaticObjectMethod(rt, class_Window, method_GetWindows);
+    jobject result = (*rt)->CallStaticObjectMethod(rt, class_AwtHelper, method_HelperPollAwtScreen);
     if ((*rt)->ExceptionCheck(rt) == JNI_TRUE) {
+        FCL_LOG("[AWT] pollAwtScreen failed");
+        (*rt)->ExceptionDescribe(rt);
         (*rt)->ExceptionClear(rt);
         return NULL;
     }
-    jsize count = (*rt)->GetArrayLength(rt, windows);
-    jint *rects = NULL;
-    jint visibleCount = 0;
-    if (count > 0) {
-        rects = malloc(sizeof(jint) * 4 * count);
-        jobject rectangle = (*rt)->NewObject(rt, class_Rect, constructor_Rect);
-        for (jsize i = 0; i < count; i++) {
-            jobject window = (*rt)->GetObjectArrayElement(rt, windows, i);
-            if (window != NULL && (*rt)->CallBooleanMethod(rt, window, method_IsVisible) == JNI_TRUE) {
-                (*rt)->CallObjectMethod(rt, window, method_WindowGetBounds, rectangle);
-                jint x = (*rt)->GetIntField(rt, rectangle, field_rectX);
-                jint y = (*rt)->GetIntField(rt, rectangle, field_rectY);
-                jint w = (*rt)->GetIntField(rt, rectangle, field_rectWidth);
-                jint h = (*rt)->GetIntField(rt, rectangle, field_rectHeight);
-                if (w > 0 && h > 0) {
-                    rects[visibleCount * 4] = x;
-                    rects[visibleCount * 4 + 1] = y;
-                    rects[visibleCount * 4 + 2] = w;
-                    rects[visibleCount * 4 + 3] = h;
-                    visibleCount++;
-                }
-            }
-            if (window != NULL) {
-                (*rt)->DeleteLocalRef(rt, window);
-            }
-            if ((*rt)->ExceptionCheck(rt) == JNI_TRUE) {
-                (*rt)->ExceptionClear(rt);
-            }
-        }
-        (*rt)->DeleteLocalRef(rt, rectangle);
-    }
-    (*rt)->DeleteLocalRef(rt, windows);
-    if (visibleCount == 0) {
-        free(rects);
+    if (result == NULL) {
         return NULL;
     }
-
-    // 虚拟屏尺寸直接向运行时查询；仅在确认存在窗口后触达 Toolkit，避免提前初始化 AWT
-    if (method_GetDefaultToolkit == NULL) {
-        jclass toolkitClass = (*rt)->FindClass(rt, "java/awt/Toolkit");
-        jclass dimensionClass = (*rt)->FindClass(rt, "java/awt/Dimension");
-        if (toolkitClass == NULL || dimensionClass == NULL) {
-            (*rt)->ExceptionClear(rt);
-            free(rects);
-            return NULL;
-        }
-        class_Toolkit = (*rt)->NewGlobalRef(rt, toolkitClass);
-        class_Dimension = (*rt)->NewGlobalRef(rt, dimensionClass);
-        method_GetDefaultToolkit = (*rt)->GetStaticMethodID(rt, class_Toolkit, "getDefaultToolkit", "()Ljava/awt/Toolkit;");
-        method_GetScreenSize = (*rt)->GetMethodID(rt, class_Toolkit, "getScreenSize", "()Ljava/awt/Dimension;");
-        field_dimWidth = (*rt)->GetFieldID(rt, class_Dimension, "width", "D");
-        field_dimHeight = (*rt)->GetFieldID(rt, class_Dimension, "height", "D");
-        if (method_GetDefaultToolkit == NULL || method_GetScreenSize == NULL
-            || field_dimWidth == NULL || field_dimHeight == NULL) {
-            (*rt)->ExceptionClear(rt);
-            free(rects);
-            return NULL;
-        }
-    }
-    jintArray result = NULL;
-    jobject toolkit = (*rt)->CallStaticObjectMethod(rt, class_Toolkit, method_GetDefaultToolkit);
-    if (toolkit != NULL && (*rt)->ExceptionCheck(rt) != JNI_TRUE) {
-        jobject dimension = (*rt)->CallObjectMethod(rt, toolkit, method_GetScreenSize);
-        if (dimension != NULL && (*rt)->ExceptionCheck(rt) != JNI_TRUE) {
-            jint header[2];
-            header[0] = (jint) (*rt)->GetDoubleField(rt, dimension, field_dimWidth);
-            header[1] = (jint) (*rt)->GetDoubleField(rt, dimension, field_dimHeight);
-            if (header[0] > 0 && header[1] > 0) {
-                result = (*env)->NewIntArray(env, 2 + visibleCount * 4);
-                (*env)->SetIntArrayRegion(env, result, 0, 2, header);
-                (*env)->SetIntArrayRegion(env, result, 2, visibleCount * 4, rects);
-            }
-            (*rt)->DeleteLocalRef(rt, dimension);
-        }
-        (*rt)->DeleteLocalRef(rt, toolkit);
-    }
-    if ((*rt)->ExceptionCheck(rt) == JNI_TRUE) {
-        (*rt)->ExceptionClear(rt);
-    }
-    free(rects);
-    return result;
+    // 运行时 JVM 的引用不能直接返回给 Dalvik，须拷贝到 Dalvik 侧新数组
+    jsize length = (*rt)->GetArrayLength(rt, result);
+    jint *elements = (*rt)->GetIntArrayElements(rt, result, 0);
+    jintArray out = (*env)->NewIntArray(env, length);
+    (*env)->SetIntArrayRegion(env, out, 0, length, elements);
+    (*rt)->ReleaseIntArrayElements(rt, result, elements, 0);
+    (*rt)->DeleteLocalRef(rt, result);
+    return out;
 }
 
 /**
@@ -464,6 +393,7 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeGetAWTWindowRects(JNIEnv *en
  */
 JNIEXPORT void JNICALL
 Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeShowTestDialog(JNIEnv *env, jclass clazz, jstring title, jstring message) {
+    FCL_LOG("[AWT] showTestDialog invoked");
     ensureRuntimeJavaVM();
     if (runtimeJavaVMPtr == NULL) {
         FCL_LOG("[AWT] showTestDialog: runtime JVM not available");
@@ -472,32 +402,24 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeShowTestDialog(JNIEnv *env, 
     JNIEnv *rt = NULL;
     (*runtimeJavaVMPtr)->AttachCurrentThread(runtimeJavaVMPtr, &rt, NULL);
 
-    if (method_ShowMessageDialog == NULL) {
-        jclass optionPaneClass = (*rt)->FindClass(rt, "javax/swing/JOptionPane");
-        if (optionPaneClass == NULL) {
-            FCL_LOG("[AWT] showTestDialog: JOptionPane not found");
-            (*rt)->ExceptionDescribe(rt);
-            (*rt)->ExceptionClear(rt);
-            (*runtimeJavaVMPtr)->DetachCurrentThread(runtimeJavaVMPtr);
-            return;
-        }
-        class_JOptionPane = (*rt)->NewGlobalRef(rt, optionPaneClass);
-        method_ShowMessageDialog = (*rt)->GetStaticMethodID(rt, class_JOptionPane, "showMessageDialog",
-                                                            "(Ljava/awt/Component;Ljava/lang/Object;Ljava/lang/String;I)V");
-        if (method_ShowMessageDialog == NULL) {
-            FCL_LOG("[AWT] showTestDialog: showMessageDialog not found");
-            (*rt)->ExceptionDescribe(rt);
-            (*rt)->ExceptionClear(rt);
-            (*runtimeJavaVMPtr)->DetachCurrentThread(runtimeJavaVMPtr);
-            return;
-        }
+    if (ensureAwtHelper(rt) != JNI_TRUE) {
+        (*runtimeJavaVMPtr)->DetachCurrentThread(runtimeJavaVMPtr);
+        return;
     }
+
     const char *titleChars = (*env)->GetStringUTFChars(env, title, NULL);
     const char *messageChars = (*env)->GetStringUTFChars(env, message, NULL);
     jstring rtTitle = (*rt)->NewStringUTF(rt, titleChars);
     jstring rtMessage = (*rt)->NewStringUTF(rt, messageChars);
-    // 最后一个参数为 JOptionPane.INFORMATION_MESSAGE
-    (*rt)->CallStaticVoidMethod(rt, class_JOptionPane, method_ShowMessageDialog, NULL, rtMessage, rtTitle, 1);
+    // 诊断：转储游戏 JVM 全部线程栈
+    (*rt)->CallStaticVoidMethod(rt, class_AwtHelper, method_HelperDumpAllStacks);
+    if ((*rt)->ExceptionCheck(rt) == JNI_TRUE) {
+        (*rt)->ExceptionDescribe(rt);
+        (*rt)->ExceptionClear(rt);
+    }
+    // 对话框由 helper 转 EDT 弹出，本调用立即返回
+    (*rt)->CallStaticVoidMethod(rt, class_AwtHelper, method_HelperShowMessageDialog, rtTitle, rtMessage);
+    FCL_LOG("[AWT] helper showMessageDialog posted");
     if ((*rt)->ExceptionCheck(rt) == JNI_TRUE) {
         (*rt)->ExceptionDescribe(rt);
         (*rt)->ExceptionClear(rt);

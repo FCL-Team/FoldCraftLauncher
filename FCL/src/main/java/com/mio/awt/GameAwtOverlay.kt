@@ -85,13 +85,12 @@ class GameAwtOverlay(context: Context) : View(context) {
         val bridge = bridge ?: return
         while (!Thread.currentThread().isInterrupted) {
             try {
-                val info = bridge.nativeGetAWTWindowRects()
-                if (info == null || info.size <= 2) {
+                val info = bridge.nativePollAwtFrame()
+                if (info == null || info.size < 3 || info[0] <= 0 || info[1] <= 0) {
                     mainHandler.post { clearWindows() }
                     Thread.sleep(IDLE_INTERVAL)
                 } else {
-                    val rgb = bridge.renderAWTScreenFrame()
-                    mainHandler.post { updateWindows(info, rgb) }
+                    mainHandler.post { updateFrame(info) }
                     Thread.sleep(ACTIVE_INTERVAL)
                 }
             } catch (e: InterruptedException) {
@@ -107,17 +106,20 @@ class GameAwtOverlay(context: Context) : View(context) {
         invalidate()
     }
 
-    private fun updateWindows(info: IntArray, rgb: IntArray?) {
+    private fun updateFrame(info: IntArray) {
         val tex = textureView ?: return
         val sw = info[0]
         val sh = info[1]
-        if (sw <= 0 || sh <= 0 || tex.width <= 0 || tex.height <= 0) {
+        val count = info[2]
+        val rectEnd = 3 + count * 4
+        if (tex.width <= 0 || tex.height <= 0 || rectEnd > info.size) {
             clearWindows()
             return
         }
         screenW = sw
         screenH = sh
-        if (rgb != null && rgb.size >= sw * sh) {
+        if (info.size - rectEnd >= sw * sh) {
+            val rgb = info.copyOfRange(rectEnd, rectEnd + sw * sh)
             val old = bitmap
             if (old != null && old.width == sw && old.height == sh) {
                 old.setPixels(rgb, 0, sw, 0, 0, sw, sh)
@@ -137,8 +139,8 @@ class GameAwtOverlay(context: Context) : View(context) {
         val scaleY = tex.height.toFloat() / sh
         srcRects.clear()
         dstRects.clear()
-        var i = 2
-        while (i + 3 < info.size) {
+        var i = 3
+        while (i + 3 < rectEnd) {
             // 窗口矩形可能越出虚拟屏，先裁剪到屏内
             val left = info[i].coerceIn(0, sw)
             val top = info[i + 1].coerceIn(0, sh)
@@ -185,6 +187,7 @@ class GameAwtOverlay(context: Context) : View(context) {
 
     fun showTestDialog() {
         val bridge = bridge ?: return
+        android.util.Log.e("FCL-AWT", "showTestDialog triggered")
         val title = context.getString(R.string.awt_test_dialog_title)
         val message = context.getString(R.string.awt_test_dialog_message)
         thread(name = "AwtTestDialog") {
