@@ -1,12 +1,13 @@
 package com.mio.ui.dialog
 
 import android.content.Context
-import android.graphics.Point
 import android.view.WindowManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.manager.RendererManager
 import com.mio.ui.adapter.RendererSelectItemAdapter
 import com.mio.ui.adapter.SpacingItemDecoration
+import com.mio.util.getScreenHeight
+import com.mio.util.getScreenWidth
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogRendererSelectBinding
 import com.tungsten.fcl.setting.Profiles
@@ -21,15 +22,13 @@ class RendererSelectDialog(
 ) : FCLDialog(context) {
 
     init {
-        val point = Point()
-        window?.windowManager?.defaultDisplay?.getSize(point)
         val params = window?.attributes
         params?.width = ConvertUtils.dip2px(context, 500f)
-        val ratio = point.x.toFloat() / point.y.toFloat()
+        val ratio = getScreenWidth().toFloat() / getScreenHeight().toFloat()
         if (ratio >= 1.5f) {
             params?.height = WindowManager.LayoutParams.MATCH_PARENT
         } else {
-            params?.height = point.y * 1 / 2
+            params?.height = getScreenHeight() * 1 / 2
         }
         window?.attributes = params
         val binding = DialogRendererSelectBinding.inflate(layoutInflater)

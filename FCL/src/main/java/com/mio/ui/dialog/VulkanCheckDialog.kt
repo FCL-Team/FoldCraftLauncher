@@ -1,15 +1,15 @@
 package com.mio.ui.dialog
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.Point
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.graphics.toColorInt
 import com.mio.device.VulkanCapabilities
 import com.mio.device.VulkanDependency
 import com.mio.device.VulkanRequirements
 import com.mio.device.profileSupport
 import com.mio.device.supports
+import com.mio.util.getScreenHeight
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogVulkanCheckBinding
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
@@ -29,14 +29,12 @@ class VulkanCheckDialog(
 ) : FCLDialog(context) {
 
     /** 缺失条目的警示红 */
-    private val errorColor = Color.parseColor("#E53935")
+    private val errorColor = "#E53935".toColorInt()
 
     init {
-        val point = Point()
-        window?.windowManager?.defaultDisplay?.getSize(point)
         val params = window?.attributes
         params?.width = ConvertUtils.dip2px(context, 420f)
-        params?.height = (point.y * 3 / 4).coerceAtLeast(ConvertUtils.dip2px(context, 360f))
+        params?.height = (getScreenHeight() * 3 / 4).coerceAtLeast(ConvertUtils.dip2px(context, 360f))
         window?.attributes = params
         val binding = DialogVulkanCheckBinding.inflate(layoutInflater)
         setContentView(binding.root)
