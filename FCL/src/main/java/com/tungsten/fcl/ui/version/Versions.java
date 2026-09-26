@@ -108,7 +108,7 @@ public class Versions {
 
         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-        builder.setMessage(message);
+        builder.setMessage(message + "\n\n" + context.getString(R.string.version_manage_remove_deep_hint));
         builder.setPositiveButton(() -> {
             ProgressDialog progress = new ProgressDialog(context);
             Task.runAsync(() -> profile.getRepository().removeVersionFromDisk(version)).whenComplete(Schedulers.androidUIThread(), (e) -> progress.dismiss()).start();

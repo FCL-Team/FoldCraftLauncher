@@ -1297,7 +1297,8 @@
     <string name="version_manage_remove_confirm">Are you sure you want to permanently remove the version %s? This action cannot be undone!</string>
     <string name="version_manage_remove_confirm_independent">Since this instance is stored in an isolated directory, deleting it will also delete its saves and other data. Do you still want to delete instance %s?</string>
     <string name="version_manage_remove_libraries">Delete All Libraries</string>
-    <string name="version_manage_remove_deep">Delete and clean unreferenced libraries &amp; assets</string>
+    <string name="version_manage_remove_deep">Deep Delete</string>
+    <string name="version_manage_remove_deep_hint">"Deep Delete" also cleans up libraries and assets referenced only by this version.</string>
     <string name="version_manage_remove_deep_done">Removed version %1$s, cleaned %2$d unreferenced library/asset files, freed %3$.1f MB</string>
     <string name="version_manage_remove_deep_failed">Failed to enumerate libraries and assets referenced by this version, only the version folder was removed</string>
     <string name="version_manage_rename">Rename Instance</string>
