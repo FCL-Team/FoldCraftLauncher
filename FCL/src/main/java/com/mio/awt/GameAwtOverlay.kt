@@ -13,7 +13,6 @@ import android.view.MotionEvent
 import android.view.TextureView
 import android.view.View
 
-import com.tungsten.fcl.BuildConfig
 import com.tungsten.fcl.R
 import com.tungsten.fcl.control.AWTInput
 import com.tungsten.fclauncher.bridge.FCLBridge
@@ -26,8 +25,8 @@ import androidx.core.graphics.createBitmap
  * 游戏内 AWT/Swing 窗口悬浮层
  *
  * 后台轮询游戏 JVM 内 cacio 的虚拟屏缓冲与可见顶层窗口矩形，按窗口矩形裁剪绘制到游戏画面之上；
- * 矩形内触摸转发为 AWT 鼠标输入，矩形外透传给下层视图。无窗口时隐藏，不拦截任何事件。
- * 顶层含虚拟屏坐标到本视图坐标的映射（跟随 TextureView 位置与尺寸）。
+ * 矩形内触摸转发为 AWT 鼠标输入，矩形外透传给下层视图。
+ * 无窗口时不绘制窗口内容，仅显示左上角测试入口；含虚拟屏坐标到本视图坐标的映射（跟随 TextureView 位置与尺寸）。
  */
 class GameAwtOverlay(context: Context) : View(context) {
 
@@ -46,7 +45,7 @@ class GameAwtOverlay(context: Context) : View(context) {
     private var cursorX = 0f
     private var cursorY = 0f
     private val chipRect = RectF()
-    private val chipText = if (BuildConfig.DEBUG) context.getString(R.string.awt_overlay_test) else ""
+    private val chipText = context.getString(R.string.awt_overlay_test)
 
     private val paint = Paint().apply { isFilterBitmap = true }
     private val cursorPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -105,10 +104,6 @@ class GameAwtOverlay(context: Context) : View(context) {
         srcRects.clear()
         dstRects.clear()
         cursorVisible = false
-        // debug 构建常驻测试入口按钮，不随窗口消失隐藏；release 保持空闲即隐藏
-        if (!BuildConfig.DEBUG && visibility != GONE) {
-            visibility = GONE
-        }
         invalidate()
     }
 
@@ -162,9 +157,6 @@ class GameAwtOverlay(context: Context) : View(context) {
             }
             i += 4
         }
-        if (visibility != VISIBLE) {
-            visibility = VISIBLE
-        }
         invalidate()
     }
 
@@ -204,7 +196,7 @@ class GameAwtOverlay(context: Context) : View(context) {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val x = event.x
         val y = event.y
-        if (BuildConfig.DEBUG && event.actionMasked == MotionEvent.ACTION_DOWN && chipRect.contains(x, y)) {
+        if (event.actionMasked == MotionEvent.ACTION_DOWN && chipRect.contains(x, y)) {
             showTestDialog()
             return true
         }
@@ -230,9 +222,7 @@ class GameAwtOverlay(context: Context) : View(context) {
         if (cursorVisible) {
             canvas.drawCircle(cursorX, cursorY, CURSOR_RADIUS * resources.displayMetrics.density, cursorPaint)
         }
-        if (BuildConfig.DEBUG) {
-            drawTestChip(canvas)
-        }
+        drawTestChip(canvas)
     }
 
     private fun drawTestChip(canvas: Canvas) {
