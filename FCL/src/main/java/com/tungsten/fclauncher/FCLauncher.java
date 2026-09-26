@@ -13,6 +13,7 @@ import android.system.ErrnoException;
 import android.system.Os;
 import android.util.ArrayMap;
 
+import com.mio.awt.AwtFontCompat;
 import com.mio.data.Renderer;
 import com.mio.device.VulkanCheckManager;
 import com.mio.plugin.DriverPlugin;
@@ -727,6 +728,10 @@ public class FCLauncher {
                 if (logModList) {
                     logModList(bridge);
                 }
+
+                // 安装系统 CJK 字体回退（AWT/Swing 中文渲染需要，须在 JVM 启动前完成）
+                AwtFontCompat.ensureFallbackFont(
+                        config.getJavaPath() + (isJDK8(config.getJavaPath()) ? "/jre" : "") + "/lib/fonts/fallback");
 
                 // env
                 setEnv(config, bridge, render);
