@@ -1397,6 +1397,31 @@
     <string name="message_vulkan_driver_system">Warning: Using the system Vulkan driver may result in better performance, but may also cause crashes due to compatibility issues!</string>
     <string name="message_loading_controllers">Loading controllers, please wait...</string>
 
+    <string name="settings_fcl_vulkan_check">Check Vulkan</string>
+    <string name="settings_fcl_vulkan_check_desc">Check whether the device supports the Vulkan rendering backend required by Minecraft 26.2 and later.</string>
+    <string name="settings_fcl_vulkan_check_not_checked">Not checked</string>
+    <string name="vulkan_check_title">Vulkan Check</string>
+    <string name="vulkan_check_running">Checking Vulkan support...</string>
+    <string name="vulkan_check_failed">Vulkan check failed. The device may not support Vulkan, or the driver failed to load.</string>
+    <string name="vulkan_check_support_all">The device supports all Vulkan features required by Minecraft %s and later.</string>
+    <string name="vulkan_check_support_none">The device does not meet the Vulkan requirements of any Minecraft version.</string>
+    <string name="vulkan_check_support_partial">The device only supports the Vulkan backend for some Minecraft versions.</string>
+    <string name="vulkan_check_versions">Version ranges</string>
+    <string name="vulkan_check_version_range">Minecraft %s:</string>
+    <string name="vulkan_check_profile_support">Supported</string>
+    <string name="vulkan_check_profile_unsupport">Not supported</string>
+    <string name="vulkan_check_version">Vulkan version: %s</string>
+    <string name="vulkan_check_turnip">Driver: %s</string>
+    <string name="vulkan_check_driver_system">System driver</string>
+    <string name="vulkan_check_extensions">Extensions</string>
+    <string name="vulkan_check_features">Features</string>
+    <string name="vulkan_check_item_name_missing">%s (missing)</string>
+    <string name="vulkan_check_dep_required">Required in: %s</string>
+    <string name="vulkan_check_dep_optional">Optional in: %s</string>
+    <string name="vulkan_check_launch_tip">This version ships with a Vulkan rendering backend. Check whether the device supports it now?</string>
+    <string name="vulkan_check_launch_warning">The device does not fully meet the Vulkan requirements of this version. The Vulkan renderer in game may not work:\n%s</string>
+    <string name="vulkan_check_launch_continue">Launch anyway</string>
+
     <string name="mcmod" translatable="false">
         <u>MC百科</u>
     </string>

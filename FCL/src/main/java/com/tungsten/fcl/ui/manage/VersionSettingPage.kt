@@ -7,11 +7,13 @@ import android.widget.Toast
 import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mio.device.VulkanCheckManager
 import com.mio.plugin.DriverPlugin.driverList
 import com.mio.plugin.DriverPlugin.selected
 import com.mio.ui.adapter.SpacingItemDecoration
 import com.mio.ui.dialog.JavaManageDialog
 import com.mio.ui.dialog.RendererSelectDialog
+import com.mio.ui.dialog.VulkanCheckDialog
 import com.mio.util.isAdrenoGPU
 import com.mio.util.openLink
 import com.mio.util.showErrorDialog
@@ -260,6 +262,41 @@ class VersionSettingPage(
             adapter.refreshRow(VersionSettingTag.EDIT_CONTROLLER)
         }
         loadIcon()
+        loadVulkanCheckSummary()
+    }
+
+    /** 读取检测缓存，刷新「检测 Vulkan」行的摘要展示 */
+    private fun loadVulkanCheckSummary() {
+        activity.lifecycleScope.launch {
+            val apiVersion = VulkanCheckManager.loadRecord()?.apiVersion.orEmpty()
+            adapter.vulkanCheckSummary = apiVersion.ifEmpty {
+                context.getString(R.string.settings_fcl_vulkan_check_not_checked)
+            }
+            Schedulers.androidUIThread().execute {
+                adapter.refreshRow(VersionSettingTag.EDIT_VULKAN_CHECK)
+            }
+        }
+    }
+
+    /** 按当前版本设置的驱动状态执行 Vulkan 检测并展示结果 */
+    private fun checkVulkan() {
+        Toast.makeText(context, R.string.vulkan_check_running, Toast.LENGTH_SHORT).show()
+        activity.lifecycleScope.launch {
+            val useTurnip = !lastVersionSetting.isVKDriverSystem
+            val driver = driverList.find { it.driver == lastVersionSetting.driver } ?: driverList.first()
+            val capabilities = VulkanCheckManager.check(useTurnip, driver.path)
+            adapter.vulkanCheckSummary = capabilities?.versionString
+                ?: context.getString(R.string.vulkan_check_profile_unsupport)
+            // 对话框展示实际生效的驱动：Turnip 加载失败回落系统加载器时显示系统驱动
+            val usedCustomDriver = capabilities?.usedCustomDriver == true
+            Schedulers.androidUIThread().execute {
+                adapter.refreshRow(VersionSettingTag.EDIT_VULKAN_CHECK)
+                VulkanCheckDialog(
+                    context, capabilities, usedCustomDriver,
+                    if (usedCustomDriver) driver.driver else null
+                ).show()
+            }
+        }
     }
 
     private fun onExploreIcon() {
@@ -399,6 +436,8 @@ class VersionSettingPage(
                 "https://github.com/FCL-Team/FCLDriverPlugin/releases/tag/Turnip",
                 "https://pan.quark.cn/s/d87c59695250"
             )
+
+            VersionSettingTag.EDIT_VULKAN_CHECK -> checkVulkan()
 
             VersionSettingTag.EDIT_ENV -> {
                 val preferences = context.getSharedPreferences("launcher", MODE_PRIVATE)

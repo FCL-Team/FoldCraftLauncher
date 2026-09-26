@@ -1,7 +1,6 @@
 package com.tungsten.fcl.control
 
 import android.content.Context
-import android.graphics.Point
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.ui.adapter.SpacingItemDecoration
 import com.mio.ui.applySelectableItemStyle
+import com.mio.util.getScreenHeight
+import com.mio.util.getScreenWidth
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogSelectControllerBinding
 import com.tungsten.fcl.databinding.ItemControllerSelectableBinding
@@ -63,14 +64,12 @@ class SelectControllerDialog(
     }
 
     init {
-        val point = Point()
-        window?.windowManager?.defaultDisplay?.getSize(point)
         val params = window?.attributes
         params?.width = ConvertUtils.dip2px(context, 500f)
-        params?.height = if (point.x.toFloat() / point.y.toFloat() >= 1.5f) {
+        params?.height = if (getScreenWidth().toFloat() / getScreenHeight().toFloat() >= 1.5f) {
             WindowManager.LayoutParams.MATCH_PARENT
         } else {
-            point.y / 2
+            getScreenHeight() / 2
         }
         window?.attributes = params
         val binding = DialogSelectControllerBinding.inflate(layoutInflater)
