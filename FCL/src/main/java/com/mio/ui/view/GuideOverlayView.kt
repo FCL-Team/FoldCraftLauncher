@@ -50,6 +50,12 @@ class GuideOverlayView private constructor(context: Context) : FrameLayout(conte
     private var holeRect: RectF? = null
     private val strokeRect = RectF()
 
+    /** 当前步骤高亮洞的目标位置（动画期间 holeRect 为插值中间值，气泡定位须以此为准） */
+    private var targetHoleRect: RectF? = null
+
+    /** 高亮洞矩形的位置过渡动画（扩散/滑动/收缩共用） */
+    private var rectAnimator: ValueAnimator? = null
+
     private lateinit var bubble: LinearLayout
     private lateinit var descView: TextView
     private lateinit var stepView: TextView
@@ -128,30 +134,64 @@ class GuideOverlayView private constructor(context: Context) : FrameLayout(conte
             return
         }
         if (notify) onStepShown?.invoke(step)
-        calculateHole(target)
+        val targetHole = RectF()
+        calculateHole(target, targetHole)
+        targetHoleRect = RectF(targetHole)
+        // 首步从目标中心扩散点亮，步骤间从旧位置平滑滑动到新位置
+        animateHole(targetHole, fromCenter = holeRect == null)
         updateBubble(step)
         layoutBubble()
         pulseAnimator.start()
-        invalidate()
     }
 
     private fun advance() {
         if (index + 1 < steps.size) showStep(index + 1) else dismiss()
     }
 
-    private fun calculateHole(target: View) {
+    private fun calculateHole(target: View, out: RectF) {
         val loc = IntArray(2)
         target.getLocationOnScreen(loc)
         val self = IntArray(2)
         getLocationOnScreen(self)
         val pad = ConvertUtils.dip2px(context, HOLE_PADDING_DP.toFloat()).toFloat()
-        holeRect = RectF(
+        out.set(
             loc[0] - self[0] - pad,
             loc[1] - self[1] - pad,
             loc[0] - self[0] + target.width + pad,
             loc[1] - self[1] + target.height + pad,
         )
-        holeRect?.let { strokeRect.set(it) }
+    }
+
+    /**
+     * 高亮洞矩形过渡动画：从当前 [holeRect]（[fromCenter] 时从目标中心）插值到 [to]，
+     * 实现显示扩散、步骤间滑动与隐藏收缩的位置过渡
+     */
+    private fun animateHole(to: RectF, fromCenter: Boolean) {
+        rectAnimator?.cancel()
+        val from = if (fromCenter || holeRect == null) {
+            RectF(to.centerX(), to.centerY(), to.centerX(), to.centerY())
+        } else {
+            RectF(holeRect)
+        }
+        holeRect = RectF(from)
+        strokeRect.set(from)
+        rectAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = HOLE_ANIMATE_DURATION
+            interpolator = AccelerateDecelerateInterpolator()
+            addUpdateListener { animation ->
+                val t = animation.animatedValue as Float
+                val current = RectF(
+                    from.left + (to.left - from.left) * t,
+                    from.top + (to.top - from.top) * t,
+                    from.right + (to.right - from.right) * t,
+                    from.bottom + (to.bottom - from.bottom) * t,
+                )
+                holeRect = current
+                strokeRect.set(current)
+                invalidate()
+            }
+            start()
+        }
     }
 
     private fun buildBubble() {
@@ -200,44 +240,44 @@ class GuideOverlayView private constructor(context: Context) : FrameLayout(conte
         } else {
             context.getString(R.string.button_next)
         }
-        // 步骤切换时气泡淡入并轻微上移，提供位置变化的连续感
+        // 步骤切换时气泡淡入并轻微上移，稍等洞的滑动动画进行到中段，衔接更自然
         bubble.alpha = 0f
         bubble.translationY = ConvertUtils.dip2px(context, 8f).toFloat()
-        bubble.animate().alpha(1f).translationY(0f).setDuration(200).start()
+        bubble.animate().alpha(1f).translationY(0f).setStartDelay(50).setDuration(200).start()
     }
 
     private fun layoutBubble() {
-        val hole = holeRect ?: return
+        // 基于洞的目标位置定位（holeRect 在动画期间是插值中间值）
+        val hole = targetHoleRect ?: return
         val margin = ConvertUtils.dip2px(context, 16f)
         val gap = ConvertUtils.dip2px(context, 16f)
-        // 固定卡片宽度，文字自动换行；高度以真实布局结果为准（手动 measure 与布局 pass 不一致）
+        // 固定卡片宽度：EXACTLY 规格的手动测量与布局 pass 结果一致，
+        // 可直接取测量高度计算定位，无需等待布局回调（回调时序在部分设备上不可靠）
         val bubbleWidth = (width - margin * 2).coerceAtMost(ConvertUtils.dip2px(context, BUBBLE_WIDTH_DP.toFloat()))
-        val lp = bubble.layoutParams as LayoutParams
-        if (lp.width != bubbleWidth) {
-            lp.width = bubbleWidth
-            bubble.requestLayout()
-        }
-        bubble.post {
-            val bubbleHeight = bubble.height
-            if (bubbleHeight <= 0) return@post
-            // 水平对齐洞中心并 clamp 到屏幕内
-            val x = (hole.centerX() - bubbleWidth / 2f)
-                .coerceIn(margin.toFloat(), (width - bubbleWidth - margin).toFloat())
-            // 垂直优先放洞下方，空间不足放上方，均放不下时取洞外较大空隙
-            var y = hole.bottom + gap
-            if (y + bubbleHeight > height - margin) {
-                y = hole.top - gap - bubbleHeight
-                if (y < margin) {
-                    y = if (hole.top >= height - hole.bottom) margin.toFloat()
-                    else (height - bubbleHeight - margin).toFloat()
-                }
-            }
-            if (lp.leftMargin != x.toInt() || lp.topMargin != y.toInt()) {
-                lp.leftMargin = x.toInt()
-                lp.topMargin = y.toInt()
-                bubble.requestLayout()
+        bubble.measure(
+            View.MeasureSpec.makeMeasureSpec(bubbleWidth, View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+        )
+        val bubbleHeight = bubble.measuredHeight
+        if (bubbleHeight <= 0) return
+        // 水平对齐洞中心并 clamp 到屏幕内
+        val x = (hole.centerX() - bubbleWidth / 2f)
+            .coerceIn(margin.toFloat(), (width - bubbleWidth - margin).toFloat())
+        // 垂直优先放洞下方，空间不足放上方，均放不下时取洞外较大空隙
+        var y = hole.bottom + gap
+        if (y + bubbleHeight > height - margin) {
+            y = hole.top - gap - bubbleHeight
+            if (y < margin) {
+                y = if (hole.top >= height - hole.bottom) margin.toFloat()
+                else (height - bubbleHeight - margin).toFloat()
             }
         }
+        (bubble.layoutParams as LayoutParams).apply {
+            width = bubbleWidth
+            leftMargin = x.toInt()
+            topMargin = y.toInt()
+        }
+        bubble.requestLayout()
     }
 
     private fun refreshThemeColors() {
@@ -256,6 +296,8 @@ class GuideOverlayView private constructor(context: Context) : FrameLayout(conte
 
     private fun dismiss() {
         pulseAnimator.cancel()
+        // 高亮洞收缩回目标中心，与整体淡出同步熄灭
+        holeRect?.let { animateHole(RectF(it.centerX(), it.centerY(), it.centerX(), it.centerY()), fromCenter = false) }
         animate().alpha(0f).setDuration(200).withEndAction {
             (parent as? ViewGroup)?.removeView(this)
             ThemeEngine.unregisterEvent(this)
@@ -281,6 +323,7 @@ class GuideOverlayView private constructor(context: Context) : FrameLayout(conte
         private const val HOLE_PADDING_DP = 8
         private const val HOLE_CORNER_RADIUS_DP = 12
         private const val BUBBLE_WIDTH_DP = 340
+        private const val HOLE_ANIMATE_DURATION = 150L
 
         /** 挂载到 Activity decorView 并开始展示引导步骤 */
         fun show(
