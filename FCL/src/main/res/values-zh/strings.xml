@@ -1290,7 +1290,6 @@
     <string name="vulkan_check_dep_required">必需：%s</string>
     <string name="vulkan_check_dep_optional">可选：%s</string>
     <string name="vulkan_check_launch_tip">该版本带有 Vulkan 渲染后端，是否立即检测设备支持情况？</string>
-    <string name="vulkan_check_launch_unsupported">设备不满足该版本的 Vulkan 要求，无法启动：\n%s</string>
     <string name="vulkan_check_launch_warning">设备不完全满足该版本的 Vulkan 要求，游戏内 Vulkan 渲染可能无法使用：\n%s</string>
     <string name="vulkan_check_launch_continue">仍要启动</string>
     <string name="wiki_game">https://zh.minecraft.wiki/w/Special:Search?search=%s&amp;variant=zh-cn</string>

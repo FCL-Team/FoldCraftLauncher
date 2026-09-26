@@ -59,9 +59,6 @@ enum class VulkanEnsureResult {
 object VulkanCheckManager {
     private val mutex = Mutex()
 
-    /** 首个强制 Vulkan 渲染的 Minecraft 版本，自此版本起缺失依赖时无法启动 */
-    private const val VULKAN_MANDATORY_VERSION = "26.3"
-
     private const val EXT_VERTEX_ATTRIBUTE_DIVISOR = "VK_EXT_vertex_attribute_divisor"
     private const val KHR_VERTEX_ATTRIBUTE_DIVISOR = "VK_KHR_vertex_attribute_divisor"
 
@@ -80,14 +77,6 @@ object VulkanCheckManager {
     fun hasVulkanBackend(gameVersion: String?): Boolean {
         val version = gameVersion?.let(::normalizeMcVersion) ?: return false
         return GameVersionNumber.compare(version, VulkanRequirements.MIN_MC_VERSION) >= 0
-    }
-
-    /**
-     * 版本是否强制 Vulkan 渲染（26.3 起移除 OpenGL 后端）
-     */
-    fun isVulkanMandatory(gameVersion: String?): Boolean {
-        val version = gameVersion?.let(::normalizeMcVersion) ?: return false
-        return GameVersionNumber.compare(version, VULKAN_MANDATORY_VERSION) >= 0
     }
 
     /**

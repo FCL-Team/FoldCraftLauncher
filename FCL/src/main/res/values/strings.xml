@@ -1419,7 +1419,6 @@
     <string name="vulkan_check_dep_required">Required in: %s</string>
     <string name="vulkan_check_dep_optional">Optional in: %s</string>
     <string name="vulkan_check_launch_tip">This version ships with a Vulkan rendering backend. Check whether the device supports it now?</string>
-    <string name="vulkan_check_launch_unsupported">The device does not meet the Vulkan requirements of this version, so it cannot be launched:\n%s</string>
     <string name="vulkan_check_launch_warning">The device does not fully meet the Vulkan requirements of this version. The Vulkan renderer in game may not work:\n%s</string>
     <string name="vulkan_check_launch_continue">Launch anyway</string>
 

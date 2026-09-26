@@ -846,15 +846,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         }.show()
     }
 
-    /** 检测后不满足依赖时：26.3+ 强制 Vulkan 的版本阻止启动，其余版本警告后允许继续 */
+    /** 检测后不满足依赖时警告缺失项，仍允许用户继续启动 */
     private fun decideVulkanLaunch(
         gameVersion: String,
         capabilities: VulkanCapabilities?,
         profile: Profile,
         versionId: String?
     ) {
-        val mcVersion = normalizeMcVersion(gameVersion)
-        val support = capabilities?.supportFor(mcVersion)
+        val support = capabilities?.supportFor(normalizeMcVersion(gameVersion))
         if (support?.isSupported == true) {
             doLaunchVersion(profile, versionId)
             return
@@ -862,24 +861,13 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         val missing = support?.missingRequired
             ?.joinToString("\n") { "· ${it.dependency.name}" }
             .orEmpty()
-        val mandatory = VulkanCheckManager.isVulkanMandatory(gameVersion)
         val builder = FCLAlertDialog.Builder(this)
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
-        builder.setMessage(
-            getString(
-                if (mandatory) R.string.vulkan_check_launch_unsupported
-                else R.string.vulkan_check_launch_warning,
-                missing
-            )
-        )
-        if (mandatory) {
-            builder.setPositiveButton(getString(R.string.dialog_positive), null)
-        } else {
-            builder.setPositiveButton(getString(R.string.vulkan_check_launch_continue)) {
-                doLaunchVersion(profile, versionId)
-            }
-            builder.setNegativeButton { }
+        builder.setMessage(getString(R.string.vulkan_check_launch_warning, missing))
+        builder.setPositiveButton(getString(R.string.vulkan_check_launch_continue)) {
+            doLaunchVersion(profile, versionId)
         }
+        builder.setNegativeButton { }
         builder.create().show()
     }
 
