@@ -16,7 +16,9 @@ data class VulkanCapabilities(
     val apiVersionMinor: Int,
     val apiVersionPatch: Int,
     val extensions: List<String>,
-    val features: Map<String, Boolean>
+    val features: Map<String, Boolean>,
+    /** 检测时是否实际经自定义驱动（Turnip）加载；请求 Turnip 但加载失败回落系统加载器时为 false */
+    val usedCustomDriver: Boolean = false
 ) {
     /** Vulkan 版本字符串 */
     val versionString: String

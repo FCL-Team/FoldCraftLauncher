@@ -840,8 +840,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         val capabilities = withContext(Dispatchers.IO) {
             VulkanCheckManager.check(useTurnip, driverPath)
         }
-        val driverName = DriverPlugin.driverList.find { it.path == driverPath }?.driver
-        VulkanCheckDialog(this, capabilities, useTurnip, driverName) {
+        // 对话框展示实际生效的驱动：请求 Turnip 但加载失败回落系统加载器时显示系统驱动
+        val usedCustomDriver = capabilities?.usedCustomDriver == true
+        val driverName = if (usedCustomDriver) {
+            DriverPlugin.driverList.find { it.path == driverPath }?.driver
+        } else null
+        VulkanCheckDialog(this, capabilities, usedCustomDriver, driverName) {
             decideVulkanLaunch(gameVersion, capabilities, profile, versionId)
         }.show()
     }

@@ -287,9 +287,14 @@ class VersionSettingPage(
             val capabilities = VulkanCheckManager.check(useTurnip, driver.path)
             adapter.vulkanCheckSummary = capabilities?.versionString
                 ?: context.getString(R.string.vulkan_check_profile_unsupport)
+            // 对话框展示实际生效的驱动：Turnip 加载失败回落系统加载器时显示系统驱动
+            val usedCustomDriver = capabilities?.usedCustomDriver == true
             Schedulers.androidUIThread().execute {
                 adapter.refreshRow(VersionSettingTag.EDIT_VULKAN_CHECK)
-                VulkanCheckDialog(context, capabilities, useTurnip, driver.driver).show()
+                VulkanCheckDialog(
+                    context, capabilities, usedCustomDriver,
+                    if (usedCustomDriver) driver.driver else null
+                ).show()
             }
         }
     }

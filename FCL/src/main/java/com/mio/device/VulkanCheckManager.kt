@@ -87,7 +87,9 @@ object VulkanCheckManager {
             withContext(Dispatchers.IO) {
                 val cacheDir = File(FCLApp.getAppContext().cacheDir, "vulkan_check")
                 val capabilities = VulkanChecker.checkCapabilities(useTurnip, driverPath, cacheDir)
-                val needsShim = capabilities != null && !useTurnip &&
+                // shim 仅包装系统 Vulkan 加载器：请求 Turnip 但加载失败回落系统加载器时，
+                // 检测与游戏运行时实际使用的都是系统驱动，shim 同样适用
+                val needsShim = capabilities != null && !capabilities.usedCustomDriver &&
                         EXT_VERTEX_ATTRIBUTE_DIVISOR !in capabilities.extensions &&
                         KHR_VERTEX_ATTRIBUTE_DIVISOR in capabilities.extensions
                 needsDivisorShim = needsShim

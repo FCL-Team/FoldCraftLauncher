@@ -519,7 +519,7 @@ Java_com_mio_device_VulkanChecker_nativeCheckVulkan(
 #undef PUT_FEAT
 
     jclass capClass = (*env)->FindClass(env, "com/mio/device/VulkanCapabilities");
-    jmethodID capInit = (*env)->GetMethodID(env, capClass, "<init>", "(IIILjava/util/List;Ljava/util/Map;)V");
+    jmethodID capInit = (*env)->GetMethodID(env, capClass, "<init>", "(IIILjava/util/List;Ljava/util/Map;Z)V");
 
     jint major = (jint) VK_API_VERSION_MAJOR(deviceApiVersion);
     jint minor = (jint) VK_API_VERSION_MINOR(deviceApiVersion);
@@ -529,7 +529,8 @@ Java_com_mio_device_VulkanChecker_nativeCheckVulkan(
 
     jobject result = (*env)->NewObject(env, capClass, capInit,
                                        major, minor, patch,
-                                       extensionsList, featuresMap);
+                                       extensionsList, featuresMap,
+                                       (jboolean) customDriver);
 
     (*env)->DeleteLocalRef(env, listClass);
     (*env)->DeleteLocalRef(env, mapClass);
