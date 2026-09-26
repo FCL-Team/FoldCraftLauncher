@@ -20,6 +20,7 @@ import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.keycodes.AWTInputEvent
 
 import kotlin.concurrent.thread
+import androidx.core.graphics.createBitmap
 
 /**
  * 游戏内 AWT/Swing 窗口悬浮层
@@ -104,9 +105,11 @@ class GameAwtOverlay(context: Context) : View(context) {
         srcRects.clear()
         dstRects.clear()
         cursorVisible = false
-        if (visibility != GONE) {
+        // debug 构建常驻测试入口按钮，不随窗口消失隐藏；release 保持空闲即隐藏
+        if (!BuildConfig.DEBUG && visibility != GONE) {
             visibility = GONE
         }
+        invalidate()
     }
 
     private fun updateWindows(info: IntArray, rgb: IntArray?) {
@@ -125,7 +128,7 @@ class GameAwtOverlay(context: Context) : View(context) {
                 old.setPixels(rgb, 0, sw, 0, 0, sw, sh)
             } else {
                 old?.recycle()
-                bitmap = Bitmap.createBitmap(sw, sh, Bitmap.Config.ARGB_8888)
+                bitmap = createBitmap(sw, sh)
                     .also { it.setPixels(rgb, 0, sw, 0, 0, sw, sh) }
             }
         }
@@ -188,7 +191,7 @@ class GameAwtOverlay(context: Context) : View(context) {
         cursorVisible = true
     }
 
-    private fun showTestDialog() {
+    fun showTestDialog() {
         val bridge = bridge ?: return
         val title = context.getString(R.string.awt_test_dialog_title)
         val message = context.getString(R.string.awt_test_dialog_message)
@@ -218,9 +221,11 @@ class GameAwtOverlay(context: Context) : View(context) {
     }
 
     override fun onDraw(canvas: Canvas) {
-        val frame = bitmap ?: return
-        for (i in srcRects.indices) {
-            canvas.drawBitmap(frame, srcRects[i], dstRects[i], paint)
+        val frame = bitmap
+        if (frame != null) {
+            for (i in srcRects.indices) {
+                canvas.drawBitmap(frame, srcRects[i], dstRects[i], paint)
+            }
         }
         if (cursorVisible) {
             canvas.drawCircle(cursorX, cursorY, CURSOR_RADIUS * resources.displayMetrics.density, cursorPaint)

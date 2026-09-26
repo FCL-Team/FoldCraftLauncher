@@ -39,6 +39,7 @@ import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
+import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
@@ -134,6 +135,16 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             awtOverlay = new GameAwtOverlay(this);
             addContentView(awtOverlay, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
             awtOverlay.start(fclBridge, textureView);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(10000);
+                    Schedulers.androidUIThread().execute(() -> {
+                        awtOverlay.showTestDialog();
+                    });
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }).start();
         }
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

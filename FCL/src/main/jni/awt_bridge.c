@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <dlfcn.h>
 
 static JavaVM *dalvikJavaVMPtr;
 static JavaVM* runtimeJavaVMPtr;
@@ -51,6 +52,39 @@ static jfieldID field_dimHeight = NULL;
 // 游戏内 AWT 窗口 overlay：Swing 测试对话框
 static jclass class_JOptionPane = NULL;
 static jmethodID method_ShowMessageDialog = NULL;
+
+// 运行时 JVM 指针获取：JNI_OnLoad 要等 cacio 初始化（首个 AWT 窗口）才触发，
+// 游戏启动后即可经 libjvm 的 JNI_GetCreatedJavaVMs 主动取到
+static jint (*getCreatedJavaVMsFunc)(JavaVM **, jsize, jsize *) = NULL;
+
+static void ensureRuntimeJavaVM(void) {
+    if (runtimeJavaVMPtr != NULL || dalvikJavaVMPtr == NULL) {
+        return;
+    }
+    if (getCreatedJavaVMsFunc == NULL) {
+        const char *libs[] = {"libjvm.so", "libjli.so"};
+        for (size_t i = 0; i < sizeof(libs) / sizeof(libs[0]) && getCreatedJavaVMsFunc == NULL; i++) {
+            void *handle = dlopen(libs[i], RTLD_LAZY | RTLD_GLOBAL);
+            if (handle == NULL) {
+                continue;
+            }
+            getCreatedJavaVMsFunc = (jint (*)(JavaVM **, jsize, jsize *)) dlsym(handle, "JNI_GetCreatedJavaVMs");
+        }
+        if (getCreatedJavaVMsFunc == NULL) {
+            return;
+        }
+    }
+    JavaVM *vms[8];
+    jsize count = 0;
+    if ((*getCreatedJavaVMsFunc)(vms, 8, &count) == JNI_OK) {
+        for (jsize i = 0; i < count; i++) {
+            if (vms[i] != NULL && vms[i] != dalvikJavaVMPtr) {
+                runtimeJavaVMPtr = vms[i];
+                break;
+            }
+        }
+    }
+}
 
 jfieldID field_x;
 jfieldID field_y;
@@ -274,6 +308,7 @@ JNIEXPORT void JNICALL Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeMoveW
  */
 JNIEXPORT jintArray JNICALL
 Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeGetAWTWindowRects(JNIEnv *env, jclass clazz) {
+    ensureRuntimeJavaVM();
     if (runtimeJavaVMPtr == NULL) {
         return NULL;
     }
@@ -398,6 +433,7 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeGetAWTWindowRects(JNIEnv *en
  */
 JNIEXPORT void JNICALL
 Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeShowTestDialog(JNIEnv *env, jclass clazz, jstring title, jstring message) {
+    ensureRuntimeJavaVM();
     if (runtimeJavaVMPtr == NULL) {
         return;
     }
