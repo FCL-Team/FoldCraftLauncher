@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.mio.awt.GameAwtOverlay;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.JarExecutorMenu;
@@ -88,6 +89,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     private MenuCallback menu;
     private static MenuType menuType;
     private static FCLBridge fclBridge;
+    private GameAwtOverlay awtOverlay;
     private boolean isTranslated = false;
     private static boolean isRunning = false;
     private long volumeDownTime = 0;
@@ -125,6 +127,13 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         DisplayManager displayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         if (displayManager != null) {
             displayManager.registerDisplayListener(displayListener, null);
+        }
+
+        // 游戏模式挂 AWT 窗口悬浮层（须在菜单布局之后添加以保持最顶层）
+        if (menuType == MenuType.GAME) {
+            awtOverlay = new GameAwtOverlay(this);
+            addContentView(awtOverlay, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            awtOverlay.start(fclBridge, textureView);
         }
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -492,6 +501,10 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         DisplayManager displayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
         if (displayManager != null) {
             displayManager.unregisterDisplayListener(displayListener);
+        }
+        if (awtOverlay != null) {
+            awtOverlay.stop();
+            awtOverlay = null;
         }
         Terracotta.setWaiting(this, true);
         CallbackBridge.resetInputState();

@@ -1559,4 +1559,7 @@
     <string name="quark_promo_message">这是你第 %1$d 次启动游戏！\n\n如果 FCL 对你有帮助，欢迎动动手指打开夸克网盘，注册或登录后点击保存到网盘（不用下载），就是对我们最大的支持，十分感谢～</string>
     <string name="quark_promo_open">打开夸克网盘</string>
     <string name="quark_promo_start">开始游戏</string>
+    <string name="awt_overlay_test">AWT 测试</string>
+    <string name="awt_test_dialog_title">Cacio AWT 测试</string>
+    <string name="awt_test_dialog_message">这是一个模拟模组弹出的 Swing 对话框。\n对话框显示期间游戏画面保持正常渲染，点击“确定”关闭。</string>
 </resources>

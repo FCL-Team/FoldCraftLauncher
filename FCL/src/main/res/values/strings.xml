@@ -1711,4 +1711,7 @@
     <string name="quark_promo_message">This is your %1$dth game launch!\n\nIf FCL has been helpful to you, feel free to take a moment to open Quark Drive, sign up or log in and tap the Save to Drive button (no download needed). It would mean a lot to us. Thank you so much!</string>
     <string name="quark_promo_open">Open Quark Drive</string>
     <string name="quark_promo_start">Start Game</string>
+    <string name="awt_overlay_test">AWT test</string>
+    <string name="awt_test_dialog_title">Cacio AWT test</string>
+    <string name="awt_test_dialog_message">This is a simulated Swing dialog popped up by a mod.\nThe game keeps rendering while the dialog is shown. Tap OK to close it.</string>
 </resources>

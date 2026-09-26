@@ -97,6 +97,18 @@ public class FCLBridge {
 
     public native int[] renderAWTScreenFrame();
 
+    /**
+     * 枚举游戏 JVM 内可见的 AWT 顶层窗口
+     *
+     * @return [screenWidth, screenHeight, x1, y1, w1, h1, x2, ...]，无可见窗口或运行时 JVM 未就绪时返回 null
+     */
+    public native int[] nativeGetAWTWindowRects();
+
+    /**
+     * 在游戏 JVM 内弹出 Swing 消息对话框，阻塞至用户关闭
+     */
+    public native void nativeShowTestDialog(String title, String message);
+
     public native void nativeSendData(int type, int i1, int i2, int i3, int i4);
 
     public native void nativeMoveWindow(int x, int y);
