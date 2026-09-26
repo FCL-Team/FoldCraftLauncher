@@ -145,6 +145,7 @@
     <string name="button_mouse_left">鼠标左键</string>
     <string name="button_mouse_right">鼠标右键</string>
     <string name="button_next">下一步</string>
+    <string name="button_done">完成</string>
     <string name="button_paste">粘贴</string>
     <string name="button_prev">上一步</string>
     <string name="button_remove">删除</string>
@@ -678,6 +679,10 @@
     <string name="modpack_type_hmcl">HMCL 整合包</string>
     <string name="modpack_type_mcbbs_export">可以被 FCL，HMCL 和 MultiMC 导入</string>
     <string name="modpack_type_modrinth">Modrinth</string>
+    <string name="modpack_type_modrinth_export">可被 Modrinth App 与常见启动器导入</string>
+    <string name="modpack_export_pack_curseforge">在整合包中附带 CurseForge 远程资源</string>
+    <string name="modpack_type_curseforge">CurseForge</string>
+    <string name="modpack_type_curseforge_export">可被 CurseForge 启动器与常见启动器导入</string>
     <string name="modpack_type_multimc">MultiMC</string>
     <string name="modpack_type_multimc_export">可以被 FCL，HMCL 和 MultiMC 导入</string>
     <string name="modpack_type_server">服务器自动更新整合包</string>
@@ -1248,6 +1253,12 @@
     <string name="guide_theme2">如果你发现右侧的文字颜色看不清可以在点击这里，再点击“启动器设置”，设置里面的“次要主题色”即可</string>
     <string name="guide_share_log">长按这里分享游戏日志（latest_game.log）。</string>
     <string name="guide_version_card">点击版本卡片打开版本列表，管理你的版本。</string>
+    <string name="guide_account">还没有账户？点击这里添加。</string>
+    <string name="guide_start">点击启动选中的版本，长按可以选择指定渲染器然后直接启动。</string>
+    <string name="guide_manage">调整游戏设置，管理游戏文件、模组、存档与资源包等。</string>
+    <string name="guide_download">下载游戏版本、模组、整合包与资源包等。</string>
+    <string name="guide_controller">配置或是下载虚拟按键。</string>
+    <string name="guide_multiplayer">通过陶瓦（Terracotta）与好友远程联机。</string>
     <string name="menu_settings_gamepad_button_binding">按键绑定</string>
     <string name="menu_settings_gamepad_open_button">打开</string>
     <string name="joystick_l">左摇杆</string>

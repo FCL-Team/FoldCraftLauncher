@@ -58,6 +58,18 @@ data class ThemeData(
     val autoHintTint: Int
         get() = if (ColorUtils.calculateLuminance(getColor()) >= 0.5) 0x99000000.toInt() else 0x99FFFFFF.toInt()
 
+    /** 当前模式主色的不透明形态（文字/图标等可读性关键场景用，不受透明度设置影响） */
+    val opaqueColor: Int
+        get() = getColor() or 0xFF000000.toInt()
+
+    /** 亮变体的不透明形态 */
+    val opaqueLtColor: Int
+        get() = ltColor or 0xFF000000.toInt()
+
+    /** 暗变体的不透明形态 */
+    val opaqueDkColor: Int
+        get() = dkColor or 0xFF000000.toInt()
+
     /** 按当前亮暗模式取主要主题色（亮色用 [color]，暗色用 [colorDark]） */
     fun getColor(): Int {
         val activity = FCLApp.getActivity()

@@ -172,6 +172,7 @@
     <string name="button_mouse_left">Mouse Left</string>
     <string name="button_mouse_right">Mouse Right</string>
     <string name="button_next">Next</string>
+    <string name="button_done">Done</string>
     <string name="button_paste">Paste</string>
     <string name="button_prev">Prev</string>
     <string name="button_remove">Remove</string>
@@ -757,6 +758,10 @@
     <string name="modpack_type_hmcl">HMCL Type</string>
     <string name="modpack_type_mcbbs_export">Can be imported by FCL, HMCL and MultiMC</string>
     <string name="modpack_type_modrinth">Modrinth</string>
+    <string name="modpack_type_modrinth_export">Can be imported by the Modrinth App and most launchers</string>
+    <string name="modpack_export_pack_curseforge">Include CurseForge remote resources in the pack</string>
+    <string name="modpack_type_curseforge">CurseForge</string>
+    <string name="modpack_type_curseforge_export">Can be imported by the CurseForge app and most launchers</string>
     <string name="modpack_type_multimc">MultiMC</string>
     <string name="modpack_type_multimc_export">Can be imported by FCL, HMCL and MultiMC</string>
     <string name="modpack_type_server">Auto-Update Modpack from Server</string>
@@ -1379,6 +1384,12 @@
     <string name="guide_theme2">If you find the color of the text on the right side is not clear, you can click here, then click \"Launcher Settings\", and select \"Secondary Theme Color\"</string>
     <string name="guide_share_log">Long press here to share the game log (latest_game.log).</string>
     <string name="guide_version_card">Tap the version card to open the version list and manage your versions.</string>
+    <string name="guide_account">No account yet? Tap here to add one.</string>
+    <string name="guide_start">Tap to launch the selected version, long-press to pick a renderer and launch directly.</string>
+    <string name="guide_manage">Adjust game settings, and manage game files, mods, saves, resource packs and more.</string>
+    <string name="guide_download">Download game versions, mods, modpacks, resource packs and more.</string>
+    <string name="guide_controller">Configure or download on-screen button layouts.</string>
+    <string name="guide_multiplayer">Play remotely with friends via Terracotta.</string>
     <string name="joystick_l">Left joystick</string>
     <string name="gamepad_dpad">DPAD</string>
     <string name="gamepad_button_binding">Gamepad button binding</string>

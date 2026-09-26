@@ -37,8 +37,8 @@ public class FCLCheckBox extends AppCompatCheckBox {
                     }
             };
             int[] color = {
-                    ThemeEngine.getInstance().getTheme().getDkColor(),
-                    ThemeEngine.getInstance().getTheme().getColor()
+                    ThemeEngine.getInstance().getTheme().getOpaqueDkColor(),
+                    ThemeEngine.getInstance().getTheme().getOpaqueColor()
             };
             setButtonTintList(new ColorStateList(state, color));
             if (autoTint) {

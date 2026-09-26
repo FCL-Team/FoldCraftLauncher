@@ -70,8 +70,8 @@ android {
         applicationId = "com.tungsten.fcl"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1334
-        versionName = "1.3.3.4"
+        versionCode = 1335
+        versionName = "1.3.3.5"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
@@ -267,7 +267,6 @@ dependencies {
     implementation(project(":Terracotta"))
     implementation(libs.commons.io)
     implementation(libs.jelf)
-    implementation(libs.taptargetview)
     implementation(libs.nanohttpd)
     implementation(libs.commons.compress)
     implementation(libs.xz)

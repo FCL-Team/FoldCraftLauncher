@@ -54,6 +54,8 @@ class SkinRenderer(context: Context) {
     init {
         // 默认播放待机（账户弹窗等不调用 restoreSkinSettings 的场景也有动画）
         model.playAnimation(animationId)
+        // 初始默认皮肤为 alex（slim 布局），模型须与之匹配，否则手臂贴图采样到透明区域
+        model.setSlim(true)
     }
 
     // 手势状态（UI 线程写、渲染线程读，单字段读写无需同步）
@@ -89,7 +91,7 @@ class SkinRenderer(context: Context) {
     private var pendingCape: Bitmap? = null
 
     @Volatile
-    private var pendingSlim = false
+    private var pendingSlim = true
 
     @Volatile
     private var pendingHasUpdate = false
@@ -110,9 +112,9 @@ class SkinRenderer(context: Context) {
     }
 
     /**
-     * 更新皮肤纹理并显式指定模型（[slim] 覆盖图像自动检测）。
+     * 更新皮肤纹理并指定模型：[slim] 非空时覆盖图像自动检测，为空时从皮肤图像检测。
      */
-    fun updateTexture(skin: Bitmap?, cape: Bitmap?, slim: Boolean) {
+    fun updateTexture(skin: Bitmap?, cape: Bitmap?, slim: Boolean?) {
         texture = arrayOf(skin, cape)
         scheduleTextureUpdate(skin, cape, slim)
     }

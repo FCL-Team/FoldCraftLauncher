@@ -11,7 +11,6 @@ import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.graphics.ColorUtils;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -53,7 +52,7 @@ public class FCLTabLayout extends TabLayout {
             };
             // 文字 Tab 默认选中为主题深色、未选中灰；autoTextTint 开启后与图标 Tab 同色系
             int[] color = autoTextTint ? iconColor : new int[]{
-                    ThemeEngine.getInstance().getTheme().getDkColor(),
+                    ThemeEngine.getInstance().getTheme().getOpaqueDkColor(),
                     followTheme ? ThemeEngine.getInstance().getTheme().getAutoTint() : Color.GRAY
             };
             int[][] bgState = {
@@ -64,7 +63,7 @@ public class FCLTabLayout extends TabLayout {
             int[] bgColor = {
                     ThemeEngine.getInstance().getTheme().getLtColor()
             };
-            setSelectedTabIndicatorColor(ThemeEngine.getInstance().getTheme().getDkColor());
+            setSelectedTabIndicatorColor(ThemeEngine.getInstance().getTheme().getOpaqueDkColor());
             setTabTextColors(new ColorStateList(state, color));
             setTabIconTint(new ColorStateList(state, iconColor));
             if (followTheme) {
@@ -110,13 +109,12 @@ public class FCLTabLayout extends TabLayout {
         float cy = getHeight() / 2f;
         float size = dp(ARROW_SIZE_DP);
         float margin = dp(ARROW_MARGIN_DP);
-        // 箭头 dkColor 与 tab 栏 ltColor 底色明暗相对，强制不透明避免随主题 colorAlpha 变淡
+        // 箭头 dkColor 与 tab 栏 ltColor 底色明暗相对，不透明形态避免随主题 colorAlpha 变淡
         arrowPaint.setStyle(Paint.Style.STROKE);
         arrowPaint.setStrokeWidth(dp(ARROW_STROKE_DP));
         arrowPaint.setStrokeCap(Paint.Cap.ROUND);
         arrowPaint.setStrokeJoin(Paint.Join.ROUND);
-        arrowPaint.setColor(ColorUtils.setAlphaComponent(
-                ThemeEngine.getInstance().getTheme().getDkColor(), 255));
+        arrowPaint.setColor(ThemeEngine.getInstance().getTheme().getOpaqueDkColor());
         if (canScrollLeft) {
             drawChevron(canvas, margin, cy, size, false);
         }

@@ -46,6 +46,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -219,7 +220,7 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
      * 计算 CurseForge 文件指纹：剔除空白符（0x9/0xa/0xd/0x20）后计算 MurmurHash2。
      * 采用流式两遍扫描（1MB 缓冲），不在内存中保留整个过滤后的文件，避免大文件 OOM。
      */
-    static long calculateFingerprint(Path file) throws IOException {
+    public static long calculateFingerprint(Path file) throws IOException {
         try (SeekableByteChannel channel = Files.newByteChannel(file, StandardOpenOption.READ)) {
             long startPosition = channel.position();
 
@@ -300,6 +301,37 @@ public final class CurseForgeRemoteModRepository implements RemoteModRepository 
                 });
 
         return match == null ? Optional.empty() : Optional.of(match.toVersion());
+    }
+
+    /**
+     * 批量按指纹反查 CurseForge 文件，返回 指纹 → 文件 的映射，用于整合包导出时补全 projectID / fileID。
+     */
+    public static Map<Long, CurseAddon.LatestFile> matchFingerprints(Collection<Long> fingerprints) throws IOException {
+        List<Long> hashes = new ArrayList<>();
+        for (Long hash : fingerprints) {
+            // Workaround for https://github.com/HMCL-dev/HMCL/issues/4597
+            if (hash != 811513880 && hash != 252446230) {
+                hashes.add(hash);
+            }
+        }
+        if (hashes.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Response<FingerprintMatchesResult> response = withApiKey(HttpRequest.POST(PREFIX + "/v1/fingerprints/432"))
+                .json(mapOf(pair("fingerprints", hashes)))
+                .getJson(new TypeToken<Response<FingerprintMatchesResult>>() {
+                }.getType());
+
+        Map<Long, CurseAddon.LatestFile> result = new HashMap<>();
+        if (response.data().exactMatches() != null) {
+            for (FingerprintMatch match : response.data().exactMatches()) {
+                if (match.file() != null) {
+                    result.put(match.file().fileFingerprint(), match.file());
+                }
+            }
+        }
+        return result;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.mio.skin
 
-import android.graphics.Bitmap
 import com.tungsten.fcl.game.TexturesLoader
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.yggdrasil.TextureModel
@@ -43,7 +42,7 @@ class SkinTextureLoader(private val renderer: SkinRenderer) {
         unbindTexturesListener()
         if (account == null) {
             lastAccount = null
-            renderer.updateTexture(TexturesLoader.getDefaultSkin(TextureModel.ALEX).image(), null)
+            renderer.updateTexture(TexturesLoader.getDefaultSkin(TextureModel.ALEX).image(), null, true)
             return
         }
         lastAccount = account
@@ -53,11 +52,11 @@ class SkinTextureLoader(private val renderer: SkinRenderer) {
         texturesBinding = binding
         texturesListener = listener
 
-        val task: Task<Array<Bitmap>> = Task.supplyAsync { TexturesLoader.loadSkinAndCape(account) }
+        val task: Task<TexturesLoader.SkinAndCape> = Task.supplyAsync { TexturesLoader.loadSkinAndCape(account) }
         task.thenAcceptAsync<Exception>(Schedulers.androidUIThread()) { result ->
             if (gen == generation) {
                 lastAccount = account
-                renderer.updateTexture(result[0], result[1])
+                renderer.updateTexture(result.skin(), result.cape(), result.model()?.let { it == TextureModel.ALEX })
             }
         }.start()
     }

@@ -20,7 +20,9 @@ import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.mod.ModAdviser;
 import com.tungsten.fclcore.mod.ModpackExportInfo;
+import com.tungsten.fclcore.mod.curse.CurseForgeModpackExportTask;
 import com.tungsten.fclcore.mod.mcbbs.McbbsModpackExportTask;
+import com.tungsten.fclcore.mod.modrinth.ModrinthModpackExportTask;
 import com.tungsten.fclcore.mod.multimc.MultiMCInstanceConfiguration;
 import com.tungsten.fclcore.mod.multimc.MultiMCModpackExportTask;
 import com.tungsten.fclcore.mod.server.ServerModpackExportTask;
@@ -221,6 +223,12 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
                     case ModpackTypeSelectionPage.MODPACK_TYPE_SERVER:
                         exportTask = exportAsServer(exportInfo, modpackFile);
                         break;
+                    case ModpackTypeSelectionPage.MODPACK_TYPE_CURSEFORGE:
+                        exportTask = exportAsCurseForge(exportInfo, modpackFile);
+                        break;
+                    case ModpackTypeSelectionPage.MODPACK_TYPE_MODRINTH:
+                        exportTask = exportAsModrinth(exportInfo, modpackFile);
+                        break;
                     default:
                         throw new IllegalStateException("Unrecognized modpack type " + modpackType);
                 }
@@ -236,7 +244,7 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             public void execute() throws Exception {
 
             }
-        };
+        }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
     private Task<?> exportAsMcbbs(ModpackExportInfo exportInfo, File modpackFile) {
@@ -252,7 +260,7 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             public Collection<Task<?>> getDependencies() {
                 return Collections.singleton(dependency);
             }
-        };
+        }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
     private Task<?> exportAsMultiMC(ModpackExportInfo exportInfo, File modpackFile) {
@@ -296,7 +304,7 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             public Collection<Task<?>> getDependencies() {
                 return Collections.singleton(dependency);
             }
-        };
+        }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
     private Task<?> exportAsServer(ModpackExportInfo exportInfo, File modpackFile) {
@@ -312,7 +320,39 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             public Collection<Task<?>> getDependencies() {
                 return Collections.singleton(dependency);
             }
-        };
+        }.setSignificance(Task.TaskSignificance.MINOR);
+    }
+
+    private Task<?> exportAsCurseForge(ModpackExportInfo exportInfo, File modpackFile) {
+        return new Task<Void>() {
+            Task<?> dependency;
+
+            @Override
+            public void execute() {
+                dependency = new CurseForgeModpackExportTask(profile.getRepository(), version, exportInfo, modpackFile);
+            }
+
+            @Override
+            public Collection<Task<?>> getDependencies() {
+                return Collections.singleton(dependency);
+            }
+        }.setSignificance(Task.TaskSignificance.MINOR);
+    }
+
+    private Task<?> exportAsModrinth(ModpackExportInfo exportInfo, File modpackFile) {
+        return new Task<Void>() {
+            Task<?> dependency;
+
+            @Override
+            public void execute() {
+                dependency = new ModrinthModpackExportTask(profile.getRepository(), version, exportInfo, modpackFile);
+            }
+
+            @Override
+            public Collection<Task<?>> getDependencies() {
+                return Collections.singleton(dependency);
+            }
+        }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
     @Override

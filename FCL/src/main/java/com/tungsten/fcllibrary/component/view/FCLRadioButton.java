@@ -33,12 +33,12 @@ public class FCLRadioButton extends AppCompatRadioButton {
                     }
             };
             int[] color = {
-                    ThemeEngine.getInstance().getTheme().getDkColor(),
-                    ThemeEngine.getInstance().getTheme().getDkColor()
+                    ThemeEngine.getInstance().getTheme().getOpaqueDkColor(),
+                    ThemeEngine.getInstance().getTheme().getOpaqueDkColor()
             };
             setButtonTintList(new ColorStateList(state, color));
             if (textWithThemeColor) {
-                setTextColor(ThemeEngine.getInstance().getTheme().getColor() | 0xFF000000);
+                setTextColor(ThemeEngine.getInstance().getTheme().getOpaqueColor());
             }
     }
 

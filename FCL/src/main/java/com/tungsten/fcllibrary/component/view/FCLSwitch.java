@@ -32,11 +32,11 @@ public class FCLSwitch extends SwitchCompat {
                     }
             };
             int[] color = {
-                    ThemeEngine.getInstance().getTheme().getDkColor(),
-                    ThemeEngine.getInstance().getTheme().getColor() | 0xFF000000
+                    ThemeEngine.getInstance().getTheme().getOpaqueDkColor(),
+                    ThemeEngine.getInstance().getTheme().getOpaqueColor()
             };
             int[] subColor = {
-                    ThemeEngine.getInstance().getTheme().getColor() | 0xFF000000,
+                    ThemeEngine.getInstance().getTheme().getOpaqueColor(),
                     Color.GRAY
             };
             setThumbTintList(new ColorStateList(state, color));

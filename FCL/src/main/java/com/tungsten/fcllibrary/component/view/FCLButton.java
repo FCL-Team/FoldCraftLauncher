@@ -49,7 +49,7 @@ public class FCLButton extends AppCompatButton {
                     applyTextColor(ThemeEngine.getInstance().getTheme().getAutoTint());
                 } else {
                     setBackgroundDrawable(drawableNormal);
-                    applyTextColor(ThemeEngine.getInstance().getTheme().getLtColor());
+                    applyTextColor(ThemeEngine.getInstance().getTheme().getOpaqueLtColor());
                 }
             } else {
                 setRipple();

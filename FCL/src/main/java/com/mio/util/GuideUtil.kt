@@ -1,104 +1,69 @@
 package com.mio.util
 
 import android.app.Activity
-import android.app.Dialog
 import android.view.View
-import com.getkeepsafe.taptargetview.TapTarget
-import com.getkeepsafe.taptargetview.TapTargetSequence
-import com.getkeepsafe.taptargetview.TapTargetView
-import com.tungsten.fclauncher.utils.FCLPath
-import com.tungsten.fcllibrary.component.theme.ThemeEngine
-import java.io.File
+import androidx.datastore.core.DataStore
+import com.mio.datastore.GuidePreference
+import com.mio.datastore.guideDataStore
+import com.mio.ui.view.GuideOverlayView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class GuideUtil {
-    companion object {
-        const val TAG_GUIDE_THEME_2 = "theme2"
-        const val TAG_GUIDE_SHARE_LOG = "share log"
-        const val TAG_GUIDE_VERSION_CARD = "version card"
-        private val tagList = mutableListOf<String>()
-        private val file = File(FCLPath.FILES_DIR + "/guide_tag.txt")
+/**
+ * 功能引导标识：每个引导步骤一个 object，类名即持久化标识
+ */
+sealed interface GuideTag {
+    data object Account : GuideTag
+    data object VersionCard : GuideTag
+    data object Start : GuideTag
+    data object Manage : GuideTag
+    data object Download : GuideTag
+    data object Controller : GuideTag
+    data object Multiplayer : GuideTag
+    data object Theme2 : GuideTag
+    data object ShareLog : GuideTag
+}
 
-        init {
-            if (!file.exists()) {
-                file.createNewFile()
-            }
-            file.readLines().forEach {
-                tagList.add(it)
-            }
-        }
+/**
+ * 一步功能引导：tag 为引导标识，target 为高亮目标控件，text 为气泡描述文案
+ */
+data class GuideStep(val tag: GuideTag, val target: View, val text: String)
 
-        fun show(activity: Activity, view: View, title: String) {
-            TapTargetView.showFor(activity, view.guideTarget(title = title))
-        }
+/**
+ * 功能引导入口：按传入顺序逐步展示全屏引导遮罩，已展示过的 tag 自动过滤
+ * （DataStore 持久化）；目标不可见的步骤静默跳过且不记录，下次仍会展示；
+ * 跳过操作会记录剩余全部步骤，避免再次打扰。
+ */
+object GuideUtil {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-        fun show(dialog: Dialog, view: View, title: String) {
-            TapTargetView.showFor(dialog, view.guideTarget(title = title))
-        }
+    private val GuideTag.id: String
+        get() = this::class.simpleName.orEmpty()
 
-        fun show(activity: Activity, targets: List<TapTarget>) {
-            TapTargetSequence(activity).targets(targets).defaultConfig().start()
-        }
-
-        fun show(dialog: Dialog, targets: List<TapTarget>) {
-            TapTargetSequence(dialog).targets(targets).defaultConfig().start()
-        }
-
-        private fun TapTargetSequence.defaultConfig() = this.apply {
-            considerOuterCircleCanceled(false) //点击空白区域不取消队列
-            continueOnCancel(true) // 点击空白区域时(TapTarget取消回调)，仍继续队列
-        }
-
-        private fun addTag(tag: String) {
-            tagList.add(tag)
-            file.writeText(tagList.joinToString("\n"))
-        }
-
-        fun show(activity: Activity, view: View, title: String, tag: String) {
-            if (!tagList.contains(tag)) {
-                addTag(tag)
-                show(activity, view, title)
-            }
-        }
-
-        fun show(dialog: Dialog, view: View, title: String, tag: String) {
-            if (!tagList.contains(tag)) {
-                addTag(tag)
-                show(dialog, view, title)
+    fun show(activity: Activity, vararg steps: GuideStep) {
+        val dataStore = activity.applicationContext.guideDataStore
+        scope.launch {
+            val shown = dataStore.data.first().shownTags.toSet()
+            val pending = steps.filter { it.tag.id !in shown }
+            if (pending.isEmpty()) return@launch
+            withContext(Dispatchers.Main) {
+                GuideOverlayView.show(
+                    activity,
+                    pending,
+                    onStepShown = { markShown(dataStore, listOf(it.tag)) },
+                    onSkipped = { remaining -> markShown(dataStore, remaining.map { it.tag }) },
+                )
             }
         }
+    }
 
-        fun show(activity: Activity, vararg targetsWithTag: Pair<String, TapTarget>) {
-            mapTargets(*targetsWithTag)?.let { targetToShow ->
-                show(activity, targetToShow)
-            }
-        }
-
-        fun show(dialog: Dialog, vararg targetsWithTag: Pair<String, TapTarget>) {
-            mapTargets(*targetsWithTag)?.let { targetToShow ->
-                show(dialog, targetToShow)
-            }
-        }
-
-        private fun mapTargets(vararg targetsWithTag: Pair<String, TapTarget>): List<TapTarget>? {
-            return targetsWithTag.mapNotNull { (tag, target) ->
-                if (!tagList.contains(tag)) {
-                    addTag(tag)
-                    target
-                } else {
-                    null
-                }
-            }.takeIf { it.isNotEmpty() }
-        }
-
-        fun View.guideTarget(title: String, description: String? = null): TapTarget {
-            return (if (description == null) {
-                TapTarget.forView(this, title)
-            } else {
-                TapTarget.forView(this, title, description)
-            })
-                .transparentTarget(true)
-                .titleTextColorInt(ThemeEngine.getInstance().getTheme().autoTint)
-                .outerCircleColorInt(ThemeEngine.getInstance().getTheme().ltColor)
+    private fun markShown(dataStore: DataStore<GuidePreference>, tags: List<GuideTag>) {
+        scope.launch {
+            dataStore.updateData { it.copy(shownTags = (it.shownTags + tags.map { tag -> tag.id }).distinct()) }
         }
     }
 }

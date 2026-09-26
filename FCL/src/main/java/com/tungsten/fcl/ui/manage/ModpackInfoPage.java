@@ -64,6 +64,7 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
     private final SimpleStringProperty description = new SimpleStringProperty("");
     private final SimpleStringProperty url = new SimpleStringProperty("");
     private final SimpleBooleanProperty forceUpdate = new SimpleBooleanProperty();
+    private final SimpleBooleanProperty packCurseForge = new SimpleBooleanProperty(true);
     private final SimpleStringProperty fileApi = new SimpleStringProperty("");
     private final SimpleIntegerProperty minMemory = new SimpleIntegerProperty(0);
     private final SimpleStringProperty authlibInjectorServer = new SimpleStringProperty();
@@ -98,6 +99,7 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
         FCLLinearLayout memoryLayout = findViewById(R.id.memory_layout);
         FCLLinearLayout serverLayout = findViewById(R.id.server_layout);
         FCLLinearLayout forceUpdateLayout = findViewById(R.id.force_update_layout);
+        FCLLinearLayout packCurseForgeLayout = findViewById(R.id.pack_curseforge_layout);
         View splitF = findViewById(R.id.split_1);
         View splitS = findViewById(R.id.split_2);
         View splitT = findViewById(R.id.split_3);
@@ -115,7 +117,10 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
         FCLEditText descText = findViewById(R.id.desc);
         FCLSpinner<String> serverSpinner = findViewById(R.id.server);
         FCLSwitch forceUpdateSwitch = findViewById(R.id.force_update);
+        FCLSwitch packCurseForgeSwitch = findViewById(R.id.pack_curseforge);
         FCLTextView pathText = findViewById(R.id.path_text);
+        FCLTextView extensionText = findViewById(R.id.file_extension);
+        extensionText.setText(ModpackTypeSelectionPage.getModpackFileExtension(type));
         pathButton = findViewById(R.id.path);
         FCLEditText fileNameText = findViewById(R.id.file_name);
         next = findViewById(R.id.next);
@@ -179,6 +184,11 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
         }
         forceUpdateLayout.setVisibility(options.isRequireForceUpdate() ? View.VISIBLE : View.GONE);
         splitT.setVisibility(options.isRequireForceUpdate() ? View.VISIBLE : View.GONE);
+        if (options.isRequirePackCurseForge()) {
+            packCurseForgeSwitch.addCheckedChangeListener();
+            packCurseForgeSwitch.checkProperty().bindBidirectional(packCurseForge);
+        }
+        packCurseForgeLayout.setVisibility(options.isRequirePackCurseForge() ? View.VISIBLE : View.GONE);
         pathText.stringProperty().bind(path);
         pathButton.setOnClickListener(this);
         fileNameText.stringProperty().bindBidirectional(fileName);
@@ -223,7 +233,7 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
             } else if (StringUtils.isBlank(path.get())) {
                 selectPath();
             } else {
-                File file = new File(path.get(), fileName.get() + ".zip");
+                File file = new File(path.get(), fileName.get() + ModpackTypeSelectionPage.getModpackFileExtension(type));
 
                 if (file.exists()) {
                     Toast.makeText(getContext(), getContext().getString(R.string.message_file_exist), Toast.LENGTH_SHORT).show();
@@ -238,6 +248,7 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
                 exportInfo.setPackWithLauncher(false);
                 exportInfo.setUrl(url.get());
                 exportInfo.setForceUpdate(forceUpdate.get());
+                exportInfo.setPackCurseForge(packCurseForge.get());
                 exportInfo.setMinMemory(minMemory.get());
                 exportInfo.setLaunchArguments(launchArguments.get());
                 exportInfo.setJavaArguments(javaArguments.get());

@@ -29,10 +29,12 @@ import com.tungsten.fclcore.mod.MinecraftInstanceTask;
 import com.tungsten.fclcore.mod.ModpackInstallTask;
 import com.tungsten.fclcore.mod.ModpackUpdateTask;
 import com.tungsten.fclcore.mod.curse.CurseCompletionTask;
+import com.tungsten.fclcore.mod.curse.CurseForgeModpackExportTask;
 import com.tungsten.fclcore.mod.curse.CurseInstallTask;
 import com.tungsten.fclcore.mod.mcbbs.McbbsModpackCompletionTask;
 import com.tungsten.fclcore.mod.mcbbs.McbbsModpackExportTask;
 import com.tungsten.fclcore.mod.modrinth.ModrinthCompletionTask;
+import com.tungsten.fclcore.mod.modrinth.ModrinthModpackExportTask;
 import com.tungsten.fclcore.mod.modrinth.ModrinthInstallTask;
 import com.tungsten.fclcore.mod.multimc.MultiMCModpackExportTask;
 import com.tungsten.fclcore.mod.multimc.MultiMCModpackInstallTask;
@@ -162,7 +164,8 @@ public final class TaskListPane extends FCLAdapter {
                     task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_server)));
                 } else if (task instanceof HMCLModpackInstallTask) {
                     task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_hmcl)));
-                } else if (task instanceof McbbsModpackExportTask || task instanceof MultiMCModpackExportTask || task instanceof ServerModpackExportTask) {
+                } else if (task instanceof McbbsModpackExportTask || task instanceof MultiMCModpackExportTask || task instanceof ServerModpackExportTask
+                        || task instanceof CurseForgeModpackExportTask || task instanceof ModrinthModpackExportTask) {
                     task.setName(getContext().getString(R.string.modpack_export));
                 } else if (task instanceof MinecraftInstanceTask) {
                     task.setName(getContext().getString(R.string.modpack_scan));
