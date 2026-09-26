@@ -52,6 +52,10 @@ class JavaManageDialog(context: Context, currentJava: String? = null, val onSele
                             JavaManager.remove(java.name)
                             refresh()
                             binding.recyclerView.adapter?.notifyDataSetChanged()
+                            // 删除的是当前选中的 Java 时，回落为自动选择
+                            if (java.name == currentJava) {
+                                onSelected.invoke("Auto")
+                            }
                         }.setNegativeButton(null)
                         .create()
                         .show()

@@ -35,10 +35,11 @@
         app:layout_constraintTop_toBottomOf="@id/java_name"
         tools:text="1.8.0_292" />
 
+    <!-- 40dp 容器 + 默认 8dp padding：图标净显示 24dp，与收藏列表删除按钮同尺寸 -->
     <com.tungsten.fcllibrary.component.view.FCLImageButton
         android:id="@+id/delete"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:src="@drawable/ic_baseline_delete_24"
         app:layout_constraintBottom_toBottomOf="parent"
