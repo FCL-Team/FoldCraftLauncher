@@ -111,4 +111,26 @@ class ItemSelectionDialog(
         binding.recyclerView.addItemDecoration(SpacingItemDecoration(ConvertUtils.dip2px(context, 6f)))
         binding.cancel.setOnClickListener { dismiss() }
     }
+
+    companion object {
+        /** Java 侧 SAM 回调，点击条目后触发并自动关闭对话框 */
+        fun interface Callback {
+            fun onSelected(position: Int, item: String)
+        }
+
+        /** 构造并显示单项选择对话框 */
+        @JvmStatic
+        fun show(
+            context: Context,
+            title: String,
+            items: List<String>,
+            small: Boolean,
+            selectedIndex: Int,
+            callback: Callback
+        ) {
+            ItemSelectionDialog(context, title, items, small, selectedIndex) { position, _ ->
+                callback.onSelected(position, items[position])
+            }.show()
+        }
+    }
 }

@@ -2,24 +2,21 @@ package com.tungsten.fcllibrary.browser.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.appcompat.widget.LinearLayoutCompat;
-import androidx.core.content.FileProvider;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.browser.FileBrowser;
 import com.tungsten.fcllibrary.browser.FileOperator;
 import com.tungsten.fcllibrary.browser.options.LibMode;
+import com.tungsten.fcllibrary.browser.options.SortMode;
 import com.tungsten.fcllibrary.component.FCLAdapter;
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
@@ -46,11 +43,16 @@ public class FileBrowserAdapter extends FCLAdapter {
 
     @SuppressLint("SimpleDateFormat")
     public FileBrowserAdapter(Context context, FileBrowser fileBrowser, Path path, ArrayList<String> selectedFiles, FileBrowserListener listener) {
+        this(context, fileBrowser, path, selectedFiles, SortMode.NAME, true, listener);
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    public FileBrowserAdapter(Context context, FileBrowser fileBrowser, Path path, ArrayList<String> selectedFiles, SortMode sortMode, boolean showHidden, FileBrowserListener listener) {
         super(context);
         this.fileBrowser = fileBrowser;
         this.selectedFiles = selectedFiles;
         this.listener = listener;
-        this.list = FileOperator.getFileList(path, fileBrowser);
+        this.list = FileOperator.getFileList(path, fileBrowser, sortMode, showHidden);
 
         this.formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
@@ -61,6 +63,13 @@ public class FileBrowserAdapter extends FCLAdapter {
 
     public ArrayList<String> getSelectedFiles() {
         return selectedFiles;
+    }
+
+    /**
+     * 当前目录下展示的文件列表
+     */
+    public List<File> getFiles() {
+        return list;
     }
 
     private static class ViewHolder {
@@ -123,7 +132,7 @@ public class FileBrowserAdapter extends FCLAdapter {
         viewHolder.icon.setImageDrawable(drawable);
         viewHolder.name.setText(file.getName());
         viewHolder.description.setText(description);
-        if (selectedFiles.contains(file.getAbsolutePath()) && file.isFile()) {
+        if (selectedFiles.contains(file.getAbsolutePath())) {
             viewHolder.parent.setBackgroundColor(Color.GRAY);
         } else {
             viewHolder.parent.setBackground(getContext().getDrawable(R.drawable.clickable_parent));
@@ -132,30 +141,13 @@ public class FileBrowserAdapter extends FCLAdapter {
             if (file.isDirectory()) {
                 listener.onEnterDir(file.getAbsolutePath());
             }
-            if (fileBrowser.getLibMode() != LibMode.FILE_BROWSER && fileBrowser.getLibMode() != LibMode.FOLDER_CHOOSER && file.isFile()) {
+            if (file.isFile() && fileBrowser.getLibMode() != LibMode.FOLDER_CHOOSER) {
                 listener.onSelect(this, file.getAbsolutePath());
             }
         });
         viewHolder.parent.setOnLongClickListener(view12 -> {
-            if (file.isFile()) {
-                FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-                builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
-                builder.setTitle(getContext().getString(R.string.file_browser_share_title));
-                builder.setMessage(getContext().getString(R.string.file_browser_share_message));
-                builder.setPositiveButton(() -> {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    Uri uri = FileProvider.getUriForFile(getContext(), getContext().getString(R.string.file_browser_provider), file);
-                    intent.setType("*/*");
-                    intent.putExtra(Intent.EXTRA_STREAM, uri);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    intent.addCategory(Intent.CATEGORY_DEFAULT);
-                    getContext().startActivity(Intent.createChooser(intent, getContext().getString(R.string.file_browser_share_title)));
-                });
-                builder.setNegativeButton(null);
-                builder.create().show();
-            }
-            return false;
+            listener.onItemLongClick(file);
+            return true;
         });
         return view;
     }
