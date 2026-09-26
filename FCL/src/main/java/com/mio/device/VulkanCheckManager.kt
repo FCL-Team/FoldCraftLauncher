@@ -22,8 +22,10 @@ data class VulkanCheckRecord(
     val driverPath: String,
     /** 检测到的 Vulkan 版本字符串（如 "1.3.2"），检测失败时为空 */
     val apiVersion: String = "",
-    /** 设备缺失 EXT divisor 但提供 KHR 扩展，可经 vkshim 合成（仅系统驱动路径生效） */
+    /** 设备缺失 EXT divisor 但提供 KHR 扩展，可经 vkshim 合成 */
     val needsDivisorShim: Boolean = false,
+    /** 设备核心能力位 fillModeNonSolid 缺失，可经 vkshim 降级模拟（线框渲染退化为实心） */
+    val needsFillModeEmulation: Boolean = false,
     /** 设备可支持的 Minecraft 版本范围，[Range.until] 为排他上界，null 表示无上界 */
     val supportedRanges: List<Range> = emptyList(),
     val version: Int = 0,
@@ -61,14 +63,15 @@ object VulkanCheckManager {
 
     private const val EXT_VERTEX_ATTRIBUTE_DIVISOR = "VK_EXT_vertex_attribute_divisor"
     private const val KHR_VERTEX_ATTRIBUTE_DIVISOR = "VK_KHR_vertex_attribute_divisor"
+    private const val FEATURE_FILL_MODE_NON_SOLID = "fillModeNonSolid"
 
     /**
-     * 当前驱动状态下是否应经 vkshim 合成 EXT divisor 扩展；
+     * 当前驱动状态下是否应经 vkshim 包装加载（divisor 合成或 fillModeNonSolid 模拟任一成立）；
      * 由最近一次检测/缓存读取刷新，启动组装环境变量时读取。
      * shim 仅包装系统 Vulkan 加载器，Turnip 驱动路径不经过它
      */
     @Volatile
-    var needsDivisorShim: Boolean = false
+    var needsVulkanShim: Boolean = false
         private set
 
     /**
@@ -89,20 +92,31 @@ object VulkanCheckManager {
                 val capabilities = VulkanChecker.checkCapabilities(useTurnip, driverPath, cacheDir)
                 // shim 仅包装系统 Vulkan 加载器：请求 Turnip 但加载失败回落系统加载器时，
                 // 检测与游戏运行时实际使用的都是系统驱动，shim 同样适用
-                val needsShim = capabilities != null && !capabilities.usedCustomDriver &&
+                val needsDivisorShim = capabilities != null && !capabilities.usedCustomDriver &&
                         EXT_VERTEX_ATTRIBUTE_DIVISOR !in capabilities.extensions &&
                         KHR_VERTEX_ATTRIBUTE_DIVISOR in capabilities.extensions
-                needsDivisorShim = needsShim
-                // shim 生效后游戏可见的扩展列表含合成的 EXT，依赖评估按补齐后的状态进行
-                val effective = if (needsShim && capabilities != null) {
-                    capabilities.copy(extensions = capabilities.extensions + EXT_VERTEX_ATTRIBUTE_DIVISOR)
-                } else capabilities
+                val needsFillModeEmulation = capabilities != null && !capabilities.usedCustomDriver &&
+                        capabilities.features[FEATURE_FILL_MODE_NON_SOLID] != true
+                needsVulkanShim = needsDivisorShim || needsFillModeEmulation
+                // shim 生效后游戏可见的能力按补齐后的状态评估：
+                // divisor 由 KHR 合成补报；fillModeNonSolid 由降级模拟保证管线可创建
+                val effective = capabilities?.let {
+                    it.copy(
+                        extensions = if (needsDivisorShim) {
+                            it.extensions + EXT_VERTEX_ATTRIBUTE_DIVISOR
+                        } else it.extensions,
+                        features = if (needsFillModeEmulation) {
+                            it.features + (FEATURE_FILL_MODE_NON_SOLID to true)
+                        } else it.features
+                    )
+                }
                 saveRecord(
                     VulkanCheckRecord(
                         useTurnip = useTurnip,
                         driverPath = if (useTurnip) driverPath.orEmpty() else "",
                         apiVersion = effective?.versionString.orEmpty(),
-                        needsDivisorShim = needsShim,
+                        needsDivisorShim = needsDivisorShim,
+                        needsFillModeEmulation = needsFillModeEmulation,
                         supportedRanges = effective?.profileSupport()
                             ?.filter { it.supported }
                             ?.map { VulkanCheckRecord.Range(since = it.since, until = it.until) }
@@ -127,10 +141,10 @@ object VulkanCheckManager {
                     last.useTurnip == useTurnip && last.driverPath == path
         } ?: run {
             //无与当前驱动状态一致的记录，shim 门控回到安全侧（不启用）
-            needsDivisorShim = false
+            needsVulkanShim = false
             return VulkanEnsureResult.NEED_CHECK
         }
-        needsDivisorShim = record.needsDivisorShim
+        needsVulkanShim = record.needsDivisorShim || record.needsFillModeEmulation
         return if (record.isSupported(mcVersion)) VulkanEnsureResult.SUPPORTED else VulkanEnsureResult.UNSUPPORTED
     }
 
