@@ -12,8 +12,7 @@
         android:layout_height="wrap_content"
         android:text="@string/vulkan_check_title"
         android:textSize="18sp"
-        android:textStyle="bold"
-        app:auto_text_tint="true" />
+        android:textStyle="bold" />
 
     <ScrollView
         android:id="@+id/scroll"
