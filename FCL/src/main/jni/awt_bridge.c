@@ -8,6 +8,8 @@
 #include <stdlib.h>
 #include <dlfcn.h>
 
+#include "log.h"
+
 static JavaVM *dalvikJavaVMPtr;
 static JavaVM* runtimeJavaVMPtr;
 static JNIEnv* runtimeJNIEnvPtr_GRAPHICS;
@@ -57,6 +59,31 @@ static jmethodID method_ShowMessageDialog = NULL;
 // 游戏启动后即可经 libjvm 的 JNI_GetCreatedJavaVMs 主动取到
 static jint (*getCreatedJavaVMsFunc)(JavaVM **, jsize, jsize *) = NULL;
 
+// 从已加载库列表中定位实际路径后按全路径打开，绕开按名解析的命名空间限制
+static void *openLoadedLib(const char *name) {
+    FILE *maps = fopen("/proc/self/maps", "r");
+    if (maps == NULL) {
+        return NULL;
+    }
+    char line[1024];
+    void *handle = NULL;
+    while (fgets(line, sizeof(line), maps) != NULL) {
+        char *path = strstr(line, name);
+        if (path == NULL || path == line || path[-1] != '/') {
+            continue;
+        }
+        char *end = path + strlen(path);
+        while (end > path && (end[-1] == '\n' || end[-1] == '\r')) {
+            end--;
+        }
+        *end = '\0';
+        handle = dlopen(path, RTLD_LAZY | RTLD_GLOBAL);
+        break;
+    }
+    fclose(maps);
+    return handle;
+}
+
 static void ensureRuntimeJavaVM(void) {
     if (runtimeJavaVMPtr != NULL || dalvikJavaVMPtr == NULL) {
         return;
@@ -64,13 +91,16 @@ static void ensureRuntimeJavaVM(void) {
     if (getCreatedJavaVMsFunc == NULL) {
         const char *libs[] = {"libjvm.so", "libjli.so"};
         for (size_t i = 0; i < sizeof(libs) / sizeof(libs[0]) && getCreatedJavaVMsFunc == NULL; i++) {
-            void *handle = dlopen(libs[i], RTLD_LAZY | RTLD_GLOBAL);
+            void *handle = openLoadedLib(libs[i]);
             if (handle == NULL) {
-                continue;
+                handle = dlopen(libs[i], RTLD_LAZY | RTLD_GLOBAL);
             }
-            getCreatedJavaVMsFunc = (jint (*)(JavaVM **, jsize, jsize *)) dlsym(handle, "JNI_GetCreatedJavaVMs");
+            if (handle != NULL) {
+                getCreatedJavaVMsFunc = (jint (*)(JavaVM **, jsize, jsize *)) dlsym(handle, "JNI_GetCreatedJavaVMs");
+            }
         }
         if (getCreatedJavaVMsFunc == NULL) {
+            FCL_LOG("[AWT] JNI_GetCreatedJavaVMs not found in loaded libs");
             return;
         }
     }
@@ -80,6 +110,7 @@ static void ensureRuntimeJavaVM(void) {
         for (jsize i = 0; i < count; i++) {
             if (vms[i] != NULL && vms[i] != dalvikJavaVMPtr) {
                 runtimeJavaVMPtr = vms[i];
+                FCL_LOG("[AWT] runtime JVM located (%d vms)", count);
                 break;
             }
         }
@@ -435,6 +466,7 @@ JNIEXPORT void JNICALL
 Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeShowTestDialog(JNIEnv *env, jclass clazz, jstring title, jstring message) {
     ensureRuntimeJavaVM();
     if (runtimeJavaVMPtr == NULL) {
+        FCL_LOG("[AWT] showTestDialog: runtime JVM not available");
         return;
     }
     JNIEnv *rt = NULL;
@@ -443,6 +475,8 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeShowTestDialog(JNIEnv *env, 
     if (method_ShowMessageDialog == NULL) {
         jclass optionPaneClass = (*rt)->FindClass(rt, "javax/swing/JOptionPane");
         if (optionPaneClass == NULL) {
+            FCL_LOG("[AWT] showTestDialog: JOptionPane not found");
+            (*rt)->ExceptionDescribe(rt);
             (*rt)->ExceptionClear(rt);
             (*runtimeJavaVMPtr)->DetachCurrentThread(runtimeJavaVMPtr);
             return;
@@ -451,6 +485,8 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeShowTestDialog(JNIEnv *env, 
         method_ShowMessageDialog = (*rt)->GetStaticMethodID(rt, class_JOptionPane, "showMessageDialog",
                                                             "(Ljava/awt/Component;Ljava/lang/Object;Ljava/lang/String;I)V");
         if (method_ShowMessageDialog == NULL) {
+            FCL_LOG("[AWT] showTestDialog: showMessageDialog not found");
+            (*rt)->ExceptionDescribe(rt);
             (*rt)->ExceptionClear(rt);
             (*runtimeJavaVMPtr)->DetachCurrentThread(runtimeJavaVMPtr);
             return;
@@ -463,6 +499,7 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_nativeShowTestDialog(JNIEnv *env, 
     // 最后一个参数为 JOptionPane.INFORMATION_MESSAGE
     (*rt)->CallStaticVoidMethod(rt, class_JOptionPane, method_ShowMessageDialog, NULL, rtMessage, rtTitle, 1);
     if ((*rt)->ExceptionCheck(rt) == JNI_TRUE) {
+        (*rt)->ExceptionDescribe(rt);
         (*rt)->ExceptionClear(rt);
     }
     (*env)->ReleaseStringUTFChars(env, title, titleChars);
