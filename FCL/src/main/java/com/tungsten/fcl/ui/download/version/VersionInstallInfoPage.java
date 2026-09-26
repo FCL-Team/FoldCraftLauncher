@@ -1,5 +1,7 @@
 package com.tungsten.fcl.ui.download.version;
 
+import static com.tungsten.fclcore.util.Logging.LOG;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.text.Editable;
@@ -14,6 +16,7 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.game.FCLGameRepository;
+import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.InstallerItem;
@@ -22,11 +25,13 @@ import com.tungsten.fcl.ui.UIManager;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.ArtifactMalformedException;
+import com.tungsten.fclcore.download.ComponentVersionList;
 import com.tungsten.fclcore.download.DefaultDependencyManager;
 import com.tungsten.fclcore.download.GameBuilder;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.download.ComponentRemoteVersion;
 import com.tungsten.fclcore.download.UnsupportedInstallationException;
+import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.download.VersionMismatchException;
 import com.tungsten.fclcore.download.game.GameAssetIndexDownloadTask;
 import com.tungsten.fclcore.download.game.LibraryDownloadException;
@@ -51,6 +56,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CancellationException;
+import java.util.logging.Level;
 import java.util.zip.ZipException;
 
 public class VersionInstallInfoPage extends FCLPage implements View.OnClickListener {
@@ -132,12 +138,17 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
                         refreshVersionName();
                         reload();
                         UIManager.getInstance().getDownloadUI().dismissCurrentTempPage();
+                        autoSelectApi(libraryId);
                     });
                     UIManager.getInstance().getDownloadUI().showTempPage(page);
                 }
             });
             library.removeAction.set(() -> {
                 map.remove(libraryId);
+                String apiId = getApiId(libraryId);
+                if (apiId != null) {
+                    map.remove(apiId);
+                }
                 refreshVersionName();
                 reload();
             });
@@ -173,6 +184,61 @@ public class VersionInstallInfoPage extends FCLPage implements View.OnClickListe
             case OPTIFINE -> getContext().getString(R.string.install_installer_optifine);
             default -> null;
         };
+    }
+
+    /**
+     * 获取加载器对应 API 的组件 id，无对应 API 时返回 null。
+     */
+    private String getApiId(String loaderId) {
+        if (LibraryAnalyzer.LibraryType.FABRIC.getPatchId().equals(loaderId)) {
+            return LibraryAnalyzer.LibraryType.FABRIC_API.getPatchId();
+        } else if (LibraryAnalyzer.LibraryType.QUILT.getPatchId().equals(loaderId)) {
+            return LibraryAnalyzer.LibraryType.QUILT_API.getPatchId();
+        }
+        return null;
+    }
+
+    /**
+     * 选择 Fabric/Quilt 后自动选中对应 API 的最新版本，已选择过 API 或存在冲突组件时跳过。
+     */
+    private void autoSelectApi(String loaderId) {
+        String apiId = getApiId(loaderId);
+        if (apiId == null || map.containsKey(apiId)) {
+            return;
+        }
+        ComponentVersionList<?> versionList = DownloadProviders.getDownloadProvider()
+                .getVersionList(GameComponentType.fromPatchId(apiId));
+        versionList.refreshAsync(gameVersion)
+                .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
+                    if (exception != null) {
+                        LOG.log(Level.WARNING, "Failed to fetch " + apiId + " versions", exception);
+                        return;
+                    }
+                    if (!isShowing() || !map.containsKey(loaderId) || map.containsKey(apiId)) {
+                        return;
+                    }
+                    InstallerItem apiItem = findInstallerItem(apiId);
+                    if (apiItem == null || apiItem.incompatibleLibraryName.get() != null) {
+                        return;
+                    }
+                    versionList.getVersions(gameVersion).stream()
+                            .sorted()
+                            .findFirst()
+                            .ifPresent(remoteVersion -> {
+                                map.put(apiId, remoteVersion);
+                                refreshVersionName();
+                                reload();
+                            });
+                }).start();
+    }
+
+    private InstallerItem findInstallerItem(String libraryId) {
+        for (InstallerItem item : group.getLibraries()) {
+            if (item.getLibraryId().equals(libraryId)) {
+                return item;
+            }
+        }
+        return null;
     }
 
     @Override
