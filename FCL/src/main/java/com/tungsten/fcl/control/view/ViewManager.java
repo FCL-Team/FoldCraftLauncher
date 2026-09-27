@@ -313,6 +313,8 @@ private long loadDialogShowTime = 0;
     /**
      * 编辑拖动吸附：以期望位置为基准，在阈值内与兄弟控件对齐并绘制参考线。
      * 同边对齐（左↔左、右↔右等）吸附为贴齐；邻接对齐（左右相邻、上下相邻）吸附保持吸附间距的间隔。
+     * 仅吸附相邻按键时，同边对齐线只对另一轴上相邻（不重叠且间隔在 2×阈值内）的目标开放，
+     * 使同排/同列摆放时仍能与同一目标在横纵两轴同时吸附；远离或重叠的目标不产生同边吸附线。
      * 期望位置每帧由手指屏幕坐标独立计算，吸附修正不参与下一帧基准，
      * 避免"吸附→弹回"的循环抖动。
      *
@@ -341,7 +343,8 @@ private long loadDialogShowTime = 0;
         float selfEdgeY = 0;
         boolean hasX = false;
         boolean hasY = false;
-        // 仅吸附相邻按键：跳过同边对齐线，只保留"自身边贴目标对侧边并保持间距"的邻接吸附
+        // 仅吸附相邻按键：同边对齐线按"另一轴相邻"条件开放（见 snapAxisLines），
+        // 否则同排/同列摆放时另一轴无法与同一目标对齐
         boolean adjacentOnly = gameMenu.getMenuSetting().isSnapAdjacentOnly();
         ViewGroup parent = gameMenu.getBaseLayout();
         for (int i = 0; i < parent.getChildCount(); i++) {
@@ -351,17 +354,23 @@ private long loadDialogShowTime = 0;
                     || (!(child instanceof ControlButton) && !(child instanceof ControlDirection))) {
                 continue;
             }
-            // x 轴吸附线：同边对齐（左↔左、右↔右）贴齐，邻接对齐（自身左↔目标右、自身右↔目标左）保持 threshold 间隔
             float selfLeft = x;
             float selfRight = x + view.getWidth();
+            float selfTop = y;
+            float selfBottom = y + view.getHeight();
             float childLeft = child.getX();
             float childRight = child.getX() + child.getWidth();
-            float[] linesX = adjacentOnly
-                    ? new float[]{childRight + threshold, childLeft - threshold}
-                    : new float[]{childLeft, childRight + threshold, childRight, childLeft - threshold};
-            float[] edgesX = adjacentOnly
-                    ? new float[]{selfLeft, selfRight}
-                    : new float[]{selfLeft, selfLeft, selfRight, selfRight};
+            float childTop = child.getY();
+            float childBottom = child.getY() + child.getHeight();
+            // x 轴吸附线：同边对齐（左↔左、右↔右）贴齐，邻接对齐（自身左↔目标右、自身右↔目标左）保持 threshold 间隔
+            boolean sameEdgeX = !adjacentOnly
+                    || isNeighborOnAxis(selfTop, selfBottom, childTop, childBottom, threshold);
+            float[] linesX = sameEdgeX
+                    ? new float[]{childLeft, childRight + threshold, childRight, childLeft - threshold}
+                    : new float[]{childRight + threshold, childLeft - threshold};
+            float[] edgesX = sameEdgeX
+                    ? new float[]{selfLeft, selfLeft, selfRight, selfRight}
+                    : new float[]{selfLeft, selfRight};
             for (int k = 0; k < linesX.length; k++) {
                 float d = Math.abs(linesX[k] - edgesX[k]);
                 if (d <= bestX) {
@@ -372,16 +381,14 @@ private long loadDialogShowTime = 0;
                 }
             }
             // y 轴吸附线：同边对齐贴齐，邻接对齐（自身上↔目标下、自身下↔目标上）保持 threshold 间隔
-            float selfTop = y;
-            float selfBottom = y + view.getHeight();
-            float childTop = child.getY();
-            float childBottom = child.getY() + child.getHeight();
-            float[] linesY = adjacentOnly
-                    ? new float[]{childBottom + threshold, childTop - threshold}
-                    : new float[]{childTop, childBottom + threshold, childBottom, childTop - threshold};
-            float[] edgesY = adjacentOnly
-                    ? new float[]{selfTop, selfBottom}
-                    : new float[]{selfTop, selfTop, selfBottom, selfBottom};
+            boolean sameEdgeY = !adjacentOnly
+                    || isNeighborOnAxis(selfLeft, selfRight, childLeft, childRight, threshold);
+            float[] linesY = sameEdgeY
+                    ? new float[]{childTop, childBottom + threshold, childBottom, childTop - threshold}
+                    : new float[]{childBottom + threshold, childTop - threshold};
+            float[] edgesY = sameEdgeY
+                    ? new float[]{selfTop, selfTop, selfBottom, selfBottom}
+                    : new float[]{selfTop, selfBottom};
             for (int k = 0; k < linesY.length; k++) {
                 float d = Math.abs(linesY[k] - edgesY[k]);
                 if (d <= bestY) {
@@ -405,6 +412,16 @@ private long loadDialogShowTime = 0;
             gameMenu.getTouchPad().removeLine(1);
         }
         return new float[]{x, y};
+    }
+
+    /**
+     * 单轴上两区间是否可视为相邻：不重叠，且间隔不超过 2×阈值。
+     * 取 2× 是因为邻接吸附的整个触发区间宽 2×阈值（吸附线在目标边外推一个阈值处），
+     * 只有覆盖该区间，另一轴的同边对齐才能与邻接吸附同时对同一目标生效。
+     */
+    private static boolean isNeighborOnAxis(float selfStart, float selfEnd, float childStart, float childEnd, float threshold) {
+        return (selfStart >= childEnd && selfStart <= childEnd + 2 * threshold)
+                || (selfEnd <= childStart && selfEnd >= childStart - 2 * threshold);
     }
 
     /** 计算控件合成透明度：一键隐藏 > 参考组 > 全局不透明度 */
