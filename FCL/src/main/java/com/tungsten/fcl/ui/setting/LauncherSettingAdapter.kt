@@ -31,6 +31,7 @@ import com.tungsten.fcllibrary.util.LocaleUtils
 enum class LauncherSettingTag {
     // 按钮行
     CHECK_UPDATE,
+    SHOW_CHANGELOG,
     EXPORT_LOG,
     REQUEST_AUDIO,
     CLEAR_MOD_CACHE,
@@ -148,7 +149,8 @@ class LauncherSettingAdapter(
             ),
             Row.ButtonRow(
                 R.string.settings_launcher_upgrade,
-                listOf(Triple(0, R.string.settings_launcher_upgrade_check, LauncherSettingTag.CHECK_UPDATE)),
+                listOf(Triple(0, R.string.settings_launcher_upgrade_check, LauncherSettingTag.CHECK_UPDATE),
+                    Triple(0, R.string.settings_launcher_update_changelog, LauncherSettingTag.SHOW_CHANGELOG)),
                 R.string.settings_launcher_upgrade_desc,
             ),
             Row.ButtonRow(

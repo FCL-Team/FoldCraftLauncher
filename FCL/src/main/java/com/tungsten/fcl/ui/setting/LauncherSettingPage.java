@@ -114,6 +114,18 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
                     }).start();
                 }
                 break;
+            case SHOW_CHANGELOG:
+                UpdateChecker.getInstance().showCurrentChangelog(getContext()).whenComplete(Schedulers.androidUIThread(), e -> {
+                    if (e != null) {
+                        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                        builder.setCancelable(false);
+                        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
+                        builder.setMessage(getContext().getString(R.string.update_check_failed) + "\n" + e);
+                        builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
+                        builder.create().show();
+                    }
+                }).start();
+                break;
             case EXPORT_LOG:
                 exportLog();
                 break;

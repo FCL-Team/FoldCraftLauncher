@@ -1064,6 +1064,9 @@
     <string name="settings_launcher_upgrade">Update Launcher</string>
     <string name="settings_launcher_upgrade_desc">Check whether a new version of the launcher is available.</string>
     <string name="settings_launcher_upgrade_check">Check</string>
+    <string name="settings_launcher_update_changelog">Notes</string>
+    <string name="update_changelog">What\'s New</string>
+    <string name="update_changelog_not_found">Update notes are not available for this version.</string>
     <string name="settings_launcher_download">Download</string>
     <string name="settings_launcher_download_threads">Threads</string>
     <string name="settings_launcher_download_threads_desc">Set the number of concurrent download threads.</string>

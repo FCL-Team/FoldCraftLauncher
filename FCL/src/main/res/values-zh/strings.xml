@@ -953,6 +953,9 @@
     <string name="settings_launcher_upgrade">启动器更新</string>
     <string name="settings_launcher_upgrade_desc">检查启动器是否有新版本可用</string>
     <string name="settings_launcher_upgrade_check">检测</string>
+    <string name="settings_launcher_update_changelog">更新内容</string>
+    <string name="update_changelog">更新内容</string>
+    <string name="update_changelog_not_found">暂无当前版本的更新内容</string>
     <string name="settings_launcher_download">下载</string>
     <string name="settings_launcher_download_threads">并发数</string>
     <string name="settings_launcher_download_threads_desc">设置下载并发线程数</string>
