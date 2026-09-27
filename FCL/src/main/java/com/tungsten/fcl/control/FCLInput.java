@@ -93,6 +93,16 @@ public class FCLInput implements View.OnCapturedPointerListener {
     private float lastHoverRawY;
     private boolean lastHoverValid;
 
+    // 捕获事件的相对位移常为亚像素值（高报点率/高分辨率设备），直接取整会把大量小位移吞成 0，
+    // 表现为视角过慢和顿挫：余数累积到下一个事件，保证总位移无损
+    private float pendingPointerDeltaX;
+    private float pendingPointerDeltaY;
+
+    // 视角浮点游标：消除 int 累计与缩放截断（scaleFactor < 1 时小位移整批丢失）；外部 setPointer 时对齐
+    private float floatPointerX;
+    private float floatPointerY;
+    private boolean floatPointerInitialized;
+
     public GameMenu getMenu() {
         return menu;
     }
@@ -125,6 +135,10 @@ public class FCLInput implements View.OnCapturedPointerListener {
     }
 
     public void setPointer(int x, int y) {
+        // 外部来源（触摸板/实体鼠标悬停）直接设置绝对位置时对齐浮点游标，避免来源切换瞬间视角跳变
+        floatPointerX = x;
+        floatPointerY = y;
+        floatPointerInitialized = true;
         if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
             menu.getCursor().setX(x);
             menu.getCursor().setY(y);
@@ -346,25 +360,32 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     private boolean handleMouse(MotionEvent event, float deltaTimeScale) {
         if (event == null || event.getAction() == MotionEvent.ACTION_MOVE) {
-            int deltaX;
-            int deltaY;
+            float deltaX;
+            float deltaY;
+            float sensitivity = (float) menu.getMenuSetting().getMouseSensitivity();
             if (event != null) {
-                double tX = event.getX();
-                double tY = event.getY();
+                float tX = event.getX();
+                float tY = event.getY();
                 final int historySize = event.getHistorySize();
                 for (int i = 0; i < historySize; i++) {
                     tX += event.getHistoricalX(i);
                     tY += event.getHistoricalY(i);
                 }
-                tX *= menu.getMenuSetting().getMouseSensitivity();
-                tY *= menu.getMenuSetting().getMouseSensitivity();
-                deltaX = (int) tX;
-                deltaY = (int) tY;
+                deltaX = tX * sensitivity;
+                deltaY = tY * sensitivity;
             } else {
-                deltaX = (int) (lastAxisZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
-                deltaY = (int) (lastAxisRZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
+                deltaX = lastAxisZ * deltaTimeScale * 10 * sensitivity;
+                deltaY = lastAxisRZ * deltaTimeScale * 10 * sensitivity;
             }
-            applyPointerDelta(deltaX, deltaY);
+            pendingPointerDeltaX += deltaX;
+            pendingPointerDeltaY += deltaY;
+            int stepX = (int) pendingPointerDeltaX;
+            int stepY = (int) pendingPointerDeltaY;
+            pendingPointerDeltaX -= stepX;
+            pendingPointerDeltaY -= stepY;
+            if (stepX != 0 || stepY != 0) {
+                applyPointerDelta(stepX, stepY);
+            }
         }
         if (event != null) {
             return handleExternalMouseEvent(event);
@@ -380,15 +401,23 @@ public class FCLInput implements View.OnCapturedPointerListener {
             setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
             setPointerId(null);
         } else {
-            int targetX = menu.getPointerX() + deltaX;
-            int targetY = menu.getPointerY() + deltaY;
+            if (!floatPointerInitialized) {
+                floatPointerX = menu.getPointerX();
+                floatPointerY = menu.getPointerY();
+                floatPointerInitialized = true;
+            }
+            floatPointerX += deltaX;
+            floatPointerY += deltaY;
             if (menu.getMenuSetting().isEnableGyroscope()) {
-                menu.setPointerX(targetX);
-                menu.setPointerY(targetY);
-            } else {
-                setPointerId(EXTERNAL_MOUSE_ID);
-                setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
-                setPointerId(null);
+                // 陀螺仪开启时视角由传感器路径发送，这里只同步累计位置
+                menu.setPointerX((int) floatPointerX);
+                menu.setPointerY((int) floatPointerY);
+            } else if (menu.getBridge() != null) {
+                // 浮点游标直推游戏，绕过 int 累计与缩放截断，小位移不再丢失
+                menu.setPointerX((int) floatPointerX);
+                menu.setPointerY((int) floatPointerY);
+                double scaleFactor = menu.getBridge().getScaleFactor();
+                menu.getBridge().pushEventPointer((float) (floatPointerX * scaleFactor), (float) (floatPointerY * scaleFactor));
             }
         }
     }

@@ -187,7 +187,12 @@ public class FCLBridge {
         CallbackBridge.sendCursorPos(x, y);
     }
 
+    /** 浮点坐标路径：FORCE_RESOLUTION 换算保持浮点，不截断（供视角浮点游标使用） */
     public void pushEventPointer(float x, float y) {
+        if (FORCE_RESOLUTION) {
+            x = (float) ((x - FORCE_RESOLUTION_START_SIZE) / FORCE_RESOLUTION_SCALE);
+            y = (float) (y / FORCE_RESOLUTION_SCALE);
+        }
         CallbackBridge.sendCursorPos(x, y);
     }
 
