@@ -314,8 +314,15 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, hasFocus ? 1 : 0);
+        if (menu == null || menuType != MenuType.GAME) {
+            return;
+        }
         if (!hasFocus) {
             CallbackBridge.resetInputState();
+            // 窗口失焦后系统会释放捕获并可能吞掉按键 UP，Java 侧状态一并复位防卡键
+            menu.getInput().resetExternalMouseState();
+        } else {
+            menu.getInput().ensurePointerCapture();
         }
     }
 
