@@ -107,6 +107,8 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
         this.executor = executor;
 
         if (executor != null) {
+            // 多次接入执行器时（如启动协程分段绑定补全任务）释放上一个任务列表，避免监听与视图树残留
+            if (taskListPane != null) taskListPane.release();
             if (autoClose) {
                 autoCloseListener = new TaskListener() {
                     @Override
