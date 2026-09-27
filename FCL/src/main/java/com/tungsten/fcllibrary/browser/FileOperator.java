@@ -21,7 +21,7 @@ import java.util.logging.Level;
 public class FileOperator {
 
     /**
-     * 列出目录内容：目录排前，再按指定方式排序；可选择过滤隐藏文件与后缀
+     * 列出目录内容：目录恒排前，组内按指定方式排序；可选择过滤隐藏文件与后缀
      */
     public static List<File> getFileList(Path path, FileBrowser fileBrowser, SortMode sortMode, boolean showHidden) {
         List<File> list = new ArrayList<>();
@@ -30,8 +30,8 @@ public class FileOperator {
         if (!showHidden) {
             rawList.removeIf(file -> file.getName().startsWith("."));
         }
-        rawList.sort(DirectoryFileComparator.DIRECTORY_COMPARATOR);
         rawList.sort(getComparator(sortMode));
+        rawList.sort(DirectoryFileComparator.DIRECTORY_COMPARATOR);
         List<File> filterList = new ArrayList<>();
         if (!fileBrowser.getSuffix().isEmpty()) {
             for (File file : rawList) {
