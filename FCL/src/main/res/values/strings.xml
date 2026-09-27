@@ -582,6 +582,8 @@
     <string name="launch_failed">Unable to launch</string>
     <string name="launch_failed_download_library">Unable to download library %s.</string>
 
+    <string name="launch_state_version">Parsing version</string>
+    <string name="launch_state_mods">Scanning mods</string>
     <string name="launch_state_dependencies">Resolving dependencies</string>
     <string name="launch_state_modpack">Downloading dependencies</string>
     <string name="launch_state_java">Checking Java version</string>
