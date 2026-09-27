@@ -2,6 +2,8 @@ package com.tungsten.fcl.control;
 
 import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.mapBindingToKeycode;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Choreographer;
 import android.view.InputDevice;
 import android.view.KeyEvent;
@@ -16,6 +18,7 @@ import com.tungsten.fcl.game.sdl.GamepadModePromptDialog;
 import com.tungsten.fcl.game.sdl.SdlBridge;
 import com.tungsten.fcl.game.sdl.SdlSettings;
 import com.tungsten.fcl.setting.GameOption;
+import com.tungsten.fcl.setting.MenuSetting;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
@@ -27,6 +30,7 @@ import org.libsdl.app.SDLActivity;
 import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class FCLInput implements View.OnCapturedPointerListener {
 
@@ -60,6 +64,34 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     @NonNull
     private final GameMenu menu;
+
+    // 鼠标键按下状态（MOUSE_MAP 的键）。系统把右键/中键转换成 BACK/HOME 的 KeyEvent
+    // 与原始按键的 MotionEvent 可能在部分设备上先后到达，按状态机去重，同一物理动作只投递一次
+    private final Map<Integer, Boolean> mouseButtonState = new HashMap<>();
+    private int lastExternalMouseButtons;
+
+    // 指针捕获看门狗：requestPointerCapture 无返回值，失败是静默的；IME 弹出、对话框、
+    // 模拟器注入时序等都会让捕获静默丢失且无人恢复，只能周期检查 hasPointerCapture 重试
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private static final long CAPTURE_RETRY_FAST_MS = 500;
+    private static final long CAPTURE_RETRY_SLOW_MS = 2000;
+    private static final int CAPTURE_MAX_FAST_RETRIES = 3;
+    private boolean captureWatchdogRunning;
+    private int captureRetryCount;
+
+    /** 手动捕获接管：快捷键切换后的意图，覆盖自动策略，游戏光标模式变化时回归 AUTO */
+    private static final int MANUAL_CAPTURE_AUTO = 0;
+    private static final int MANUAL_CAPTURE_REQUEST = 1;
+    private static final int MANUAL_CAPTURE_RELEASE = 2;
+    private int manualCaptureIntent = MANUAL_CAPTURE_AUTO;
+    /**
+     * 持续请求捕获仍失败（部分模拟器/老设备不支持 pointer capture）时启用：
+     * 以悬停事件的绝对坐标差值近似相对位移驱动视角，光标到屏幕边缘差值归零会卡住，属降级体验
+     */
+    private boolean hoverFallbackEnabled;
+    private float lastHoverRawX;
+    private float lastHoverRawY;
+    private boolean lastHoverValid;
 
     public GameMenu getMenu() {
         return menu;
@@ -116,6 +148,9 @@ public class FCLInput implements View.OnCapturedPointerListener {
     public void sendKeyEvent(int keycode, int keyChar, boolean press) {
         if (menu.getBridge() != null) {
             if (MOUSE_MAP.containsKey(keycode) && MOUSE_MAP.get(keycode) != null) {
+                if (isDuplicateMouseButtonEvent(keycode, press)) {
+                    return;
+                }
                 menu.getBridge().pushEventMouseButton(MOUSE_MAP.get(keycode), press);
             } else {
                 int code = LwjglKeycodeMap.convertKeycode(keycode);
@@ -125,6 +160,35 @@ public class FCLInput implements View.OnCapturedPointerListener {
                 menu.getBridge().pushEventKey(keycode, keyChar, press);
             }
         }
+    }
+
+    private boolean isDuplicateMouseButtonEvent(int keycode, boolean press) {
+        // 仅按键参与去重：滚轮是瞬时事件只有 press，进状态机会把后续滚动滤掉
+        if (keycode != MOUSE_LEFT && keycode != MOUSE_MIDDLE && keycode != MOUSE_RIGHT) {
+            return false;
+        }
+        Boolean pressed = mouseButtonState.get(keycode);
+        if (pressed != null && pressed == press) {
+            return true;
+        }
+        mouseButtonState.put(keycode, press);
+        return false;
+    }
+
+    /**
+     * 光标模式切换或切后台时复位：丢弃悬停触摸的按键快照，并把仍视为按下的鼠标键补发释放，
+     * 防止事件来源在切换中丢失（捕获抢走触摸、窗口失焦吞掉 UP）造成卡键
+     */
+    public void resetExternalMouseState() {
+        if (menu.getBridge() != null) {
+            for (Integer keycode : MOUSE_MAP.keySet()) {
+                if (Boolean.TRUE.equals(mouseButtonState.get(keycode))) {
+                    menu.getBridge().pushEventMouseButton(MOUSE_MAP.get(keycode), false);
+                }
+            }
+        }
+        mouseButtonState.clear();
+        lastExternalMouseButtons = 0;
     }
 
     public void sendBoundKeyEvent(GameOption option, String binding, int defaultKeycode, boolean press) {
@@ -159,14 +223,103 @@ public class FCLInput implements View.OnCapturedPointerListener {
         view.setFocusableInTouchMode(true);
         view.setOnCapturedPointerListener(this);
         view.getViewTreeObserver().addOnWindowFocusChangeListener(hasFocus -> {
-            if (!menu.getMenuSetting().isPhysicalMouseMode()) {
-                view.requestPointerCapture();
+            if (hasFocus && !menu.getMenuSetting().isPhysicalMouseMode()) {
+                tryCapturePointer(view);
             }
         });
         view.requestFocus();
 
         this.focusableView = view;
+        startCaptureWatchdog();
     }
+
+    private void tryCapturePointer(View view) {
+        // 窗口焦点刚切回或 view 未挂载时请求会被 InputDispatcher 静默拒绝，
+        // 包一层防御；失败后由看门狗周期重试兜底
+        // 手动释放接管时不自动请求
+        if (manualCaptureIntent == MANUAL_CAPTURE_RELEASE) {
+            return;
+        }
+        if (view.isAttachedToWindow() && view.hasWindowFocus() && !view.hasPointerCapture()) {
+            try {
+                view.requestPointerCapture();
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
+    public void ensurePointerCapture() {
+        View view = focusableView;
+        if (view == null || menu.getMenuSetting().isPhysicalMouseMode()) {
+            return;
+        }
+        tryCapturePointer(view);
+    }
+
+    public void startCaptureWatchdog() {
+        if (captureWatchdogRunning) {
+            return;
+        }
+        captureWatchdogRunning = true;
+        mainHandler.postDelayed(captureWatchdog, CAPTURE_RETRY_FAST_MS);
+    }
+
+    public void stopCaptureWatchdog() {
+        captureWatchdogRunning = false;
+        mainHandler.removeCallbacks(captureWatchdog);
+    }
+
+    private final Runnable captureWatchdog = new Runnable() {
+        @Override
+        public void run() {
+            View view = focusableView;
+            if (view == null || !view.isAttachedToWindow()
+                    || menu.getActivity().isDestroyed() || menu.getActivity().isFinishing()) {
+                captureWatchdogRunning = false;
+                return;
+            }
+            // 手动接管优先；否则实体鼠标模式仅游戏捕获视角期间（CursorDisabled）需要捕获，
+            // 菜单态用系统指针；默认模式始终捕获。漏掉 cursorMode 判断会把游戏内刚建立的捕获又释放掉
+            boolean captureWanted;
+            if (manualCaptureIntent == MANUAL_CAPTURE_REQUEST) {
+                captureWanted = true;
+            } else if (manualCaptureIntent == MANUAL_CAPTURE_RELEASE) {
+                captureWanted = false;
+            } else {
+                captureWanted = !menu.getMenuSetting().isPhysicalMouseMode()
+                        || menu.getCursorMode() == FCLBridge.CursorDisabled;
+            }
+            long nextDelay;
+            if (!captureWanted) {
+                hoverFallbackEnabled = false;
+                captureRetryCount = 0;
+                if (view.hasPointerCapture()) {
+                    view.releasePointerCapture();
+                }
+                nextDelay = CAPTURE_RETRY_SLOW_MS;
+            } else if (view.hasPointerCapture()) {
+                captureRetryCount = 0;
+                hoverFallbackEnabled = false;
+                lastHoverValid = false;
+                nextDelay = CAPTURE_RETRY_SLOW_MS;
+            } else {
+                if (view.hasWindowFocus()) {
+                    try {
+                        view.requestPointerCapture();
+                    } catch (Throwable ignored) {
+                    }
+                }
+                captureRetryCount++;
+                if (captureRetryCount > CAPTURE_MAX_FAST_RETRIES) {
+                    hoverFallbackEnabled = true;
+                    nextDelay = CAPTURE_RETRY_SLOW_MS;
+                } else {
+                    nextDelay = CAPTURE_RETRY_FAST_MS;
+                }
+            }
+            mainHandler.postDelayed(this, nextDelay);
+        }
+    };
 
     public boolean handleExternalMouseEvent(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_BUTTON_PRESS || event.getActionMasked() == MotionEvent.ACTION_BUTTON_RELEASE) {
@@ -211,24 +364,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
                 deltaX = (int) (lastAxisZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
                 deltaY = (int) (lastAxisRZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
             }
-            if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-                int targetX = (int) Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * menu.getMenuSetting().getMouseSensitivityCursor()));
-                int targetY = (int) Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY * menu.getMenuSetting().getMouseSensitivityCursor()));
-                setPointerId(EXTERNAL_MOUSE_ID);
-                setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
-                setPointerId(null);
-            } else {
-                int targetX = menu.getPointerX() + deltaX;
-                int targetY = menu.getPointerY() + deltaY;
-                if (menu.getMenuSetting().isEnableGyroscope()) {
-                    menu.setPointerX(targetX);
-                    menu.setPointerY(targetY);
-                } else {
-                    setPointerId(EXTERNAL_MOUSE_ID);
-                    setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
-                    setPointerId(null);
-                }
-            }
+            applyPointerDelta(deltaX, deltaY);
         }
         if (event != null) {
             return handleExternalMouseEvent(event);
@@ -236,8 +372,34 @@ public class FCLInput implements View.OnCapturedPointerListener {
         return false;
     }
 
+    private void applyPointerDelta(int deltaX, int deltaY) {
+        if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
+            int targetX = (int) Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * menu.getMenuSetting().getMouseSensitivityCursor()));
+            int targetY = (int) Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY * menu.getMenuSetting().getMouseSensitivityCursor()));
+            setPointerId(EXTERNAL_MOUSE_ID);
+            setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
+            setPointerId(null);
+        } else {
+            int targetX = menu.getPointerX() + deltaX;
+            int targetY = menu.getPointerY() + deltaY;
+            if (menu.getMenuSetting().isEnableGyroscope()) {
+                menu.setPointerX(targetX);
+                menu.setPointerY(targetY);
+            } else {
+                setPointerId(EXTERNAL_MOUSE_ID);
+                setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
+                setPointerId(null);
+            }
+        }
+    }
+
 
     public boolean handleKeyEvent(KeyEvent event) {
+        // 快捷键绑定监听中：吞掉所有按键交给 GameMenu 记录，BACK 取消
+        if (menu.isKeyBindListening()) {
+            menu.handleKeyBindCaptured(event);
+            return true;
+        }
         int fclKeycode = AndroidKeycodeMap.convertKeycode(event.getKeyCode());
         if (event.getKeyCode() == KeyEvent.KEYCODE_UNKNOWN || event.getAction() == KeyEvent.ACTION_MULTIPLE)
             return true;
@@ -245,12 +407,11 @@ public class FCLInput implements View.OnCapturedPointerListener {
             return false;
         if (event.getAction() == KeyEvent.ACTION_UP && (event.getFlags() & KeyEvent.FLAG_CANCELED) != 0)
             return true;
-        //mouse button right
-        if (event.getDevice() != null && ((event.getSource() & InputDevice.SOURCE_MOUSE_RELATIVE) == InputDevice.SOURCE_MOUSE_RELATIVE || (event.getSource() & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE)) {
-            if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-                sendKeyEvent(MOUSE_RIGHT, event.getAction() == KeyEvent.ACTION_DOWN);
-                return true;
-            }
+        //mouse button right：部分 ROM/模拟器在 InputReader 层把鼠标右键转换成 BACK，
+        //来源标记也可能被改写成纯键盘，回查设备能力兜底
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK && isMouseOriginatedEvent(event)) {
+            sendKeyEvent(MOUSE_RIGHT, event.getAction() == KeyEvent.ACTION_DOWN);
+            return true;
         }
         //soft keyboard enter
         if ((event.getFlags() & KeyEvent.FLAG_SOFT_KEYBOARD) == KeyEvent.FLAG_SOFT_KEYBOARD) {
@@ -259,13 +420,20 @@ public class FCLInput implements View.OnCapturedPointerListener {
             menu.getTouchCharInput().dispatchKeyEvent(event);
             return true;
         }
-        // shift + enter switch soft keyboard state
-        if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && KeyEvent.metaStateHasModifiers(event.getMetaState(), KeyEvent.META_SHIFT_ON)) {
-            if (event.getAction() == KeyEvent.ACTION_UP) {
-                menu.getTouchCharInput().switchKeyboardState();
-                menu.getInput().sendKeyEvent(FCLKeycodes.KEY_RIGHTSHIFT, false);
+        // 自定义快捷键（右菜单鼠标页可配）：指针捕获切换 / 输入法呼出，在转发游戏前拦截
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+            if (matchesHotkey(event, menu.getMenuSetting().getCapturePointerKey(), menu.getMenuSetting().getCapturePointerModifier())) {
+                togglePointerCapture();
+                return true;
             }
-            return true;
+            if (matchesHotkey(event, menu.getMenuSetting().getImeToggleKey(), menu.getMenuSetting().getImeToggleModifier())) {
+                menu.getTouchCharInput().switchKeyboardState();
+                // shift 修饰呼出软键盘后复位游戏内的 shift 按住状态，避免潜行残留
+                if (menu.getMenuSetting().getImeToggleModifier() == MenuSetting.HOTKEY_MOD_SHIFT) {
+                    sendKeyEvent(FCLKeycodes.KEY_RIGHTSHIFT, false);
+                }
+                return true;
+            }
         }
         if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
             if (event.getAction() == KeyEvent.ACTION_UP) {
@@ -302,6 +470,78 @@ public class FCLInput implements View.OnCapturedPointerListener {
         return true;
     }
 
+    /**
+     * 快捷键匹配：事件键码经 AndroidKeycodeMap 换算后与配置一致，
+     * 修饰键按 metaState 精确匹配（不允许携带其它修饰键）
+     */
+    private boolean matchesHotkey(KeyEvent event, int fclKeycode, int modifier) {
+        if (fclKeycode == 0 || fclKeycode == FCLKeycodes.KEY_UNKNOWN) {
+            return false;
+        }
+        if (AndroidKeycodeMap.convertKeycode(event.getKeyCode()) != fclKeycode) {
+            return false;
+        }
+        int meta;
+        switch (modifier) {
+            case MenuSetting.HOTKEY_MOD_SHIFT:
+                meta = KeyEvent.META_SHIFT_ON;
+                break;
+            case MenuSetting.HOTKEY_MOD_CTRL:
+                meta = KeyEvent.META_CTRL_ON;
+                break;
+            case MenuSetting.HOTKEY_MOD_ALT:
+                meta = KeyEvent.META_ALT_ON;
+                break;
+            default:
+                meta = 0;
+                break;
+        }
+        return KeyEvent.metaStateHasModifiers(event.getMetaState(), meta);
+    }
+
+    /**
+     * 主动切换 Android 指针捕获（不同步游戏的 grab 状态）：已捕获则释放，未捕获则请求。
+     * 切换后进入手动接管，看门狗与自动捕获路径维持该意图，游戏光标模式变化时回归自动
+     */
+    public void togglePointerCapture() {
+        View view = focusableView;
+        if (view == null) {
+            return;
+        }
+        if (view.hasPointerCapture()) {
+            manualCaptureIntent = MANUAL_CAPTURE_RELEASE;
+            view.releasePointerCapture();
+        } else {
+            manualCaptureIntent = MANUAL_CAPTURE_REQUEST;
+            try {
+                view.requestPointerCapture();
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
+    /** 游戏光标模式变化（进入/退出视角捕获）后回归自动捕获管理 */
+    public void resetManualCaptureControl() {
+        manualCaptureIntent = MANUAL_CAPTURE_AUTO;
+    }
+
+    private boolean isMouseOriginatedEvent(KeyEvent event) {
+        int source = event.getSource();
+        if ((source & InputDevice.SOURCE_MOUSE_RELATIVE) != 0
+                || (source & InputDevice.SOURCE_MOUSE) != 0) {
+            return true;
+        }
+        // 仅对 BACK 键回查：设备带鼠标能力且不带键盘能力时（键鼠套装的键盘仍按键盘处理），
+        // 该 BACK 大概率是系统由右键转换而来
+        InputDevice device = event.getDevice();
+        if (device == null) {
+            return false;
+        }
+        int sources = device.getSources();
+        return (sources & InputDevice.SOURCE_MOUSE) != 0
+                && (sources & InputDevice.SOURCE_KEYBOARD) == 0;
+    }
+
     public boolean handleGenericMotionEvent(MotionEvent event) {
         if (menu.isGamepadControl() && Gamepad.isGamepadEvent(event)) {
             // 首次手柄输入时弹窗选择输入模式，确认前吞掉手柄输入
@@ -332,13 +572,81 @@ public class FCLInput implements View.OnCapturedPointerListener {
                 choreographer.postFrameCallback(frameCallback);
             }
             return gamepad.handleMotionEventInput(event);
-        } else if (event.getSource() == InputDevice.SOURCE_MOUSE && event.getActionMasked() == MotionEvent.ACTION_SCROLL) {
-            for (int i = 0; i < Math.abs((int) event.getAxisValue(MotionEvent.AXIS_VSCROLL)); i++) {
-                sendKeyEvent(event.getAxisValue(MotionEvent.AXIS_VSCROLL) > 0 ? MOUSE_SCROLL_UP : MOUSE_SCROLL_DOWN, true);
+        } else if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+            int action = event.getActionMasked();
+            // 鼠标按键统一在入口层处理，不依赖事件命中的控件；捕获路径已投递的
+            // 部分由 isDuplicateMouseButtonEvent 去重
+            if (action == MotionEvent.ACTION_BUTTON_PRESS || action == MotionEvent.ACTION_BUTTON_RELEASE) {
+                return handleExternalMouseEvent(event);
             }
-            return true;
+            if (action == MotionEvent.ACTION_SCROLL) {
+                for (int i = 0; i < Math.abs((int) event.getAxisValue(MotionEvent.AXIS_VSCROLL)); i++) {
+                    sendKeyEvent(event.getAxisValue(MotionEvent.AXIS_VSCROLL) > 0 ? MOUSE_SCROLL_UP : MOUSE_SCROLL_DOWN, true);
+                }
+                return true;
+            }
+            if (action == MotionEvent.ACTION_HOVER_MOVE) {
+                if (menu.getMenuSetting().isPhysicalMouseMode() && menu.getCursorMode() == FCLBridge.CursorEnabled) {
+                    // 实体鼠标模式：系统指针的绝对坐标直接驱动光标
+                    setPointer((int) event.getRawX(), (int) event.getRawY());
+                    return true;
+                }
+                if (hoverFallbackEnabled) {
+                    applyHoverFallbackDelta(event);
+                    return true;
+                }
+            }
         }
         return false;
+    }
+
+    /**
+     * 指针捕获持续失败的设备上以悬停坐标差值近似相对位移；
+     * 捕获一旦恢复，悬停事件不再产生，无需额外切换
+     */
+    private void applyHoverFallbackDelta(MotionEvent event) {
+        float rawX = event.getRawX();
+        float rawY = event.getRawY();
+        if (!lastHoverValid) {
+            lastHoverRawX = rawX;
+            lastHoverRawY = rawY;
+            lastHoverValid = true;
+            return;
+        }
+        int deltaX = (int) ((rawX - lastHoverRawX) * menu.getMenuSetting().getMouseSensitivity());
+        int deltaY = (int) ((rawY - lastHoverRawY) * menu.getMenuSetting().getMouseSensitivity());
+        lastHoverRawX = rawX;
+        lastHoverRawY = rawY;
+        if (deltaX != 0 || deltaY != 0) {
+            applyPointerDelta(deltaX, deltaY);
+        }
+    }
+
+    /**
+     * 未捕获的外接鼠标点击以普通 touch 事件到达（没有 BUTTON_PRESS），按 buttonState
+     * 的变化补齐按键投递；与系统转换出的 KeyEvent 共用 {@link #isDuplicateMouseButtonEvent} 去重，
+     * 双路同时到达的设备只生效一次
+     */
+    public void handleExternalTouchButtons(MotionEvent event) {
+        int action = event.getActionMasked();
+        if (action != MotionEvent.ACTION_DOWN && action != MotionEvent.ACTION_UP
+                && action != MotionEvent.ACTION_CANCEL && action != MotionEvent.ACTION_POINTER_DOWN
+                && action != MotionEvent.ACTION_POINTER_UP) {
+            return;
+        }
+        int buttonState = action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL
+                ? 0 : event.getButtonState();
+        int changed = lastExternalMouseButtons ^ buttonState;
+        lastExternalMouseButtons = buttonState;
+        if ((changed & MotionEvent.BUTTON_PRIMARY) != 0) {
+            sendKeyEvent(MOUSE_LEFT, (buttonState & MotionEvent.BUTTON_PRIMARY) != 0);
+        }
+        if ((changed & MotionEvent.BUTTON_SECONDARY) != 0) {
+            sendKeyEvent(MOUSE_RIGHT, (buttonState & MotionEvent.BUTTON_SECONDARY) != 0);
+        }
+        if ((changed & MotionEvent.BUTTON_TERTIARY) != 0) {
+            sendKeyEvent(MOUSE_MIDDLE, (buttonState & MotionEvent.BUTTON_TERTIARY) != 0);
+        }
     }
 
     public void handleLeftJoyStick(float xAxis, float yAxis) {

@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -64,6 +65,7 @@ import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
+import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -510,6 +512,11 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             }
 
             @Override
+            public void onKeyBindClick(@NonNull RightMenuTag tag) {
+                startKeyBindListen(tag);
+            }
+
+            @Override
             public void onSeekBarChange(@NonNull RightMenuTag tag, int progress) {
                 handleRightSeekBarChange(tag, progress);
             }
@@ -853,11 +860,14 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, true);
             fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, false);
         }
+        fclInput.stopCaptureWatchdog();
+        fclInput.resetExternalMouseState();
         gyroscope.disableSensor();
     }
 
     @Override
     public void onResume() {
+        fclInput.startCaptureWatchdog();
         if (menuSetting != null && menuSetting.isEnableGyroscope() && gyroscope != null) {
             gyroscope.enableSensor();
         }
@@ -879,6 +889,10 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 return;
             lastCursorMode = mode;
             this.cursorModeProperty.set(mode);
+            // 模式切换点事件来源会丢失（捕获抢走触摸等），先复位鼠标键防卡键；
+            // 手动捕获接管同步回归自动管理
+            getInput().resetExternalMouseState();
+            getInput().resetManualCaptureControl();
             if (mode == FCLBridge.CursorEnabled) {
                 getCursor().setVisibility(View.VISIBLE);
                 gameItemBar.setVisibility(View.GONE);
@@ -886,6 +900,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 if (menuSetting.isPhysicalMouseMode()) {
                     getInput().getFocusableView().releasePointerCapture();
                     getInput().getFocusableView().clearFocus();
+                } else {
+                    // 游戏退出捕获时系统可能顺带释放 pointer capture，立即补回
+                    getInput().ensurePointerCapture();
                 }
             } else {
                 getCursor().setVisibility(View.GONE);
@@ -895,6 +912,8 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 if (menuSetting.isPhysicalMouseMode()) {
                     getInput().getFocusableView().requestFocus();
                     getInput().getFocusableView().requestPointerCapture();
+                } else {
+                    getInput().ensurePointerCapture();
                 }
             }
         });
@@ -1168,6 +1187,56 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             menuSetting.setMouseMoveMode(MouseMoveMode.getById(position));
         } else if (tag == RightMenuTag.GAMEPAD_INPUT_MODE) {
             SdlSettings.setGamepadInputMode(GamepadInputMode.values()[position]);
+        } else if (tag == RightMenuTag.CAPTURE_POINTER_MODIFIER) {
+            menuSetting.setCapturePointerModifier(position);
+        } else if (tag == RightMenuTag.IME_TOGGLE_MODIFIER) {
+            menuSetting.setImeToggleModifier(position);
+        }
+    }
+
+    /** 正在等待快捷键绑定按键时为对应菜单项，null 表示未监听 */
+    @Nullable
+    private RightMenuTag keyBindListeningTag;
+
+    /** 快捷键设置行点击：进入按键监听，下一个按下的物理键即被绑定 */
+    private void startKeyBindListen(@NonNull RightMenuTag tag) {
+        keyBindListeningTag = tag;
+        Toast.makeText(activity, R.string.key_bind_listening, Toast.LENGTH_SHORT).show();
+    }
+
+    public boolean isKeyBindListening() {
+        return keyBindListeningTag != null;
+    }
+
+    /**
+     * 按键监听期间由 FCLInput 在分发最前调用，消费所有按键；
+     * BACK 取消绑定，无法识别的键忽略继续等待
+     */
+    public void handleKeyBindCaptured(@NonNull KeyEvent event) {
+        if (event.getAction() != KeyEvent.ACTION_UP) {
+            return;
+        }
+        RightMenuTag tag = keyBindListeningTag;
+        keyBindListeningTag = null;
+        if (tag == null) {
+            return;
+        }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            return;
+        }
+        int fclKeycode = AndroidKeycodeMap.convertKeycode(event.getKeyCode());
+        if (fclKeycode == FCLKeycodes.KEY_UNKNOWN) {
+            Toast.makeText(activity, R.string.key_bind_unknown, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (tag == RightMenuTag.CAPTURE_POINTER_KEY) {
+            menuSetting.setCapturePointerKey(fclKeycode);
+        } else if (tag == RightMenuTag.IME_TOGGLE_KEY) {
+            menuSetting.setImeToggleKey(fclKeycode);
+        }
+        Toast.makeText(activity, activity.getString(R.string.key_bind_done, RightMenuAdapter.keycodeName(fclKeycode)), Toast.LENGTH_SHORT).show();
+        if (rightMenuAdapter != null) {
+            rightMenuAdapter.rebuild();
         }
     }
 

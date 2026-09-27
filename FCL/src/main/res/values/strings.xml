@@ -660,6 +660,16 @@
     <string name="menu_settings_mouse_offset_x">Mouse Offset X</string>
     <string name="menu_settings_mouse_offset_y">Mouse Offset Y</string>
     <string name="menu_settings_physical_mouse_mode">Physical Mouse</string>
+    <string name="menu_settings_capture_pointer_key">Capture Pointer Key</string>
+    <string name="menu_settings_ime_toggle_key">IME Toggle Key</string>
+    <string name="menu_settings_key_modifier">Modifier Key</string>
+    <string name="key_modifier_none">None</string>
+    <string name="key_modifier_shift">Shift</string>
+    <string name="key_modifier_ctrl">Ctrl</string>
+    <string name="key_modifier_alt">Alt</string>
+    <string name="key_bind_listening">Press a key to bind (BACK to cancel)</string>
+    <string name="key_bind_unknown">Unrecognized key, try another</string>
+    <string name="key_bind_done">Bound to %1$s</string>
     <string name="menu_settings_gamepad">GamePad</string>
     <string name="menu_settings_gamepad_control">Gamepad Control</string>
     <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>
