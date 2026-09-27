@@ -2,11 +2,9 @@ package com.tungsten.fcl.game;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonObject;
 import com.tungsten.fclcore.download.MaintainTask;
 import com.tungsten.fclcore.game.Arguments;
-import com.tungsten.fclcore.game.GameJavaVersion;
 import com.tungsten.fclcore.game.Library;
 import com.tungsten.fclcore.game.Version;
 import com.tungsten.fclcore.mod.LocalModFile;
@@ -25,7 +23,6 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
@@ -42,12 +39,18 @@ import org.jetbrains.annotations.Nullable;
  * <p>
  * lwjgl3ify 3.x 的 jar 内嵌了一份完整的 version.json（RetroFuturaBootstrap 主类、
  * Java 17+ 的 --add-opens JVM 参数以及 Forge 1.7.10 全量依赖库）。
- * 启动前检测实例 mods 目录中的 lwjgl3ify，将这份 version.json 合并进实例版本并落盘，
+ * 启动前检测实例 mods 目录中的 lwjgl3ify，将这份 version.json 合并进内存中的启动版本，
  * 使其以 RFB 入口 + Java 17+ 启动，而不是原有的纯净 1.7.10 / Forge 版本。
+ * 合并结果不落盘：磁盘版本 JSON 始终保持纯净，补丁随 mods 目录自动生效或失效，
+ * 补丁依赖库的下载与校验由启动链现有的 checkGameCompletionAsync 按内存版本闭包完成。
+ * 代价是其他启动器无法直接启动打过补丁的实例（磁盘上没有 RFB 入口）。
  * <p>
  * 3.x 的内嵌 version.json 已为各库自带正确的下载地址；仅当个别库缺地址
  * （旧版 lwjgl3ify）时按 groupId 重写 Maven 源兜底，并优先从 jar 内嵌的
  * forgePatches.zip 还原 com.github.GTNewHorizons:lwjgl3ify:*:forgePatches（离线可用）。
+ * <p>
+ * 历史版本曾把合并结果落盘（并备份原 JSON 为 *.before-lwjgl3ify）；对这类存量实例，
+ * 移除 lwjgl3ify 后仍会从备份还原磁盘 JSON（见 {@link #restoreIfNeeded}）。
  */
 public final class Lwjgl3ifyPatcher {
 
@@ -62,6 +65,7 @@ public final class Lwjgl3ifyPatcher {
 
     /**
      * 在启动流程最早处调用（MaintainTask 之后、Java 选择与依赖补全之前）。
+     * 仅改写内存版本对象，不修改磁盘版本 JSON。
      * mods 为启动链已扫描的 mod 列表，null 时自行扫描。
      */
     public static void patchIfNeeded(@NotNull FCLGameRepository repository,
@@ -72,7 +76,7 @@ public final class Lwjgl3ifyPatcher {
             Version current = versionRef.get();
             LocalModFile lwjgl3ifyMod = findLwjgl3ifyMod(repository, versionId, mods);
             if (lwjgl3ifyMod == null) {
-                // RFB 入口残留会让实例无法启动，从备份还原
+                // 历史落盘补丁的存量实例：RFB 入口残留会让实例无法启动，从备份还原
                 restoreIfNeeded(repository, versionId, versionRef);
                 return;
             }
@@ -90,23 +94,11 @@ public final class Lwjgl3ifyPatcher {
             }
             ensureLwjgl3ifyConfig(new File(repository.getRunDirectory(versionId), "config"));
 
-            if (isPatchedWith(current, embedded)) {
-                // 已合并过同一版本，但需确保磁盘 JSON 不含 resolved 版本残留的 root/patches 字段，
-                // 否则 resolve() 会走合成根分支丢失 mainClass，导致 isModded 误判
-                cleanVersionJsonOnDisk(repository.getVersionJson(versionId));
-                // 早期补丁产物可能遗留与内嵌声明不一致的 Java 版本要求（历史兼容限制），对齐内嵌声明
-                syncDiskJavaVersionIfNeeded(repository, versionId, versionRef, embedded);
-                return;
-            }
-
             Version patched = patchVersion(current, embedded);
             if (patched == null) return;
 
-            backupOriginalVersionJson(repository.getVersionJson(versionId));
-            writeCleanVersionJson(repository.getVersionJson(versionId), patched);
-            repository.reloadVersionFromDisk(versionId);
             versionRef.set(patched);
-            LOG.log(Level.INFO, "Patched version " + versionId + " with lwjgl3ify from " + lwjgl3ifyJar.getName()
+            LOG.log(Level.INFO, "Merged lwjgl3ify from " + lwjgl3ifyJar.getName() + " into in-memory version " + versionId
                     + ", mainClass=" + patched.getMainClass()
                     + ", java=" + (patched.getJavaVersion() == null ? null : patched.getJavaVersion().getMajorVersion()));
         } catch (Throwable e) {
@@ -116,7 +108,7 @@ public final class Lwjgl3ifyPatcher {
     }
 
     /**
-     * 版本仍为 RFB 入口且备份存在时，从备份还原版本 JSON。
+     * 历史落盘补丁的存量实例：版本仍为 RFB 入口且备份存在时，从备份还原版本 JSON。
      * 还原后按启动链原有流程（resolve + MaintainTask.maintain）重建内存版本对象。
      */
     private static void restoreIfNeeded(FCLGameRepository repository, String versionId, AtomicReference<Version> versionRef) {
@@ -185,31 +177,6 @@ public final class Lwjgl3ifyPatcher {
         // 内嵌 version.json 的库列表即 1.7.10-Forge-lwjgl3ify 的完整闭包，整体替换
         result = result.setLibraries(patchLibraryUrls(embedded.getLibraries()));
         return result;
-    }
-
-    /**
-     * 对齐已落盘补丁产物的 Java 版本要求与内嵌声明：早期补丁可能遗留了不同的
-     * Java 版本要求，不一致时以内嵌声明修正并同步内存版本对象。
-     */
-    private static void syncDiskJavaVersionIfNeeded(FCLGameRepository repository, String versionId,
-                                                    @NotNull AtomicReference<Version> versionRef,
-                                                    @NotNull Version embedded) {
-        try {
-            if (embedded.getJavaVersion() == null) return;
-            Version current = versionRef.get();
-            GameJavaVersion diskJava = current.getJavaVersion();
-            GameJavaVersion embeddedJava = embedded.getJavaVersion();
-            if (diskJava != null && diskJava.getMajorVersion() == embeddedJava.getMajorVersion()) return;
-            Version fixed = current.setJavaVersion(embeddedJava);
-            writeCleanVersionJson(repository.getVersionJson(versionId), fixed);
-            repository.reloadVersionFromDisk(versionId);
-            versionRef.set(fixed);
-            LOG.log(Level.INFO, "Synced lwjgl3ify instance Java version "
-                    + (diskJava == null ? null : diskJava.getMajorVersion())
-                    + " -> " + embeddedJava.getMajorVersion() + " from embedded declaration");
-        } catch (Throwable e) {
-            LOG.log(Level.WARNING, "Failed to sync lwjgl3ify instance Java version", e);
-        }
     }
 
     /**
@@ -345,74 +312,6 @@ public final class Lwjgl3ifyPatcher {
         return false;
     }
 
-    /**
-     * 当前版本是否已经合并过同版本的 lwjgl3ify version.json。
-     */
-    private static boolean isPatchedWith(Version current, Version embedded) {
-        String mainClass = current.getMainClass();
-        if (mainClass == null || !mainClass.startsWith(RFB_MAIN_CLASS_PREFIX)) return false;
-        return findForgePatchesLibrary(embedded)
-                .map(library -> Objects.equals(library.getName(), getCurrentForgePatchesName(current)))
-                .orElse(false);
-    }
-
-    @Nullable
-    private static String getCurrentForgePatchesName(Version current) {
-        return current.getLibraries().stream()
-                .filter(library -> "com.github.GTNewHorizons".equals(library.getGroupId())
-                        && "lwjgl3ify".equals(library.getArtifactId())
-                        && "forgePatches".equals(library.getClassifier()))
-                .map(Library::getName)
-                .findFirst().orElse(null);
-    }
-
-
-    /**
-     * 首次合并前备份原版本 JSON（仅当备份不存在时创建，不覆盖已有备份），
-     * 便于用户在移除 lwjgl3ify 或合并不符合预期时手工恢复。
-     */
-    private static void backupOriginalVersionJson(File target) {
-        try {
-            File backup = new File(target.getParentFile(), target.getName() + ".before-lwjgl3ify");
-            if (target.isFile() && !backup.exists()) {
-                Files.copy(target.toPath(), backup.toPath());
-                LOG.log(Level.INFO, "Backed up original version json to " + backup.getName());
-            }
-        } catch (IOException e) {
-            LOG.log(Level.WARNING, "Failed to back up version json " + target, e);
-        }
-    }
-
-    /**
-     * 将版本写入磁盘并清除 resolved/maintained 版本对象携带的
-     * {@code root}/{@code patches} 字段：它们是内存合并的内部状态，
-     * 一旦写入 JSON 会让 {@code resolve()} 走合成根分支丢弃 mainClass 等关键字段。
-     */
-    private static void writeCleanVersionJson(File target, Version version) throws IOException {
-        JsonObject obj = JsonUtils.GSON.toJsonTree(version).getAsJsonObject();
-        obj.remove("root");
-        obj.remove("patches");
-        FileUtils.writeText(target, obj.toString());
-    }
-
-    /**
-     * 清理已存在磁盘版本 JSON 中的 resolved 残留字段（旧版本补丁产物）。
-     */
-    private static void cleanVersionJsonOnDisk(File target) {
-        try {
-            if (!target.isFile()) return;
-            JsonObject obj = JsonUtils.GSON.fromJson(FileUtils.readText(target), JsonObject.class);
-            if (obj == null) return;
-            boolean dirty = obj.remove("root") != null || obj.remove("patches") != null;
-            if (dirty) {
-                FileUtils.writeText(target, obj.toString());
-                LOG.log(Level.INFO, "Cleaned resolved leftovers (root/patches) from " + target);
-            }
-        } catch (IOException | JsonParseException e) {
-            LOG.log(Level.WARNING, "Failed to clean version json " + target, e);
-        }
-    }
-
     @Nullable
     private static Version readEmbeddedVersionJson(ZipFile zip) {
         try {
@@ -420,7 +319,7 @@ public final class Lwjgl3ifyPatcher {
             if (entry == null) return null;
             String text = readText(zip.getInputStream(entry));
             return JsonUtils.fromNonNullJson(text, Version.class);
-        } catch (IOException | JsonParseException e) {
+        } catch (IOException e) {
             LOG.log(Level.WARNING, "Cannot read lwjgl3ify relauncher version.json from " + zip.getName(), e);
             return null;
         }

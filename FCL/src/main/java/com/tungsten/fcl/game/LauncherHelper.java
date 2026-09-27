@@ -167,7 +167,7 @@ public final class LauncherHelper {
                     // 全量 mod 扫描一次，供 lwjgl3ify 补丁、modloader 与渲染器检查共用
                     List<LocalModFile> scannedMods = scanMods(repository, selectedVersion);
                     scannedModsRef.set(scannedMods);
-                    // GTNH/lwjgl3ify 兼容：mods 目录存在 lwjgl3ify 时改写版本 JSON，以 RFB + Java17+ 启动
+                    // GTNH/lwjgl3ify 兼容：mods 目录存在 lwjgl3ify 时在内存中合并 RFB 启动清单（不落盘），以 RFB + Java17+ 启动
                     Lwjgl3ifyPatcher.patchIfNeeded(repository, selectedVersion, scannedMods, version);
                     gameVersionRef.set(repository.getGameVersion(version.get()));
                     integrityCheckRef.set(repository.unmarkVersionLaunchedAbnormally(selectedVersion));
