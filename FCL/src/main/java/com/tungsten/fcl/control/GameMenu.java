@@ -372,7 +372,8 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     /**
      * 切换当前编辑组（含样式名重解析），并刷新控件组面板
      */
-    private void selectViewGroup(@Nullable ControlViewGroup viewGroup) {        setViewGroup(viewGroup);
+    private void selectViewGroup(@Nullable ControlViewGroup viewGroup) {
+        setViewGroup(viewGroup);
         if (viewGroup != null) {
             viewGroup.getViewData().buttonList().forEach(it -> {
                 String name = it.getStyle().getName();

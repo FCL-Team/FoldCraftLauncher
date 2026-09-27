@@ -168,7 +168,8 @@ private long loadDialogShowTime = 0;
     }
 
     /** 打开选中控件的编辑对话框（设置/复制/删除中的"设置"） */
-    private void openEditDialog() {        if (selectedView instanceof ControlButton) {
+    private void openEditDialog() {
+        if (selectedView instanceof ControlButton) {
             ControlButton button = (ControlButton) selectedView;
             EditViewDialog dialog = new EditViewDialog(gameMenu.getActivity(), button.getData().clone(), gameMenu, new EditViewDialog.Callback() {
                 @Override
