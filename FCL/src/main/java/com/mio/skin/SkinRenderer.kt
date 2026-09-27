@@ -170,6 +170,7 @@ class SkinRenderer(context: Context) {
         GLES20.glEnable(GLES20.GL_BLEND)
         GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA)
         texture[0]?.let { skinTextureId = uploadTexture(skinTextureId, it) }
+        texture[1]?.let { capeTextureId = uploadTexture(capeTextureId, it) }
     }
 
     fun onSurfaceChanged(width: Int, height: Int) {
