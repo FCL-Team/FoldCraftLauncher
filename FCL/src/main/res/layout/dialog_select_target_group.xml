@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="320dp"
+    android:padding="10dp"
+    android:orientation="vertical">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/title"
+        android:singleLine="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/select_target_group_title"
+        android:textSize="16sp"
+        android:layout_gravity="center"/>
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:divider="@null"/>
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/negative"
+        android:layout_gravity="end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_negative"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
