@@ -66,13 +66,46 @@ fun uploadLog(activity: AppCompatActivity, log: String) {
 }
 
 /**
- * 分享日志文件。合并写入时会从日志内容中自动查找 JVM 崩溃报告 hs_err 一并附带，
- * 并对 --accessToken 后的 token 做脱敏（与 latest_game.log 的 *** 一致）。
+ * 分享日志文件。默认从日志内容中自动查找 JVM 崩溃报告 hs_err 一并附带，
+ * 并对 --accessToken 后的 token 做脱敏（与 latest_game.log 的 *** 一致）；
+ * 超过 8 MB 的文件跳过处理直接分享原文件。文件处理在 IO 线程执行，避免大日志阻塞主线程。
  */
 fun shareLogFile(activity: AppCompatActivity, file: File) {
-    if (!file.exists()) return
+    activity.lifecycleScope.launch {
+        if (!withContext(Dispatchers.IO) { file.exists() }) return@launch
+        val merged = try {
+            withContext(Dispatchers.IO) {
+                if (file.length() <= MAX_SHARE_LOG_SIZE) createSharedLogFile(file) else null
+            }
+        } catch (e: Exception) {
+            Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
+            return@launch
+        }
+        try {
+            val uri = FileProvider.getUriForFile(activity, "${activity.packageName}.provider", merged ?: file)
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_STREAM, uri)
+            }
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            activity.startActivity(
+                Intent.createChooser(
+                    intent,
+                    activity.getString(R.string.crash_reporter_share)
+                )
+            )
+        } catch (e: Exception) {
+            Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+}
+
+/**
+ * 生成脱敏后的临时日志文件（含 hs_err 附加段）。
+ */
+private fun createSharedLogFile(file: File): File {
+    val merged = Files.createTempFile("fcl-latest-", ".log").toFile()
     try {
-        val merged = Files.createTempFile("fcl-latest-",".log").toFile()
         merged.bufferedWriter(Charsets.UTF_8).use { writer ->
             var hsErrFile: File? = null
             file.bufferedReader(Charsets.UTF_8).useLines { lines ->
@@ -94,20 +127,10 @@ fun shareLogFile(activity: AppCompatActivity, file: File) {
                 }
             }
         }
-        val uri = FileProvider.getUriForFile(activity, "${activity.packageName}.provider", merged)
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_STREAM, uri)
-        }
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        activity.startActivity(
-            Intent.createChooser(
-                intent,
-                activity.getString(R.string.crash_reporter_share)
-            )
-        )
+        return merged
     } catch (e: Exception) {
-        Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
+        merged.delete()
+        throw e
     }
 }
 
@@ -118,6 +141,9 @@ fun findFatalErrorLogPath(log: String): String? {
     val pattern = Regex("^\\s*#?\\s*(.*hs_err_pid\\d+\\.log.*)\\s*$", RegexOption.MULTILINE)
     return pattern.find(log)?.groupValues?.get(1)?.trim()
 }
+
+/** 可分享日志的大小上限（8 MB，与崩溃页上传路径一致）。 */
+private const val MAX_SHARE_LOG_SIZE = 8L * 1024 * 1024
 
 private val ACCESS_TOKEN_REGEX = Regex("--accessToken(?:\\s+|\\s*=\\s*)\\S+")
 
