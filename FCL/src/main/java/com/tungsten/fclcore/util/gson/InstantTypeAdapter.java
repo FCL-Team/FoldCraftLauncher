@@ -91,7 +91,7 @@ public final class InstantTypeAdapter implements JsonSerializer<Instant>, JsonDe
                         ZonedDateTime zonedDateTime = ZonedDateTime.parse(string, ISO_DATE_TIME);
                         return zonedDateTime.toInstant();
                     } catch (DateTimeParseException e3) {
-                        throw new JsonParseException("Invalid instant: " + string, e);
+                        throw new JsonParseException("Invalid instant: " + string, e3);
                     }
                 }
             }

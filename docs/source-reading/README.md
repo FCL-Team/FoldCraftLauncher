@@ -46,5 +46,6 @@ FCLApp（轻量 Application，仅跟踪 currentActivity）
 2. DownloadUI 与 FCLMultiPageUI 并存两套临时页栈（自维护 overlay 栈 vs 统一栈），跨 UI 弹栈时需注意调用侧（架构现状，保留）。
 3. 遗留坑处理情况：
     - 已修复：`OAuth.IS_CANCELED` 加 `volatile`（跨线程可见性；同一时刻仍仅支持一次设备码登录）；`GameMenu.initCursorView` 光标 Y 偏移误用 `getMouseOffsetX()` 笔误；favorite Room 库补 `MIGRATION_1_2` 正式迁移并移除破坏式重建；`ClassicAccountLoginDialog` 由空壳补全为密码重登弹窗（原实现回调永不触发，`AccountListItem.logIn` 的 `latch.await()` 会永久阻塞）；删除死代码 DocIndex/DocCategoryAdapter/ArticleAdapter 及孤儿布局 item_article；`LwjglKeycodeMap` 删除重复的 KEY_3 添加；`CacheRepository.storages` 改 `ConcurrentHashMap` 消除读锁内 computeIfAbsent 写竞态。
-    - 待做：fakefx 约 1/5 死代码（event 整包、JavaBean 适配链、converter 等，约 9500 行）建议单独一轮删除并整机回归，未在本次处理。
+    - 已修复：fakefx 死代码第一轮（0ac88547a，字节码可达性分析删 113/322 类：event 整包、JavaBean 适配链、converter、FxGson 等，模拟器实测通过）；`ModrinthInstallTask` 读旧配置 TypeToken 误用 `CurseManifest`（Modrinth 整合包更新必 CCE 回滚）；`GameOption` 静态 `parameterMap`/`FileObserver` 多实例互相覆盖（改实例级、监听者注册时才启动观察者）；`ControlDirectionData.equals` 参数类型笔误；`InstantTypeAdapter` 最内层 catch 误引外层异常变量；`EventBus.fireEvent` INFO 日志降 FINE。
+    - 暂缓：fakefx 剩余"仅 Bindings 内部可达"类（When/ListBinding 族、ObservableArray 族、StringFormatter、Subscription 等）深嵌在 Bindings/Expression API 面内，删除需连带改动数十个互依文件，收益低回归风险高，不再单独立项。
 4. 非显然行为（设计使然，非 bug）：`GameVersionNumber` 依赖类加载时解析 versions.txt 建静态表（首次触达成本高）；`HttpRequest` 的 GET 不校验状态码（Modrinth SHA-1 反查依赖此行为，不可改）；`OSRestriction.allow()` 恒 false 使所有带 OS 规则的库一律不适用（Android 特化）。

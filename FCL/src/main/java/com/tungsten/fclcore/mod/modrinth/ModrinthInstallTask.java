@@ -27,7 +27,6 @@ import com.tungsten.fclcore.mod.Modpack;
 import com.tungsten.fclcore.mod.ModpackCompletionException;
 import com.tungsten.fclcore.mod.ModpackConfiguration;
 import com.tungsten.fclcore.mod.ModpackInstallTask;
-import com.tungsten.fclcore.mod.curse.CurseManifest;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.gson.JsonUtils;
 import com.tungsten.fclcore.util.io.FileUtils;
@@ -99,7 +98,7 @@ public class ModrinthInstallTask extends Task<Void> {
         ModpackConfiguration<ModrinthManifest> config = null;
         try {
             if (json.exists()) {
-                config = JsonUtils.GSON.fromJson(FileUtils.readText(json), new TypeToken<ModpackConfiguration<CurseManifest>>() {
+                config = JsonUtils.GSON.fromJson(FileUtils.readText(json), new TypeToken<ModpackConfiguration<ModrinthManifest>>() {
                 }.getType());
 
                 if (!ModrinthModpackProvider.INSTANCE.getName().equals(config.getType()))

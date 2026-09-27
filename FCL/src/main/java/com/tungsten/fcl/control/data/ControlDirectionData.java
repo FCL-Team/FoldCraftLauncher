@@ -34,7 +34,7 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
         return id;
     }
 
-    public boolean equals(ControlButtonData data) {
+    public boolean equals(ControlDirectionData data) {
         return data.getId().equals(id);
     }
 

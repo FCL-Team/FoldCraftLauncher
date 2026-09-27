@@ -44,9 +44,10 @@ import java.util.logging.Level;
 public class GameOption {
 
     private final String optionPath;
-    private static final HashMap<String, String> parameterMap = new HashMap<>();
+    // 键值对按实例隔离：不同游戏目录（版本隔离）的 options.txt 互不污染
+    private final HashMap<String, String> parameterMap = new HashMap<>();
     private static final ArrayList<WeakReference<GameOptionListener>> optionListeners = new ArrayList<>();
-    private static FileObserver fileObserver;
+    private FileObserver fileObserver;
 
     public GameOption(String gameDir) {
         this.optionPath = gameDir + "/options.txt";
@@ -68,9 +69,6 @@ public class GameOption {
                 }
             }
 
-            if (fileObserver == null) {
-                setupFileObserver();
-            }
             parameterMap.clear();
 
             try {
@@ -130,9 +128,13 @@ public class GameOption {
                         .append('\n');
 
             try {
-                fileObserver.stopWatching();
+                if (fileObserver != null) {
+                    fileObserver.stopWatching();
+                }
                 FileUtils.writeText(new File(optionPath), result.toString());
-                fileObserver.startWatching();
+                if (fileObserver != null) {
+                    fileObserver.startWatching();
+                }
             } catch (IOException e) {
                 Logging.LOG.log(Level.WARNING, "Could not save options.txt", e);
             }
@@ -188,7 +190,8 @@ public class GameOption {
 
     /** Notify the option listeners */
     public void notifyListeners() {
-        for (WeakReference<GameOptionListener> optionListener : optionListeners) {
+        // 快照遍历，避免与注册/注销并发修改
+        for (WeakReference<GameOptionListener> optionListener : new ArrayList<>(optionListeners)) {
             if(optionListener.get() == null) continue;
 
             optionListener.get().onOptionChanged(false);
@@ -197,16 +200,24 @@ public class GameOption {
 
     /** Add an option listener, notice how we don't have a reference to it */
     public void addGameOptionListener(GameOptionListener listener) {
-        optionListeners.add(new WeakReference<>(listener));
+        synchronized (optionListeners) {
+            optionListeners.add(new WeakReference<>(listener));
+        }
+        // 监听文件变更是为监听者服务的，注册时才启动，避免一次性实例遗留观察者
+        if (fileObserver == null) {
+            setupFileObserver();
+        }
     }
 
     /** Remove a listener from existence, or at least, its reference here */
     public void removeGameOptionListener(GameOptionListener listener) {
-        for(WeakReference<GameOptionListener> optionListener : optionListeners) {
-            if(optionListener == null) continue;
-            if(optionListener == listener) {
-                optionListeners.remove(optionListener);
-                return;
+        synchronized (optionListeners) {
+            for(WeakReference<GameOptionListener> optionListener : optionListeners) {
+                if(optionListener.get() == null) continue;
+                if(optionListener.get() == listener) {
+                    optionListeners.remove(optionListener);
+                    return;
+                }
             }
         }
     }

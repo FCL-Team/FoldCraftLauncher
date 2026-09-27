@@ -186,7 +186,6 @@ public class FCLauncher {
                 a = "-Djava.library.path=${natives_directory}";
             }
             a = a.replace("${natives_directory}", libraryPath);
-            config.getRenderer();
             args[i] = a.replace("${gl_lib_name}", config.getRenderer().getGLPath())
                     .replace("${egl_lib_name}", config.getRenderer().getEGLPath());
         }

@@ -32,7 +32,8 @@ public final class EventBus {
 
     @SuppressWarnings("unchecked")
     public Event.Result fireEvent(Event obj) {
-        Logging.LOG.info(obj + " gets fired");
+        // 事件频率不可控，INFO 会刷屏，降到 FINE 便于按需排查
+        Logging.LOG.fine(obj + " gets fired");
 
         return channel((Class<Event>) obj.getClass()).fireEvent(obj);
     }
