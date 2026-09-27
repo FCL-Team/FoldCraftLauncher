@@ -49,6 +49,8 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.lwjgl.glfw.CallbackBridge;
+
 /**
  * Custom game control button.
  */
@@ -310,6 +312,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
     private float downY;
     private int initialX;
     private int initialY;
+    // 指针跟随：上一 MOVE 事件触点位置，用于计算逐帧视角增量
+    private float lastLookX;
+    private float lastLookY;
     private float positionX;
     private float positionY;
     private long downTime;
@@ -458,6 +463,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     setPressedStyle();
                     downX = event.getX();
                     downY = event.getY();
+                    lastLookX = event.getX();
+                    lastLookY = event.getY();
                     setInitialPosition();
                     positionX = getX();
                     positionY = getY();
@@ -471,6 +478,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     if (cursorMode != menu.getCursorMode()) {
                         cursorMode = menu.getCursorMode();
                         setInitialPosition();
+                        lastLookX = event.getX();
+                        lastLookY = event.getY();
                     }
                     // 滑动链与指针跟随/可移动并存：链式切换只改变按住的按钮，指针移动照常
                     if (getData().getEvent().isSwipable()) {
@@ -608,14 +617,16 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 int targetY = Math.max(0, Math.min(screenHeight, initialY + deltaY));
                 menu.getInput().setPointerId(getData().getId());
                 menu.getInput().setPointer(targetX, targetY, getData().getId());
-            } else {
-                if (menu.getMenuSetting().isEnableGyroscope()) {
-                    menu.setPointerX(initialX + deltaX);
-                    menu.setPointerY(initialY + deltaY);
-                } else {
-                    menu.getInput().setPointerId(getData().getId());
-                    menu.getInput().setPointer(initialX + deltaX, initialY + deltaY, getData().getId());
-                }
+            } else if (menu.getBridge() != null) {
+                // 捕获态统一走相对增量流，与触控/陀螺仪等来源的增量叠加互不干扰
+                float frameDX = event.getX() - lastLookX;
+                float frameDY = event.getY() - lastLookY;
+                lastLookX = event.getX();
+                lastLookY = event.getY();
+                double sensitivity = menu.getMenuSetting().getMouseSensitivity();
+                float scaleFactor = (float) menu.getBridge().getScaleFactor();
+                CallbackBridge.sendCursorDelta((float) (frameDX * sensitivity * scaleFactor),
+                        (float) (frameDY * sensitivity * scaleFactor));
             }
         }
         if (getData().getEvent().isMovable()) {
