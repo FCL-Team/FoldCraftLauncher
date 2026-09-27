@@ -1122,11 +1122,20 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                     gyroscope.disableSensor();
                 }
                 break;
-            case GYRO_INVERT:
-                menuSetting.setInvertGyroscope(checked);
+            case GYRO_INVERT_X:
+                menuSetting.setInvertGyroscopeX(checked);
+                break;
+            case GYRO_INVERT_Y:
+                menuSetting.setInvertGyroscopeY(checked);
                 break;
             case PHYSICAL_MOUSE:
                 menuSetting.setPhysicalMouseMode(checked);
+                break;
+            case SLIDE_ACCELERATION:
+                menuSetting.setSlideAcceleration(checked);
+                break;
+            case DISTANCE_ACCELERATION:
+                menuSetting.setDistanceAcceleration(checked);
                 break;
             case GAMEPAD_CONTROL:
                 setGamepadControl(checked);
@@ -1222,8 +1231,12 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             case GAMEPAD_DEADZONE:
                 menuSetting.setGamepadDeadzone(progress / 100d);
                 break;
-            case GYRO_SENSITIVITY:
-                menuSetting.setGyroscopeSensitivity(progress);
+            case GYRO_SENSITIVITY_X:
+                // 进度值按百分比显示（100% = 存储倍率 10）
+                menuSetting.setGyroscopeSensitivityX(progress / 10);
+                break;
+            case GYRO_SENSITIVITY_Y:
+                menuSetting.setGyroscopeSensitivityY(progress / 10);
                 break;
         }
     }

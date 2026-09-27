@@ -218,15 +218,10 @@ public class FCLInput implements View.OnCapturedPointerListener {
                 setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
                 setPointerId(null);
             } else {
-                int targetX = menu.getPointerX() + deltaX;
-                int targetY = menu.getPointerY() + deltaY;
-                if (menu.getMenuSetting().isEnableGyroscope()) {
-                    menu.setPointerX(targetX);
-                    menu.setPointerY(targetY);
-                } else {
-                    setPointerId(EXTERNAL_MOUSE_ID);
-                    setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
-                    setPointerId(null);
+                // 捕获态统一走相对增量流，与陀螺仪等来源的增量叠加互不干扰
+                if (menu.getBridge() != null) {
+                    float scaleFactor = (float) menu.getBridge().getScaleFactor();
+                    CallbackBridge.sendCursorDelta(deltaX * scaleFactor, deltaY * scaleFactor);
                 }
             }
         }

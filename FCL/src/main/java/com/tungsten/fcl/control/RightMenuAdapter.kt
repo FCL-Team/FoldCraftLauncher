@@ -41,7 +41,7 @@ enum class RightMenuTag {
     SOFT_KEYBOARD_ADJUST, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, WINDOW_SCALE, CURSOR_OFFSET,
 
     // 手势
-    DISABLE_GESTURE, GESTURE_MODE, DISABLE_LEFT_TOUCH,
+    DISABLE_GESTURE, GESTURE_MODE, DISABLE_LEFT_TOUCH, SLIDE_ACCELERATION, DISTANCE_ACCELERATION,
 
     // 鼠标
     MOUSE_MODE, MOUSE_SENSITIVITY, MOUSE_CURSOR_SENSITIVITY, MOUSE_SIZE,
@@ -52,7 +52,7 @@ enum class RightMenuTag {
     GAMEPAD_INPUT_MODE,
 
     // 陀螺仪
-    GYRO, GYRO_INVERT, GYRO_SENSITIVITY,
+    GYRO, GYRO_INVERT_X, GYRO_INVERT_Y, GYRO_SENSITIVITY_X, GYRO_SENSITIVITY_Y,
 
     // 调试
     SHOW_MEMORY, PERFORMANCE_MODE, SHOW_LOG, AUTO_SHOW_LOG, FORCE_EXIT,
@@ -199,6 +199,16 @@ class RightMenuAdapter(
                 { menuSetting.isDisableLeftTouch },
                 RightMenuTag.DISABLE_LEFT_TOUCH
             ),
+            Row.SwitchRow(
+                R.string.menu_settings_slide_acceleration,
+                { menuSetting.isSlideAcceleration },
+                RightMenuTag.SLIDE_ACCELERATION
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_distance_acceleration,
+                { menuSetting.isDistanceAcceleration },
+                RightMenuTag.DISTANCE_ACCELERATION
+            ),
             Row.SeekBarRow(
                 R.string.menu_settings_item_bar_scale_width, 100, 0,
                 { menuSetting.itemBarWidth * 100 / screenWidth }, RightMenuTag.ITEM_BAR_WIDTH, "%"
@@ -298,13 +308,22 @@ class RightMenuAdapter(
                 RightMenuTag.GYRO
             ),
             Row.SwitchRow(
-                R.string.menu_settings_gyro_invert,
-                { menuSetting.isInvertGyroscope },
-                RightMenuTag.GYRO_INVERT
+                R.string.menu_settings_gyro_invert_x,
+                { menuSetting.isInvertGyroscopeX },
+                RightMenuTag.GYRO_INVERT_X
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_gyro_invert_y,
+                { menuSetting.isInvertGyroscopeY },
+                RightMenuTag.GYRO_INVERT_Y
             ),
             Row.SeekBarRow(
-                R.string.menu_settings_gyro_sensitivity, 1000, 0,
-                { menuSetting.gyroscopeSensitivity }, RightMenuTag.GYRO_SENSITIVITY
+                R.string.menu_settings_gyro_sensitivity_x, 1000, 0,
+                { menuSetting.gyroscopeSensitivityX * 10 }, RightMenuTag.GYRO_SENSITIVITY_X, "%"
+            ),
+            Row.SeekBarRow(
+                R.string.menu_settings_gyro_sensitivity_y, 1000, 0,
+                { menuSetting.gyroscopeSensitivityY * 10 }, RightMenuTag.GYRO_SENSITIVITY_Y, "%"
             )
         )
 
