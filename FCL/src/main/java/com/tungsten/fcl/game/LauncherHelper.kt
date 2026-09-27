@@ -101,8 +101,8 @@ import kotlin.coroutines.resumeWithException
 
 /**
  * 启动流程编排：以协程串联版本解析、mod 扫描、依赖补全、登录与启动前检查，
- * 替代原先的 Task 任务链；弹窗标题实时显示当前阶段，fclcore 子任务
- * （依赖补全等）仍经 [runTracked] 接入 TaskExecutor 以复用进度展示。
+ * 替代原先的 Task 任务链；弹窗以任务列表形式展示各启动阶段并随协程推进打勾，
+ * fclcore 子任务（依赖补全等）仍经 [runTracked] 接入 TaskExecutor 以复用进度展示。
  */
 class LauncherHelper(
     private val context: Context,
@@ -119,6 +119,17 @@ class LauncherHelper(
     private var scaleFactor = 1.0
     private var launchJob: Job? = null
 
+    /** 启动阶段列表（与原任务链 withStagesHint 一致），驱动弹窗任务列表的阶段行展示 */
+    private val launchStages = listOf(
+        "launch.state.version",
+        "launch.state.mods",
+        "launch.state.java",
+        "launch.state.dependencies",
+        "launch.state.logging_in",
+        "launch.state.waiting_launching",
+    )
+    private var currentStage: String? = null
+
     /** 启动前确认框的按钮选择：positive 取消启动，negative 继续，neutral 由调用方处理 */
     private enum class Choice { CONTINUE, NEUTRAL, CANCEL }
 
@@ -128,16 +139,25 @@ class LauncherHelper(
     fun launch() {
         LOG.info("Launching game version: $selectedVersion")
         launchingStepsPane.show()
+        // 任务列表形式展示各启动阶段，随协程推进打勾
+        launchingStepsPane.setStages(launchStages)
         // 取消按钮点击时同时取消启动协程
         launchingStepsPane.setCancel(TaskCancellationAction(Runnable { launchJob?.cancel() }))
         launchJob = CoroutineScope(Dispatchers.IO).launch {
             try {
                 launch0()
-                withContext(Dispatchers.Main) { launchingStepsPane.dismiss() }
+                withContext(Dispatchers.Main) {
+                    currentStage?.let { launchingStepsPane.succeedStage(it) }
+                    launchingStepsPane.dismiss()
+                }
             } catch (_: CancellationException) {
-                // 用户主动取消：弹窗已随取消按钮关闭，无需提示
+                // 用户主动取消（TaskDialog 取消按钮或检查弹窗中选择取消）：幂等关闭启动弹窗。
+                // 注意经弹窗选择取消时 Job 并未真正 cancel，withContext 可正常执行；
+                // 经取消按钮取消时 Job 已取消、弹窗也已关闭，此处直接抛出即可
+                withContext(Dispatchers.Main) { launchingStepsPane.dismiss() }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
+                    currentStage?.let { launchingStepsPane.failStage(it) }
                     launchingStepsPane.dismiss()
                     showLaunchErrorMessage(e)
                 }
@@ -145,17 +165,25 @@ class LauncherHelper(
         }
     }
 
+    /** 进入下一启动阶段：前一阶段打勾，当前阶段标记开始 */
+    private fun enterStage(stage: String) {
+        val index = launchStages.indexOf(stage)
+        if (index > 0) launchingStepsPane.succeedStage(launchStages[index - 1])
+        launchingStepsPane.beginStage(stage)
+        currentStage = stage
+    }
+
     private suspend fun launch0() {
         val repository = profile.repository
         val dependencyManager = profile.getDependency()
 
-        setStage(R.string.launch_state_version)
+        enterStage("launch.state.version")
         // 版本维护/解析较重，协程已在后台线程执行
         val versionRef = AtomicReference(
             MaintainTask.maintain(repository, repository.getResolvedVersion(selectedVersion))
         )
 
-        setStage(R.string.launch_state_mods)
+        enterStage("launch.state.mods")
         // 全量 mod 扫描一次，供 lwjgl3ify 补丁、modloader 与渲染器检查共用
         val scannedMods = scanMods(repository, selectedVersion)
         // GTNH/lwjgl3ify 兼容：mods 目录存在 lwjgl3ify 时改写版本 JSON，以 RFB + Java17+ 启动
@@ -163,12 +191,12 @@ class LauncherHelper(
         val gameVersion = repository.getGameVersion(versionRef.get())
         val integrityCheck = repository.unmarkVersionLaunchedAbnormally(selectedVersion)
 
-        setStage(R.string.launch_state_java)
+        enterStage("launch.state.java")
         val javaVersion = checkGameState(versionRef.get())
         val version = LibFilter.filter(versionRef.get(), false)
 
         if (!setting.isNotCheckGame) {
-            setStage(R.string.launch_state_dependencies)
+            enterStage("launch.state.dependencies")
             // 游戏文件补全与整合包依赖补全（若存在）在同一执行器下并行，进度展示在弹窗任务列表
             val tasks = mutableListOf<Task<*>>(
                 dependencyManager.checkGameCompletionAsync(version, integrityCheck)
@@ -199,10 +227,10 @@ class LauncherHelper(
             runTracked(GameVerificationFixTask(dependencyManager, gameVersion.get(), version))
         }
 
-        setStage(R.string.launch_state_logging_in)
+        enterStage("launch.state.logging_in")
         val authInfo = logIn()
 
-        setStage(R.string.launch_state_waiting_launching)
+        enterStage("launch.state.waiting_launching")
         try {
             val menuSetting = GsonBuilder().setPrettyPrinting().create()
                 .fromJson(
@@ -283,14 +311,9 @@ class LauncherHelper(
         }
     }
 
-    /** 弹窗标题切换为当前启动阶段 */
-    private suspend fun setStage(stageRes: Int) {
-        withContext(Dispatchers.Main) { launchingStepsPane.title = context.getString(stageRes) }
-    }
-
     /**
      * 在独立 TaskExecutor 中执行 fclcore 任务（依赖补全、资源修复等），协程挂起至完成；
-     * 执行器绑定到启动弹窗以复用下载进度展示，协程取消会级联取消任务
+     * 执行器接入弹窗既有的阶段列表以复用下载进度展示，协程取消会级联取消任务
      */
     private suspend fun runTracked(task: Task<*>) {
         val executor = task.executor()

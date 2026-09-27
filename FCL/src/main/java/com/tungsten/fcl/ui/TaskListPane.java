@@ -54,6 +54,8 @@ import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,8 +64,12 @@ import java.util.stream.Collectors;
 
 public final class TaskListPane extends FCLAdapter {
 
+    @Nullable
     private final TaskExecutor executor;
     private final TaskListener taskListener;
+    /** 展示模式下经 attachExecutor 接入的执行器，release 时解除其监听 */
+    @Nullable
+    private TaskExecutor attachedExecutor;
     private final Map<Task<?>, ProgressListNode> nodes = new HashMap<>();
     private final List<StageNode> stageNodes = new ArrayList<>();
     private final ArrayList<View> listBox = new ArrayList<>();
@@ -71,17 +77,60 @@ public final class TaskListPane extends FCLAdapter {
     public TaskListPane(Context context, TaskExecutor taskExecutor) {
         super(context);
         this.executor = taskExecutor;
-        this.taskListener = createTaskListener();
+        this.taskListener = createTaskListener(true);
+        executor.addTaskListener(taskListener);
+    }
+
+    /** 纯展示模式：预先固定显示阶段列表，阶段状态由外部流程（如启动协程）驱动，任务行经 attachExecutor 接入 */
+    public TaskListPane(Context context, List<String> stages) {
+        super(context);
+        this.executor = null;
+        this.taskListener = createTaskListener(false);
+        for (String stage : Lang.removingDuplicates(stages)) {
+            StageNode stageNode = new StageNode(getContext(), stage);
+            stageNodes.add(stageNode);
+            listBox.add(stageNode.getView());
+        }
+        notifyDataSetChanged();
+    }
+
+    /** 是否为纯展示模式（阶段行由外部驱动而非任务链阶段） */
+    public boolean isDisplayOnly() {
+        return executor == null;
+    }
+
+    /** 展示模式下接入执行器：任务行与阶段图标随执行器事件更新 */
+    public void attachExecutor(TaskExecutor executor) {
+        attachedExecutor = executor;
         executor.addTaskListener(taskListener);
     }
 
     /** 解除对 executor 的监听并释放全部行 View，对话框关闭时调用，避免 View 树随长命 executor 泄漏 */
     public void release() {
-        executor.removeTaskListener(taskListener);
+        TaskExecutor bound = executor != null ? executor : attachedExecutor;
+        if (bound != null) bound.removeTaskListener(taskListener);
         nodes.forEach((task, node) -> node.unbind());
         nodes.clear();
         stageNodes.clear();
         listBox.clear();
+    }
+
+    /** 标记阶段开始（外部流程驱动，任意线程可调） */
+    public void beginStage(String stage) {
+        Schedulers.androidUIThread().execute(() -> stageNodes.stream()
+                .filter(x -> x.stage.equals(stage)).findAny().ifPresent(StageNode::begin));
+    }
+
+    /** 标记阶段成功（外部流程驱动，任意线程可调） */
+    public void succeedStage(String stage) {
+        Schedulers.androidUIThread().execute(() -> stageNodes.stream()
+                .filter(x -> x.stage.equals(stage)).findAny().ifPresent(StageNode::succeed));
+    }
+
+    /** 标记阶段失败（外部流程驱动，任意线程可调） */
+    public void failStage(String stage) {
+        Schedulers.androidUIThread().execute(() -> stageNodes.stream()
+                .filter(x -> x.stage.equals(stage)).findAny().ifPresent(StageNode::fail));
     }
 
     @Override
@@ -99,11 +148,13 @@ public final class TaskListPane extends FCLAdapter {
         return listBox.get(i);
     }
 
-    private TaskListener createTaskListener() {
-        List<String> stages = Lang.removingDuplicates(executor.getStages());
+    private TaskListener createTaskListener(boolean buildStagesOnStart) {
         return new TaskListener() {
             @Override
             public void onStart() {
+                if (!buildStagesOnStart)
+                    return;
+                List<String> stages = Lang.removingDuplicates(executor.getStages());
                 Schedulers.androidUIThread().execute(() -> {
                     stageNodes.clear();
                     stageNodes.addAll(stages.stream().map(it -> new StageNode(getContext(), it)).collect(Collectors.toList()));
@@ -117,7 +168,7 @@ public final class TaskListPane extends FCLAdapter {
             @Override
             public void onReady(Task<?> task) {
                 if (task.getStage() != null) {
-                    Schedulers.androidUIThread().execute(() -> stageNodes.stream().filter(x -> x.stage.equals(task.getStage())).findAny().ifPresent(StageNode::begin));
+                    beginStage(task.getStage());
                 }
             }
 
@@ -126,50 +177,7 @@ public final class TaskListPane extends FCLAdapter {
                 if (!task.getSignificance().shouldShow() || task.getName() == null)
                     return;
 
-                if (task instanceof GameAssetDownloadTask) {
-                    task.setName(getContext().getString(R.string.assets_download_all));
-                } else if (task instanceof GameInstallTask) {
-                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_game)));
-                } else if (task instanceof CleanroomInstallTask) {
-                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_cleanroom)));
-                } else if (task instanceof ForgeNewInstallTask || task instanceof ForgeOldInstallTask) {
-                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_forge)));
-                } else if (task instanceof NeoForgeInstallTask || task instanceof NeoForgeOldInstallTask) {
-                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_neoforge)));
-                } else if (task instanceof LiteLoaderInstallTask) {
-                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_liteloader)));
-                } else if (task instanceof OptiFineInstallTask) {
-                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_optifine)));
-                } else if (task instanceof FabricInstallTask) {
-                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_fabric)));
-                } else if (task instanceof FabricAPIInstallTask) {
-                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_fabric_api)));
-                } else if (task instanceof LegacyFabricInstallTask) {
-                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_legacyfabric)));
-                } else if (task instanceof LegacyFabricAPIInstallTask) {
-                    task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_legacyfabric_api)));
-                } else if (task instanceof CurseCompletionTask || task instanceof ModrinthCompletionTask || task instanceof ServerModpackCompletionTask || task instanceof McbbsModpackCompletionTask) {
-                    task.setName(getContext().getString(R.string.modpack_completion));
-                } else if (task instanceof ModpackInstallTask) {
-                    task.setName(getContext().getString(R.string.modpack_installing));
-                } else if (task instanceof ModpackUpdateTask) {
-                    task.setName(getContext().getString(R.string.modpack_update));
-                } else if (task instanceof CurseInstallTask) {
-                    task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_curse)));
-                } else if (task instanceof MultiMCModpackInstallTask) {
-                    task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_multimc)));
-                } else if (task instanceof ModrinthInstallTask) {
-                    task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_modrinth)));
-                } else if (task instanceof ServerModpackLocalInstallTask) {
-                    task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_server)));
-                } else if (task instanceof HMCLModpackInstallTask) {
-                    task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_hmcl)));
-                } else if (task instanceof McbbsModpackExportTask || task instanceof MultiMCModpackExportTask || task instanceof ServerModpackExportTask
-                        || task instanceof CurseForgeModpackExportTask || task instanceof ModrinthModpackExportTask) {
-                    task.setName(getContext().getString(R.string.modpack_export));
-                } else if (task instanceof MinecraftInstanceTask) {
-                    task.setName(getContext().getString(R.string.modpack_scan));
-                }
+                applyTaskName(task);
 
                 Schedulers.androidUIThread().execute(() -> {
                     StageNode stageNode = stageNodes.stream().filter(x -> x.stage.equals(task.getInheritedStage())).findAny().orElse(null);
@@ -183,7 +191,7 @@ public final class TaskListPane extends FCLAdapter {
             @Override
             public void onFinished(Task<?> task) {
                 if (task.getStage() != null) {
-                    Schedulers.androidUIThread().execute(() -> stageNodes.stream().filter(x -> x.stage.equals(task.getStage())).findAny().ifPresent(StageNode::succeed));
+                    succeedStage(task.getStage());
                 }
 
                 Schedulers.androidUIThread().execute(() -> {
@@ -199,7 +207,7 @@ public final class TaskListPane extends FCLAdapter {
             @Override
             public void onFailed(Task<?> task, Throwable throwable) {
                 if (task.getStage() != null) {
-                    Schedulers.androidUIThread().execute(() -> stageNodes.stream().filter(x -> x.stage.equals(task.getStage())).findAny().ifPresent(StageNode::fail));
+                    failStage(task.getStage());
                 }
                 ProgressListNode node = nodes.remove(task);
                 if (node == null)
@@ -229,6 +237,54 @@ public final class TaskListPane extends FCLAdapter {
                 }
             }
         };
+    }
+
+    /** 按任务类型映射展示名（安装器/补全任务默认名为类名，需替换为本地化文案） */
+    private void applyTaskName(Task<?> task) {
+        if (task instanceof GameAssetDownloadTask) {
+            task.setName(getContext().getString(R.string.assets_download_all));
+        } else if (task instanceof GameInstallTask) {
+            task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_game)));
+        } else if (task instanceof CleanroomInstallTask) {
+            task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_cleanroom)));
+        } else if (task instanceof ForgeNewInstallTask || task instanceof ForgeOldInstallTask) {
+            task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_forge)));
+        } else if (task instanceof NeoForgeInstallTask || task instanceof NeoForgeOldInstallTask) {
+            task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_neoforge)));
+        } else if (task instanceof LiteLoaderInstallTask) {
+            task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_liteloader)));
+        } else if (task instanceof OptiFineInstallTask) {
+            task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_optifine)));
+        } else if (task instanceof FabricInstallTask) {
+            task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_fabric)));
+        } else if (task instanceof FabricAPIInstallTask) {
+            task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_fabric_api)));
+        } else if (task instanceof LegacyFabricInstallTask) {
+            task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_legacyfabric)));
+        } else if (task instanceof LegacyFabricAPIInstallTask) {
+            task.setName(getContext().getString(R.string.install_installer_install, getContext().getString(R.string.install_installer_legacyfabric_api)));
+        } else if (task instanceof CurseCompletionTask || task instanceof ModrinthCompletionTask || task instanceof ServerModpackCompletionTask || task instanceof McbbsModpackCompletionTask) {
+            task.setName(getContext().getString(R.string.modpack_completion));
+        } else if (task instanceof ModpackInstallTask) {
+            task.setName(getContext().getString(R.string.modpack_installing));
+        } else if (task instanceof ModpackUpdateTask) {
+            task.setName(getContext().getString(R.string.modpack_update));
+        } else if (task instanceof CurseInstallTask) {
+            task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_curse)));
+        } else if (task instanceof MultiMCModpackInstallTask) {
+            task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_multimc)));
+        } else if (task instanceof ModrinthInstallTask) {
+            task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_modrinth)));
+        } else if (task instanceof ServerModpackLocalInstallTask) {
+            task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_server)));
+        } else if (task instanceof HMCLModpackInstallTask) {
+            task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_hmcl)));
+        } else if (task instanceof McbbsModpackExportTask || task instanceof MultiMCModpackExportTask || task instanceof ServerModpackExportTask
+                || task instanceof CurseForgeModpackExportTask || task instanceof ModrinthModpackExportTask) {
+            task.setName(getContext().getString(R.string.modpack_export));
+        } else if (task instanceof MinecraftInstanceTask) {
+            task.setName(getContext().getString(R.string.modpack_scan));
+        }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
