@@ -37,7 +37,6 @@ public class LwjglKeycodeMap {
         add(LwjglGlfwKeycode.KEY_7, FCLKeycodes.KEY_7);
         add(LwjglGlfwKeycode.KEY_8, FCLKeycodes.KEY_8);
         add(LwjglGlfwKeycode.KEY_9, FCLKeycodes.KEY_9);
-        add(LwjglGlfwKeycode.KEY_3, FCLKeycodes.KEY_3);
         add(LwjglGlfwKeycode.KEY_UP, FCLKeycodes.KEY_UP);
         add(LwjglGlfwKeycode.KEY_DOWN, FCLKeycodes.KEY_DOWN);
         add(LwjglGlfwKeycode.KEY_LEFT, FCLKeycodes.KEY_LEFT);

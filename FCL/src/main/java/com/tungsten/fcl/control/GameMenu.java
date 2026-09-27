@@ -810,7 +810,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         layoutParams.height = ConvertUtils.dip2px(activity, menuSetting.getMouseSize());
         cursorView.setLayoutParams(layoutParams);
         cursorView.setOffsetX(menuSetting.getMouseOffsetX());
-        cursorView.setOffsetY(menuSetting.getMouseOffsetX());
+        cursorView.setOffsetY(menuSetting.getMouseOffsetY());
     }
 
     @Override

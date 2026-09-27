@@ -44,7 +44,8 @@ public class OAuth {
     private final String accessTokenURL;
     private final String deviceCodeURL;
     private final String tokenURL;
-    public static boolean IS_CANCELED = false;
+    /** 取消标志：UI 线程置位、轮询线程读取，须保证可见性；同一时刻仅支持一次设备码登录 */
+    public static volatile boolean IS_CANCELED = false;
 
     public OAuth(String authorizationURL, String accessTokenURL, String deviceCodeURL, String tokenURL) {
         this.authorizationURL = authorizationURL;

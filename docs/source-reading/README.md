@@ -40,7 +40,11 @@ FCLApp（轻量 Application，仅跟踪 currentActivity）
 
 ## 与 AGENTS.md 的出入及遗留问题
 
-1. **AGENTS.md 已过时一处**：`FCLCommonPage` / `FCLPageManager` / `FCLTempPage` / `FCLUILifecycleCallbacks` 四个类在仓库中已不存在（grep 零命中），页面机制实际是 `FCLMultiPageUI`（内层 ViewPager2 + overlay 临时页栈）+ `FCLPage`。
-2. DownloadUI 与 FCLMultiPageUI 并存两套临时页栈（自维护 overlay 栈 vs 统一栈），跨 UI 弹栈时需注意调用侧。
-3. 已知遗留/坑（代码注释自证）：`OAuth.IS_CANCELED` 为 public static 可变字段（并发登录互相取消）；`GameMenu.initCursorView` 的 Y 偏移误用 `getMouseOffsetX()`（笔误）；favorite Room 库 v2 破坏式迁移待补；fakefx 约 1/5 死代码可清理；ClassicAccountLoginDialog 空壳、SettingUI 的 DocIndex 三类未挂载；`LwjglKeycodeMap` KEY_3 重复添加。
-4. 其他非显然行为：`GameVersionNumber` 依赖类加载时解析 versions.txt 建静态表（首次触达成本高）；`HttpRequest` 的 GET 不校验状态码与 POST 不对称；`CacheRepository.getStorage` 读锁包 computeIfAbsent 存在理论竞态；`OSRestriction.allow()` 恒 false 使所有带 OS 规则的库一律不适用（Android 特化）。
+> 2026-09-27 已修正一轮，现状如下。
+
+1. ~~AGENTS.md 过时段落~~ 已修复：PageManager 体系（`FCLCommonPage`/`FCLPageManager`/`FCLTempPage`/`FCLUILifecycleCallbacks`）早已删除，AGENTS.md 已改写为 `FCLMultiPageUI`（内层 ViewPager2 + overlay 临时页栈）+ `FCLPage` 的现行机制。
+2. DownloadUI 与 FCLMultiPageUI 并存两套临时页栈（自维护 overlay 栈 vs 统一栈），跨 UI 弹栈时需注意调用侧（架构现状，保留）。
+3. 遗留坑处理情况：
+    - 已修复：`OAuth.IS_CANCELED` 加 `volatile`（跨线程可见性；同一时刻仍仅支持一次设备码登录）；`GameMenu.initCursorView` 光标 Y 偏移误用 `getMouseOffsetX()` 笔误；favorite Room 库补 `MIGRATION_1_2` 正式迁移并移除破坏式重建；`ClassicAccountLoginDialog` 由空壳补全为密码重登弹窗（原实现回调永不触发，`AccountListItem.logIn` 的 `latch.await()` 会永久阻塞）；删除死代码 DocIndex/DocCategoryAdapter/ArticleAdapter 及孤儿布局 item_article；`LwjglKeycodeMap` 删除重复的 KEY_3 添加；`CacheRepository.storages` 改 `ConcurrentHashMap` 消除读锁内 computeIfAbsent 写竞态。
+    - 待做：fakefx 约 1/5 死代码（event 整包、JavaBean 适配链、converter 等，约 9500 行）建议单独一轮删除并整机回归，未在本次处理。
+4. 非显然行为（设计使然，非 bug）：`GameVersionNumber` 依赖类加载时解析 versions.txt 建静态表（首次触达成本高）；`HttpRequest` 的 GET 不校验状态码（Modrinth SHA-1 反查依赖此行为，不可改）；`OSRestriction.allow()` 恒 false 使所有带 OS 规则的库一律不适用（Android 特化）。

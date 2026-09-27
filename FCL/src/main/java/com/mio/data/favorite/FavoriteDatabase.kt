@@ -6,6 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.serialization.json.Json
 
 /** List<String> 与 TEXT 列互转（kotlinx.serialization JSON），categories 与 groups 列共用 */
@@ -24,7 +26,6 @@ class FavoriteConverters {
 
 /**
  * 下载收藏库：用户数据，导出 schema 留底。
- * 分组功能（v2）处于测试阶段，schema 变更暂用破坏式重建，合并前需补正式迁移。
  */
 @Database(
     entities = [DownloadFavoriteEntity::class, FavoriteGroupEntity::class],
@@ -39,12 +40,24 @@ abstract class FavoriteDatabase : RoomDatabase() {
     abstract fun favoriteGroupDao(): FavoriteGroupDao
 
     companion object {
+        /** v2 新增分组：收藏表补 groups 列（存量条目为空 = 未分组），并建分组表 */
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `download_favorites` ADD COLUMN `groups` TEXT NOT NULL DEFAULT '[]'")
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `favorite_groups` (" +
+                        "`groupId` TEXT NOT NULL, `name` TEXT NOT NULL, `createTime` INTEGER NOT NULL, " +
+                        "PRIMARY KEY(`groupId`))"
+                )
+            }
+        }
+
         @Volatile
         private var instance: FavoriteDatabase? = null
 
         fun getInstance(context: Context): FavoriteDatabase = instance ?: synchronized(this) {
             instance ?: Room.databaseBuilder(context.applicationContext, FavoriteDatabase::class.java, "download_favorites.db")
-                .fallbackToDestructiveMigration()
+                .addMigrations(MIGRATION_1_2)
                 .build().also { instance = it }
         }
     }
