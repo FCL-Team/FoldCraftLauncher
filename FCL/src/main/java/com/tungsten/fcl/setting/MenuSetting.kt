@@ -239,6 +239,14 @@ class MenuSetting {
             changed()
         }
 
+    /** 编辑吸附仅对齐相邻按键（关闭时同边与邻接全量吸附） */
+    var isSnapAdjacentOnly: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
     private val changeListeners = mutableListOf<Runnable>()
 
     /** 注册属性变化监听（替代原 fakefx property 监听，用于自动保存与页面刷新） */
@@ -294,6 +302,7 @@ class MenuSetting {
                 addProperty("cursorOffset", src.cursorOffset)
                 addProperty("gamepadDeadzone", src.gamepadDeadzone)
                 addProperty("controlsOpacity", src.controlsOpacity)
+                addProperty("snapAdjacentOnly", src.isSnapAdjacentOnly)
             }
         }
 
@@ -336,6 +345,7 @@ class MenuSetting {
                 ms.cursorOffset = json["cursorOffset"]?.asDouble ?: 0.0
                 ms.gamepadDeadzone = json["gamepadDeadzone"]?.asDouble ?: 0.2
                 ms.controlsOpacity = json["controlsOpacity"]?.asInt ?: 100
+                ms.isSnapAdjacentOnly = json["snapAdjacentOnly"]?.asBoolean ?: false
             }
         }
     }

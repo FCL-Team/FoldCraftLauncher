@@ -143,8 +143,9 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
     @Override
     public CustomControl cloneView() {
         ControlDirectionData clone = clone();
-        clone.getBaseInfo().setXPosition(0);
-        clone.getBaseInfo().setYPosition(0);
+        // 副本贴近原控件（偏移 2%），不与原控件完全重叠，也不落回左上角
+        clone.getBaseInfo().setXPosition(Math.min(1000, clone.getBaseInfo().getXPosition() + 20));
+        clone.getBaseInfo().setYPosition(Math.min(1000, clone.getBaseInfo().getYPosition() + 20));
         return clone;
     }
 

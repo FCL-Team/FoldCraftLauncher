@@ -599,6 +599,7 @@
     <string name="menu_controls_hide_all">Hide All Views</string>
     <string name="menu_controls_auto_fit">Auto Fit Position</string>
     <string name="menu_controls_auto_fit_dist">Auto Fit Position Distance</string>
+    <string name="menu_controls_snap_adjacent">Snap to Adjacent Controls Only</string>
     <string name="menu_controls_groups">View Groups</string>
     <string name="menu_controls_manage">Manage</string>
     <string name="menu_controls_current_view_group">Current View Group</string>

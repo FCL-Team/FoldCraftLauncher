@@ -527,6 +527,7 @@
     <string name="menu_controls_hide_all">隐藏所有控件</string>
     <string name="menu_controls_auto_fit">自动吸附</string>
     <string name="menu_controls_auto_fit_dist">自动吸附间距</string>
+    <string name="menu_controls_snap_adjacent">仅吸附相邻按键</string>
     <string name="menu_controls_groups">控件组</string>
     <string name="menu_controls_manage">管理</string>
     <string name="menu_controls_current_view_group">当前控件组</string>

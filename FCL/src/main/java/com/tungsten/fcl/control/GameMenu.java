@@ -950,7 +950,11 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 if (getViewGroup() == null) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
                 } else {
-                    EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlButtonData(UUID.randomUUID().toString()), this, new EditViewDialog.Callback() {
+                    // 新控件默认落在屏幕中心：默认 (0,0) 会被打开着的左侧菜单挡住，看起来像"添加后消失"
+                    ControlButtonData data = new ControlButtonData(UUID.randomUUID().toString());
+                    data.getBaseInfo().setXPosition(500);
+                    data.getBaseInfo().setYPosition(500);
+                    EditViewDialog dialog = new EditViewDialog(getActivity(), data, this, new EditViewDialog.Callback() {
                         @Override
                         public void onPositive(CustomControl view) {
                             viewManager.addView(view);
@@ -969,7 +973,11 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 if (getViewGroup() == null) {
                     Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
                 } else {
-                    EditViewDialog dialog = new EditViewDialog(getActivity(), new ControlDirectionData(UUID.randomUUID().toString()), this, new EditViewDialog.Callback() {
+                    // 新控件默认落在屏幕中心：默认 (0,0) 会被打开着的左侧菜单挡住，看起来像"添加后消失"
+                    ControlDirectionData data = new ControlDirectionData(UUID.randomUUID().toString());
+                    data.getBaseInfo().setXPosition(500);
+                    data.getBaseInfo().setYPosition(500);
+                    EditViewDialog dialog = new EditViewDialog(getActivity(), data, this, new EditViewDialog.Callback() {
                         @Override
                         public void onPositive(CustomControl view) {
                             viewManager.addView(view);
@@ -1016,6 +1024,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 break;
             case AUTO_FIT:
                 menuSetting.setAutoFit(checked);
+                break;
+            case SNAP_ADJACENT_ONLY:
+                menuSetting.setSnapAdjacentOnly(checked);
                 break;
         }
     }

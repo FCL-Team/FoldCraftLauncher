@@ -18,7 +18,7 @@ import com.tungsten.fcllibrary.component.view.FCLTextView
 
 /** 左菜单条目标签，交互回调按此分发 */
 enum class LeftMenuTag {
-    EDIT_MODE, SHOW_BOUNDARY, CONTROLS_OPACITY, HIDE_ALL, AUTO_FIT, AUTO_FIT_DIST,
+    EDIT_MODE, SHOW_BOUNDARY, CONTROLS_OPACITY, HIDE_ALL, AUTO_FIT, AUTO_FIT_DIST, SNAP_ADJACENT_ONLY,
     CURRENT_CONTROLLER,
     ADD_BUTTON, ADD_DIRECTION, MANAGE_BUTTON_STYLE, MANAGE_DIRECTION_STYLE
 }
@@ -73,7 +73,8 @@ class LeftMenuAdapter(
             Row.SwitchRow(R.string.menu_controls_hide_all, { gameMenu.isHideAllViews }, LeftMenuTag.HIDE_ALL),
             Row.SwitchRow(R.string.menu_controls_auto_fit, { gameMenu.menuSetting.isAutoFit }, LeftMenuTag.AUTO_FIT),
             Row.SeekBarRow(R.string.menu_controls_auto_fit_dist, 10, 0,
-                { gameMenu.menuSetting.autoFitDist }, LeftMenuTag.AUTO_FIT_DIST, "dp")
+                { gameMenu.menuSetting.autoFitDist }, LeftMenuTag.AUTO_FIT_DIST, "dp"),
+            Row.SwitchRow(R.string.menu_controls_snap_adjacent, { gameMenu.menuSetting.isSnapAdjacentOnly }, LeftMenuTag.SNAP_ADJACENT_ONLY)
         )
         if (gameMenu.isEditMode) {
             rows = rows + listOf(

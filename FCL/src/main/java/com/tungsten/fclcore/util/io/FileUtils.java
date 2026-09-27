@@ -211,18 +211,16 @@ public final class FileUtils {
         writeBytes(file.toPath(), data);
     }
 
-    /**
-     * Write byte array to file.
-     * It will create the file if it does not exist, or truncate the existing file to empty for rewriting.
-     * All bytes in byte array will be written into the file in binary format. Existing data will be erased.
-     *
-     * @param file  the path to the file
-     * @param data the data being written to file
-     * @throws IOException if an I/O error occurs
-     */
     public static void writeBytes(Path file, byte[] data) throws IOException {
         Files.createDirectories(file.getParent());
-        Files.write(file, data);
+        // 先写临时文件再原子替换：进程中途被杀也不会留下半截内容损坏配置
+        Path tmp = file.resolveSibling(file.getFileName() + ".tmp");
+        Files.write(tmp, data);
+        try {
+            Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        } catch (AtomicMoveNotSupportedException e) {
+            Files.move(tmp, file, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     public static void deleteDirectory(File directory)

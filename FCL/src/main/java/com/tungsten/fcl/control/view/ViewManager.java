@@ -255,7 +255,9 @@ private long loadDialogShowTime = 0;
                     gameMenu.getViewGroup().getViewData().addDirection((ControlDirectionData) control);
                 }
                 saveController();
-                loadView(control, true, 0f, false);
+                // 与 renderGroup 一致按组序取 z 序，避免新增控件压到所在组其他控件之下
+                float zOrder = gameMenu.getController().viewGroups().indexOf(gameMenu.getViewGroup()) * 2f;
+                loadView(control, true, zOrder, false);
             } else {
                 Toast.makeText(gameMenu.getActivity(), gameMenu.getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
             }
@@ -339,6 +341,8 @@ private long loadDialogShowTime = 0;
         float selfEdgeY = 0;
         boolean hasX = false;
         boolean hasY = false;
+        // 仅吸附相邻按键：跳过同边对齐线，只保留"自身边贴目标对侧边并保持间距"的邻接吸附
+        boolean adjacentOnly = gameMenu.getMenuSetting().isSnapAdjacentOnly();
         ViewGroup parent = gameMenu.getBaseLayout();
         for (int i = 0; i < parent.getChildCount(); i++) {
             View child = parent.getChildAt(i);
@@ -352,8 +356,12 @@ private long loadDialogShowTime = 0;
             float selfRight = x + view.getWidth();
             float childLeft = child.getX();
             float childRight = child.getX() + child.getWidth();
-            float[] linesX = {childLeft, childRight + threshold, childRight, childLeft - threshold};
-            float[] edgesX = {selfLeft, selfLeft, selfRight, selfRight};
+            float[] linesX = adjacentOnly
+                    ? new float[]{childRight + threshold, childLeft - threshold}
+                    : new float[]{childLeft, childRight + threshold, childRight, childLeft - threshold};
+            float[] edgesX = adjacentOnly
+                    ? new float[]{selfLeft, selfRight}
+                    : new float[]{selfLeft, selfLeft, selfRight, selfRight};
             for (int k = 0; k < linesX.length; k++) {
                 float d = Math.abs(linesX[k] - edgesX[k]);
                 if (d <= bestX) {
@@ -368,8 +376,12 @@ private long loadDialogShowTime = 0;
             float selfBottom = y + view.getHeight();
             float childTop = child.getY();
             float childBottom = child.getY() + child.getHeight();
-            float[] linesY = {childTop, childBottom + threshold, childBottom, childTop - threshold};
-            float[] edgesY = {selfTop, selfTop, selfBottom, selfBottom};
+            float[] linesY = adjacentOnly
+                    ? new float[]{childBottom + threshold, childTop - threshold}
+                    : new float[]{childTop, childBottom + threshold, childBottom, childTop - threshold};
+            float[] edgesY = adjacentOnly
+                    ? new float[]{selfTop, selfBottom}
+                    : new float[]{selfTop, selfTop, selfBottom, selfBottom};
             for (int k = 0; k < linesY.length; k++) {
                 float d = Math.abs(linesY[k] - edgesY[k]);
                 if (d <= bestY) {

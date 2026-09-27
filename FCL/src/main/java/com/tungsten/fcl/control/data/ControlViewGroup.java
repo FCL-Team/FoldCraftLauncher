@@ -332,18 +332,25 @@ public class ControlViewGroup implements Cloneable, Observable {
                 JsonObject obj = (JsonObject) json;
 
                 ViewData data = new ViewData();
+                // 历史版本崩溃可能留下重复 id 的条目，加载时按 id 去重，避免同一按键渲染/保存两份
                 ArrayList<ControlButtonData> buttonList = new ArrayList<>();
                 JsonArray buttonArray = Optional.ofNullable(obj.get("buttonList")).map(JsonElement::getAsJsonArray).orElseGet(JsonArray::new);
                 for (JsonElement button : buttonArray) {
                     if (button.isJsonObject()) {
-                        buttonList.add(new ControlButtonData.Serializer().deserialize(button, null, null));
+                        ControlButtonData buttonData = new ControlButtonData.Serializer().deserialize(button, null, null);
+                        if (buttonData != null && buttonList.stream().noneMatch(it -> it.getId().equals(buttonData.getId()))) {
+                            buttonList.add(buttonData);
+                        }
                     }
                 }
                 data.setButtonList(FXCollections.observableList(buttonList));
                 ArrayList<ControlDirectionData> directionList = new ArrayList<>();
                 for (JsonElement direction : Optional.ofNullable(obj.get("directionList")).map(JsonElement::getAsJsonArray).orElseGet(JsonArray::new)) {
                     if (direction.isJsonObject()) {
-                        directionList.add(new ControlDirectionData.Serializer().deserialize(direction, null, null));
+                        ControlDirectionData directionData = new ControlDirectionData.Serializer().deserialize(direction, null, null);
+                        if (directionData != null && directionList.stream().noneMatch(it -> it.getId().equals(directionData.getId()))) {
+                            directionList.add(directionData);
+                        }
                     }
                 }
                 data.setDirectionList(FXCollections.observableList(directionList));
