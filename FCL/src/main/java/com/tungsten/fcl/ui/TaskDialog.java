@@ -24,6 +24,7 @@ import com.tungsten.fcllibrary.component.view.FCLTextView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -107,8 +108,6 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
         this.executor = executor;
 
         if (executor != null) {
-            // 多次接入执行器时（如启动协程分段绑定补全任务）释放上一个任务列表，避免监听与视图树残留
-            if (taskListPane != null) taskListPane.release();
             if (autoClose) {
                 autoCloseListener = new TaskListener() {
                     @Override
@@ -147,9 +146,37 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
             };
             executor.addTaskListener(messageUpdateListener);
 
-            taskListPane = new TaskListPane(getContext(), executor);
-            taskListView.setAdapter(taskListPane);
+            if (taskListPane != null && taskListPane.isDisplayOnly()) {
+                // 展示模式（如启动流程的阶段列表）：不重建列表，任务行转发至既有列表
+                taskListPane.attachExecutor(executor);
+            } else {
+                // 多次接入执行器时释放上一个任务列表，避免监听与视图树残留
+                if (taskListPane != null) taskListPane.release();
+                taskListPane = new TaskListPane(getContext(), executor);
+                taskListView.setAdapter(taskListPane);
+            }
         }
+    }
+
+    /** 纯展示模式：预先固定显示阶段列表，阶段状态由外部流程（如启动协程）驱动 */
+    public void setStages(List<String> stages) {
+        taskListPane = new TaskListPane(getContext(), stages);
+        taskListView.setAdapter(taskListPane);
+    }
+
+    /** 标记阶段开始（任意线程可调，展示模式下生效） */
+    public void beginStage(String stage) {
+        if (taskListPane != null) taskListPane.beginStage(stage);
+    }
+
+    /** 标记阶段成功（任意线程可调，展示模式下生效） */
+    public void succeedStage(String stage) {
+        if (taskListPane != null) taskListPane.succeedStage(stage);
+    }
+
+    /** 标记阶段失败（任意线程可调，展示模式下生效） */
+    public void failStage(String stage) {
+        if (taskListPane != null) taskListPane.failStage(stage);
     }
 
     /** 更新日志面板内容并滚动到底部 */
