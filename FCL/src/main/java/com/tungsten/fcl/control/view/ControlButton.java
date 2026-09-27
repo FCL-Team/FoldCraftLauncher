@@ -310,8 +310,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     private float downX;
     private float downY;
-    private int initialX;
-    private int initialY;
+    private float initialX;
+    private float initialY;
     // 指针跟随：上一 MOVE 事件触点位置，用于计算逐帧视角增量
     private float lastLookX;
     private float lastLookY;
@@ -610,11 +610,11 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     private void handleMoveEvent(MotionEvent event) {
         if (getData().getEvent().isPointerFollow()) {
-            int deltaX = (int) ((event.getX() - downX) * menu.getMenuSetting().getMouseSensitivity());
-            int deltaY = (int) ((event.getY() - downY) * menu.getMenuSetting().getMouseSensitivity());
+            float deltaX = (event.getX() - downX) * (float) menu.getMenuSetting().getMouseSensitivity();
+            float deltaY = (event.getY() - downY) * (float) menu.getMenuSetting().getMouseSensitivity();
             if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-                int targetX = Math.max(0, Math.min(screenWidth, initialX + deltaX));
-                int targetY = Math.max(0, Math.min(screenHeight, initialY + deltaY));
+                float targetX = Math.max(0, Math.min(screenWidth, initialX + deltaX));
+                float targetY = Math.max(0, Math.min(screenHeight, initialY + deltaY));
                 menu.getInput().setPointerId(getData().getId());
                 menu.getInput().setPointer(targetX, targetY, getData().getId());
             } else if (menu.getBridge() != null) {
