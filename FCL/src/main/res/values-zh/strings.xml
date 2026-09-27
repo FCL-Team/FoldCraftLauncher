@@ -591,6 +591,16 @@
     <string name="menu_settings_physical_mouse_mode">实体鼠标控制</string>
     <string name="menu_settings_slide_acceleration">滑动加速</string>
     <string name="menu_settings_distance_acceleration">距离加速</string>
+    <string name="menu_settings_capture_pointer_key">指针捕获切换键</string>
+    <string name="menu_settings_ime_toggle_key">输入法切换键</string>
+    <string name="menu_settings_key_modifier">修饰键</string>
+    <string name="key_modifier_none">无</string>
+    <string name="key_modifier_shift">Shift</string>
+    <string name="key_modifier_ctrl">Ctrl</string>
+    <string name="key_modifier_alt">Alt</string>
+    <string name="key_bind_listening">请按下要绑定的按键（按返回取消）</string>
+    <string name="key_bind_unknown">无法识别的按键，请换一个键</string>
+    <string name="key_bind_done">已绑定 %1$s</string>
     <string name="menu_settings_gamepad">手柄</string>
     <string name="menu_settings_gamepad_control">手柄控制</string>
     <string name="menu_settings_gamepad_reset_mapper">重置映射</string>
