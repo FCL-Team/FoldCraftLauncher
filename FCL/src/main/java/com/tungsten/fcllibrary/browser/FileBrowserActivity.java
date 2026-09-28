@@ -390,7 +390,12 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         actions.add(this::showSortMenu);
         items.add(getString(showHidden ? R.string.file_browser_hide_hidden_files : R.string.file_browser_show_hidden_files));
         actions.add(this::toggleShowHidden);
-        if (fileBrowser.getLibMode() != LibMode.FOLDER_CHOOSER && adapter != null && adapter.getCount() > 0) {
+        // 批量操作会向调用方返回多个路径：单选的文件选择模式（launchSingleSelection）下不提供
+        // 入口，否则全选后确认会破坏调用方的单选约定
+        boolean singleSelectionChooser = fileBrowser.getLibMode() == LibMode.FILE_CHOOSER
+                && fileBrowser.getSelectionMode() == SelectionMode.SINGLE_SELECTION;
+        if (!singleSelectionChooser && fileBrowser.getLibMode() != LibMode.FOLDER_CHOOSER
+                && adapter != null && adapter.getCount() > 0) {
             items.add(getString(R.string.file_browser_batch));
             actions.add(this::showBatchMenu);
         }
