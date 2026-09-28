@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -482,6 +483,8 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
         hideAllViewsProperty.addListener(i -> {
             if (isHideAllViews()) {
+                // 菜单视图隐藏后音量键用于唤回菜单，不再保留未完成的按键监听
+                cancelKeyBindListen();
                 Toast.makeText(activity, R.string.tip_hide_menu_view, Toast.LENGTH_LONG).show();
             }
         });
@@ -824,7 +827,18 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     public View getLayout() {
         if (layout == null) {
             layout = LayoutInflater.from(activity).inflate(R.layout.view_game_menu, null);
-            ((DrawerLayout) layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            DrawerLayout drawerLayout = (DrawerLayout) layout;
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            // 右菜单收起即退出按键监听态：悬置的监听会吞掉所有按键（含唤回菜单的音量键），
+            // 并把下一个按下的键误绑定为快捷键
+            drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+                @Override
+                public void onDrawerClosed(@NonNull View drawerView) {
+                    if (isRightMenuDrawer(drawerView)) {
+                        cancelKeyBindListen();
+                    }
+                }
+            });
         }
         return layout;
     }
@@ -862,6 +876,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         }
         fclInput.stopCaptureWatchdog();
         fclInput.resetExternalMouseState();
+        cancelKeyBindListen();
         gyroscope.disableSensor();
     }
 
@@ -1222,6 +1237,18 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     private void startKeyBindListen(@NonNull RightMenuTag tag) {
         keyBindListeningTag = tag;
         Toast.makeText(activity, R.string.key_bind_listening, Toast.LENGTH_SHORT).show();
+    }
+
+    /** 放弃按键监听（右菜单收起、菜单视图隐藏、页面暂停）：未完成的绑定不生效 */
+    private void cancelKeyBindListen() {
+        keyBindListeningTag = null;
+    }
+
+    /** 抽屉是否为右菜单，快捷键设置行位于其中 */
+    private static boolean isRightMenuDrawer(@NonNull View drawerView) {
+        ViewGroup.LayoutParams params = drawerView.getLayoutParams();
+        return params instanceof DrawerLayout.LayoutParams
+                && ((DrawerLayout.LayoutParams) params).gravity == GravityCompat.END;
     }
 
     public boolean isKeyBindListening() {
