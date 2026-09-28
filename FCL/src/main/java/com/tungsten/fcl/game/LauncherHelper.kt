@@ -473,10 +473,18 @@ class LauncherHelper(
                 )) {
                     Choice.CONTINUE -> {}
                     Choice.NEUTRAL -> {
-                        // 跳转版本管理页的“游戏”标签页（索引 2）引导安装 modloader，随后取消本次启动
-                        MainActivity.getInstance().binding.manage.isSelected = true
-                        val tabLayout = UIManager.instance.manageUI.tabLayout
-                        tabLayout.selectTab(tabLayout.getTabAt(2))
+                        // 跳转版本管理页的“游戏”标签页（索引 2）引导安装 modloader，随后取消本次启动。
+                        // awaitChoice 自身在主线程执行，但返回后恢复在调用方上下文（IO），界面操作须显式切回；
+                        // 跳转失败同样取消启动，避免退化成用户未选择的“继续启动”
+                        withContext(Dispatchers.Main) {
+                            runCatching {
+                                MainActivity.getInstance().binding.manage.isSelected = true
+                                val tabLayout = UIManager.instance.manageUI.tabLayout
+                                tabLayout.selectTab(tabLayout.getTabAt(2))
+                            }.onFailure {
+                                LOG.log(Level.WARNING, "Unable to open mod loader install page", it)
+                            }
+                        }
                         throw CancellationException()
                     }
 
