@@ -61,6 +61,8 @@ object VulkanChecker {
         cacheDir: File?
     ): VulkanCapabilities? {
         return try {
+            // native 侧把该目录作为驱动补丁文件的输出目录，不存在时 dlopen 补丁会直接失败
+            cacheDir?.mkdirs()
             nativeCheckVulkan(useTurnip, driverPath, cacheDir?.absolutePath)
         } catch (e: UnsatisfiedLinkError) {
             Logging.LOG.log(Level.WARNING, "$TAG: Native library or method not found", e)

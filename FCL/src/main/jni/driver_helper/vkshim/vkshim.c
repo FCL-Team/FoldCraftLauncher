@@ -3,7 +3,8 @@
 // 一、驱动缺失 VK_EXT_vertex_attribute_divisor 但提供 VK_KHR_vertex_attribute_divisor：
 //   1. vkEnumerateDeviceExtensionProperties 补报 EXT 扩展；
 //   2. vkCreateDevice 把启用列表里的 EXT 换成 KHR；EXT v1/v2 应用不传 features 结构，
-//      而 KHR/核心把 divisor 用法门控在其后，链上缺位时补写一个全开节点；
+//      而 KHR/核心把 divisor 用法门控在其后，链上缺位时补写启用节点
+//      （两个特性位按驱动实际报告的支持情况置位）；
 //   3. vkGetPhysicalDeviceProperties2 把 EXT properties 节点转接为 KHR 节点
 //      （KHR 结构多一个 supportsNonZeroFirstInstance 字段，须用自有存储承接后回填）。
 //   features（sType 1000190002）与 pipeline divisor state（sType 1000190001）的 sType
@@ -40,11 +41,15 @@
 
 // 驱动能力判定：
 // translate 表示 EXT divisor 需经 KHR 合成；add_khr 表示设备创建时需补上 KHR 扩展名；
-// fns_emulated 表示核心能力位 fillModeNonSolid 原生缺失，需模拟（谎报 + 管线降级）
+// fns_emulated 表示核心能力位 fillModeNonSolid 原生缺失，需模拟（谎报 + 管线降级）；
+// divisor_feature / zero_divisor_feature 为驱动对两个 divisor 特性位的报告值，
+// 启用驱动不支持的位会让设备创建失败（VK_ERROR_FEATURE_NOT_PRESENT）
 struct driver_mode {
     bool translate;
     bool add_khr;
     bool fns_emulated;
+    bool divisor_feature;
+    bool zero_divisor_feature;
 };
 
 // 已创建的逻辑设备是否处于 fillModeNonSolid 模拟（管线降级只对这些设备生效）
@@ -114,14 +119,14 @@ static bool extension_list_contains(const VkExtensionProperties* list, uint32_t 
     return false;
 }
 
-// 链上是否存在指定 sType 的节点
-static bool chain_contains(const void* pNext, VkStructureType sType) {
-    const struct chain_node* node = pNext;
+// 链上是否存在指定 sType 的节点，存在时返回首个匹配节点
+static struct chain_node* chain_find(const void* pNext, VkStructureType sType) {
+    struct chain_node* node = (struct chain_node*) pNext;
     while (node != NULL) {
-        if (node->sType == sType) return true;
-        node = (const struct chain_node*) node->pNext;
+        if (node->sType == sType) return node;
+        node = (struct chain_node*) node->pNext;
     }
-    return false;
+    return NULL;
 }
 
 // 把 node 接到 *head_link 链尾，返回原链尾的链接槽（原值必为 NULL），调用后须将其置回 NULL 摘除
@@ -137,7 +142,7 @@ static void** chain_splice_tail(void** head_link, void* node) {
 }
 
 static struct driver_mode compute_driver_mode(VkPhysicalDevice physicalDevice) {
-    struct driver_mode mode = {false, false, false};
+    struct driver_mode mode = {false, false, false, false, false};
     if (real.enumerate_device_extension_properties == NULL) return mode;
 
     uint32_t count = 0;
@@ -163,6 +168,23 @@ static struct driver_mode compute_driver_mode(VkPhysicalDevice physicalDevice) {
     if (hasKHR) {
         mode.translate = true;
         mode.add_khr = true;
+        // 补写启用节点前先取驱动报告的特性位；KHR divisor 的最低要求为 Vulkan 1.1，
+        // 核心查询接口在该版本必然可用，不可用时仅启用 divisor 功能本身、零 divisor 位关闭
+        if (real.get_physical_device_features2 != NULL) {
+            VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR divisorFeatures = {
+                    VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR,
+                    NULL,
+                    VK_FALSE,
+                    VK_FALSE,
+            };
+            VkPhysicalDeviceFeatures2 features2 = {VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2};
+            features2.pNext = &divisorFeatures;
+            real.get_physical_device_features2(physicalDevice, &features2);
+            mode.divisor_feature = divisorFeatures.vertexAttributeInstanceRateDivisor == VK_TRUE;
+            mode.zero_divisor_feature = divisorFeatures.vertexAttributeInstanceRateZeroDivisor == VK_TRUE;
+        } else {
+            mode.divisor_feature = true;
+        }
     }
     return mode;
 }
@@ -191,8 +213,9 @@ static struct driver_mode driver_mode_of(VkPhysicalDevice physicalDevice) {
     // 并发首查由登记前的重查兜底（重复登记无害但避免）
     struct driver_mode mode = compute_driver_mode(physicalDevice);
     mode.fns_emulated = compute_fns_emulated(physicalDevice);
-    FCL_LOG("vkshim: pd %p mode translate=%d add_khr=%d fns_emulated=%d", physicalDevice, mode.translate,
-            mode.add_khr, mode.fns_emulated);
+    FCL_LOG("vkshim: pd %p mode translate=%d add_khr=%d fns_emulated=%d divisor_feat=%d zero_divisor_feat=%d",
+            physicalDevice, mode.translate, mode.add_khr, mode.fns_emulated, mode.divisor_feature,
+            mode.zero_divisor_feature);
     pthread_mutex_lock(&g_lock);
     bool registered = false;
     for (int i = 0; i < g_physical_device_count; i++) {
@@ -447,21 +470,38 @@ static VkResult shim_create_device(VkPhysicalDevice physicalDevice, const VkDevi
         patched.ppEnabledExtensionNames = names;
         patched.enabledExtensionCount = count;
 
-        // EXT v1/v2 语义下 divisor 无需显式启用，而 KHR/核心要求 features 结构置位；
-        // 应用未提供时补写一个全开节点，用后摘除
-        void** restore = NULL;
+        // EXT v1/v2 语义下 divisor 无需显式启用，而 KHR/核心要求 features 结构置位。
+        // 两个特性位以驱动报告值为准：应用未提供节点时按查询结果补写，
+        // 自带节点时把驱动不支持的位临时置回 VK_FALSE，调用后恢复
         VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR injected = {
                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR,
                 NULL,
-                VK_TRUE,
-                VK_TRUE,
+                mode.divisor_feature ? VK_TRUE : VK_FALSE,
+                mode.zero_divisor_feature ? VK_TRUE : VK_FALSE,
         };
-        if (!chain_contains(patched.pNext, VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR)) {
+        VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR* appFeatures =
+                (VkPhysicalDeviceVertexAttributeDivisorFeaturesKHR*)
+                        chain_find(patched.pNext, VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR);
+        VkBool32 appDivisorOriginal = VK_FALSE;
+        VkBool32 appZeroDivisorOriginal = VK_FALSE;
+        void** restore = NULL;
+        if (appFeatures != NULL) {
+            if (!mode.divisor_feature && appFeatures->vertexAttributeInstanceRateDivisor == VK_TRUE) {
+                appDivisorOriginal = VK_TRUE;
+                appFeatures->vertexAttributeInstanceRateDivisor = VK_FALSE;
+            }
+            if (!mode.zero_divisor_feature && appFeatures->vertexAttributeInstanceRateZeroDivisor == VK_TRUE) {
+                appZeroDivisorOriginal = VK_TRUE;
+                appFeatures->vertexAttributeInstanceRateZeroDivisor = VK_FALSE;
+            }
+        } else {
             restore = chain_splice_tail((void**) &patched.pNext, &injected);
         }
 
         result = real.create_device(physicalDevice, &patched, pAllocator, pDevice);
         if (restore != NULL) *restore = NULL;
+        if (appDivisorOriginal) appFeatures->vertexAttributeInstanceRateDivisor = VK_TRUE;
+        if (appZeroDivisorOriginal) appFeatures->vertexAttributeInstanceRateZeroDivisor = VK_TRUE;
         free(names);
     } else {
         VkDeviceCreateInfo patched = *pCreateInfo;
