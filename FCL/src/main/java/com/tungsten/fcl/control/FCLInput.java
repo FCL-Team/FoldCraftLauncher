@@ -449,20 +449,25 @@ public class FCLInput implements View.OnCapturedPointerListener {
             menu.getTouchCharInput().dispatchKeyEvent(event);
             return true;
         }
-        // 自定义快捷键（右菜单鼠标页可配）：指针捕获切换 / 输入法呼出，在转发游戏前拦截
-        if (event.getAction() == KeyEvent.ACTION_UP) {
-            if (matchesHotkey(event, menu.getMenuSetting().getCapturePointerKey(), menu.getMenuSetting().getCapturePointerModifier())) {
-                togglePointerCapture();
-                return true;
-            }
-            if (matchesHotkey(event, menu.getMenuSetting().getImeToggleKey(), menu.getMenuSetting().getImeToggleModifier())) {
-                menu.getTouchCharInput().switchKeyboardState();
-                // shift 修饰呼出软键盘后复位游戏内的 shift 按住状态，避免潜行残留
-                if (menu.getMenuSetting().getImeToggleModifier() == MenuSetting.HOTKEY_MOD_SHIFT) {
-                    sendKeyEvent(FCLKeycodes.KEY_RIGHTSHIFT, false);
+        // 自定义快捷键（右菜单鼠标页可配）：指针捕获切换 / 输入法呼出，在转发游戏前拦截。
+        // 匹配后按下与抬起须成对吞掉：只拦抬起而把按下转发给游戏，游戏收不到对应释放而卡键
+        boolean captureHotkey = matchesHotkey(event, menu.getMenuSetting().getCapturePointerKey(),
+                menu.getMenuSetting().getCapturePointerModifier());
+        boolean imeHotkey = matchesHotkey(event, menu.getMenuSetting().getImeToggleKey(),
+                menu.getMenuSetting().getImeToggleModifier());
+        if (captureHotkey || imeHotkey) {
+            if (event.getAction() == KeyEvent.ACTION_UP) {
+                if (captureHotkey) {
+                    togglePointerCapture();
+                } else {
+                    menu.getTouchCharInput().switchKeyboardState();
+                    // shift 修饰呼出软键盘后复位游戏内的 shift 按住状态，避免潜行残留
+                    if (menu.getMenuSetting().getImeToggleModifier() == MenuSetting.HOTKEY_MOD_SHIFT) {
+                        sendKeyEvent(FCLKeycodes.KEY_RIGHTSHIFT, false);
+                    }
                 }
-                return true;
             }
+            return true;
         }
         if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
             if (event.getAction() == KeyEvent.ACTION_UP) {
