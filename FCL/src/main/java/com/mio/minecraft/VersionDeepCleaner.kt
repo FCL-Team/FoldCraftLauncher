@@ -7,6 +7,7 @@ import com.tungsten.fclcore.game.VersionNotFoundException
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.FileUtils
 import java.io.File
+import java.io.IOException
 import java.util.logging.Level
 
 /**
@@ -58,6 +59,7 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
 
         for (file in targetRefs.libraries) {
             if (file in protectedRefs.libraries) continue
+            if (!isWithin(file, librariesRoot)) continue
             val freedNow = deleteFile(file)
             if (freedNow != null) {
                 freed += freedNow
@@ -71,7 +73,7 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
         val protectedObjects = protectedRefs.allObjectFiles()
         for (assetId in deletableAssetIds) {
             val indexFile = targetRefs.indexFiles[assetId]
-            if (indexFile != null) {
+            if (indexFile != null && isWithin(indexFile, indexesRoot)) {
                 val freedNow = deleteFile(indexFile)
                 if (freedNow != null) {
                     freed += freedNow
@@ -81,6 +83,7 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
             }
             for (file in targetRefs.objects[assetId].orEmpty()) {
                 if (file in protectedObjects) continue
+                if (!isWithin(file, objectsRoot)) continue
                 val freedNow = deleteFile(file)
                 if (freedNow != null) {
                     freed += freedNow
@@ -89,7 +92,7 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
                 }
             }
             val virtualDir = File(virtualRoot, assetId)
-            if (virtualDir.isDirectory) {
+            if (isWithin(virtualDir, virtualRoot) && virtualDir.isDirectory) {
                 val size = virtualDir.walkBottomUp().filter { it.isFile }.sumOf { it.length() }
                 if (FileUtils.deleteDirectoryQuietly(virtualDir)) {
                     freed += size
@@ -170,10 +173,30 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
         return size
     }
 
+    /**
+     * 待删路径是否位于 [root] 内：库路径、资产 hash、assetId 均取自版本 json 与资产索引，
+     * 携带 .. 或指向外部目录时跳过，避免删除共享目录之外的文件
+     */
+    private fun isWithin(file: File, root: File): Boolean {
+        val path = canonical(file)?.path ?: return false
+        val rootPath = canonical(root)?.path ?: return false
+        if (path.startsWith(rootPath + File.separator)) return true
+        Logging.LOG.warning("Skip path outside $root for deep delete: $file")
+        return false
+    }
+
+    private fun canonical(file: File): File? = try {
+        file.canonicalFile
+    } catch (e: IOException) {
+        Logging.LOG.log(Level.WARNING, "Unable to canonicalize path for deep delete: $file", e)
+        null
+    }
+
     /** 自底向上删除文件清理后留下的空目录，不越过 stopRoot */
     private fun pruneEmptyDirs(file: File, stopRoot: File) {
-        var dir = file.parentFile ?: return
-        while (dir != stopRoot && dir.absolutePath.startsWith(stopRoot.absolutePath + File.separator)) {
+        val stopPath = canonical(stopRoot)?.path ?: return
+        var dir = canonical(file)?.parentFile ?: return
+        while (dir.path.startsWith(stopPath + File.separator)) {
             if (!dir.isDirectory || !dir.listFiles().isNullOrEmpty()) return
             if (!dir.delete()) return
             dir = dir.parentFile ?: return
