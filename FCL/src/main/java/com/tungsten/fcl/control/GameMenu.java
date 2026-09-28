@@ -601,6 +601,11 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                     }
 
                     @Override
+                    public boolean supportsMerge() {
+                        return true;
+                    }
+
+                    @Override
                     public void onMergeToGroup(ControlViewGroup source) {
                         // 选择目标组后把 source 全部控件转移过去（控件组合并）
                         ArrayList<ControlViewGroup> candidates = new ArrayList<>(getController().viewGroups());

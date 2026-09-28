@@ -64,6 +64,8 @@ public class BindGroupDialog extends FCLDialog {
             modeSpinners.add(spinner);
         }
 
+        findViewById(R.id.negative).setOnClickListener(v -> dismiss());
+
         findViewById(R.id.positive).setOnClickListener(v -> {
             List<String> bindings = new ArrayList<>();
             for (int i = 0; i < groups.size(); i++) {

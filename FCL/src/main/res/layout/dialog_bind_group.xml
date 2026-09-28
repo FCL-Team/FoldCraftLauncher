@@ -26,12 +26,26 @@
 
     </ScrollView>
 
-    <com.tungsten.fcllibrary.component.view.FCLButton
-        android:id="@+id/positive"
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
         android:layout_marginTop="10dp"
-        android:layout_gravity="end"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/dialog_positive"/>
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/negative"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_negative"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/positive"
+            android:layout_marginStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_positive"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
 </androidx.appcompat.widget.LinearLayoutCompat>
