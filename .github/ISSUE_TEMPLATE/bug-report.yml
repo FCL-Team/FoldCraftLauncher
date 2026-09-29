@@ -1,14 +1,14 @@
 name: Bug Feedback / 错误反馈
 description:
   Report a bug. 报告错误。
-labels: bug
+labels: bug/错误
 body:
   - type: markdown
     attributes:
       value: |
-        Please ensure you are using the **latest bata version** before you submit, you can get the latest beta version by checking update in launcher setting page.
-        请确认在你提交之前你使用的是最新版本，你可以在启动器的设置页内通过检测更新获取最新版本。
-        Please confirm that the question you are asking is not related to modpacks.If you ask about modpacks, we will directly delete it.
+        Please ensure you are using the **latest version** (including beta versions) before you submit, you can get the latest version by checking update in launcher setting page.
+        请确认在你提交之前你使用的是最新版本（包括测试版），你可以在启动器的设置页内通过检测更新获取最新版本。
+        Please confirm that the question you are asking is not related to modpacks. If you ask about modpacks, we will directly delete it.
         请确认你询问的不是整合包相关的问题。如果你询问整合包相关问题，我们会直接删除。
         To improve communication efficiency, we suggest you join our community to report bugs.
         为了提高交流效率，我们建议你加入我们的社区报告错误。
@@ -19,21 +19,42 @@ body:
     attributes:
       label: Before making issue / 在发布提问之前...
       options:
-      - label: I have read the content above.我已经阅读了上方的内容。
+      - label: I have read the content above. 我已经阅读了上方的内容。
         required: true
-      - label: I understand what I'm asking is not about modpack.我明白我询问的不是整合包相关的问题。
+      - label: I understand what I'm asking is not about modpack. 我明白我询问的不是整合包相关的问题。
         required: true
-      - label: I have searched for existing issues.我已经搜索了现有的 issues。
+      - label: I have searched for existing issues. 我已经搜索了现有的 issues。
         required: true
-      - label: I have tried switching renderer.我已经尝试过切换渲染器。
+      - label: I have tried switching renderer. 我已经尝试过切换渲染器。
+      - label: I have attached launcher logs / crash reports (if any). 我已经附上了启动器日志/崩溃报告（如果有的话）。
+  - type: dropdown
+    id: category
+    attributes:
+      label: Problem Type / 问题类型
+      description: |
+        What kind of problem did you encounter?
+        你遇到的是哪类问题？
+      options:
+        - Launcher crash / 启动器崩溃
+        - Game fails to launch / 游戏无法启动
+        - In-game crash / 游戏内崩溃
+        - Rendering issue / 渲染问题
+        - Download issue / 下载问题
+        - Account / login issue / 账户登录问题
+        - Multiplayer issue / 联机问题
+        - Control / input issue / 控制输入问题
+        - UI display issue / 界面显示问题
+        - Other / 其他
+    validations:
+      required: true
   - type: input
     id: fcl-version
     attributes:
       label: Launcher Version / 启动器版本
       description: |
-        Please enter the Fold Craft Launcher version you are using.
-        请输入你正在使用的Fold Craft Launcher版本。
-      placeholder: e.g. 1.0.1 / 例如1.0.1
+        Please enter the Fold Craft Launcher version you are using. You can find it in the launcher about page.
+        请输入你正在使用的 Fold Craft Launcher 版本，可以在启动器的关于页内查看。
+      placeholder: e.g. 1.3.3.5 / 例如1.3.3.5
     validations:
       required: true
   - type: input
@@ -41,18 +62,9 @@ body:
     attributes:
       label: Device Information / 设备信息
       description: |
-        Please enter the information of the device on which you encountered the bug.
-        请输入你遇到错误的设备的信息。
-      placeholder: e.g. OPPO Find X3 Pro, Android 13, arm64
-    validations:
-      required: true
-  - type: textarea
-    id: bug-report
-    attributes:
-      label: Problem Description / 问题描述
-      description: |
-        Please describe the problem in as much detail as possible, especially how you encountered this bug.
-        请尽可能详细地描述问题，特别是你是如何遇到这个bug的。
+        Please enter the information of the device on which you encountered the bug, including the CPU architecture.
+        请输入你遇到错误的设备的信息，包括 CPU 架构。
+      placeholder: e.g. Redmi K60, Android 14, arm64-v8a / 例如 Redmi K60, Android 14, arm64-v8a
     validations:
       required: true
   - type: input
@@ -60,51 +72,60 @@ body:
     attributes:
       label: Java
       description: |
-        Please enter the version of Java you are using.
-        请输入你正在使用的Java版本。
-      placeholder: e.g. Java 17
+        Please enter the Java runtime the game is using. The launcher bundles Java 8, 17, 21 and 25, and you can also add custom runtimes.
+        请输入游戏使用的 Java 运行时。启动器内置了 Java 8、17、21、25，你也可以添加自定义运行时。
+      placeholder: e.g. Java 21 (bundled) / 例如 Java 21（内置）
   - type: input
     id: renderer
     attributes:
       label: Renderer / 渲染器
       description: |
-        Please enter the renderer you are using.
-        请输入你正在使用的渲染器。
-      placeholder: e.g. Holy-GL4ES
+        Please enter the renderer you are using, or the renderer installed via renderer plugin. Note that different renderers support different game versions (e.g. Holy-GL4ES supports up to 1.21.4, VGPU supports up to 1.16.5).
+        请输入你正在使用的渲染器，或通过渲染器插件安装的渲染器。注意不同渲染器支持的游戏版本不同（例如 Holy-GL4ES 最高支持 1.21.4，VGPU 最高支持 1.16.5）。
+      placeholder: e.g. Holy-GL4ES / Zink / VirGLRenderer / Freedreno / Krypton Wrapper
   - type: input
     id: game-version
     attributes:
       label: Game Version / 游戏版本
       description: |
         If you are having trouble launching a game that was automatically downloaded through the Fold Craft Launcher, please enter the version of the game you are launching.
-        如果你在启动通过Fold Craft Launcher自动下载的游戏时遇到问题，请输入你要启动的游戏版本。
-      placeholder: e.g. 1.19
+        如果你在启动通过 Fold Craft Launcher 自动下载的游戏时遇到问题，请输入你要启动的游戏版本。
+      placeholder: e.g. 1.20.1 / 1.21.4 / 26.2
   - type: input
     id: game-modify
     attributes:
       label: Modifications Made to the Game / 对游戏所做的修改
       description: |
-        If you have OptiFine, Forge, or other mods installed for the game, please enter your modifications below.
-        如果你为游戏安装了OptiFine、Forge或其他模组，请在下面输入你的修改。
-      placeholder: e.g. OptiFine HD_U_G9, Rift
+        If you have OptiFine, Forge, NeoForge, Fabric, or other mods installed for the game, please enter your modifications below.
+        如果你为游戏安装了 OptiFine、Forge、NeoForge、Fabric 或其他模组，请在下面输入你的修改。
+      placeholder: e.g. OptiFine HD_U_G9, Forge / 例如 OptiFine HD_U_G9、Forge
+  - type: textarea
+    id: bug-report
+    attributes:
+      label: Problem Description / 问题描述
+      description: |
+        Please describe the problem in as much detail as possible, especially how you encountered this bug.
+        请尽可能详细地描述问题，特别是你是如何遇到这个 bug 的。
+    validations:
+      required: true
   - type: textarea
     id: game-crash-report
     attributes:
       label: Game Crash Report / 游戏崩溃报告
       description: |
-        If there is a game crash report, please upload it(file) below.
-        如果有游戏崩溃报告，请在下面上传(文件)。
+        If there is a game crash report, please provide it below. Game crash logs are contained in "latest_game.log" in the "FCL/log" directory. You can also tap "Share Log" on the crash page to export the log file, or tap "Upload Log" to get a log link and paste the link below.
+        如果有游戏崩溃报告，请在下方提供。游戏崩溃日志包含在 "FCL/log" 目录下的 "latest_game.log" 中，也可以在崩溃界面点击“分享日志”导出日志文件，或点击“上传日志”获取日志链接并将链接粘贴到下方。
   - type: textarea
     id: fcl-crash-report
     attributes:
       label: Launcher Crash Report / 启动器崩溃报告
       description: |
-        If there is a launcher crash report, please upload it(file) below.
-        如果有启动器崩溃报告，请在下面上传(文件)。
+        If there is a launcher crash report, please upload the file below.
+        如果有启动器崩溃报告，请在下面上传文件。
   - type: textarea
     id: fcl-logs
     attributes:
       label: Launcher Log File / 启动器日志文件
       description: |
-        After encountering a problem, please click "Export Launcher Log" in the launcher setting page, and upload the exported log to the input field below.
-        遇到问题后，请在启动器设置页面中单击“导出启动器日志”，并将导出的日志上传到下面的输入字段。
+        After encountering a problem, please click "Export launcher logs" in the launcher setting page, and upload the exported log to the input field below. Issues without logs are hard to investigate.
+        遇到问题后，请在启动器设置页中单击“导出启动器日志”，并将导出的日志上传到下面的输入框。没有日志的问题很难排查。

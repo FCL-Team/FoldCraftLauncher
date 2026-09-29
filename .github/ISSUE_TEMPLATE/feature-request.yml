@@ -1,8 +1,8 @@
 name: Feature Request / 功能请求
 description: |
   Propose new features for Fold Craft Launcher.
-  为Fold Craft Launcher提出新功能。
-labels: feature request
+  为 Fold Craft Launcher 提出新功能。
+labels: enhancement/增强
 body:
 - type: markdown
   attributes:
@@ -14,7 +14,9 @@ body:
   attributes:
     label: Before making issue / 在发布提问之前...
     options:
-    - label: I understand this is a request, not a wish.我明白这是在提出请求而不是在许愿。
+    - label: I understand this is a request, not a wish. 我明白这是在提出请求而不是在许愿。
+      required: true
+    - label: I have searched for existing issues. 我已经搜索了现有的 issues。
       required: true
 - type: textarea
   id: "feature"
@@ -34,3 +36,10 @@ body:
       描述此功能的好处及其原因。
   validations:
     required: true
+- type: textarea
+  id: "solution"
+  attributes:
+    label: Proposed Solution (optional) / 设想方案（可选）
+    description: |
+      If you have an idea of how to implement this feature, describe it here.
+      如果你对如何实现此功能有想法，请在这里描述。
