@@ -111,24 +111,6 @@ public class DownloadUI extends FCLCommonUI {
 
             }
         });
-
-        // 页面离开屏幕仅是 detach（实例保留，重新可见时不重跑 onCreate），
-        // 因此重新可见时需刷新打开中的详情页推荐版本（目录/版本可能在其他页面被切换）
-        getContentView().addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
-            @Override
-            public void onViewAttachedToWindow(@NonNull View v) {
-                for (FCLPage page : tempPageStack) {
-                    if (page instanceof RemoteModInfoPage) {
-                        ((RemoteModInfoPage) page).reloadVersions();
-                    }
-                }
-            }
-
-            @Override
-            public void onViewDetachedFromWindow(@NonNull View v) {
-
-            }
-        });
     }
 
     private void switchTab(int position) {

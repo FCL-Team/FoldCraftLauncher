@@ -33,7 +33,8 @@ object FavoriteManager {
 
     private val _favorites = MutableStateFlow<List<DownloadFavoriteEntity>>(emptyList())
 
-    /** 收藏列表，按收藏时间倒序（最新在前） */
+    /** 收藏列表，按收藏时间倒序（最新在前）；@JvmStatic 供 Java 页面直接访问 getFavorites() */
+    @JvmStatic
     val favorites: StateFlow<List<DownloadFavoriteEntity>> = _favorites
 
     private val _groups = MutableStateFlow<List<FavoriteGroupEntity>>(emptyList())

@@ -29,12 +29,14 @@ object Profiles {
     private val _selectedProfile = MutableStateFlow<Profile?>(null)
     /** 当前选中的 Profile（Repository 单例状态，Java 侧访问 getSelectedProfileFlow()） */
     @get:JvmName("getSelectedProfileFlow")
+    @JvmStatic
     val selectedProfile: StateFlow<Profile?> = _selectedProfile.asStateFlow()
     /** 选中 Profile 变化的监听者（setter 同步通知，调用线程即回调线程） */
     private val selectedProfileListeners = mutableListOf<Runnable>()
     private val _selectedVersion = MutableStateFlow<String?>(null)
     /** 当前选中 Profile 的选中版本（Repository 单例状态，Java 侧访问 getSelectedVersionFlow()） */
     @get:JvmName("getSelectedVersionFlow")
+    @JvmStatic
     val selectedVersion: StateFlow<String?> = _selectedVersion.asStateFlow()
     private var selectedVersionProfile: Profile? = null
     private var selectedVersionListener: Runnable? = null
