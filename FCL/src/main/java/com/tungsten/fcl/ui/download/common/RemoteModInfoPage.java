@@ -32,6 +32,7 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
+import com.tungsten.fcllibrary.component.ui.PageFlows;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
@@ -142,6 +143,12 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         ThemeEngine.getInstance().registerEvent(versionListView, () -> versionListView.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
 
         search.stringProperty().addListener(observable -> loadGameVersions());
+
+        // 推荐版本/版本分组依赖选中目录与版本：observe 相关状态流，attach 重放 + 变化自动重算
+        // （取代 DownloadUI 重新可见时的补偿调用）；收藏星形跟随收藏表变化自动校准
+        PageFlows.observe(this, Profiles.getSelectedVersionFlow(), v -> reloadVersions());
+        PageFlows.observe(this, Profiles.getSelectedProfileFlow(), p -> reloadVersions());
+        PageFlows.observe(this, FavoriteManager.getFavorites(), f -> refreshFavoriteIcon());
     }
 
     private void loadGameVersions() {
@@ -178,8 +185,8 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
 
     /**
      * 按当前选中的目录/版本重算推荐版本并刷新版本列表。
-     * 推荐版本在构造加载时计算，页面存续期间目录/版本可能在其他页面被切换
-     * （此时下载页不可见），由 DownloadUI 重新可见时调用
+     * 由选中版本/Profile 状态流的 observe 驱动（attach 重放当前值，变化时自动重算），
+     * 首次版本数据加载完成后也会调用一次。
      */
     public void reloadVersions() {
         if (allVersions == null) return;
@@ -311,8 +318,6 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
 
     @Override
     public Task<?> refresh(Object... param) {
-        // 页面重新可见时校准收藏星形（其他页面的收藏变化不触发本页回调）
-        refreshFavoriteIcon();
         return null;
     }
 
