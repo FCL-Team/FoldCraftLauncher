@@ -355,10 +355,6 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
         }.setSignificance(Task.TaskSignificance.MINOR);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void onClick(View v) {

@@ -33,6 +33,12 @@ class DownloadSearchViewModel : ViewModel() {
         var result: ArrayList<RemoteMod>? = null
         @JvmField
         var pageCount: Int = -1
+        /** 搜索进行中（发起搜索置位，回调落地/失败复位） */
+        @JvmField
+        var loading: Boolean = false
+        /** 上次搜索失败（恢复时据此直接渲染失败态而不重搜） */
+        @JvmField
+        var failed: Boolean = false
         /** Mod 模式的加载器筛选位置 */
         @JvmField
         var modLoaderPosition: Int = 0

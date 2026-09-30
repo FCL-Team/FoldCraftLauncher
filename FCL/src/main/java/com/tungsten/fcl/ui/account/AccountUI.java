@@ -47,11 +47,10 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
         serverListView.setAdapter(new ServerListAdapter(getContext()));
 
         // 首次创建即刷新账户列表（原 onStart 生命周期，页面随重建重新初始化）
-        refresh().start();
+        loadAccounts();
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
+    public void loadAccounts() {
         ArrayList<AccountListItem> accountList = Accounts.getAccounts().stream()
                 .map(account -> new AccountListItem(getContext(), account))
                 .collect(Collectors.toCollection(ArrayList::new));
@@ -61,9 +60,6 @@ public class AccountUI extends FCLCommonUI implements View.OnClickListener {
         } else {
             accountListAdapter.refresh(accountList);
         }
-        return Task.runAsync(() -> {
-
-        });
     }
 
     @Override

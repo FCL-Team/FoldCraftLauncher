@@ -124,10 +124,6 @@ public class ManageUI extends FCLMultiPageUI {
         }
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     private void checkSelectedVersion() {
         Schedulers.androidUIThread().execute(() -> {

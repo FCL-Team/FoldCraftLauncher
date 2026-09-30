@@ -62,10 +62,6 @@ public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadab
         installOfflineButton.setOnClickListener(this);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void loadVersion(Profile profile, String versionId) {

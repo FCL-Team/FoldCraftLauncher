@@ -266,10 +266,6 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
         }
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void loadVersion(Profile profile, String version) {

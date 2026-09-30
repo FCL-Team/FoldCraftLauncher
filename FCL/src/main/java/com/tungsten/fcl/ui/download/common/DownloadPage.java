@@ -480,13 +480,15 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         if (executor != null && !executor.isCancelled()) {
             executor.cancel();
         }
-        // 保存搜索条件，模式切换后据此恢复
+        // 保存搜索条件与状态机相位，模式切换后据此恢复
         searchState.userGameVersion = userGameVersion;
         searchState.category = category;
         searchState.pageOffset = pageOffset;
         searchState.searchFilter = searchFilter;
         searchState.sortType = sort;
         searchState.source = downloadSource.get();
+        searchState.loading = true;
+        searchState.failed = false;
         int searchPageId = pageId;
         executor = Task.supplyAsync(() -> {
                     SearchOutcome outcome;
@@ -519,8 +521,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                         return;
                     }
                     setLoading(false);
+                    searchState.loading = false;
                     if (exception == null) {
                         // 保存搜索结果与 adapter，切回该模式时直接恢复显示
+                        searchState.failed = false;
                         searchState.result = outcome.mods();
                         searchState.pageCount = pageCount.get();
                         adapter = createAdapter(outcome.mods());
@@ -532,6 +536,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                         }
                     } else {
                         setFailed();
+                        searchState.failed = true;
                         pageCount.set(-1);
                         searchState.result = null;
                         searchState.pageCount = -1;
@@ -1081,10 +1086,6 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         }
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void onClick(View v) {

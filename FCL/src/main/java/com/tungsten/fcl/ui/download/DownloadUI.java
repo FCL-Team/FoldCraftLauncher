@@ -275,8 +275,4 @@ public class DownloadUI extends FCLCommonUI {
         }
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 }

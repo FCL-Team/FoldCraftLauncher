@@ -66,7 +66,6 @@ class ResourcePackListPage(context: Context?, id: Int) :
         })
     }
 
-    override fun refresh(vararg param: Any): Task<*>? = null
 
     override fun loadVersion(profile: Profile, version: String?) {
         this.profile = profile

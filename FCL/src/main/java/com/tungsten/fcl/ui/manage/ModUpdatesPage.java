@@ -83,10 +83,6 @@ public class ModUpdatesPage extends FCLPage implements View.OnClickListener {
         updateWithout.setSelected(true);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void onClick(View v) {
@@ -113,7 +109,6 @@ public class ModUpdatesPage extends FCLPage implements View.OnClickListener {
                         .collect(Collectors.toList()), keepOldVersion);
         TaskExecutor executor = task.whenComplete(Schedulers.androidUIThread(), exception -> {
             UIManager.getInstance().getManageUI().dismissCurrentTempPage();
-            modListPage.refresh();
             if (!task.getFailedMods().isEmpty()) {
                 FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
                 builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
