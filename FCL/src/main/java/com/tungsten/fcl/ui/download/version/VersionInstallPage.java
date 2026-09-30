@@ -1,35 +1,39 @@
 package com.tungsten.fcl.ui.download.version;
 
-import static com.tungsten.fclcore.util.Logging.LOG;
-
 import android.content.Context;
 import android.view.View;
 import android.widget.CompoundButton;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.setting.DownloadProviders;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fclcore.download.ComponentRemoteVersion;
-import com.tungsten.fclcore.download.ComponentVersionList;
 import com.tungsten.fclcore.game.GameComponentType;
-import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fclcore.util.versioning.GameVersionNumber;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
+import com.tungsten.fcllibrary.component.ui.PageFlows;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+/**
+ * 游戏版本安装页：只渲染 {@link DownloadListViewModel} 的清单状态并触发加载。
+ * 清单数据与加载状态挂 Activity 级 ViewModel，页面随 ViewPager 回收重建时直接恢复，
+ * 不重新网络拉取（刷新按钮才是显式 force 通道）。
+ */
 public class VersionInstallPage extends FCLPage implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+
+    private static final String VM_KEY = "download_list_game";
 
     private FCLCheckBox checkRelease;
     private FCLCheckBox checkSnapShot;
@@ -42,6 +46,11 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
     private FCLEditText search;
 
     private RemoteVersionListAdapter.OnRemoteVersionSelectListener listener;
+    private RemoteVersionListAdapter adapter;
+    private DownloadListViewModel viewModel;
+
+    /** 最近一次 Loaded 的全量清单（未按复选框/搜索过滤），过滤重算的数据源 */
+    private List<ComponentRemoteVersion> versions = Collections.emptyList();
 
     public VersionInstallPage(Context context, int id) {
         super(context, id, R.layout.page_install_version);
@@ -74,15 +83,53 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
             UIManager.getInstance().getDownloadUI().showTempPage(page);
         };
 
-        search.stringProperty().addListener(observable -> refreshDisplayVersions());
+        search.stringProperty().addListener(observable -> applyFilters());
 
+        adapter = new RemoteVersionListAdapter(getContext(), listener);
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        refreshList();
+        viewModel = new ViewModelProvider(getActivity()).get(VM_KEY, DownloadListViewModel.class);
+        PageFlows.observe(this, viewModel.getState(), this::render);
+        viewModel.load("", GameComponentType.GAME, false);
+    }
+
+    private void render(DownloadListViewModel.State state) {
+        if (state instanceof DownloadListViewModel.State.Loaded loaded) {
+            versions = loaded.getVersions();
+            // 过滤后为空通常是复选框把所有类型都关了：放开类型过滤（回调会重新过滤）
+            if (loadVersions().isEmpty()) {
+                checkRelease.setChecked(true);
+                checkSnapShot.setChecked(true);
+                checkOld.setChecked(true);
+            }
+            applyFilters();
+            recyclerView.setVisibility(View.VISIBLE);
+            failedRefresh.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            refresh.setEnabled(true);
+        } else if (state instanceof DownloadListViewModel.State.Failed failed) {
+            progressBar.setVisibility(View.GONE);
+            refresh.setEnabled(true);
+            if (failed.getLastList().isEmpty()) {
+                recyclerView.setVisibility(View.GONE);
+                failedRefresh.setVisibility(View.VISIBLE);
+            } else {
+                // 保留已加载的旧列表（adapter 未被触碰），仅显示重试入口，瞬时网络故障不掩盖可用数据
+                recyclerView.setVisibility(View.VISIBLE);
+                failedRefresh.setVisibility(View.VISIBLE);
+            }
+        } else {
+            // Idle / Loading：清单拉取中
+            recyclerView.setVisibility(View.GONE);
+            failedRefresh.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            refresh.setEnabled(false);
+        }
     }
 
     private List<ComponentRemoteVersion> loadVersions() {
-        return DownloadProviders.getDownloadProvider().getVersionList(GameComponentType.GAME).getVersions("").stream()
+        return versions.stream()
                 .filter(it -> switch (it.getVersionType()) {
                     case RELEASE -> checkRelease.isChecked();
                     case PENDING, UNOBFUSCATED, SNAPSHOT -> {
@@ -103,46 +150,8 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
                 .sorted().collect(Collectors.toList());
     }
 
-    public void refreshDisplayVersions() {
-        List<ComponentRemoteVersion> items = loadVersions();
-        RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), new ArrayList<>(items), listener);
-        recyclerView.setAdapter(adapter);
-    }
-
-    public void refreshList() {
-        recyclerView.setVisibility(View.GONE);
-        failedRefresh.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
-        refresh.setEnabled(false);
-        search.setText("");
-        ComponentVersionList<?> currentVersionList = DownloadProviders.getDownloadProvider().getVersionList(GameComponentType.GAME);
-        currentVersionList.refreshAsync("")
-                .whenComplete(Schedulers.androidUIThread(), (result, exception) -> {
-                    if (exception == null) {
-                        List<ComponentRemoteVersion> items = loadVersions();
-
-                        if (items.isEmpty()) {
-                            checkRelease.setChecked(true);
-                            checkSnapShot.setChecked(true);
-                            checkOld.setChecked(true);
-                        } else {
-                            RemoteVersionListAdapter adapter = new RemoteVersionListAdapter(getContext(), new ArrayList<>(items), listener);
-                            recyclerView.setAdapter(adapter);
-                        }
-                        recyclerView.setVisibility(View.VISIBLE);
-                        failedRefresh.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.GONE);
-                        refresh.setEnabled(true);
-                    } else {
-                        LOG.log(Level.WARNING, "Failed to fetch versions list", exception);
-                        recyclerView.setVisibility(View.GONE);
-                        failedRefresh.setVisibility(View.VISIBLE);
-                        progressBar.setVisibility(View.GONE);
-                        refresh.setEnabled(true);
-                    }
-
-                    System.gc();
-                }).start();
+    private void applyFilters() {
+        adapter.submitList(new ArrayList<>(loadVersions()));
     }
 
     @Override
@@ -155,14 +164,15 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
     @Override
     public void onClick(View view) {
         if (view == refresh || view == failedRefresh) {
-            refreshList();
+            search.setText("");
+            viewModel.load("", GameComponentType.GAME, true);
         }
     }
 
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         if (compoundButton == checkRelease || compoundButton == checkSnapShot || compoundButton == checkOld || compoundButton == checkAprilFools) {
-            refreshDisplayVersions();
+            applyFilters();
         }
     }
 }
