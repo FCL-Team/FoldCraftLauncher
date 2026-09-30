@@ -28,6 +28,7 @@ import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.version.Versions;
 import com.mio.download.DownloadManager;
+import com.mio.data.ModsChanged;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -904,6 +905,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                     } else {
                         Toast.makeText(context, context.getString(R.string.install_success), Toast.LENGTH_SHORT).show();
                         refreshInstalledState();
+                        // 模组落盘驱动模组管理页自动重载（资源包/光影等子目录无关）
+                        if ("mods".equals(subdirectoryName)) {
+                            ModsChanged.notifyChanged();
+                        }
                     }
                 }).executor();
                 DownloadManager.submit(name, fileTask, executor);
@@ -966,6 +971,8 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                 builder.create().show();
             } else if (exception == null) {
                 refreshInstalledState();
+                // 模组文件落盘（一键含前置/收藏批量共用此入口），逐文件通知
+                ModsChanged.notifyChanged();
             }
         }).executor();
         DownloadManager.submit(filename, fileTask, executor);

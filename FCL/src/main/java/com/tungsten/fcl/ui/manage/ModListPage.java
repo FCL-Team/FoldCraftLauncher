@@ -47,6 +47,8 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.browser.SelectedFile;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
+import com.tungsten.fcllibrary.component.ui.PageFlows;
+import com.mio.data.ModsChanged;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
@@ -184,6 +186,16 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
             @Override
             public void afterTextChanged(Editable s) {
                 search();
+            }
+        });
+
+        // 模组目录变化（下载模组落盘/模组更新完成）自动重载：
+        // 下载发生在下载页（本页 detach 错过实时 tick），重进管理页时 attach 重放当前 tick 触发重载；
+        // 管理页可见期间（如模组更新临时页）实时重载。扫描进行中跳过（refreshButton 被 setLoading 禁用），
+        // 错过的变化由下次 attach 重放兜底。
+        PageFlows.observe(this, ModsChanged.getEventsFlow(), tick -> {
+            if (modManager != null && refreshButton.isEnabled()) {
+                refresh();
             }
         });
     }
