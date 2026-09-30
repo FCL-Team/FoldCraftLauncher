@@ -9,7 +9,6 @@ import com.tungsten.fclcore.event.RefreshedVersionsEvent
 import com.tungsten.fclcore.fakefx.collections.FXCollections
 import java.io.File
 import java.util.TreeMap
-import java.util.function.Consumer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,8 +45,6 @@ object Profiles {
      */
     @get:JvmName("getVersionsRefreshedFlow")
     val versionsRefreshed: StateFlow<Int> = _versionsRefreshed.asStateFlow()
-    private val versionsListeners: MutableList<Consumer<Profile>> =
-        ArrayList(4)
 
     /** 添加 Profile（触发配置保存、默认补全与选中项校验） */
     @JvmStatic
@@ -135,7 +132,6 @@ object Profiles {
                 if (profile.repository === event!!.getSource()) {
                     bindSelectedVersion(profile)
                     _versionsRefreshed.value += 1
-                    for (listener in versionsListeners) listener.accept(profile)
                 }
                 }
         )
@@ -225,16 +221,6 @@ object Profiles {
     @JvmStatic
     fun getSelectedVersion(): String? {
         return _selectedVersion.value
-    }
-
-    @JvmStatic
-    fun registerVersionsListener(listener: Consumer<Profile>) {
-        versionsListeners.add(listener)
-    }
-
-    @JvmStatic
-    fun unregisterVersionsListener(listener: Consumer<Profile>) {
-        versionsListeners.remove(listener)
     }
 
 }

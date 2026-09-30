@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.core.graphics.drawable.toDrawable
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,10 +22,11 @@ import com.tungsten.fcl.databinding.ItemVersionSwitchBinding
 import com.tungsten.fcl.databinding.PopupVersionSwitchBinding
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
+import com.tungsten.fcl.ui.version.VersionListViewModel
 import com.tungsten.fclcore.util.versioning.GameVersionNumber
 import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.util.ConvertUtils
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.milliseconds
@@ -34,8 +36,8 @@ import kotlin.time.Duration.Companion.milliseconds
  * 点击条目切换选中版本，点击条目右侧启动按钮切换并启动。
  *
  * 弹窗与右菜单对齐：宽度同菜单宽度，顶到屏幕顶端、底悬于版本卡片上方，背景半透明。
- * 条目直接读取与版本列表页共享的 [VersionCache] 快照（[preload] 预热），
- * 打开后后台重刷快照并按最新数据刷新条目。
+ * 条目读取与版本列表页共享的 [VersionListViewModel] 状态（快照未就绪时等它加载），
+ * 数据新鲜度由 VM 的 profile/tick 驱动重载保证，弹窗自身不再触发重算。
  */
 class VersionSwitchPopup(private val activity: FCLActivity) {
 
@@ -46,16 +48,22 @@ class VersionSwitchPopup(private val activity: FCLActivity) {
     /** 展示弹窗并异步填充条目；[menu] 传右菜单视图，弹窗与其对齐 */
     fun show(anchor: View, menu: View, onLaunch: (String) -> Unit) {
         val profile = Profiles.getSelectedProfile()
+        val viewModel = ViewModelProvider(activity).get(VersionListViewModel::class.java)
         activity.lifecycleScope.launch {
             showPopup(anchor, menu, profile, onLaunch)
-            // 快照为空（尚未预热）时显示圆形进度，等待与版本列表页共享的快照就绪
-            if (VersionCache.get(profile).isEmpty()) {
-                binding.progress.visibility = View.VISIBLE
-                binding.list.visibility = View.GONE
-                withTimeoutOrNull(60_000.milliseconds) { runCatching { VersionCache.refresh(profile) } }
+            val current = viewModel.state.value
+            if (current.profile === profile && !current.loading && current.entries.isNotEmpty()) {
+                applyItems(items(profile, current.entries))
+                return@launch
             }
-            val items = items(profile)
-            if (items.isEmpty()) {
+            // 快照未就绪：显示圆形进度，等待与版本列表页共享的 VM 状态加载完成
+            binding.progress.visibility = View.VISIBLE
+            binding.list.visibility = View.GONE
+            val ready = withTimeoutOrNull(60_000.milliseconds) {
+                viewModel.state.first { it.profile === profile && !it.loading }
+            }
+            val entries = ready?.entries.orEmpty()
+            if (entries.isEmpty()) {
                 if (popup.isShowing && !activity.isDestroyed && !activity.isFinishing) {
                     popup.dismiss()
                     Toast.makeText(activity, R.string.version_no_version, Toast.LENGTH_SHORT).show()
@@ -64,10 +72,7 @@ class VersionSwitchPopup(private val activity: FCLActivity) {
             }
             binding.progress.visibility = View.GONE
             binding.list.visibility = View.VISIBLE
-            applyItems(items)
-            // 后台重刷共享快照保证数据新鲜，完成后按最新数据刷新条目
-            withTimeoutOrNull(60_000.milliseconds) { runCatching { VersionCache.refresh(profile) } }
-            applyItems(items(profile))
+            applyItems(items(profile, entries))
         }
     }
 
@@ -78,10 +83,10 @@ class VersionSwitchPopup(private val activity: FCLActivity) {
         if (selectedIndex > 0) binding.list.scrollToPosition(selectedIndex)
     }
 
-    /** 从共享快照（VersionCache）派生条目：按真实游戏版本降序 */
-    private fun items(profile: Profile): List<Item> {
+    /** 从共享 VM 状态派生条目：按真实游戏版本降序 */
+    private fun items(profile: Profile, entries: List<VersionCache.Entry>): List<Item> {
         val selected = profile.selectedVersion
-        return VersionCache.get(profile).values
+        return entries
             .sortedWith(compareByDescending<VersionCache.Entry> { it.gameVersion }.thenByDescending { it.id })
             .map { Item(it.id, it.newIcon(), it.gameVersion, it.id == selected) }
     }
@@ -172,33 +177,6 @@ class VersionSwitchPopup(private val activity: FCLActivity) {
             )
             holder.itemView.setOnClickListener { onClick(item, false) }
             binding.launch.setOnClickListener { onClick(item, true) }
-        }
-    }
-
-    companion object {
-
-        private var preloading = false
-
-        /**
-         * 后台预热版本快照（等待版本仓库加载完成，上限 30s），
-         * 与版本列表页共享同一份 VersionCache，长按弹出时即可完整显示
-         */
-        fun preload(activity: FCLActivity) {
-            if (preloading) return
-            preloading = true
-            activity.lifecycleScope.launch {
-                try {
-                    val repository = Profiles.getSelectedProfile().repository
-                    var waited = 0
-                    while (!repository.isLoaded && waited < 30_000) {
-                        delay(500.milliseconds)
-                        waited += 500
-                    }
-                    withTimeoutOrNull(60_000.milliseconds) { runCatching { VersionCache.refresh(Profiles.getSelectedProfile()) } }
-                } finally {
-                    preloading = false
-                }
-            }
         }
     }
 }

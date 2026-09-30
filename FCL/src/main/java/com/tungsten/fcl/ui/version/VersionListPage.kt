@@ -4,29 +4,23 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
-import com.mio.cache.VersionCache
 import com.tungsten.fcl.R
-import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.PageVersionListBinding
-import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
-import com.tungsten.fcl.setting.Profiles.getSelectedProfile
 import com.tungsten.fcl.setting.Profiles.profiles
-import com.tungsten.fcl.setting.Profiles.registerVersionsListener
-import com.tungsten.fcl.setting.Profiles.unregisterVersionsListener
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fcllibrary.component.ui.FCLPage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.tungsten.fcllibrary.component.ui.observeWhileAttached
 import java.util.Locale
-import java.util.function.Consumer
-import java.util.stream.Collectors
 
+/**
+ * 版本列表页：只渲染 [VersionListViewModel] 的状态（数据加载/失效/去重全部在 VM），
+ * 并 observe 选中版本流更新高亮。搜索文本与分类 tab 是页面自有筛选状态，
+ * 数据刷新不再触碰它们（装完新版本回到列表，筛选保持）。
+ */
 class VersionListPage(context: Context?, id: Int) :
     FCLPage(context, id, R.layout.page_version_list),
     View.OnClickListener {
@@ -35,45 +29,25 @@ class VersionListPage(context: Context?, id: Int) :
     private lateinit var children: List<VersionListItem>
     private var textWatcher: TextWatcher? = null
     private var searchWatcherAttached = false
-    private var highlightedProfile: Profile? = null
-    private var versionHighlightListener: Runnable? = null
-    private var loadJob: Job? = null
-    private var versionsListener: Consumer<Profile>? = null
-    private var profileCollectJob: Job? = null
+    private var searchText = ""
+    private var currentTab = 0
+    private lateinit var viewModel: VersionListViewModel
 
     override fun onCreate() {
         super.onCreate()
         binding = PageVersionListBinding.bind(contentView)
         binding.refresh.setOnClickListener(this)
         binding.newProfile.setOnClickListener(this)
-        // 版本刷新监听：attach 恢复、detach 注销，防止静态列表持有已销毁页面（与 DownloadUI 一致）
-        val listener = Consumer<Profile> { loadVersions(it) }
-        versionsListener = listener
-        registerVersionsListener(listener)
-        contentView.addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-            override fun onViewAttachedToWindow(v: View) {
-                versionsListener?.let {
-                    unregisterVersionsListener(it)
-                    registerVersionsListener(it)
-                }
-                // 版本刷新事件走监听器；首次 attach 与切换 Profile 由 collect 首值承担，避免双重加载
-                profileCollectJob = activity.lifecycleScope.launch {
-                    Profiles.selectedProfile.collect { profile ->
-                        if (profile != null) loadVersions(profile)
-                    }
-                }
-            }
 
-            override fun onViewDetachedFromWindow(v: View) {
-                versionsListener?.let { unregisterVersionsListener(it) }
-                profileCollectJob?.cancel()
-                // 移除挂到 profile 单例上的高亮监听，避免页面销毁后仍被回调
-                // （attach 时 collect 立即发射当前值，会重新 loadVersions 注册）
-                versionHighlightListener?.let { highlightedProfile?.removeSelectedVersionListener(it) }
-                versionHighlightListener = null
-                highlightedProfile = null
+        viewModel = ViewModelProvider(getActivity()).get(VersionListViewModel::class.java)
+        observeWhileAttached(viewModel.state) { render(it) }
+        // 高亮跟随选中版本（StateFlow 重放当前值，页面重建自动校准）
+        observeWhileAttached(Profiles.selectedVersion) { selected ->
+            if (::children.isInitialized) {
+                children.forEach { it.selectedProperty().set(it.version == selected) }
             }
-        })
+        }
+
         refreshProfile()
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -83,17 +57,14 @@ class VersionListPage(context: Context?, id: Int) :
             }
 
             override fun afterTextChanged(s: Editable) {
-                val text = s.toString()
-                adapter?.updateVersionList(if (text.isEmpty()) children else children.filter {
-                    it.version.lowercase(
-                        Locale.getDefault()
-                    ).contains(text.lowercase(Locale.getDefault()))
-                })
+                searchText = s.toString()
+                applyFilter()
             }
         }
         binding.category.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
-                filterByTab(tab.position)
+                currentTab = tab.position
+                applyFilter()
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
@@ -107,54 +78,66 @@ class VersionListPage(context: Context?, id: Int) :
     }
 
     /**
-     * 按分类 tab 过滤版本列表：0 全部，1 Fabric，2 Forge，3 NeoForge，4 其他
+     * 应用当前搜索文本与分类 tab 过滤（0 全部，1 Fabric，2 Forge，3 NeoForge，4 其他）
      */
-    private fun filterByTab(position: Int) {
-        when (position) {
-            0 -> {
-                adapter?.updateVersionList(children)
+    private fun applyFilter() {
+        if (!::children.isInitialized) return
+        var list = children
+        if (searchText.isNotEmpty()) {
+            val keyword = searchText.lowercase(Locale.getDefault())
+            list = list.filter { it.version.lowercase(Locale.getDefault()).contains(keyword) }
+        }
+        list = when (currentTab) {
+            1 -> list.filter { it.libraries.hasLoaderTag("Fabric") }
+            2 -> list.filter { it.libraries.hasLoaderTag("Forge") && !it.libraries.contains("NeoForge") }
+            3 -> list.filter { it.libraries.hasLoaderTag("NeoForge") }
+            4 -> list.filter {
+                it.libraries.split(",").none { lib ->
+                    lib.contains("Fabric") || lib.contains("Forge") || lib.contains("NeoForge")
+                }
             }
 
-            1 -> {
-                adapter?.updateVersionList(
-                    children.filter {
-                        it.libraries.split(",").find { lib ->
-                            lib.contains(":") && lib.contains("Fabric")
-                        } != null
-                    }
-                )
-            }
+            else -> list
+        }
+        adapter?.updateVersionList(list)
+    }
 
-            2 -> {
-                adapter?.updateVersionList(
-                    children.filter {
-                        it.libraries.split(",").find { lib ->
-                            lib.contains(":") && lib.contains("Forge") && !lib.contains("NeoForge")
-                        } != null
-                    }
-                )
-            }
+    /** 组件摘要片段（如 "Fabric: 0.16.0"）是否含某加载器 */
+    private fun String.hasLoaderTag(name: String): Boolean =
+        split(",").any { it.contains(":") && it.contains(name) }
 
-            3 -> {
-                adapter?.updateVersionList(
-                    children.filter {
-                        it.libraries.split(",").find { lib ->
-                            lib.contains(":") && lib.contains("NeoForge")
-                        } != null
-                    }
-                )
-            }
-
-            else -> {
-                adapter?.updateVersionList(
-                    children.filter {
-                        it.libraries.split(",").none { lib ->
-                            lib.contains("Fabric") || lib.contains("Forge") || lib.contains("NeoForge")
-                        }
-                    }
-                )
-            }
-
+    /**
+     * 渲染 VM 状态：条目变化时重建 item 列表并重新应用筛选；冷加载显示进度条。
+     */
+    private fun render(state: VersionListViewModel.UiState) {
+        val profile = state.profile ?: return
+        if (state.loading && state.entries.isEmpty()) {
+            binding.layout.visibility = View.GONE
+            binding.progress.visibility = View.VISIBLE
+            binding.refresh.isEnabled = false
+            return
+        }
+        children = state.entries.map {
+            VersionListItem(profile, it.id, it.libraries, it.tag, it.newIcon(), it.modCount)
+        }
+        if (adapter == null) {
+            adapter = VersionListAdapter(context, children)
+            binding.versionList.adapter = adapter
+            binding.versionList.layoutManager = LinearLayoutManager(context)
+        }
+        binding.progress.visibility = View.GONE
+        binding.refresh.isEnabled = true
+        if (children.isNotEmpty()) {
+            binding.layout.visibility = View.VISIBLE
+        }
+        if (!searchWatcherAttached) {
+            binding.search.addTextChangedListener(textWatcher)
+            searchWatcherAttached = true
+        }
+        applyFilter()
+        val selected = children.find { it.selectedProperty().get() }
+        if (selected != null) {
+            binding.versionList.scrollToPosition(children.indexOf(selected))
         }
     }
 
@@ -167,118 +150,10 @@ class VersionListPage(context: Context?, id: Int) :
         binding.profileList.adapter = adapter
     }
 
-    private fun loadVersions(profile: Profile) {
-        // 终止上一个加载（切换 profile 时旧版本加载立即取消，避免过期结果覆盖）
-        loadJob?.cancel()
-        var job: Job? = null
-        job = MainActivity.getInstance().lifecycleScope.launch {
-            binding.category.selectTab(binding.category.getTabAt(0))
-            binding.search.removeTextChangedListener(textWatcher)
-            searchWatcherAttached = false
-            binding.search.setText("")
-            binding.refresh.isEnabled = false
-            if (profile == getSelectedProfile()) {
-                val repository = profile.repository
-                val ids = withContext(Dispatchers.IO) {
-                    repository.displayVersions.map { it.id }.collect(Collectors.toList())
-                }
-                // 命中会话级快照时跳过进度条即时渲染，最新数据随后台刷新覆盖
-                // （快照在创建时排序，绘制与后续 sameEntries 比较共用同一份，避免顺序不一致误判为数据变化）
-                val snapshotMap = VersionCache.get(profile)
-                val snapshot = sortEntries(ids.mapNotNull { snapshotMap[it] })
-                if (snapshot.isNotEmpty()) {
-                    showVersions(profile, snapshot)
-                } else {
-                    binding.layout.visibility = View.GONE
-                    binding.progress.visibility = View.VISIBLE
-                }
-                registerHighlightListener(profile)
-                // 共享快照重算（写入 VersionCache，主界面快速切换弹窗同样读取）
-                val entries = VersionCache.refresh(profile)
-                // 加载期间可能已切换 profile 或重新加载，放弃过期结果
-                if (loadJob !== job) return@launch
-                val sorted = sortEntries(entries)
-                // 与快照一致时跳过重绘，避免列表无意义地重放入场动画
-                if (snapshot.isEmpty() || !sameEntries(snapshot, sorted)) {
-                    showVersions(profile, sorted)
-                }
-            }
-        }
-        loadJob = job
-    }
-
-    /**
-     * 在主线程应用一批版本条目：刷新适配器、恢复搜索框过滤、滚动到选中版本
-     */
-    private fun showVersions(profile: Profile, entries: List<VersionCache.Entry>) {
-        children = entries.map {
-            VersionListItem(profile, it.id, it.libraries, it.tag, it.newIcon(), it.modCount)
-        }
-        if (adapter == null) {
-            adapter = VersionListAdapter(context, children)
-            binding.versionList.adapter = adapter
-            binding.versionList.layoutManager = LinearLayoutManager(context)
-        } else {
-            adapter!!.updateVersionList(children)
-        }
-        binding.refresh.isEnabled = true
-        if (children.isNotEmpty()) {
-            binding.layout.visibility = View.VISIBLE
-        }
-        binding.progress.visibility = View.GONE
-        if (!searchWatcherAttached) {
-            binding.search.addTextChangedListener(textWatcher)
-            searchWatcherAttached = true
-        }
-        val selected = children.find { it.selectedProperty().get() }
-        if (selected != null) {
-            binding.versionList.scrollToPosition(children.indexOf(selected))
-        }
-    }
-
-    /**
-     * 按真实游戏版本从大到小排序（GameVersionNumber 比较，无法识别的版本排在最后），同版本时按 id 倒序保持稳定
-     */
-    private fun sortEntries(entries: List<VersionCache.Entry>): List<VersionCache.Entry> {
-        return entries.sortedWith(
-            compareByDescending<VersionCache.Entry> { it.gameVersion }
-                .thenByDescending { it.id }
-        )
-    }
-
-    private fun sameEntries(
-        a: List<VersionCache.Entry>,
-        b: List<VersionCache.Entry>
-    ): Boolean {
-        if (a.size != b.size) return false
-        return a.zip(b).all { (x, y) ->
-            x.id == y.id && x.libraries == y.libraries && x.tag == y.tag
-                    && x.modCount == y.modCount && x.iconKey == y.iconKey
-        }
-    }
-
-    /**
-     * 版本选中高亮：监听 profile 版本变化时更新（替代 fakefx bind）
-     */
-    private fun registerHighlightListener(profile: Profile) {
-        versionHighlightListener?.let { highlightedProfile?.removeSelectedVersionListener(it) }
-        val highlightListener = Runnable {
-            if (!::children.isInitialized) return@Runnable
-            children.forEach { item ->
-                item.selectedProperty().set(profile.selectedVersion == item.version)
-            }
-        }
-        versionHighlightListener = highlightListener
-        highlightedProfile = profile
-        profile.addSelectedVersionListener(highlightListener)
-    }
-
     override fun onClick(view: View?) {
         if (view === binding.refresh) {
-            val profile = getSelectedProfile()
-            // 强制刷新：失效快照缓存，刷新完成的事件回调走冷加载（显示进度条并全量重绘）
-            VersionCache.invalidate(profile)
-            profile.repository.refreshVersionsAsync().start()
+            // 强制刷新：VM 失效快照并触发仓库重扫，完成事件经 tick 走冷加载（进度条 + 全量重绘）
+            viewModel.forceRefresh()
         }
         if (view === binding.newProfile) {
             val dialog = AddProfileDialog(context)
