@@ -43,9 +43,6 @@ class ManagePage(context: Context?, id: Int) : FCLPage(context, id, R.layout.pag
         create()
     }
 
-    override fun refresh(vararg param: Any): Task<*>? {
-        return null
-    }
 
     override fun loadVersion(profile: Profile, version: String) {
         currentVersionUpgradable.set(profile.repository.isModpack(version))

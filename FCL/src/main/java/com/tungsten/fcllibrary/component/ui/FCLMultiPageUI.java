@@ -249,9 +249,6 @@ public abstract class FCLMultiPageUI extends FCLCommonUI {
     }
 
     @Override
-    public abstract Task<?> refresh(Object... param);
-
-    @Override
     public void onBackPressed() {
         if (canReturn()) {
             dismissCurrentTempPage();

@@ -312,10 +312,6 @@ public class WorldInfoPage extends FCLPage {
         xpLevel = findViewById(R.id.xp_level);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     private void saveWorldData() {
         LOG.info("Saving data of world " + world.getWorldName());

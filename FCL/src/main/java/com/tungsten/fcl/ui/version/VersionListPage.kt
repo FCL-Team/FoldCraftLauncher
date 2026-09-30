@@ -141,9 +141,6 @@ class VersionListPage(context: Context?, id: Int) :
         }
     }
 
-    override fun refresh(vararg param: Any?): Task<*>? {
-        return Task.runAsync {}
-    }
 
     fun refreshProfile() {
         val adapter = ProfileListAdapter(context, profiles)

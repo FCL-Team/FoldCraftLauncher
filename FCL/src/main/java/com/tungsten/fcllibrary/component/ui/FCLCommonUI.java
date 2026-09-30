@@ -23,9 +23,6 @@ public abstract class FCLCommonUI extends FCLBaseUI {
     }
 
     @Override
-    public abstract Task<?> refresh(Object... param);
-
-    @Override
     public void onCreate() {
         super.onCreate();
     }

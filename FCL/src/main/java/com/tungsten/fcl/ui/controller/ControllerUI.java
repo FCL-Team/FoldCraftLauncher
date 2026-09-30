@@ -49,8 +49,4 @@ public class ControllerUI extends FCLMultiPageUI {
         }
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 }

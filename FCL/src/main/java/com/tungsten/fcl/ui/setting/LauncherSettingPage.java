@@ -92,10 +92,6 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         adapter.rebuild();
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void onButtonClick(LauncherSettingTag tag) {

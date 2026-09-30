@@ -35,10 +35,4 @@ public class VersionUI extends FCLMultiPageUI {
         return new VersionListPage(getContext(), PAGE_ID_VERSION_LIST);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return Task.runAsync(() -> {
-
-        });
-    }
 }

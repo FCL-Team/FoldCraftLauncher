@@ -137,10 +137,6 @@ public class ModpackSelectionPage extends FCLPage implements View.OnClickListene
         dialog.show();
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
 
     @Override
