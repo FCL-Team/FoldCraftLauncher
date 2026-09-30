@@ -1,5 +1,61 @@
 # Changelog
 
+## [1.3.3.6] - 2026-09-30
+
+### 中文
+
+#### ✨ 新功能
+
+1. **整合包导出**：新增 Modrinth（.mrpack）与 CurseForge 整合包导出，复用导出向导界面，支持覆盖文件筛选、禁用/旧版模组自动跳过、可选打包配置与模组覆盖文件；CurseForge 导出经批量指纹反查服务端文件 ID (#1859)
+2. **全新引导组件**：自研引导遮罩替换停更的 TapTargetView，覆盖账户、启动与各菜单入口，遮罩带位置过渡动画；引导文案同步补充长按版本卡片快速切换、联机等说明
+3. **Fabric/Quilt 安装自动选择 API**：安装新游戏选择 Fabric/Quilt 加载器时自动勾选对应的 Fabric API / QSL
+4. **"更新内容"入口**：启动器设置新增入口，可重复查看当前版本的更新说明 (#1856)；检查更新与更新内容拉取改同步 CAS 防抖，修复快速连点重复触发
+5. **控件编辑器吸附开关**：编辑吸附新增"仅吸附相邻按键"选项 (#646)
+
+#### ⚡ 优化
+
+1. **启动卡顿优化**：启动准备段（版本解析、模组全量扫描等重活）迁至后台线程，消除点击启动时的界面卡顿，准备弹窗内实时显示解析与扫描模组进度
+2. **皮肤模型判定**：优先使用账户提供的模型类型，无指定时再回退图像检测
+3. **lwjgl3ify**：兼容补丁改为启动时内存合并，不再改写版本 JSON 文件
+4. 内部清理：删除 fakefx 包 113 个不可达死代码类，删除未使用的帮助文档组件与孤儿布局
+
+#### 🐛 修复
+
+1. **控件编辑器系列**：新建/克隆控件默认屏幕中心并对齐组 z 序，修复添加控件被菜单遮挡看似消失 (#1865)；配置文件原子写入与布局按键数据按 id 去重，避免崩溃后键位重复 (#624)；仅吸附相邻按键时同边对齐只对另一轴相邻目标开放，修复无法与同一按钮横纵两轴同时对齐
+2. **整合包更新**：修复 Modrinth 整合包更新读取旧配置时 TypeToken 误用 Curse 清单类型，导致 ClassCastException 必然回滚
+3. **账户与收藏**：补全 Classic 账户密码重登弹窗，修复重登线程永久阻塞；收藏库补 v1→v2 正式迁移替代破坏式重建，修复收藏数据损坏
+4. **渲染**：EGL 上下文重建后未重传披风纹理，导致切换页面后披风消失；初始默认皮肤 alex 与渲染模型不一致导致手臂透明
+5. **日志分享**：迁移后台线程并对超大文件跳过处理，避免 ANR (#1871)
+6. **主题透明度**：主题色透明度不再影响文字与图标可见性
+7. **其他**：Java 管理弹窗删除图标过小且删除选中项后未回落自动选择；亮色模式下引导气泡文字看不清；GameOption 键值表与文件观察者改实例级，防止跨游戏目录串数据；OAuth 取消标志跨线程可见性与缓存 Storage 并发竞态等
+
+### English
+
+#### ✨ New Features
+
+1. **Modpack export**: Added Modrinth (.mrpack) and CurseForge modpack export, reusing the export wizard — with override-file filtering, automatic skipping of disabled/old mods, optional config and override packaging; CurseForge export resolves server-side file IDs via batch fingerprint lookup (#1859)
+2. **New onboarding component**: An in-house spotlight overlay replaces the unmaintained TapTargetView, covering the account, launch and menu entries, with position transition animations; the guide copy now also covers long-pressing the version card for quick switching, multiplayer and more
+3. **Auto-select API when installing Fabric/Quilt**: Installing a new game with the Fabric/Quilt loader now auto-selects the matching Fabric API / QSL
+4. **"What's New" entry**: Launcher settings gained an entry to review the current version's update notes at any time (#1856); the update check and notes fetch now use a synchronous CAS debounce, fixing duplicate triggers from rapid tapping
+5. **Control editor snap toggle**: Editor snapping gained a "snap to adjacent buttons only" option (#646)
+
+#### ⚡ Improvements
+
+1. **Launch stutter fix**: The launch preparation stage (version parsing, full mod scanning and other heavy work) moved to a background thread, eliminating UI stutter when tapping launch; the preparation dialog shows parsing and scanning progress in real time
+2. **Skin model detection**: The account-provided model type is preferred, falling back to image detection only when unspecified
+3. **lwjgl3ify**: Compatibility patches are now merged in memory at launch instead of rewriting the version JSON file
+4. Internal cleanup: removed 113 unreachable dead-code classes from the fakefx package, plus unused help-document components and orphan layouts
+
+#### 🐛 Bug Fixes
+
+1. **Control editor series**: New/cloned controls now default to the screen center with aligned z-order, fixing added controls seemingly disappearing behind menus (#1865); config files are written atomically and layout key data is de-duplicated by id, preventing duplicated keys after crashes (#624); when "snap to adjacent buttons only" is on, same-edge alignment is only offered to adjacent targets on the other axis, fixing the inability to align with the same button on both axes
+2. **Modpack updates**: Fixed Modrinth modpack updates always rolling back due to a TypeToken misusing the Curse manifest type when reading old configs, causing a ClassCastException
+3. **Accounts & favorites**: Completed the Classic account password re-login dialog, fixing a permanently blocked re-login thread; the favorites database gained a proper v1→v2 migration replacing the destructive rebuild, fixing corrupted favorites data
+4. **Rendering**: Fixed the cape disappearing after page switches because the EGL context recreation did not re-upload the cape texture; fixed transparent arms caused by the initial default alex skin mismatching the render model
+5. **Log sharing**: Moved to a background thread and skips processing oversized files, preventing ANR (#1871)
+6. **Theme transparency**: Theme color transparency no longer affects text and icon visibility
+7. **Others**: The Java management dialog's delete icon was too small and the selection did not fall back after deleting; onboarding bubble text was hard to read in light mode; GameOption key tables and file watchers are now instance-level, preventing data leaking across game directories; OAuth cancel-flag cross-thread visibility, cache Storage concurrency races, and more
+
 ## [1.3.3.5] - 2026-09-25
 
 ### 中文
