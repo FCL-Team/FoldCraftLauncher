@@ -28,6 +28,7 @@ import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.version.Versions;
 import com.mio.download.DownloadManager;
+import com.mio.data.ModsChanged;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -1000,18 +1001,21 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     }
 
     /**
-     * 模组文件落地后同步进 ModManager 并广播事件，模组管理页可增量刷新；
+     * 模组文件落地后：同步进 ModManager 缓存并登记目录快照（避免下次 getMods 因快照失配
+     * 触发全量重扫），同时经 ModsChanged tick 流驱动模组管理页自动重载；
      * 下载目录不是该版本的 mods 目录（如资源包目录）时跳过
      */
     private void notifyModsChanged(@Nullable ModManager modManager, Path modsDirectory, Path dest) {
         if (modManager == null || !modsDirectory.equals(modManager.getModsDirectory())) return;
         Schedulers.io().execute(() -> {
             try {
-                modManager.onModFileAdded(dest);
+                modManager.registerModFile(dest);
             } catch (IOException e) {
                 Logging.LOG.log(Level.WARNING, "Failed to sync downloaded mod file " + dest, e);
             }
         });
+        // 逐文件通知（一键含前置/收藏批量共用 submitModDownload 入口），300ms debounce 收敛
+        ModsChanged.notifyChanged();
     }
 
     /** 批量下载计划：去重后待入队的文件、因已安装跳过的模组数、解析失败的模组名 */
