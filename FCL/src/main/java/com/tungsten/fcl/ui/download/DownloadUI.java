@@ -234,13 +234,19 @@ public class DownloadUI extends FCLCommonUI {
     }
 
     /**
-     * 弹栈顶临时页（淡出后移除并恢复下层）
+     * 弹栈顶临时页并立即移除其视图。
+     *
+     * 不留淡出期间的视图：留在覆盖层上的旧页仍能接收触摸，误触会用该页旧模式下的回调
+     * 发起操作（把模组下到光影包目录、收藏存错类别等）；且淡出动画被取消时
+     * withEndAction 不回调，视图会永久残留在覆盖层（与 FCLMultiPageUI 的同款处理）。
+     * 过渡动画由下层页面的 slideIn 承担。
      */
     public void dismissCurrentTempPage() {
         if (tempPageStack.isEmpty()) return;
         FCLPage page = tempPageStack.remove(tempPageStack.size() - 1);
         View view = page.getContentView();
-        // 恢复下层（与临时页淡出交叉进行，形成返回过渡动画）
+        overlay.removeView(view);
+        // 恢复下层
         if (!tempPageStack.isEmpty()) {
             View lowerView = tempPageStack.get(tempPageStack.size() - 1).getContentView();
             lowerView.setVisibility(View.VISIBLE);
@@ -248,13 +254,8 @@ public class DownloadUI extends FCLCommonUI {
         } else {
             contentContainer.setVisibility(View.VISIBLE);
             slideIn(contentContainer);
+            overlay.setVisibility(View.GONE);
         }
-        view.animate().alpha(0f).setDuration(TEMP_PAGE_ANIM_DURATION).withEndAction(() -> {
-            overlay.removeView(view);
-            if (tempPageStack.isEmpty()) {
-                overlay.setVisibility(View.GONE);
-            }
-        }).start();
     }
 
     /**
