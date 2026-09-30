@@ -146,7 +146,8 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
                     }
                     default -> true;
                 })
-                .filter(it -> it.getGameVersion().contains(search.getStringValue()))
+                // getStringValue 在从未 setText 时为 null（原 refreshList 靠先 setText("") 掩盖）
+                .filter(it -> it.getGameVersion().contains(java.util.Optional.ofNullable(search.getStringValue()).orElse("")))
                 .sorted().collect(Collectors.toList());
     }
 
