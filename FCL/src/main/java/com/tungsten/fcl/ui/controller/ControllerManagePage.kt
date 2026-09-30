@@ -132,7 +132,6 @@ class ControllerManagePage(context: Context, id: Int) :
         adapter.notifyDataSetChanged()
     }
 
-    override fun refresh(vararg param: Any?): Task<*>? = null
 
     override fun onClick(view: View) {
         when (view) {

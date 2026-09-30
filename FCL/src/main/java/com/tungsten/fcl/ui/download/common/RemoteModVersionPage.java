@@ -63,10 +63,6 @@ public class RemoteModVersionPage extends FCLPage {
         });
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     public interface DownloadCallback {
         void download(RemoteMod.Version file);

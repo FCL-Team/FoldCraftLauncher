@@ -63,10 +63,6 @@ public class ControllerUploadPage extends FCLPage implements View.OnClickListene
         share.setOnClickListener(this);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
 
     @Override

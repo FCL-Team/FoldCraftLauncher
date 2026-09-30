@@ -69,5 +69,4 @@ public abstract class FCLPage {
 
     }
 
-    public abstract Task<?> refresh(Object... param);
 }

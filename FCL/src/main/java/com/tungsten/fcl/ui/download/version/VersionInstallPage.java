@@ -154,12 +154,6 @@ public class VersionInstallPage extends FCLPage implements View.OnClickListener,
         adapter.submitList(new ArrayList<>(loadVersions()));
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return Task.runAsync(() -> {
-
-        });
-    }
 
     @Override
     public void onClick(View view) {

@@ -87,10 +87,6 @@ public class MultiplayerUI extends FCLCommonUI implements View.OnClickListener, 
         shareLog.setOnClickListener(this);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void onClick(View v) {
