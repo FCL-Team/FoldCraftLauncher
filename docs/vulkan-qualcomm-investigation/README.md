@@ -72,10 +72,33 @@ against the exact client with Java 25 class-file verification and was loaded
 as a real startup agent with signed GameRenderer and a signed package sibling;
 the signers remained intact. Other clears and original client SHA256 match.
 
-A full APK build and device test of the new UI/build/extraction route remain
-unverified locally: no Android SDK is configured. The prior in-game agent
-result is not presented as a complete test of the new APK. Additional device
-coverage and performance are untested. Historical
+The source-built ARM64 `com.tungsten.fcl.debug` APK was assembled in
+[fork CI](https://github.com/zxcccssssssas-eng/FoldCraftLauncher/actions/runs/36747972892)
+and installed alongside the original app. The UI toggle, persistence across
+restart, automatic asset extraction (matching hash), and automatic injection
+without manual Java arguments were verified. The game log confirms native
+Qualcomm Vulkan and the bundled transformer's Applied message; the original
+signed client JAR hash is unchanged. Seven focused tests pass. Two unrelated
+control-layout golden tests fail identically on the unmodified baseline;
+the full suite is not claimed to pass.
+
+The first fresh-world test failed with the vendor profiler's duplicate-submit
+path still active despite `debug.vulkan.profiler=false`: 1767 wrapper calls,
+3534 core submissions, followed by device lost. Matching the original startup
+renderer did not remove it. The HAL gate at `0x24ccf0` separately checks
+`debug.graphics.gpu.profiler.perfetto`, then `ro.debuggable` or a positive
+`prctl(PR_GET_DUMPABLE)` result. The test APK is debuggable; the original is not.
+
+Temporarily disabling only that Perfetto profiling property and restarting
+the test app produced 41982 core entries and 41982 successful returns, with
+zero defective profiler-submit hits and no increase in its fault counter
+(14). The user confirmed fresh-world entry, near-block hand rendering and
+menu scrolling all work in this source-built APK under that condition. Native
+Qualcomm Vulkan and the KGSL hooks stayed active. The property was restored
+after saving/quitting; no global-property mutation is part of the source fix.
+The hand patch does not fix the vendor profiler or validate gameplay with
+that profiling route enabled. Additional device coverage and performance
+remain untested. Historical
 [#1498](https://github.com/FCL-Team/FoldCraftLauncher/issues/1498) and
 [#1674](https://github.com/FCL-Team/FoldCraftLauncher/pull/1674) use other
 backends and are not assumed to share this cause.
