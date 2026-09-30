@@ -35,7 +35,7 @@ class ThemeDataTest {
         color2: Int = Color.BLACK,
         color2Dark: Int = Color.WHITE
     ) = ThemeData(color, colorDark, color2, color2Dark,
-        fullscreen = false, closeSkinModel = false, animationSpeed = 8,
+        fullscreen = false, closeSkinModel = false, animationSpeed = 8, colorAlpha = 255,
         backgroundLt = BitmapDrawableStub(), backgroundDk = BitmapDrawableStub())
 
     /** 占位背景（测试不依赖真实图片资源） */
