@@ -30,8 +30,6 @@ import com.tungsten.fcl.ui.download.DownloadUI;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.event.EventBus;
-import com.tungsten.fclcore.event.ModsChangedEvent;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -52,6 +50,8 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.browser.SelectedFile;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
+import com.tungsten.fcllibrary.component.ui.PageFlows;
+import com.mio.data.ModsChanged;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLCheckBox;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
@@ -75,7 +75,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -102,13 +101,6 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
     private ModManager modManager;
     private Profile profile;
     private String versionId;
-
-    /**
-     * 模组文件变化监听（下载完成等外部新增场景）；页面持有强引用，
-     * 保证 registerWeak 的弱引用在页面存活期间不被回收。
-     * 不能用声明处初始化器：onCreate 在超类构造期间回调，那时字段尚未初始化
-     */
-    private Consumer<ModsChangedEvent> modsChangedListener;
 
     private boolean isSearching = false;
 
@@ -223,8 +215,15 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
         sortField = ModSortManager.getField();
         sortAscending = ModSortManager.isAscending();
 
-        modsChangedListener = this::onModsChanged;
-        EventBus.EVENT_BUS.channel(ModsChangedEvent.class).registerWeak(modsChangedListener);
+        // 模组目录变化（下载模组落盘/模组更新完成）自动重载：
+        // 下载发生在下载页（本页 detach 错过实时 tick），重进管理页时 attach 重放当前 tick 触发重载；
+        // 管理页可见期间（如模组更新临时页）实时重载。扫描进行中跳过（refreshButton 被 setLoading 禁用），
+        // 错过的变化由下次 attach 重放兜底。
+        PageFlows.observe(this, ModsChanged.getEventsFlow(), tick -> {
+            if (modManager != null && refreshButton.isEnabled()) {
+                refresh();
+            }
+        });
     }
 
     @Override
@@ -436,41 +435,6 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
             }
         }
         return fresh;
-    }
-
-    /**
-     * 模组文件变化事件：仅响应当前版本的 ModManager；
-     * 事件携带增量模组时直接追加，否则整体重扫
-     */
-    private void onModsChanged(ModsChangedEvent event) {
-        Schedulers.androidUIThread().execute(() -> {
-            if (event.getModManager() != modManager) return;
-            LocalModFile modFile = event.getModFile();
-            if (modFile == null) {
-                loadMods(modManager);
-            } else {
-                appendMod(modFile);
-            }
-        });
-    }
-
-    /** 增量追加一个模组条目（下载完成等外部新增场景）；仅 UI 线程调用 */
-    private void appendMod(LocalModFile modFile) {
-        ModInfoObject obj = new ModInfoObject(getContext(), modFile);
-        List<ModInfoObject> fresh = addAllMods(Collections.singletonList(obj));
-        if (fresh.isEmpty()) return;
-        if (sortField == null || sortField == ModSortField.DEFAULT) {
-            itemsProperty.addAll(filterMods(fresh));
-            if (isSearching) {
-                search();
-            }
-        } else {
-            // 排序模式下按当前排序整体重建视图
-            List<ModInfoObject> display = new ArrayList<>(allMods);
-            sortList(display, sortField, sortAscending);
-            itemsProperty.setAll(filterMods(display));
-        }
-        calculateMod();
     }
 
     /**

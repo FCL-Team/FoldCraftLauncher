@@ -25,8 +25,6 @@ import android.net.Uri;
 
 import com.google.gson.JsonParseException;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
-import com.tungsten.fclcore.event.EventBus;
-import com.tungsten.fclcore.event.ModsChangedEvent;
 import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.mod.modinfo.FabricModMetadata;
 import com.tungsten.fclcore.mod.modinfo.ForgeNewModMetadata;
@@ -268,19 +266,17 @@ public final class ModManager {
     }
 
     /**
-     * 模组目录发生变化（如下载完成的模组落地）后由外部调用：增量解析该文件并广播事件，
-     * 供模组管理界面增量刷新；目录快照同步登记，避免下次访问触发全量重扫。
-     *
-     * @return 解析出的模组信息；非模组文件或旧版模组返回 null
+     * 模组文件落地（如下载完成）后由外部调用：增量解析该文件同步进缓存并登记目录快照，
+     * 避免下次 getMods 因快照失配触发全量重扫；localModFiles 按文件名去重，
+     * 与全量扫描交错时重复登记安全。快照存在其他外部变化时保持失配，由下次 getMods 全量重扫补齐。
+     * 尚未扫描过时不处理（交给下次全量扫描），UI 侧刷新由调用方另行驱动。
      */
-    public synchronized LocalModFile onModFileAdded(Path file) throws IOException {
-        if (!loaded || isSnapshotOutdated())
-            refreshMods();
+    public synchronized void registerModFile(Path file) throws IOException {
+        if (!loaded)
+            return;
 
-        LocalModFile modFile = addModInfo(file);
+        addModInfo(file);
         registerSnapshotFile(file);
-        EventBus.EVENT_BUS.fireEvent(new ModsChangedEvent(this, modFile));
-        return modFile;
     }
 
     public synchronized void addMod(Path file) throws IOException {
