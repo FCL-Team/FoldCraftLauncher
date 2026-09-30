@@ -924,6 +924,8 @@
     <string name="settings_fcl_controller_desc">选择此版本使用的控制器布局</string>
     <string name="settings_fcl_vulkan_driver_system">使用系统Vulkan驱动</string>
     <string name="settings_fcl_vulkan_driver_system_desc">使用系统 Vulkan 驱动，性能更好但存在兼容性风险</string>
+    <string name="settings_fcl_vulkan_hand_depth_fix">高通 Vulkan 手部深度兼容修复</string>
+    <string name="settings_fcl_vulkan_hand_depth_fix_desc">实验性选项，默认关闭。在手部渲染通道内清除深度。仅应用于已验证的原版 26.4 Snapshot 2 客户端、Java 25、明确选择的 Vulkan 后端及系统驱动。其他客户端和模组加载器入口将跳过，不修改原游戏 JAR。</string>
     <string name="settings_fcl_graphics_backend">图形后端</string>
     <string name="settings_fcl_graphics_backend_desc">选择图形渲染后端，仅对 26.2+ 生效</string>
     <string name="settings_fcl_renderer">OpenGL实现方式</string>

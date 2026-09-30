@@ -198,6 +198,13 @@ class VersionSettingAdapter(
                 )
             }
             result += Row.SwitchRow(
+                R.string.settings_fcl_vulkan_hand_depth_fix,
+                { versionSetting.isVulkanHandDepthFix },
+                { versionSetting.isVulkanHandDepthFix = it },
+                descriptionRes = R.string.settings_fcl_vulkan_hand_depth_fix_desc,
+                group = SettingGroup.Render,
+            )
+            result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_game_completeness,
                 { versionSetting.isNotCheckGame },
                 { versionSetting.isNotCheckGame = it },

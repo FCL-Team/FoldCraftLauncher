@@ -42,6 +42,8 @@ public class LaunchOptions implements Serializable {
     private Integer height;
     private String serverIp;
     private boolean vulkanDriverSystem;
+    private boolean vulkanHandDepthFix;
+    private String graphicsBackend = "default";
     private Renderer renderer;
     private boolean debugLog;
 
@@ -138,6 +140,14 @@ public class LaunchOptions implements Serializable {
      */
     public boolean isVKDriverSystem() {
         return vulkanDriverSystem;
+    }
+
+    public boolean isVulkanHandDepthFix() {
+        return vulkanHandDepthFix;
+    }
+
+    public String getGraphicsBackend() {
+        return graphicsBackend;
     }
 
     /**
@@ -238,6 +248,16 @@ public class LaunchOptions implements Serializable {
 
         public Builder setVkDriverSystem(boolean vulkanDriverSystem) {
             options.vulkanDriverSystem = vulkanDriverSystem;
+            return this;
+        }
+
+        public Builder setVulkanHandDepthFix(boolean enabled) {
+            options.vulkanHandDepthFix = enabled;
+            return this;
+        }
+
+        public Builder setGraphicsBackend(String backend) {
+            options.graphicsBackend = backend;
             return this;
         }
 
