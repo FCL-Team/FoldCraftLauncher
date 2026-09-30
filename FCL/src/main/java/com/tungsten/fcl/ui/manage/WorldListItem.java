@@ -94,7 +94,10 @@ public class WorldListItem {
         new FCLAlertDialog.Builder(context)
                 .setMessage(context.getString(R.string.version_manage_remove_confirm, world.getWorldName()))
                 .setPositiveButton(() -> Task.runAsync(Schedulers.io(), () -> world.delete())
-                        .whenComplete(Schedulers.androidUIThread(), exception -> {                            if (exception instanceof WorldLockedException) {
+                        .whenComplete(Schedulers.androidUIThread(), exception -> {
+                            if (exception == null) {
+                                notifyChanged();
+                            } else if (exception instanceof WorldLockedException) {
                                 DialogUtilKt.showErrorDialog(context, context.getString(R.string.world_locked_failed));
                             } else {
                                 DialogUtilKt.showErrorDialog(context, exception.toString());
@@ -115,6 +118,7 @@ public class WorldListItem {
                     .whenComplete(Schedulers.androidUIThread(), exception -> {
                         if (exception == null) {
                             Toast.makeText(context, R.string.message_success, Toast.LENGTH_SHORT).show();
+                            notifyChanged();
                         } else if (exception instanceof WorldLockedException) {
                             DialogUtilKt.showErrorDialog(context, context.getString(R.string.world_locked_failed));
                         } else {
@@ -124,6 +128,12 @@ public class WorldListItem {
         });
         dialog.setTitle(R.string.world_duplicate);
         dialog.show();
+    }
+
+    /** 删除/复制世界成功后刷新世界列表（同 UI 内跨页直调；模组页的自动重载走 ModsChanged 流） */
+    private void notifyChanged() {
+        WorldListPage page = (WorldListPage) UIManager.getInstance().getManageUI().getPage(4);
+        page.refresh();
     }
 
 }
