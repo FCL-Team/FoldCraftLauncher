@@ -39,6 +39,13 @@ object Profiles {
     val selectedVersion: StateFlow<String?> = _selectedVersion.asStateFlow()
     private var selectedVersionProfile: Profile? = null
     private var selectedVersionListener: Runnable? = null
+    private val _versionsRefreshed = MutableStateFlow(0)
+    /**
+     * 选中 Profile 的版本列表刷新信号（tick）：RefreshedVersionsEvent 的响应式出口，
+     * 页面/ViewModel collect 此流即可在版本数据变化时自动重载，无需注册监听器
+     */
+    @get:JvmName("getVersionsRefreshedFlow")
+    val versionsRefreshed: StateFlow<Int> = _versionsRefreshed.asStateFlow()
     private val versionsListeners: MutableList<Consumer<Profile>> =
         ArrayList(4)
 
@@ -125,10 +132,11 @@ object Profiles {
             EventBus.EVENT_BUS.channel(RefreshedVersionsEvent::class.java)
                 .registerWeak { event ->
                     val profile = _selectedProfile.value ?: return@registerWeak
-                    if (profile.repository === event!!.getSource()) {
-                        bindSelectedVersion(profile)
-                        for (listener in versionsListeners) listener.accept(profile)
-                    }
+                if (profile.repository === event!!.getSource()) {
+                    bindSelectedVersion(profile)
+                    _versionsRefreshed.value += 1
+                    for (listener in versionsListeners) listener.accept(profile)
+                }
                 }
         )
         isFirstRefresh = false
