@@ -1,7 +1,6 @@
 package com.mio.ui.dialog
 
 import android.content.Context
-import android.graphics.Point
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.WindowManager
@@ -10,6 +9,8 @@ import androidx.core.content.ContextCompat
 import com.mio.plugin.RendererPlugin.EnvSpec
 import com.mio.plugin.RendererPlugin.EnvType
 import com.mio.plugin.RendererPlugin.EnvValue
+import com.mio.util.getScreenHeight
+import com.mio.util.getScreenWidth
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogRendererEnvBinding
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
@@ -39,15 +40,13 @@ class RendererEnvDialog(
     private val inputs = mutableMapOf<String, FCLEditText>()
 
     init {
-        val point = Point()
-        window?.windowManager?.defaultDisplay?.getSize(point)
         val params = window?.attributes
         params?.width = ConvertUtils.dip2px(context, 500f)
-        val ratio = point.x.toFloat() / point.y.toFloat()
+        val ratio = getScreenWidth().toFloat() / getScreenHeight().toFloat()
         if (ratio >= 1.5f) {
             params?.height = WindowManager.LayoutParams.MATCH_PARENT
         } else {
-            params?.height = point.y * 1 / 2
+            params?.height = getScreenHeight() * 1 / 2
         }
         window?.attributes = params
 
