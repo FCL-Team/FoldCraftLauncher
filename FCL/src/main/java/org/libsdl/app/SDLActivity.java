@@ -42,6 +42,8 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputConnection;
 import android.webkit.MimeTypeMap;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Keep;
@@ -1631,7 +1633,28 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
             try {
                 final MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(host).setCancelable(false);
                 if (title != null) builder.setTitle(title);
-                if (message != null) builder.setTitle(message);
+
+                final ArrayList<MaterialButton> extraButtons = new ArrayList<>();
+                if (buttonIds.length > 3) {
+                    LinearLayout customView = new LinearLayout(host);
+                    customView.setOrientation(LinearLayout.VERTICAL);
+                    if (message != null) {
+                        ScrollView messageScroll = new ScrollView(host);
+                        TextView messageView = new TextView(host);
+                        messageView.setText(message);
+                        messageScroll.addView(messageView);
+                        customView.addView(messageScroll);
+                    }
+                    for (int i = 3; i < buttonIds.length; ++i) {
+                        MaterialButton button = new MaterialButton(host);
+                        button.setText(buttonTexts[i]);
+                        customView.addView(button);
+                        extraButtons.add(button);
+                    }
+                    builder.setView(customView);
+                } else if (message != null) {
+                    builder.setMessage(message);
+                }
 
                 final int slotCount = Math.min(buttonIds.length, 3);
                 for (int i = 0; i < slotCount; ++i) {
@@ -1647,19 +1670,6 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
                     } else {
                         builder.setNegativeButton(buttonTexts[i], listener);
                     }
-                }
-
-                final ArrayList<MaterialButton> extraButtons = new ArrayList<>();
-                if (buttonIds.length > 3) {
-                    LinearLayout extraButtonsRow = new LinearLayout(host);
-                    extraButtonsRow.setOrientation(LinearLayout.VERTICAL);
-                    for (int i = 3; i < buttonIds.length; ++i) {
-                        MaterialButton button = new MaterialButton(host);
-                        button.setText(buttonTexts[i]);
-                        extraButtonsRow.addView(button);
-                        extraButtons.add(button);
-                    }
-                    builder.setView(extraButtonsRow);
                 }
 
                 AlertDialog dialog = builder.create();
