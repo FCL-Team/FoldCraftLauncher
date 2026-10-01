@@ -93,6 +93,12 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
     private Profile profile;
     private String versionId;
 
+    /** 最近一次扫描列表时的变化信号（ModsChanged tick），用于判断是否真的需要重扫 */
+    private int loadedTick = -1;
+
+    /** 列表扫描次数（诊断/测试用：验证重进本页不会无条件重扫） */
+    public int scanCount;
+
     private boolean isSearching = false;
 
     private FCLTextView warningText;
@@ -189,12 +195,12 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
             }
         });
 
-        // 模组目录变化（下载模组落盘/模组更新完成）自动重载：
-        // 下载发生在下载页（本页 detach 错过实时 tick），重进管理页时 attach 重放当前 tick 触发重载；
-        // 管理页可见期间（如模组更新临时页）实时重载。扫描进行中跳过（refreshButton 被 setLoading 禁用），
-        // 错过的变化由下次 attach 重放兜底。
+        // 模组目录变化（下载模组落盘/模组更新完成）后重载列表。
+        // tick 与"最近一次扫描时的 tick"比较后才重扫：observe 在每次 attach 都会重放当前值，
+        // 若不比较就会在每次重进本页时无条件全量重扫（解析上百个模组很贵，正是 loadVersion 同版本守卫要避免的）。
+        // 下载发生在下载页（本页 detach 错过实时事件）时，tick 已前进，重进页面即可补上一次重载。
         PageFlows.observe(this, ModsChanged.getEventsFlow(), tick -> {
-            if (modManager != null && refreshButton.isEnabled()) {
+            if (modManager != null && refreshButton.isEnabled() && tick != loadedTick) {
                 refresh();
             }
         });
@@ -329,6 +335,9 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
 
     private void loadMods(ModManager modManager) {
         this.modManager = modManager;
+        // 记录本次扫描对应的变化信号：之后只有 tick 前进过（有新的落盘/更新）才重扫
+        loadedTick = ModsChanged.getTickFlow().getValue();
+        scanCount++;
         CompletableFuture.supplyAsync(() -> {
             try {
                 synchronized (ModListPage.this) {
