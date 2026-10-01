@@ -130,10 +130,9 @@ static bool check_adreno_graphics() {
 
 /**
  * 与 egl_bridge.c 的 loadTurnipVulkan 同链路：创建隔离命名空间并预载 liblinkerhook，
- * 由 hook 拦截系统 libvulkan 的驱动加载转至 DRIVER_PATH 下的 Turnip；
- * DRIVER_PATH 环境变量仅检测期间生效，结束后恢复原值
+ * 由 hook 拦截系统 libvulkan 的驱动加载转至 DRIVER_PATH 下的 Turnip
  */
-static void *load_turnip_vulkan(const char *driver_path, const char *cache_dir) {
+static void *load_turnip_vulkan(const char *cache_dir) {
     if (!check_adreno_graphics())
         return NULL;
 
@@ -153,42 +152,20 @@ static void *load_turnip_vulkan(const char *driver_path, const char *cache_dir) 
     // 授予命名空间访问系统库的权限
     private_link_namespaces_all_libs(ns, get_escape_namespace());
 
-    const char *old_path = getenv("DRIVER_PATH");
-    char *old_copy = old_path ? strdup(old_path) : NULL;
-    setenv("DRIVER_PATH", driver_path, 1);
-    void *handle = linker_ns_dlopen_unique(VULKAN_LOADER_PATH, cache_dir, RTLD_LOCAL | RTLD_NOW, ns);
-    if (old_copy) {
-        setenv("DRIVER_PATH", old_copy, 1);
-        free(old_copy);
-    } else {
-        unsetenv("DRIVER_PATH");
-    }
-    return handle;
+    return linker_ns_dlopen_unique(VULKAN_LOADER_PATH, cache_dir, RTLD_LOCAL | RTLD_NOW, ns);
 }
 
 #endif
 
 #define LOAD_VK_FUNC(name) PFN_##name p##name = (PFN_##name)dlsym(vulkan_handle, #name)
 
-JNIEXPORT jobject JNICALL
-Java_com_mio_device_VulkanChecker_nativeCheckVulkan(
-        JNIEnv *env,
-        jclass clazz,
-        jboolean jUseTurnip,
-        jstring jDriverPath,
-        jstring jCacheDir
-) {
-    (void) clazz;
-
-    const char *driverPath = jDriverPath ? (*env)->GetStringUTFChars(env, jDriverPath, NULL) : NULL;
-    const char *cacheDir = jCacheDir ? (*env)->GetStringUTFChars(env, jCacheDir, NULL) : NULL;
-
+static jobject do_check_vulkan(JNIEnv *env, jboolean jUseTurnip, const char *driverPath, const char *cacheDir) {
     void *vulkan_handle = NULL;
     bool customDriver = false;
     if (jUseTurnip == JNI_TRUE && driverPath && cacheDir) {
 #ifdef ADRENO_POSSIBLE
         if (android_get_device_api_level() >= 28) {
-            vulkan_handle = load_turnip_vulkan(driverPath, cacheDir);
+            vulkan_handle = load_turnip_vulkan(cacheDir);
             customDriver = vulkan_handle != NULL;
         }
 #endif
@@ -196,9 +173,6 @@ Java_com_mio_device_VulkanChecker_nativeCheckVulkan(
     if (!vulkan_handle) {
         vulkan_handle = dlopen("libvulkan.so", RTLD_NOW | RTLD_LOCAL);
     }
-
-    if (driverPath) (*env)->ReleaseStringUTFChars(env, jDriverPath, driverPath);
-    if (cacheDir) (*env)->ReleaseStringUTFChars(env, jCacheDir, cacheDir);
 
     if (!vulkan_handle) {
         LOG_E("Failed to load Vulkan library.");
@@ -541,5 +515,44 @@ Java_com_mio_device_VulkanChecker_nativeCheckVulkan(
     dlclose(vulkan_handle);
 
     LOG_I("Check finished. Vulkan %d.%d.%d", major, minor, patch);
+    return result;
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_mio_device_VulkanChecker_nativeCheckVulkan(
+        JNIEnv *env,
+        jclass clazz,
+        jboolean jUseTurnip,
+        jstring jDriverPath,
+        jstring jCacheDir
+) {
+    (void) clazz;
+
+    const char *driverPath = jDriverPath ? (*env)->GetStringUTFChars(env, jDriverPath, NULL) : NULL;
+    const char *cacheDir = jCacheDir ? (*env)->GetStringUTFChars(env, jCacheDir, NULL) : NULL;
+
+    // 加载器到首次 vkCreateInstance 才枚举硬件驱动，hook 在那一刻经 DRIVER_PATH
+    // 定位驱动目录，因此须让它覆盖整个检测过程，结束后再恢复原值
+    bool turnipRequested = jUseTurnip == JNI_TRUE && driverPath && cacheDir;
+    char *oldDriverPath = NULL;
+    if (turnipRequested) {
+        const char *previous = getenv("DRIVER_PATH");
+        if (previous) oldDriverPath = strdup(previous);
+        setenv("DRIVER_PATH", driverPath, 1);
+    }
+
+    jobject result = do_check_vulkan(env, jUseTurnip, driverPath, cacheDir);
+
+    if (turnipRequested) {
+        if (oldDriverPath) {
+            setenv("DRIVER_PATH", oldDriverPath, 1);
+            free(oldDriverPath);
+        } else {
+            unsetenv("DRIVER_PATH");
+        }
+    }
+
+    if (driverPath) (*env)->ReleaseStringUTFChars(env, jDriverPath, driverPath);
+    if (cacheDir) (*env)->ReleaseStringUTFChars(env, jCacheDir, cacheDir);
     return result;
 }
