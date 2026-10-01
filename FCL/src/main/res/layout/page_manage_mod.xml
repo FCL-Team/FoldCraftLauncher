@@ -79,6 +79,14 @@
                     app:ripple="true" />
 
                 <com.tungsten.fcllibrary.component.view.FCLButton
+                    android:id="@+id/sort"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/mods_sort"
+                    app:ripple="true" />
+
+                <com.tungsten.fcllibrary.component.view.FCLButton
                     android:id="@+id/refresh"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -795,6 +795,12 @@
     <string name="mods_check_updates_target_version">目标版本</string>
     <string name="mods_check_updates_update">更新</string>
     <string name="mods_check_updates_update_without">更新（不保留旧版本）</string>
+    <string name="mods_sort">排序</string>
+    <string name="mods_sort_default">默认</string>
+    <string name="mods_sort_name">名称</string>
+    <string name="mods_sort_file_name">文件名</string>
+    <string name="mods_sort_size">大小</string>
+    <string name="mods_sort_date">修改时间</string>
     <string name="mods_choose_mod">选择模组</string>
     <string name="mods_curseforge">CurseForge</string>
     <string name="mods_dependency">依赖</string>
