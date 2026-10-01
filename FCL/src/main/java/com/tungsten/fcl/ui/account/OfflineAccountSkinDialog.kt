@@ -5,6 +5,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import com.mio.skin.SkinRenderer
+import com.mio.skin.restoreSkinSwitches
 import com.mio.util.getScreenHeight
 import com.mio.util.getScreenWidth
 import com.tungsten.fcl.R
@@ -40,6 +41,7 @@ class OfflineAccountSkinDialog(context: Context, private val accountListItem: Ac
 
         renderer = SkinRenderer(getContext())
         binding.skinView.setRenderer(renderer, 5f)
+        context.restoreSkinSwitches(renderer)
 
         binding.modelClassic.setOnClickListener(this)
         binding.modelSlim.setOnClickListener(this)

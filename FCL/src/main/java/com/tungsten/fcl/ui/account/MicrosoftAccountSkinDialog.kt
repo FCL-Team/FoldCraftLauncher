@@ -8,6 +8,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import com.mio.skin.SkinRenderer
+import com.mio.skin.restoreSkinSwitches
 import com.mio.util.getScreenHeight
 import com.mio.util.getScreenWidth
 import com.tungsten.fcl.R
@@ -55,6 +56,7 @@ class MicrosoftAccountSkinDialog(
 
         renderer = SkinRenderer(context)
         binding.skinView.setRenderer(renderer, 5f)
+        context.restoreSkinSwitches(renderer)
 
         // Button listeners
         binding.skinFilePick.setOnClickListener(this)

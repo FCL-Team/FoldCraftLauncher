@@ -50,6 +50,17 @@ fun Context.restoreSkinSettings(renderer: SkinRenderer) {
     }
 }
 
+/** 恢复 3D 皮肤层开关与身体腿部分离开关（异步读取，读取完成后应用，不含动画选择），
+ *  供主界面之外其他使用皮肤模型的地方保持一致的显示效果 */
+fun Context.restoreSkinSwitches(renderer: SkinRenderer) {
+    if (this !is LifecycleOwner) return
+    lifecycleScope.launch {
+        val setting = skinAnimationDataStore.data.first()
+        renderer.solidLayerEnabled = setting.solidLayerEnabled
+        renderer.upperBodySeparated = setting.upperBodySeparated
+    }
+}
+
 /** 保存当前动画、3D 皮肤层开关与身体腿部分离开关为下次启动的选择 */
 fun Context.saveSkinSettings(renderer: SkinRenderer) {
     if (this !is LifecycleOwner) return
