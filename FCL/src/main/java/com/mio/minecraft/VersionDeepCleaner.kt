@@ -1,5 +1,7 @@
 package com.mio.minecraft
 
+import android.content.Context
+import com.tungsten.fcl.R
 import com.tungsten.fclcore.game.DefaultGameRepository
 import com.tungsten.fclcore.game.SimpleVersionProvider
 import com.tungsten.fclcore.game.Version
@@ -10,11 +12,20 @@ import java.io.File
 import java.io.IOException
 import java.util.logging.Level
 
+/** 删除进度回调：接收拼装完成的进度文案 */
+fun interface ProgressListener {
+    fun onProgress(message: String)
+}
+
 /**
  * 版本深度删除：在移除版本文件夹之外，一并清理 libraries / assets 中仅被该版本引用的文件。
  * 清理前全量解析磁盘上所有版本的 json 及其资产索引，其余版本仍引用到的文件一律保留。
  */
-class VersionDeepCleaner(private val repository: DefaultGameRepository) {
+class VersionDeepCleaner(
+    private val context: Context,
+    private val repository: DefaultGameRepository,
+    private val onProgress: ProgressListener
+) {
 
     /** 清理统计：各类条目的删除数量与释放的字节数 */
     data class Stats(
@@ -35,6 +46,7 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
         val provider = SimpleVersionProvider()
         val parsed = scanVersions(provider)
         val target = parsed[id]
+        report(R.string.version_deep_clean_folder, id)
         if (!repository.removeVersionFromDisk(id)) return null
         if (target == null) return null
 
@@ -62,6 +74,7 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
             if (!isWithin(file, librariesRoot)) continue
             val freedNow = deleteFile(file)
             if (freedNow != null) {
+                report(R.string.version_deep_clean_library, relativePath(file))
                 freed += freedNow
                 libraries++
                 pruneEmptyDirs(file, librariesRoot)
@@ -76,14 +89,16 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
             if (indexFile != null && isWithin(indexFile, indexesRoot)) {
                 val freedNow = deleteFile(indexFile)
                 if (freedNow != null) {
+                    report(R.string.version_deep_clean_asset_index, assetId)
                     freed += freedNow
                     indexes++
                     pruneEmptyDirs(indexFile, indexesRoot)
                 }
             }
-            for (file in targetRefs.objects[assetId].orEmpty()) {
-                if (file in protectedObjects) continue
-                if (!isWithin(file, objectsRoot)) continue
+            val objects = targetRefs.objects[assetId].orEmpty()
+                .filter { it !in protectedObjects && isWithin(it, objectsRoot) }
+            if (objects.isNotEmpty()) report(R.string.version_deep_clean_assets, assetId, objects.size)
+            for (file in objects) {
                 val freedNow = deleteFile(file)
                 if (freedNow != null) {
                     freed += freedNow
@@ -95,6 +110,7 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
             if (isWithin(virtualDir, virtualRoot) && virtualDir.isDirectory) {
                 val size = virtualDir.walkBottomUp().filter { it.isFile }.sumOf { it.length() }
                 if (FileUtils.deleteDirectoryQuietly(virtualDir)) {
+                    report(R.string.version_deep_clean_virtual, assetId)
                     freed += size
                     virtualDirs++
                 }
@@ -110,6 +126,7 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
             ?: return versions
         for (dir in dirs) {
             val id = dir.name
+            report(R.string.version_deep_clean_parsing, id)
             var json = File(dir, "$id.json")
             if (!json.isFile) {
                 // json 被误改名时，目录内唯一的 json 视为版本描述文件（与仓库刷新逻辑一致）
@@ -130,6 +147,7 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
 
     /** 收集一个版本在共享目录中的全部引用文件 */
     private fun collectReferences(id: String, version: Version, provider: SimpleVersionProvider, refs: References) {
+        report(R.string.version_deep_clean_references, id)
         val resolved = try {
             version.resolve(provider)
         } catch (e: VersionNotFoundException) {
@@ -161,6 +179,15 @@ class VersionDeepCleaner(private val repository: DefaultGameRepository) {
             refs.unresolvedAssetIds += assetId
         }
     }
+
+    /** 上报一条进度文案（带格式化参数） */
+    private fun report(resId: Int, vararg args: Any) {
+        onProgress.onProgress(context.getString(resId, *args))
+    }
+
+    /** 文件相对游戏根目录的路径，用于进度展示；越出根目录时回退绝对路径 */
+    private fun relativePath(file: File): String =
+        file.relativeToOrNull(repository.baseDirectory)?.path ?: file.path
 
     /** 删除文件并返回其大小；文件不存在或删除失败时返回 null */
     private fun deleteFile(file: File): Long? {

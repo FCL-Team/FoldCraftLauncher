@@ -1179,6 +1179,16 @@
     <string name="version_manage_remove_deep_hint">「深度删除」会在删除版本后，一并清理 libraries 和 assets 中仅被该版本引用的文件。</string>
     <string name="version_manage_remove_deep_done">已删除版本 %1$s，清理了 %2$d 个不再被共享的库/资源文件，释放 %3$.1f MB</string>
     <string name="version_manage_remove_deep_failed">未能枚举该版本引用的库与资源，仅删除了版本文件夹</string>
+    <string name="version_manage_remove_deep_done_title">深度删除完成</string>
+    <string name="version_manage_remove_deep_failed_title">深度删除失败</string>
+    <string name="version_manage_remove_progress_title">正在删除版本 %s</string>
+    <string name="version_deep_clean_parsing">正在解析版本 %s</string>
+    <string name="version_deep_clean_references">正在统计版本 %s 的引用</string>
+    <string name="version_deep_clean_folder">正在删除版本文件夹 %s</string>
+    <string name="version_deep_clean_library">正在删除库 %s</string>
+    <string name="version_deep_clean_asset_index">正在删除资产索引 %s</string>
+    <string name="version_deep_clean_assets">正在删除资产 %1$s 的 %2$d 个文件</string>
+    <string name="version_deep_clean_virtual">正在删除虚拟资产 %s</string>
     <string name="version_manage_rename">重命名版本</string>
     <string name="version_manage_rename_message">重命名版本</string>
     <string name="version_manage_rename_new">新名称</string>
