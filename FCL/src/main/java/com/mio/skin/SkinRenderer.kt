@@ -140,6 +140,13 @@ class SkinRenderer(context: Context) {
         scale = value.coerceIn(MIN_SCALE, MAX_SCALE)
     }
 
+    /** 视角回正：清零手势旋转与缩放（页面重新进入时调用，避免残留的旋转被误认为渲染错误） */
+    fun resetView() {
+        rotationX = 0f
+        rotationY = 0f
+        scale = 1f
+    }
+
     /**
      * 切换动画（模型内烘焙 clip 名，未知 id 回退默认）。
      */
