@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.mio.download.DownloadManager;
+import com.mio.minecraft.VersionDeepCleaner;
 import com.mio.util.ParseUtil;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
@@ -107,13 +108,30 @@ public class Versions {
 
         FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(context);
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
-        builder.setMessage(message);
+        builder.setMessage(message + "\n\n" + context.getString(R.string.version_manage_remove_deep_hint));
         builder.setPositiveButton(() -> {
             ProgressDialog progress = new ProgressDialog(context);
             Task.runAsync(() -> profile.getRepository().removeVersionFromDisk(version)).whenComplete(Schedulers.androidUIThread(), (e) -> progress.dismiss()).start();
         });
+        builder.setNeutralButton(context.getString(R.string.version_manage_remove_deep), () -> deleteVersionDeep(context, profile, version));
         builder.setNegativeButton(null);
         builder.create().show();
+    }
+
+    /** 深度删除：在版本文件夹之外，一并清理仅被该版本引用的库与资源文件 */
+    private static void deleteVersionDeep(Context context, Profile profile, String version) {
+        ProgressDialog progress = new ProgressDialog(context);
+        Task.supplyAsync(() -> new VersionDeepCleaner(profile.getRepository()).delete(version))
+                .whenComplete(Schedulers.androidUIThread(), (result, e) -> {
+                    progress.dismiss();
+                    if (result != null) {
+                        double freedMb = result.getFreedBytes() / 1024.0 / 1024.0;
+                        Toast.makeText(context, context.getString(
+                                R.string.version_manage_remove_deep_done, version, result.getTotalEntries(), freedMb), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, R.string.version_manage_remove_deep_failed, Toast.LENGTH_SHORT).show();
+                    }
+                }).start();
     }
 
     public static CompletableFuture<String> renameVersion(Context context, Profile profile, String version) {

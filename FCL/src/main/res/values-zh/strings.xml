@@ -1175,6 +1175,10 @@
     <string name="version_manage_remove_confirm">你确定要删除 %s 吗？ 该操作无法撤回！</string>
     <string name="version_manage_remove_confirm_independent">该版本启用了版本隔离，删除该版本将会一并删除存档及其他数据。你仍要删除 %s 吗?</string>
     <string name="version_manage_remove_libraries">删除所有库文件</string>
+    <string name="version_manage_remove_deep">深度删除</string>
+    <string name="version_manage_remove_deep_hint">「深度删除」会在删除版本后，一并清理 libraries 和 assets 中仅被该版本引用的文件。</string>
+    <string name="version_manage_remove_deep_done">已删除版本 %1$s，清理了 %2$d 个不再被共享的库/资源文件，释放 %3$.1f MB</string>
+    <string name="version_manage_remove_deep_failed">未能枚举该版本引用的库与资源，仅删除了版本文件夹</string>
     <string name="version_manage_rename">重命名版本</string>
     <string name="version_manage_rename_message">重命名版本</string>
     <string name="version_manage_rename_new">新名称</string>
