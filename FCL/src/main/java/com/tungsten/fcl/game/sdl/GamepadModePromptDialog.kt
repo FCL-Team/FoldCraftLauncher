@@ -6,6 +6,7 @@ package com.tungsten.fcl.game.sdl
 
 import android.app.Activity
 import android.view.LayoutInflater
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import com.tungsten.fcl.R
@@ -40,25 +41,37 @@ class GamepadModePromptDialog private constructor(activity: Activity) : FCLDialo
         binding.radioSdl.isChecked = mode == GamepadInputMode.SDL_DIRECT
     }
 
+    private fun select(newMode: GamepadInputMode) {
+        mode = newMode
+        binding.radioMapped.isChecked = newMode == GamepadInputMode.MAPPED
+        binding.radioSdl.isChecked = newMode == GamepadInputMode.SDL_DIRECT
+    }
+
+    private fun confirm() {
+        SdlSettings.setGamepadInputMode(mode)
+        SdlSettings.setGamepadInputModePrompted(true)
+        dismiss()
+    }
+
+    /**
+     * The dialog is not cancelable and swallows gamepad input from the game, so the gamepad
+     * itself must be able to operate it: D-pad up/down selects, A/Cross or Start confirms.
+     */
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_UP -> select(GamepadInputMode.MAPPED)
+            KeyEvent.KEYCODE_DPAD_DOWN -> select(GamepadInputMode.SDL_DIRECT)
+            KeyEvent.KEYCODE_BUTTON_A, KeyEvent.KEYCODE_BUTTON_START -> confirm()
+            else -> return super.onKeyDown(keyCode, event)
+        }
+        return true
+    }
+
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.row_mapped, R.id.radio_mapped -> {
-                mode = GamepadInputMode.MAPPED
-                binding.radioMapped.isChecked = true
-                binding.radioSdl.isChecked = false
-            }
-
-            R.id.row_sdl, R.id.radio_sdl -> {
-                mode = GamepadInputMode.SDL_DIRECT
-                binding.radioMapped.isChecked = false
-                binding.radioSdl.isChecked = true
-            }
-
-            R.id.positive -> {
-                SdlSettings.setGamepadInputMode(mode)
-                SdlSettings.setGamepadInputModePrompted(true)
-                dismiss()
-            }
+            R.id.row_mapped, R.id.radio_mapped -> select(GamepadInputMode.MAPPED)
+            R.id.row_sdl, R.id.radio_sdl -> select(GamepadInputMode.SDL_DIRECT)
+            R.id.positive -> confirm()
         }
     }
 
