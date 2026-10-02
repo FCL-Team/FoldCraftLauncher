@@ -58,8 +58,18 @@ class VersionListViewModel : ViewModel() {
     private fun load(profile: Profile) {
         loadJob?.cancel()
         loadJob = scope.launch {
+            val repository = profile.repository
+            // 冷启动时版本仓库尚未加载（versions map 为 null，读 displayVersions 会 NPE 崩进程）：
+            // 先呈现缓存快照/loading 态，仓库自载完成的 RefreshedVersionsEvent 经 versionsRefreshed
+            // tick 重入本方法完成真实加载
+            if (!repository.isLoaded) {
+                val snapshot = VersionCache.get(profile).values.toList()
+                if (snapshot.isEmpty()) update(profile, emptyList(), loading = true)
+                else update(profile, sortEntries(snapshot), loading = false)
+                return@launch
+            }
             val ids = withContext(Dispatchers.IO) {
-                profile.repository.displayVersions.map { it.id }.collect(Collectors.toList())
+                repository.displayVersions.map { it.id }.collect(Collectors.toList())
             }
             // 会话级快照命中即时渲染，最新数据随后台重算覆盖（VersionCache 共享给弹窗）
             val snapshot = sortEntries(ids.mapNotNull { VersionCache.get(profile)[it] })
