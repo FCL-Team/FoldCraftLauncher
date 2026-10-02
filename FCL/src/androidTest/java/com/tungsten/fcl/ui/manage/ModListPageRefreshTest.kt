@@ -144,4 +144,31 @@ class ModListPageRefreshTest {
             }
         }
     }
+
+    @Test
+    fun distributingNullVersionDoesNotCrashCreatedPages() {
+        withUiManager { _, uiManager ->
+            val modPage = openModTab(uiManager)
+            // 把另两个会因 null 崩溃的页面也创建出来（页签1=ManagePage，页签2=InstallerListPage）
+            onMain { uiManager.manageUI.tabLayout.selectTab(uiManager.manageUI.tabLayout.getTabAt(2)) }
+            SystemClock.sleep(1500)
+            onMain { uiManager.manageUI.tabLayout.selectTab(uiManager.manageUI.tabLayout.getTabAt(1)) }
+            SystemClock.sleep(1000)
+
+            val beforeCount = modPage.scanCount
+            // 模拟切换到未选版本 Profile 时的分发（ManageUI.profileListener 传 getSelectedVersion()=null）。
+            // 修复前：ModListPage resolve(null) NPE、ManagePage Kotlin 非空参数 NPE、
+            // InstallerListPage getVersion(null) 抛 VersionNotFoundException
+            onMain { uiManager.manageUI.setVersion(null, Profiles.getSelectedProfile()) }
+            SystemClock.sleep(500)
+
+            // null 分发不得崩溃，也不应触发模组重扫
+            assertEquals("null 版本分发不应触发重扫", beforeCount, modPage.scanCount)
+
+            // 真实版本分发恢复正常（同版本去重，无需重扫）
+            onMain { uiManager.manageUI.setVersion("1.0", Profiles.getSelectedProfile()) }
+            SystemClock.sleep(1000)
+            assertEquals("恢复真实版本分发后页面仍可用", beforeCount, modPage.scanCount)
+        }
+    }
 }

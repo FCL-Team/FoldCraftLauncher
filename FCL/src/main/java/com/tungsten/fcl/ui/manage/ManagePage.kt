@@ -44,7 +44,9 @@ class ManagePage(context: Context?, id: Int) : FCLPage(context, id, R.layout.pag
     }
 
 
-    override fun loadVersion(profile: Profile, version: String) {
+    override fun loadVersion(profile: Profile, version: String?) {
+        // null 是合法分发（切到未选版本 Profile 的瞬态）：无版本可判定整合包升级，保持现状
+        if (version == null) return
         currentVersionUpgradable.set(profile.repository.isModpack(version))
     }
 
