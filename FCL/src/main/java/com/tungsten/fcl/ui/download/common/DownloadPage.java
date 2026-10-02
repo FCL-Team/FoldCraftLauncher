@@ -271,8 +271,12 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
             // 本地化模式：分类走统一静态表（CurseForge/Modrinth id 成对），无需联网加载
             setupUnifiedCategories();
         }
-        if (searchState.result != null) {
+        // 恢复搜索状态：失败恢复失败态、有结果直接恢复、在途等回调、否则重搜
+        if (searchState.failed || searchState.result != null) {
             restoreResult();
+        } else if (searchState.loading) {
+            // 搜索仍在进行（切走时未被取消）：显示进度，回调落地后自动渲染
+            setLoading(true);
         } else {
             search(searchState.userGameVersion, searchState.category, searchState.pageOffset, searchState.searchFilter, searchState.sortType);
         }
@@ -491,6 +495,8 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         searchState.loading = true;
         searchState.failed = false;
         int searchPageId = pageId;
+        // 回调落地前可能已 switchType 换模式（searchState 字段指向别的模式），过期路径的相位回写必须用发起时捕获的状态
+        DownloadSearchViewModel.State startState = searchState;
         executor = Task.supplyAsync(() -> {
                     SearchOutcome outcome;
                     if (isAggregate()) {
@@ -513,8 +519,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                     return outcome.withMods(list);
                 })
                 .whenComplete(Schedulers.androidUIThread(), (outcome, exception) -> {
-                    // 模式已切换时跳过过期回调，避免旧模式结果覆盖当前页面
+                    // 模式已切换时跳过过期回调，避免旧模式结果覆盖当前页面；
+                    // 相位复位到发起模式，否则该模式的 loading 永久滞留（切回时无法据此等待/重搜）
                     if (searchPageId != pageId) {
+                        startState.loading = false;
                         return;
                     }
                     if (exception instanceof CancellationException) {
@@ -745,6 +753,12 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
      * 复用该模式缓存的 adapter 时不重建列表，避免 item 滑入动画重播
      */
     private void restoreResult() {
+        if (searchState.failed) {
+            // 恢复失败态：显示重试入口而不自动重搜（重试沿用上次搜索条件）
+            setFailed();
+            retrySearch = () -> search(searchState.userGameVersion, searchState.category, searchState.pageOffset, searchState.searchFilter, searchState.sortType);
+            return;
+        }
         setLoading(false);
         retry.setVisibility(View.GONE);
         pageOffset.set(searchState.pageOffset);
