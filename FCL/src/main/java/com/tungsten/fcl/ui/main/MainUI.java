@@ -114,10 +114,6 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
                     Accounts.selectedAccountProperty().addListener(accountListener);
                     skinLoader.load(Accounts.getSelectedAccount(), false);
                 }
-                // 页面实例复用时手势视角随之残留，回首页先回正，避免残留的背面/侧面姿态被误认为渲染错误
-                if (renderer != null) {
-                    renderer.resetView();
-                }
             }
 
             @Override
