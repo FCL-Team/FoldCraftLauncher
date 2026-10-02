@@ -419,6 +419,12 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
         }, Schedulers.defaultScheduler()).whenCompleteAsync((result, exception) -> {
             // 已被更新的 loadMods 取代时跳过，避免旧扫描回调操作新状态（如主线程触发未加载实例的 getMods）
             if (this.modManager != modManager) return;
+            // 扫描期间刷新按钮禁用，observe 的重载会被挡下：若扫描期间有模组落盘/更新（tick 前进），
+            // 结束时补一次重扫，否则该次变化要等重进页面才会体现
+            if (ModsChanged.getTickFlow().getValue() != loadedTick) {
+                refresh();
+                return;
+            }
             setLoading(false);
             if (exception == null)
                 try {
