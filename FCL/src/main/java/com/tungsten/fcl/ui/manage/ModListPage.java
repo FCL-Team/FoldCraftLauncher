@@ -245,6 +245,11 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
 
     @Override
     public void loadVersion(Profile profile, String version) {
+        // null 是合法分发（切到未选版本 Profile 的瞬态、全局设置页隔离目录回调）：
+        // 本页内容依赖具体版本（resolve(null) 会 NPE），保持现状等下一个真实版本分发
+        if (version == null) {
+            return;
+        }
         // 同一版本重复加载（如从其他页面返回时 ManageUI.onStart 触发）直接跳过，
         // 避免每次显示都全量重扫模组 zip：上百个模组时解析耗时长，
         // 且与上一次扫描交错时 calculateMod 在主线程触发 getMods 会 ANR。
