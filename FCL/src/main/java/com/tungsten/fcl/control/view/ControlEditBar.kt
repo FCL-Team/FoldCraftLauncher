@@ -16,6 +16,9 @@ class ControlEditBar(context: Context) : LinearLayout(context) {
         fun onSettings()
         fun onCopy()
         fun onDelete()
+
+        /** 跨组操作：把选中控件复制/移动到其他控件组 */
+        fun onCrossGroup()
     }
 
     private var listener: Listener? = null
@@ -49,6 +52,7 @@ class ControlEditBar(context: Context) : LinearLayout(context) {
         listOf(
             R.string.menu_settings to Runnable { listener?.onSettings() },
             R.string.edit_view_clone to Runnable { listener?.onCopy() },
+            R.string.edit_bar_cross_group to Runnable { listener?.onCrossGroup() },
             R.string.edit_view_delete to Runnable { listener?.onDelete() }
         ).forEach { (textRes, action) ->
             val button = LayoutInflater.from(context)

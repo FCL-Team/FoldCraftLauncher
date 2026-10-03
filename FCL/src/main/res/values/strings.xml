@@ -386,6 +386,18 @@
 
     <string name="edit_view_clone">Clone View</string>
     <string name="edit_view_delete">Delete View</string>
+    <string name="edit_view_move">Move to Group</string>
+    <string name="edit_bar_cross_group">Group</string>
+    <string name="edit_bar_cross_group_title">Copy or Move to Another Group</string>
+    <string name="dialog_copy">Copy</string>
+    <string name="dialog_move">Move</string>
+    <string name="select_target_group_title">Select Target Group</string>
+    <string name="edit_view_group_merge">Merge controls into another group</string>
+    <string name="bind_group_title">Bind View Groups</string>
+    <string name="bind_group_mode_none">None</string>
+    <string name="bind_group_mode_toggle">Toggle on Press</string>
+    <string name="bind_group_mode_show">Show on Press</string>
+    <string name="bind_group_mode_hide">Hide on Press</string>
     <string name="edit_view_event">View Event</string>
     <string name="edit_view_info">Base View Info</string>
     <string name="edit_view_no_group">Please add or select a view group first!</string>

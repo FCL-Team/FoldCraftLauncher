@@ -355,7 +355,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (ghost) {
+        // 参考组控件在编辑模式下同样可选中/拖动/编辑（改动写入其归属组），游戏模式下不响应
+        if (ghost && !menu.isEditMode()) {
             return true;
         }
         if (menu.isEditMode()) {
@@ -840,10 +841,32 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 }, 150);
             }
         }
-        for (String id : event.bindViewGroupList()) {
-            if (menu.getController().viewGroups().stream().anyMatch(it -> it.getId().equals(id))) {
-                ControlViewGroup viewGroup = menu.getController().viewGroups().stream().filter(it -> it.getId().equals(id)).findFirst().orElse(null);
-                menu.getViewManager().switchViewGroupVisibility(viewGroup);
+        for (String bind : event.bindViewGroupList()) {
+            // 绑定格式：groupId（按下切换显隐）或 groupId:show / groupId:hide（按下强制为指定状态）
+            String groupId = bind;
+            String mode = "";
+            int separator = bind.indexOf(':');
+            if (separator >= 0) {
+                groupId = bind.substring(0, separator);
+                mode = bind.substring(separator + 1);
+            }
+            final String targetGroupId = groupId;
+            ControlViewGroup viewGroup = menu.getController().viewGroups().stream()
+                    .filter(it -> it.getId().equals(targetGroupId))
+                    .findFirst().orElse(null);
+            if (viewGroup == null) {
+                continue;
+            }
+            switch (mode) {
+                case "show":
+                    menu.getViewManager().setViewGroupVisibility(viewGroup, true);
+                    break;
+                case "hide":
+                    menu.getViewManager().setViewGroupVisibility(viewGroup, false);
+                    break;
+                default:
+                    menu.getViewManager().switchViewGroupVisibility(viewGroup);
+                    break;
             }
         }
     }

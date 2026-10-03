@@ -328,6 +328,48 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     }
 
     /**
+     * 控件组合并：把 source 的全部控件移动到 target（控件 id 保持不变），原组保留但清空。
+     * 双方按键数据未加载时先按需加载再执行。
+     */
+    private void mergeViewGroup(ControlViewGroup source, ControlViewGroup target) {
+        if (source == null || target == null || source == target) {
+            return;
+        }
+        loadGroupThen(source, () -> loadGroupThen(target, () -> {
+            for (ControlButtonData button : new ArrayList<>(source.getViewData().buttonList())) {
+                target.getViewData().addButton(button);
+            }
+            for (ControlDirectionData direction : new ArrayList<>(source.getViewData().directionList())) {
+                target.getViewData().addDirection(direction);
+            }
+            source.getViewData().buttonList().clear();
+            source.getViewData().directionList().clear();
+            viewManager.saveController();
+            rightMenuAdapter.rebuild();
+            viewManager.initializeController();
+        }));
+    }
+
+    /** 数据就绪后（必要时按需加载）在主线程执行动作 */
+    private void loadGroupThen(ControlViewGroup group, Runnable action) {
+        if (group.isDataLoaded()) {
+            action.run();
+            return;
+        }
+        Controllers.loadViewGroup(getController(), group, new Controllers.ViewGroupLoadCallback() {
+            @Override
+            public void onLoaded(ControlViewGroup viewGroup) {
+                action.run();
+            }
+
+            @Override
+            public void onFailed(Throwable e) {
+                Toast.makeText(getActivity(), getActivity().getString(R.string.message_data_is_loading), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
      * 切换当前编辑组（含样式名重解析），并刷新控件组面板
      */
     private void selectViewGroup(@Nullable ControlViewGroup viewGroup) {
@@ -549,12 +591,33 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
             @Override
             public void onEditGroupEdit(@NonNull ControlViewGroup group) {
-                EditViewGroupDialog dialog = new EditViewGroupDialog(getActivity(), GameMenu.this, group, (name, visibility) -> {
-                    group.setName(name);
-                    group.setVisibility(visibility);
-                    getController().updateViewGroup(group);
-                    rightMenuAdapter.rebuild();
-                });
+                EditViewGroupDialog.Callback callback = new EditViewGroupDialog.Callback() {
+                    @Override
+                    public void onPositive(String name, ControlViewGroup.Visibility visibility) {
+                        group.setName(name);
+                        group.setVisibility(visibility);
+                        getController().updateViewGroup(group);
+                        rightMenuAdapter.rebuild();
+                    }
+
+                    @Override
+                    public boolean supportsMerge() {
+                        return true;
+                    }
+
+                    @Override
+                    public void onMergeToGroup(ControlViewGroup source) {
+                        // 选择目标组后把 source 全部控件转移过去（控件组合并）
+                        ArrayList<ControlViewGroup> candidates = new ArrayList<>(getController().viewGroups());
+                        candidates.remove(source);
+                        if (candidates.isEmpty()) {
+                            Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        new SelectTargetGroupDialog(getActivity(), candidates, target -> mergeViewGroup(source, target)).show();
+                    }
+                };
+                EditViewGroupDialog dialog = new EditViewGroupDialog(getActivity(), GameMenu.this, group, callback);
                 dialog.show();
             }
 

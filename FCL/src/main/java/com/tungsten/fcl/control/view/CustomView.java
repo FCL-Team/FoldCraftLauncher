@@ -21,5 +21,10 @@ public interface CustomView {
     void setSelected(boolean selected);
     boolean isSelected();
     void switchParentVisibility();
+
+    /**
+     * 直接设置参考组显隐状态（绑定组"按下显示/按下隐藏"用，区别于切换）
+     */
+    void setParentVisibility(boolean parentVisibility);
     void removeListener();
 }
