@@ -54,12 +54,17 @@ object InstallerProcessRunner {
     /** 两次尝试之间等待系统回收旧进程的时间 */
     private const val RETRY_DELAY_MS = 2 * 1000L
 
-    /** 单次尝试内日志无任何新增且未返回退出码的空闲判定上限，超过即认为进程挂起。
-     *  阈值需覆盖健康处理器（如 FART 静默重命名全程）在慢设备上的最长运行时间 */
+    /** 单次尝试内日志无任何新增且未返回退出码的空闲判定上限。仅作为
+     *  /proc CPU 进度不可用时的退化判据（个别 ROM 限制读取 procfs） */
     private const val LOG_IDLE_TIMEOUT_MS = 10 * 60 * 1000L
 
-    /** 单次尝试的绝对时限：即使日志仍在输出，超过也判为挂起，防止静默死循环 */
-    private const val JVM_HARD_TIMEOUT_MS = 25 * 60 * 1000L
+    /** 单次尝试内进程无进展（CPU 时间与日志均无变化）的判定上限，超过即认为进程挂起。
+     *  FART 等静默处理器运行中 CPU 时间持续增长，不会被误杀；
+     *  被系统 SIGKILL 而退出码未回写的进程也会在此收敛 */
+    private const val NO_PROGRESS_TIMEOUT_MS = 3 * 60 * 1000L
+
+    /** 单次尝试的绝对时限：即使进程仍在推进，超过也判为挂起，防止静默死循环 */
+    private const val JVM_HARD_TIMEOUT_MS = 15 * 60 * 1000L
 
     /**
      * 超时类失败（进程无响应 / 未返回退出码 / 未能启动），可自动重试；
@@ -172,7 +177,14 @@ object InstallerProcessRunner {
         val attemptStart = System.currentTimeMillis()
         val startedDeadline = attemptStart + SERVICE_START_TIMEOUT_MS
         val hardDeadline = attemptStart + JVM_HARD_TIMEOUT_MS
-        var lastActivity = attemptStart
+        var lastProgress = attemptStart
+
+        // :jvm 进程 CPU 进度检测：启动标记文件内容即 :jvm 的 pid，
+        // 读 /proc/<pid>/stat 累计 CPU 时间判断进程是否仍在推进。
+        // FART 等处理器全程静默（日志不增长），仅靠日志空闲会误杀慢设备上的健康运行
+        var installerPid: Int? = null
+        var cpuEverSeen = false
+        var lastCpuMillis = -1L
 
         while (true) {
             val now = System.currentTimeMillis()
@@ -194,7 +206,7 @@ object InstallerProcessRunner {
             val logLength = if (logFile.exists()) logFile.length() else 0L
             if (logLength != lastLogLength) {
                 lastLogLength = logLength
-                lastActivity = now
+                lastProgress = now
             }
 
             // 退出码文件出现即结束（内容为空时说明刚创建、尚未写完，继续等待）
@@ -212,21 +224,35 @@ object InstallerProcessRunner {
                 }
             }
 
-            // 确认 :jvm 服务确实启动（由 ProcessService.onStartCommand 写入启动标记）
+            // 确认 :jvm 服务确实启动（由 ProcessService.onStartCommand 写入启动标记，内容为 :jvm 的 pid）
             if (!serviceStarted) {
                 if (startedFile.exists()) {
                     serviceStarted = true
-                    Logging.LOG.info("Installer process service started")
+                    installerPid = FileUtils.readText(startedFile).trim().toIntOrNull()
+                    Logging.LOG.info("Installer process service started, pid: $installerPid")
                 } else if (now > startedDeadline) {
                     killRemainingProcesses(activityManager, context.packageName)
                     throw ProcessTimeoutException(context.getString(R.string.installer_process_failed_to_start) + logTail(logFile, context))
+                }
+            } else if (installerPid != null) {
+                // CPU 时间增长 = 进程仍在推进（静默处理器靠此判定存活）
+                val cpuMillis = readProcessCpuMillis(installerPid)
+                if (cpuMillis != null) {
+                    cpuEverSeen = true
+                    if (cpuMillis != lastCpuMillis) {
+                        lastCpuMillis = cpuMillis
+                        lastProgress = now
+                    }
                 }
             }
 
             // 只以退出码文件为准，不依赖 getRunningAppProcesses 判断进程存活
             // （部分系统/ROM 不返回 :jvm 进程，会导致误判安装失败）
+            // 无进展判定：CPU 与日志均无变化超过 3 分钟即挂起；
+            // procfs 不可用（从未读到 CPU）时退化为 10 分钟日志空闲
             // 超时时按旧列表杀进程可能误杀复用 pid，但此时进程已判挂起，误杀风险可接受
-            if (now - lastActivity > LOG_IDLE_TIMEOUT_MS) {
+            val noProgressLimit = if (cpuEverSeen) NO_PROGRESS_TIMEOUT_MS else LOG_IDLE_TIMEOUT_MS
+            if (now - lastProgress > noProgressLimit) {
                 killRemainingProcesses(activityManager, context.packageName)
                 throw ProcessTimeoutException(context.getString(R.string.installer_process_no_response) + logTail(logFile, context))
             }
@@ -243,6 +269,24 @@ object InstallerProcessRunner {
             }
 
             delay(POLL_INTERVAL_MS)
+        }
+    }
+
+    /**
+     * 读取 /proc/<pid>/stat 中进程的累计 CPU 时间（utime + stime，毫秒）。
+     * :jvm 与主进程同 UID，procfs 可读；进程已死或读取受限时返回 null。
+     */
+    private fun readProcessCpuMillis(pid: Int): Long? {
+        return try {
+            val stat = File("/proc/$pid/stat").readText()
+            // comm 字段可含空格与括号，取最后一个 ')' 之后的字段：state ppid … utime stime
+            val fields = stat.substringAfterLast(')').trim().split(Regex("\\s+"))
+            // utime = 第 14 字段、stime = 第 15 字段；从 state（第 3 字段）起索引分别为 11、12
+            val utime = fields[11].toLongOrNull() ?: return null
+            val stime = fields[12].toLongOrNull() ?: return null
+            (utime + stime) * 10L // USER_HZ = 100，每 tick 10ms
+        } catch (e: Exception) {
+            null
         }
     }
 
