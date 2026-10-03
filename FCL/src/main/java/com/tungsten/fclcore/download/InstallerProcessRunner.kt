@@ -63,8 +63,9 @@ object InstallerProcessRunner {
      *  被系统 SIGKILL 而退出码未回写的进程也会在此收敛 */
     private const val NO_PROGRESS_TIMEOUT_MS = 3 * 60 * 1000L
 
-    /** 单次尝试的绝对时限：即使进程仍在推进，超过也判为挂起，防止静默死循环 */
-    private const val JVM_HARD_TIMEOUT_MS = 15 * 60 * 1000L
+    /** 单次尝试的绝对时限：即使进程仍在推进，超过也判为挂起，防止静默死循环。
+     *  仅兜底 CPU 持续增长但永不结束的病态场景，正常安装远达不到 */
+    private const val JVM_HARD_TIMEOUT_MS = 10 * 60 * 1000L
 
     /**
      * 超时类失败（进程无响应 / 未返回退出码 / 未能启动），可自动重试；
