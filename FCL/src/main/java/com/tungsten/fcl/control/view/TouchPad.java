@@ -19,7 +19,10 @@ import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.GestureMode;
 import com.tungsten.fcl.control.MouseMoveMode;
 import com.mio.util.AndroidUtilKt;
+import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fclauncher.bridge.FCLBridge;
+
+import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Objects;
 
@@ -57,17 +60,21 @@ public class TouchPad extends View {
         linePaint.setStyle(Paint.Style.STROKE);
     }
 
-    private int downX;
-    private int downY;
+    // 触摸坐标全程 float：中途取整会让慢移时的小步长增量整体丢失，转视角顿挫
+    private float downX;
+    private float downY;
     private long downTime;
-    private int initialX;
-    private int initialY;
+    private float initialX;
+    private float initialY;
     private boolean cancelMouseLeft = false;
     private boolean cancelMouseRight = false;
     private int currentPointerID;
     private int lastPointerCount;
     private boolean shouldBeDown = false;
     private final Handler handler = new Handler();
+    // 触控加速：本次按住的累计滑动距离与上一 MOVE 事件时间，用于距离加速与滑动速度计算
+    private float acceleratedDistance;
+    private long lastMoveTime;
 
     private final Runnable runnable = () -> {
         if (!gameMenu.getMenuSetting().isDisableGesture()) {
@@ -155,14 +162,14 @@ public class TouchPad extends View {
         if (gameMenu.getCursorMode() == FCLBridge.CursorEnabled) {
             if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
-                    gameMenu.getInput().setPointer((int) event.getRawX(), (int) event.getRawY());
+                    gameMenu.getInput().setPointer(event.getRawX(), event.getRawY());
                 }
                 //防止被外接鼠标触发
                 return true;
             }
             if (gameMenu.getMenuSetting().getMouseMoveMode() == MouseMoveMode.CLICK) {
                 gameMenu.getInput().setPointerId(POINTER_ID);
-                gameMenu.getInput().setPointer((int) event.getX(), (int) event.getY(), POINTER_ID);
+                gameMenu.getInput().setPointer(event.getX(), event.getY(), POINTER_ID);
                 gameMenu.getInput().setPointerId(null);
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
@@ -178,17 +185,17 @@ public class TouchPad extends View {
             } else {
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
-                        downX = (int) event.getX();
-                        downY = (int) event.getY();
+                        downX = event.getX();
+                        downY = event.getY();
                         downTime = System.currentTimeMillis();
                         initialX = gameMenu.getCursorX();
                         initialY = gameMenu.getCursorY();
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        int deltaX = (int) ((event.getX() - downX) * gameMenu.getMenuSetting().getMouseSensitivityCursor());
-                        int deltaY = (int) ((event.getY() - downY) * gameMenu.getMenuSetting().getMouseSensitivityCursor());
-                        int targetX = Math.max(0, Math.min(screenWidth, initialX + deltaX));
-                        int targetY = Math.max(0, Math.min(screenHeight, initialY + deltaY));
+                        float deltaX = (event.getX() - downX) * (float) gameMenu.getMenuSetting().getMouseSensitivityCursor();
+                        float deltaY = (event.getY() - downY) * (float) gameMenu.getMenuSetting().getMouseSensitivityCursor();
+                        float targetX = Math.max(0, Math.min(screenWidth, initialX + deltaX));
+                        float targetY = Math.max(0, Math.min(screenHeight, initialY + deltaY));
                         gameMenu.getInput().setPointerId(POINTER_ID);
                         gameMenu.getInput().setPointer(targetX, targetY, POINTER_ID);
                         break;
@@ -210,17 +217,17 @@ public class TouchPad extends View {
             }
         } else {
             if (event.isFromSource(InputDevice.SOURCE_MOUSE)) return true;
-            initialX = gameMenu.getPointerX();
-            initialY = gameMenu.getPointerY();
             if (gameMenu.getMenuSetting().isDisableLeftTouch() && event.getX() <= (float) screenWidth / 2) {
                 return true;
             }
             switch (event.getActionMasked()) {
                 case MotionEvent.ACTION_DOWN:
                     currentPointerID = event.getPointerId(0);
-                    downX = (int) event.getX();
-                    downY = (int) event.getY();
+                    downX = event.getX();
+                    downY = event.getY();
                     downTime = System.currentTimeMillis();
+                    acceleratedDistance = 0;
+                    lastMoveTime = event.getEventTime();
                     handler.postDelayed(runnable, 400);
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -229,22 +236,23 @@ public class TouchPad extends View {
                     if (pointerIndex == -1 || lastPointerCount != pointerCount || !shouldBeDown) {
                         shouldBeDown = true;
                         currentPointerID = event.getPointerId(0);
-                        downX = (int) event.getX();
-                        downY = (int) event.getY();
+                        downX = event.getX();
+                        downY = event.getY();
+                        acceleratedDistance = 0;
+                        lastMoveTime = event.getEventTime();
                         break;
                     }
-                    int newDownX = (int) event.getX(pointerIndex);
-                    int newDownY = (int) event.getY(pointerIndex);
-                    int deltaX = (int) ((newDownX - downX) * gameMenu.getMenuSetting().getMouseSensitivity() / gameMenu.getBridge().getScaleFactor());
-                    int deltaY = (int) ((newDownY - downY) * gameMenu.getMenuSetting().getMouseSensitivity() / gameMenu.getBridge().getScaleFactor());
-                    if (gameMenu.getMenuSetting().isEnableGyroscope()) {
-                        gameMenu.setPointerX(initialX + deltaX);
-                        gameMenu.setPointerY(initialY + deltaY);
-                    } else {
-                        gameMenu.getInput().setPointerId(POINTER_ID);
-                        gameMenu.getInput().setPointer(initialX + deltaX, initialY + deltaY, POINTER_ID);
-                    }
-                    if ((Math.abs(deltaX) > 1 || Math.abs(deltaY) > 1) && System.currentTimeMillis() - downTime < 400) {
+                    float newDownX = event.getX(pointerIndex);
+                    float newDownY = event.getY(pointerIndex);
+                    float frameDX = newDownX - downX;
+                    float frameDY = newDownY - downY;
+                    float acceleration = viewAcceleration(event, frameDX, frameDY);
+                    // 捕获态统一走相对增量流，与陀螺仪等来源的增量叠加互不干扰
+                    double sensitivity = gameMenu.getMenuSetting().getMouseSensitivity();
+                    float gameDX = (float) (frameDX * sensitivity * acceleration);
+                    float gameDY = (float) (frameDY * sensitivity * acceleration);
+                    CallbackBridge.sendCursorDelta(gameDX, gameDY);
+                    if ((Math.abs(gameDX) > 1 || Math.abs(gameDY) > 1) && System.currentTimeMillis() - downTime < 400) {
                         handler.removeCallbacks(runnable);
                     }
                     downX = newDownX;
@@ -286,5 +294,34 @@ public class TouchPad extends View {
             lastPointerCount = event.getPointerCount();
         }
         return true;
+    }
+
+    /**
+     * 转视角的触控加速系数。
+     * 滑动加速：滑动速度超过慢拖上限后线性放大，快速甩动时视角转动更远；
+     * 距离加速：系数随本次按住的累计滑动距离增长，长距离连续拖动逐渐加快。
+     * 两项加速均在松手或重新按下时归零。
+     */
+    private float viewAcceleration(MotionEvent event, float frameDX, float frameDY) {
+        MenuSetting setting = gameMenu.getMenuSetting();
+        if (!setting.isSlideAcceleration() && !setting.isDistanceAcceleration()) {
+            return 1f;
+        }
+        float movement = Math.abs(frameDX) + Math.abs(frameDY);
+        float speedMult = 1f;
+        float distMult = 1f;
+        if (setting.isSlideAcceleration()) {
+            float dt = Math.max(1, event.getEventTime() - lastMoveTime);
+            // 速度单位 px/ms，慢拖约低于 1；线性放大，约 7px/ms 快甩时达到 3 倍封顶
+            float speed = movement / dt;
+            speedMult = Math.min(1f + Math.max(0, speed - 1f) * 0.3f, 3f);
+        }
+        if (setting.isDistanceAcceleration()) {
+            acceleratedDistance += movement;
+            // 累计滑动每 1000px 增加 1 倍，2 倍封顶
+            distMult = 1f + Math.min(acceleratedDistance, 1000f) / 1000f;
+        }
+        lastMoveTime = event.getEventTime();
+        return speedMult * distMult;
     }
 }

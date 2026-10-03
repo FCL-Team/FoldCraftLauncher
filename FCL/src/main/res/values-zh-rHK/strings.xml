@@ -529,7 +529,6 @@
     <string name="menu_settings_gesture_mode_fight">戰鬥模式</string>
     <string name="menu_settings_gesture_current">當前模式為 %s</string>
     <string name="menu_settings_gyro">陀螺儀</string>
-    <string name="menu_settings_gyro_sensitivity">陀螺儀靈敏度</string>
     <string name="menu_settings_lock_view">鎖定菜單鍵</string>
     <string name="menu_settings_hide_view">隱藏菜單鍵</string>
     <string name="menu_settings_show_fps">顯示FPS</string>

@@ -502,7 +502,6 @@
     <string name="menu_settings_gesture_mode_fight">Lutar</string>
     <string name="menu_settings_gesture_current">Modo atual: %s</string>
     <string name="menu_settings_gyro">Giroscópio</string>
-    <string name="menu_settings_gyro_sensitivity">Sensibilidade</string>
     <string name="menu_settings_lock_view">Travar botão de menu</string>
     <string name="menu_settings_mouse">Mouse</string>
     <string name="menu_settings_mouse_mode">Modo</string>

@@ -476,7 +476,6 @@
     <string name="menu_settings_gesture_mode_fight">Боевой</string>
     <string name="menu_settings_gesture_current">Текущий режим: %s</string>
     <string name="menu_settings_gyro">Гироскоп</string>
-    <string name="menu_settings_gyro_sensitivity">Чувствительность гироскопа</string>
     <string name="menu_settings_lock_view">Заблокировать меню</string>
     <string name="menu_settings_hide_view">Скрыть меню</string>
     <string name="menu_settings_show_fps">Отобразить FPS</string>

@@ -133,14 +133,42 @@ class MenuSetting {
             changed()
         }
 
-    var isInvertGyroscope: Boolean = false
+    var isInvertGyroscopeX: Boolean = false
         set(value) {
             if (field == value) return
             field = value
             changed()
         }
 
-    var gyroscopeSensitivity: Int = 10
+    var isInvertGyroscopeY: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
+    var gyroscopeSensitivityX: Int = 10
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
+    var gyroscopeSensitivityY: Int = 10
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
+    var isSlideAcceleration: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
+    var isDistanceAcceleration: Boolean = false
         set(value) {
             if (field == value) return
             field = value
@@ -287,8 +315,12 @@ class MenuSetting {
                 addProperty("gestureMode", src.gestureMode.id)
                 addProperty("disableLeftTouch", src.isDisableLeftTouch)
                 addProperty("enableGyroscope", src.isEnableGyroscope)
-                addProperty("invertGyroscope", src.isInvertGyroscope)
-                addProperty("gyroscopeSensitivity", src.gyroscopeSensitivity)
+                addProperty("invertGyroscopeX", src.isInvertGyroscopeX)
+                addProperty("invertGyroscopeY", src.isInvertGyroscopeY)
+                addProperty("gyroscopeSensitivityX", src.gyroscopeSensitivityX)
+                addProperty("gyroscopeSensitivityY", src.gyroscopeSensitivityY)
+                addProperty("slideAcceleration", src.isSlideAcceleration)
+                addProperty("distanceAcceleration", src.isDistanceAcceleration)
                 addProperty("mouseMoveMode", src.mouseMoveMode.id)
                 addProperty("mouseSensitivity", src.mouseSensitivity)
                 addProperty("mouseSensitivityCursor", src.mouseSensitivityCursor)
@@ -330,8 +362,18 @@ class MenuSetting {
                 ms.gestureMode = GestureMode.getById(json["gestureMode"]?.asInt ?: 0)
                 ms.isDisableLeftTouch = json["disableLeftTouch"]?.asBoolean ?: false
                 ms.isEnableGyroscope = json["enableGyroscope"]?.asBoolean ?: false
-                ms.isInvertGyroscope = json["invertGyroscope"]?.asBoolean ?: false
-                ms.gyroscopeSensitivity = json["gyroscopeSensitivity"]?.asInt ?: 10
+                // 旧版本单开关同时反转双轴，迁移为独立开关时回落旧值
+                ms.isInvertGyroscopeX =
+                    json["invertGyroscopeX"]?.asBoolean ?: json["invertGyroscope"]?.asBoolean ?: false
+                ms.isInvertGyroscopeY =
+                    json["invertGyroscopeY"]?.asBoolean ?: json["invertGyroscope"]?.asBoolean ?: false
+                // 旧版本横向纵向共用一个灵敏度，迁移时回落旧值
+                ms.gyroscopeSensitivityX =
+                    json["gyroscopeSensitivityX"]?.asInt ?: json["gyroscopeSensitivity"]?.asInt ?: 10
+                ms.gyroscopeSensitivityY =
+                    json["gyroscopeSensitivityY"]?.asInt ?: json["gyroscopeSensitivity"]?.asInt ?: 10
+                ms.isSlideAcceleration = json["slideAcceleration"]?.asBoolean ?: false
+                ms.isDistanceAcceleration = json["distanceAcceleration"]?.asBoolean ?: false
                 ms.mouseMoveMode = MouseMoveMode.getById(json["mouseMoveMode"]?.asInt ?: 0)
                 ms.mouseSensitivity = json["mouseSensitivity"]?.asDouble ?: 1.0
                 ms.mouseSensitivityCursor = json["mouseSensitivityCursor"]?.asDouble ?: 2.0
