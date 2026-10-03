@@ -170,6 +170,14 @@ class VersionSetting : Cloneable {
             changed()
         }
 
+    /** Opt-in native system-Vulkan hand attachment clear for the verified snapshot. */
+    var isVulkanHandDepthFix: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
     var controller: String = "00000000"
         set(value) {
             if (field == value) return
@@ -254,6 +262,7 @@ class VersionSetting : Cloneable {
             it.isIsolateGameDir = isIsolateGameDir
             it.graphicsBackend = graphicsBackend
             it.isVKDriverSystem = isVKDriverSystem
+            it.isVulkanHandDepthFix = isVulkanHandDepthFix
             it.controller = controller
             it.renderer = renderer
             it.driver = driver
@@ -286,6 +295,7 @@ class VersionSetting : Cloneable {
                 addProperty("notCheckJVM", src.isNotCheckJVM)
                 addProperty("graphicsBackend", src.graphicsBackend)
                 addProperty("vulkanDriverSystem", src.isVKDriverSystem)
+                addProperty("vulkanHandDepthFix", src.isVulkanHandDepthFix)
                 addProperty("controller", src.controller)
                 addProperty("renderer", src.renderer)
                 addProperty("driver", src.driver)
@@ -324,6 +334,7 @@ class VersionSetting : Cloneable {
                 vs.isNotCheckJVM = json["notCheckJVM"]?.asBoolean ?: false
                 vs.graphicsBackend = json["graphicsBackend"]?.asString ?: "default"
                 vs.isVKDriverSystem = json["vulkanDriverSystem"]?.asBoolean ?: false
+                vs.isVulkanHandDepthFix = json["vulkanHandDepthFix"]?.asBoolean ?: false
                 vs.controller = json["controller"]?.asString ?: ("00000000")
                 vs.renderer =
                     json["renderer"]?.asString ?: Renderer.ID_NGGL4ES

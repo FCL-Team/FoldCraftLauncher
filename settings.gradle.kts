@@ -18,6 +18,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Fold Craft Launcher"
 include(":FCL")
+include(":VulkanCompat")
 include(":Terracotta")
 include(":ZipFileSystem")
 include(":LWJGL")

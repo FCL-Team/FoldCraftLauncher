@@ -443,6 +443,8 @@ public class FCLGameRepository extends DefaultGameRepository {
                 .setHeight(vs.isForceResolution() ? FCLBridge.FORCE_RESOLUTION_HEIGHT : (int) (AndroidUtilKt.getScreenHeight() * scaleFactor))
                 .setServerIp(vs.getServerIp())
                 .setVkDriverSystem(vs.isVKDriverSystem())
+                .setVulkanHandDepthFix(vs.isVulkanHandDepthFix())
+                .setGraphicsBackend(vs.getGraphicsBackend())
                 .setRenderer(RendererManager.getRenderer(vs.getRenderer()))
                 .setDebugLog(vs.isDebugLog());
 

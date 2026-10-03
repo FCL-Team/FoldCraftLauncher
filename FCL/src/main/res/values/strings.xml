@@ -1031,6 +1031,8 @@
     <string name="settings_fcl_controller_desc">Choose the controller layout used by this version.</string>
     <string name="settings_fcl_vulkan_driver_system">Use System Vulkan driver</string>
     <string name="settings_fcl_vulkan_driver_system_desc">Use the system Vulkan driver. Better performance but may cause compatibility issues.</string>
+    <string name="settings_fcl_vulkan_hand_depth_fix">Qualcomm Vulkan hand depth workaround</string>
+    <string name="settings_fcl_vulkan_hand_depth_fix_desc">Experimental, off by default. Clears depth inside the hand render pass. Only applied to the verified vanilla 26.4 Snapshot 2 client, Java 25, explicit Vulkan backend and system driver. Other clients and mod-loader entry points are skipped. Does not modify the original game JAR.</string>
     <string name="settings_fcl_graphics_backend">Graphics Backend</string>
     <string name="settings_fcl_graphics_backend_desc">Choose the graphics rendering backend. Only effective for 26.2+.</string>
     <string name="settings_fcl_renderer">OpenGL Implementation</string>
