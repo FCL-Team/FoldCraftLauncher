@@ -63,6 +63,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
@@ -74,10 +75,12 @@ public class ForgeNewInstallTask extends Task<Version> {
 
         private final ForgeNewInstallProfile.Processor processor;
         private final Map<String, String> vars;
+        private final int step;
 
-        public ProcessorTask(@NotNull ForgeNewInstallProfile.Processor processor, @NotNull Map<String, String> vars) {
+        public ProcessorTask(@NotNull ForgeNewInstallProfile.Processor processor, @NotNull Map<String, String> vars, int step) {
             this.processor = processor;
             this.vars = vars;
+            this.step = step;
             setSignificance(TaskSignificance.MODERATE);
         }
 
@@ -158,7 +161,7 @@ public class ForgeNewInstallTask extends Task<Version> {
 
             command.addAll(args);
 
-            runJVMProcess(processor, command, 8);
+            runJVMProcess(processor, command, 8, step);
 
             for (Map.Entry<String, String> entry : outputs.entrySet()) {
                 Path artifact = Paths.get(entry.getKey());
@@ -178,21 +181,26 @@ public class ForgeNewInstallTask extends Task<Version> {
         }
     }
 
-    private void runJVMProcess(ForgeNewInstallProfile.Processor processor, List<String> command, int java) throws Exception {
+    private void runJVMProcess(ForgeNewInstallProfile.Processor processor, List<String> command, int java, int step) throws Exception {
         LOG.info("Executing external processor " + processor.getJar().toString() + ", command line: " + new CommandBuilder().addAll(command));
-        updateMessage(FCLApp.getAppContext().getString(R.string.installer_running_processor, String.valueOf(java)));
+        stepHeader = FCLApp.getAppContext().getString(R.string.installer_running_processor_step,
+                step, processors.size(), processor.getJar().getFileName(), String.valueOf(java));
+        lastElapsedMs = 0;
+        updateMessage(buildInstallerMessage());
         int exitCode = InstallerProcessRunner.run(
                 FCLApp.getAppContext(),
                 command.toArray(new String[0]),
                 java,
-                this::appendInstallerLog);
+                this::isCancelled,
+                this::appendInstallerLog,
+                this::updateInstallerElapsed);
         if (exitCode != 0) {
             if (java == 8) {
-                runJVMProcess(processor, command, 17);
+                runJVMProcess(processor, command, 17, step);
             } else if (java == 17) {
-                runJVMProcess(processor, command, 11);
+                runJVMProcess(processor, command, 11, step);
             } else if (java == 11) {
-                runJVMProcess(processor, command, 21);
+                runJVMProcess(processor, command, 21, step);
             } else {
                 throw new IOException("Game processor exited abnormally with code " + exitCode);
             }
@@ -203,6 +211,12 @@ public class ForgeNewInstallTask extends Task<Version> {
 
     private final List<String> installLogs = new ArrayList<>(MAX_INSTALL_LOG_LINES);
 
+    /** 当前运行处理器的消息头（步骤/名称/JRE 版本），无处理器运行时为 null */
+    private String stepHeader;
+
+    /** 当前尝试已运行毫秒数，由运行器每秒回调更新 */
+    private long lastElapsedMs;
+
     /** 追加安装器日志并同步到任务消息，供 UI 实时显示 */
     private void appendInstallerLog(String lines) {
         for (String line : lines.split("\n")) {
@@ -211,7 +225,31 @@ public class ForgeNewInstallTask extends Task<Version> {
             if (installLogs.size() > MAX_INSTALL_LOG_LINES)
                 installLogs.remove(0);
         }
-        updateMessage(String.join("\n", installLogs));
+        updateMessage(buildInstallerMessage());
+    }
+
+    /** 运行器每秒回调：刷新耗时显示，静默运行的处理器的消息也能持续走动 */
+    private void updateInstallerElapsed(long elapsedMs) {
+        lastElapsedMs = elapsedMs;
+        updateMessage(buildInstallerMessage());
+    }
+
+    /** 组装任务消息：处理器步骤/耗时 + 安装日志尾部 */
+    private String buildInstallerMessage() {
+        StringBuilder builder = new StringBuilder();
+        if (stepHeader != null) {
+            builder.append(stepHeader);
+            if (lastElapsedMs >= 1000) {
+                long seconds = lastElapsedMs / 1000;
+                builder.append(" · ").append(String.format(Locale.ROOT, "%02d:%02d", seconds / 60, seconds % 60));
+            }
+        }
+        if (!installLogs.isEmpty()) {
+            if (builder.length() > 0)
+                builder.append("\n");
+            builder.append(String.join("\n", installLogs));
+        }
+        return builder.toString();
     }
 
     private final DefaultDependencyManager dependencyManager;
@@ -396,10 +434,10 @@ public class ForgeNewInstallTask extends Task<Version> {
                 });
     }
 
-    private Task<?> createProcessorTask(ForgeNewInstallProfile.Processor processor, Map<String, String> vars) {
+    private Task<?> createProcessorTask(ForgeNewInstallProfile.Processor processor, Map<String, String> vars, int step) {
         Task<?> task = patchDownloadMojangMappingsTask(processor, vars);
         if (task == null) {
-            task = new ProcessorTask(processor, vars);
+            task = new ProcessorTask(processor, vars, step);
         }
         task.onDone().register(
                 () -> updateProgress(processorDoneCount.incrementAndGet(), processors.size()));
@@ -438,10 +476,11 @@ public class ForgeNewInstallTask extends Task<Version> {
 
         updateProgress(0, processors.size());
 
-        Task<?> processorsTask = Task.runSequentially(
-                processors.stream()
-                        .map(processor -> createProcessorTask(processor, vars))
-                        .toArray(Task<?>[]::new));
+        Task<?>[] processorTasks = new Task<?>[processors.size()];
+        for (int i = 0; i < processors.size(); i++) {
+            processorTasks[i] = createProcessorTask(processors.get(i), vars, i + 1);
+        }
+        Task<?> processorsTask = Task.runSequentially(processorTasks);
 
         dependencies.add(
                 processorsTask.thenComposeAsync(
