@@ -585,19 +585,36 @@ public class Controller implements Cloneable, Observable {
                 saveDirty.set(false);
                 // 轻量对象先补全未加载布局的按键数据，避免空 viewData 覆盖磁盘上的按钮
                 ensureAllLoaded();
-                String str = new GsonBuilder()
-                        .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
-                        .setPrettyPrinting()
-                        .create().toJson(this);
-                try {
-                    FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR, getFileName()), str);
-                } catch (IOException e) {
-                    Logging.LOG.log(Level.SEVERE, "Failed to save controller!", e);
-                }
+                writeToFile();
                 // 保存期间又有新修改则再写一次，保证不丢最新数据
             } while (saveDirty.getAndSet(false));
             saveActive.set(false);
         });
+    }
+
+    /**
+     * 同步写盘：在调用线程立即完成一次完整保存（不经异步队列）。
+     * 供初始化流程使用，保证返回时磁盘状态立即可被再次扫描到。
+     */
+    public synchronized void saveToDiskSync() {
+        ensureAllLoaded();
+        writeToFile();
+    }
+
+    private String serialize() {
+        return new GsonBuilder()
+                .registerTypeAdapterFactory(new JavaFxPropertyTypeAdapterFactory(true, true))
+                .setPrettyPrinting()
+                .create().toJson(this);
+    }
+
+    // synchronized 与 saveToDisk/saveToDiskSync 互斥，避免两路写并发时 .tmp 被对方移走
+    private synchronized void writeToFile() {
+        try {
+            FileUtils.writeText(new File(FCLPath.CONTROLLER_DIR, getFileName()), serialize());
+        } catch (IOException e) {
+            Logging.LOG.log(Level.SEVERE, "Failed to save controller!", e);
+        }
     }
 
     public void changeId(String newId) throws IOException {

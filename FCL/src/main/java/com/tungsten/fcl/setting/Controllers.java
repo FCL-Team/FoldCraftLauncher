@@ -53,11 +53,13 @@ public class Controllers {
                         // assets 默认控制器保持完整解析（列表为空场景罕见，一次可接受）
                         DEFAULT_CONTROLLER = Controller.GSON.fromJson(str, Controller.class);
                     }
-                    DEFAULT_CONTROLLER.saveToDisk();
+                    // 必须同步写盘：异步保存未落盘前磁盘上没有布局文件，紧随的扫描会拿到空结果，
+                    // 后续兜底逻辑会反复触发保存与清理
+                    DEFAULT_CONTROLLER.saveToDiskSync();
                 } catch (IOException e) {
                     Logging.LOG.log(Level.SEVERE, "Failed to generate default controller!", e.getMessage());
                 }
-                controllers.addAll(getControllersFromDisk());
+                addControllersFromDisk();
             }
         }
     }
@@ -79,10 +81,13 @@ public class Controllers {
         // update storage
         File[] files = new File(FCLPath.CONTROLLER_DIR).listFiles();
         if (files != null) {
-            ArrayList<String> fileNames = (ArrayList<String>) controllers.stream().map(Controller::getFileName).collect(Collectors.toList());
+            List<String> fileNames = controllers.stream().map(Controller::getFileName).collect(Collectors.toList());
             for (File file : files) {
-                if (((file.isDirectory() && !file.getName().equals("styles") && !file.getName().equals("input")) || !fileNames.contains(file.getName())) && !file.getName().endsWith(".bak")) {
-                    file.delete();
+                // 仅对不在内存列表的布局 json 做孤儿清理：列表加载不完整时（初始化竞态/解析失败），
+                // 直接删除会永久丢失用户布局，故改名为 .bak 保留数据；
+                // 其余文件（.tmp 在途临时文件、styles/input 等目录）一律不动
+                if (file.isFile() && file.getName().endsWith(".json") && !fileNames.contains(file.getName())) {
+                    file.renameTo(new File(file.getParentFile(), file.getName() + ".bak"));
                 }
             }
         }
@@ -101,13 +106,26 @@ public class Controllers {
             if (initialized)
                 return;
 
-            controllers.addAll(getControllersFromDisk());
+            addControllersFromDisk();
             checkControllers();
 
             initialized = true;
         }
         CALLBACKS.forEach(callback -> Schedulers.androidUIThread().execute(callback));
         CALLBACKS.clear();
+    }
+
+    /**
+     * 扫描磁盘布局加入列表，按 id 去重：init 与 checkControllers 可能先后触发扫描，
+     * 重复加入会让同一布局文件出现两个实例并发写盘（内容互相覆盖或 .tmp 竞争失败）。
+     */
+    private static void addControllersFromDisk() {
+        for (Controller controller : getControllersFromDisk()) {
+            boolean exist = controllers.stream().anyMatch(it -> it.getId().equals(controller.getId()));
+            if (!exist) {
+                controllers.add(controller);
+            }
+        }
     }
 
     private static ArrayList<Controller> getControllersFromDisk() {
@@ -148,7 +166,13 @@ public class Controllers {
             if (controllers.contains(null)) {
                 controllers.remove(null);
             }
-            if (controllers.isEmpty()) controllers.add(DEFAULT_CONTROLLER);
+            if (controllers.isEmpty()) {
+                // 初始化未完成时先补扫磁盘（内部含默认控制器同步落盘），
+                // 仅当磁盘确实无布局时才回退到 assets 默认控制器，避免 assets 数据
+                // 进入列表后覆盖磁盘上用户编辑过的同名布局
+                checkControllers();
+                if (controllers.isEmpty()) controllers.add(DEFAULT_CONTROLLER);
+            }
         }
         return controllers;
     }
