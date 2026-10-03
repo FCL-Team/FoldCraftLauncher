@@ -654,7 +654,7 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
             }
             items.add(label);
         }
-        new ItemSelectionDialog(getContext(), getContext().getString(R.string.mods_sort), items, true, sortField.ordinal(),
+        new ItemSelectionDialog(getContext(), getContext().getString(R.string.mods_sort), items, false, sortField.ordinal(),
                 (position, item) -> {
                     ModSortField clicked = ModSortField.values()[position];
                     if (clicked == sortField && clicked != ModSortField.DEFAULT) {
