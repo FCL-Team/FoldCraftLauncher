@@ -1,6 +1,7 @@
 package com.tungsten.fcl.ui.account
 
 import android.content.Context
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogReloginPasswordBinding
@@ -12,6 +13,7 @@ import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging.LOG
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
+import com.tungsten.fcllibrary.util.ConvertUtils
 import java.util.function.Consumer
 import java.util.logging.Level
 
@@ -26,8 +28,10 @@ class ClassicAccountLoginDialog(
     private val binding = DialogReloginPasswordBinding.inflate(layoutInflater)
 
     init {
-        setContentView(binding.root)
         setCancelable(false)
+        // 布局根节点是 400dp×match_parent，不显式设定窗口尺寸时对话框按内容收缩成一团
+        window?.setLayout(ConvertUtils.dip2px(context, 400f), ViewGroup.LayoutParams.WRAP_CONTENT)
+        setContentView(binding.root)
         binding.username.text = account.username
         binding.login.setOnClickListener { logIn() }
         binding.cancel.setOnClickListener {
