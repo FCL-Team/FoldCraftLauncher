@@ -80,6 +80,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -407,15 +408,36 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     }
 
     /**
-     * 本地文件反查远程版本：聚合模式依次尝试 Modrinth 与 CurseForge 源（命中与未命中均有缓存），
-     * 其余模式使用当前仓库
+     * 本地文件反查远程版本：聚合模式同时反查 Modrinth 与 CurseForge 源并合并全部命中，
+     * 同一 mod 双平台都有收录时两个平台的项目 id 都能命中列表"已安装"标记，
+     * 不会因 Modrinth 命中短路而漏标 CurseForge 条目。
+     * 单源失败只记日志不丢另一源结果；两源均无命中且存在异常时抛出首个异常。
+     * 其余模式使用当前仓库（至多一个结果）
      */
-    Optional<RemoteMod.Version> getRemoteVersionByLocalFile(LocalModFile localModFile, Path file) throws IOException {
+    List<RemoteMod.Version> getRemoteVersionsByLocalFile(LocalModFile localModFile, Path file) throws IOException {
         if (isAggregate()) {
-            Optional<RemoteMod.Version> result = aggregateModrinthRepository.getRemoteVersionByLocalFile(localModFile, file);
-            return result.isPresent() ? result : aggregateCurseRepository.getRemoteVersionByLocalFile(localModFile, file);
+            List<RemoteMod.Version> result = new ArrayList<>(2);
+            IOException firstFailure = null;
+            try {
+                aggregateModrinthRepository.getRemoteVersionByLocalFile(localModFile, file).ifPresent(result::add);
+            } catch (IOException e) {
+                firstFailure = e;
+                Logging.LOG.log(Level.WARNING, "Failed to lookup local file on Modrinth " + file, e);
+            }
+            try {
+                aggregateCurseRepository.getRemoteVersionByLocalFile(localModFile, file).ifPresent(result::add);
+            } catch (IOException e) {
+                if (firstFailure == null) firstFailure = e;
+                Logging.LOG.log(Level.WARNING, "Failed to lookup local file on CurseForge " + file, e);
+            }
+            if (result.isEmpty() && firstFailure != null) {
+                throw firstFailure;
+            }
+            return result;
         }
-        return repository.getRemoteVersionByLocalFile(localModFile, file);
+        return repository.getRemoteVersionByLocalFile(localModFile, file)
+                .map(Collections::singletonList)
+                .orElseGet(Collections::emptyList);
     }
 
     public void setLoading(boolean loading) {

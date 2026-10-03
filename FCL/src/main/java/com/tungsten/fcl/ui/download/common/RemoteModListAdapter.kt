@@ -81,6 +81,8 @@ class RemoteModListAdapter(
 
     /**
      * 后台扫描本地已安装模组并反查远程 modid，结果变化时刷新列表的"已安装"标记。
+     * 聚合模式反查双源：同一 mod 双平台都有收录时两个平台的项目 id 都会收集，
+     * 跨源条目（本地 Modrinth 源、列表 CurseForge 条目，反之亦然）也能命中标记。
      * 并发触发时按顺序串行扫描，避免旧的扫描结果覆盖新的。
      */
     fun refreshInstalledState() {
@@ -107,13 +109,12 @@ class RemoteModListAdapter(
         val ids = mutableListOf<String?>()
         for (localModFile in modFiles) {
             try {
-                val remoteVersionOptional = downloadPage
-                    .getRemoteVersionByLocalFile(localModFile, localModFile.file)
-                remoteVersionOptional.ifPresent {
-                    localModFile.remoteVersion = it
-                }
-                localModFile.remoteVersion?.let {
-                    ids.add(it.modid())
+                val remoteVersions = downloadPage
+                    .getRemoteVersionsByLocalFile(localModFile, localModFile.file)
+                // 首个命中仍写入 remoteVersion，保持原有副作用
+                remoteVersions.firstOrNull()?.let { localModFile.remoteVersion = it }
+                remoteVersions.forEach { version ->
+                    version.modid()?.let { ids.add(it) }
                 }
             } catch (e: Throwable) {
                 Logging.LOG.log(Level.SEVERE, e.toString())
