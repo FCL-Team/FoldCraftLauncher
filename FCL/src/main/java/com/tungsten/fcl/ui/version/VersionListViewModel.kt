@@ -1,14 +1,12 @@
 package com.tungsten.fcl.ui.version
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mio.cache.VersionCache
 import com.tungsten.fcl.setting.Profile
 import com.tungsten.fcl.setting.Profiles
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -37,12 +35,10 @@ class VersionListViewModel : ViewModel() {
     private val _state = MutableStateFlow(UiState())
     val state: StateFlow<UiState> = _state.asStateFlow()
 
-    // lifecycle-viewmodel-ktx 未引入：自建 scope，onCleared 取消
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private var loadJob: Job? = null
 
     init {
-        scope.launch {
+        viewModelScope.launch {
             combine(Profiles.selectedProfile, Profiles.versionsRefreshed) { profile, _ -> profile }
                 .collect { profile -> if (profile != null) load(profile) }
         }
@@ -57,7 +53,7 @@ class VersionListViewModel : ViewModel() {
 
     private fun load(profile: Profile) {
         loadJob?.cancel()
-        loadJob = scope.launch {
+        loadJob = viewModelScope.launch {
             val repository = profile.repository
             // 冷启动时版本仓库尚未加载（versions map 为 null，读 displayVersions 会 NPE 崩进程）：
             // 先呈现缓存快照/loading 态，仓库自载完成的 RefreshedVersionsEvent 经 versionsRefreshed
@@ -104,9 +100,5 @@ class VersionListViewModel : ViewModel() {
             x.id == y.id && x.libraries == y.libraries && x.tag == y.tag
                     && x.modCount == y.modCount && x.iconKey == y.iconKey
         }
-    }
-
-    override fun onCleared() {
-        scope.cancel()
     }
 }

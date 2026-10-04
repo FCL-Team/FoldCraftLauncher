@@ -287,6 +287,7 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.lifecycle.viewmodel)
+    implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.recyclerview)
     implementation(libs.coroutines.android)
     implementation(libs.glide)
