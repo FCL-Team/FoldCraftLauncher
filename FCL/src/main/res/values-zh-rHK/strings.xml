@@ -450,6 +450,7 @@
     <string name="install_installer_install_offline">從本地文件安裝/升級</string>
     <string name="install_installer_install_offline_extension">Forge/OptiFine 安裝器</string>
     <string name="installer_running_processor">正在運行安裝器（Java %s）…</string>
+    <string name="installer_running_processor_step">正在運行安裝器 %1$d/%2$d：%3$s（Java %4$s）…</string>
     <string name="installer_recent_logs">最近日誌：</string>
     <string name="installer_process_retrying">安裝器進程超時，正在重試（%1$d/%2$d）…</string>
     <string name="installer_process_start_error">無法啟動安裝器進程</string>

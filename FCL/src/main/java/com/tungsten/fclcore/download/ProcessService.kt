@@ -28,6 +28,9 @@ import java.util.logging.Level
 import kotlin.concurrent.thread
 
 class ProcessService : Service() {
+    /** 当前运行的会话 ID，决定退出码与启动标记的文件名 */
+    private var session: String = ""
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -38,6 +41,9 @@ class ProcessService : Service() {
         FCLPath.loadPaths(this)
         val command = intent.extras!!.getStringArray("command")
         val java = intent.extras!!.getInt("java")
+        // 会话 ID：主进程每次运行生成，退出码与启动标记文件名以其结尾，
+        // 保证取消后重试等并发场景下新旧运行互不覆盖
+        session = intent.extras!!.getString(InstallerProcessRunner.EXTRA_SESSION) ?: ""
         Logging.LOG.info(
             "Installer process service started, java: $java, command: ${
                 command?.joinToString(
@@ -48,7 +54,7 @@ class ProcessService : Service() {
         // 记录启动标记，供主进程确认安装器服务已启动
         try {
             FileUtils.writeText(
-                File(applicationContext.cacheDir, InstallerProcessRunner.STARTED_FILE),
+                File(applicationContext.cacheDir, InstallerProcessRunner.STARTED_FILE_PREFIX + session + ".txt"),
                 Process.myPid().toString()
             )
         } catch (e: IOException) {
@@ -148,9 +154,9 @@ class ProcessService : Service() {
     private fun writeExitCode(code: Int) {
         try {
             val cacheDir = applicationContext.cacheDir
-            val exitCodeFile = File(cacheDir, InstallerProcessRunner.EXIT_CODE_FILE)
+            val exitCodeFile = File(cacheDir, InstallerProcessRunner.EXIT_CODE_FILE_PREFIX + session + ".txt")
             // 先写临时文件再改名，保证主进程读到的退出码文件内容完整
-            val tmp = File(cacheDir, InstallerProcessRunner.EXIT_CODE_FILE + ".tmp")
+            val tmp = File(cacheDir, InstallerProcessRunner.EXIT_CODE_FILE_PREFIX + session + ".txt.tmp")
             FileUtils.writeText(tmp, code.toString())
             if (!tmp.renameTo(exitCodeFile)) {
                 FileUtils.writeText(exitCodeFile, code.toString())

@@ -55,6 +55,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -229,12 +230,16 @@ public final class OptiFineInstallTask extends Task<Version> {
     }
 
     private void runJVMProcess(String[] command, int java) throws Exception {
-        updateMessage(FCLApp.getAppContext().getString(R.string.installer_running_processor, String.valueOf(java)));
+        stepHeader = FCLApp.getAppContext().getString(R.string.installer_running_processor, String.valueOf(java));
+        lastElapsedMs = 0;
+        updateMessage(buildInstallerMessage());
         int exitCode = InstallerProcessRunner.run(
                 FCLApp.getAppContext(),
                 command,
                 java,
-                this::appendInstallerLog);
+                this::isCancelled,
+                this::appendInstallerLog,
+                this::updateInstallerElapsed);
         if (exitCode != 0) {
             if (java == 8) {
                 runJVMProcess(command, 17);
@@ -252,6 +257,12 @@ public final class OptiFineInstallTask extends Task<Version> {
 
     private final List<String> installLogs = new ArrayList<>(MAX_INSTALL_LOG_LINES);
 
+    /** 当前运行处理器的消息头（JRE 版本），无处理器运行时为 null */
+    private String stepHeader;
+
+    /** 当前尝试已运行毫秒数，由运行器每秒回调更新 */
+    private long lastElapsedMs;
+
     /** 追加安装器日志并同步到任务消息，供 UI 实时显示 */
     private void appendInstallerLog(String lines) {
         for (String line : lines.split("\n")) {
@@ -260,7 +271,31 @@ public final class OptiFineInstallTask extends Task<Version> {
             if (installLogs.size() > MAX_INSTALL_LOG_LINES)
                 installLogs.remove(0);
         }
-        updateMessage(String.join("\n", installLogs));
+        updateMessage(buildInstallerMessage());
+    }
+
+    /** 运行器每秒回调：刷新耗时显示，静默运行的处理器的消息也能持续走动 */
+    private void updateInstallerElapsed(long elapsedMs) {
+        lastElapsedMs = elapsedMs;
+        updateMessage(buildInstallerMessage());
+    }
+
+    /** 组装任务消息：处理器信息/耗时 + 安装日志尾部 */
+    private String buildInstallerMessage() {
+        StringBuilder builder = new StringBuilder();
+        if (stepHeader != null) {
+            builder.append(stepHeader);
+            if (lastElapsedMs >= 1000) {
+                long seconds = lastElapsedMs / 1000;
+                builder.append(" · ").append(String.format(Locale.ROOT, "%02d:%02d", seconds / 60, seconds % 60));
+            }
+        }
+        if (!installLogs.isEmpty()) {
+            if (builder.length() > 0)
+                builder.append("\n");
+            builder.append(String.join("\n", installLogs));
+        }
+        return builder.toString();
     }
 
     /**

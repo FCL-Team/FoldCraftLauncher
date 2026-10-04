@@ -550,6 +550,7 @@
     <string name="install_installer_install_offline">Install/Update from Local File</string>
     <string name="install_installer_install_offline_extension">Forge/OptiFine installer</string>
     <string name="installer_running_processor">Running installer (Java %s)…</string>
+    <string name="installer_running_processor_step">Running installer %1$d/%2$d: %3$s (Java %4$s)…</string>
     <string name="installer_recent_logs">Recent logs:</string>
     <string name="installer_process_retrying">Installer process timed out, retrying (%1$d/%2$d)…</string>
     <string name="installer_process_start_error">Failed to start installer process</string>
