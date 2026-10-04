@@ -46,7 +46,7 @@ class VersionListViewModel : ViewModel() {
 
     /** 刷新按钮通道：失效快照后触发版本仓库重扫，完成事件经 tick 回到 load 走冷加载 */
     fun forceRefresh() {
-        val profile = _state.value.profile ?: Profiles.getSelectedProfile()
+        val profile = _state.value.profile ?: Profiles.selectedProfile.value ?: return
         VersionCache.invalidate(profile)
         profile.repository.refreshVersionsAsync().start()
     }
