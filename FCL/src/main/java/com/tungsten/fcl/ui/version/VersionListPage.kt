@@ -89,7 +89,7 @@ class VersionListPage(context: Context?, id: Int) :
         }
         list = when (currentTab) {
             1 -> list.filter { it.libraries.hasLoaderTag("Fabric") }
-            2 -> list.filter { it.libraries.hasLoaderTag("Forge") && !it.libraries.contains("NeoForge") }
+            2 -> list.filter { it.libraries.hasLoaderTag("Forge", excludeName = "NeoForge") }
             3 -> list.filter { it.libraries.hasLoaderTag("NeoForge") }
             4 -> list.filter {
                 it.libraries.split(",").none { lib ->
@@ -102,9 +102,12 @@ class VersionListPage(context: Context?, id: Int) :
         adapter?.updateVersionList(list)
     }
 
-    /** 组件摘要片段（如 "Fabric: 0.16.0"）是否含某加载器 */
-    private fun String.hasLoaderTag(name: String): Boolean =
-        split(",").any { it.contains(":") && it.contains(name) }
+    /**
+     * 组件摘要片段（如 "Fabric: 0.16.0"）是否含某加载器；
+     * excludeName 在片段级别排除另一加载器（NeoForge 含 "Forge" 字样，两者须按段区分）
+     */
+    private fun String.hasLoaderTag(name: String, excludeName: String? = null): Boolean =
+        split(",").any { it.contains(":") && it.contains(name) && (excludeName == null || !it.contains(excludeName)) }
 
     /**
      * 渲染 VM 状态：条目变化时重建 item 列表并重新应用筛选；冷加载显示进度条。
