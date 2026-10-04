@@ -898,9 +898,11 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         String version = profile.getSelectedVersion();
 
         Path runDirectory = version != null && profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
+        Path modsDirectory = runDirectory.resolve(subdirectoryName);
+        ModManager modManager = version == null ? null : profile.getRepository().getModManager(version);
 
         DownloadAddonDialog dialog = new DownloadAddonDialog(context, file.file().filename(), name -> {
-            Path dest = runDirectory.resolve(subdirectoryName).resolve(name);
+            Path dest = modsDirectory.resolve(name);
 
             FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(file.file().url()), dest.toFile());
             fileTask.setName(file.name());
@@ -921,6 +923,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                     } else {
                         Toast.makeText(context, context.getString(R.string.install_success), Toast.LENGTH_SHORT).show();
                         refreshInstalledState();
+                        notifyModsChanged(modManager, modsDirectory, dest);
                     }
                 }).executor();
                 DownloadManager.submit(name, fileTask, executor);
@@ -939,6 +942,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         if (version == null) version = profile.getSelectedVersion();
         Path runDirectory = profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
         Path modsDirectory = runDirectory.resolve(subdirectoryName);
+        ModManager modManager = profile.getRepository().getModManager(version);
 
         Toast.makeText(context, context.getString(R.string.mods_dependency_resolving), Toast.LENGTH_SHORT).show();
 
@@ -950,12 +954,12 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                     if (exception != null || result == null)
                         return;
                     if (!result.rootInstalled()) {
-                        submitModDownload(context, file.file().filename(), file, modsDirectory);
+                        submitModDownload(context, file.file().filename(), file, modsDirectory, modManager);
                     } else {
                         Toast.makeText(context, context.getString(R.string.mods_already_installed), Toast.LENGTH_SHORT).show();
                     }
                     for (ModDependenciesResolver.ResolvedDependency dep : result.dependencies()) {
-                        submitModDownload(context, dep.version().file().filename(), dep.version(), modsDirectory);
+                        submitModDownload(context, dep.version().file().filename(), dep.version(), modsDirectory, modManager);
                     }
                     if (result.installedSkipped() > 0) {
                         Toast.makeText(context, context.getString(R.string.mods_installed_skipped_note, result.installedSkipped()), Toast.LENGTH_SHORT).show();
@@ -967,7 +971,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     }
 
     /** 提交单个模组文件到下载队列：队列标题与保存文件均使用原始文件名；成功完成后刷新安装状态 */
-    private void submitModDownload(Context context, String filename, RemoteMod.Version version, Path modsDirectory) {
+    private void submitModDownload(Context context, String filename, RemoteMod.Version version, Path modsDirectory, ModManager modManager) {
         Path dest = modsDirectory.resolve(filename);
         FileDownloadTask fileTask = new FileDownloadTask(NetworkUtils.toURL(version.file().url()), dest.toFile(), version.file().getIntegrityCheck());
         fileTask.setName(filename);
@@ -983,10 +987,26 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                 builder.create().show();
             } else if (exception == null) {
                 refreshInstalledState();
+                notifyModsChanged(modManager, modsDirectory, dest);
             }
         }).executor();
         DownloadManager.submit(filename, fileTask, executor);
         executor.start();
+    }
+
+    /**
+     * 模组文件落地后同步进 ModManager 并广播事件，模组管理页可增量刷新；
+     * 下载目录不是该版本的 mods 目录（如资源包目录）时跳过
+     */
+    private void notifyModsChanged(@Nullable ModManager modManager, Path modsDirectory, Path dest) {
+        if (modManager == null || !modsDirectory.equals(modManager.getModsDirectory())) return;
+        Schedulers.io().execute(() -> {
+            try {
+                modManager.onModFileAdded(dest);
+            } catch (IOException e) {
+                Logging.LOG.log(Level.WARNING, "Failed to sync downloaded mod file " + dest, e);
+            }
+        });
     }
 
     /** 批量下载计划：去重后待入队的文件、因已安装跳过的模组数、解析失败的模组名 */
@@ -1006,6 +1026,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         if (version == null) version = profile.getSelectedVersion();
         Path runDirectory = profile.getRepository().hasVersion(version) ? profile.getRepository().getRunDirectory(version).toPath() : profile.getRepository().getBaseDirectory().toPath();
         Path modsDirectory = runDirectory.resolve(subdirectoryName);
+        ModManager modManager = profile.getRepository().getModManager(version);
         Task<BatchDownloadPlan> resolveTask = new Task<BatchDownloadPlan>() {
             @Override
             public void execute() throws Exception {
@@ -1043,7 +1064,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                 return;
             }
             for (RemoteMod.Version file : plan.toSubmit()) {
-                submitModDownload(context, file.file().filename(), file, modsDirectory);
+                submitModDownload(context, file.file().filename(), file, modsDirectory, modManager);
             }
             if (callback != null) callback.onQueued(plan.toSubmit().size(), plan.installedSkipped(), plan.failedTitles().size());
         }).executor();

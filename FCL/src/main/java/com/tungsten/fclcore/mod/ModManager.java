@@ -25,6 +25,8 @@ import android.net.Uri;
 
 import com.google.gson.JsonParseException;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
+import com.tungsten.fclcore.event.EventBus;
+import com.tungsten.fclcore.event.ModsChangedEvent;
 import com.tungsten.fclcore.game.GameRepository;
 import com.tungsten.fclcore.mod.modinfo.FabricModMetadata;
 import com.tungsten.fclcore.mod.modinfo.ForgeNewModMetadata;
@@ -49,6 +51,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -94,6 +97,12 @@ public final class ModManager {
 
     private boolean loaded = false;
 
+    /**
+     * 上次扫描完成时 mods 目录的状态快照（模组文件相对路径 → mtime:size，含版本 json 指纹），
+     * 用于 getMods 时跳过无变化的全量重扫；null 表示快照失效，下次访问重扫。
+     */
+    private Map<String, String> directorySnapshot;
+
     public ModManager(GameRepository repository, String id) {
         this.repository = repository;
         this.id = id;
@@ -115,12 +124,12 @@ public final class ModManager {
         return analyzer;
     }
 
-    public LocalMod getLocalMod(String modId, ModLoaderType modLoaderType) {
+    public synchronized LocalMod getLocalMod(String modId, ModLoaderType modLoaderType) {
         return localMods.computeIfAbsent(pair(modId, modLoaderType),
                 x -> new LocalMod(x.getKey(), x.getValue()));
     }
 
-    public boolean hasMod(String modId, ModLoaderType modLoaderType) {
+    public synchronized boolean hasMod(String modId, ModLoaderType modLoaderType) {
         return localMods.containsKey(pair(modId, modLoaderType));
     }
 
@@ -206,7 +215,7 @@ public final class ModManager {
         return null;
     }
 
-    public void refreshMods() throws IOException {
+    public synchronized void refreshMods() throws IOException {
         refreshMods(null);
     }
 
@@ -216,7 +225,7 @@ public final class ModManager {
      *
      * @param onScanned 每个模组解析成功后的回调，可为 null
      */
-    public void refreshMods(Consumer<LocalModFile> onScanned) throws IOException {
+    public synchronized void refreshMods(Consumer<LocalModFile> onScanned) throws IOException {
         localModFiles.clear();
         localMods.clear();
         brokenFiles.clear();
@@ -242,24 +251,43 @@ public final class ModManager {
             }
         }
         loaded = true;
+        // 扫描期间目录被外部修改时放弃快照，下次访问重扫以补齐
+        Map<String, String> snapshot = computeSnapshot();
+        directorySnapshot = snapshot.equals(computeSnapshot()) ? snapshot : null;
     }
 
-    public List<LocalModFile> getMods() throws IOException {
-        if (!loaded)
+    public synchronized List<LocalModFile> getMods() throws IOException {
+        if (!loaded || isSnapshotOutdated())
             refreshMods();
         return List.copyOf(localModFiles);
     }
 
     /** 本次扫描中损坏（无法打开）的模组文件 */
-    public List<Path> getBrokenFiles() {
+    public synchronized List<Path> getBrokenFiles() {
         return List.copyOf(brokenFiles);
     }
 
-    public void addMod(Path file) throws IOException {
+    /**
+     * 模组目录发生变化（如下载完成的模组落地）后由外部调用：增量解析该文件并广播事件，
+     * 供模组管理界面增量刷新；目录快照同步登记，避免下次访问触发全量重扫。
+     *
+     * @return 解析出的模组信息；非模组文件或旧版模组返回 null
+     */
+    public synchronized LocalModFile onModFileAdded(Path file) throws IOException {
+        if (!loaded || isSnapshotOutdated())
+            refreshMods();
+
+        LocalModFile modFile = addModInfo(file);
+        registerSnapshotFile(file);
+        EventBus.EVENT_BUS.fireEvent(new ModsChangedEvent(this, modFile));
+        return modFile;
+    }
+
+    public synchronized void addMod(Path file) throws IOException {
         if (!isFileNameMod(file))
             throw new IllegalArgumentException("File " + file + " is not a valid mod file.");
 
-        if (!loaded)
+        if (!loaded || isSnapshotOutdated())
             refreshMods();
 
         Path modsDirectory = getModsDirectory();
@@ -269,13 +297,14 @@ public final class ModManager {
         FileUtils.copyFile(file, newFile);
 
         addModInfo(newFile);
+        registerSnapshotFile(newFile);
     }
 
-    public void addMod(Activity activity, Uri uri, String name) throws IOException {
+    public synchronized void addMod(Activity activity, Uri uri, String name) throws IOException {
         if (!isFileNameMod(uri))
             throw new IllegalArgumentException("File " + uri + " is not a valid mod file.");
 
-        if (!loaded)
+        if (!loaded || isSnapshotOutdated())
             refreshMods();
 
         Path modsDirectory = getModsDirectory();
@@ -290,6 +319,7 @@ public final class ModManager {
         }
         inputStream.close();
         addModInfo(newFile);
+        registerSnapshotFile(newFile);
     }
 
     public void removeMods(LocalModFile... localModFiles) throws IOException {
@@ -298,7 +328,7 @@ public final class ModManager {
         }
     }
 
-    public void rollback(LocalModFile from, LocalModFile to) throws IOException {
+    public synchronized void rollback(LocalModFile from, LocalModFile to) throws IOException {
         if (!loaded) {
             throw new IllegalStateException("ModManager Not loaded");
         }
@@ -341,6 +371,7 @@ public final class ModManager {
         );
         if (Files.exists(file)) {
             Files.move(file, newPath, StandardCopyOption.REPLACE_EXISTING);
+            renameSnapshotEntry(file, newPath);
         }
         return newPath;
     }
@@ -351,11 +382,12 @@ public final class ModManager {
         );
         if (Files.exists(file)) {
             Files.move(file, newPath, StandardCopyOption.REPLACE_EXISTING);
+            renameSnapshotEntry(file, newPath);
         }
         return newPath;
     }
 
-    public Path setOld(LocalModFile modFile, boolean old) throws IOException {
+    public synchronized Path setOld(LocalModFile modFile, boolean old) throws IOException {
         Path newPath;
         if (old) {
             newPath = backupMod(modFile.getFile());
@@ -367,23 +399,27 @@ public final class ModManager {
         return newPath;
     }
 
-    public Path disableMod(Path file) throws IOException {
+    public synchronized Path disableMod(Path file) throws IOException {
         if (isOld(file)) return file; // no need to disable an old mod.
 
         String fileName = FileUtils.getName(file);
         if (fileName.endsWith(DISABLED_EXTENSION)) return file;
 
         Path disabled = file.resolveSibling(fileName + DISABLED_EXTENSION);
-        if (Files.exists(file))
+        if (Files.exists(file)) {
             Files.move(file, disabled, StandardCopyOption.REPLACE_EXISTING);
+            renameSnapshotEntry(file, disabled);
+        }
         return disabled;
     }
 
-    public Path enableMod(Path file) throws IOException {
+    public synchronized Path enableMod(Path file) throws IOException {
         if (isOld(file)) return file;
         Path enabled = file.resolveSibling(StringUtils.removeSuffix(FileUtils.getName(file), DISABLED_EXTENSION));
-        if (Files.exists(file))
+        if (Files.exists(file)) {
             Files.move(file, enabled, StandardCopyOption.REPLACE_EXISTING);
+            renameSnapshotEntry(file, enabled);
+        }
         return enabled;
     }
 
@@ -454,6 +490,67 @@ public final class ModManager {
 
     public Path getSimpleModPath(String fileName) {
         return getModsDirectory().resolve(fileName);
+    }
+
+    /** 快照与当前目录状态是否失配；快照缺失（从未扫描或上次扫描被外部修改打断）视为失配 */
+    private boolean isSnapshotOutdated() throws IOException {
+        return directorySnapshot == null || !computeSnapshot().equals(directorySnapshot);
+    }
+
+    /**
+     * 计算 mods 目录当前状态快照：模组文件（含禁用/旧版后缀）的相对路径与 mtime:size。
+     * 版本 json 一并纳入——装载 loader 等改动会影响模组的加载器解析结果。
+     */
+    private Map<String, String> computeSnapshot() throws IOException {
+        Map<String, String> snapshot = new HashMap<>();
+        Path modsDirectory = getModsDirectory();
+        if (Files.isDirectory(modsDirectory)) {
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(modsDirectory)) {
+                for (Path subitem : stream) {
+                    if (Files.isDirectory(subitem) && VersionNumber.isIntVersionNumber(FileUtils.getName(subitem))) {
+                        try (DirectoryStream<Path> subStream = Files.newDirectoryStream(subitem)) {
+                            for (Path subsubitem : subStream) {
+                                registerSnapshotEntry(snapshot, modsDirectory, subsubitem);
+                            }
+                        }
+                    } else {
+                        registerSnapshotEntry(snapshot, modsDirectory, subitem);
+                    }
+                }
+            }
+        }
+        Path versionJson = repository.getVersionRoot(id).toPath().resolve(id + ".json");
+        if (Files.isRegularFile(versionJson)) {
+            snapshot.put(versionJson.getFileName().toString(), fileFingerprint(versionJson));
+        }
+        return snapshot;
+    }
+
+    private static void registerSnapshotEntry(Map<String, String> snapshot, Path modsDirectory, Path file) throws IOException {
+        if (!Files.isRegularFile(file) || !isFileNameMod(file)) return;
+        snapshot.put(modsDirectory.relativize(file).toString(), fileFingerprint(file));
+    }
+
+    /** 新增的模组文件登记进当前快照；快照缺失或文件不在 mods 目录内时跳过 */
+    private void registerSnapshotFile(Path file) throws IOException {
+        if (directorySnapshot == null) return;
+        Path modsDirectory = getModsDirectory();
+        if (!file.startsWith(modsDirectory)) return;
+        registerSnapshotEntry(directorySnapshot, modsDirectory, file);
+    }
+
+    /** 快照中的文件改名（禁用/启用/备份/恢复）后同步更新，保持快照有效 */
+    private void renameSnapshotEntry(Path from, Path to) throws IOException {
+        if (directorySnapshot == null) return;
+        Path modsDirectory = getModsDirectory();
+        if (!from.startsWith(modsDirectory) || !to.startsWith(modsDirectory)) return;
+        directorySnapshot.remove(modsDirectory.relativize(from).toString());
+        registerSnapshotEntry(directorySnapshot, modsDirectory, to);
+    }
+
+    private static String fileFingerprint(Path file) throws IOException {
+        BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+        return attrs.lastModifiedTime().toMillis() + ":" + attrs.size();
     }
 
     public static final String DISABLED_EXTENSION = ".disabled";

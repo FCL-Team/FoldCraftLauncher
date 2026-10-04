@@ -30,6 +30,8 @@ import com.tungsten.fcl.ui.download.DownloadUI;
 import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
+import com.tungsten.fclcore.event.EventBus;
+import com.tungsten.fclcore.event.ModsChangedEvent;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -73,6 +75,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -99,6 +102,13 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
     private ModManager modManager;
     private Profile profile;
     private String versionId;
+
+    /**
+     * 模组文件变化监听（下载完成等外部新增场景）；页面持有强引用，
+     * 保证 registerWeak 的弱引用在页面存活期间不被回收。
+     * 不能用声明处初始化器：onCreate 在超类构造期间回调，那时字段尚未初始化
+     */
+    private Consumer<ModsChangedEvent> modsChangedListener;
 
     private boolean isSearching = false;
 
@@ -212,6 +222,9 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
 
         sortField = ModSortManager.getField();
         sortAscending = ModSortManager.isAscending();
+
+        modsChangedListener = this::onModsChanged;
+        EventBus.EVENT_BUS.channel(ModsChangedEvent.class).registerWeak(modsChangedListener);
     }
 
     @Override
@@ -376,26 +389,22 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
                             List<ModInfoObject> batch = new ArrayList<>(pending);
                             pending.clear();
                             Schedulers.androidUIThread().execute(() -> {
-                                allMods.addAll(batch);
-                                itemsProperty.addAll(filterMods(batch));
+                                List<ModInfoObject> fresh = addAllMods(batch);
+                                if (!fresh.isEmpty()) {
+                                    itemsProperty.addAll(filterMods(fresh));
+                                }
                             });
                         }
                     });
                     List<ModInfoObject> batch = new ArrayList<>(pending);
-                    // 排序作用于显示副本，allMods 保持加载顺序，切回默认时无需重扫即可恢复
-                    List<ModInfoObject> display;
-                    if (sorting) {
-                        display = new ArrayList<>(batch);
-                        sortList(display, sortField, sortAscending);
-                    } else {
-                        display = batch;
-                    }
                     Schedulers.androidUIThread().execute(() -> {
-                        allMods.addAll(batch);
+                        List<ModInfoObject> fresh = addAllMods(batch);
                         if (sorting) {
-                            itemsProperty.setAll(filterMods(display));
-                        } else if (!batch.isEmpty()) {
-                            itemsProperty.addAll(filterMods(batch));
+                            // 排序模式下增量批不上屏，全部解析完成后一次性排序显示
+                            sortList(fresh, sortField, sortAscending);
+                            itemsProperty.addAll(filterMods(fresh));
+                        } else if (!fresh.isEmpty()) {
+                            itemsProperty.addAll(filterMods(fresh));
                         }
                     });
                     return null;
@@ -418,6 +427,54 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
             else
                 LOG.log(Level.SEVERE, "Failed to load local mod list", exception);
         }, Schedulers.androidUIThread());
+    }
+
+    /** 把一批条目并入 allMods（按文件名去重，防与外部新增事件交错时重复），返回实际新增的部分；仅 UI 线程调用 */
+    private List<ModInfoObject> addAllMods(List<ModInfoObject> batch) {
+        List<ModInfoObject> fresh = new ArrayList<>(batch.size());
+        for (ModInfoObject obj : batch) {
+            boolean exists = allMods.stream().anyMatch(o -> Objects.equals(o.getModInfo().getFileName(), obj.getModInfo().getFileName()));
+            if (!exists) {
+                allMods.add(obj);
+                fresh.add(obj);
+            }
+        }
+        return fresh;
+    }
+
+    /**
+     * 模组文件变化事件：仅响应当前版本的 ModManager；
+     * 事件携带增量模组时直接追加，否则整体重扫
+     */
+    private void onModsChanged(ModsChangedEvent event) {
+        Schedulers.androidUIThread().execute(() -> {
+            if (event.getModManager() != modManager) return;
+            LocalModFile modFile = event.getModFile();
+            if (modFile == null) {
+                loadMods(modManager);
+            } else {
+                appendMod(modFile);
+            }
+        });
+    }
+
+    /** 增量追加一个模组条目（下载完成等外部新增场景）；仅 UI 线程调用 */
+    private void appendMod(LocalModFile modFile) {
+        ModInfoObject obj = new ModInfoObject(getContext(), modFile);
+        List<ModInfoObject> fresh = addAllMods(Collections.singletonList(obj));
+        if (fresh.isEmpty()) return;
+        if (sortField == null || sortField == ModSortField.DEFAULT) {
+            itemsProperty.addAll(filterMods(fresh));
+            if (isSearching) {
+                search();
+            }
+        } else {
+            // 排序模式下按当前排序整体重建视图
+            List<ModInfoObject> display = new ArrayList<>(allMods);
+            sortList(display, sortField, sortAscending);
+            itemsProperty.setAll(filterMods(display));
+        }
+        calculateMod();
     }
 
     /**
@@ -760,17 +817,15 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
         }
     }
 
+    /**
+     * 依已加载的模组统计启用/禁用计数并刷新复选框文案；仅 UI 线程调用
+     */
     @SuppressLint("SetTextI18n")
     private void calculateMod() {
-        try {
-            List<LocalModFile> mods = modManager.getMods();
-            long activeCount = mods.stream().filter(LocalModFile::isActive).count();
-            enabled.setText(getContext().getString(R.string.enabled) + " (" + activeCount + ")");
-            disabled.setText(getContext().getString(R.string.disabled) + " (" + (mods.size() - activeCount) + ")");
-        } catch (Exception ignore) {
-            enabled.setText(getContext().getString(R.string.enabled));
-            disabled.setText(getContext().getString(R.string.disabled));
-        }
+        if (enabled == null || disabled == null) return;
+        long activeCount = allMods.stream().filter(modInfoObject -> modInfoObject.getModInfo().isActive()).count();
+        enabled.setText(getContext().getString(R.string.enabled) + " (" + activeCount + ")");
+        disabled.setText(getContext().getString(R.string.disabled) + " (" + (allMods.size() - activeCount) + ")");
     }
 
     public static class ModInfoObject {
