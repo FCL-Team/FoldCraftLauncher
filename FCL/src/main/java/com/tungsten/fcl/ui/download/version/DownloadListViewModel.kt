@@ -34,6 +34,9 @@ class DownloadListViewModel : ViewModel() {
 
     private var lastLoaded: List<ComponentRemoteVersion> = emptyList()
 
+    /** 在途/最近一次清单请求对应的游戏版本：回调落地时据此丢弃过期结果 */
+    private var requestedGameVersion: String? = null
+
     fun load(gameVersion: String, componentType: GameComponentType, force: Boolean) {
         val versionList: ComponentVersionList<*> =
             DownloadProviders.getDownloadProvider().getVersionList(componentType)
@@ -41,13 +44,20 @@ class DownloadListViewModel : ViewModel() {
         val loaded =
             if (componentType == GameComponentType.GAME) versionList.isLoaded() else versionList.isLoaded(gameVersion)
         if (!force && loaded) {
+            requestedGameVersion = gameVersion
             updateLoaded(items(versionList, gameVersion))
             return
         }
-        if (_state.value is State.Loading) return
+        // 同一版本的清单拉取已在途：等回调落地，不重入。
+        // 不同版本的请求不能复用在途结果（VM 按组件 key 跨页面共享，gameVersion 随页面变化）
+        if (_state.value is State.Loading && requestedGameVersion == gameVersion) return
+        requestedGameVersion = gameVersion
         _state.value = State.Loading
         versionList.refreshAsync(gameVersion)
             .whenComplete(Schedulers.androidUIThread()) { _, error ->
+                // 请求已被更新 gameVersion 的加载取代：结果过期，丢弃
+                // （否则旧版本的清单会作为 Loaded 写进状态，新页面渲染出错误版本的组件列表）
+                if (gameVersion != requestedGameVersion) return@whenComplete
                 if (error == null) {
                     updateLoaded(items(versionList, gameVersion))
                 } else {
