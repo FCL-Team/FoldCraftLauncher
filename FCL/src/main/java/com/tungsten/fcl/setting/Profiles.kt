@@ -131,10 +131,10 @@ object Profiles {
             EventBus.EVENT_BUS.channel(RefreshedVersionsEvent::class.java)
                 .registerWeak { event ->
                     val profile = _selectedProfile.value ?: return@registerWeak
-                if (profile.repository === event!!.getSource()) {
-                    bindSelectedVersion(profile)
-                    _versionsRefreshed.value += 1
-                }
+                    if (profile.repository === event!!.getSource()) {
+                        bindSelectedVersion(profile)
+                        _versionsRefreshed.value += 1
+                    }
                 }
         )
         isFirstRefresh = false
