@@ -1236,6 +1236,11 @@ public class GLFW
         mGLFWWindowVisibleOnCreation = true;
     }
 
+    public static void glfwGetWindowPos(long window, IntBuffer xpos, IntBuffer ypos) {
+        if (xpos != null) xpos.put(internalGetWindow(window).x);
+        if (ypos != null) ypos.put(internalGetWindow(window).y);
+    }
+
     public static void glfwGetWindowSize(long window, IntBuffer width, IntBuffer height) {
         if (width != null) width.put(internalGetWindow(window).width);
         if (height != null) height.put(internalGetWindow(window).height);
