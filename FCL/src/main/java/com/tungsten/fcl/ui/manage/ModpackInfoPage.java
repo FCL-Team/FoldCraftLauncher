@@ -83,7 +83,8 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
         this.options = options;
 
         name.set(version);
-        author.set(Optional.ofNullable(Accounts.getSelectedAccount()).map(Account::getUsername).orElse(""));
+        fileName.set(version);
+        author.set(Optional.ofNullable(Accounts.getSelectedAccount()).map(Account::getCharacter).orElse(""));
 
         VersionSetting versionSetting = profile.getRepository().getVersionSetting(versionName);
         minMemory.set(Optional.ofNullable(versionSetting.getMinMemory()).orElse(0));
@@ -191,6 +192,7 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
         packCurseForgeLayout.setVisibility(options.isRequirePackCurseForge() ? View.VISIBLE : View.GONE);
         pathText.stringProperty().bind(path);
         pathButton.setOnClickListener(this);
+        fileNameText.setText(fileName.get());
         fileNameText.stringProperty().bindBidirectional(fileName);
         next.setOnClickListener(this);
     }

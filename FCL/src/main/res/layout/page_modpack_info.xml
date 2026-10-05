@@ -420,7 +420,8 @@
                         android:textSize="14sp"
                         android:gravity="top"
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
+                        android:layout_height="wrap_content"
+                        android:minHeight="100dp"
                         android:layout_gravity="center"
                         android:id="@+id/desc"
                         app:auto_edit_tint="true"/>
