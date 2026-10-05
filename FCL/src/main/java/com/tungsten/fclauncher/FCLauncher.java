@@ -517,7 +517,11 @@ public class FCLauncher {
     }
 
     public static FCLBridge launchMinecraft(FCLConfig config) {
-        return launchProcess(config, FCLPath.LATEST_GAME_LOG, "Minecraft", true, true, true);
+        FCLBridge bridge = launchProcess(config, FCLPath.LATEST_GAME_LOG, "Minecraft", true, true, true);
+        // 标志先落在 bridge 实例上：launch 线程无 Looper，不能在此触碰 CallbackBridge（类初始化含 Choreographer）
+        bridge.setCleanroomActive(config.getInstalledModLoaders() != null
+                && config.getInstalledModLoaders().getInstallCleanroom());
+        return bridge;
     }
 
     public static FCLBridge launchJarExecutor(FCLConfig config) {

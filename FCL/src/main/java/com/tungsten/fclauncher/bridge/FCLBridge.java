@@ -77,6 +77,12 @@ public class FCLBridge {
     private SurfaceTexture surfaceTexture;
     private String modSummary;
     private boolean hasTouchController = false;
+    /** 当前实例是否安装 Cleanroom，随启动设置，execute 时同步进 CallbackBridge */
+    private volatile boolean cleanroomActive = false;
+
+    public void setCleanroomActive(boolean cleanroomActive) {
+        this.cleanroomActive = cleanroomActive;
+    }
 
     static {
         System.loadLibrary("fcl");
@@ -143,6 +149,7 @@ public class FCLBridge {
         this.callback = callback;
         this.surface = surface;
         CallbackBridge.setFCLBridge(this);
+        CallbackBridge.setCleanroomActive(cleanroomActive);
         receiveLog("==================== Before Start ====================\n");
         receiveLog("invoke redirectStdio\n");
         int errorCode = redirectStdio(getLogPath());

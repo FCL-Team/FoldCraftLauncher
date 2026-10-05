@@ -135,16 +135,18 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     public void sendChar(char keyChar) {
         if (menu.getBridge() != null) {
-            // 按键与字符成对发送：lwjglx 系 LWJGL2 兼容层将字母等 keydown 暂存，
-            // 待 charMods 事件合并后才投给游戏，只发字符无法驱动按键绑定
-            int androidKeycode = EfficientAndroidLWJGLKeycode.getAndroidKeycode(keyChar);
-            int keycode = AndroidKeycodeMap.convertKeycode(androidKeycode);
-            if (keycode != FCLKeycodes.KEY_UNKNOWN) {
-                menu.getBridge().pushEventKey(keycode, keyChar, true);
-                menu.getBridge().pushEventKey(keycode, keyChar, false);
-            } else {
-                menu.getBridge().pushEventChar(keyChar);
+            // Cleanroom 的 lwjglx 系兼容层将字母等 keydown 暂存，待 charMods 事件合并后才投给游戏，
+            // 只发字符无法驱动按键绑定，需按字符反查键码补发一对 keydown/keyup；其余实例保持纯字符通道
+            if (CallbackBridge.isCleanroomActive()) {
+                int androidKeycode = EfficientAndroidLWJGLKeycode.getAndroidKeycode(keyChar);
+                int keycode = AndroidKeycodeMap.convertKeycode(androidKeycode);
+                if (keycode != FCLKeycodes.KEY_UNKNOWN) {
+                    menu.getBridge().pushEventKey(keycode, keyChar, true);
+                    menu.getBridge().pushEventKey(keycode, keyChar, false);
+                    return;
+                }
             }
+            menu.getBridge().pushEventChar(keyChar);
         }
     }
 

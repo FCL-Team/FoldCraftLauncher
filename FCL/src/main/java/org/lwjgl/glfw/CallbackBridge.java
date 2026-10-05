@@ -43,6 +43,16 @@ public class CallbackBridge {
     private static volatile boolean isGrabbing = false;
     /** 保护 isGrabbing 的写与「检查+应用」的组合操作，防止应用过期状态 */
     private static final Object grabLock = new Object();
+    /** 当前游戏实例是否安装 Cleanroom，用于门控 lwjglx 系按键/字符成对补发 */
+    private static volatile boolean cleanroomActive = false;
+
+    public static void setCleanroomActive(boolean active) {
+        cleanroomActive = active;
+    }
+
+    public static boolean isCleanroomActive() {
+        return cleanroomActive;
+    }
 
     private static void postFrameCallbackDelayed(Choreographer.FrameCallback callback, long delayMillis) {
         MAIN_HANDLER.post(() -> Choreographer.getInstance().postFrameCallbackDelayed(callback, delayMillis));
@@ -183,12 +193,13 @@ public class CallbackBridge {
                 return;
             }
             nativeSendKey(code, scancode, isDown ? 1 : 0, modifiers);
-            // 补齐桌面键盘 keydown 与字符事件成对到达的语义：lwjglx 系 LWJGL2 兼容层
+            // 补齐桌面键盘 keydown 与字符事件成对到达的语义：Cleanroom 的 lwjglx 系 LWJGL2 兼容层
             // 参考 Display.keyCallback（https://github.com/CleanroomMC/LWJGLXX/blob/master/src/main/java/org/lwjglx/opengl/Display.java）
             // 将字母/数字/标点的 keydown 暂存，等 charMods 事件合并后才投给游戏；
-            // 虚拟按键等来源不携带字符，按键位反查补发，否则按键无法驱动绑定
+            // 虚拟按键等来源不携带字符，按键位反查补发，否则按键无法驱动绑定。
+            // 该补发仅 Cleanroom 实例生效，其余实例保持 char 随按键原样下发
             char charToSend = keychar;
-            if (isDown && charToSend == '\u0000'
+            if (isDown && charToSend == '\u0000' && cleanroomActive
                     && code > LwjglGlfwKeycode.KEY_SPACE && code <= LwjglGlfwKeycode.KEY_GRAVE_ACCENT) {
                 charToSend = getUnicodeChar(EfficientAndroidLWJGLKeycode.getAndroidKeycode(code), modifiers);
             }
