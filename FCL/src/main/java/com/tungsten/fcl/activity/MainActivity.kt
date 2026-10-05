@@ -549,7 +549,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     val version = Profiles.getSelectedProfile().selectedVersion
                     if (version == null) {
                         refreshMenuView(null)
-                        title.setTextWithAnim(getString(R.string.version))
+                        // 标题动画由 pageSelectedListener 的版本页分支统一触发，此处不再重复调用
                         uiManager.switchUI(uiManager.versionUI)
                     } else {
                         title.setTextWithAnim(getString(R.string.manage))
@@ -713,12 +713,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         binding.apply {
             if (view === account && uiManager.currentUI !== uiManager.accountUI) {
                 refreshMenuView(null)
-                title.setTextWithAnim(getString(R.string.account))
+                // 标题动画由 pageSelectedListener 的账户页分支统一触发，此处不再重复调用
                 uiManager.switchUI(uiManager.accountUI)
             }
             if (view === versionCard && uiManager.currentUI !== uiManager.versionUI) {
                 refreshMenuView(null)
-                title.setTextWithAnim(getString(R.string.version))
+                // 标题动画由 pageSelectedListener 的版本页分支统一触发，此处不再重复调用
                 uiManager.switchUI(uiManager.versionUI)
             }
             if (view === back) {
