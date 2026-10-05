@@ -354,9 +354,11 @@ class FavoritePage(
         } catch (e: IllegalArgumentException) {
             RemoteModRepository.Type.MOD
         }
-        // 模式对齐：下载回调按模式绑定安装目录，推荐版本/分类本地化也按模式生效
+        // 模式对齐：下载回调按模式绑定安装目录，推荐版本/分类本地化也按模式生效。
+        // 不能只比较 pageId：新建实例的 pageId 默认值恰为 MOD 模式但 switchType 从未执行，
+        // 仓库/回调为 null，直接 openModDetail 会在详情页构造时失败（表现为点击无跳转）
         val pageId = pageIdForType(type)
-        if (downloadPage.pageId != pageId) {
+        if (!downloadPage.isTypeReady(pageId)) {
             downloadPage.switchType(pageId)
         }
         loading = true

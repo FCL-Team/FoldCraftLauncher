@@ -107,6 +107,8 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     private static final int SEARCH_PAGE_SIZE = 30;
 
     private int pageId = PAGE_ID_DOWNLOAD_MOD;
+    /** switchType 是否执行过：新建实例的 pageId 字段默认值（MOD 模式）不代表已完成初始化，仓库/回调仍为 null */
+    private boolean typeInitialized;
     protected RemoteModRepository repository;
     /** 聚合搜索使用的两个固定源仓库（仅本地化模式构建） */
     private LocalizedRepository aggregateCurseRepository;
@@ -172,6 +174,16 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
 
     public int getPageId() {
         return pageId;
+    }
+
+    /**
+     * 页面当前是否已就绪于指定模式（switchType 至少执行过一次且 pageId 一致）。
+     * 收藏页等外部入口跳转详情前据此判断是否需要先 switchType：
+     * 仅比较 pageId 会漏掉从未初始化的新实例（pageId 默认值恰为 MOD 模式），
+     * 此时 repository/callback 为 null，详情页构造即失败
+     */
+    public boolean isTypeReady(int pageId) {
+        return typeInitialized && this.pageId == pageId;
     }
 
     /**
@@ -275,6 +287,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         } else {
             search(searchState.userGameVersion, searchState.category, searchState.pageOffset, searchState.searchFilter, searchState.sortType);
         }
+        typeInitialized = true;
     }
 
     /**
