@@ -794,6 +794,10 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 return@launch
             }
             val versionSetting = profile.getVersionSetting(launchId)
+            if (versionSetting.isNotCheckVulkan) {
+                doLaunchVersion(profile, versionId)
+                return@launch
+            }
             val useTurnip = !versionSetting.isVKDriverSystem
             val driverPath = if (useTurnip) {
                 (DriverPlugin.driverList.find { it.driver == versionSetting.driver }

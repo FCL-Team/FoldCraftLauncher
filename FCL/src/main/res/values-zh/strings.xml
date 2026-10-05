@@ -1298,6 +1298,8 @@
     <string name="settings_fcl_vulkan_check">检测 Vulkan</string>
     <string name="settings_fcl_vulkan_check_desc">检测设备是否支持 Minecraft 26.2 及以后版本所需的 Vulkan 渲染后端。</string>
     <string name="settings_fcl_vulkan_check_not_checked">未检测</string>
+    <string name="settings_fcl_vulkan_check_disable">禁用 Vulkan 兼容性检测</string>
+    <string name="settings_fcl_vulkan_check_disable_desc">启动 Minecraft 26.2 及以后版本时跳过 Vulkan 兼容性检测及相关提示。</string>
     <string name="vulkan_check_title">Vulkan 支持检测</string>
     <string name="vulkan_check_running">正在检测 Vulkan 支持情况…</string>
     <string name="vulkan_check_failed">Vulkan 检测失败：设备可能不支持 Vulkan，或驱动加载失败。</string>

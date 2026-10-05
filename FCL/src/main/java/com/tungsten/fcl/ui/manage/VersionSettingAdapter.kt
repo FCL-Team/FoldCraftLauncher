@@ -210,6 +210,13 @@ class VersionSettingAdapter(
                 group = SettingGroup.Render,
             )
             result += Row.SwitchRow(
+                R.string.settings_fcl_vulkan_check_disable,
+                { versionSetting.isNotCheckVulkan },
+                { versionSetting.isNotCheckVulkan = it },
+                descriptionRes = R.string.settings_fcl_vulkan_check_disable_desc,
+                group = SettingGroup.Render,
+            )
+            result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_game_completeness,
                 { versionSetting.isNotCheckGame },
                 { versionSetting.isNotCheckGame = it },

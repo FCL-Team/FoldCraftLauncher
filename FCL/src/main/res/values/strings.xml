@@ -1427,6 +1427,8 @@
     <string name="settings_fcl_vulkan_check">Check Vulkan</string>
     <string name="settings_fcl_vulkan_check_desc">Check whether the device supports the Vulkan rendering backend required by Minecraft 26.2 and later.</string>
     <string name="settings_fcl_vulkan_check_not_checked">Not checked</string>
+    <string name="settings_fcl_vulkan_check_disable">Disable Vulkan compatibility check</string>
+    <string name="settings_fcl_vulkan_check_disable_desc">Skip the Vulkan compatibility check and related prompts when launching Minecraft 26.2 and later.</string>
     <string name="vulkan_check_title">Vulkan Check</string>
     <string name="vulkan_check_running">Checking Vulkan support...</string>
     <string name="vulkan_check_failed">Vulkan check failed. The device may not support Vulkan, or the driver failed to load.</string>

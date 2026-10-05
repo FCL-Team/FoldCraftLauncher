@@ -198,6 +198,14 @@ class VersionSetting : Cloneable {
             changed()
         }
 
+    /** 禁用启动前的 Vulkan 兼容性检测，开启后直接启动游戏 */
+    var isNotCheckVulkan: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
     var isDebugLog: Boolean = false
         set(value) {
             if (field == value) return
@@ -258,6 +266,7 @@ class VersionSetting : Cloneable {
             it.renderer = renderer
             it.driver = driver
             it.isNotCheckMod = isNotCheckMod
+            it.isNotCheckVulkan = isNotCheckVulkan
             it.isDebugLog = isDebugLog
             it.isForceResolution = isForceResolution
         }
@@ -291,6 +300,7 @@ class VersionSetting : Cloneable {
                 addProperty("driver", src.driver)
                 addProperty("isolateGameDir", src.isIsolateGameDir)
                 addProperty("notCheckMod", src.isNotCheckMod)
+                addProperty("notCheckVulkan", src.isNotCheckVulkan)
                 addProperty("debugLog", src.isDebugLog)
                 addProperty("forceResolution", src.isForceResolution)
             }
@@ -330,6 +340,7 @@ class VersionSetting : Cloneable {
                 vs.driver = json["driver"]?.asString ?: "Turnip"
                 vs.isIsolateGameDir = json["isolateGameDir"]?.asBoolean ?: false
                 vs.isNotCheckMod = json["notCheckMod"]?.asBoolean ?: false
+                vs.isNotCheckVulkan = json["notCheckVulkan"]?.asBoolean ?: false
                 vs.isDebugLog = json["debugLog"]?.asBoolean ?: false
                 vs.isForceResolution = json["forceResolution"]?.asBoolean ?: false
             }
