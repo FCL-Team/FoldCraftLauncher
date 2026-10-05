@@ -55,6 +55,7 @@ class LocalModListAdapter(
 
     val drawable = AppCompatResources.getDrawable(context, R.drawable.ic_cube)!!
     private val jobs = HashMap<String, Job>()
+    private var recyclerView: RecyclerView? = null
 
     fun listProperty(): ListProperty<ModInfoObject> {
         return listProperty
@@ -110,11 +111,45 @@ class LocalModListAdapter(
                 fromSelf = false
                 notifyDataSetChanged()
             }
+            scheduleVisibleQueryRefresh()
         })
         selectedItemsProperty.addListener { _: Observable? ->
             if (!fromSelf) {
                 notifyDataSetChanged()
             }
+        }
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this.recyclerView = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        this.recyclerView = null
+    }
+
+    /**
+     * 列表变化后统一补发可见条目的远程查询：连续搜索时每轮刷新都会取消在途查询，
+     * 而条目 view 可能被原位复用（既不重绑定也不触发 attach），查询会随刷新一起丢失；
+     * post 到布局完成后主动扫描可见条目，保证最后一轮刷新结束后查询必然发起。
+     */
+    private fun scheduleVisibleQueryRefresh() {
+        recyclerView?.post { refreshVisibleQueries() }
+    }
+
+    private fun refreshVisibleQueries() {
+        val recyclerView = recyclerView ?: return
+        val layoutManager = recyclerView.layoutManager ?: return
+        for (i in 0 until layoutManager.childCount) {
+            val child = layoutManager.getChildAt(i) ?: continue
+            val holder = recyclerView.getChildViewHolder(child) as ViewHolder
+            val position = holder.bindingAdapterPosition
+            if (position == RecyclerView.NO_POSITION || position >= listProperty.size) continue
+            val modInfoObject = listProperty[position]
+            if (modInfoObject.remoteMod != null) continue
+            startRemoteModQuery(holder, ItemLocalModBinding.bind(child), modInfoObject)
         }
     }
 
@@ -160,6 +195,12 @@ class LocalModListAdapter(
         val binding = ItemLocalModBinding.bind(holder.itemView)
         val modInfoObject = listProperty[position]
         val key = modInfoObject.modInfo.fileName
+        // 复用的 view 可能还在跑上一个条目的在途查询，若不取消，
+        // 查询完成时会把上一个条目的远程信息错误写进正在显示本条目的 view
+        val oldKey = holder.itemView.tag as? String
+        if (oldKey != null && oldKey != key) {
+            jobs.remove(oldKey)?.cancel()
+        }
         jobs[key]?.cancel()
         jobs.remove(key)
         binding.parent.backgroundTintList = ColorStateList(
@@ -244,25 +285,36 @@ class LocalModListAdapter(
         val cachedRemoteMod = modInfoObject.remoteMod
         if (cachedRemoteMod != null) {
             applyRemoteMod(binding, cachedRemoteMod, modInfoObject)
+        } else {
+            startRemoteModQuery(holder, binding, modInfoObject)
         }
     }
 
-    /**
-     * 远程信息查询挂在 attach 生命周期上而不是 onBindViewHolder：RecyclerView 的 view cache
-     * （视口外侧各约 2 个条目）复用缓存 view 重新显示时不会重新绑定，挂在绑定上会导致
-     * 查询被防抖跳过后（如快速滑动）永久失去重试机会；attach 则每次重新显示都会触发。
-     * detach 时取消在途查询，delay(200ms) 后仍存活即说明条目停在了屏幕上。
-     */
     override fun onViewAttachedToWindow(holder: ViewHolder) {
         super.onViewAttachedToWindow(holder)
         val position = holder.bindingAdapterPosition
         if (position == RecyclerView.NO_POSITION || position >= listProperty.size) return
         val modInfoObject = listProperty[position]
         if (modInfoObject.remoteMod != null) return
+        startRemoteModQuery(holder, ItemLocalModBinding.bind(holder.itemView), modInfoObject)
+    }
+
+    /**
+     * 远程信息查询挂在 attach 与 bind 两个生命周期上：
+     * RecyclerView 的 view cache（视口外侧各约 2 个条目）复用缓存 view 重新显示时不会重新绑定，
+     * 查询必须由 attach 发起；而 notifyDataSetChanged 整体刷新（搜索 / 勾选筛选 / 排序）后，
+     * 屏幕上的条目从 attachedScrap 原位复用，既不触发 attach 也不触发 detach，
+     * 此时查询只能由重新绑定发起。
+     * detach 时取消在途查询，delay(200ms) 后仍存活即说明条目停在了屏幕上。
+     */
+    private fun startRemoteModQuery(
+        holder: ViewHolder,
+        binding: ItemLocalModBinding,
+        modInfoObject: ModInfoObject
+    ) {
         val key = modInfoObject.modInfo.fileName
         val existing = jobs[key]
         if (existing != null && existing.isActive) return
-        val binding = ItemLocalModBinding.bind(holder.itemView)
         holder.itemView.tag = key
         val job = MainActivity.getInstance().lifecycleScope.launch {
             delay(200L.milliseconds)

@@ -675,8 +675,6 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
         if (StringUtils.isBlank(queryString)) {
             adapter.listProperty().setAll(itemsProperty.get());
         } else {
-            adapter.listProperty().clear();
-
             Predicate<String> predicate;
             if (queryString.startsWith("regex:")) {
                 try {
@@ -691,7 +689,8 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
                 predicate = s -> s.toLowerCase(Locale.ROOT).contains(lowerQueryString);
             }
 
-            // 一次性 setAll 整体替换，避免逐条 add 触发多次列表通知
+            // 一次性 setAll 整体替换（replace change），避免 clear+setAll 两段通知
+            // 触发逐条增删动画造成输入时列表反复闪烁刷新
             List<ModInfoObject> filtered = itemsProperty.get().stream().filter(item ->
                     predicate.test(item.getModInfo().getFileName()) || (item.getRemoteMod() != null && predicate.test(item.getRemoteMod().getTitle()))
             ).collect(Collectors.toList());
