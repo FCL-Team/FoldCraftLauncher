@@ -1,5 +1,53 @@
 # Changelog
 
+## [1.3.3.7] - 2026-10-05
+
+### 中文
+
+#### ✨ 新功能
+
+1. **Vulkan 设备检测与驱动能力补齐 (#1866)**：新增 native 检测模块，dlopen 系统 libvulkan 或经 liblinkerhook 加载 Turnip 驱动，枚举物理设备读取 apiVersion/扩展/特性，并移植 MC 版本与 Vulkan 依赖关系表；启动 26.2+ 版本前自动校验（缓存命中直接判定，无缓存时询问检测），不满足时列出缺失项警告，确认后仍可继续启动；版本设置页新增「检测 Vulkan」入口与结果对话框，展示总体结论、版本区间支持情况与逐项扩展/特性依赖标注；检测结果经 DataStore 缓存，驱动状态或检测规则变更时自动失效；vkshim 包装系统 Vulkan 加载器，设备缺失 VK_EXT_vertex_attribute_divisor 时用 KHR/核心功能合成，并补齐 fillModeNonSolid（线框/点填充）降级模拟；同时修复 Turnip 驱动下检测失败的问题
+2. **版本深度删除 (#1873)**：版本列表删除弹窗新增深度删除，可一并清理仅被该版本引用的库与资源文件（libraries、资产索引与对象、虚拟资产目录）；删除前对规范路径做目录内断言，携带 `..` 或指向共享目录之外的路径一律跳过并记日志；删除与深度删除过程实时显示进度日志，完成后的统计与失败原因改由对话框展示，不再一闪而过的 Toast
+3. **模组列表排序 (#1892)**：支持名称/文件名/大小/修改时间四个维度，重复选择同一维度切换升降序；排序选择经 DataStore 全局持久化，重启后保持；排序模式下扫描完成后在后台排序再一次性显示，大小/修改时间排序先批量读取文件属性再比较，避免比较器内反复 IO
+4. **数值调节条加减按钮**：FCLNumberSeekBar 左右新增主题色圆底加减按钮，点按步进一个显示单位、长按连发、滑出热区取消，触控热区以轨道端点为界，与数值文本点按/拖动互不干扰
+5. **皮肤对话框预览同步开关状态 (#1884)**：离线/微软账户皮肤对话框的 3D 预览应用「3D 皮肤层」与「身体腿部分离」开关状态，与主界面显示效果保持一致
+
+#### ⚡ 优化
+
+1. **模组扫描缓存与增量刷新**：ModManager 按版本缓存共享实例并增加目录快照校验，同一版本避免重复全量扫描；模组下载完成后事件通知管理页增量刷新，无需重新进入页面
+2. **已安装标记跨源匹配**：模组下载页「已安装」标记支持跨源匹配，聚合反查同时命中 Modrinth 与 CurseForge，任一来源已安装即正确标注
+
+#### 🐛 修复
+
+1. **Forge/NeoForge/OptiFine 安装卡死且无法取消 (#1903)**：安装器进程运行器协程化，轮询间隔检查任务取消，取消即杀 :jvm 进程并中止任务，修复安装卡在处理器阶段时取消按钮无效；退出码/启动标记文件名带会话 ID，取消后立即重试不再读到陈旧退出码；超时判定引入 CPU 进度检测（/proc utime+stime），无进展 3 分钟判挂起，procfs 不可用时退化为日志空闲 10 分钟，单次尝试绝对时限 15 分钟；处理器消息显示步骤 i/N、jar 名、JRE 版本与已运行时长，静默处理器阶段任务消息持续走动，不再表现为假死
+2. **控制器初始化竞态**：修复控制器初始化竞态导致的保存报错与用户布局丢失
+3. **oshi 系统信息初始化崩溃**：oshi 5.x 的 initProcessorCounts 返回 List，误包装成 Pair 导致构造遍历时抛 IncompatibleClassChangeError
+4. **Quilt 安装崩溃**：Quilt meta JSON 缺少 intermediary 字段时判空跳过，不再空指针崩溃
+5. **SDL 消息框**：修复 message 误设为标题导致错误信息显示不全
+
+### English
+
+#### ✨ New Features
+
+1. **Vulkan device detection & driver capability shimming (#1866)**: A new native detection module dlopens the system libvulkan or loads the Turnip driver via liblinkerhook, enumerates physical devices for apiVersion/extensions/features, with a ported MC-version-to-Vulkan dependency table; Vulkan support is now verified automatically before launching 26.2+ versions (cached results are judged directly, otherwise detection is offered), and when requirements are unmet a warning lists the missing items while still allowing launch; version settings gained a "Detect Vulkan" entry with a result dialog showing the overall verdict, per-version-range support and per-item extension/feature annotations; results are cached in DataStore and invalidated automatically when the driver or rules change; vkshim wraps the system Vulkan loader, synthesizing VK_EXT_vertex_attribute_divisor from KHR/core equivalents when missing, plus a fillModeNonSolid (wire/point fill) fallback simulation; the detection failure under Turnip drivers is also fixed
+2. **Version deep deletion (#1873)**: The version list delete dialog gained deep deletion, which also cleans up libraries and assets referenced only by that version (libraries, asset indexes/objects, virtual assets); every path is asserted to stay inside its shared directory after canonicalization — paths carrying `..` or pointing outside are skipped and logged; deletion and deep deletion now show real-time progress logs, with final stats and failure reasons presented in a dialog instead of fleeting toasts
+3. **Mod list sorting (#1892)**: Four dimensions — name/filename/size/modification time — with ascending/descending toggled by re-selecting the same dimension; the choice is persisted globally via DataStore; in sorting mode the list is sorted in the background after scanning and shown in one pass, and size/mtime sorting batch-reads file attributes before comparing to avoid repeated IO inside comparators
+4. **Seek bar stepper buttons**: FCLNumberSeekBar gained themed round +/- buttons on both sides — tap steps one display unit, long-press repeats, sliding out cancels; the touch targets are bounded by the track endpoints and never overlap the value text tap/drag area
+5. **Skin dialog preview honors switches (#1884)**: The 3D preview in the offline/Microsoft account skin dialogs now applies the "3D skin layer" and "body-leg separation" switch states, matching the main interface
+
+#### ⚡ Improvements
+
+1. **Mod scan caching & incremental refresh**: ModManager caches a shared instance per version with a directory-snapshot check, avoiding repeated full scans of the same version; after a mod download completes, an event notifies the manage page to refresh incrementally
+2. **Cross-source "installed" badge**: The "installed" badge on the mod download page now matches across sources — the aggregate reverse lookup hits both Modrinth and CurseForge, so an install from either source is labeled correctly
+
+#### 🐛 Bug Fixes
+
+1. **Forge/NeoForge/OptiFine installation freezing and being impossible to cancel (#1903)**: The installer process runner is now coroutine-based — each poll checks the task's cancellation supplier, killing the :jvm process and aborting the task on cancel, fixing the dead cancel button while stuck in a processor stage; exit-code/start marker files carry a session ID so an immediate retry never reads stale exit codes; the hang detection now uses CPU-time progress (/proc utime+stime) — 3 minutes without progress is judged hung, degrading to 10-minute log-idle when procfs is unavailable, with a 15-minute absolute cap per attempt; processor messages show step i/N, jar name, JRE version and elapsed time, so silent processor stages no longer look frozen
+2. **Controller initialization race**: Fixed save errors and user layout loss caused by a controller initialization race
+3. **oshi system-info initialization crash**: oshi 5.x's initProcessorCounts returns a List which was wrongly wrapped as a Pair, throwing IncompatibleClassChangeError during construction iteration
+4. **Quilt installation crash**: Missing intermediary field in Quilt meta JSON is now skipped gracefully instead of throwing a NullPointerException
+5. **SDL message boxes**: Fixed incomplete error messages caused by the message text being set as the title
+
 ## [1.3.3.6] - 2026-09-30
 
 ### 中文
