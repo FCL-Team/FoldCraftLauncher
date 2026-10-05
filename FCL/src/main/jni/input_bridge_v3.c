@@ -488,6 +488,23 @@ Java_com_tungsten_fcl_game_sdl_SdlBridge_setNativeTextInputActive(__attribute__(
     return result ? JNI_TRUE : JNI_FALSE;
 }
 
+JNIEXPORT jboolean JNICALL
+Java_com_tungsten_fcl_game_sdl_SdlBridge_isNativeTextInputActive(__attribute__((unused)) JNIEnv* env, __attribute__((unused)) jclass clazz) {
+    SDL_Window *window = sdlHookGetPrimaryWindow();
+    if (window == NULL) return JNI_FALSE;
+    void *handle = dlopen("libSDL3.so", RTLD_NOW);
+    if (handle == NULL) return JNI_FALSE;
+    // Java 侧的激活镜像依赖 showTextInput JNI 回调，该回调受 SDL_ENABLE_SCREEN_KEYBOARD hint
+    // 支配（MC 运行中会把它设回 0）而可能永不到达；此处直接查 native 真实状态
+    typedef bool (*sdlIsTextInputActive_t)(SDL_Window *);
+    sdlIsTextInputActive_t isActive = (sdlIsTextInputActive_t) dlsym(handle, "SDL_TextInputActive");
+    if (isActive == NULL) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "isNativeTextInputActive: SDL_TextInputActive not found");
+        return JNI_FALSE;
+    }
+    return isActive(window) ? JNI_TRUE : JNI_FALSE;
+}
+
 JNIEXPORT jobject JNICALL
 Java_org_lwjgl_glfw_CallbackBridge_nativeCreateGamepadButtonBuffer(JNIEnv* env, __attribute__((unused)) jclass clazz) {
     return (*env)->NewDirectByteBuffer(env, pojav_environ->gamepadState.buttons, sizeof(pojav_environ->gamepadState.buttons));

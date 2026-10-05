@@ -389,6 +389,11 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
         return SdlImeController.isTextInputActive();
     }
 
+    /** 经 SDL 文本输入通道向游戏提交文本；通道未激活时文本会被 SDL 丢弃 */
+    public static void commitTextInput(String text) {
+        SDLInputConnection.nativeCommitText(text, 0);
+    }
+
     public static void enableSDLEditKeyboard(){
         SdlImeController.requestShow(SdlImeController.Source.LAUNCHER);
     }
