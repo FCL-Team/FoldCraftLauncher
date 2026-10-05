@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1336,
-    "versionName": "1.3.3.6",
-    "date": "2026.09.30",
+    "versionCode": 1337,
+    "versionName": "1.3.3.7",
+    "date": "2026.10.05",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Added modpack export — instances can now be exported as Modrinth (.mrpack) or CurseForge packs.\n2. A new in-house onboarding component now guides first-time users through the account, launch and menu entries.\n3. The launch preparation stage now runs on a background thread, eliminating the stutter when tapping launch; the dialog shows mod parsing and scanning progress in real time.\n4. The matching API is now auto-selected when installing Fabric/Quilt; a \"What's New\" entry was added to launcher settings to review the current version's update notes at any time.\n5. Control layout editor enhancements: a \"snap to adjacent buttons only\" toggle, snapping can now align to the same button on both axes, and new/cloned controls default to the screen center; fixed added controls seemingly disappearing behind menus and duplicated keys after crashes.\n6. Fixed Classic account re-login dialog deadlock, Modrinth modpack updates always rolling back, favorites database corruption, cape disappearing after page switches, transparent arms with the initial default skin, log-sharing ANR, and theme transparency affecting text/icon visibility."
+        "text": "(Translated from Chinese by AI)\n1. Added Vulkan capability detection — device support is now verified automatically before launching 26.2+ versions, with a new \"Detect Vulkan\" entry in version settings for manual checks and per-item extension/feature dependency details; the vkshim driver layer automatically synthesizes missing Vulkan capabilities.\n2. The version list gained deep deletion, which also cleans up libraries and assets referenced only by that version; deletion progress is now shown in real time.\n3. The mod list gained sorting by name/filename/size/modification time with ascending/descending toggle, and the choice is remembered.\n4. The number seek bar gained +/- buttons on both sides, supporting tap to step and long-press to repeat.\n5. The account skin dialog's 3D preview now applies the 3D skin layer and body-leg separation switch states.\n6. Optimized mod scanning: repeated full scans of the same version are avoided, and the manage page refreshes incrementally after a mod download; the \"installed\" badge on the mod download page now matches across Modrinth and CurseForge.\n7. Fixed Forge/NeoForge/OptiFine installation freezing and being impossible to cancel; processor progress is now shown in real time and hangs are detected automatically.\n8. Fixed save errors and user layout loss caused by a controller initialization race.\n9. Fixed Quilt installation crashes, system-info initialization crashes on some devices, and incomplete error messages in SDL message boxes."
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增整合包导出功能，支持导出为 Modrinth（.mrpack）与 CurseForge 格式\n2.全新自研引导组件，首次使用时引导账户、启动与各菜单入口操作\n3.启动准备段迁至后台线程，消除点击启动卡顿，弹窗内实时显示解析与扫描模组进度\n4.安装新游戏选择 Fabric/Quilt 时自动勾选对应 API；启动器设置新增\"更新内容\"入口，可重复查看当前版本更新说明\n5.控件编辑器增强：编辑吸附新增仅吸附相邻按键开关，支持与同一按钮横纵两轴同时对齐，新建/克隆控件默认屏幕中心；修复添加控件被菜单遮挡看似消失、崩溃后键位重复等问题\n6.修复 Classic 账户密码重登弹窗阻塞、Modrinth 整合包更新必然回滚、收藏库数据损坏、切换页面后披风消失、初始默认皮肤手臂透明、日志分享 ANR、主题色透明度影响文字与图标可见性等问题"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增 Vulkan 能力检测，启动 26.2+ 版本前自动校验设备支持情况，版本设置页新增\"检测 Vulkan\"入口可手动检测并查看逐项扩展/特性依赖；vkshim 驱动层自动合成缺失的 Vulkan 能力\n2.版本列表新增深度删除，可一并清理仅被该版本引用的库与资源文件，删除过程实时显示进度\n3.模组列表新增排序，支持按名称/文件名/大小/修改时间升降序排列，选择自动记忆\n4.数值调节条左右新增加减按钮，支持点按步进与长按连发\n5.账户皮肤对话框 3D 预览同步应用 3D 皮肤层与身体腿部分离开关状态\n6.模组扫描性能优化，同一版本避免重复全量扫描，下载模组后管理页自动增量刷新；模组下载页\"已安装\"标记支持 Modrinth 与 CurseForge 跨源匹配\n7.修复 Forge/NeoForge/OptiFine 安装卡死且无法取消的问题，安装过程实时显示处理器进度，挂起自动检测收敛\n8.修复控制器初始化竞态导致的保存报错与用户布局丢失\n9.修复 Quilt 安装崩溃、部分设备系统信息初始化崩溃、SDL 消息框错误信息显示不全等问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/fdafb37d56e4",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.3.6/FCL-release-1.3.3.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/bcb708440285",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.3.7/FCL-release-1.3.3.7-all.apk"
   }
 ]
