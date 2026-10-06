@@ -1525,8 +1525,8 @@ public class GLFW
             checkSafe(xpos, 1);
             checkSafe(ypos, 1);
         }
-        xpos[0] = 0;
-        ypos[0] = 0;
+        if (xpos != null) xpos[0] = internalGetWindow(window).x;
+        if (ypos != null) ypos[0] = internalGetWindow(window).y;
     }
 
     public static void glfwGetWindowPos(@NativeType("GLFWwindow *") long window, @NativeType("int *") @Nullable IntBuffer xpos, @NativeType("int *") @Nullable IntBuffer ypos) {
@@ -1534,8 +1534,8 @@ public class GLFW
             checkSafe(xpos, 1);
             checkSafe(ypos, 1);
         }
-        xpos.put(0);
-        ypos.put(0);
+        if (xpos != null) xpos.put(internalGetWindow(window).x);
+        if (ypos != null) ypos.put(internalGetWindow(window).y);
     }
 
     /** Array version of: {@link #glfwGetWindowSize GetWindowSize} */
