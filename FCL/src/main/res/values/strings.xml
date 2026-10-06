@@ -676,6 +676,7 @@
     <string name="key_bind_listening">Press a key to bind (BACK to cancel)</string>
     <string name="key_bind_unknown">Unrecognized key, try another</string>
     <string name="key_bind_done">Bound to %1$s</string>
+    <string name="key_bind_conflict">Conflicts with the other shortcut</string>
     <string name="menu_settings_gamepad">GamePad</string>
     <string name="menu_settings_gamepad_control">Gamepad Control</string>
     <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>

@@ -601,6 +601,7 @@
     <string name="key_bind_listening">请按下要绑定的按键（按返回取消）</string>
     <string name="key_bind_unknown">无法识别的按键，请换一个键</string>
     <string name="key_bind_done">已绑定 %1$s</string>
+    <string name="key_bind_conflict">与另一个快捷键冲突</string>
     <string name="menu_settings_gamepad">手柄</string>
     <string name="menu_settings_gamepad_control">手柄控制</string>
     <string name="menu_settings_gamepad_reset_mapper">重置映射</string>

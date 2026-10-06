@@ -1175,6 +1175,17 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 break;
             case PHYSICAL_MOUSE:
                 menuSetting.setPhysicalMouseMode(checked);
+                // 模式切换即时生效：菜单态改用系统指针时释放捕获，改回虚拟指针时立即补回，不等看门狗轮询
+                if (checked) {
+                    if (getCursorMode() == FCLBridge.CursorEnabled) {
+                        View focusView = getInput().getFocusableView();
+                        if (focusView != null && focusView.hasPointerCapture()) {
+                            focusView.releasePointerCapture();
+                        }
+                    }
+                } else {
+                    getInput().ensurePointerCapture();
+                }
                 break;
             case SLIDE_ACCELERATION:
                 menuSetting.setSlideAcceleration(checked);
@@ -1223,9 +1234,32 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         } else if (tag == RightMenuTag.GAMEPAD_INPUT_MODE) {
             SdlSettings.setGamepadInputMode(GamepadInputMode.values()[position]);
         } else if (tag == RightMenuTag.CAPTURE_POINTER_MODIFIER) {
+            if (isHotkeyConflict(menuSetting.getCapturePointerKey(), position,
+                    menuSetting.getImeToggleKey(), menuSetting.getImeToggleModifier())) {
+                rejectHotkeyConflict();
+                return;
+            }
             menuSetting.setCapturePointerModifier(position);
         } else if (tag == RightMenuTag.IME_TOGGLE_MODIFIER) {
+            if (isHotkeyConflict(menuSetting.getImeToggleKey(), position,
+                    menuSetting.getCapturePointerKey(), menuSetting.getCapturePointerModifier())) {
+                rejectHotkeyConflict();
+                return;
+            }
             menuSetting.setImeToggleModifier(position);
+        }
+    }
+
+    /** 两个快捷键的键码与修饰键完全一致时会同时触发，视为冲突 */
+    private static boolean isHotkeyConflict(int key, int modifier, int otherKey, int otherModifier) {
+        return key != 0 && key == otherKey && modifier == otherModifier;
+    }
+
+    /** 拒绝冲突的快捷键配置并还原菜单显示 */
+    private void rejectHotkeyConflict() {
+        Toast.makeText(activity, R.string.key_bind_conflict, Toast.LENGTH_SHORT).show();
+        if (rightMenuAdapter != null) {
+            rightMenuAdapter.rebuild();
         }
     }
 
@@ -1274,6 +1308,17 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         int fclKeycode = AndroidKeycodeMap.convertKeycode(event.getKeyCode());
         if (fclKeycode == FCLKeycodes.KEY_UNKNOWN) {
             Toast.makeText(activity, R.string.key_bind_unknown, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 绑定键码配合当前修饰键后不得与另一快捷键完全一致，否则一次按键两个功能同时触发
+        if (tag == RightMenuTag.CAPTURE_POINTER_KEY && isHotkeyConflict(fclKeycode, menuSetting.getCapturePointerModifier(),
+                menuSetting.getImeToggleKey(), menuSetting.getImeToggleModifier())) {
+            Toast.makeText(activity, R.string.key_bind_conflict, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (tag == RightMenuTag.IME_TOGGLE_KEY && isHotkeyConflict(fclKeycode, menuSetting.getImeToggleModifier(),
+                menuSetting.getCapturePointerKey(), menuSetting.getCapturePointerModifier())) {
+            Toast.makeText(activity, R.string.key_bind_conflict, Toast.LENGTH_SHORT).show();
             return;
         }
         if (tag == RightMenuTag.CAPTURE_POINTER_KEY) {
