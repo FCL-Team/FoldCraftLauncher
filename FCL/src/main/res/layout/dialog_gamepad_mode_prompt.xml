@@ -1,125 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:padding="20dp">
 
-    <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/gamepad_mode_prompt_title"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:id="@+id/description"
+    <!-- Scrollable so the confirm button stays reachable on short (landscape) screens. -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/gamepad_mode_prompt_description"
-        app:layout_constraintTop_toBottomOf="@id/title" />
+        android:layout_weight="1"
+        android:fillViewport="false">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/row_mapped"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintTop_toBottomOf="@id/description">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <com.tungsten.fcllibrary.component.view.FCLRadioButton
-            android:id="@+id/radio_mapped"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gamepad_mode_prompt_title"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <com.tungsten.fcllibrary.component.view.FCLTextView
-            android:id="@+id/mapped_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/menu_settings_gamepad_input_mode_mapped"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/radio_mapped"
-            app:layout_constraintTop_toTopOf="@id/radio_mapped" />
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/gamepad_mode_prompt_description"
+                app:layout_constraintTop_toBottomOf="@id/title" />
 
-        <com.tungsten.fcllibrary.component.view.FCLTextView
-            android:id="@+id/mapped_summary"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/gamepad_mode_prompt_mapped_summary"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/radio_mapped"
-            app:layout_constraintTop_toBottomOf="@id/mapped_title" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/row_mapped"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toBottomOf="@id/description">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/row_sdl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintTop_toBottomOf="@id/row_mapped">
+                <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                    android:id="@+id/radio_mapped"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <com.tungsten.fcllibrary.component.view.FCLRadioButton
-            android:id="@+id/radio_sdl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/mapped_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/menu_settings_gamepad_input_mode_mapped"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/radio_mapped"
+                    app:layout_constraintTop_toTopOf="@id/radio_mapped" />
 
-        <com.tungsten.fcllibrary.component.view.FCLTextView
-            android:id="@+id/sdl_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/menu_settings_gamepad_input_mode_sdl_direct"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/radio_sdl"
-            app:layout_constraintTop_toTopOf="@id/radio_sdl" />
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/mapped_summary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/gamepad_mode_prompt_mapped_summary"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/radio_mapped"
+                    app:layout_constraintTop_toBottomOf="@id/mapped_title" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.tungsten.fcllibrary.component.view.FCLTextView
-            android:id="@+id/sdl_summary"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/gamepad_mode_prompt_sdl_direct_summary"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/radio_sdl"
-            app:layout_constraintTop_toBottomOf="@id/sdl_title" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/row_sdl"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                app:layout_constraintTop_toBottomOf="@id/row_mapped">
 
-    <com.tungsten.fcllibrary.component.view.FCLTextView
-        android:id="@+id/hint"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/gamepad_mode_prompt_hint"
-        android:textSize="12sp"
-        app:layout_constraintTop_toBottomOf="@id/row_sdl" />
+                <com.tungsten.fcllibrary.component.view.FCLRadioButton
+                    android:id="@+id/radio_sdl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/sdl_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/menu_settings_gamepad_input_mode_sdl_direct"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/radio_sdl"
+                    app:layout_constraintTop_toTopOf="@id/radio_sdl" />
+
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/sdl_summary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/gamepad_mode_prompt_sdl_direct_summary"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/radio_sdl"
+                    app:layout_constraintTop_toBottomOf="@id/sdl_title" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.tungsten.fcllibrary.component.view.FCLTextView
+                android:id="@+id/hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/gamepad_mode_prompt_hint"
+                android:textSize="12sp"
+                app:layout_constraintTop_toBottomOf="@id/row_sdl"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/positive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="@string/dialog_positive"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/hint" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_gravity="end"
+        android:layout_marginTop="12dp"
+        android:text="@string/dialog_positive" />
+</LinearLayout>
