@@ -86,13 +86,13 @@ public class FCLInput implements View.OnCapturedPointerListener {
         this.screenHeight = AndroidUtilKt.getScreenHeight();
     }
 
-    public void setPointer(int x, int y, String id) {
+    public void setPointer(float x, float y, String id) {
         if (id.equals(pointerId) || id.equals("Gyro")) {
             setPointer(x, y);
         }
     }
 
-    public void setPointer(int x, int y) {
+    public void setPointer(float x, float y) {
         if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
             menu.getCursor().setX(x);
             menu.getCursor().setY(y);
@@ -104,7 +104,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
         menu.setPointerX(x);
         menu.setPointerY(y);
         if (menu.getBridge() != null) {
-            menu.getBridge().pushEventPointer((int) (x * menu.getBridge().getScaleFactor()), (int) (y * menu.getBridge().getScaleFactor()));
+            menu.getBridge().pushEventPointer(x * (float) menu.getBridge().getScaleFactor(), y * (float) menu.getBridge().getScaleFactor());
         }
     }
 
@@ -195,8 +195,8 @@ public class FCLInput implements View.OnCapturedPointerListener {
 
     private boolean handleMouse(MotionEvent event, float deltaTimeScale) {
         if (event == null || event.getAction() == MotionEvent.ACTION_MOVE) {
-            int deltaX;
-            int deltaY;
+            double deltaX;
+            double deltaY;
             if (event != null) {
                 double tX = event.getX();
                 double tY = event.getY();
@@ -205,30 +205,23 @@ public class FCLInput implements View.OnCapturedPointerListener {
                     tX += event.getHistoricalX(i);
                     tY += event.getHistoricalY(i);
                 }
-                tX *= menu.getMenuSetting().getMouseSensitivity();
-                tY *= menu.getMenuSetting().getMouseSensitivity();
-                deltaX = (int) tX;
-                deltaY = (int) tY;
+                deltaX = tX * menu.getMenuSetting().getMouseSensitivity();
+                deltaY = tY * menu.getMenuSetting().getMouseSensitivity();
             } else {
-                deltaX = (int) (lastAxisZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
-                deltaY = (int) (lastAxisRZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity());
+                deltaX = lastAxisZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity();
+                deltaY = lastAxisRZ * deltaTimeScale * 10 * menu.getMenuSetting().getMouseSensitivity();
             }
             if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-                int targetX = (int) Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * menu.getMenuSetting().getMouseSensitivityCursor()));
-                int targetY = (int) Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY * menu.getMenuSetting().getMouseSensitivityCursor()));
+                float targetX = (float) Math.max(0, Math.min(screenWidth, menu.getCursorX() + deltaX * menu.getMenuSetting().getMouseSensitivityCursor()));
+                float targetY = (float) Math.max(0, Math.min(screenHeight, menu.getCursorY() + deltaY * menu.getMenuSetting().getMouseSensitivityCursor()));
                 setPointerId(EXTERNAL_MOUSE_ID);
                 setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
                 setPointerId(null);
             } else {
-                int targetX = menu.getPointerX() + deltaX;
-                int targetY = menu.getPointerY() + deltaY;
-                if (menu.getMenuSetting().isEnableGyroscope()) {
-                    menu.setPointerX(targetX);
-                    menu.setPointerY(targetY);
-                } else {
-                    setPointerId(EXTERNAL_MOUSE_ID);
-                    setPointer(targetX, targetY, EXTERNAL_MOUSE_ID);
-                    setPointerId(null);
+                // 捕获态统一走相对增量流，与陀螺仪等来源的增量叠加互不干扰
+                if (menu.getBridge() != null) {
+                    float scaleFactor = (float) menu.getBridge().getScaleFactor();
+                    CallbackBridge.sendCursorDelta((float) (deltaX * scaleFactor), (float) (deltaY * scaleFactor));
                 }
             }
         }

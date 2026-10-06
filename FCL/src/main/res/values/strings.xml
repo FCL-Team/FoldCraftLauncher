@@ -647,8 +647,10 @@
     <string name="menu_settings_gesture_mode_fight">Fight</string>
     <string name="menu_settings_gesture_current">Current Mode is %s</string>
     <string name="menu_settings_gyro">Gyroscope</string>
-    <string name="menu_settings_gyro_invert">Invert Gyroscope</string>
-    <string name="menu_settings_gyro_sensitivity">Gyro Sensitivity</string>
+    <string name="menu_settings_gyro_invert_x">Invert X Axis</string>
+    <string name="menu_settings_gyro_invert_y">Invert Y Axis</string>
+    <string name="menu_settings_gyro_sensitivity_x">Horizontal Gyro Sensitivity</string>
+    <string name="menu_settings_gyro_sensitivity_y">Vertical Gyro Sensitivity</string>
     <string name="menu_settings_lock_view">Lock Menu View</string>
     <string name="menu_settings_hide_view">Hide Menu View</string>
     <string name="menu_settings_show_fps">Show FPS</string>
@@ -662,6 +664,8 @@
     <string name="menu_settings_mouse_offset_x">Mouse Offset X</string>
     <string name="menu_settings_mouse_offset_y">Mouse Offset Y</string>
     <string name="menu_settings_physical_mouse_mode">Physical Mouse</string>
+    <string name="menu_settings_slide_acceleration">Slide Acceleration</string>
+    <string name="menu_settings_distance_acceleration">Distance Acceleration</string>
     <string name="menu_settings_gamepad">GamePad</string>
     <string name="menu_settings_gamepad_control">Gamepad Control</string>
     <string name="menu_settings_gamepad_reset_mapper">ResetMapper</string>

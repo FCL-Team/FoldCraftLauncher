@@ -6,66 +6,171 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.view.Surface;
 
 import com.tungsten.fclauncher.bridge.FCLBridge;
 
+import org.lwjgl.glfw.CallbackBridge;
+
+import java.util.Arrays;
+
+/**
+ * 陀螺仪转视角：仅在游戏捕获指针（转视角）时生效，把角速度转为相对增量下发。
+ * 数据经滑动窗口平均抑制手抖，低于死区的微小移动视为传感器噪声忽略；
+ * 轴映射随屏幕旋转自适应，X/Y 轴可独立反转。
+ */
 public class Gyroscope implements SensorEventListener {
 
+    // 角速度到视角增量的换算系数，沿用历史版本标定值，保持既有灵敏度手感
     private static final float NS2S = 1.0f / 40000000.0f;
+    // 滑动平均窗口长度，越大越平滑但响应越迟
+    private static final int SMOOTHING_WINDOW = 4;
+    // 死区阈值（rad/s），低于该值的角速度不驱动视角
+    private static final float DEAD_ZONE = 0.02f;
 
     private final GameMenu gameMenu;
     private final SensorManager sensorManager;
     private final Sensor sensor;
-    private final float[] angle = new float[3];
+
+    // 平滑环形缓冲与窗口内累计和
+    private final float[][] buffer = new float[SMOOTHING_WINDOW][2];
+    private float xTotal;
+    private float yTotal;
+    private int historyIndex;
+    private long timestamp;
+    // 轴映射：swapXY 表示水平/垂直视角交换传感器轴，factor 为各轴方向（含屏幕旋转与反转设置）
+    private boolean swapXY;
+    private float xFactor;
+    private float yFactor;
 
     public Gyroscope(GameMenu gameMenu) {
         this.gameMenu = gameMenu;
 
         sensorManager = (SensorManager) gameMenu.getActivity().getSystemService(SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        if (gameMenu.getMenuSetting().isEnableGyroscope()) {
+        if (isAvailable() && gameMenu.getMenuSetting().isEnableGyroscope()) {
             enableSensor();
-        } else {
-            disableSensor();
         }
     }
 
+    /** 设备是否具备陀螺仪传感器 */
+    public boolean isAvailable() {
+        return sensor != null;
+    }
+
     public void enableSensor() {
-        timestamp = 0;
+        if (!isAvailable()) {
+            return;
+        }
+        reset();
         sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
     }
 
     public void disableSensor() {
+        // 捕获态是纯增量流，关闭时不再补发绝对坐标，
+        // 否则会把视角拽回开启时的位置（幅度=期间累计转动）
         sensorManager.unregisterListener(this);
-        if (gameMenu.getCursorMode() == FCLBridge.CursorDisabled) {
-            gameMenu.getInput().setPointer(gameMenu.getPointerX(), gameMenu.getPointerY(), "Gyro");
-        }
+        reset();
     }
-
-    private long timestamp;
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (gameMenu.getCursorMode() == FCLBridge.CursorDisabled) {
-            if (timestamp != 0) {
-                final float dT = (event.timestamp - timestamp) * NS2S;
-                angle[0] += event.values[0] * dT * gameMenu.getMenuSetting().getGyroscopeSensitivity();
-                angle[1] += event.values[1] * dT * gameMenu.getMenuSetting().getGyroscopeSensitivity();
-                if (gameMenu.getBridge() != null) {
-                    if (gameMenu.getMenuSetting().isInvertGyroscope()) {
-                        gameMenu.getBridge().pushEventPointer((gameMenu.getPointerX() + angle[0]), (gameMenu.getPointerY() - angle[1]));
-                    } else {
-                        gameMenu.getBridge().pushEventPointer((gameMenu.getPointerX() - angle[0]), (gameMenu.getPointerY() + angle[1]));
-                    }
-                }
-            }
-            timestamp = event.timestamp;
+        // 非捕获状态不累计时间戳，重新进入时从当前帧重新起步，避免大步长突跳
+        if (gameMenu.getCursorMode() != FCLBridge.CursorDisabled) {
+            timestamp = 0;
+            return;
         }
+        if (timestamp == 0) {
+            timestamp = event.timestamp;
+            return;
+        }
+        final float dT = (event.timestamp - timestamp) * NS2S;
+        timestamp = event.timestamp;
+        if (dT <= 0) {
+            return;
+        }
+
+        updateFactors();
+
+        float x = event.values[0];
+        float y = event.values[1];
+        // 屏幕旋转后水平/垂直视角对应的传感器轴与方向随之变化
+        float vx = (swapXY ? y : x) * xFactor;
+        float vy = (swapXY ? x : y) * yFactor;
+
+        // 滑动平均：新值入环形缓冲，以窗口均值替代瞬时值
+        historyIndex = (historyIndex + 1) % SMOOTHING_WINDOW;
+        xTotal -= buffer[historyIndex][0];
+        yTotal -= buffer[historyIndex][1];
+        buffer[historyIndex][0] = vx;
+        buffer[historyIndex][1] = vy;
+        xTotal += vx;
+        yTotal += vy;
+        vx = xTotal / SMOOTHING_WINDOW;
+        vy = yTotal / SMOOTHING_WINDOW;
+
+        // 死区过滤
+        if (Math.abs(vx) < DEAD_ZONE) {
+            vx = 0;
+        }
+        if (Math.abs(vy) < DEAD_ZONE) {
+            vy = 0;
+        }
+        if (vx == 0 && vy == 0) {
+            return;
+        }
+
+        float sensitivityX = gameMenu.getMenuSetting().getGyroscopeSensitivityX();
+        float sensitivityY = gameMenu.getMenuSetting().getGyroscopeSensitivityY();
+        CallbackBridge.sendCursorDelta(vx * dT * sensitivityX, vy * dT * sensitivityY);
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // Ignore
+    }
+
+    /** 按当前屏幕旋转计算轴映射：水平视角取自竖直轴的角速度，垂直视角取自水平轴的角速度 */
+    private void updateFactors() {
+        switch (gameMenu.getActivity().getWindowManager().getDefaultDisplay().getRotation()) {
+            case Surface.ROTATION_0: // 竖屏：左右转头绕 Y 轴，上下点头绕 X 轴
+                swapXY = true;
+                xFactor = -1;
+                yFactor = 1;
+                break;
+            case Surface.ROTATION_180: // 倒置竖屏：两轴相对竖屏反向
+                swapXY = true;
+                xFactor = 1;
+                yFactor = -1;
+                break;
+            case Surface.ROTATION_270: // 右横屏：两轴相对左横屏反向
+                swapXY = false;
+                xFactor = 1;
+                yFactor = -1;
+                break;
+            default: // ROTATION_90 左横屏，历史标定方向
+                swapXY = false;
+                xFactor = -1;
+                yFactor = 1;
+                break;
+        }
+        if (gameMenu.getMenuSetting().isInvertGyroscopeX()) {
+            xFactor *= -1;
+        }
+        if (gameMenu.getMenuSetting().isInvertGyroscopeY()) {
+            yFactor *= -1;
+        }
+    }
+
+    /** 清空平滑缓冲与时间戳，在启停、进出捕获状态时调用，避免旧状态造成视角跳变 */
+    private void reset() {
+        timestamp = 0;
+        historyIndex = 0;
+        xTotal = 0;
+        yTotal = 0;
+        for (float[] axis : buffer) {
+            Arrays.fill(axis, 0);
+        }
     }
 
 }

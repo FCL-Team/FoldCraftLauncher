@@ -470,7 +470,6 @@
     <string name="menu_settings_gesture_mode_fight">Kampfmodus</string>
     <string name="menu_settings_gesture_current">Aktueller Modus: %s</string>
     <string name="menu_settings_gyro">Gyroskop</string>
-    <string name="menu_settings_gyro_sensitivity">Gyroskop-Empfindlichkeit</string>
     <string name="menu_settings_lock_view">Menü sperren</string>
     <string name="menu_settings_show_fps">FPS anzeigen</string>
     <string name="menu_settings_mouse">Maus</string>

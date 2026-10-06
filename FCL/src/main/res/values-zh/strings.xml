@@ -572,8 +572,10 @@
     <string name="menu_settings_gesture_mode_fight">战斗模式</string>
     <string name="menu_settings_gesture_current">当前模式为 %s</string>
     <string name="menu_settings_gyro">陀螺仪</string>
-    <string name="menu_settings_gyro_invert">反转陀螺仪</string>
-    <string name="menu_settings_gyro_sensitivity">陀螺仪灵敏度</string>
+    <string name="menu_settings_gyro_invert_x">反转 X 轴</string>
+    <string name="menu_settings_gyro_invert_y">反转 Y 轴</string>
+    <string name="menu_settings_gyro_sensitivity_x">陀螺仪横向灵敏度</string>
+    <string name="menu_settings_gyro_sensitivity_y">陀螺仪纵向灵敏度</string>
     <string name="menu_settings_lock_view">锁定菜单键</string>
     <string name="menu_settings_hide_view">隐藏菜单键</string>
     <string name="menu_settings_show_fps">显示FPS</string>
@@ -587,6 +589,8 @@
     <string name="menu_settings_mouse_offset_x">鼠标偏移X</string>
     <string name="menu_settings_mouse_offset_y">鼠标偏移Y</string>
     <string name="menu_settings_physical_mouse_mode">实体鼠标控制</string>
+    <string name="menu_settings_slide_acceleration">滑动加速</string>
+    <string name="menu_settings_distance_acceleration">距离加速</string>
     <string name="menu_settings_gamepad">手柄</string>
     <string name="menu_settings_gamepad_control">手柄控制</string>
     <string name="menu_settings_gamepad_reset_mapper">重置映射</string>

@@ -502,7 +502,6 @@
     <string name="menu_settings_gesture_mode_fight">مبارزه</string>
     <string name="menu_settings_gesture_current">حالت فعلی %s است</string>
     <string name="menu_settings_gyro">ژیروسکوپ</string>
-    <string name="menu_settings_gyro_sensitivity">حساسیت ژیروسکوپ</string>
     <string name="menu_settings_lock_view">قفل کردن ویو منو</string>
     <string name="menu_settings_mouse">ماوس</string>
     <string name="menu_settings_mouse_mode">حالت ماوس</string>

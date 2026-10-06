@@ -108,10 +108,10 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     private FCLBridge fclBridge;
     private FCLInput fclInput;
     private MenuSetting menuSetting;
-    private int cursorX;
-    private int cursorY;
-    private int pointerX;
-    private int pointerY;
+    private float cursorX;
+    private float cursorY;
+    private float pointerX;
+    private float pointerY;
 
     private View layout;
     private RelativeLayout baseLayout;
@@ -171,35 +171,35 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         return cursorModeProperty.get();
     }
 
-    public int getCursorX() {
+    public float getCursorX() {
         return cursorX;
     }
 
-    public int getCursorY() {
+    public float getCursorY() {
         return cursorY;
     }
 
-    public int getPointerX() {
+    public float getPointerX() {
         return pointerX;
     }
 
-    public int getPointerY() {
+    public float getPointerY() {
         return pointerY;
     }
 
-    public void setCursorX(int cursorX) {
+    public void setCursorX(float cursorX) {
         this.cursorX = cursorX;
     }
 
-    public void setCursorY(int cursorY) {
+    public void setCursorY(float cursorY) {
         this.cursorY = cursorY;
     }
 
-    public void setPointerX(int pointerX) {
+    public void setPointerX(float pointerX) {
         this.pointerX = pointerX;
     }
 
-    public void setPointerY(int pointerY) {
+    public void setPointerY(float pointerY) {
         this.pointerY = pointerY;
     }
 
@@ -792,7 +792,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         touchPad.setOnGenericMotionListener((view, motionEvent) -> {
             if (motionEvent.isFromSource(InputDevice.SOURCE_MOUSE) && menuSetting.isPhysicalMouseMode()) {
                 if (getCursorMode() == FCLBridge.CursorEnabled && motionEvent.getAction() == MotionEvent.ACTION_HOVER_MOVE) {
-                    getInput().setPointer((int) motionEvent.getRawX(), (int) motionEvent.getRawY());
+                    getInput().setPointer(motionEvent.getRawX(), motionEvent.getRawY());
                     return true;
                 }
                 return fclInput.handleExternalMouseEvent(motionEvent);
@@ -1133,11 +1133,20 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                     gyroscope.disableSensor();
                 }
                 break;
-            case GYRO_INVERT:
-                menuSetting.setInvertGyroscope(checked);
+            case GYRO_INVERT_X:
+                menuSetting.setInvertGyroscopeX(checked);
+                break;
+            case GYRO_INVERT_Y:
+                menuSetting.setInvertGyroscopeY(checked);
                 break;
             case PHYSICAL_MOUSE:
                 menuSetting.setPhysicalMouseMode(checked);
+                break;
+            case SLIDE_ACCELERATION:
+                menuSetting.setSlideAcceleration(checked);
+                break;
+            case DISTANCE_ACCELERATION:
+                menuSetting.setDistanceAcceleration(checked);
                 break;
             case GAMEPAD_CONTROL:
                 setGamepadControl(checked);
@@ -1233,8 +1242,12 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             case GAMEPAD_DEADZONE:
                 menuSetting.setGamepadDeadzone(progress / 100d);
                 break;
-            case GYRO_SENSITIVITY:
-                menuSetting.setGyroscopeSensitivity(progress);
+            case GYRO_SENSITIVITY_X:
+                // 进度值按百分比显示（100% = 存储倍率 10）
+                menuSetting.setGyroscopeSensitivityX(progress / 10);
+                break;
+            case GYRO_SENSITIVITY_Y:
+                menuSetting.setGyroscopeSensitivityY(progress / 10);
                 break;
         }
     }

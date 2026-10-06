@@ -186,15 +186,15 @@ public class FCLBridge {
         }
     }
 
-    public void pushEventPointer(int x, int y) {
-        if (FORCE_RESOLUTION) {
-            x = (int) ((x - FORCE_RESOLUTION_START_SIZE) / FORCE_RESOLUTION_SCALE);
-            y = (int) (y / FORCE_RESOLUTION_SCALE);
-        }
-        CallbackBridge.sendCursorPos(x, y);
-    }
-
+    /**
+     * 坐标全程 float 透传：旧 int 版是 boat 后端兼容包袱，中途取整会让慢速移动的
+     * 增量被截断丢步，转视角顿挫；取整交给 native 侧统一处理
+     */
     public void pushEventPointer(float x, float y) {
+        if (FORCE_RESOLUTION) {
+            x = (x - FORCE_RESOLUTION_START_SIZE) / FORCE_RESOLUTION_SCALE;
+            y = y / FORCE_RESOLUTION_SCALE;
+        }
         CallbackBridge.sendCursorPos(x, y);
     }
 
