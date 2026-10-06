@@ -248,6 +248,7 @@ public class TouchPad extends View {
                     float frameDY = newDownY - downY;
                     float acceleration = viewAcceleration(event, frameDX, frameDY);
                     // 捕获态统一走相对增量流，与陀螺仪等来源的增量叠加互不干扰
+                    // 触摸按历史标定 1:1 下发，不乘 scaleFactor：旧实现的预先除法与 setPointer 内的乘法恰好抵消，保持手感
                     double sensitivity = gameMenu.getMenuSetting().getMouseSensitivity();
                     float gameDX = (float) (frameDX * sensitivity * acceleration);
                     float gameDY = (float) (frameDY * sensitivity * acceleration);

@@ -1,11 +1,16 @@
 package com.tungsten.fcl.control;
 
+import static android.content.Context.DISPLAY_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.hardware.display.DisplayManager;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.Display;
 import android.view.Surface;
 
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -21,8 +26,8 @@ import java.util.Arrays;
  */
 public class Gyroscope implements SensorEventListener {
 
-    // 角速度到视角增量的换算系数，沿用历史版本标定值，保持既有灵敏度手感
-    private static final float NS2S = 1.0f / 40000000.0f;
+    // 角速度积分的时间系数：沿用历史版本标定值（并非真实纳秒到秒换算，含既有手感放大倍率）
+    private static final float TIME_SCALE = 1.0f / 40000000.0f;
     // 滑动平均窗口长度，越大越平滑但响应越迟
     private static final int SMOOTHING_WINDOW = 4;
     // 死区阈值（rad/s），低于该值的角速度不驱动视角
@@ -31,6 +36,27 @@ public class Gyroscope implements SensorEventListener {
     private final GameMenu gameMenu;
     private final SensorManager sensorManager;
     private final Sensor sensor;
+    private final DisplayManager displayManager;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+    // 屏幕旋转缓存：由 DisplayListener 推送刷新，避免在每个传感器事件里查询显示服务
+    private final DisplayManager.DisplayListener displayListener = new DisplayManager.DisplayListener() {
+        @Override
+        public void onDisplayAdded(int displayId) {
+        }
+
+        @Override
+        public void onDisplayChanged(int displayId) {
+            if (displayId == Display.DEFAULT_DISPLAY) {
+                refreshRotation();
+            }
+        }
+
+        @Override
+        public void onDisplayRemoved(int displayId) {
+        }
+    };
+    private int rotation = Surface.ROTATION_0;
 
     // 平滑环形缓冲与窗口内累计和
     private final float[][] buffer = new float[SMOOTHING_WINDOW][2];
@@ -47,6 +73,7 @@ public class Gyroscope implements SensorEventListener {
         this.gameMenu = gameMenu;
 
         sensorManager = (SensorManager) gameMenu.getActivity().getSystemService(SENSOR_SERVICE);
+        displayManager = (DisplayManager) gameMenu.getActivity().getSystemService(DISPLAY_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
         if (isAvailable() && gameMenu.getMenuSetting().isEnableGyroscope()) {
             enableSensor();
@@ -62,6 +89,8 @@ public class Gyroscope implements SensorEventListener {
         if (!isAvailable()) {
             return;
         }
+        refreshRotation();
+        displayManager.registerDisplayListener(displayListener, mainHandler);
         reset();
         sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
     }
@@ -70,6 +99,7 @@ public class Gyroscope implements SensorEventListener {
         // 捕获态是纯增量流，关闭时不再补发绝对坐标，
         // 否则会把视角拽回开启时的位置（幅度=期间累计转动）
         sensorManager.unregisterListener(this);
+        displayManager.unregisterDisplayListener(displayListener);
         reset();
     }
 
@@ -84,7 +114,7 @@ public class Gyroscope implements SensorEventListener {
             timestamp = event.timestamp;
             return;
         }
-        final float dT = (event.timestamp - timestamp) * NS2S;
+        final float dT = (event.timestamp - timestamp) * TIME_SCALE;
         timestamp = event.timestamp;
         if (dT <= 0) {
             return;
@@ -132,7 +162,7 @@ public class Gyroscope implements SensorEventListener {
 
     /** 按当前屏幕旋转计算轴映射：水平视角取自竖直轴的角速度，垂直视角取自水平轴的角速度 */
     private void updateFactors() {
-        switch (gameMenu.getActivity().getWindowManager().getDefaultDisplay().getRotation()) {
+        switch (rotation) {
             case Surface.ROTATION_0: // 竖屏：左右转头绕 Y 轴，上下点头绕 X 轴
                 swapXY = true;
                 xFactor = -1;
@@ -159,6 +189,14 @@ public class Gyroscope implements SensorEventListener {
         }
         if (gameMenu.getMenuSetting().isInvertGyroscopeY()) {
             yFactor *= -1;
+        }
+    }
+
+    /** 读取默认显示屏的当前旋转角度，在启用传感器与旋转变化时调用 */
+    private void refreshRotation() {
+        Display display = displayManager.getDisplay(Display.DEFAULT_DISPLAY);
+        if (display != null) {
+            rotation = display.getRotation();
         }
     }
 
