@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.InputDevice;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -64,6 +66,7 @@ import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.bridge.FCLBridgeCallback;
+import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -480,6 +483,8 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
         hideAllViewsProperty.addListener(i -> {
             if (isHideAllViews()) {
+                // 菜单视图隐藏后音量键用于唤回菜单，不再保留未完成的按键监听
+                cancelKeyBindListen();
                 Toast.makeText(activity, R.string.tip_hide_menu_view, Toast.LENGTH_LONG).show();
             }
         });
@@ -507,6 +512,11 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             @Override
             public void onSpinnerSelect(@NonNull RightMenuTag tag, int position) {
                 handleRightSpinnerSelect(tag, position);
+            }
+
+            @Override
+            public void onKeyBindClick(@NonNull RightMenuTag tag) {
+                startKeyBindListen(tag);
             }
 
             @Override
@@ -817,7 +827,18 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     public View getLayout() {
         if (layout == null) {
             layout = LayoutInflater.from(activity).inflate(R.layout.view_game_menu, null);
-            ((DrawerLayout) layout).setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            DrawerLayout drawerLayout = (DrawerLayout) layout;
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            // 右菜单收起即退出按键监听态：悬置的监听会吞掉所有按键（含唤回菜单的音量键），
+            // 并把下一个按下的键误绑定为快捷键
+            drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+                @Override
+                public void onDrawerClosed(@NonNull View drawerView) {
+                    if (isRightMenuDrawer(drawerView)) {
+                        cancelKeyBindListen();
+                    }
+                }
+            });
         }
         return layout;
     }
@@ -853,11 +874,15 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, true);
             fclInput.sendKeyEvent(FCLKeycodes.KEY_ESC, false);
         }
+        fclInput.stopCaptureWatchdog();
+        fclInput.resetExternalMouseState();
+        cancelKeyBindListen();
         gyroscope.disableSensor();
     }
 
     @Override
     public void onResume() {
+        fclInput.startCaptureWatchdog();
         if (menuSetting != null && menuSetting.isEnableGyroscope() && gyroscope != null) {
             gyroscope.enableSensor();
         }
@@ -879,6 +904,10 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 return;
             lastCursorMode = mode;
             this.cursorModeProperty.set(mode);
+            // 模式切换点事件来源会丢失（捕获抢走触摸等），先复位鼠标键防卡键；
+            // 手动捕获接管同步回归自动管理
+            getInput().resetExternalMouseState();
+            getInput().resetManualCaptureControl();
             if (mode == FCLBridge.CursorEnabled) {
                 getCursor().setVisibility(View.VISIBLE);
                 gameItemBar.setVisibility(View.GONE);
@@ -886,6 +915,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 if (menuSetting.isPhysicalMouseMode()) {
                     getInput().getFocusableView().releasePointerCapture();
                     getInput().getFocusableView().clearFocus();
+                } else {
+                    // 游戏退出捕获时系统可能顺带释放 pointer capture，立即补回
+                    getInput().ensurePointerCapture();
                 }
             } else {
                 getCursor().setVisibility(View.GONE);
@@ -895,6 +927,8 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 if (menuSetting.isPhysicalMouseMode()) {
                     getInput().getFocusableView().requestFocus();
                     getInput().getFocusableView().requestPointerCapture();
+                } else {
+                    getInput().ensurePointerCapture();
                 }
             }
         });
@@ -1141,6 +1175,17 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 break;
             case PHYSICAL_MOUSE:
                 menuSetting.setPhysicalMouseMode(checked);
+                // 模式切换即时生效：菜单态改用系统指针时释放捕获，改回虚拟指针时立即补回，不等看门狗轮询
+                if (checked) {
+                    if (getCursorMode() == FCLBridge.CursorEnabled) {
+                        View focusView = getInput().getFocusableView();
+                        if (focusView != null && focusView.hasPointerCapture()) {
+                            focusView.releasePointerCapture();
+                        }
+                    }
+                } else {
+                    getInput().ensurePointerCapture();
+                }
                 break;
             case SLIDE_ACCELERATION:
                 menuSetting.setSlideAcceleration(checked);
@@ -1188,6 +1233,102 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             menuSetting.setMouseMoveMode(MouseMoveMode.getById(position));
         } else if (tag == RightMenuTag.GAMEPAD_INPUT_MODE) {
             SdlSettings.setGamepadInputMode(GamepadInputMode.values()[position]);
+        } else if (tag == RightMenuTag.CAPTURE_POINTER_MODIFIER) {
+            if (isHotkeyConflict(menuSetting.getCapturePointerKey(), position,
+                    menuSetting.getImeToggleKey(), menuSetting.getImeToggleModifier())) {
+                rejectHotkeyConflict();
+                return;
+            }
+            menuSetting.setCapturePointerModifier(position);
+        } else if (tag == RightMenuTag.IME_TOGGLE_MODIFIER) {
+            if (isHotkeyConflict(menuSetting.getImeToggleKey(), position,
+                    menuSetting.getCapturePointerKey(), menuSetting.getCapturePointerModifier())) {
+                rejectHotkeyConflict();
+                return;
+            }
+            menuSetting.setImeToggleModifier(position);
+        }
+    }
+
+    /** 两个快捷键的键码与修饰键完全一致时会同时触发，视为冲突 */
+    private static boolean isHotkeyConflict(int key, int modifier, int otherKey, int otherModifier) {
+        return key != 0 && key == otherKey && modifier == otherModifier;
+    }
+
+    /** 拒绝冲突的快捷键配置并还原菜单显示 */
+    private void rejectHotkeyConflict() {
+        Toast.makeText(activity, R.string.key_bind_conflict, Toast.LENGTH_SHORT).show();
+        if (rightMenuAdapter != null) {
+            rightMenuAdapter.rebuild();
+        }
+    }
+
+    /** 正在等待快捷键绑定按键时为对应菜单项，null 表示未监听 */
+    @Nullable
+    private RightMenuTag keyBindListeningTag;
+
+    /** 快捷键设置行点击：进入按键监听，下一个按下的物理键即被绑定 */
+    private void startKeyBindListen(@NonNull RightMenuTag tag) {
+        keyBindListeningTag = tag;
+        Toast.makeText(activity, R.string.key_bind_listening, Toast.LENGTH_SHORT).show();
+    }
+
+    /** 放弃按键监听（右菜单收起、菜单视图隐藏、页面暂停）：未完成的绑定不生效 */
+    private void cancelKeyBindListen() {
+        keyBindListeningTag = null;
+    }
+
+    /** 抽屉是否为右菜单，快捷键设置行位于其中 */
+    private static boolean isRightMenuDrawer(@NonNull View drawerView) {
+        ViewGroup.LayoutParams params = drawerView.getLayoutParams();
+        return params instanceof DrawerLayout.LayoutParams
+                && ((DrawerLayout.LayoutParams) params).gravity == GravityCompat.END;
+    }
+
+    public boolean isKeyBindListening() {
+        return keyBindListeningTag != null;
+    }
+
+    /**
+     * 按键监听期间由 FCLInput 在分发最前调用，消费所有按键；
+     * BACK 取消绑定，无法识别的键忽略继续等待
+     */
+    public void handleKeyBindCaptured(@NonNull KeyEvent event) {
+        if (event.getAction() != KeyEvent.ACTION_UP) {
+            return;
+        }
+        RightMenuTag tag = keyBindListeningTag;
+        keyBindListeningTag = null;
+        if (tag == null) {
+            return;
+        }
+        if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+            return;
+        }
+        int fclKeycode = AndroidKeycodeMap.convertKeycode(event.getKeyCode());
+        if (fclKeycode == FCLKeycodes.KEY_UNKNOWN) {
+            Toast.makeText(activity, R.string.key_bind_unknown, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 绑定键码配合当前修饰键后不得与另一快捷键完全一致，否则一次按键两个功能同时触发
+        if (tag == RightMenuTag.CAPTURE_POINTER_KEY && isHotkeyConflict(fclKeycode, menuSetting.getCapturePointerModifier(),
+                menuSetting.getImeToggleKey(), menuSetting.getImeToggleModifier())) {
+            Toast.makeText(activity, R.string.key_bind_conflict, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (tag == RightMenuTag.IME_TOGGLE_KEY && isHotkeyConflict(fclKeycode, menuSetting.getImeToggleModifier(),
+                menuSetting.getCapturePointerKey(), menuSetting.getCapturePointerModifier())) {
+            Toast.makeText(activity, R.string.key_bind_conflict, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (tag == RightMenuTag.CAPTURE_POINTER_KEY) {
+            menuSetting.setCapturePointerKey(fclKeycode);
+        } else if (tag == RightMenuTag.IME_TOGGLE_KEY) {
+            menuSetting.setImeToggleKey(fclKeycode);
+        }
+        Toast.makeText(activity, activity.getString(R.string.key_bind_done, RightMenuAdapter.keycodeName(fclKeycode)), Toast.LENGTH_SHORT).show();
+        if (rightMenuAdapter != null) {
+            rightMenuAdapter.rebuild();
         }
     }
 

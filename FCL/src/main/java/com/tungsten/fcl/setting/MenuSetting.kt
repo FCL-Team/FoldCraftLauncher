@@ -11,6 +11,7 @@ import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
 import com.tungsten.fcl.control.GestureMode
 import com.tungsten.fcl.control.MouseMoveMode
+import com.tungsten.fclauncher.keycodes.FCLKeycodes
 import java.lang.reflect.Type
 
 /**
@@ -267,6 +268,44 @@ class MenuSetting {
             changed()
         }
 
+    companion object {
+        /** 快捷键修饰键编码：与修饰键选择器（无/Shift/Ctrl/Alt）的下标一致 */
+        const val HOTKEY_MOD_NONE = 0
+        const val HOTKEY_MOD_SHIFT = 1
+        const val HOTKEY_MOD_CTRL = 2
+        const val HOTKEY_MOD_ALT = 3
+    }
+
+    /** 指针捕获/释放切换快捷键（FCLKeycodes），0 表示未设置；配合修饰键使用 */
+    var capturePointerKey: Int = FCLKeycodes.KEY_F8
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
+    var capturePointerModifier: Int = HOTKEY_MOD_NONE
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
+    /** 输入法呼出/隐藏切换快捷键，默认右 Shift+Enter */
+    var imeToggleKey: Int = FCLKeycodes.KEY_ENTER
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
+    var imeToggleModifier: Int = HOTKEY_MOD_SHIFT
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
     /** 编辑吸附仅对齐相邻按键（关闭时同边与邻接全量吸附） */
     var isSnapAdjacentOnly: Boolean = false
         set(value) {
@@ -335,6 +374,10 @@ class MenuSetting {
                 addProperty("gamepadDeadzone", src.gamepadDeadzone)
                 addProperty("controlsOpacity", src.controlsOpacity)
                 addProperty("snapAdjacentOnly", src.isSnapAdjacentOnly)
+                addProperty("capturePointerKey", src.capturePointerKey)
+                addProperty("capturePointerModifier", src.capturePointerModifier)
+                addProperty("imeToggleKey", src.imeToggleKey)
+                addProperty("imeToggleModifier", src.imeToggleModifier)
             }
         }
 
@@ -388,6 +431,10 @@ class MenuSetting {
                 ms.gamepadDeadzone = json["gamepadDeadzone"]?.asDouble ?: 0.2
                 ms.controlsOpacity = json["controlsOpacity"]?.asInt ?: 100
                 ms.isSnapAdjacentOnly = json["snapAdjacentOnly"]?.asBoolean ?: false
+                ms.capturePointerKey = json["capturePointerKey"]?.asInt ?: FCLKeycodes.KEY_F8
+                ms.capturePointerModifier = json["capturePointerModifier"]?.asInt ?: HOTKEY_MOD_NONE
+                ms.imeToggleKey = json["imeToggleKey"]?.asInt ?: FCLKeycodes.KEY_ENTER
+                ms.imeToggleModifier = json["imeToggleModifier"]?.asInt ?: HOTKEY_MOD_SHIFT
             }
         }
     }

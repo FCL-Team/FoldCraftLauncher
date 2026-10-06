@@ -164,6 +164,8 @@ public class TouchPad extends View {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
                     gameMenu.getInput().setPointer(event.getRawX(), event.getRawY());
                 }
+                // 指针捕获未生效时外接鼠标点击以普通 touch 事件到达，这里补齐按键投递
+                gameMenu.getInput().handleExternalTouchButtons(event);
                 //防止被外接鼠标触发
                 return true;
             }
@@ -216,7 +218,11 @@ public class TouchPad extends View {
                 }
             }
         } else {
-            if (event.isFromSource(InputDevice.SOURCE_MOUSE)) return true;
+            if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
+                // 游戏捕获视角期间外接鼠标的点击同样以 touch 事件到达，转发按键
+                gameMenu.getInput().handleExternalTouchButtons(event);
+                return true;
+            }
             if (gameMenu.getMenuSetting().isDisableLeftTouch() && event.getX() <= (float) screenWidth / 2) {
                 return true;
             }
