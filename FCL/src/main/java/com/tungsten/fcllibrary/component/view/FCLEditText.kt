@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.os.Build
+import android.os.SystemClock
 import android.text.Editable
 import android.text.InputFilter
 import android.text.Spanned
@@ -28,6 +29,12 @@ class FCLEditText @JvmOverloads constructor(
 ) : AppCompatEditText(context, attrs) {
 
     private var autoTint = false
+
+    /** 最近一次获得焦点的时刻（elapsedRealtime），用于区分误清与正常失焦 */
+    private var focusGainedAt = 0L
+
+    /** 恢复焦点后是否需要补发软键盘弹出请求 */
+    private var imePendingShow = false
 
     @JvmField
     var fromUserOrSystem = false
@@ -68,7 +75,12 @@ class FCLEditText @JvmOverloads constructor(
 
     override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(focused, direction, previouslyFocusedRect)
-        if (!focused) {
+        if (focused) {
+            focusGainedAt = SystemClock.elapsedRealtime()
+        } else {
+            // 刚获焦即被清焦 = 布局流程误伤了用户点击，恢复时需补上键盘弹出请求；
+            // 长期持有后被清焦（如从文件选择器返回后的整页清焦）不补，避免键盘自动弹出
+            imePendingShow = SystemClock.elapsedRealtime() - focusGainedAt < FOCUS_HOLD_SHORT_MILLIS
             scheduleFocusRestoreCheck()
         }
     }
@@ -76,14 +88,14 @@ class FCLEditText @JvmOverloads constructor(
     /**
      * 焦点恢复守卫：承载页面的 ViewPager2 每次布局都会清除页面内焦点（focusClearer），
      * 此时输入框刚被点中就被清焦，而软键盘已被拉起，表现为键盘滞留却无法编辑。
-     * 被误清的特征是全窗口没有任何 view 接住焦点（正常失焦必有其他 view 获得焦点），
-     * 延迟一轮布局后再据此判定并恢复。
+     * 被误清的特征是窗口持有焦点但全窗口没有任何 view 接住焦点（正常失焦必有其他 view 获焦），
+     * 延迟一轮布局后再据此判定并恢复；窗口自身失焦期间（如跳转文件选择器）不插手。
      */
     private fun scheduleFocusRestoreCheck() {
         postDelayed({
-            if (isFocused || !isAttachedToWindow || !isShown) return@postDelayed
+            if (isFocused || !isAttachedToWindow || !isShown || !hasWindowFocus()) return@postDelayed
             if (rootView.findFocus() != null) return@postDelayed
-            if (requestFocus()) {
+            if (requestFocus() && imePendingShow) {
                 context.getSystemService<InputMethodManager>()?.showSoftInput(this, 0)
             }
         }, FOCUS_RESTORE_DELAY_MILLIS)
@@ -92,6 +104,9 @@ class FCLEditText @JvmOverloads constructor(
     companion object {
         /** 等待误清布局流程结束再判定 */
         private const val FOCUS_RESTORE_DELAY_MILLIS = 150L
+
+        /** 焦点持有短于此时长即被清焦，视为布局误伤点击 */
+        private const val FOCUS_HOLD_SHORT_MILLIS = 500L
     }
 
     fun addTextWatcher() {

@@ -99,6 +99,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:imeOptions="actionDone"
                         android:id="@+id/name"
                         android:hint="@string/input_hint_not_empty"
                         app:auto_edit_tint="true"/>
@@ -133,6 +134,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:imeOptions="actionDone"
                         android:id="@+id/author"
                         android:hint="@string/input_hint_not_empty"
                         app:auto_edit_tint="true"/>
@@ -167,6 +169,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:imeOptions="actionDone"
                         android:id="@+id/version"
                         android:hint="@string/input_hint_not_empty"
                         app:auto_edit_tint="true"/>
@@ -202,6 +205,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:imeOptions="actionDone"
                         android:id="@+id/file_api"
                         app:auto_edit_tint="true"/>
 
@@ -236,6 +240,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:imeOptions="actionDone"
                         android:id="@+id/minecraft_args"
                         app:auto_edit_tint="true"/>
 
@@ -270,6 +275,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:imeOptions="actionDone"
                         android:id="@+id/jvm_args"
                         app:auto_edit_tint="true"/>
 
@@ -304,6 +310,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:imeOptions="actionDone"
                         android:id="@+id/origin_url"
                         app:auto_edit_tint="true"/>
 
@@ -338,6 +345,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:imeOptions="actionDone"
                         android:id="@+id/mcbbs"
                         app:auto_edit_tint="true"/>
 
@@ -609,6 +617,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:singleLine="true"
+                        android:imeOptions="actionDone"
                         android:id="@+id/file_name"
                         android:hint="@string/input_hint_not_empty"
                         app:auto_edit_tint="true"/>
