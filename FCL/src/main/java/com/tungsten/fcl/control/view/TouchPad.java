@@ -74,6 +74,9 @@ public class TouchPad extends View {
     // 触控加速：本次按住的累计滑动距离与上一 MOVE 事件时间，用于距离加速与滑动速度计算
     private float acceleratedDistance;
     private long lastMoveTime;
+    // 光标模式快照：按住期间游戏开关界面（如按 E 开关背包）会切换捕获/菜单态，
+    // 跨模式继续拖动时旧锚点对应另一模式的轨迹，须重新锚定防视角/光标突跳
+    private int cursorMode;
 
     private final Runnable runnable = () -> {
         if (!gameMenu.getMenuSetting().isDisableGesture()) {
@@ -158,6 +161,11 @@ public class TouchPad extends View {
         if (gameMenu.getTouchController() != null) {
             gameMenu.getTouchController().handleTouchEvent(event);
         }
+        // 手势起点与取消时对齐模式快照；按住期间的切换由各拖动分支的 MOVE 检测重锚
+        if (event.getActionMasked() == MotionEvent.ACTION_DOWN
+                || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+            cursorMode = gameMenu.getCursorMode();
+        }
         if (gameMenu.getCursorMode() == FCLBridge.CursorEnabled) {
             if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
                 if (event.getAction() == MotionEvent.ACTION_MOVE) {
@@ -172,6 +180,8 @@ public class TouchPad extends View {
                 gameMenu.getInput().setPointerId(POINTER_ID);
                 gameMenu.getInput().setPointer(event.getX(), event.getY(), POINTER_ID);
                 gameMenu.getInput().setPointerId(null);
+                // 按住跨模式拖动时保持快照一致，回捕获态后锚点检测才能识别模式切换
+                cursorMode = gameMenu.getCursorMode();
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
                         Choreographer.getInstance().postFrameCallbackDelayed(frameTimeNanos -> gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, true), 33);
@@ -193,6 +203,15 @@ public class TouchPad extends View {
                         initialY = gameMenu.getCursorY();
                         break;
                     case MotionEvent.ACTION_MOVE:
+                        if (cursorMode != gameMenu.getCursorMode()) {
+                            // 按住期间进出过捕获态：锚点对应另一模式的光标位置，从当前光标处重新锚定防跳变
+                            cursorMode = gameMenu.getCursorMode();
+                            downX = event.getX();
+                            downY = event.getY();
+                            initialX = gameMenu.getCursorX();
+                            initialY = gameMenu.getCursorY();
+                            break;
+                        }
                         float deltaX = (event.getX() - downX) * (float) gameMenu.getMenuSetting().getMouseSensitivityCursor();
                         float deltaY = (event.getY() - downY) * (float) gameMenu.getMenuSetting().getMouseSensitivityCursor();
                         float targetX = Math.max(0, Math.min(screenWidth, initialX + deltaX));
@@ -238,6 +257,16 @@ public class TouchPad extends View {
                 case MotionEvent.ACTION_MOVE:
                     int pointerCount = event.getPointerCount();
                     int pointerIndex = event.findPointerIndex(currentPointerID);
+                    if (cursorMode != gameMenu.getCursorMode()) {
+                        // 按住期间进出过菜单态（如按 E 开关背包界面）：锚点对应菜单期间的轨迹，
+                        // 直接计算会把整段位移一次性下发，重新锚定并丢弃本帧
+                        cursorMode = gameMenu.getCursorMode();
+                        downX = pointerIndex == -1 ? event.getX() : event.getX(pointerIndex);
+                        downY = pointerIndex == -1 ? event.getY() : event.getY(pointerIndex);
+                        acceleratedDistance = 0;
+                        lastMoveTime = event.getEventTime();
+                        break;
+                    }
                     if (pointerIndex == -1 || lastPointerCount != pointerCount || !shouldBeDown) {
                         shouldBeDown = true;
                         currentPointerID = event.getPointerId(0);
