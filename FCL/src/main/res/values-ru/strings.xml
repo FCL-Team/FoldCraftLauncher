@@ -507,6 +507,7 @@
     <string name="menu_settings_show_log">Показать лог</string>
     <string name="menu_settings_show_log_auto">Автопоказ лога</string>
     <string name="menu_settings_performance_mode">Режим стабильной производительности</string>
+    <string name="menu_settings_max_refresh_rate">Запрос максимальной частоты обновления</string>
     <string name="message_cancelled">Операция отменена</string>
     <string name="message_copy">Скопировано успешно!</string>
     <string name="message_doing">Подождите</string>

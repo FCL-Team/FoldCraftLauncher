@@ -1,11 +1,15 @@
 package com.tungsten.fcl.activity;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Surface;
@@ -48,6 +52,40 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     private TextureView textureView;
 
+    /** 游戏渲染用的 native Surface，保留引用供系统降档后重新发起刷新率投票 */
+    @Nullable
+    private Surface gameSurface;
+
+    /** 已请求的目标刷新率，0 表示未请求；DisplayListener 据此判断系统是否中途降档 */
+    private float requestedRefreshRate = 0f;
+
+    /** 系统中途降档（智能刷新率/省电策略）后重新发起请求；1s 冷却防御部分 ROM 频繁回调 */
+    private final DisplayManager.DisplayListener displayListener = new DisplayManager.DisplayListener() {
+        private long lastRequestAt = 0L;
+
+        @Override
+        public void onDisplayAdded(int displayId) {
+        }
+
+        @Override
+        public void onDisplayRemoved(int displayId) {
+        }
+
+        @Override
+        public void onDisplayChanged(int displayId) {
+            if (SystemClock.uptimeMillis() - lastRequestAt < 1000L) return;
+            Display display = currentDisplay();
+            if (display == null
+                    || display.getDisplayId() != displayId
+                    || requestedRefreshRate <= 0f
+                    || display.getMode().getRefreshRate() >= requestedRefreshRate - 0.1f) {
+                return;
+            }
+            lastRequestAt = SystemClock.uptimeMillis();
+            applyMaxRefreshRatePolicy();
+        }
+    };
+
     private MenuCallback menu;
     private static MenuType menuType;
     private static FCLBridge fclBridge;
@@ -86,6 +124,12 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
+        applyMaxRefreshRatePolicy();
+        DisplayManager displayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
+        if (displayManager != null) {
+            displayManager.registerDisplayListener(displayListener, null);
+        }
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             if (menuType == MenuType.GAME && ((GameMenu) menu).getMenuSetting().isDisableSoftKeyAdjust()) {
@@ -105,27 +149,91 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     }
 
     /**
-     * 请求系统将屏幕切换到设备支持的最高刷新率，避免游戏帧率被系统限制在自选的较低刷新档位
+     * 应用“请求最高刷新率”策略（游戏菜单设置开关，默认开）：
+     * 窗口级 preferredDisplayModeId 硬请求同分辨率下的最高刷新率档位，
+     * surface 级 setFrameRate 投票（CHANGE_FRAME_RATE_ALWAYS，非无缝切档的机型也生效）。
+     * 关闭时清除两类请求，回落系统自适应刷新。
+     */
+    public void applyMaxRefreshRatePolicy() {
+        Display display = currentDisplay();
+        if (display == null) return;
+        if (!isMaxRefreshRateEnabled()) {
+            requestedRefreshRate = 0f;
+            setPreferredDisplayModeId(0);
+            clearSurfaceFrameRate();
+            return;
+        }
+        Display.Mode best = maxRefreshRateMode(display);
+        requestedRefreshRate = best.getRefreshRate();
+        setPreferredDisplayModeId(best.getModeId());
+        voteMaxDisplayRefreshRate();
+    }
+
+    private boolean isMaxRefreshRateEnabled() {
+        return menu instanceof GameMenu
+                && ((GameMenu) menu).getMenuSetting().isRequestMaxRefreshRate();
+    }
+
+    /** 当前关联的 Display；API 30 前走已废弃的 getDefaultDisplay */
+    @Nullable
+    private Display currentDisplay() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return getDisplay();
+        }
+        @SuppressWarnings("deprecation")
+        Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+        return display;
+    }
+
+    /**
+     * surface 级投票：请求系统将屏幕切换到设备支持的最高刷新率，避免游戏帧率被系统限制在自选的较低刷新档位
      *
      * 参考 MinecraftGLSurface（https://github.com/AngelAuraMC/Amethyst-Android/blob/v3_openjdk/app_pojavlauncher/src/main/java/net/kdt/pojavlaunch/MinecraftGLSurface.java）
      */
-    private void voteMaxDisplayRefreshRate(Surface surface) {
+    private void voteMaxDisplayRefreshRate() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return;
-        float maxRefreshRate = 120f;
-        for (float rate : getDisplay().getMode().getAlternativeRefreshRates()) {
-            maxRefreshRate = Math.max(maxRefreshRate, rate);
-        }
-        surface.setFrameRate(
-                maxRefreshRate,
+        Display display = currentDisplay();
+        if (gameSurface == null || display == null) return;
+        gameSurface.setFrameRate(
+                maxRefreshRateMode(display).getRefreshRate(),
                 Surface.FRAME_RATE_COMPATIBILITY_DEFAULT,
-                Surface.CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS
+                Surface.CHANGE_FRAME_RATE_ALWAYS
         );
+    }
+
+    /** 在与当前模式同分辨率的档位中取最高刷新率档（只比同分辨率，避免选到低分辨率高刷档） */
+    private Display.Mode maxRefreshRateMode(Display display) {
+        Display.Mode current = display.getMode();
+        Display.Mode best = current;
+        for (Display.Mode mode : display.getSupportedModes()) {
+            if (mode.getPhysicalWidth() == current.getPhysicalWidth()
+                    && mode.getPhysicalHeight() == current.getPhysicalHeight()
+                    && mode.getRefreshRate() > best.getRefreshRate()) {
+                best = mode;
+            }
+        }
+        return best;
+    }
+
+    /** modeId 传 0 表示清除窗口的显示模式偏好 */
+    private void setPreferredDisplayModeId(int modeId) {
+        WindowManager.LayoutParams attributes = getWindow().getAttributes();
+        if (attributes.preferredDisplayModeId == modeId) return;
+        attributes.preferredDisplayModeId = modeId;
+        getWindow().setAttributes(attributes);
+    }
+
+    private void clearSurfaceFrameRate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && gameSurface != null) {
+            gameSurface.clearFrameRate();
+        }
     }
 
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
         Surface nativeSurface = new Surface(surfaceTexture);
-        voteMaxDisplayRefreshRate(nativeSurface);
+        gameSurface = nativeSurface;
+        applyMaxRefreshRatePolicy();
         if (isRunning) {
             fclBridge.setSurfaceTexture(surfaceTexture);
             CallbackBridge.setupBridgeWindow(nativeSurface);
@@ -185,6 +293,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
         fclBridge.setSurfaceDestroyed(true);
+        gameSurface = null;
         if (SdlBridge.getSdlEnabled() && SDLActivity.getSDLSurface() != null) {
             SDLActivity.getSDLSurface().surfaceDestroyed();
         }
@@ -303,6 +412,10 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     protected void onDestroy() {
+        DisplayManager displayManager = (DisplayManager) getSystemService(Context.DISPLAY_SERVICE);
+        if (displayManager != null) {
+            displayManager.unregisterDisplayListener(displayListener);
+        }
         Terracotta.setWaiting(this, true);
         CallbackBridge.resetInputState();
         SdlBridge.reset();

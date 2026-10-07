@@ -41,6 +41,7 @@ import com.mio.util.AndroidUtilKt;
 import com.mio.util.ImageUtil;
 import com.tungsten.fcl.BuildConfig;
 import com.tungsten.fcl.R;
+import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.activity.JVMCrashActivity;
 import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonData;
@@ -1201,6 +1202,10 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             case PERFORMANCE_MODE:
                 menuSetting.setPerformanceMode(checked);
                 activity.getWindow().setSustainedPerformanceMode(checked);
+                break;
+            case REQUEST_MAX_REFRESH_RATE:
+                menuSetting.setRequestMaxRefreshRate(checked);
+                ((JVMActivity) getActivity()).applyMaxRefreshRatePolicy();
                 break;
             case SHOW_LOG:
                 menuSetting.setShowLog(checked);

@@ -92,6 +92,14 @@ class MenuSetting {
             changed()
         }
 
+    /** 游戏运行时请求系统切到同分辨率最高刷新率档位（关闭则回落系统自适应刷新） */
+    var isRequestMaxRefreshRate: Boolean = true
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
     var menuPositionX: Double = 0.5
         set(value) {
             if (field == value) return
@@ -348,6 +356,7 @@ class MenuSetting {
                 addProperty("showLog", src.isShowLog)
                 addProperty("autoShowLog", src.isAutoShowLog)
                 addProperty("performanceMode", src.isPerformanceMode)
+                addProperty("requestMaxRefreshRate", src.isRequestMaxRefreshRate)
                 addProperty("menuPositionX", src.menuPositionX)
                 addProperty("menuPositionY", src.menuPositionY)
                 addProperty("disableGesture", src.isDisableGesture)
@@ -399,6 +408,7 @@ class MenuSetting {
                 ms.isShowLog = json["showLog"]?.asBoolean ?: false
                 ms.isAutoShowLog = json["autoShowLog"]?.asBoolean ?: false
                 ms.isPerformanceMode = json["performanceMode"]?.asBoolean ?: false
+                ms.isRequestMaxRefreshRate = json["requestMaxRefreshRate"]?.asBoolean ?: true
                 ms.menuPositionX = json["menuPositionX"]?.asDouble ?: 0.5
                 ms.menuPositionY = json["menuPositionY"]?.asDouble ?: 0.5
                 ms.isDisableGesture = json["disableGesture"]?.asBoolean ?: false

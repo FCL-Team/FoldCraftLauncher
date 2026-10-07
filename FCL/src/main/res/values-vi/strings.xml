@@ -607,6 +607,7 @@
     <string name="menu_settings_show_log">Hiển thị Nhật ký</string>
     <string name="menu_settings_show_log_auto">Tự động Hiển thị Nhật ký</string>
     <string name="menu_settings_performance_mode">Chế độ Hiệu suất Duy trì</string>
+    <string name="menu_settings_max_refresh_rate">Yêu cầu tần số quét tối đa</string>
     <string name="menu_settings_show_memory">Hiển thị Bộ nhớ</string>
     <string name="message_cancelled">Thao tác đã bị hủy</string>
     <string name="message_copy">Sao chép thành công!</string>

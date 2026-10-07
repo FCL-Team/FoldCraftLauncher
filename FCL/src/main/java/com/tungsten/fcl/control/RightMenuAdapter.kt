@@ -56,7 +56,7 @@ enum class RightMenuTag {
     GYRO, GYRO_INVERT_X, GYRO_INVERT_Y, GYRO_SENSITIVITY_X, GYRO_SENSITIVITY_Y,
 
     // 调试
-    SHOW_MEMORY, PERFORMANCE_MODE, SHOW_LOG, AUTO_SHOW_LOG, FORCE_EXIT,
+    SHOW_MEMORY, PERFORMANCE_MODE, REQUEST_MAX_REFRESH_RATE, SHOW_LOG, AUTO_SHOW_LOG, FORCE_EXIT,
 
     // SDL
     SDL_AUTO_SHOW_IME,
@@ -383,6 +383,11 @@ class RightMenuAdapter(
                 R.string.menu_settings_performance_mode,
                 { menuSetting.isPerformanceMode },
                 RightMenuTag.PERFORMANCE_MODE
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_max_refresh_rate,
+                { menuSetting.isRequestMaxRefreshRate },
+                RightMenuTag.REQUEST_MAX_REFRESH_RATE
             ),
             Row.SwitchRow(
                 R.string.menu_settings_show_log,

@@ -630,6 +630,7 @@
     <string name="menu_settings_show_log">显示日志</string>
     <string name="menu_settings_show_log_auto">自动显示日志</string>
     <string name="menu_settings_performance_mode">持续性能模式</string>
+    <string name="menu_settings_max_refresh_rate">请求最高刷新率</string>
     <string name="menu_settings_show_memory">显示内存</string>
     <string name="message_cancelled">操作已取消</string>
     <string name="message_copy">复制成功！</string>
