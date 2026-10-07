@@ -15,7 +15,6 @@ import android.view.Surface;
 
 import com.tungsten.fclauncher.bridge.FCLBridge;
 
-import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Arrays;
 
@@ -152,7 +151,7 @@ public class Gyroscope implements SensorEventListener {
 
         float sensitivityX = gameMenu.getMenuSetting().getGyroscopeSensitivityX();
         float sensitivityY = gameMenu.getMenuSetting().getGyroscopeSensitivityY();
-        CallbackBridge.sendCursorDelta(vx * dT * sensitivityX, vy * dT * sensitivityY);
+        FCLBridge.pushEventLookDelta(vx * dT * sensitivityX, vy * dT * sensitivityY);
     }
 
     @Override

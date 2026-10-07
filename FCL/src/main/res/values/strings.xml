@@ -708,6 +708,9 @@
     <string name="menu_settings_show_log_auto">Show Log Automatically</string>
     <string name="menu_settings_performance_mode">Sustained Performance Mode</string>
     <string name="menu_settings_max_refresh_rate">Request Max Refresh Rate</string>
+    <string name="menu_settings_force_resolution_size">Force Resolution Size</string>
+    <string name="menu_settings_force_resolution_edit">Set</string>
+    <string name="menu_settings_force_resolution_invalid">Invalid resolution, please enter as WxH (e.g. 1920x1080).</string>
     <string name="menu_settings_show_memory">Show Memory</string>
 
     <string name="message_cancelled">Operation was cancelled</string>

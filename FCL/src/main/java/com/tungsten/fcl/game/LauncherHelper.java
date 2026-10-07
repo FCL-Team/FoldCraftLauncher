@@ -125,6 +125,7 @@ public final class LauncherHelper {
     private final VersionSetting setting;
     private final TaskDialog launchingStepsPane;
     private double scaleFactor;
+    private double cursorOffset;
 
     public LauncherHelper(Context context, Profile profile, Account account, String selectedVersion) {
         this.context = Objects.requireNonNull(context);
@@ -218,18 +219,24 @@ public final class LauncherHelper {
                         text -> Schedulers.androidUIThread().execute(() -> launchingStepsPane.appendLog(text)))
                         .withStage("launch.state.logging_in"))
                 .thenComposeAsync(authInfo -> Task.supplyAsync(() -> {
+                            MenuSetting menuSetting = null;
                             try {
-                                MenuSetting menuSetting = new GsonBuilder()
+                                menuSetting = new GsonBuilder()
                                         .setPrettyPrinting()
                                         .create()
                                         .fromJson(FileUtils.readText(new File(FCLPath.FILES_DIR + "/menu_setting.json")), MenuSetting.class);
-                                if (menuSetting != null) {
-                                    scaleFactor = menuSetting.getWindowScale();
-                                }
                             } catch (Throwable ignore) {
-                                scaleFactor = 1d;
                             }
-                            LaunchOptions launchOptions = repository.getLaunchOptions(selectedVersion, javaVersionRef.get(), profile.getGameDir(), scaleFactor);
+                            if (menuSetting != null) {
+                                scaleFactor = menuSetting.getWindowScale();
+                                cursorOffset = menuSetting.getCursorOffset();
+                            } else {
+                                scaleFactor = 1d;
+                                cursorOffset = 0d;
+                            }
+                            // 强制分辨率已迁移到游戏内菜单（MenuSetting），启动前同步进静态配置
+                            FCLBridge.initForceResolution(menuSetting);
+                            LaunchOptions launchOptions = repository.getLaunchOptions(selectedVersion, javaVersionRef.get(), profile.getGameDir(), scaleFactor, cursorOffset);
                             FCLGameLauncher launcher = new FCLGameLauncher(
                                     context,
                                     repository,

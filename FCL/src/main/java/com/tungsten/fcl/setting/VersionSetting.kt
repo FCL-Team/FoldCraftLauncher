@@ -213,13 +213,6 @@ class VersionSetting : Cloneable {
             changed()
         }
 
-    var isForceResolution: Boolean = false
-        set(value) {
-            if (field == value) return
-            field = value
-            changed()
-        }
-
     private val changeListeners = mutableListOf<Runnable>()
 
     /** 注册属性变化监听（替代原 fakefx property 监听，用于自动保存与页面刷新） */
@@ -268,7 +261,6 @@ class VersionSetting : Cloneable {
             it.isNotCheckMod = isNotCheckMod
             it.isNotCheckVulkan = isNotCheckVulkan
             it.isDebugLog = isDebugLog
-            it.isForceResolution = isForceResolution
         }
     }
 
@@ -302,7 +294,6 @@ class VersionSetting : Cloneable {
                 addProperty("notCheckMod", src.isNotCheckMod)
                 addProperty("notCheckVulkan", src.isNotCheckVulkan)
                 addProperty("debugLog", src.isDebugLog)
-                addProperty("forceResolution", src.isForceResolution)
             }
         }
 
@@ -342,7 +333,6 @@ class VersionSetting : Cloneable {
                 vs.isNotCheckMod = json["notCheckMod"]?.asBoolean ?: false
                 vs.isNotCheckVulkan = json["notCheckVulkan"]?.asBoolean ?: false
                 vs.isDebugLog = json["debugLog"]?.asBoolean ?: false
-                vs.isForceResolution = json["forceResolution"]?.asBoolean ?: false
             }
         }
 

@@ -43,7 +43,6 @@ import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fclcore.util.platform.MemoryUtils
-import com.tungsten.fcllibrary.component.dialog.EditDialog
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FullEditDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
@@ -52,7 +51,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
-import java.util.Locale
 import java.util.logging.Level
 
 /**
@@ -137,34 +135,6 @@ class VersionSettingPage(
                 settingsChangeListener = null
             }
         })
-    }
-
-    private fun editForceResolution() {
-        if (lastVersionSetting.isForceResolution) {
-            val preferences = context.getSharedPreferences("launcher", MODE_PRIVATE)
-            val dialog = EditDialog(context) { str ->
-                try {
-                    val split =
-                        str.lowercase(Locale.getDefault()).split("x".toRegex())
-                            .dropLastWhile { it.isEmpty() }.toTypedArray()
-                    if (split.size == 2) {
-                        val w = split[0].toInt()
-                        val h = split[1].toInt()
-                        preferences.edit {
-                            putString("force_resolution", w.toString() + "x" + h)
-                        }
-                    }
-                } catch (e: Exception) {
-                    showErrorDialog(context, e.toString())
-                }
-            }
-            dialog.getEditText().setText(preferences.getString("force_resolution", "1920x1080"))
-            dialog.onCancelListener = {
-                lastVersionSetting.isForceResolution = false
-                adapter.refreshRow(VersionSettingTag.FORCE_RESOLUTION)
-            }
-            dialog.show()
-        }
     }
 
     /** 安装插件的下载来源选择（Github / 网盘） */
@@ -488,19 +458,11 @@ class VersionSettingPage(
                 )
             }
 
-            VersionSettingTag.FORCE_RESOLUTION -> {
-                lastVersionSetting.isForceResolution = checked
-                if (checked) editForceResolution()
-            }
-
             else -> {}
         }
     }
 
     override fun onSwitchLongClick(tag: VersionSettingTag) {
-        if (tag == VersionSettingTag.FORCE_RESOLUTION && lastVersionSetting.isForceResolution) {
-            editForceResolution()
-        }
     }
 
     override fun onLongPressEdit(tag: VersionSettingTag) {

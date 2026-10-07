@@ -136,7 +136,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
         menu.setPointerX(x);
         menu.setPointerY(y);
         if (menu.getBridge() != null) {
-            menu.getBridge().pushEventPointer(x * (float) menu.getBridge().getScaleFactor(), y * (float) menu.getBridge().getScaleFactor());
+            menu.getBridge().pushEventPointer(x, y);
         }
     }
 
@@ -386,8 +386,9 @@ public class FCLInput implements View.OnCapturedPointerListener {
         if (menu.getBridge() == null) {
             return;
         }
-        float scaleFactor = (float) menu.getBridge().getScaleFactor();
-        CallbackBridge.sendCursorDelta(deltaX * scaleFactor, deltaY * scaleFactor);
+        // 强制分辨率下游戏窗口与 windowScale 无关，外置鼠标增量按 1:1 下发，由 pushEventLookDelta 统一除拉伸系数
+        float scaleFactor = FCLBridge.FORCE_RESOLUTION ? 1f : (float) menu.getBridge().getScaleFactor();
+        FCLBridge.pushEventLookDelta(deltaX * scaleFactor, deltaY * scaleFactor);
     }
 
     /** 悬停降级路径的增量应用：菜单态移动光标，捕获态转发视角增量 */

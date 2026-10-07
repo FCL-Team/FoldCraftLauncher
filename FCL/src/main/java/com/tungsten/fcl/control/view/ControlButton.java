@@ -49,7 +49,6 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 import java.util.Objects;
 import java.util.UUID;
 
-import org.lwjgl.glfw.CallbackBridge;
 
 /**
  * Custom game control button.
@@ -624,8 +623,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 lastLookX = event.getX();
                 lastLookY = event.getY();
                 double sensitivity = menu.getMenuSetting().getMouseSensitivity();
-                float scaleFactor = (float) menu.getBridge().getScaleFactor();
-                CallbackBridge.sendCursorDelta((float) (frameDX * sensitivity * scaleFactor),
+                // 强制分辨率下游戏窗口与 windowScale 无关，增量按 1:1 下发，由 pushEventLookDelta 统一除拉伸系数
+                float scaleFactor = FCLBridge.FORCE_RESOLUTION ? 1f : (float) menu.getBridge().getScaleFactor();
+                FCLBridge.pushEventLookDelta((float) (frameDX * sensitivity * scaleFactor),
                         (float) (frameDY * sensitivity * scaleFactor));
             }
         }

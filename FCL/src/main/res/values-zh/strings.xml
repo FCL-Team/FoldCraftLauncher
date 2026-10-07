@@ -631,6 +631,9 @@
     <string name="menu_settings_show_log_auto">自动显示日志</string>
     <string name="menu_settings_performance_mode">持续性能模式</string>
     <string name="menu_settings_max_refresh_rate">请求最高刷新率</string>
+    <string name="menu_settings_force_resolution_size">强制分辨率大小</string>
+    <string name="menu_settings_force_resolution_edit">设置</string>
+    <string name="menu_settings_force_resolution_invalid">分辨率无效，请按 宽x高 输入（如 1920x1080）。</string>
     <string name="menu_settings_show_memory">显示内存</string>
     <string name="message_cancelled">操作已取消</string>
     <string name="message_copy">复制成功！</string>

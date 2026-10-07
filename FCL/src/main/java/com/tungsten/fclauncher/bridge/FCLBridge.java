@@ -21,6 +21,7 @@ import androidx.core.content.FileProvider;
 
 import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.control.OpenFolderDialog;
+import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 
 import org.lwjgl.glfw.CallbackBridge;
@@ -187,15 +188,43 @@ public class FCLBridge {
     }
 
     /**
-     * 坐标全程 float 透传：旧 int 版是 boat 后端兼容包袱，中途取整会让慢速移动的
-     * 增量被截断丢步，转视角顿挫；取整交给 native 侧统一处理
+     * 屏幕→游戏坐标换算收敛在此处，全程 float 透传（取整交给 native 侧统一处理）：
+     * - 普通模式：游戏窗口 = 屏幕 × windowScale，输入乘 scaleFactor 换算；
+     * - 强制分辨率：游戏窗口为固定 WxH（windowScale 不参与），屏幕内容按
+     *   FORCE_RESOLUTION_SCALE 等比拉伸并水平居中，输入按 letterbox 逆变换换算。
      */
     public void pushEventPointer(float x, float y) {
         if (FORCE_RESOLUTION) {
             x = (x - FORCE_RESOLUTION_START_SIZE) / FORCE_RESOLUTION_SCALE;
             y = y / FORCE_RESOLUTION_SCALE;
+        } else {
+            x *= (float) scaleFactor;
+            y *= (float) scaleFactor;
         }
         CallbackBridge.sendCursorPos(x, y);
+    }
+
+    /**
+     * 捕获态视角增量统一出口：各来源（触摸 1:1、外置鼠标乘 windowScale、陀螺仪角速度增量）
+     * 按各自标定传入屏幕坐标增量，强制分辨率下屏幕内容被拉伸，统一除以 FORCE_RESOLUTION_SCALE
+     * 换算回游戏坐标，各来源标定不受影响。
+     */
+    public static void pushEventLookDelta(float x, float y) {
+        if (FORCE_RESOLUTION) {
+            x /= FORCE_RESOLUTION_SCALE;
+            y /= FORCE_RESOLUTION_SCALE;
+        }
+        CallbackBridge.sendCursorDelta(x, y);
+    }
+
+    /**
+     * 从菜单设置同步强制分辨率静态配置，启动流程与游戏内实时修改共用；
+     * menuSetting 为 null（menu_setting.json 缺失或损坏）时回落关闭状态
+     */
+    public static void initForceResolution(@Nullable MenuSetting menuSetting) {
+        FORCE_RESOLUTION = menuSetting != null && menuSetting.isForceResolution();
+        FORCE_RESOLUTION_WIDTH = menuSetting != null ? menuSetting.getForceResolutionWidth() : 1920;
+        FORCE_RESOLUTION_HEIGHT = menuSetting != null ? menuSetting.getForceResolutionHeight() : 1080;
     }
 
     public void pushEventKey(int keyCode, int keyChar, boolean press) {

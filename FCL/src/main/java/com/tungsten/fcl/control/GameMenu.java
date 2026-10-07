@@ -82,6 +82,7 @@ import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.FCLActivity;
+import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -1120,6 +1121,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                     new GamepadMapDialog(getActivity(), fclInput).show();
                 }
                 break;
+            case FORCE_RESOLUTION_SIZE:
+                editForceResolutionSize();
+                break;
             case FORCE_EXIT: {
                 FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(activity);
                 builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
@@ -1153,6 +1157,14 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 break;
             case SOFT_KEYBOARD_ADJUST:
                 menuSetting.setDisableSoftKeyAdjust(checked);
+                break;
+            case FORCE_RESOLUTION:
+                menuSetting.setForceResolution(checked);
+                if (checked) {
+                    // 实验性选项提示；默认 1920x1080 直接生效，宽高经"设置"按钮修改
+                    Toast.makeText(activity, R.string.settings_advanced_force_resolution_desc, Toast.LENGTH_LONG).show();
+                }
+                applyForceResolution();
                 break;
             case DISABLE_GESTURE:
                 menuSetting.setDisableGesture(checked);
@@ -1475,6 +1487,43 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
             fclBridge.pushEventWindow(width, height);
         }
+    }
+
+    /** 强制分辨率实时应用：同步静态配置 → 重排 TextureView letterbox → 刷新渲染 buffer 与窗口事件 */
+    private void applyForceResolution() {
+        FCLBridge.initForceResolution(menuSetting);
+        if (fclBridge == null || isSimulated()) {
+            return;
+        }
+        ((JVMActivity) activity).applyForceResolutionLayout();
+        refreshWindowsSize(menuSetting.getWindowScale());
+    }
+
+    /** 强制分辨率宽高编辑：输入 "宽x高"，确认后实时应用（仅经"设置"按钮进入） */
+    private void editForceResolutionSize() {
+        EditDialog dialog = new EditDialog(activity,
+                menuSetting.getForceResolutionWidth() + "x" + menuSetting.getForceResolutionHeight(),
+                str -> {
+                    String[] split = str.toLowerCase().trim().split("x");
+                    if (split.length == 2) {
+                        try {
+                            int w = Integer.parseInt(split[0].trim());
+                            int h = Integer.parseInt(split[1].trim());
+                            if (w > 0 && h > 0) {
+                                menuSetting.setForceResolutionWidth(w);
+                                menuSetting.setForceResolutionHeight(h);
+                                if (menuSetting.isForceResolution()) {
+                                    applyForceResolution();
+                                }
+                                return;
+                            }
+                        } catch (NumberFormatException ignore) {
+                        }
+                    }
+                    Toast.makeText(activity, R.string.menu_settings_force_resolution_invalid, Toast.LENGTH_SHORT).show();
+                });
+        dialog.setTitle(R.string.menu_settings_force_resolution_size);
+        dialog.show();
     }
 
     @Nullable

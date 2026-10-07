@@ -22,7 +22,6 @@ import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.setting.MenuSetting;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 
-import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Objects;
 
@@ -258,7 +257,7 @@ public class TouchPad extends View {
                     double sensitivity = gameMenu.getMenuSetting().getMouseSensitivity();
                     float gameDX = (float) (frameDX * sensitivity * acceleration);
                     float gameDY = (float) (frameDY * sensitivity * acceleration);
-                    CallbackBridge.sendCursorDelta(gameDX, gameDY);
+                    FCLBridge.pushEventLookDelta(gameDX, gameDY);
                     if ((Math.abs(gameDX) > 1 || Math.abs(gameDY) > 1) && System.currentTimeMillis() - downTime < 400) {
                         handler.removeCallbacks(runnable);
                     }

@@ -113,13 +113,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         textureView = findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(this);
         if (FCLBridge.FORCE_RESOLUTION) {
-            ViewGroup.LayoutParams params = textureView.getLayoutParams();
-            FCLBridge.FORCE_RESOLUTION_SCALE = (float) AndroidUtilKt.getScreenHeight() / FCLBridge.FORCE_RESOLUTION_HEIGHT;
-            params.width = (int) (FCLBridge.FORCE_RESOLUTION_WIDTH * FCLBridge.FORCE_RESOLUTION_SCALE);
-            params.height = (int) (FCLBridge.FORCE_RESOLUTION_HEIGHT * FCLBridge.FORCE_RESOLUTION_SCALE);
-            FCLBridge.FORCE_RESOLUTION_START_SIZE = (AndroidUtilKt.getScreenWidth() - params.width) / 2;
-            textureView.setLayoutParams(params);
-            textureView.setX(FCLBridge.FORCE_RESOLUTION_START_SIZE);
+            applyForceResolutionLayout();
         }
 
         addContentView(menu.getLayout(), new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -146,6 +140,28 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
                 textureView.setTranslationY(0);
             }
         });
+    }
+
+    /**
+     * 应用/撤销强制分辨率的 TextureView letterbox 布局：开启时视图按 FORCE_RESOLUTION_SCALE
+     * 等比缩放并水平居中，关闭时恢复全屏。游戏内菜单实时修改强制分辨率时也会调用。
+     */
+    public void applyForceResolutionLayout() {
+        ViewGroup.LayoutParams params = textureView.getLayoutParams();
+        if (FCLBridge.FORCE_RESOLUTION) {
+            FCLBridge.FORCE_RESOLUTION_SCALE = (float) AndroidUtilKt.getScreenHeight() / FCLBridge.FORCE_RESOLUTION_HEIGHT;
+            params.width = (int) (FCLBridge.FORCE_RESOLUTION_WIDTH * FCLBridge.FORCE_RESOLUTION_SCALE);
+            params.height = (int) (FCLBridge.FORCE_RESOLUTION_HEIGHT * FCLBridge.FORCE_RESOLUTION_SCALE);
+            FCLBridge.FORCE_RESOLUTION_START_SIZE = (AndroidUtilKt.getScreenWidth() - params.width) / 2;
+            textureView.setX(FCLBridge.FORCE_RESOLUTION_START_SIZE);
+        } else {
+            FCLBridge.FORCE_RESOLUTION_SCALE = -1;
+            FCLBridge.FORCE_RESOLUTION_START_SIZE = -1;
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            textureView.setX(0);
+        }
+        textureView.setLayoutParams(params);
     }
 
     /**

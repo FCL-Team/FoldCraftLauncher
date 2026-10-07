@@ -219,6 +219,28 @@ class MenuSetting {
             changed()
         }
 
+    /** 强制游戏以固定分辨率运行（游戏内菜单实时修改），开启后 windowScale 不参与窗口尺寸计算 */
+    var isForceResolution: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
+    var forceResolutionWidth: Int = 1920
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
+    var forceResolutionHeight: Int = 1080
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
     var mouseSensitivity: Double = 1.0
         set(value) {
             if (field == value) return
@@ -380,6 +402,9 @@ class MenuSetting {
                 addProperty("itemBarHeight", src.itemBarHeight)
                 addProperty("windowScale", src.windowScale)
                 addProperty("cursorOffset", src.cursorOffset)
+                addProperty("forceResolution", src.isForceResolution)
+                addProperty("forceResolutionWidth", src.forceResolutionWidth)
+                addProperty("forceResolutionHeight", src.forceResolutionHeight)
                 addProperty("gamepadDeadzone", src.gamepadDeadzone)
                 addProperty("controlsOpacity", src.controlsOpacity)
                 addProperty("snapAdjacentOnly", src.isSnapAdjacentOnly)
@@ -438,6 +463,9 @@ class MenuSetting {
                 ms.itemBarHeight = json["itemBarHeight"]?.asInt ?: 0
                 ms.windowScale = json["windowScale"]?.asDouble ?: 1.0
                 ms.cursorOffset = json["cursorOffset"]?.asDouble ?: 0.0
+                ms.isForceResolution = json["forceResolution"]?.asBoolean ?: false
+                ms.forceResolutionWidth = json["forceResolutionWidth"]?.asInt ?: 1920
+                ms.forceResolutionHeight = json["forceResolutionHeight"]?.asInt ?: 1080
                 ms.gamepadDeadzone = json["gamepadDeadzone"]?.asDouble ?: 0.2
                 ms.controlsOpacity = json["controlsOpacity"]?.asInt ?: 100
                 ms.isSnapAdjacentOnly = json["snapAdjacentOnly"]?.asBoolean ?: false

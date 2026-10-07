@@ -31,7 +31,6 @@ enum class VersionSettingTag {
     // 特殊开关行
     SPECIAL,
     VULKAN,
-    FORCE_RESOLUTION,
 
     // 按钮行
     EDIT_ICON,
@@ -270,14 +269,6 @@ class VersionSettingAdapter(
                 null,
                 descriptionRes = R.string.settings_advanced_env_desc,
                 group = SettingGroup.Argument
-            )
-            result += Row.SwitchRow(
-                R.string.settings_advanced_force_resolution,
-                { versionSetting.isForceResolution },
-                { listener.onSpecialSwitch(VersionSettingTag.FORCE_RESOLUTION, it) },
-                longClick = true,
-                rowTag = VersionSettingTag.FORCE_RESOLUTION,
-                descriptionRes = R.string.settings_advanced_force_resolution_desc,
             )
         }
         return result

@@ -560,6 +560,9 @@
     <string name="menu_settings_show_log_auto">自動顯示日誌</string>
     <string name="menu_settings_performance_mode">持續性能模式</string>
     <string name="menu_settings_max_refresh_rate">請求最高刷新率</string>
+    <string name="menu_settings_force_resolution_size">強制分辨率大小</string>
+    <string name="menu_settings_force_resolution_edit">設置</string>
+    <string name="menu_settings_force_resolution_invalid">分辨率無效，請按 寬x高 輸入（如 1920x1080）。</string>
     <string name="message_cancelled">操作已取消</string>
     <string name="message_copy">複製成功！</string>
     <string name="message_doing">請耐心等待</string>
