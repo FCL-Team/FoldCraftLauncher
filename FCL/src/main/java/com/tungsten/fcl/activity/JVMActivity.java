@@ -32,6 +32,7 @@ import com.tungsten.fcl.control.MenuType;
 import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.game.sdl.SdlBridge;
 import com.mio.flite.FliteTts;
+import com.mio.service.GameService;
 import com.tungsten.fcl.setting.GameOption;
 import com.tungsten.fcl.terracotta.Terracotta;
 import com.mio.util.AndroidUtilKt;
@@ -110,6 +111,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
         menu = menuType == MenuType.GAME ? new GameMenu() : new JarExecutorMenu();
         menu.setup(this, fclBridge);
+        GameService.start(this);
         textureView = findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(this);
         if (FCLBridge.FORCE_RESOLUTION) {
@@ -436,6 +438,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         CallbackBridge.resetInputState();
         SdlBridge.reset();
         FliteTts.shutdown();
+        GameService.stop(this);
         super.onDestroy();
     }
 

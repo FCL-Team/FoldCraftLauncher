@@ -645,6 +645,9 @@
     <string name="mods_installed_skipped_note">%1$d 个前置模组本地已安装，已跳过</string>
     <string name="mods_dependency_resolving">正在解析前置模组…</string>
     <string name="download_manager">下载管理</string>
+    <string name="game_service_channel">游戏运行</string>
+    <string name="game_service_notification_title">游戏运行中</string>
+    <string name="game_service_notification_text">点击返回游戏</string>
     <string name="message_error">错误</string>
     <string name="message_failed">操作失败</string>
     <string name="message_file_exist">文件已存在</string>

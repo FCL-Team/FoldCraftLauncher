@@ -723,6 +723,9 @@
     <string name="mods_installed_skipped_note">%1$d mods already installed and skipped</string>
     <string name="mods_dependency_resolving">Resolving required dependencies…</string>
     <string name="download_manager">Download Manager</string>
+    <string name="game_service_channel">Game running</string>
+    <string name="game_service_notification_title">Game running</string>
+    <string name="game_service_notification_text">Tap to return to the game</string>
     <string name="message_error">Error</string>
     <string name="message_failed">Operation Failed</string>
     <string name="message_file_exist">File already exist</string>
