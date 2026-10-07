@@ -155,6 +155,10 @@
             </intent-filter>
         </service>
 
+        <meta-data
+            android:name="android.game_mode_config"
+            android:resource="@xml/game_mode_config" />
+
         <provider
             android:name=".scoped.FolderProvider"
             android:authorities="${applicationId}.document.provider"
