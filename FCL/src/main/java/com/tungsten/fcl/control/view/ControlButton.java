@@ -1,7 +1,5 @@
 package com.tungsten.fcl.control.view;
 
-import static com.tungsten.fclauncher.keycodes.MinecraftKeyBindingMapper.BINDING_CHAT;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -23,6 +21,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.GameMenu;
+import com.tungsten.fcl.control.GameTextSender;
 import com.tungsten.fcl.control.GestureMode;
 import com.tungsten.fcl.control.MouseMoveMode;
 import com.tungsten.fcl.control.data.BaseInfoData;
@@ -30,10 +29,8 @@ import com.tungsten.fcl.control.data.ButtonEventData;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
-import com.tungsten.fcl.setting.GameOption;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
-import com.tungsten.fclauncher.keycodes.FCLKeycodes;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.BooleanProperty;
@@ -834,22 +831,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
             menu.openQuickInput();
         }
         if (StringUtils.isNotBlank(event.getOutputText())) {
-            if (menu.getCursorMode() == FCLBridge.CursorEnabled) {
-                for (int i = 0; i < event.getOutputText().length(); i++) {
-                    menu.getInput().sendChar(event.getOutputText().charAt(i));
-                }
-            } else {
-                GameOption gameOption = menu.getGameOption();
-                menu.getInput().sendBoundKeyEvent(gameOption, BINDING_CHAT, FCLKeycodes.KEY_T, true);
-                menu.getInput().sendBoundKeyEvent(gameOption, BINDING_CHAT, FCLKeycodes.KEY_T, false);
-                new Handler().postDelayed(() -> {
-                    for (int i = 0; i < event.getOutputText().length(); i++) {
-                        menu.getInput().sendChar(event.getOutputText().charAt(i));
-                    }
-                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, true);
-                    menu.getInput().sendKeyEvent(FCLKeycodes.KEY_ENTER, false);
-                }, 150);
-            }
+            GameTextSender.send(menu, event.getOutputText());
         }
         for (String id : event.bindViewGroupList()) {
             if (menu.getController().viewGroups().stream().anyMatch(it -> it.getId().equals(id))) {
