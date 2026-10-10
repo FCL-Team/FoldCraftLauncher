@@ -286,15 +286,19 @@ public class TouchPad extends View {
                     double sensitivity = gameMenu.getMenuSetting().getMouseSensitivity();
                     float gameDX = (float) (frameDX * sensitivity * acceleration);
                     float gameDY = (float) (frameDY * sensitivity * acceleration);
-                    FCLBridge.pushEventLookDelta(gameDX, gameDY);
+                    downX = newDownX;
+                    downY = newDownY;
+                    // 非同时控制模式下先开始拖动的一方独占视角，被占用时丢弃增量；锚点已推进，不累积位移
+                    if (gameMenu.getInput().acquireLookOwner(POINTER_ID)) {
+                        FCLBridge.pushEventLookDelta(gameDX, gameDY);
+                    }
                     if ((Math.abs(gameDX) > 1 || Math.abs(gameDY) > 1) && System.currentTimeMillis() - downTime < 400) {
                         handler.removeCallbacks(runnable);
                     }
-                    downX = newDownX;
-                    downY = newDownY;
                     break;
                 case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP:
+                    gameMenu.getInput().releaseLookOwner(POINTER_ID);
                     if (Objects.equals(gameMenu.getInput().getPointerId(), POINTER_ID)) {
                         gameMenu.getInput().setPointerId(null);
                     }

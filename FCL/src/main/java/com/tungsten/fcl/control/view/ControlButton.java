@@ -488,6 +488,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
                     break;
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
+                    menu.getInput().releaseLookOwner(getData().getId());
                     if (swipeEngaged) {
                         // 滑动链结束：释放链上被按住的按钮（滑回自己时是自己），不触发单击/双击
                         if (swipePressed != null) {
@@ -589,6 +590,7 @@ public class ControlButton extends AppCompatButton implements CustomView {
     }
 
     private void cancelAllEvent() {
+        menu.getInput().releaseLookOwner(getData().getId());
         handleUpAfterPressEvent();
         handleUpAfterLongPressEvent();
         cancelTickEvent(getData().getEvent().getPressEvent());
@@ -619,11 +621,14 @@ public class ControlButton extends AppCompatButton implements CustomView {
                 float frameDY = event.getY() - lastLookY;
                 lastLookX = event.getX();
                 lastLookY = event.getY();
-                double sensitivity = menu.getMenuSetting().getMouseSensitivity();
-                // 强制分辨率下游戏窗口与 windowScale 无关，增量按 1:1 下发，由 pushEventLookDelta 统一除拉伸系数
-                float scaleFactor = FCLBridge.FORCE_RESOLUTION ? 1f : (float) menu.getBridge().getScaleFactor();
-                FCLBridge.pushEventLookDelta((float) (frameDX * sensitivity * scaleFactor),
-                        (float) (frameDY * sensitivity * scaleFactor));
+                // 非同时控制模式下先开始拖动的一方独占视角，被占用时丢弃增量；锚点已推进，不累积位移
+                if (menu.getInput().acquireLookOwner(getData().getId())) {
+                    double sensitivity = menu.getMenuSetting().getMouseSensitivity();
+                    // 强制分辨率下游戏窗口与 windowScale 无关，增量按 1:1 下发，由 pushEventLookDelta 统一除拉伸系数
+                    float scaleFactor = FCLBridge.FORCE_RESOLUTION ? 1f : (float) menu.getBridge().getScaleFactor();
+                    FCLBridge.pushEventLookDelta((float) (frameDX * sensitivity * scaleFactor),
+                            (float) (frameDY * sensitivity * scaleFactor));
+                }
             }
         }
         if (getData().getEvent().isMovable()) {

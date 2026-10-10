@@ -391,6 +391,37 @@ public class FCLInput implements View.OnCapturedPointerListener {
         FCLBridge.pushEventLookDelta(deltaX * scaleFactor, deltaY * scaleFactor);
     }
 
+    /**
+     * 视角增量占用者（触控板/按键 id）。非同时控制时先开始拖动的一方独占视角，
+     * 另一方增量被忽略，抬起后释放
+     */
+    private String lookOwner;
+
+    /**
+     * 申请视角控制权并判断本次增量是否可下发：允许同时控制时全部放行，
+     * 否则先到者独占（本次调用即占用）
+     */
+    public boolean acquireLookOwner(String owner) {
+        if (menu.getMenuSetting().isSimultaneousViewControl()) {
+            return true;
+        }
+        if (lookOwner == null) {
+            lookOwner = owner;
+        }
+        return owner.equals(lookOwner);
+    }
+
+    public void releaseLookOwner(String owner) {
+        if (owner.equals(lookOwner)) {
+            lookOwner = null;
+        }
+    }
+
+    /** 同时控制开关切换后清空占用，避免上一模式遗留的占用者阻塞另一来源 */
+    public void resetLookOwner() {
+        lookOwner = null;
+    }
+
     /** 悬停降级路径的增量应用：菜单态移动光标，捕获态转发视角增量 */
     private void applyPointerDelta(float deltaX, float deltaY) {
         if (menu.getCursorMode() == FCLBridge.CursorEnabled) {

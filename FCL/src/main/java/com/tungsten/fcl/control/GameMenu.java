@@ -1206,6 +1206,11 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             case DISTANCE_ACCELERATION:
                 menuSetting.setDistanceAcceleration(checked);
                 break;
+            case SIMULTANEOUS_VIEW_CONTROL:
+                menuSetting.setSimultaneousViewControl(checked);
+                // 切换后清空占用者，避免上一模式的占用残留阻塞另一来源
+                getInput().resetLookOwner();
+                break;
             case GAMEPAD_CONTROL:
                 setGamepadControl(checked);
                 // 联动刷新：手柄关闭时输入模式选择器禁用

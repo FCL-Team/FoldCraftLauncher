@@ -666,6 +666,7 @@
     <string name="menu_settings_physical_mouse_mode">Physical Mouse</string>
     <string name="menu_settings_slide_acceleration">Slide Acceleration</string>
     <string name="menu_settings_distance_acceleration">Distance Acceleration</string>
+    <string name="menu_settings_simultaneous_view_control">Simultaneous View Control</string>
     <string name="menu_settings_capture_pointer_key">Capture Pointer Key</string>
     <string name="menu_settings_ime_toggle_key">IME Toggle Key</string>
     <string name="menu_settings_key_modifier">Modifier Key</string>

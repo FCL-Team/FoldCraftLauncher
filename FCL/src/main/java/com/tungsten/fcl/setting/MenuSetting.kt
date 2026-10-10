@@ -184,6 +184,14 @@ class MenuSetting {
             changed()
         }
 
+    /** 触控板与按键指针跟随是否可同时控制视角，关闭时先开始拖动的一方独占 */
+    var isSimultaneousViewControl: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
     var mouseMoveMode: MouseMoveMode = MouseMoveMode.CLICK
         set(value) {
             if (field == value) return
@@ -391,6 +399,7 @@ class MenuSetting {
                 addProperty("gyroscopeSensitivityY", src.gyroscopeSensitivityY)
                 addProperty("slideAcceleration", src.isSlideAcceleration)
                 addProperty("distanceAcceleration", src.isDistanceAcceleration)
+                addProperty("simultaneousViewControl", src.isSimultaneousViewControl)
                 addProperty("mouseMoveMode", src.mouseMoveMode.id)
                 addProperty("mouseSensitivity", src.mouseSensitivity)
                 addProperty("mouseSensitivityCursor", src.mouseSensitivityCursor)
@@ -452,6 +461,8 @@ class MenuSetting {
                     json["gyroscopeSensitivityY"]?.asInt ?: json["gyroscopeSensitivity"]?.asInt ?: 10
                 ms.isSlideAcceleration = json["slideAcceleration"]?.asBoolean ?: false
                 ms.isDistanceAcceleration = json["distanceAcceleration"]?.asBoolean ?: false
+                ms.isSimultaneousViewControl =
+                    json["simultaneousViewControl"]?.asBoolean ?: false
                 ms.mouseMoveMode = MouseMoveMode.getById(json["mouseMoveMode"]?.asInt ?: 0)
                 ms.mouseSensitivity = json["mouseSensitivity"]?.asDouble ?: 1.0
                 ms.mouseSensitivityCursor = json["mouseSensitivityCursor"]?.asDouble ?: 2.0

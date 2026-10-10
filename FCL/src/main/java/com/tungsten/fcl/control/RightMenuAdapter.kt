@@ -42,6 +42,7 @@ enum class RightMenuTag {
 
     // 手势
     DISABLE_GESTURE, GESTURE_MODE, DISABLE_LEFT_TOUCH, SLIDE_ACCELERATION, DISTANCE_ACCELERATION,
+    SIMULTANEOUS_VIEW_CONTROL,
 
     // 鼠标
     MOUSE_MODE, MOUSE_SENSITIVITY, MOUSE_CURSOR_SENSITIVITY, MOUSE_SIZE,
@@ -222,6 +223,11 @@ class RightMenuAdapter(
                 R.string.menu_settings_distance_acceleration,
                 { menuSetting.isDistanceAcceleration },
                 RightMenuTag.DISTANCE_ACCELERATION
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_simultaneous_view_control,
+                { menuSetting.isSimultaneousViewControl },
+                RightMenuTag.SIMULTANEOUS_VIEW_CONTROL
             ),
             Row.SeekBarRow(
                 R.string.menu_settings_item_bar_scale_width, 100, 0,

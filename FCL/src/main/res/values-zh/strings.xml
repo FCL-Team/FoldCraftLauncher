@@ -591,6 +591,7 @@
     <string name="menu_settings_physical_mouse_mode">实体鼠标控制</string>
     <string name="menu_settings_slide_acceleration">滑动加速</string>
     <string name="menu_settings_distance_acceleration">距离加速</string>
+    <string name="menu_settings_simultaneous_view_control">同时控制视角</string>
     <string name="menu_settings_capture_pointer_key">指针捕获切换键</string>
     <string name="menu_settings_ime_toggle_key">输入法切换键</string>
     <string name="menu_settings_key_modifier">修饰键</string>
