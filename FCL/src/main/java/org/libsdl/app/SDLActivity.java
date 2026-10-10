@@ -52,6 +52,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.tungsten.fcl.game.sdl.SdlBridge;
+import com.tungsten.fclauncher.bridge.FCLBridge;
 
 
 import java.io.FileNotFoundException;
@@ -1924,22 +1925,12 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
     /**
      * This method is called by SDL using JNI.
+     * 游戏以 SDL_OpenURL 打开链接/文件夹（26.3+ 的 Blaze3D.openUri），
+     * 转交启动器处理：file: 路径由启动器弹文件浏览器，其余交给系统。
      */
     public static boolean openURL(String url)
     {
-        try {
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-
-            int flags = Intent.FLAG_ACTIVITY_NO_HISTORY
-                      | Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-                      | Intent.FLAG_ACTIVITY_NEW_DOCUMENT;
-            i.addFlags(flags);
-
-            mSingleton.startActivity(i);
-        } catch (Exception ex) {
-            return false;
-        }
+        FCLBridge.openLink(url);
         return true;
     }
 
