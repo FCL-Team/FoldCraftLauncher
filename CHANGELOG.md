@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.3.3.9] - 2026-10-10
+
+### 中文
+
+#### ✨ 新功能
+
+1. **「同时控制视角」开关 (#1922)**：右菜单手势分类新增开关，默认关闭。触控板拖动与按键的指针跟随是两条独立的转视角路径，此前会同时下发增量、互相干扰；关闭时由 FCLInput 记录视角占用者，先开始拖动的一方独占，另一方的增量在占用期间被直接丢弃（锚点照常推进，不把这段位移累积到释放后一次性下发），抬起即释放——按键侧在抬起/取消与 cancelAllEvent 两处释放，触控板侧在 UP/CANCEL 释放；切换开关时清空占用者，避免上一模式遗留的占用阻塞另一来源；开关持久化到游戏菜单设置，旧配置缺失时默认关闭
+
+#### 🐛 修复
+
+1. **26.3 下打开文件夹/链接失效 (#1921)**：26.3 的游戏改用 SDL_OpenURL（Blaze3D.openUri）打开链接与文件夹，而 SDLActivity.openURL 原实现自建 ACTION_VIEW Intent 并带 NO_HISTORY/MULTIPLE_TASK/NEW_DOCUMENT 标志，file: 路径因缺少权限与对应 Activity 而打不开；改为转交 FCLBridge.openLink，与启动器内其它打开入口共用同一套分发——file: 路径由启动器弹文件浏览器，其余交给系统
+2. **「按住」交互被瞬间打断 (#1923)**：机械动力等模组的数值设置界面需要按住右键拖动、松开右键才确认，而打开该界面本身会切换光标模式，GameMenu 在模式切换时无条件补发仍被视为按下的鼠标键释放，右键在界面刚打开的一瞬间就被松掉；模式切换并不等于事件来源丢失——手指或鼠标键仍按住时 UP 会照常到达，抢先补发反而制造了假释放；新增 FCLInput.onCursorModeChanged 仅作废悬停坐标快照（避免切换点的坐标跳变派生出整段位移），不再补发释放；切后台、窗口失焦这些真正丢失来源的场景仍走 resetExternalMouseState
+3. **按住期间切换光标模式导致长按手势合成的鼠标键卡住**：触控板长按超过阈值后会按下按滑动方向合成的左/右键，原实现只在捕获模式分支的 UP/CANCEL 里释放；按住期间切换光标模式会让抬手事件落到另一模式的分支，合成的按键便一直留在按下状态；改为在分流之前统一撤销未触发的长按并释放合成的鼠标键
+
+### English
+
+#### ✨ New Features
+
+1. **"Simultaneous View Control" toggle (#1922)**: A new toggle in the right menu's gesture section, off by default. Touch-pad dragging and key-based pointer follow are two independent look paths that used to send deltas at the same time and interfere with each other; with the toggle off, FCLInput tracks a look owner, the side that starts dragging first owns control and the other side's deltas are dropped while it is held (the anchor still advances, so the displacement is not accumulated and flushed on release), and it is released on lift — the key side releases in both the up/cancel path and cancelAllEvent, the touch-pad side on UP/CANCEL. Toggling the switch clears the owner so a leftover from the previous mode cannot block the other source, and the setting persists in the in-game menu settings, defaulting to off when absent from an older config
+
+#### 🐛 Bug Fixes
+
+1. **Opening folders/links doing nothing on 26.3 (#1921)**: On 26.3 the game opens links and folders through SDL_OpenURL (Blaze3D.openUri), while SDLActivity.openURL built its own ACTION_VIEW intent with NO_HISTORY/MULTIPLE_TASK/NEW_DOCUMENT flags, so file: paths failed for lack of permission and a matching activity; it now forwards to FCLBridge.openLink, sharing one dispatch path with the launcher's other open entries — the launcher shows the file browser for file: paths and delegates the rest to the system
+2. **"Hold" interactions cut short (#1923)**: Numeric settings screens in mods such as Create require holding the right button while dragging and confirm when it is released, yet opening such a screen itself switches the cursor mode, and GameMenu unconditionally resent releases for buttons still considered held — dropping the right button the moment the screen opened; a mode switch is not a lost event source (the up event still arrives while a finger or mouse button is held), so pre-emptively resending created a false release; FCLInput.onCursorModeChanged now only invalidates the hover-coordinate snapshot (so the coordinate jump at the switch point cannot derive a whole segment of displacement) without resending releases, while genuinely-lost-source cases (backgrounding, window focus loss) still go through resetExternalMouseState
+3. **Mouse buttons synthesized by the long-press gesture getting stuck when the cursor mode changed mid-hold**: After the touch pad's long press exceeds its threshold it holds a left/right button synthesized from the slide direction, and the old code released it only in the capture branch's UP/CANCEL; switching cursor mode mid-hold routed the up event to the other branch, leaving the synthesized button down forever; the untriggered long press is now cancelled and the synthesized buttons released before the branch split
+
 ## [1.3.3.8] - 2026-10-10
 
 ### 中文
