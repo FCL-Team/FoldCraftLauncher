@@ -1,5 +1,67 @@
 # Changelog
 
+## [1.3.3.8] - 2026-10-10
+
+### 中文
+
+#### ✨ 新功能
+
+1. **陀螺仪重构与触控加速 (#1876)**：陀螺仪由绝对坐标补发改相对增量流，仅在游戏捕获指针（转视角）时生效，退出捕获态不再补发绝对坐标，消除关闭陀螺仪时视角被拽回；角速度经滑动窗口平均抑制手抖、低于死区的微小移动视为噪声忽略，轴映射随屏幕旋转自适应；灵敏度与反转拆分为横向/纵向独立设置；触摸板新增「滑动加速」与「距离加速」开关，分别按滑动速度与本次按住的累计距离放大转视角增量；触摸坐标与光标/指针位置全程 float 透传，取整交给 native 侧，消除慢速移动时小步长增量被截断导致的转视角顿挫
+2. **外置键鼠链路健壮性重构 (#1878)**：指针捕获增加看门狗，静默丢失自动重试，持续失败降级为悬停差值转视角，未捕获鼠标的 touch 点击补投按键；实体鼠标模式仅游戏内维持捕获、菜单态用系统指针，切换即时生效；鼠标键状态机去重，根治右键/中键经系统转换与原始事件双触发的问题；右菜单鼠标页新增指针捕获切换键与输入法切换键设置，支持主键+修饰键组合（默认 F8 与 Shift+Enter），冲突组合拒绝绑定；快捷键匹配后按下与抬起一律不再下发（此前只吞抬起会让游戏侧持续按住），按键监听态在菜单收起、菜单视图隐藏与页面暂停三处统一放弃
+3. **游戏会话前台服务保活**：游戏界面创建时启动 specialUse 类型前台服务（通知可点击返回游戏会话），销毁时停止；游戏运行期间进程不再是缓存级优先级，降低切后台后因内存占用被系统回收的概率
+4. **强制分辨率迁入游戏内菜单**：由版本设置迁移至右菜单调试分类，默认 1920×1080，开关即时生效，宽高可经设置按钮实时修改；启动参数宽度补上 cursorOffset，与 surface 回调、刷新尺寸三处口径一致；屏幕→游戏坐标换算收敛进 FCLBridge，新增 pushEventLookDelta 统一四处视角增量发送点，强制分辨率下统一除拉伸系数，修复光标偏移与视角增量偏差；移除版本设置与 SharedPreferences 旧入口
+5. **接入 Android 12+ 系统游戏模式**：manifest 声明 android.game_mode_config，并在 res/xml-v33 声明拒绝系统降分辨率与帧率覆写干预（API 33 属性），性能/省电策略可对应用单独配置
+6. **文件浏览器常规文件管理 (#1875)**：新建文件夹/文件、重命名、删除（二次确认）、复制/剪切/粘贴（会话级剪贴板，重名自动追加序号）；排序方式（名称/大小/修改时间）与显示隐藏文件开关经 SharedPreferences 持久化；长按条目弹出详情/重命名/删除/复制/剪切/分享菜单；浏览模式与多选模式支持全选、批量复制/剪切/删除；文件操作走 IO 线程，目录大小后台计算，失败提示并记录日志；单选文件选择模式不提供批量入口（批量结果会违反单选契约）
+7. **Vulkan 兼容性检测禁用开关 (#1911)**：版本设置页渲染分组新增开关并持久化到版本设置，开启后启动 26.2+ 版本跳过 Vulkan 兼容性检测及相关提示
+8. **glfwGetWindowPos 补全 (#1915)**：补上 IntBuffer 重载并对齐官方签名，数组版由固定返回 0 改为返回真实窗口坐标
+
+#### ⚡ 优化
+
+1. **Xms 与 Xmx 解耦**：Xms 取 min(512MB, Xmx)，堆按需增长；Xms=Xmx 会让 G1 按峰值全量提交物理内存且不收缩堆，白占内存易触发系统杀进程与温控
+2. **陀螺仪旋转缓存化**：屏幕旋转改由 DisplayListener 推送刷新缓存，不再在每个传感器事件里查询显示服务；时间系数更名 TIME_SCALE 并补充标定注释
+
+#### 🐛 修复
+
+1. **26.3 下快捷输入与「发送文本」无效 (#1909)**：SDL 渲染路径不注册 GLFW 字符回调，字符改经 SDL 文本输入通道提交，新增 GameTextSender 收敛文本提交入口（快捷输入与按钮发送文本共用）；聊天栏打开后轮询等待 native 文本输入通道激活再提交，超时丢弃并记日志
+2. **按住拖动视角时开关游戏界面视角突跳**：按住期间进出捕获态/菜单态会切换锚点含义，跨模式继续拖动时整段位移被一次性下发；TouchPad 增加光标模式快照，MOVE 检测到模式变化即从当前光标重新锚定并丢弃本帧
+3. **部分设备 60fps 锁定**：窗口级 preferredDisplayModeId 硬请求同分辨率下最高刷新率档（只比同分辨率，避免选中低分辨率高刷档）；surface 投票目标改由 supportedModes 计算（不再硬编码 120），兼容标志改 CHANGE_FRAME_RATE_ALWAYS，非无缝切档机型也生效；DisplayListener 监听系统中途降档（智能刷新率/省电）自动重发请求，1s 冷却防 ROM 回调风暴；右菜单调试分类新增「请求最高刷新率」开关（默认开），关闭即清除两类请求回落系统自适应
+4. **按键与字符成对补发误伤非 Cleanroom 实例**：成对补发本是 Cleanroom 的 lwjglx 兼容层所需，此前对所有实例生效；改为仅 Cleanroom 生效，标志随启动参数落在 FCLBridge 上（launch 线程无 Looper，不能在启动线程触碰 CallbackBridge）
+5. **模组列表搜索/筛选后远程信息查询丢失 (#1912)**：连续搜索时每轮刷新会取消在途查询，而条目 view 可能被原位复用（既不重绑定也不触发 attach），最后一轮刷新后查询不再发起；列表变化后 post 到布局完成主动扫描可见条目补发查询；同时修复 view 复用时上一个条目的在途查询把远程信息写错条目
+6. **冷启动点击模组收藏无法进入详情 (#1910)**：DownloadPage 新建实例的 pageId 默认值恰为模组模式，但 switchType 从未执行时仓库与回调均为 null，原守卫仅比较 pageId 会跳过初始化，构造详情页的空指针被 Task 框架吞掉表现为静默无跳转；改用 typeInitialized 标志与 isTypeReady 判断
+7. **账户/版本页标题动画重复触发**：标题动画原由点击回调与 pageSelectedListener 两处触发，连点会连续播放多次；收拢到 pageSelectedListener 单点调用
+8. **手柄输入模式对话框小屏无法关闭 (#1894)**：内容改为 ScrollView 包裹、确认按钮固定底部，小屏横屏不再被裁掉；支持手柄操作对话框（上下选择模式，A/Start 确认）
+9. **整合包导出页**：作者改用账户游戏名、文件名自动预填；描述框由固定 200dp 改为自适应高度（minHeight 100dp）；单行输入改完成动作，并区分误清焦点与正常失焦，修复从文件选择器返回后键盘自动弹出
+
+### English
+
+#### ✨ New Features
+
+1. **Gyroscope rework & touch acceleration (#1876)**: The gyroscope switched from absolute-coordinate resend to a relative delta stream — it only acts while the game has captured the pointer (look mode), and no absolute coordinates are resent on exit, so the view is no longer dragged back; angular velocity passes through a moving-average window to suppress hand tremor and sub-dead-zone movements are treated as noise, with the axis mapping following screen rotation; sensitivity and inversion are now separate for the horizontal/vertical axes; the touch pad gained "slide acceleration" and "distance acceleration" toggles that scale the look delta by slide speed and by the accumulated distance of the current hold; touch coordinates and cursor/pointer positions are now floats end-to-end (rounding is left to the native side), removing the stutter caused by truncated increments during slow movements
+2. **External mouse/keyboard robustness rework (#1878)**: Pointer capture gained a watchdog that retries silent loss and degrades to hover-delta look when capture keeps failing, re-sending touch clicks as button presses while uncaptured; physical-mouse mode keeps capture only in-game and hands the system pointer back in menus, switching immediately; a mouse-button state machine deduplicates right/middle button events that used to fire twice (system-translated and raw); the mouse page of the right menu gained customizable shortcut keys for the pointer-capture toggle and the IME toggle with modifier-key combinations (defaults F8 and Shift+Enter), rejecting conflicting combinations; matched shortcuts now swallow both key-down and key-up (previously only key-up was swallowed, leaving the game stuck pressing), and the key-listening state is abandoned in all three cases — menu collapsed, menu view hidden, page paused
+3. **Game session foreground service**: A specialUse foreground service (its notification taps back into the game session) starts with the game activity and stops with it, so the process is no longer at cached priority while Minecraft runs and is less likely to be killed in the background for memory pressure
+4. **Forced resolution moved into the in-game menu**: Relocated from version settings to the debug section of the right menu, defaulting to 1920×1080, applied immediately with width/height editable live; the launch-parameter width now includes cursorOffset, matching the surface callback and the resize path; screen-to-game coordinate conversion is consolidated into FCLBridge with a new pushEventLookDelta unifying all four look-delta send sites and dividing by the stretch factor under forced resolution, fixing cursor offset and look-delta drift; the old version-setting and SharedPreferences entries were removed
+5. **Android 12+ system game mode**: The manifest declares android.game_mode_config and res/xml-v33 declares the refusal of system downscaling and frame-rate overrides (API 33 attributes), so performance/battery policies can be configured per app
+6. **File browser file management (#1875)**: Create folder/file, rename, delete (with confirmation), copy/cut/paste (session clipboard, duplicate names get a numeric suffix); sort order (name/size/mtime) and a show-hidden-files toggle persisted via SharedPreferences; long-press menu with details/rename/delete/copy/cut/share; browse and multi-select modes support select-all and batch copy/cut/delete; file operations run on IO threads with directory sizes computed in the background, and failures are reported and logged; single-selection mode hides batch entries (batch results would violate the single-selection contract)
+7. **Vulkan check disable switch (#1911)**: A new toggle in the Render group of version settings, persisted per version, skips the Vulkan compatibility check and its prompts when launching 26.2+ versions
+8. **glfwGetWindowPos completed (#1915)**: Added the IntBuffer overload aligned with the official signature, and the array version now returns real window coordinates instead of always 0
+
+#### ⚡ Improvements
+
+1. **Xms decoupled from Xmx**: Xms is now min(512MB, Xmx) so the heap grows on demand — Xms=Xmx made G1 commit all physical memory up front at peak size and never shrink it, wasting memory and inviting system kills and thermal throttling
+2. **Gyroscope rotation caching**: Screen rotation is refreshed through a DisplayListener instead of querying the display service on every sensor event; the time coefficient was renamed TIME_SCALE with calibration notes added
+
+#### 🐛 Bug Fixes
+
+1. **Quick input and the "send text" button not working on 26.3 (#1909)**: The SDL render path does not register GLFW character callbacks, so text is now committed through the SDL text-input channel via a new GameTextSender entry shared by both paths; after the chat bar opens it polls until the native text-input channel is active and drops the text with a log if it times out
+2. **View jump when holding to look while opening/closing in-game screens**: Switching between capture and menu modes mid-hold changes the meaning of the anchor, so the whole displacement was sent at once; TouchPad now snapshots the cursor mode and re-anchors from the current cursor on a mode change during MOVE, discarding that frame
+3. **60fps lock on some devices**: The window now hard-requests the highest refresh-rate mode at the same resolution (comparing only same-resolution modes, so a lower-resolution high-refresh mode is never picked) and the surface vote target is derived from supportedModes instead of a hard-coded 120, with CHANGE_FRAME_RATE_ALWAYS so non-seamless devices benefit too; a DisplayListener re-requests the mode when the system drops it midway (adaptive refresh/battery saver) with a 1s cooldown, and a "request max refresh rate" toggle (default on) was added to the debug section of the right menu — turning it off clears both requests and returns to system-adaptive refresh
+4. **Paired key/char resend affecting non-Cleanroom instances**: The paired resend is required by Cleanroom's lwjglx compatibility layer but used to apply to every instance; it is now Cleanroom-only, with the flag set on FCLBridge by the launch parameters (the launch thread has no Looper, so CallbackBridge must not be touched there)
+5. **Remote mod info lost after mod-list search/filter refresh (#1912)**: Each refresh of a running search cancels in-flight queries, and item views may be reused in place (no rebind, no attach), so the final refresh issued no queries; the list now posts a scan of visible items after layout to re-issue pending queries, and a reused view cancels the previous item's in-flight query so remote info no longer lands on the wrong item
+6. **Mod favorites silently failing to open details on cold start (#1910)**: A newly created DownloadPage defaults its pageId to the MOD mode while switchType had never run, leaving repository and callbacks null; the old guard only compared pageId and skipped initialization, and the resulting NPE was swallowed by the Task framework; replaced with a typeInitialized flag and an isTypeReady check
+7. **Account/version page title animation firing repeatedly**: The animation was triggered both from click callbacks and the pageSelectedListener, so rapid taps played it several times; it is now triggered only from the pageSelectedListener
+8. **Gamepad input-mode dialog undismissable on short screens (#1894)**: The content is now wrapped in a ScrollView with the confirm button pinned below it, so short landscape screens no longer clip it; the gamepad can operate the dialog (up/down to select a mode, A/Start to confirm)
+9. **Modpack export page**: The author now uses the account's game name and the file name is pre-filled; the description box changed from a fixed 200dp to wrap_content (minHeight 100dp); single-line inputs use a done action, and focus restore now distinguishes accidental clearing from normal focus loss, fixing the keyboard popping up after returning from the file picker
+
 ## [1.3.3.7] - 2026-10-05
 
 ### 中文
