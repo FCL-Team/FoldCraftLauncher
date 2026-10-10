@@ -906,9 +906,10 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 return;
             lastCursorMode = mode;
             this.cursorModeProperty.set(mode);
-            // 模式切换点事件来源会丢失（捕获抢走触摸等），先复位鼠标键防卡键；
+            // 模式切换只重对齐来源，不补发鼠标键释放：按住中的键等来源自身抬起时再释放，
+            // 抢先释放会打断「按住某键」的交互（如机械动力数值设置界面松开右键才确认）；
             // 手动捕获接管同步回归自动管理
-            getInput().resetExternalMouseState();
+            getInput().onCursorModeChanged();
             getInput().resetManualCaptureControl();
             if (mode == FCLBridge.CursorEnabled) {
                 getCursor().setVisibility(View.VISIBLE);

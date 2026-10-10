@@ -96,6 +96,21 @@ public class TouchPad extends View {
         return gameMenu.getMenuSetting().getGestureMode();
     }
 
+    /**
+     * 释放长按手势合成的鼠标键（按下超过阈值后由 runnable 按下的左/右键）。
+     * 按住期间切换光标模式会让 UP/CANCEL 落到另一模式的分支，故在分支之前统一释放
+     */
+    private void releaseHoldKeys() {
+        if (cancelMouseLeft) {
+            gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, false);
+            cancelMouseLeft = false;
+        }
+        if (cancelMouseRight) {
+            gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_RIGHT, false);
+            cancelMouseRight = false;
+        }
+    }
+
     private Path path;
     private final Paint linePaint = new Paint();
     private int prefX;
@@ -165,6 +180,13 @@ public class TouchPad extends View {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN
                 || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
             cursorMode = gameMenu.getCursorMode();
+        }
+        // 松手统一释放长按手势合成的鼠标键并撤回未触发的长按：抬起事件可能落到另一光标模式的分支，
+        // 只在捕获分支释放会把按键留在按下状态
+        if (event.getActionMasked() == MotionEvent.ACTION_UP
+                || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+            releaseHoldKeys();
+            handler.removeCallbacks(runnable);
         }
         if (gameMenu.getCursorMode() == FCLBridge.CursorEnabled) {
             if (event.isFromSource(InputDevice.SOURCE_MOUSE)) {
@@ -304,15 +326,6 @@ public class TouchPad extends View {
                     }
                     shouldBeDown = false;
                     currentPointerID = -1;
-                    handler.removeCallbacks(runnable);
-                    if (cancelMouseLeft) {
-                        gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_LEFT, false);
-                    }
-                    if (cancelMouseRight) {
-                        gameMenu.getInput().sendKeyEvent(FCLInput.MOUSE_RIGHT, false);
-                    }
-                    cancelMouseLeft = false;
-                    cancelMouseRight = false;
                     if (System.currentTimeMillis() - downTime <= 100
                             && Math.abs(event.getX() - downX) <= 10
                             && Math.abs(event.getY() - downY) <= 10) {
