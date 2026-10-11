@@ -956,6 +956,7 @@
     <string name="favorite_batch_parsing">Resolving downloadable mods...</string>
     <string name="favorite_batch_download">Download</string>
     <string name="favorite_batch_queued">Queued %d file(s) for download</string>
+    <string name="favorite_operation_in_progress">An operation is still in progress, please wait.</string>
     <string name="favorite_group">Groups</string>
     <string name="favorite_group_select">Select groups</string>
     <string name="favorite_group_edit">Edit groups</string>

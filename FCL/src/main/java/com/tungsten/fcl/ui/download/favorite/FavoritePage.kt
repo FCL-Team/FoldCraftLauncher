@@ -6,19 +6,14 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
-import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
-import com.tungsten.fcllibrary.component.theme.ThemeEngine
-import com.tungsten.fcllibrary.component.view.FCLTextView
 import com.mio.data.FavoriteManager
 import com.mio.data.favorite.DownloadFavoriteEntity
 import com.tungsten.fcl.R
@@ -29,15 +24,22 @@ import com.tungsten.fcl.ui.download.DownloadUI
 import com.tungsten.fcl.ui.download.common.DownloadPage
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.mod.ModLoaderType
-import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fclcore.mod.curse.CurseForgeRemoteModRepository
 import com.tungsten.fclcore.mod.modrinth.ModrinthRemoteModRepository
 import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
+import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLPage
-import com.tungsten.fcllibrary.component.view.FCLButton
+import com.tungsten.fcllibrary.component.view.FCLTextView
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.stream.Collectors
 
 /**
@@ -55,7 +57,9 @@ class FavoritePage(
     // FCLPage 在超类构造期间回调 onCreate，属性初始化器要等构造完成才执行、会覆盖 onCreate 的赋值，
     // 因此字段一律 lateinit（无初始化器、赋值后保留），仅真正需要空默认的可变标志用普通 var
     private lateinit var binding: PageDownloadFavoriteBinding
-    private val downloadPage: DownloadPage
+
+    // init 块属于主构造器（可访问构造参数），执行于超类构造之后；val 无初始化器，赋值不会被覆盖
+    private val downloadPage: DownloadPage = page
     private lateinit var adapter: FavoriteAdapter
     private lateinit var allFavorites: List<DownloadFavoriteEntity>
     private var filterType: RemoteModRepository.Type? = null
@@ -68,6 +72,9 @@ class FavoritePage(
     /** 详情拉取/批量下载进行中，防止重复点击 */
     private var loading = false
 
+    /** 一键下载的解析协程；用户关闭对话框时取消，避免残留解析阻塞再次点击 */
+    private var batchJob: Job? = null
+
     /** 左侧筛选行：行视图 + 标签 + 数量徽标；type/groupId 为对应筛选维度（null 为全部） */
     private data class FilterOptionRow(
         val root: ConstraintLayout,
@@ -76,11 +83,6 @@ class FavoritePage(
         val type: RemoteModRepository.Type? = null,
         val groupId: String? = null,
     )
-
-    init {
-        // init 块属于主构造器（可访问构造参数），执行于超类构造之后；val 无初始化器，赋值不会被覆盖
-        downloadPage = page
-    }
 
     override fun onCreate() {
         super.onCreate()
@@ -199,8 +201,9 @@ class FavoritePage(
     /** 分组筛选区：全部 + 各分组，随分组变化整体重建（管理入口在区头图标上） */
     private fun rebuildGroupRows(binding: PageDownloadFavoriteBinding) {
         binding.groupOptions.removeAllViews()
-        val options: List<Pair<String, String?>> = listOf(context.getString(R.string.favorite_filter_all) to null) +
-            FavoriteManager.groups.value.map { it.name to it.groupId }
+        val options: List<Pair<String, String?>> =
+            listOf(context.getString(R.string.favorite_filter_all) to null) +
+                    FavoriteManager.groups.value.map { it.name to it.groupId }
         val rows = options.map { (label, groupId) ->
             buildFilterRow(label, groupId = groupId) {
                 if (filterGroup != groupId) {
@@ -273,15 +276,30 @@ class FavoritePage(
         // 首帧（onCreate 内同步 collect）之前 allFavorites 尚未就绪，数量随后 applyFilter 刷新
         val countsReady = ::allFavorites.isInitialized
         filterOptionRows.forEach { row ->
-            styleRow(row, row.type == filterType, if (countsReady) countForType(row.type) else 0, countsReady)
+            styleRow(
+                row,
+                row.type == filterType,
+                if (countsReady) countForType(row.type) else 0,
+                countsReady
+            )
         }
         groupOptionRows.forEach { row ->
-            styleRow(row, row.groupId == filterGroup, if (countsReady) countForGroup(row.groupId) else 0, countsReady)
+            styleRow(
+                row,
+                row.groupId == filterGroup,
+                if (countsReady) countForGroup(row.groupId) else 0,
+                countsReady
+            )
         }
     }
 
     /** 选中项使用主要主题色实底（getColor 按当前亮暗模式动态取色）+ 自动对比色文字 */
-    private fun styleRow(row: FilterOptionRow, selected: Boolean, count: Int, countsReady: Boolean) {
+    private fun styleRow(
+        row: FilterOptionRow,
+        selected: Boolean,
+        count: Int,
+        countsReady: Boolean
+    ) {
         val theme = ThemeEngine.getInstance().getTheme()
         val density = context.resources.displayMetrics.density
         val contentColor = theme.autoTint
@@ -297,7 +315,12 @@ class FavoritePage(
         )
         row.label.setTextColor(contentColor)
         row.label.typeface = if (selected) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
-        row.count.setTextColor(ColorUtils.setAlphaComponent(contentColor, if (selected) 230 else 170))
+        row.count.setTextColor(
+            ColorUtils.setAlphaComponent(
+                contentColor,
+                if (selected) 230 else 170
+            )
+        )
         row.count.text = count.toString()
         row.count.visibility = if (countsReady && count > 0) View.VISIBLE else View.GONE
     }
@@ -329,9 +352,6 @@ class FavoritePage(
         if (!::allFavorites.isInitialized) emptyList()
         else allFavorites.filter { matchesType(it) && matchesGroup(it) }
 
-    private fun contrastOf(color: Int): Int =
-        if (ColorUtils.calculateLuminance(color) >= 0.5f) Color.BLACK else Color.WHITE
-
     private fun applyPanelBackground() {
         // 与条目卡片（FCLConstraintLayout auto_tint）完全相同的着色路径：白底 + 主题浅色 tint
         binding.filterPanel.setBackgroundResource(R.drawable.bg_container_white)
@@ -351,7 +371,7 @@ class FavoritePage(
         if (loading) return
         val type = try {
             RemoteModRepository.Type.valueOf(favorite.type)
-        } catch (e: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             RemoteModRepository.Type.MOD
         }
         // 模式对齐：下载回调按模式绑定安装目录，推荐版本/分类本地化也按模式生效。
@@ -370,7 +390,11 @@ class FavoritePage(
                 if (exception == null && mod != null) {
                     downloadPage.openModDetail(mod)
                 } else {
-                    Toast.makeText(context, context.getString(R.string.favorite_open_failed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.favorite_open_failed),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }.start()
     }
@@ -379,93 +403,137 @@ class FavoritePage(
      * 一键下载当前筛选（类别 × 分组）下的收藏模组：先弹对话框后台解析（按当前游戏版本与加载器匹配各模组最新版本），
      * 解析完成转为勾选列表由用户选择，确认后经 downloadWithDependencies 同款批量流程
      * 下载（解析 REQUIRED 前置、已安装去重、入队下载面板）；无匹配的模组在对话框底部汇总提示。
+     * 解析期间关闭对话框即取消解析并立即复位 loading，可重新点击发起。
      */
     private fun startBatchDownload() {
-        if (loading) return
+        if (loading) {
+            // 取消对话框后当前网络请求仍在收尾，loading 复位前点击无效果，提示等待
+            Toast.makeText(
+                context,
+                context.getString(R.string.favorite_operation_in_progress),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
         val profile = Profiles.getSelectedProfile()
         val selected = profile.selectedVersion
         if (selected == null) {
-            Toast.makeText(context, context.getString(R.string.favorite_batch_no_version), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.favorite_batch_no_version),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
         val mods = currentFiltered().filter { it.type == RemoteModRepository.Type.MOD.name }
         if (mods.isEmpty()) {
-            Toast.makeText(context, context.getString(R.string.favorite_batch_no_mods), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                context.getString(R.string.favorite_batch_no_mods),
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
         loading = true
         val dialog = FavoriteBatchDialog(context)
+        dialog.setOnDismissListener { batchJob?.cancel() }
         dialog.showParsing()
         dialog.show()
-        Task.supplyAsync {
-            val analyzer = LibraryAnalyzer.analyze(
-                profile.repository.getResolvedPreservingPatchesVersion(selected),
-                selected
-            )
-            val mcv = analyzer.getVersion(LibraryAnalyzer.LibraryType.MINECRAFT).orElse("")
-            val loaders: Set<ModLoaderType> = analyzer.modLoaders
-            val entries = mutableListOf<FavoriteBatchDialog.Entry>()
-            val skipped = mutableListOf<String>()
-            for (favorite in mods) {
-                try {
-                    val repo = repositoryFor(favorite)
-                    val mod = repo.getModById(favorite.modId)
-                    val versions = mod.data.loadVersions(repo).collect(Collectors.toList())
-                    // 匹配当前游戏版本与加载器；当前版本无加载器（原版）时仅接受无加载器要求的模组，
-                    // 同一版本取发布日期最新
-                    val match = versions
-                        .filter { v -> v.gameVersions.contains(mcv) }
-                        .filter { v -> loaders.isEmpty() || v.loaders.any { it in loaders } }
-                        .maxByOrNull { it.datePublished?.toEpochMilli() ?: 0L }
-                    if (match != null) {
-                        entries.add(FavoriteBatchDialog.Entry(favorite.title, match))
-                    } else {
-                        skipped.add(favorite.title)
+        batchJob = MainActivity.getInstance().lifecycleScope.launch {
+            try {
+                val (entries, skipped) = withContext(Dispatchers.IO) {
+                    val analyzer = LibraryAnalyzer.analyze(
+                        profile.repository.getResolvedPreservingPatchesVersion(selected),
+                        selected
+                    )
+                    val mcv = analyzer.getVersion(LibraryAnalyzer.LibraryType.MINECRAFT).orElse("")
+                    resolveBatchEntries(mods, mcv, analyzer.modLoaders)
+                }
+                if (entries.isEmpty()) {
+                    dialog.dismiss()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.favorite_batch_none_matched),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@launch
+                }
+                dialog.showResult(entries, skipped) { selectedVersions ->
+                    downloadPage.downloadModsBatch(
+                        context,
+                        profile,
+                        selected,
+                        selectedVersions,
+                        "mods"
+                    ) { queued, installedSkipped, failed ->
+                        when {
+                            queued > 0 -> Toast.makeText(
+                                context,
+                                context.getString(R.string.favorite_batch_queued, queued),
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            installedSkipped > 0 && failed == 0 -> Toast.makeText(
+                                context,
+                                context.getString(R.string.mods_already_installed),
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            else -> Toast.makeText(
+                                context,
+                                context.getString(R.string.favorite_batch_failed),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
                     }
-                } catch (e: Exception) {
+                }
+            } catch (_: CancellationException) {
+                // 用户关闭对话框取消解析，静默结束
+            } catch (_: Exception) {
+                if (dialog.isShowing) dialog.dismiss()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.favorite_batch_failed),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } finally {
+                loading = false
+            }
+        }
+    }
+
+    /**
+     * 逐个拉取收藏模组的版本列表并匹配当前游戏版本与加载器；当前版本无加载器（原版）时
+     * 仅接受无加载器要求的模组，同一版本取发布日期最新。每个模组解析前检查协程取消状态，
+     * 已取消则不再发起后续网络请求。
+     */
+    private suspend fun resolveBatchEntries(
+        mods: List<DownloadFavoriteEntity>,
+        mcv: String,
+        loaders: Set<ModLoaderType>,
+    ): Pair<List<FavoriteBatchDialog.Entry>, List<String>> {
+        val entries = mutableListOf<FavoriteBatchDialog.Entry>()
+        val skipped = mutableListOf<String>()
+        for (favorite in mods) {
+            currentCoroutineContext().ensureActive()
+            try {
+                val repo = repositoryFor(favorite)
+                val mod = repo.getModById(favorite.modId)
+                val versions = mod.data.loadVersions(repo).collect(Collectors.toList())
+                val match = versions
+                    .filter { v -> v.gameVersions.contains(mcv) }
+                    .filter { v -> loaders.isEmpty() || v.loaders.any { it in loaders } }
+                    .maxByOrNull { it.datePublished?.toEpochMilli() ?: 0L }
+                if (match != null) {
+                    entries.add(FavoriteBatchDialog.Entry(favorite.title, match))
+                } else {
                     skipped.add(favorite.title)
                 }
+            } catch (_: Exception) {
+                skipped.add(favorite.title)
             }
-            Pair(entries, skipped)
-        }.whenComplete(Schedulers.androidUIThread()) { result, exception ->
-            loading = false
-            if (exception != null || result == null) {
-                if (dialog.isShowing) dialog.dismiss()
-                Toast.makeText(context, context.getString(R.string.favorite_batch_failed), Toast.LENGTH_SHORT).show()
-                return@whenComplete
-            }
-            val (entries, skipped) = result
-            // 解析期间用户已关闭对话框：不再弹出结果
-            if (!dialog.isShowing) return@whenComplete
-            if (entries.isEmpty()) {
-                dialog.dismiss()
-                Toast.makeText(context, context.getString(R.string.favorite_batch_none_matched), Toast.LENGTH_SHORT).show()
-                return@whenComplete
-            }
-            dialog.showResult(entries, skipped) { selectedVersions ->
-                downloadPage.downloadModsBatch(context, profile, selected, selectedVersions, "mods") { queued, installedSkipped, failed ->
-                    when {
-                        queued > 0 -> Toast.makeText(
-                            context,
-                            context.getString(R.string.favorite_batch_queued, queued),
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        installedSkipped > 0 && failed == 0 -> Toast.makeText(
-                            context,
-                            context.getString(R.string.mods_already_installed),
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        else -> Toast.makeText(
-                            context,
-                            context.getString(R.string.favorite_batch_failed),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-        }.start()
+        }
+        return entries to skipped
     }
 
     /** 按平台取仓库：getModById 与资源类别无关，直接用静态实例 */

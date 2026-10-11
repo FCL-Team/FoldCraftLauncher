@@ -866,6 +866,7 @@
     <string name="favorite_batch_parsing">正在解析可下载的模组...</string>
     <string name="favorite_batch_download">下载</string>
     <string name="favorite_batch_queued">已加入下载队列 %d 个文件</string>
+    <string name="favorite_operation_in_progress">有操作尚未结束，请稍候</string>
     <string name="favorite_group">分组</string>
     <string name="favorite_group_select">选择分组</string>
     <string name="favorite_group_edit">修改分组</string>
