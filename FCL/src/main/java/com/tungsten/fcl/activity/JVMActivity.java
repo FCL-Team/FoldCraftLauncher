@@ -165,6 +165,20 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         textureView.setLayoutParams(params);
     }
 
+    /** 按当前模式计算游戏渲染窗口尺寸：强制分辨率取固定值,普通模式 = 视图尺寸 × windowScale(宽含 cursorOffset),工具页用默认值 */
+    private int[] resolveWindowSize(int viewWidth, int viewHeight) {
+        if (menuType != MenuType.GAME) {
+            return new int[]{FCLBridge.DEFAULT_WIDTH, FCLBridge.DEFAULT_HEIGHT};
+        }
+        if (FCLBridge.FORCE_RESOLUTION) {
+            return new int[]{FCLBridge.FORCE_RESOLUTION_WIDTH, FCLBridge.FORCE_RESOLUTION_HEIGHT};
+        }
+        double factor = fclBridge.getScaleFactor();
+        int width = (int) ((viewWidth + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * factor);
+        int height = (int) (viewHeight * factor);
+        return new int[]{width, height};
+    }
+
     /**
      * 应用“请求最高刷新率”策略（游戏菜单设置开关，默认开）：
      * 窗口级 preferredDisplayModeId 硬请求同分辨率下的最高刷新率档位，
@@ -255,18 +269,23 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             fclBridge.setSurfaceTexture(surfaceTexture);
             CallbackBridge.setupBridgeWindow(nativeSurface);
             SdlBridge.prepareSurface(this, nativeSurface, (ViewGroup) textureView.getParent(), this);
+            // surface 重建后新 SurfaceTexture 的 buffer 回落视图尺寸,须按当前模式恢复渲染尺寸并
+            // 重发窗口状态,否则渲染 buffer 与游戏窗口尺寸错位(黑边、点击与 UI 不对齐)
+            int[] size = resolveWindowSize(i, i1);
+            surfaceTexture.setDefaultBufferSize(size[0], size[1]);
+            CallbackBridge.windowWidth = size[0];
+            CallbackBridge.windowHeight = size[1];
+            SdlBridge.syncResolution(size[0], size[1]);
+            fclBridge.pushEventWindow(size[0], size[1]);
             menu.onGraphicOutput();
             return;
         }
         isRunning = true;
         Logging.LOG.log(Level.INFO, "surface ready, start jvm now!");
         fclBridge.setSurfaceDestroyed(false);
-        int width = menuType == MenuType.GAME ? (int) ((i + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
-        int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
-        if (FCLBridge.FORCE_RESOLUTION) {
-            width = FCLBridge.FORCE_RESOLUTION_WIDTH;
-            height = FCLBridge.FORCE_RESOLUTION_HEIGHT;
-        }
+        int[] size = resolveWindowSize(i, i1);
+        int width = size[0];
+        int height = size[1];
         if (menuType == MenuType.GAME) {
             menu.getInput().initExternalController(textureView);
             GameOption gameOption = new GameOption(Objects.requireNonNull(menu.getBridge()).getGameDir());
@@ -287,12 +306,9 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surfaceTexture, int i, int i1) {
-        int width = menuType == MenuType.GAME ? (int) ((i + ((GameMenu) menu).getMenuSetting().getCursorOffset()) * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_WIDTH;
-        int height = menuType == MenuType.GAME ? (int) (i1 * fclBridge.getScaleFactor()) : FCLBridge.DEFAULT_HEIGHT;
-        if (FCLBridge.FORCE_RESOLUTION) {
-            width = FCLBridge.FORCE_RESOLUTION_WIDTH;
-            height = FCLBridge.FORCE_RESOLUTION_HEIGHT;
-        }
+        int[] size = resolveWindowSize(i, i1);
+        int width = size[0];
+        int height = size[1];
         surfaceTexture.setDefaultBufferSize(width, height);
         CallbackBridge.windowWidth = width;
         CallbackBridge.windowHeight = height;
