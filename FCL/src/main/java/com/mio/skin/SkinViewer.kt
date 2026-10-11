@@ -44,6 +44,9 @@ class SkinViewer @JvmOverloads constructor(
     // 触摸状态（仅 UI 线程访问）
     private var previousX = 0f
     private var previousY = 0f
+
+    /** 多指手势刚结束（第二指抬起）后的首个 MOVE 仅作基准复位，不参与旋转，避免 dx 跳变导致模型猛转 */
+    private var skipNextRotate = false
     private var primaryPointerId = 0
     private var secondaryPointerId = 0
     private var pinchStartDistance = 0.0
@@ -114,11 +117,19 @@ class SkinViewer @JvmOverloads constructor(
                     }
                 }
                 if (event.action == MotionEvent.ACTION_MOVE) {
-                    renderer?.rotateStep((x - previousX) / density, (y - previousY) / density)
+                    if (skipNextRotate) {
+                        skipNextRotate = false
+                    } else {
+                        renderer?.rotateStep((x - previousX) / density, (y - previousY) / density)
+                    }
                 }
                 previousX = x
                 previousY = y
             } else if (event.pointerCount == 2) {
+                if (event.actionMasked == MotionEvent.ACTION_POINTER_UP) {
+                    // 第二指抬起后恢复单指旋转时，previous 基准已过期
+                    skipNextRotate = true
+                }
                 when (event.actionMasked) {
                     MotionEvent.ACTION_DOWN ->
                         primaryPointerId = event.getPointerId(event.actionIndex)

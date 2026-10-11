@@ -64,6 +64,12 @@ android {
             keyAlias = "FCL-Debug"
             keyPassword = "FCL-Debug"
         }
+        // minSdk 26 ≥ 24，v1 已无必要，统一启用 v2 + v3 签名方案
+        configureEach {
+            enableV1Signing = false
+            enableV2Signing = true
+            enableV3Signing = true
+        }
     }
 
     defaultConfig {
