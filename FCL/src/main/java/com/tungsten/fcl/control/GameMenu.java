@@ -1223,7 +1223,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 break;
             case REQUEST_MAX_REFRESH_RATE:
                 menuSetting.setRequestMaxRefreshRate(checked);
-                ((JVMActivity) getActivity()).applyMaxRefreshRatePolicy();
+                if (getActivity() instanceof JVMActivity jvmActivity) {
+                    jvmActivity.applyMaxRefreshRatePolicy();
+                }
                 break;
             case SHOW_LOG:
                 menuSetting.setShowLog(checked);
@@ -1273,12 +1275,16 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         }
     }
 
-    /** 两个快捷键的键码与修饰键完全一致时会同时触发，视为冲突 */
+    /**
+     * 两个快捷键的键码与修饰键完全一致时会同时触发，视为冲突
+     */
     private static boolean isHotkeyConflict(int key, int modifier, int otherKey, int otherModifier) {
         return key != 0 && key == otherKey && modifier == otherModifier;
     }
 
-    /** 拒绝冲突的快捷键配置并还原菜单显示 */
+    /**
+     * 拒绝冲突的快捷键配置并还原菜单显示
+     */
     private void rejectHotkeyConflict() {
         Toast.makeText(activity, R.string.key_bind_conflict, Toast.LENGTH_SHORT).show();
         if (rightMenuAdapter != null) {
@@ -1286,22 +1292,30 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         }
     }
 
-    /** 正在等待快捷键绑定按键时为对应菜单项，null 表示未监听 */
+    /**
+     * 正在等待快捷键绑定按键时为对应菜单项，null 表示未监听
+     */
     @Nullable
     private RightMenuTag keyBindListeningTag;
 
-    /** 快捷键设置行点击：进入按键监听，下一个按下的物理键即被绑定 */
+    /**
+     * 快捷键设置行点击：进入按键监听，下一个按下的物理键即被绑定
+     */
     private void startKeyBindListen(@NonNull RightMenuTag tag) {
         keyBindListeningTag = tag;
         Toast.makeText(activity, R.string.key_bind_listening, Toast.LENGTH_SHORT).show();
     }
 
-    /** 放弃按键监听（右菜单收起、菜单视图隐藏、页面暂停）：未完成的绑定不生效 */
+    /**
+     * 放弃按键监听（右菜单收起、菜单视图隐藏、页面暂停）：未完成的绑定不生效
+     */
     private void cancelKeyBindListen() {
         keyBindListeningTag = null;
     }
 
-    /** 抽屉是否为右菜单，快捷键设置行位于其中 */
+    /**
+     * 抽屉是否为右菜单，快捷键设置行位于其中
+     */
     private static boolean isRightMenuDrawer(@NonNull View drawerView) {
         ViewGroup.LayoutParams params = drawerView.getLayoutParams();
         return params instanceof DrawerLayout.LayoutParams
@@ -1495,7 +1509,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         }
     }
 
-    /** 强制分辨率实时应用：同步静态配置 → 重排 TextureView letterbox → 刷新渲染 buffer 与窗口事件 */
+    /**
+     * 强制分辨率实时应用：同步静态配置 → 重排 TextureView letterbox → 刷新渲染 buffer 与窗口事件
+     */
     private void applyForceResolution() {
         FCLBridge.initForceResolution(menuSetting);
         if (fclBridge == null || isSimulated()) {
@@ -1505,7 +1521,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         refreshWindowsSize(menuSetting.getWindowScale());
     }
 
-    /** 强制分辨率宽高编辑：输入 "宽x高"，确认后实时应用（仅经"设置"按钮进入） */
+    /**
+     * 强制分辨率宽高编辑：输入 "宽x高"，确认后实时应用（仅经"设置"按钮进入）
+     */
     private void editForceResolutionSize() {
         EditDialog dialog = new EditDialog(activity,
                 menuSetting.getForceResolutionWidth() + "x" + menuSetting.getForceResolutionHeight(),
