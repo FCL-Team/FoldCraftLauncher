@@ -55,9 +55,6 @@ class AboutPage(context: Context?, id: Int) : FCLPage(context, id, R.layout.page
         binding.settingList.adapter = AboutAdapter { openLinkAt(it) }
     }
 
-    override fun refresh(vararg param: Any?): Task<*>? {
-        return null
-    }
 
     private fun openLinkAt(linkIndex: Int) {
         val link = LINKS[linkIndex].link

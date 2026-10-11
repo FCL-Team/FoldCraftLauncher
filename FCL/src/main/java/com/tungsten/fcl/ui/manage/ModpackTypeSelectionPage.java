@@ -49,10 +49,6 @@ public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickLis
         modrinth.setOnClickListener(this);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
 
     @Override

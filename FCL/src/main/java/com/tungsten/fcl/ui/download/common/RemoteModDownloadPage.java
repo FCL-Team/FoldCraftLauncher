@@ -186,10 +186,6 @@ public class RemoteModDownloadPage extends FCLPage implements View.OnClickListen
         });
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void onClick(View view) {

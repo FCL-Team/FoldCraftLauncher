@@ -55,10 +55,6 @@ public abstract class ModpackPage extends FCLPage implements View.OnClickListene
         ThemeEngine.getInstance().registerEvent(infoLayout, () -> infoLayout.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
 
     protected abstract void onInstall();

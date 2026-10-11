@@ -65,7 +65,7 @@ class AccountListAdapter(
         )
         binding.radio.setOnClickListener {
             Accounts.setSelectedAccount(item.account)
-            instance.accountUI.refresh().start()
+            instance.accountUI.loadAccounts()
         }
         binding.refresh.setOnClickListener {
             binding.refresh.setVisibility(View.INVISIBLE)
@@ -103,7 +103,7 @@ class AccountListAdapter(
                         builder1.create().show()
                     }
                     item.refreshSkinBinding()
-                    instance.accountUI.refresh().start()
+                    instance.accountUI.loadAccounts()
                 }.start()
         }
         binding.skin.setOnClickListener {
@@ -144,7 +144,7 @@ class AccountListAdapter(
                             Accounts.replaceAccount(item.account.uuid, this)
                             Accounts.setSelectedAccount(this)
                         }
-                    instance.accountUI.refresh().start()
+                    instance.accountUI.loadAccounts()
                 }
                 dialog.binding.editText.setText(item.account.uuid.toString())
                 dialog.show()
@@ -161,7 +161,7 @@ class AccountListAdapter(
             )
             builder.setPositiveButton {
                 item.remove()
-                instance.accountUI.refresh().start()
+                instance.accountUI.loadAccounts()
             }
             builder.setNegativeButton(null)
             builder.create().show()

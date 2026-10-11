@@ -80,10 +80,6 @@ public class DatapackListPage extends FCLPage implements View.OnClickListener {
         refreshButton.setOnClickListener(this);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void onClick(View v) {

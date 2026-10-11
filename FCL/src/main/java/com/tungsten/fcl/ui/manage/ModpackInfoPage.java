@@ -197,10 +197,6 @@ public class ModpackInfoPage extends FCLPage implements View.OnClickListener {
         next.setOnClickListener(this);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     private void selectPath() {
         MainActivity.getInstance().fileLauncher.launchSingleSelection(null, null, true, files -> {

@@ -25,14 +25,21 @@ public class RemoteModVersionPage extends FCLPage {
 
     private final RemoteModVersionPage.DownloadCallback callback;
 
-    public RemoteModVersionPage(Context context, int id, List<RemoteMod.Version> list, @Nullable RemoteModVersionPage.DownloadCallback callback, DownloadPage downloadPage) {
+    /**
+     * @param pinnedPageId 本页内容所属的下载模式（上游详情页创建时固定）。
+     *                     不能用 {@code downloadPage.getPageId()} 现取：共享页模式可能在别处被切换，
+     *                     而本页回调（安装目录）固定，现取会让两者不一致——
+     *                     例如光影模式下现取到 MOD 而回调仍是光影，下载落错目录。
+     */
+    public RemoteModVersionPage(Context context, int id, List<RemoteMod.Version> list, @Nullable RemoteModVersionPage.DownloadCallback callback, DownloadPage downloadPage, int pinnedPageId) {
         super(context, id, R.layout.page_download_addon_version);
         this.callback = callback;
 
         // 原 onStart 逻辑：页面构造即初始化列表
         ListView listView = findViewById(R.id.list);
         ModVersionAdapter adapter = new ModVersionAdapter(getContext(), list, modVersion -> {
-            if (downloadPage.getPageId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
+            // 模组模式先出下载选项页（可加前置），其余模式直接下载；判定与回调同源
+            if (pinnedPageId == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
                 RemoteModDownloadPage page = new RemoteModDownloadPage(getContext(), FCLPage.PAGE_ID_TEMP, modVersion, callback, this, downloadPage);
                 UIManager.getInstance().getDownloadUI().showTempPage(page);
             } else {
@@ -63,10 +70,6 @@ public class RemoteModVersionPage extends FCLPage {
         });
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     public interface DownloadCallback {
         void download(RemoteMod.Version file);

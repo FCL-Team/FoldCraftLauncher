@@ -9,7 +9,6 @@ import com.tungsten.fclcore.event.RefreshedVersionsEvent
 import com.tungsten.fclcore.fakefx.collections.FXCollections
 import java.io.File
 import java.util.TreeMap
-import java.util.function.Consumer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,17 +29,24 @@ object Profiles {
     private val _selectedProfile = MutableStateFlow<Profile?>(null)
     /** 当前选中的 Profile（Repository 单例状态，Java 侧访问 getSelectedProfileFlow()） */
     @get:JvmName("getSelectedProfileFlow")
+    @JvmStatic
     val selectedProfile: StateFlow<Profile?> = _selectedProfile.asStateFlow()
     /** 选中 Profile 变化的监听者（setter 同步通知，调用线程即回调线程） */
     private val selectedProfileListeners = mutableListOf<Runnable>()
     private val _selectedVersion = MutableStateFlow<String?>(null)
     /** 当前选中 Profile 的选中版本（Repository 单例状态，Java 侧访问 getSelectedVersionFlow()） */
     @get:JvmName("getSelectedVersionFlow")
+    @JvmStatic
     val selectedVersion: StateFlow<String?> = _selectedVersion.asStateFlow()
     private var selectedVersionProfile: Profile? = null
     private var selectedVersionListener: Runnable? = null
-    private val versionsListeners: MutableList<Consumer<Profile>> =
-        ArrayList(4)
+    private val _versionsRefreshed = MutableStateFlow(0)
+    /**
+     * 选中 Profile 的版本列表刷新信号（tick）：RefreshedVersionsEvent 的响应式出口，
+     * 页面/ViewModel collect 此流即可在版本数据变化时自动重载，无需注册监听器
+     */
+    @get:JvmName("getVersionsRefreshedFlow")
+    val versionsRefreshed: StateFlow<Int> = _versionsRefreshed.asStateFlow()
 
     /** 添加 Profile（触发配置保存、默认补全与选中项校验） */
     @JvmStatic
@@ -127,7 +133,7 @@ object Profiles {
                     val profile = _selectedProfile.value ?: return@registerWeak
                     if (profile.repository === event!!.getSource()) {
                         bindSelectedVersion(profile)
-                        for (listener in versionsListeners) listener.accept(profile)
+                        _versionsRefreshed.value += 1
                     }
                 }
         )
@@ -217,16 +223,6 @@ object Profiles {
     @JvmStatic
     fun getSelectedVersion(): String? {
         return _selectedVersion.value
-    }
-
-    @JvmStatic
-    fun registerVersionsListener(listener: Consumer<Profile>) {
-        versionsListeners.add(listener)
-    }
-
-    @JvmStatic
-    fun unregisterVersionsListener(listener: Consumer<Profile>) {
-        versionsListeners.remove(listener)
     }
 
 }

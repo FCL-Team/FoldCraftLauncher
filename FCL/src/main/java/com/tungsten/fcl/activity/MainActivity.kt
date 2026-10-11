@@ -30,6 +30,7 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.core.view.postDelayed
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.mio.device.VulkanCapabilities
 import com.mio.device.VulkanCheckManager
@@ -65,6 +66,7 @@ import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.ui.download.modpack.LocalModpackPage
 import com.tungsten.fcl.ui.main.MainUI
+import com.tungsten.fcl.ui.version.VersionListViewModel
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
 import com.tungsten.fclauncher.utils.FCLPath
@@ -137,9 +139,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     /** 右列内容当前是否为下载面板（true 时波浪/账号等让位给任务列表） */
     private var downloadPanelOpen = false
-
-    /** 版本列表刷新监听（预热快速切换弹窗缓存），onDestroy 注销 */
-    private lateinit var preloadListener: Consumer<Profile>
 
     /** 是否有下载任务（收起面板时用于决定波浪指示器显隐） */
     private var hasTasks = false
@@ -527,9 +526,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         ThemeEngine.getInstance().removeRefreshListener(themeRefreshListener)
-        if (::preloadListener.isInitialized) {
-            Profiles.unregisterVersionsListener(preloadListener)
-        }
         if (shouldPlayVideo()) {
             mediaPlayer = null
             binding.videoView.stopPlayback()
@@ -1005,11 +1001,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 loadVersion(s)
             }
         }
-        // 启动即预热版本快照（内部等待版本仓库加载完成），主界面快速切换弹窗与版本列表页共享
-        VersionSwitchPopup.preload(this)
-        // 版本列表刷新完成（安装/删除版本）时重新预热
-        preloadListener = Consumer { VersionSwitchPopup.preload(this@MainActivity) }
-        Profiles.registerVersionsListener(preloadListener)
+        // 预创建版本列表 VM（selectedProfile/tick 驱动，自动加载并随版本刷新重算），
+        // 主界面快速切换弹窗与版本列表页共享同一份状态
+        ViewModelProvider(this).get(VersionListViewModel::class.java)
     }
 
     private fun accountSubtitle(context: Context, account: Account): ObservableValue<String> {

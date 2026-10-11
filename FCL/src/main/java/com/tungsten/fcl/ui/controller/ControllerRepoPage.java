@@ -360,10 +360,6 @@ public class ControllerRepoPage extends FCLPage implements View.OnClickListener,
     }
 
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void onClick(View view) {

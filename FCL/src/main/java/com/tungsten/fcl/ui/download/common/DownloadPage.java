@@ -28,6 +28,7 @@ import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.version.Versions;
 import com.mio.download.DownloadManager;
+import com.mio.data.ModsChanged;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -282,8 +283,12 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
             // 本地化模式：分类走统一静态表（CurseForge/Modrinth id 成对），无需联网加载
             setupUnifiedCategories();
         }
-        if (searchState.result != null) {
+        // 恢复搜索状态：失败恢复失败态、有结果直接恢复、在途等回调、否则重搜
+        if (searchState.failed || searchState.result != null) {
             restoreResult();
+        } else if (searchState.loading) {
+            // 搜索仍在进行（切走时未被取消）：显示进度，回调落地后自动渲染
+            setLoading(true);
         } else {
             search(searchState.userGameVersion, searchState.category, searchState.pageOffset, searchState.searchFilter, searchState.sortType);
         }
@@ -493,14 +498,18 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         if (executor != null && !executor.isCancelled()) {
             executor.cancel();
         }
-        // 保存搜索条件，模式切换后据此恢复
+        // 保存搜索条件与状态机相位，模式切换后据此恢复
         searchState.userGameVersion = userGameVersion;
         searchState.category = category;
         searchState.pageOffset = pageOffset;
         searchState.searchFilter = searchFilter;
         searchState.sortType = sort;
         searchState.source = downloadSource.get();
+        searchState.loading = true;
+        searchState.failed = false;
         int searchPageId = pageId;
+        // 回调落地前可能已 switchType 换模式（searchState 字段指向别的模式），过期路径的相位回写必须用发起时捕获的状态
+        DownloadSearchViewModel.State startState = searchState;
         executor = Task.supplyAsync(() -> {
                     SearchOutcome outcome;
                     if (isAggregate()) {
@@ -523,8 +532,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                     return outcome.withMods(list);
                 })
                 .whenComplete(Schedulers.androidUIThread(), (outcome, exception) -> {
-                    // 模式已切换时跳过过期回调，避免旧模式结果覆盖当前页面
+                    // 模式已切换时跳过过期回调，避免旧模式结果覆盖当前页面；
+                    // 相位复位到发起模式，否则该模式的 loading 永久滞留（切回时无法据此等待/重搜）
                     if (searchPageId != pageId) {
+                        startState.loading = false;
                         return;
                     }
                     if (exception instanceof CancellationException) {
@@ -532,8 +543,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                         return;
                     }
                     setLoading(false);
+                    searchState.loading = false;
                     if (exception == null) {
                         // 保存搜索结果与 adapter，切回该模式时直接恢复显示
+                        searchState.failed = false;
                         searchState.result = outcome.mods();
                         searchState.pageCount = pageCount.get();
                         adapter = createAdapter(outcome.mods());
@@ -545,6 +558,7 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
                         }
                     } else {
                         setFailed();
+                        searchState.failed = true;
                         pageCount.set(-1);
                         searchState.result = null;
                         searchState.pageCount = -1;
@@ -752,6 +766,12 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
      * 复用该模式缓存的 adapter 时不重建列表，避免 item 滑入动画重播
      */
     private void restoreResult() {
+        if (searchState.failed) {
+            // 恢复失败态：显示重试入口而不自动重搜（重试沿用上次搜索条件）
+            setFailed();
+            retrySearch = () -> search(searchState.userGameVersion, searchState.category, searchState.pageOffset, searchState.searchFilter, searchState.sortType);
+            return;
+        }
         setLoading(false);
         retry.setVisibility(View.GONE);
         pageOffset.set(searchState.pageOffset);
@@ -1008,18 +1028,21 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
     }
 
     /**
-     * 模组文件落地后同步进 ModManager 并广播事件，模组管理页可增量刷新；
+     * 模组文件落地后：同步进 ModManager 缓存并登记目录快照（避免下次 getMods 因快照失配
+     * 触发全量重扫），同时经 ModsChanged tick 流驱动模组管理页自动重载；
      * 下载目录不是该版本的 mods 目录（如资源包目录）时跳过
      */
     private void notifyModsChanged(@Nullable ModManager modManager, Path modsDirectory, Path dest) {
         if (modManager == null || !modsDirectory.equals(modManager.getModsDirectory())) return;
         Schedulers.io().execute(() -> {
             try {
-                modManager.onModFileAdded(dest);
+                modManager.registerModFile(dest);
             } catch (IOException e) {
                 Logging.LOG.log(Level.WARNING, "Failed to sync downloaded mod file " + dest, e);
             }
         });
+        // 逐文件通知（一键含前置/收藏批量共用 submitModDownload 入口），300ms debounce 收敛
+        ModsChanged.notifyChanged();
     }
 
     /** 批量下载计划：去重后待入队的文件、因已安装跳过的模组数、解析失败的模组名 */
@@ -1094,10 +1117,6 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         }
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void onClick(View v) {

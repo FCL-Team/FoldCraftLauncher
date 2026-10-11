@@ -81,8 +81,4 @@ public class SettingUI extends FCLMultiPageUI {
         }
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 }

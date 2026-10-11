@@ -91,9 +91,6 @@ class WorldListPage(context: Context?, id: Int) : FCLPage(context, id, R.layout.
         binding.recyclerView.setAdapter(adapter)
     }
 
-    override fun refresh(vararg param: Any?): Task<*>? {
-        return null
-    }
 
     override fun loadVersion(profile: Profile, version: String?) {
         this.profile = profile

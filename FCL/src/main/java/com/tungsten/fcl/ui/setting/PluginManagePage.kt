@@ -128,7 +128,4 @@ class PluginManagePage(context: Context?, id: Int) :
         }
     }
 
-    override fun refresh(vararg param: Any?): Task<*>? {
-        return null
-    }
 }
