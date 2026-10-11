@@ -9,12 +9,14 @@ import android.widget.Toast;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
+import com.tungsten.fcl.control.SelectTargetGroupDialog;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
@@ -142,9 +144,9 @@ private long loadDialogShowTime = 0;
             @Override
             public void onCopy() {
                 if (selectedView instanceof ControlButton) {
-                    addView(((ControlButton) selectedView).getData().cloneView());
+                    addView(((ControlButton) selectedView).getData().cloneView(), findOwnerGroup(((ControlButton) selectedView).getData()));
                 } else if (selectedView instanceof ControlDirection) {
-                    addView(((ControlDirection) selectedView).getData().cloneView());
+                    addView(((ControlDirection) selectedView).getData().cloneView(), findOwnerGroup(((ControlDirection) selectedView).getData()));
                 }
             }
 
@@ -155,6 +157,11 @@ private long loadDialogShowTime = 0;
                 } else if (selectedView instanceof ControlDirection) {
                     removeView(((ControlDirection) selectedView).getData());
                 }
+            }
+
+            @Override
+            public void onCrossGroup() {
+                crossGroup();
             }
         });
         gameMenu.getBaseLayout().addView(editBar);
@@ -180,7 +187,7 @@ private long loadDialogShowTime = 0;
 
                 @Override
                 public void onClone(CustomControl view) {
-                    addView(view);
+                    addView(view, findOwnerGroup(button.getData()));
                 }
 
                 @Override
@@ -206,7 +213,7 @@ private long loadDialogShowTime = 0;
 
                 @Override
                 public void onClone(CustomControl view) {
-                    addView(view);
+                    addView(view, findOwnerGroup(direction.getData()));
                 }
 
                 @Override
@@ -216,6 +223,53 @@ private long loadDialogShowTime = 0;
             }, true);
             dialog.show();
         }
+    }
+
+    /** 选中控件的数据（按钮或方向键），无选中时返回 null */
+    private CustomControl selectedControl() {
+        if (selectedView instanceof ControlButton) {
+            return ((ControlButton) selectedView).getData();
+        }
+        if (selectedView instanceof ControlDirection) {
+            return ((ControlDirection) selectedView).getData();
+        }
+        return null;
+    }
+
+    /** 跨组操作入口：先选复制/移动，再选目标控件组 */
+    private void crossGroup() {
+        CustomControl control = selectedControl();
+        if (control == null) {
+            return;
+        }
+        ControlViewGroup owner = findOwnerGroup(control);
+        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(gameMenu.getActivity());
+        builder.setCancelable(true);
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+        builder.setMessage(gameMenu.getActivity().getString(R.string.edit_bar_cross_group_title));
+        builder.setPositiveButton(gameMenu.getActivity().getString(R.string.dialog_copy), () -> pickTargetAndApply(control, owner, true));
+        builder.setNegativeButton(gameMenu.getActivity().getString(R.string.dialog_move), () -> pickTargetAndApply(control, owner, false));
+        builder.create().show();
+    }
+
+    private void pickTargetAndApply(CustomControl control, ControlViewGroup owner, boolean copy) {
+        ArrayList<ControlViewGroup> candidates = new ArrayList<>();
+        for (ControlViewGroup group : gameMenu.getController().viewGroups()) {
+            if (group != owner) {
+                candidates.add(group);
+            }
+        }
+        if (candidates.isEmpty()) {
+            Toast.makeText(gameMenu.getActivity(), R.string.edit_view_no_group, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        new SelectTargetGroupDialog(gameMenu.getActivity(), candidates, target -> {
+            if (copy) {
+                copyControlToGroup(control, target);
+            } else {
+                moveControlToGroup(control, target);
+            }
+        }).show();
     }
 
     public void setup() {
@@ -242,46 +296,91 @@ private long loadDialogShowTime = 0;
     }
 
     public void addView(CustomControl control) {
-        if (gameMenu.isEditMode()) {
-            if (gameMenu.getViewGroup() != null) {
-                if (!gameMenu.getViewGroup().isDataLoaded()) {
-                    // 布局数据加载中：此时写入会被加载完成后的完整数据覆盖
-                    Toast.makeText(gameMenu.getActivity(), gameMenu.getActivity().getString(R.string.message_data_is_loading), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (control instanceof ControlButtonData) {
-                    gameMenu.getViewGroup().getViewData().addButton((ControlButtonData) control);
-                } else {
-                    gameMenu.getViewGroup().getViewData().addDirection((ControlDirectionData) control);
-                }
-                saveController();
-                // 与 renderGroup 一致按组序取 z 序，避免新增控件压到所在组其他控件之下
-                float zOrder = gameMenu.getController().viewGroups().indexOf(gameMenu.getViewGroup()) * 2f;
-                loadView(control, true, zOrder, false);
-            } else {
-                Toast.makeText(gameMenu.getActivity(), gameMenu.getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
-            }
+        addView(control, gameMenu.getViewGroup());
+    }
+
+    /**
+     * 向指定控件组添加控件：目标为当前编辑组时走轻量路径直接渲染，
+     * 其他组（跨组复制/移动）追加数据后整体重建画布。
+     */
+    public void addView(CustomControl control, ControlViewGroup target) {
+        if (!gameMenu.isEditMode()) {
+            return;
+        }
+        if (target == null) {
+            Toast.makeText(gameMenu.getActivity(), gameMenu.getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!target.isDataLoaded()) {
+            Toast.makeText(gameMenu.getActivity(), gameMenu.getActivity().getString(R.string.message_data_is_loading), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (control instanceof ControlButtonData) {
+            target.getViewData().addButton((ControlButtonData) control);
+        } else {
+            target.getViewData().addDirection((ControlDirectionData) control);
+        }
+        saveController();
+        if (target == gameMenu.getViewGroup()) {
+            // 与 renderGroup 一致按组序取 z 序，避免新增控件压到所在组其他控件之下
+            float zOrder = gameMenu.getController().viewGroups().indexOf(target) * 2f;
+            loadView(control, true, zOrder, false);
+        } else {
+            initializeController();
         }
     }
 
+    /** 查找控件数据所属的控件组（参考组控件跨组操作时解析归属） */
+    public ControlViewGroup findOwnerGroup(CustomControl control) {
+        if (gameMenu.getController() == null) return null;
+        for (ControlViewGroup group : gameMenu.getController().viewGroups()) {
+            if (!group.isDataLoaded()) continue;
+            if (group.getViewData().buttonList().stream().anyMatch(it -> it.getId().equals(control.getViewId()))
+                    || group.getViewData().directionList().stream().anyMatch(it -> it.getId().equals(control.getViewId()))) {
+                return group;
+            }
+        }
+        return null;
+    }
+
     public void removeView(CustomControl control) {
-        if (gameMenu.getViewGroup() != null && gameMenu.isEditMode()) {
-            clearSelection();
-            for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
-                View view = gameMenu.getBaseLayout().getChildAt(i);
-                if (view instanceof CustomView) {
-                    if (control.getViewId().equals(((CustomView) view).getViewId())) {
-                        gameMenu.getBaseLayout().removeView(view);
-                        break;
-                    }
+        removeViewFromGroup(control, findOwnerGroup(control));
+    }
+
+    /** 从指定控件组删除控件（跨组移动时显式指定来源，避免归属解析歧义） */
+    public void removeViewFromGroup(CustomControl control, ControlViewGroup owner) {
+        if (!gameMenu.isEditMode() || owner == null) {
+            return;
+        }
+        clearSelection();
+        for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
+            View view = gameMenu.getBaseLayout().getChildAt(i);
+            if (view instanceof CustomView) {
+                if (control.getViewId().equals(((CustomView) view).getViewId())) {
+                    gameMenu.getBaseLayout().removeView(view);
+                    break;
                 }
             }
-            if (control instanceof ControlButtonData) {
-                gameMenu.getViewGroup().getViewData().removeButton((ControlButtonData) control);
-            } else {
-                gameMenu.getViewGroup().getViewData().removeDirection((ControlDirectionData) control);
-            }
-            saveController();
+        }
+        if (control instanceof ControlButtonData) {
+            owner.getViewData().removeButton((ControlButtonData) control);
+        } else {
+            owner.getViewData().removeDirection((ControlDirectionData) control);
+        }
+        saveController();
+    }
+
+    /** 跨组操作：复制控件数据到目标组（id 重新生成） */
+    public void copyControlToGroup(CustomControl control, ControlViewGroup target) {
+        addView(control.cloneView(), target);
+    }
+
+    /** 跨组操作：移动控件到目标组（从归属组删除，id 保持不变） */
+    public void moveControlToGroup(CustomControl control, ControlViewGroup target) {
+        ControlViewGroup owner = findOwnerGroup(control);
+        addView(control, target);
+        if (owner != null && owner != target) {
+            removeViewFromGroup(control, owner);
         }
     }
 
@@ -675,6 +774,34 @@ private long loadDialogShowTime = 0;
                 if (viewGroup.getViewData().buttonList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))
                         || viewGroup.getViewData().directionList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))) {
                     ((CustomView) view).switchParentVisibility();
+                }
+            }
+        }
+    }
+
+    /**
+     * 将布局渲染视图设置为指定显隐状态（区别于切换）。
+     * 显示时按需加载/渲染，隐藏时仅处理已渲染视图。
+     */
+    public void setViewGroupVisibility(ControlViewGroup viewGroup, boolean visible) {
+        if (viewGroup == null)
+            return;
+        if (visible) {
+            if (!viewGroup.isDataLoaded()) {
+                requestLoadForBind(viewGroup);
+                return;
+            }
+            if (!isGroupRendered(viewGroup)) {
+                renderGroup(viewGroup);
+                return;
+            }
+        }
+        for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
+            View view = gameMenu.getBaseLayout().getChildAt(i);
+            if (view instanceof CustomView) {
+                if (viewGroup.getViewData().buttonList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))
+                        || viewGroup.getViewData().directionList().stream().anyMatch(it -> it.getId().equals(((CustomView) view).getViewId()))) {
+                    ((CustomView) view).setParentVisibility(visible);
                 }
             }
         }

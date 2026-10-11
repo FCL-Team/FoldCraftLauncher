@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minWidth="360dp"
+    android:padding="10dp"
+    android:orientation="vertical">
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bind_group_title"
+        android:textSize="16sp"
+        android:layout_gravity="center"/>
+
+    <ScrollView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="320dp">
+
+        <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+
+    </ScrollView>
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal">
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/negative"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_negative"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/positive"
+            android:layout_marginStart="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_positive"/>
+
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
