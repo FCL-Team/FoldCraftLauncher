@@ -92,6 +92,9 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     private boolean isTranslated = false;
     private static boolean isRunning = false;
     private long volumeDownTime = 0;
+    /** 上次 letterbox 计算使用的窗口尺寸，布局回调据此判断窗口尺寸是否变化 */
+    private int lastLetterboxWidth = -1;
+    private int lastLetterboxHeight = -1;
 
     public static void setFCLBridge(FCLBridge fclBridge, MenuType menuType) {
         JVMActivity.fclBridge = fclBridge;
@@ -141,6 +144,24 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
                 textureView.setTranslationY(0);
             }
         });
+        // 布局回调驱动强制分辨率 letterbox:小窗/分屏/全屏切换等窗口尺寸变化后按当前窗口重算。
+        // onConfigurationChanged 等回调期窗口尺寸尚未稳定(还是过渡值),letterbox 以布局结果为准;
+        // 对比基准与计算基准同为 TextureView 父容器实测尺寸,保证输入换算与显示区域同源
+        getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            if (!FCLBridge.FORCE_RESOLUTION) {
+                return;
+            }
+            ViewGroup container = (ViewGroup) textureView.getParent();
+            if (container == null) {
+                return;
+            }
+            int width = container.getWidth();
+            int height = container.getHeight();
+            if (width == 0 || (width == lastLetterboxWidth && height == lastLetterboxHeight)) {
+                return;
+            }
+            applyForceResolutionLayout();
+        });
     }
 
     /**
@@ -149,11 +170,30 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
      */
     public void applyForceResolutionLayout() {
         ViewGroup.LayoutParams params = textureView.getLayoutParams();
+        // letterbox 基准用 TextureView 父容器的实测尺寸,与视图布局落定区域同源,
+        // 吸收小窗等窗口形态的装饰 inset 差异;容器与本窗口均尚未布局时(onCreate 早期)
+        // 回退启动器快照,布局落定后由布局回调按实测重算
+        ViewGroup container = (ViewGroup) textureView.getParent();
+        View decorView = getWindow().getDecorView();
+        int screenWidth;
+        int screenHeight;
+        if (container.getWidth() > 0 && container.getHeight() > 0) {
+            screenWidth = container.getWidth();
+            screenHeight = container.getHeight();
+        } else if (decorView.getWidth() > 0 && decorView.getHeight() > 0) {
+            screenWidth = decorView.getWidth();
+            screenHeight = decorView.getHeight();
+        } else {
+            screenWidth = AndroidUtilKt.getScreenWidth();
+            screenHeight = AndroidUtilKt.getScreenHeight();
+        }
+        lastLetterboxWidth = screenWidth;
+        lastLetterboxHeight = screenHeight;
         if (FCLBridge.FORCE_RESOLUTION) {
-            FCLBridge.FORCE_RESOLUTION_SCALE = (float) AndroidUtilKt.getScreenHeight() / FCLBridge.FORCE_RESOLUTION_HEIGHT;
+            FCLBridge.FORCE_RESOLUTION_SCALE = (float) screenHeight / FCLBridge.FORCE_RESOLUTION_HEIGHT;
             params.width = (int) (FCLBridge.FORCE_RESOLUTION_WIDTH * FCLBridge.FORCE_RESOLUTION_SCALE);
             params.height = (int) (FCLBridge.FORCE_RESOLUTION_HEIGHT * FCLBridge.FORCE_RESOLUTION_SCALE);
-            FCLBridge.FORCE_RESOLUTION_START_SIZE = (AndroidUtilKt.getScreenWidth() - params.width) / 2;
+            FCLBridge.FORCE_RESOLUTION_START_SIZE = (screenWidth - params.width) / 2;
             textureView.setX(FCLBridge.FORCE_RESOLUTION_START_SIZE);
         } else {
             FCLBridge.FORCE_RESOLUTION_SCALE = -1;
@@ -432,6 +472,8 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        // 窗口尺寸变化(分屏、小窗、折叠屏等)后恢复渲染状态:buffer 与窗口事件按新视图尺寸重发,
+        // 强制分辨率 letterbox 由布局回调按稳定后的窗口尺寸重算(回调期 decorView 尺寸尚未稳定)
         if (textureView != null && textureView.getSurfaceTexture() != null) {
             textureView.post(() -> onSurfaceTextureSizeChanged(textureView.getSurfaceTexture(), textureView.getWidth(), textureView.getHeight()));
         }
