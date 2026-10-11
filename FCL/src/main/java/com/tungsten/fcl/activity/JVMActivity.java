@@ -43,7 +43,6 @@ import com.tungsten.fclcore.util.Logging;
 import com.tungsten.fcllibrary.component.FCLActivity;
 
 import org.libsdl.app.SDLActivity;
-import org.libsdl.app.SDLSurface;
 import org.lwjgl.glfw.CallbackBridge;
 
 import java.util.Objects;
@@ -298,13 +297,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         CallbackBridge.windowWidth = width;
         CallbackBridge.windowHeight = height;
         // SDL 侧同步分辨率
-        if (SdlBridge.getSdlEnabled()) {
-            SDLSurface sdlSurface = SDLActivity.getSDLSurface();
-            if (sdlSurface != null) {
-                sdlSurface.surfaceChanged();
-                sdlSurface.nativeResize(width, height);
-            }
-        }
+        SdlBridge.syncResolution(width, height);
         fclBridge.pushEventWindow(width, height);
     }
 

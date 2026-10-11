@@ -60,6 +60,7 @@ import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.control.view.TouchPad;
 import com.tungsten.fcl.control.view.ViewManager;
 import com.tungsten.fcl.game.sdl.GamepadInputMode;
+import com.tungsten.fcl.game.sdl.SdlBridge;
 import com.tungsten.fcl.game.sdl.SdlSettings;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
@@ -1506,6 +1507,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             }
             fclBridge.getSurfaceTexture().setDefaultBufferSize(width, height);
             fclBridge.pushEventWindow(width, height);
+            // SDL 窗口尺寸不消费 GLFW 窗口事件，调整缩放等不改视图尺寸的变化须显式同步 SDL 分辨率；
+            // 须在 pushEventWindow 更新 CallbackBridge.windowWidth/Height 之后调，surfaceChanged() 读的才是新值
+            SdlBridge.syncResolution(width, height);
         }
     }
 

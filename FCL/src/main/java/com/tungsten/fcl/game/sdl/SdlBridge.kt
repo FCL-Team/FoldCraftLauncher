@@ -110,6 +110,20 @@ object SdlBridge {
     external fun isSdlRenderActive(): Boolean
 
     /**
+     * 运行时窗口尺寸变化后同步 SDL 渲染分辨率。
+     * SDL 窗口尺寸不消费 GLFW 窗口事件，不改视图尺寸的调整（如分辨率缩放滑条）
+     * 须显式重设，否则游戏 viewport 与渲染 buffer 不一致，画面留黑边、点击与 UI 错位
+     */
+    @JvmStatic
+    @MainThread
+    fun syncResolution(width: Int, height: Int) {
+        if (!sdlEnabled) return
+        val sdlSurface = SDLActivity.getSDLSurface() ?: return
+        sdlSurface.surfaceChanged()
+        sdlSurface.nativeResize(width, height)
+    }
+
+    /**
      * 激活/关闭 native 侧 SDL 文本输入通道
      * 游戏侧通道被模组（自绘输入界面）关闭时，启动器显式唤起输入法需代为激活，
      * 否则输入法提交的文本会在 native 层被丢弃
