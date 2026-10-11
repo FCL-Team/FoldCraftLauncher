@@ -313,13 +313,33 @@
 
         </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/edit_info"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/control_info_edit"
-            app:ripple="true" />
+            android:orientation="horizontal">
+
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/copy_controller"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="@string/control_copy"
+                app:ripple="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/edit_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:text="@string/control_info_edit"
+                app:ripple="true" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <com.tungsten.fcllibrary.component.view.FCLButton
             android:id="@+id/edit_controller"

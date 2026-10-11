@@ -23,7 +23,6 @@ import com.tungsten.fcllibrary.util.ConvertUtils;
 
 public class ControllerInfoDialog extends FCLDialog implements View.OnClickListener {
 
-    private final boolean create;
     private final Controller controller;
     private final Callback callback;
 
@@ -39,8 +38,11 @@ public class ControllerInfoDialog extends FCLDialog implements View.OnClickListe
 
     @SuppressLint("SetTextI18n")
     public ControllerInfoDialog(@NonNull Context context, boolean create, Controller controller, Callback callback) {
+        this(context, controller, callback, create ? R.string.control_create : R.string.control_info_edit);
+    }
+
+    public ControllerInfoDialog(@NonNull Context context, Controller controller, Callback callback, int titleRes) {
         super(context);
-        this.create = create;
         this.controller = controller;
         this.callback = callback;
         Window window = getWindow();
@@ -51,7 +53,7 @@ public class ControllerInfoDialog extends FCLDialog implements View.OnClickListe
         setCancelable(false);
 
         FCLTextView titleView = findViewById(R.id.title);
-        titleView.setText(create ? getContext().getString(R.string.control_create) : getContext().getString(R.string.control_info_edit));
+        titleView.setText(getContext().getString(titleRes));
 
         editName = findViewById(R.id.name);
 

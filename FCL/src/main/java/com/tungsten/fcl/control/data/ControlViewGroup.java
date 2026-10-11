@@ -147,7 +147,8 @@ public class ControlViewGroup implements Cloneable, Observable {
         ControlViewGroup viewGroup = new ControlViewGroup(UUID.randomUUID().toString());
         viewGroup.setName(getName());
         viewGroup.setVisibility(getVisibility());
-        viewGroup.setViewData(getViewData());
+        viewGroup.setViewData(getViewData().clone());
+        viewGroup.setDataLoaded(isDataLoaded());
         return viewGroup;
     }
 
@@ -292,8 +293,9 @@ public class ControlViewGroup implements Cloneable, Observable {
         @Override
         public ViewData clone() {
             ViewData data = new ViewData();
-            data.setButtonList(buttonList());
-            data.setDirectionList(directionList());
+            // 按键逐个克隆：列表与元素均与源隔离，编辑副本不会污染源布局
+            data.setButtonList(FXCollections.observableList(buttonList().stream().map(ControlButtonData::clone).collect(Collectors.toList())));
+            data.setDirectionList(FXCollections.observableList(directionList().stream().map(ControlDirectionData::clone).collect(Collectors.toList())));
             return data;
         }
 

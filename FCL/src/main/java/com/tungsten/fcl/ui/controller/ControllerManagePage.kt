@@ -22,6 +22,7 @@ import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.function.ExceptionalConsumer
+import com.tungsten.fclcore.util.function.ExceptionalRunnable
 import com.tungsten.fclcore.util.io.FileUtils
 import com.tungsten.fcllibrary.component.ui.FCLPage
 import com.tungsten.fcllibrary.ui.ProgressDialog
@@ -63,6 +64,7 @@ class ControllerManagePage(context: Context, id: Int) :
         binding.downloadController.setOnClickListener(this)
         binding.upload.setOnClickListener(this)
         binding.share.setOnClickListener(this)
+        binding.copyController.setOnClickListener(this)
         binding.editInfo.setOnClickListener(this)
         binding.editController.setOnClickListener(this)
 
@@ -132,6 +134,32 @@ class ControllerManagePage(context: Context, id: Int) :
         adapter.notifyDataSetChanged()
     }
 
+    /** 复制当前布局：补全按键数据后克隆（自带随机新 id），弹信息编辑框确认后加入列表 */
+    private fun copyController() {
+        val source = selectedController ?: return
+        // 轻量对象按键数据未加载，clone 只能带走内存数据且副本没有源文件可补，须先补全
+        Task.runAsync(Schedulers.io(), ExceptionalRunnable<Exception> { source.ensureAllLoaded() })
+            .thenRunAsync(
+                Schedulers.androidUIThread(),
+                ExceptionalRunnable<Exception> {
+                    val copy = source.clone()
+                    ControllerInfoDialog(
+                        context,
+                        copy,
+                        { info ->
+                            copy.name = info.name
+                            copy.version = info.version
+                            copy.versionCode = info.versionCode
+                            copy.author = info.author
+                            copy.description = info.description
+                            addController(copy)
+                        },
+                        R.string.control_copy
+                    ).show()
+                }
+            ).start()
+    }
+
     override fun refresh(vararg param: Any?): Task<*>? = null
 
     override fun onClick(view: View) {
@@ -155,6 +183,7 @@ class ControllerManagePage(context: Context, id: Int) :
             }
 
             binding.share -> shareController()
+            binding.copyController -> copyController()
             binding.editInfo -> ControllerInfoDialog(
                 context,
                 false,
