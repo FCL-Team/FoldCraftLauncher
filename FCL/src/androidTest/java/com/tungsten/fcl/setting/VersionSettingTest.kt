@@ -54,7 +54,6 @@ class VersionSettingTest {
         assertEquals("Turnip", vs.driver)
         assertFalse(vs.isNotCheckMod)
         assertFalse(vs.isDebugLog)
-        assertFalse(vs.isForceResolution)
     }
 
     /** 所有可写字段的 setter 都触发一次监听通知（值变化时） */
@@ -83,8 +82,7 @@ class VersionSettingTest {
             vs.driver = "Mesa"
             vs.isNotCheckMod = true
             vs.isDebugLog = true
-            vs.isForceResolution = true
-            assertEquals(19, notified.get())
+            assertEquals(18, notified.get())
         } finally {
             vs.removeOnChangeListener(listener)
         }
@@ -165,7 +163,6 @@ class VersionSettingTest {
             driver = "Mesa"
             isNotCheckMod = true
             isDebugLog = true
-            isForceResolution = true
         }
         val copy = vs.clone()
         assertNotSame(vs, copy)
@@ -187,7 +184,6 @@ class VersionSettingTest {
         assertEquals(vs.driver, copy.driver)
         assertEquals(vs.isNotCheckMod, copy.isNotCheckMod)
         assertEquals(vs.isDebugLog, copy.isDebugLog)
-        assertEquals(vs.isForceResolution, copy.isForceResolution)
         // 修改副本不影响原对象
         copy.java = "Changed"
         copy.maxMemory = 1
@@ -217,7 +213,6 @@ class VersionSettingTest {
             driver = "Mesa"
             isNotCheckMod = true
             isDebugLog = true
-            isForceResolution = true
         }
         val restored = JsonUtils.GSON.fromJson<VersionSetting>(JsonUtils.GSON.toJson(vs), VersionSetting::class.java)
         assertFalse(restored.isUsesGlobal)
@@ -238,15 +233,14 @@ class VersionSettingTest {
         assertEquals("Mesa", restored.driver)
         assertTrue(restored.isNotCheckMod)
         assertTrue(restored.isDebugLog)
-        assertTrue(restored.isForceResolution)
     }
 
     /** 空对象反序列化：缺失字段使用反序列化默认值 */
     @Test
     fun deserializeEmptyObjectUsesDefaults() {
         val restored = JsonUtils.GSON.fromJson<VersionSetting>("{}", VersionSetting::class.java)
-        // 反序列化默认值（与字段默认值不同处：usesGlobal/isolateGameDir 缺失时为 false）
-        assertFalse(restored.isUsesGlobal)
+        // 反序列化默认值（与字段默认值不同处：isolateGameDir 缺失时为 false，usesGlobal 缺失时为 true）
+        assertTrue(restored.isUsesGlobal)
         assertFalse(restored.isIsolateGameDir)
         assertTrue(restored.isAutoMemory)
         assertEquals(defaultMemory(), restored.maxMemory)

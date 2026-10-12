@@ -56,6 +56,8 @@ class ProfileTest {
             serverIp = "1.2.3.4"
             isUsesGlobal = false
         }
+        // 选中版本必须已存在于磁盘：仓库刷新完成后不存在的版本会被校验清空，序列化时该键被省略
+        writeVersion("1.0", parent = File(tempDir, "game"))
         val profile = Profile("TestProfile", File(tempDir, "game"), global, "1.0")
         val restored = JsonUtils.GSON.fromJson<Profile>(JsonUtils.GSON.toJson(profile), Profile::class.java)
         assertEquals(File(tempDir, "game"), restored.gameDir)
