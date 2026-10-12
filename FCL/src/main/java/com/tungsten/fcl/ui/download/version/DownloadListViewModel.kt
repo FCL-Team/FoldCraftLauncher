@@ -25,7 +25,11 @@ class DownloadListViewModel : ViewModel() {
 
         data class Loaded(val versions: List<ComponentRemoteVersion>) : State
 
-        /** 加载失败：lastList 为失败前已加载的数据，页面据此保留旧列表、仅显示重试入口 */
+        /**
+         * 加载失败：lastList 为失败前已加载的数据，页面据此保留旧列表、仅显示重试入口。
+         * 仅当失败请求与已加载数据同版本时才非空——组件清单按 gameVersion 差异化，
+         * 跨版本失败保留旧列表等于展示错误版本的组件。
+         */
         data class Failed(val error: Throwable, val lastList: List<ComponentRemoteVersion>) : State
     }
 
@@ -33,6 +37,9 @@ class DownloadListViewModel : ViewModel() {
     val state: StateFlow<State> = _state.asStateFlow()
 
     private var lastLoaded: List<ComponentRemoteVersion> = emptyList()
+
+    /** [lastLoaded] 对应的游戏版本：失败时据此判断旧列表能否保留 */
+    private var lastLoadedGameVersion: String? = null
 
     /** 在途/最近一次清单请求对应的游戏版本：回调落地时据此丢弃过期结果 */
     private var requestedGameVersion: String? = null
@@ -45,7 +52,7 @@ class DownloadListViewModel : ViewModel() {
             if (componentType == GameComponentType.GAME) versionList.isLoaded() else versionList.isLoaded(gameVersion)
         if (!force && loaded) {
             requestedGameVersion = gameVersion
-            updateLoaded(items(versionList, gameVersion))
+            updateLoaded(gameVersion, items(versionList, gameVersion))
             return
         }
         // 同一版本的清单拉取已在途：等回调落地，不重入。
@@ -59,15 +66,18 @@ class DownloadListViewModel : ViewModel() {
                 // （否则旧版本的清单会作为 Loaded 写进状态，新页面渲染出错误版本的组件列表）
                 if (gameVersion != requestedGameVersion) return@whenComplete
                 if (error == null) {
-                    updateLoaded(items(versionList, gameVersion))
+                    updateLoaded(gameVersion, items(versionList, gameVersion))
                 } else {
-                    _state.value = State.Failed(error, lastLoaded)
+                    // 跨版本失败不带旧列表：组件清单随 gameVersion 差异化，保留即展示错误版本的数据
+                    val lastList = if (gameVersion == lastLoadedGameVersion) lastLoaded else emptyList()
+                    _state.value = State.Failed(error, lastList)
                 }
             }.start()
     }
 
-    private fun updateLoaded(versions: List<ComponentRemoteVersion>) {
+    private fun updateLoaded(gameVersion: String, versions: List<ComponentRemoteVersion>) {
         lastLoaded = versions
+        lastLoadedGameVersion = gameVersion
         _state.value = State.Loaded(versions)
     }
 
