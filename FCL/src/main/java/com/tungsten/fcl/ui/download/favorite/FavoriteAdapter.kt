@@ -15,6 +15,7 @@ import com.mio.ui.adapter.ViewHolder
 import com.mio.ui.widget.SwipeMenuLayout
 import com.mio.ui.widget.closeSwipeMenuOnOutsideTouch
 import com.mio.util.applySourceBadgeStyle
+import com.mio.util.format
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemFavoriteBinding
@@ -212,7 +213,7 @@ class FavoriteAdapter(
         binding.sourceBadge.text = context.getString(if (curseforge) R.string.mods_curseforge else R.string.mods_modrinth)
         ThemeEngine.getInstance().registerEvent(binding.sourceBadge) { applySourceBadgeStyle(binding.sourceBadge, curseforge) }
         binding.description.text = favorite.description
-        binding.downloadCount.text = favorite.downloadCount.toString()
+        binding.downloadCount.text = favorite.downloadCount.format(context)
         // 所属分组标签：与类别一致用提示色弱化显示（随主题联动）
         val groupNames = favorite.groups.mapNotNull { id ->
             FavoriteManager.groups.value.firstOrNull { it.groupId == id }?.name
