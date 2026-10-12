@@ -294,6 +294,8 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
         }
 
         public RemoteMod toMod() {
+            String iconUrl = Optional.ofNullable(this.iconUrl).orElse("");
+
             return new RemoteMod(
                     slug,
                     "",
@@ -520,6 +522,8 @@ public final class ModrinthRemoteModRepository implements RemoteModRepository {
         }
 
         public RemoteMod toMod() {
+            String iconUrl = Optional.ofNullable(this.iconUrl).orElse("");
+
             return new RemoteMod(
                     slug,
                     author,
