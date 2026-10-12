@@ -1238,16 +1238,19 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         }).show();
     }
 
-    /** 按分类 id 查本地化名：modrinth 为 true 时用 Modrinth 键前缀（资源包分类名中的 "+" 需去除），否则用 CurseForge 键前缀 */
+    /**
+     * 按分类 id 查本地化名：modrinth 为 true 时用 Modrinth 键前缀（资源包分类名中的 "+" 需去除），否则用 CurseForge 键前缀。
+     * 未命中本地化串时回退原始 slug，避免把资源键名（如 modrinth_category_xxx）直接渲染到条目标签上
+     */
     private String getLocalizedCategory(String category, boolean modrinth) {
-        if (modrinth) {
-            String key = "modrinth_category_" + category.replace("-", "_");
-            if (pageId == PAGE_ID_DOWNLOAD_RESOURCE_PACK) {
-                key = key.replaceAll("\\+", "");
-            }
-            return AndroidUtilKt.getLocalizedText(getContext(), key);
+        String key = modrinth
+                ? "modrinth_category_" + category.replace("-", "_")
+                : "curse_category_" + category;
+        if (modrinth && pageId == PAGE_ID_DOWNLOAD_RESOURCE_PACK) {
+            key = key.replaceAll("\\+", "");
         }
-        return AndroidUtilKt.getLocalizedText(getContext(), "curse_category_" + category);
+        String localized = AndroidUtilKt.getLocalizedText(getContext(), key);
+        return localized.equals(key) ? category : localized;
     }
 
     /** 条目分类的本地化名：按条目自身平台选键前缀（单源模式条目来源即所选下载源，行为不变） */
