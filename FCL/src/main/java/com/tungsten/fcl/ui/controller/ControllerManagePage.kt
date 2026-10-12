@@ -160,8 +160,6 @@ class ControllerManagePage(context: Context, id: Int) :
             ).start()
     }
 
-    override fun refresh(vararg param: Any?): Task<*>? = null
-
     override fun onClick(view: View) {
         when (view) {
             binding.importController -> importController()

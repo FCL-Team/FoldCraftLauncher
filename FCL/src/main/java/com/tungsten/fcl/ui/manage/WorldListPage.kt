@@ -91,11 +91,12 @@ class WorldListPage(context: Context?, id: Int) : FCLPage(context, id, R.layout.
         binding.recyclerView.setAdapter(adapter)
     }
 
-    override fun refresh(vararg param: Any?): Task<*>? {
-        return null
-    }
 
     override fun loadVersion(profile: Profile, version: String?) {
+        // null 是合法分发（切到未选版本 Profile 的瞬态）：本页内容依赖具体版本，保持现状等下一个真实版本分发
+        if (version == null) {
+            return
+        }
         this.profile = profile
         this.id = version
         this.savesDir = profile.repository.getRunDirectory(id).toPath().resolve("saves")

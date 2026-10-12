@@ -62,13 +62,14 @@ public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadab
         installOfflineButton.setOnClickListener(this);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void loadVersion(Profile profile, String versionId) {
+        // null 是合法分发（切到未选版本 Profile 的瞬态）：getVersion(null) 会抛
+        // VersionNotFoundException，本页内容依赖具体版本，保持现状等下一个真实版本分发
+        if (versionId == null) {
+            return;
+        }
         this.profile = profile;
         this.versionId = versionId;
         this.version = profile.getRepository().getVersion(versionId);

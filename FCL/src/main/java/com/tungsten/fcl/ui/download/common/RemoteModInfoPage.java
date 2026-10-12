@@ -32,6 +32,7 @@ import com.tungsten.fclcore.util.StringUtils;
 import com.tungsten.fclcore.util.versioning.VersionNumber;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
+import com.tungsten.fcllibrary.component.ui.PageFlows;
 import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLImageView;
@@ -57,6 +58,14 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
     private final RemoteMod addon;
     private final RemoteModVersionPage.DownloadCallback callback;
     private final DownloadPage page;
+    /**
+     * 本页内容所属的下载模式，创建时固定。
+     * 共享下载页的模式可能在别处被切换（如收藏页对齐模式），
+     * 而本页的内容与 [callback] 都是创建时按模式确定的——收藏类别、推荐版本、
+     * 版本点击行为必须用固定模式判定，否则会与回调（安装目录）不一致，
+     * 把模组下到光影包等目录。
+     */
+    private final int pinnedPageId;
 
     private SimpleMultimap<String, RemoteMod.Version, List<RemoteMod.Version>> versions;
 
@@ -88,6 +97,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         super(context, id, R.layout.page_download_addon_info);
 
         this.page = page;
+        this.pinnedPageId = page.getPageId();
         // 聚合搜索的列表混合两源条目，按条目自身来源取仓库；单源模式即当前仓库
         this.repository = page.repositoryFor(addon);
         this.addon = addon;
@@ -142,6 +152,12 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         ThemeEngine.getInstance().registerEvent(versionListView, () -> versionListView.setBackgroundTintList(new ColorStateList(new int[][]{{}}, new int[]{ThemeEngine.getInstance().getTheme().getLtColor()})));
 
         search.stringProperty().addListener(observable -> loadGameVersions());
+
+        // 推荐版本/版本分组依赖选中目录与版本：observe 相关状态流，attach 重放 + 变化自动重算
+        // （取代 DownloadUI 重新可见时的补偿调用）；收藏星形跟随收藏表变化自动校准
+        PageFlows.observe(this, Profiles.getSelectedVersionFlow(), v -> reloadVersions());
+        PageFlows.observe(this, Profiles.getSelectedProfileFlow(), p -> reloadVersions());
+        PageFlows.observe(this, FavoriteManager.getFavorites(), f -> refreshFavoriteIcon());
     }
 
     private void loadGameVersions() {
@@ -154,7 +170,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
             list.add(0, recommendedVersion);
         }
         ModGameVersionAdapter adapter = new ModGameVersionAdapter(getContext(), list, v -> {
-            RemoteModVersionPage page = new RemoteModVersionPage(getContext(), FCLPage.PAGE_ID_TEMP, new ArrayList<>(versions.get(v)), callback, RemoteModInfoPage.this.page);
+            RemoteModVersionPage page = new RemoteModVersionPage(getContext(), FCLPage.PAGE_ID_TEMP, new ArrayList<>(versions.get(v)), callback, RemoteModInfoPage.this.page, pinnedPageId);
             UIManager.getInstance().getDownloadUI().showTempPage(page);
         });
         versionListView.setAdapter(adapter);
@@ -178,8 +194,8 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
 
     /**
      * 按当前选中的目录/版本重算推荐版本并刷新版本列表。
-     * 推荐版本在构造加载时计算，页面存续期间目录/版本可能在其他页面被切换
-     * （此时下载页不可见），由 DownloadUI 重新可见时调用
+     * 由选中版本/Profile 状态流的 observe 驱动（attach 重放当前值，变化时自动重算），
+     * 首次版本数据加载完成后也会调用一次。
      */
     public void reloadVersions() {
         if (allVersions == null) return;
@@ -247,7 +263,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
             List<RemoteMod.Version> versionList = classifiedVersions.get(gameVersion);
             versionList.sort(Comparator.comparing(RemoteMod.Version::datePublished).reversed());
         }
-        if (page.getPageId() != DownloadUI.PAGE_ID_DOWNLOAD_MODPACK) {
+        if (pinnedPageId != DownloadUI.PAGE_ID_DOWNLOAD_MODPACK) {
             Profile profile = Profiles.getSelectedProfile();
             if (profile.getSelectedVersion() != null) {
                 LibraryAnalyzer analyzer = LibraryAnalyzer.analyze(profile.getRepository().getResolvedPreservingPatchesVersion(profile.getSelectedVersion()), profile.getSelectedVersion());
@@ -256,7 +272,7 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
 
                 if (classifiedVersions.keys().contains(mcv)) {
                     classifiedVersions.get(mcv).stream().filter(v -> {
-                        if (page.getPageId() == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
+                        if (pinnedPageId == DownloadUI.PAGE_ID_DOWNLOAD_MOD) {
                             for (ModLoaderType loader : v.loaders()) {
                                 if (modLoaders.contains(loader)) {
                                     recommendedVersion = getContext().getString(R.string.recommend_version) + ": " + mcv + " " + loader.name();
@@ -309,12 +325,6 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         });
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        // 页面重新可见时校准收藏星形（其他页面的收藏变化不触发本页回调）
-        refreshFavoriteIcon();
-        return null;
-    }
 
     @Override
     public void onClick(View v) {
@@ -344,9 +354,9 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         }
     }
 
-    /** 详情页收藏实体对应的资源类别：与打开此详情的下载页模式一致 */
+    /** 详情页收藏实体对应的资源类别：按本页固定模式判定（与下载回调的安装目录保持一致） */
     private RemoteModRepository.Type favoriteType() {
-        switch (page.getPageId()) {
+        switch (pinnedPageId) {
             case DownloadUI.PAGE_ID_DOWNLOAD_MODPACK:
                 return RemoteModRepository.Type.MODPACK;
             case DownloadUI.PAGE_ID_DOWNLOAD_RESOURCE_PACK:

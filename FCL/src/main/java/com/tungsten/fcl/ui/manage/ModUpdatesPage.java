@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.mio.download.DownloadManager;
+import com.mio.data.ModsChanged;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.TaskDialog;
@@ -83,10 +84,6 @@ public class ModUpdatesPage extends FCLPage implements View.OnClickListener {
         updateWithout.setSelected(true);
     }
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
     @Override
     public void onClick(View v) {
@@ -113,7 +110,8 @@ public class ModUpdatesPage extends FCLPage implements View.OnClickListener {
                         .collect(Collectors.toList()), keepOldVersion);
         TaskExecutor executor = task.whenComplete(Schedulers.androidUIThread(), exception -> {
             UIManager.getInstance().getManageUI().dismissCurrentTempPage();
-            modListPage.refresh();
+            // 模组文件已替换/新增/删除：驱动模组管理页自动重载（原 modListPage.refresh() 直调的响应式等价）
+            ModsChanged.notifyChanged();
             if (!task.getFailedMods().isEmpty()) {
                 FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
                 builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);

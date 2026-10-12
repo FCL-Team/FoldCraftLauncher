@@ -130,8 +130,10 @@ public class WorldListItem {
         dialog.show();
     }
 
+    /** 删除/复制世界成功后刷新世界列表（同 UI 内跨页直调；模组页的自动重载走 ModsChanged 流） */
     private void notifyChanged() {
         WorldListPage page = (WorldListPage) UIManager.getInstance().getManageUI().getPage(4);
         page.refresh();
     }
+
 }

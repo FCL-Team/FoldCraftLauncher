@@ -197,10 +197,6 @@ public class ControllerDownloadPage extends FCLPage implements View.OnClickListe
     }
 
 
-    @Override
-    public Task<?> refresh(Object... param) {
-        return null;
-    }
 
 
     @Override

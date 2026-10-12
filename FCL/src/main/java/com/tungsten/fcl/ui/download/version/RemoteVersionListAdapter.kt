@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.mio.ui.adapter.ViewHolder
 import com.mio.util.AnimUtil
@@ -32,8 +34,12 @@ import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.util.LocaleUtils
 import com.mio.util.openLink
 
-class RemoteVersionListAdapter(val context: Context, private val list: ArrayList<ComponentRemoteVersion>, private val listener: OnRemoteVersionSelectListener) :
-    RecyclerView.Adapter<ViewHolder>() {
+/**
+ * 远端版本列表 adapter：ListAdapter + DiffUtil，列表更新走 submitList，
+ * 未变化条目不重绑（不再重放入场动画、不丢滚动位置）。
+ */
+class RemoteVersionListAdapter(val context: Context, private val listener: OnRemoteVersionSelectListener) :
+    ListAdapter<ComponentRemoteVersion, ViewHolder>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -52,7 +58,7 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
         position: Int
     ) {
         val binding = ItemRemoteVersionBinding.bind(holder.itemView)
-        val remoteVersion: ComponentRemoteVersion = list[position]
+        val remoteVersion: ComponentRemoteVersion = getItem(position)
         binding.root.setOnClickListener {
             listener.onSelect(
                 remoteVersion
@@ -114,11 +120,6 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
             0f
         ).start()
     }
-
-    override fun getItemCount(): Int {
-        return list.size
-    }
-
 
     private fun getIcon(remoteVersion: ComponentRemoteVersion?): Drawable? {
         when (remoteVersion) {
@@ -234,5 +235,28 @@ class RemoteVersionListAdapter(val context: Context, private val list: ArrayList
 
     interface OnRemoteVersionSelectListener {
         fun onSelect(remoteVersion: ComponentRemoteVersion)
+    }
+
+    companion object {
+
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ComponentRemoteVersion>() {
+            override fun areItemsTheSame(
+                oldItem: ComponentRemoteVersion,
+                newItem: ComponentRemoteVersion
+            ): Boolean = oldItem === newItem ||
+                    (oldItem.selfVersion == newItem.selfVersion
+                            && oldItem.gameVersion == newItem.gameVersion
+                            && oldItem.versionType == newItem.versionType)
+
+            override fun areContentsTheSame(
+                oldItem: ComponentRemoteVersion,
+                newItem: ComponentRemoteVersion
+            ): Boolean = oldItem === newItem ||
+                    (oldItem.selfVersion == newItem.selfVersion
+                            && oldItem.gameVersion == newItem.gameVersion
+                            && oldItem.versionType == newItem.versionType
+                            && oldItem.releaseDate == newItem.releaseDate
+                            && oldItem.urls == newItem.urls)
+        }
     }
 }

@@ -154,7 +154,7 @@ class CreateAccountDialog : FCLDialog, View.OnClickListener {
                 if (exception == null) {
                     Accounts.addAccount(account)
                     Accounts.setSelectedAccount(account)
-                    UIManager.instance.accountUI.refresh().start()
+                    UIManager.instance.accountUI.loadAccounts()
                     dismiss()
                 } else {
                     if (exception is NoSelectedCharacterException || exception is CancellationException) {

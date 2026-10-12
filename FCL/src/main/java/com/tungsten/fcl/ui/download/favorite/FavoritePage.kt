@@ -32,6 +32,7 @@ import com.tungsten.fclcore.task.Task
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.ui.FCLPage
+import com.tungsten.fcllibrary.component.ui.observeWhileAttached
 import com.tungsten.fcllibrary.component.view.FCLTextView
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -103,11 +104,10 @@ class FavoritePage(
         ThemeEngine.getInstance().registerEvent(binding.emptyIcon) {
             binding.emptyIcon.setColorFilter(ThemeEngine.getInstance().getTheme().getColor2())
         }
-        MainActivity.getInstance().lifecycleScope.launch {
-            FavoriteManager.favorites.collect { favorites ->
-                allFavorites = favorites
-                applyFilter()
-            }
+        // attach 收集、detach 取消：页面随 ViewPager 回收后不再持有数据回调
+        observeWhileAttached(FavoriteManager.favorites) { favorites ->
+            allFavorites = favorites
+            applyFilter()
         }
     }
 
@@ -187,14 +187,12 @@ class FavoritePage(
         applyPanelBackground()
         ThemeEngine.getInstance().registerEvent(binding.filterPanel) { applyPanelBackground() }
         // 分组增删改（含管理对话框内操作）时重建分组筛选区；被删分组的筛选状态复位为全部
-        MainActivity.getInstance().lifecycleScope.launch {
-            FavoriteManager.groups.collect { groups ->
-                if (filterGroup != null && groups.none { it.groupId == filterGroup }) {
-                    filterGroup = null
-                }
-                rebuildGroupRows(binding)
-                applyFilter()
+        observeWhileAttached(FavoriteManager.groups) { groups ->
+            if (filterGroup != null && groups.none { it.groupId == filterGroup }) {
+                filterGroup = null
             }
+            rebuildGroupRows(binding)
+            applyFilter()
         }
     }
 
@@ -549,5 +547,4 @@ class FavoritePage(
         else -> DownloadUI.PAGE_ID_DOWNLOAD_MOD
     }
 
-    override fun refresh(vararg param: Any?): Task<*>? = null
 }

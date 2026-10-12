@@ -52,7 +52,6 @@ public abstract class FCLBaseUI {
 
     public abstract boolean isShowing();
 
-    public abstract Task<?> refresh(Object... param);
 
     public void onCreate() {
 
