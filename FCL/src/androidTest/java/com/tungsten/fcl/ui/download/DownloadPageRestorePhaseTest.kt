@@ -82,4 +82,32 @@ class DownloadPageRestorePhaseTest {
             }
         }
     }
+
+    @Test
+    fun recreatedPageResearcsInsteadOfWaitingForDeadExecutor() {
+        withReadyActivity { activity ->
+            val instrumentation = InstrumentationRegistry.getInstrumentation()
+            lateinit var state: DownloadSearchViewModel.State
+            instrumentation.runOnMainSync {
+                state = ViewModelProvider(activity)
+                    .get(DownloadSearchViewModel::class.java)
+                    .getState(DownloadUI.PAGE_ID_DOWNLOAD_MOD)
+                // 模拟上一实例销毁时留下的在途搜索现场（executor 属于旧实例，已随页面丢弃）
+                state.failed = false
+                state.result = null
+                state.loading = true
+            }
+            lateinit var page: DownloadPage
+            instrumentation.runOnMainSync {
+                page = DownloadPage(activity)
+                page.switchType(DownloadUI.PAGE_ID_DOWNLOAD_MOD)
+            }
+            // 修复前：loading 相位被无条件等待（setLoading(true) 全控件禁用），而在途回调
+            // 落在旧实例上只会写回 ViewModel 字段、永不驱动本页——spinner 永久滞留；
+            // 修复后：新实例 executor 为空，等待分支不生效，改为重搜（同步路径内已发起）
+            instrumentation.runOnMainSync {
+                assertTrue("重建实例应重新发起搜索而不是等待已销毁实例的 executor", page.getExecutor() != null)
+            }
+        }
+    }
 }

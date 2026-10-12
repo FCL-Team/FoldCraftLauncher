@@ -177,6 +177,11 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         return pageId;
     }
 
+    /** 当前在途搜索任务；新创建的实例恒为 null，供回归测试区分"等待在途"与"重新发起搜索" */
+    public TaskExecutor getExecutor() {
+        return executor;
+    }
+
     /**
      * 页面当前是否已就绪于指定模式（switchType 至少执行过一次且 pageId 一致）。
      * 收藏页等外部入口跳转详情前据此判断是否需要先 switchType：
@@ -286,8 +291,10 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
         // 恢复搜索状态：失败恢复失败态、有结果直接恢复、在途等回调、否则重搜
         if (searchState.failed || searchState.result != null) {
             restoreResult();
-        } else if (searchState.loading) {
-            // 搜索仍在进行（切走时未被取消）：显示进度，回调落地后自动渲染
+        } else if (searchState.loading && executor != null && !executor.isCancelled()) {
+            // 搜索仍在进行且在途回调属于本页实例（同实例切走再切回）：显示进度，回调落地后自动渲染。
+            // executor 为空说明本页是销毁后重建的实例，在途回调落在旧实例上、只会写回 ViewModel 字段
+            // 而不会驱动本页，等待会永久 loading（控件全禁用）——那种情况落到下面重搜
             setLoading(true);
         } else {
             search(searchState.userGameVersion, searchState.category, searchState.pageOffset, searchState.searchFilter, searchState.sortType);
