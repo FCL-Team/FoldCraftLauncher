@@ -17,6 +17,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
+import java.util.stream.Collectors
 
 /**
  * VersionCache 仓库化的行为验证：全量派生数据填充、指纹增量复用（未变条目复用同一实例）、
@@ -58,7 +59,7 @@ class VersionCacheTest {
         writeVersion("1.0", mainClass = "com.a.Main")
         writeVersion("2.0", mainClass = "com.b.Main")
         profile.repository.refreshVersions()
-        return profile.repository.displayVersions.map { it.id }.collect(java.util.stream.Collectors.toList())
+        return profile.repository.displayVersions.map { it.id }.collect(Collectors.toList())
     }
 
     @Test
