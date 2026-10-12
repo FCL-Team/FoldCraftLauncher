@@ -811,11 +811,11 @@
     <string name="modpack_wizard_step_initialization_warning">Before creating a modpack, please make sure the game launches, and it is a release version instead of a snapshot version.\n\nKeep in mind that you are not allowed to add mods and resource packs that are explicitly said not to be distributed or put in a modpack.</string>
 
     <string name="modrinth_category_adventure">Adventure</string>
-    <string name="modrinth_category_babric">Babric</string>
-    <string name="modrinth_category_bta_babric">BTA Babric</string>
+    <string name="modrinth_category_babric" translatable="false">Babric</string>
+    <string name="modrinth_category_bta_babric" translatable="false">BTA Babric</string>
     <string name="modrinth_category_bukkit">Bukkit</string>
     <string name="modrinth_category_bungeecord">BungeeCord</string>
-    <string name="modrinth_category_canvas">Canvas</string>
+    <string name="modrinth_category_canvas" translatable="false">Canvas</string>
     <string name="modrinth_category_challenging">Challenging</string>
     <string name="modrinth_category_combat">Combat</string>
     <string name="modrinth_category_cursed">Cursed</string>
@@ -826,27 +826,27 @@
     <string name="modrinth_category_food">Food</string>
     <string name="modrinth_category_forge">Forge</string>
     <string name="modrinth_category_game_mechanics">Game Mechanics</string>
-    <string name="modrinth_category_geyser">Geyser</string>
-    <string name="modrinth_category_iris">Iris</string>
-    <string name="modrinth_category_java_agent">Java Agent</string>
+    <string name="modrinth_category_geyser" translatable="false">Geyser</string>
+    <string name="modrinth_category_iris" translatable="false">Iris</string>
+    <string name="modrinth_category_java_agent" translatable="false">Java Agent</string>
     <string name="modrinth_category_kitchen_sink">Kitchen-Sink</string>
-    <string name="modrinth_category_legacy_fabric">Legacy Fabric</string>
+    <string name="modrinth_category_legacy_fabric" translatable="false">Legacy Fabric</string>
     <string name="modrinth_category_library">Library</string>
     <string name="modrinth_category_lightweight">Lightweight</string>
-    <string name="modrinth_category_liteloader">LiteLoader</string>
+    <string name="modrinth_category_liteloader" translatable="false">LiteLoader</string>
     <string name="modrinth_category_magic">Magic</string>
     <string name="modrinth_category_management">Management</string>
-    <string name="modrinth_category_minecraft">Minecraft</string>
+    <string name="modrinth_category_minecraft" translatable="false">Minecraft</string>
     <string name="modrinth_category_minigame">Minigame</string>
     <string name="modrinth_category_misc">Misc</string>
     <string name="modrinth_category_mobs">Mobs</string>
     <string name="modrinth_category_modloader">Modloader</string>
     <string name="modrinth_category_multiplayer">Multiplayer</string>
     <string name="modrinth_category_neoforge">NeoForge</string>
-    <string name="modrinth_category_nilloader">NilLoader</string>
-    <string name="modrinth_category_optifine">OptiFine</string>
+    <string name="modrinth_category_nilloader" translatable="false">NilLoader</string>
+    <string name="modrinth_category_optifine" translatable="false">OptiFine</string>
     <string name="modrinth_category_optimization">Optimization</string>
-    <string name="modrinth_category_ornithe">Ornithe</string>
+    <string name="modrinth_category_ornithe" translatable="false">Ornithe</string>
     <string name="modrinth_category_paper">Paper</string>
     <string name="modrinth_category_purpur">Purpur</string>
     <string name="modrinth_category_quests">Quests</string>
