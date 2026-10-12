@@ -7,7 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.lifecycle.lifecycleScope
 import com.mio.datastore.GameItemBarSetting
-import com.mio.datastore.gameItemBarDataStore
+import com.mio.datastore.appSettingsDataStore
 import com.tungsten.fcl.control.GameItemBarSettingDialog
 import com.tungsten.fcl.control.GameMenu
 import com.tungsten.fcl.setting.GameOption
@@ -72,8 +72,8 @@ class GameItemBar @JvmOverloads constructor(
         optionListener!!.onOptionChanged(false)
         gameOption.addGameOptionListener(optionListener)
         gameMenu.activity.lifecycleScope.launch {
-            context.gameItemBarDataStore.data.collect {
-                setting = it
+            context.appSettingsDataStore.data.collect {
+                setting = it.gameItemBar
             }
         }
     }
@@ -155,11 +155,11 @@ class GameItemBar @JvmOverloads constructor(
         setting?.let {
             GameItemBarSettingDialog(context, setting!!) { result ->
                 gameMenu.activity.lifecycleScope.launch {
-                    context.gameItemBarDataStore.updateData {
-                        it.copy(
+                    context.appSettingsDataStore.updateData {
+                        it.copy(gameItemBar = it.gameItemBar.copy(
                             slideSelection = result.slideSelection,
                             doubleTapSwapHands = result.doubleTapSwapHands
-                        )
+                        ))
                     }
                 }
             }.show()

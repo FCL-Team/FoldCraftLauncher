@@ -1,7 +1,7 @@
 package com.mio.plugin
 
 import com.mio.datastore.PluginPreference
-import com.mio.datastore.pluginDataStore
+import com.mio.datastore.appSettingsDataStore
 import com.tungsten.fcl.FCLApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -76,7 +76,7 @@ object MioLibPatcherManager {
         if (loaded) return
         synchronized(this) {
             if (loaded) return
-            preference.value = runBlocking { FCLApp.getAppContext().pluginDataStore.data.first() }
+            preference.value = runBlocking { FCLApp.getAppContext().appSettingsDataStore.data.first().plugin }
             loaded = true
         }
     }
@@ -90,7 +90,7 @@ object MioLibPatcherManager {
         snapshot()
         preference.update(transform)
         scope.launch {
-            FCLApp.getAppContext().pluginDataStore.updateData { transform(it) }
+            FCLApp.getAppContext().appSettingsDataStore.updateData { it.copy(plugin = transform(it.plugin)) }
         }
     }
 }

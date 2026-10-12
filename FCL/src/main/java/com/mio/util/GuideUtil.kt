@@ -3,8 +3,8 @@ package com.mio.util
 import android.app.Activity
 import android.view.View
 import androidx.datastore.core.DataStore
-import com.mio.datastore.GuidePreference
-import com.mio.datastore.guideDataStore
+import com.mio.datastore.AppSettingsPreference
+import com.mio.datastore.appSettingsDataStore
 import com.mio.ui.view.GuideOverlayView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,9 +45,9 @@ object GuideUtil {
         get() = this::class.simpleName.orEmpty()
 
     fun show(activity: Activity, vararg steps: GuideStep) {
-        val dataStore = activity.applicationContext.guideDataStore
+        val dataStore = activity.applicationContext.appSettingsDataStore
         scope.launch {
-            val shown = dataStore.data.first().shownTags.toSet()
+            val shown = dataStore.data.first().guide.shownTags.toSet()
             val pending = steps.filter { it.tag.id !in shown }
             if (pending.isEmpty()) return@launch
             withContext(Dispatchers.Main) {
@@ -61,9 +61,9 @@ object GuideUtil {
         }
     }
 
-    private fun markShown(dataStore: DataStore<GuidePreference>, tags: List<GuideTag>) {
+    private fun markShown(dataStore: DataStore<AppSettingsPreference>, tags: List<GuideTag>) {
         scope.launch {
-            dataStore.updateData { it.copy(shownTags = (it.shownTags + tags.map { tag -> tag.id }).distinct()) }
+            dataStore.updateData { it.copy(guide = it.guide.copy(shownTags = (it.guide.shownTags + tags.map { tag -> tag.id }).distinct())) }
         }
     }
 }

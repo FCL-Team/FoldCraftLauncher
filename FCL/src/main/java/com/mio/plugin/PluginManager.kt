@@ -6,7 +6,7 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
-import com.mio.datastore.pluginDataStore
+import com.mio.datastore.appSettingsDataStore
 import com.mio.manager.RendererManager
 import com.tungsten.fcl.FCLApp
 import kotlinx.coroutines.CoroutineScope
@@ -104,10 +104,10 @@ object PluginManager {
             current.toMutableSet().apply { if (enabled) remove(packageName) else add(packageName) }
         }
         scope.launch {
-            context.pluginDataStore.updateData { pref ->
-                val disabled = pref.disabledPlugins.toMutableSet()
+            context.appSettingsDataStore.updateData { pref ->
+                val disabled = pref.plugin.disabledPlugins.toMutableSet()
                 if (enabled) disabled.remove(packageName) else disabled.add(packageName)
-                pref.copy(disabledPlugins = disabled.toList())
+                pref.copy(plugin = pref.plugin.copy(disabledPlugins = disabled.toList()))
             }
         }
     }
@@ -125,7 +125,7 @@ object PluginManager {
         if (disabledLoaded) return
         synchronized(this) {
             if (disabledLoaded) return
-            val pref = runBlocking { context.pluginDataStore.data.first() }
+            val pref = runBlocking { context.appSettingsDataStore.data.first().plugin }
             disabledPackages.value = pref.disabledPlugins.toSet()
             disabledLoaded = true
         }

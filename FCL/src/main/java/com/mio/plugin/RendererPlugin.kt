@@ -3,7 +3,7 @@ package com.mio.plugin
 import android.content.Context
 import android.os.Bundle
 import com.mio.data.Renderer
-import com.mio.datastore.pluginDataStore
+import com.mio.datastore.appSettingsDataStore
 import com.mio.manager.RendererManager
 import com.tungsten.fcl.FCLApp
 import com.tungsten.fclcore.util.Logging
@@ -74,7 +74,7 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
     override fun onInit(context: Context) {
         v2Entries.clear()
         envPrefs = runCatching {
-            runBlocking { context.pluginDataStore.data.first().rendererEnvPrefs }
+            runBlocking { context.appSettingsDataStore.data.first().plugin.rendererEnvPrefs }
         }.getOrDefault(emptyMap())
     }
 
@@ -230,11 +230,11 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
         envPrefs = envPrefs.toMutableMap().apply { put(packageName, flat) }
         saveScope.launch {
             runCatching {
-                context.pluginDataStore.updateData { pref ->
-                    pref.copy(
-                        rendererEnvPrefs = pref.rendererEnvPrefs.toMutableMap()
+                context.appSettingsDataStore.updateData { pref ->
+                    pref.copy(plugin = pref.plugin.copy(
+                        rendererEnvPrefs = pref.plugin.rendererEnvPrefs.toMutableMap()
                             .apply { put(packageName, flat) }
-                    )
+                    ))
                 }
             }.onFailure { e ->
                 Logging.LOG.log(Level.SEVERE, "保存插件环境变量配置失败", e)

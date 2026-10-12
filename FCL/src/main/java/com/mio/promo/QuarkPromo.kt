@@ -3,7 +3,7 @@ package com.mio.promo
 import android.content.Context
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
-import com.mio.datastore.launchCountDataStore
+import com.mio.datastore.appSettingsDataStore
 import com.mio.util.openLink
 import com.tungsten.fcl.R
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
@@ -40,24 +40,24 @@ object QuarkPromo {
         val netdiskUrl = activity.getSharedPreferences("launcher", Context.MODE_PRIVATE)
             .getString(PREF_KEY_NETDISK_URL, null)
         activity.lifecycleScope.launch {
-            val current = activity.launchCountDataStore.data.first()
+            val current = activity.appSettingsDataStore.data.first().launchCount
             val totalCount = current.totalLaunchCount + 1
             // 兑现之前保留的触发：有链接直接弹出，不再掷骰子
             if (current.pendingPopup && netdiskUrl != null) {
-                activity.launchCountDataStore.updateData {
-                    it.copy(totalLaunchCount = totalCount, pityCounter = 0, pendingPopup = false)
+                activity.appSettingsDataStore.updateData {
+                    it.copy(launchCount = it.launchCount.copy(totalLaunchCount = totalCount, pityCounter = 0, pendingPopup = false))
                 }
                 showDialog(activity, totalCount, netdiskUrl, onProceed)
                 return@launch
             }
             val pity = current.pityCounter + 1
             val shown = Random.nextDouble() < popupProbability(pity)
-            activity.launchCountDataStore.updateData {
-                it.copy(
+            activity.appSettingsDataStore.updateData {
+                it.copy(launchCount = it.launchCount.copy(
                     totalLaunchCount = totalCount,
                     pityCounter = if (shown) 0 else pity,
                     pendingPopup = current.pendingPopup || (shown && netdiskUrl == null)
-                )
+                ))
             }
             if (shown && netdiskUrl != null) {
                 showDialog(activity, totalCount, netdiskUrl, onProceed)

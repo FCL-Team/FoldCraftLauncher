@@ -1,7 +1,7 @@
 package com.mio.device
 
 import com.mio.datastore.VulkanCheckPreference
-import com.mio.datastore.vulkanCheckDataStore
+import com.mio.datastore.appSettingsDataStore
 import com.tungsten.fcl.FCLApp
 import com.tungsten.fclcore.util.versioning.GameVersionNumber
 import kotlinx.coroutines.Dispatchers
@@ -150,14 +150,14 @@ object VulkanCheckManager {
 
     suspend fun loadRecord(): VulkanCheckRecord? {
         return runCatching {
-            FCLApp.getAppContext().vulkanCheckDataStore.data.first().record
+            FCLApp.getAppContext().appSettingsDataStore.data.first().vulkanCheck.record
         }.getOrNull()
     }
 
     private suspend fun saveRecord(record: VulkanCheckRecord) {
         runCatching {
-            FCLApp.getAppContext().vulkanCheckDataStore.updateData {
-                VulkanCheckPreference(record = record)
+            FCLApp.getAppContext().appSettingsDataStore.updateData {
+                it.copy(vulkanCheck = VulkanCheckPreference(record = record))
             }
         }
     }

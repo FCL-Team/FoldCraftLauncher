@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.mio.datastore.SkinAnimationSetting
-import com.mio.datastore.skinAnimationDataStore
+import com.mio.datastore.appSettingsDataStore
 import com.tungsten.fcl.R
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -43,7 +43,7 @@ object SkinAnimations {
 fun Context.restoreSkinSettings(renderer: SkinRenderer) {
     if (this !is LifecycleOwner) return
     lifecycleScope.launch {
-        val setting = skinAnimationDataStore.data.first()
+        val setting = appSettingsDataStore.data.first().skinAnimation
         renderer.playAnimation(SkinAnimations.validId(setting.animationId))
         renderer.solidLayerEnabled = setting.solidLayerEnabled
         renderer.upperBodySeparated = setting.upperBodySeparated
@@ -55,7 +55,7 @@ fun Context.restoreSkinSettings(renderer: SkinRenderer) {
 fun Context.restoreSkinSwitches(renderer: SkinRenderer) {
     if (this !is LifecycleOwner) return
     lifecycleScope.launch {
-        val setting = skinAnimationDataStore.data.first()
+        val setting = appSettingsDataStore.data.first().skinAnimation
         renderer.solidLayerEnabled = setting.solidLayerEnabled
         renderer.upperBodySeparated = setting.upperBodySeparated
     }
@@ -65,12 +65,12 @@ fun Context.restoreSkinSwitches(renderer: SkinRenderer) {
 fun Context.saveSkinSettings(renderer: SkinRenderer) {
     if (this !is LifecycleOwner) return
     lifecycleScope.launch {
-        skinAnimationDataStore.updateData {
-            SkinAnimationSetting(
+        appSettingsDataStore.updateData {
+            it.copy(skinAnimation = SkinAnimationSetting(
                 animationId = renderer.animationId,
                 solidLayerEnabled = renderer.solidLayerEnabled,
                 upperBodySeparated = renderer.upperBodySeparated
-            )
+            ))
         }
     }
 }
