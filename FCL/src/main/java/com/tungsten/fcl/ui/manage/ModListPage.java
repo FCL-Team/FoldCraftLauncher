@@ -105,8 +105,12 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
     /** 最近一次扫描列表时的变化信号（ModsChanged tick），用于判断是否真的需要重扫 */
     private int loadedTick = -1;
 
-    /** 列表扫描次数（诊断/测试用：验证重进本页不会无条件重扫） */
-    public int scanCount;
+    /** 列表扫描次数（回归测试读取：验证重进本页不会无条件重扫、tick 变化恰好补扫一次） */
+    private int scanCount;
+
+    public int getScanCount() {
+        return scanCount;
+    }
 
     private boolean isSearching = false;
 
