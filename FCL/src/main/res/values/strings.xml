@@ -1338,6 +1338,8 @@
     <string name="version_empty_launch">No instances, please install one before launch.</string>
     <string name="version_launch">Launch Game</string>
     <string name="version_no_version">No version</string>
+    <string name="version_pin">Pin to top</string>
+    <string name="version_unpin">Unpin</string>
     <string name="version_manage">Click to manage</string>
     <string name="version_manage_clean">Delete Log Files</string>
     <string name="version_manage_duplicate">Duplicate Instance</string>

@@ -1199,6 +1199,8 @@
     <string name="version_empty_launch">没有版本，请先安装一个版本。</string>
     <string name="version_launch">启动游戏</string>
     <string name="version_no_version">没有版本</string>
+    <string name="version_pin">置顶</string>
+    <string name="version_unpin">取消置顶</string>
     <string name="version_manage">点击管理</string>
     <string name="version_manage_clean">清理游戏日志</string>
     <string name="version_manage_duplicate">复制游戏实例</string>

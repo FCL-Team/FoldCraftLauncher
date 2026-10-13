@@ -31,6 +31,10 @@ class VersionListPage(context: Context?, id: Int) :
     private var searchWatcherAttached = false
     private var searchText = ""
     private var currentTab = 0
+
+    /** 上次渲染的版本 id 集合：仅数据集变化（首次加载/安装/删除版本/切 Profile）时才滚动
+     *  定位选中项，收藏重排不滚动，避免连续收藏时视口被反复拉走 */
+    private var lastEntryIds: Set<String>? = null
     private lateinit var viewModel: VersionListViewModel
 
     override fun onCreate() {
@@ -46,6 +50,8 @@ class VersionListPage(context: Context?, id: Int) :
             if (::children.isInitialized) {
                 children.forEach { it.selectedProperty().set(it.version == selected) }
             }
+            // adapter 内条目在 diff 后可能仍是未重绑的旧对象，勾选态须单独刷新
+            adapter?.updateSelection(selected)
         }
 
         refreshProfile()
@@ -121,12 +127,13 @@ class VersionListPage(context: Context?, id: Int) :
             return
         }
         children = state.entries.map {
-            VersionListItem(profile, it.id, it.libraries, it.tag, it.newIcon(), it.modCount)
+            VersionListItem(profile, it.id, it.libraries, it.tag, it.newIcon(), it.modCount, it.id in state.pinned)
         }
         if (adapter == null) {
             adapter = VersionListAdapter(context, children)
             binding.versionList.adapter = adapter
             binding.versionList.layoutManager = LinearLayoutManager(context)
+            adapter?.itemTouchHelper?.attachToRecyclerView(binding.versionList)
         }
         binding.progress.visibility = View.GONE
         binding.refresh.isEnabled = true
@@ -140,7 +147,12 @@ class VersionListPage(context: Context?, id: Int) :
         applyFilter()
         val selected = children.find { it.selectedProperty().get() }
         if (selected != null) {
-            binding.versionList.scrollToPosition(children.indexOf(selected))
+            val entryIds = state.entries.map { it.id }.toSet()
+            val entriesChanged = entryIds != lastEntryIds
+            lastEntryIds = entryIds
+            if (entriesChanged) {
+                binding.versionList.scrollToPosition(children.indexOf(selected))
+            }
         }
     }
 

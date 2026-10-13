@@ -16,14 +16,16 @@ public class VersionListItem {
     private final String tag;
     private final Drawable drawable;
     private final int modCount;
+    private final boolean pinned;
 
-    public VersionListItem(Profile profile, String id, String libraries, String tag, Drawable drawable, int modCount) {
+    public VersionListItem(Profile profile, String id, String libraries, String tag, Drawable drawable, int modCount, boolean pinned) {
         this.profile = profile;
         this.version = id;
         this.libraries = libraries;
         this.drawable = drawable;
         this.tag = tag;
         this.modCount = modCount;
+        this.pinned = pinned;
         this.isModpack = profile.getRepository().isModpack(id);
 
         selected.set(id.equals(profile.getSelectedVersion()));
@@ -51,6 +53,10 @@ public class VersionListItem {
 
     public int getModCount() {
         return modCount;
+    }
+
+    public boolean isPinned() {
+        return pinned;
     }
 
     public BooleanProperty selectedProperty() {

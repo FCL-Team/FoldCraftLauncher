@@ -32,7 +32,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
- * 版本快速切换弹窗：长按主界面版本卡片弹出，就地列出版本（按真实游戏版本降序），
+ * 版本快速切换弹窗：长按主界面版本卡片弹出，就地列出版本（置顶提前，其余按真实游戏版本降序），
  * 点击条目切换选中版本，点击条目右侧启动按钮切换并启动。
  *
  * 弹窗与右菜单对齐：宽度同菜单宽度，顶到屏幕顶端、底悬于版本卡片上方，背景半透明。
@@ -83,12 +83,10 @@ class VersionSwitchPopup(private val activity: FCLActivity) {
         if (selectedIndex > 0) binding.list.scrollToPosition(selectedIndex)
     }
 
-    /** 从共享 VM 状态派生条目：按真实游戏版本降序 */
+    /** 从共享 VM 状态派生条目：沿用 VM 顺序（真实游戏版本降序 + 置顶提前），不在此重排 */
     private fun items(profile: Profile, entries: List<VersionCache.Entry>): List<Item> {
         val selected = profile.selectedVersion
-        return entries
-            .sortedWith(compareByDescending<VersionCache.Entry> { it.gameVersion }.thenByDescending { it.id })
-            .map { Item(it.id, it.newIcon(), it.gameVersion, it.id == selected) }
+        return entries.map { Item(it.id, it.newIcon(), it.gameVersion, it.id == selected) }
     }
 
     private fun showPopup(anchor: View, menu: View, profile: Profile, onLaunch: (String) -> Unit) {

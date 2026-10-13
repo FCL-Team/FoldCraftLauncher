@@ -93,6 +93,16 @@ data class VulkanCheckPreference(
 )
 
 /**
+ * 版本列表置顶持久化数据（DataStore）：
+ * @param pinned 置顶版本表，外层 key 为 Profile 名称，value 为该 Profile 的置顶版本 id
+ *   列表（列表顺序即置顶显示顺序）
+ */
+@Serializable
+data class VersionPinPreference(
+    val pinned: Map<String, List<String>> = emptyMap(),
+)
+
+/**
  * 应用设置总集：全部领域设置合并为单个 DataStore 文件持久化，
  * 各领域为独立 data class，字段默认值即该领域出厂设置。
  */
@@ -105,6 +115,7 @@ data class AppSettingsPreference(
     val plugin: PluginPreference = PluginPreference(),
     val skinAnimation: SkinAnimationSetting = SkinAnimationSetting(),
     val vulkanCheck: VulkanCheckPreference = VulkanCheckPreference(),
+    val versionPin: VersionPinPreference = VersionPinPreference(),
 )
 
 object AppSettingsSerializer : Serializer<AppSettingsPreference> {

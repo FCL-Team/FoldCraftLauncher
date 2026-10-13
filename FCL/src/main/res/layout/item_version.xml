@@ -91,10 +91,22 @@
             android:stateListAnimator="@xml/anim_scale_large"
             app:auto_tint="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/delete"
+            app:layout_constraintEnd_toStartOf="@id/pin"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5"
             android:visibility="gone"/>
+
+        <com.tungsten.fcllibrary.component.view.FCLImageButton
+            android:id="@+id/pin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_star_outline"
+            android:stateListAnimator="@xml/anim_scale_large"
+            app:auto_tint="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/delete"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
 
         <com.tungsten.fcllibrary.component.view.FCLImageButton
             android:id="@+id/delete"
