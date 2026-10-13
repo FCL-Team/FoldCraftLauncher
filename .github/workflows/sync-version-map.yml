@@ -1,0 +1,45 @@
+name: Sync version map
+
+# version_map.json 由维护者手动更新，本 workflow 只负责将其同步到
+# FCL-Repo 的 res/version_map.json（gitee 镜像的数据源，大陆用户检测更新走该文件）
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "version_map.json"
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout FoldCraftLauncher
+        uses: actions/checkout@v4
+
+      - name: Checkout FCL-Repo
+        uses: actions/checkout@v4
+        with:
+          repository: FCL-Team/FCL-Repo
+          ref: main
+          # TOKEN 需对 FCL-Team/FCL-Repo 有写权限
+          token: ${{ secrets.TOKEN }}
+          path: fcl-repo
+
+      # 手动编辑的文件，推送前做一次 JSON 合法性校验，避免坏文件污染镜像
+      - name: Validate JSON
+        run: python3 -m json.tool version_map.json > /dev/null
+
+      - name: Sync res/version_map.json
+        working-directory: fcl-repo
+        run: |
+          cp "$GITHUB_WORKSPACE/version_map.json" res/version_map.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "res/version_map.json unchanged"
+          else
+            git add res/version_map.json
+            git commit -m "Update version_map.json"
+            git push
+          fi
