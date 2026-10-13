@@ -297,10 +297,18 @@ public class FCLauncher {
         }
         String gl = renderer.getGlName();
         if (!gl.isEmpty()) {
-            if (!gl.startsWith("/")) {
+            // v1 插件约定：glName 以 / 开头表示相对插件 nativeLibraryDir（与 eglName 一致），须拼上插件目录
+            if (gl.startsWith("/")) {
+                if (!renderer.getPath().isEmpty()) {
+                    gl = renderer.getPath() + gl;
+                }
+            } else {
                 gl = rendererLibPath(renderer) + "/" + gl;
             }
-            envMap.put("SDL_OPENGL_LIBRARY", gl);
+            // 与 SDL_EGL_LIBRARY 同策略：路径不存在时不设置，交给 SDL 按自身默认解析
+            if (new File(gl).isFile()) {
+                envMap.put("SDL_OPENGL_LIBRARY", gl);
+            }
         }
     }
 
