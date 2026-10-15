@@ -1228,6 +1228,11 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                     jvmActivity.applyMaxRefreshRatePolicy();
                 }
                 break;
+            case FULLSCREEN:
+                // 与启动器设置页同一功能：更新主题持久化值并应用到当前窗口，
+                // 后续焦点恢复/onPostResume 会按主题值重放全屏标志
+                ThemeEngine.getInstance().applyAndSave(activity, activity.getWindow(), checked);
+                break;
             case SHOW_LOG:
                 menuSetting.setShowLog(checked);
                 logWindow.setVisibility(menuSetting.isShowLog());
