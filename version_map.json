@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1339,
-    "versionName": "1.3.3.9",
-    "date": "2026.10.10",
+    "versionCode": 1340,
+    "versionName": "1.3.4.0",
+    "date": "2026.10.15",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. The right menu's gesture section gained a \"Simultaneous View Control\" toggle: touch-pad dragging and key-based pointer follow are two independent look paths, and with the toggle off (the default) whichever starts dragging first owns look control while the other's deltas are ignored until it is released; turning it on lets both control the view at once, and the setting persists in the in-game menu settings.\n2. Fixed opening folders and links doing nothing on 26.3: links opened by the game through SDL_OpenURL used to be handed straight to the system and are now forwarded to the launcher, which shows the file browser for file: paths and delegates the rest to the system.\n3. Fixed \"hold\" interactions such as Create's numeric settings screen being cut short: switching cursor mode no longer pre-emptively resends mouse-button releases, since a mode switch is not a lost event source - a held button is released when its own source lifts, and only the hover-coordinate snapshot is invalidated.\n4. Fixed mouse buttons synthesized by the touch pad's long-press gesture getting stuck when the cursor mode changed mid-hold: the up/cancel path now releases the synthesized left/right buttons and retracts an untriggered long-press regardless of mode, instead of only in the capture branch."
+        "text": "(Translated from Chinese by AI)\n1. The version list supports pinned favorites: entries gain a star button, pinned entries are placed first in favorite order, long-press and drag to reorder them, and pins are stored per profile.\n2. The layout manager gained a layout copy feature that pops up a dialog to edit the info and generates a random new id; the mod manager page now reloads automatically after downloads land on disk or mods are updated.\n3. Fixed the UI freezing when launching modded instances on 26.3+: the FML early-loading window is now force-disabled, as its render thread and the launcher UI used to block each other on shared graphics buffers.\n4. Fixed black bars and misaligned clicks after resizing the window at runtime under SDL rendering; the forced-resolution letterbox is now driven by layout callbacks and computed from the parent container's measured size.\n5. Fixed external keyboards being unable to type text in-game under SDL mode.\n6. Fixed old-format (64x32) skins rendering incorrectly after switching pages.\n7. Fixed the \"request highest refresh rate\" toggle crashing inside the layout editor, Modrinth entries without icons crashing the favorites page, and unknown aggregation-search category tags leaking internal key names.\n8. Favorites-page download counts are now formatted per locale (wan/yi, K/M/B); the SDL GL library path of custom renderer plugins is joined per the plugin path convention and checked for existence."
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.右菜单手势分类新增\"同时控制视角\"开关：触控板拖动与按键指针跟随是两条独立的转视角路径，默认关闭时先开始拖动的一方独占视角控制权，另一方的增量在占用期间被忽略、抬起后释放；开启后两者可同时转视角，开关状态持久化到游戏菜单设置\n2.修复 26.3 下游戏打开文件夹与链接失效：游戏经 SDL_OpenURL 打开的链接此前被直接交给系统，现转交启动器处理，file: 路径弹文件浏览器、其余交给系统\n3.修复机械动力数值设置界面等\"按住\"交互被瞬间打断：光标模式切换不再抢先补发鼠标键释放，模式切换不等于来源丢失，按住中的键等来源自身抬起时再释放，仅作废悬停坐标快照避免整段位移\n4.修复按住期间切换光标模式导致长按手势合成的鼠标键卡住：抬起与取消事件统一释放合成的左/右键并撤回未触发的长按，不再只在捕获分支处理"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.版本列表支持收藏置顶：条目新增星标收藏，置顶项按收藏顺序前置，长按拖拽调整置顶顺序，数据按配置文件隔离\n2.布局管理页新增布局复制功能，复制时弹框编辑信息并生成随机新 id；模组管理页在下载落盘或模组更新后自动刷新列表\n3.修复 26.3+ 部分模组启动时 UI 冻死：强制关闭 FML 早期加载屏，其渲染线程与启动器界面曾在图形缓冲上互相阻塞\n4.修复 SDL 渲染下运行时调整窗口尺寸后画面黑边与点击错位；强制分辨率黑边改由布局回调驱动、按父容器实测尺寸计算\n5.修复 SDL 模式下外置键盘无法在游戏内输入文本\n6.修复旧格式（64x32）皮肤切换页面后渲染错乱\n7.修复布局编辑页内开关\"请求最高刷新率\"崩溃、Modrinth 无图标项目进收藏页崩溃、聚合搜索未知分类标签泄漏内部键名\n8.收藏页下载量按语言环境换算显示（万/亿、K/M/B）；自定义渲染器插件的 SDL GL 库路径按插件约定拼接并校验存在性"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/664a1ea7792e",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.3.9/FCL-release-1.3.3.9-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/8d761a2e88aa",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.0/FCL-release-1.3.4.0-all.apk"
   }
 ]
