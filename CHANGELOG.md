@@ -1,5 +1,55 @@
 # Changelog
 
+## [1.3.4.0] - 2026-10-15
+
+### 中文
+
+#### ✨ 新功能
+
+1. **版本列表收藏置顶**：版本条目新增星标收藏按钮（auto_tint 跟随主题），置顶项按收藏顺序前置、其余按真实版本降序；置顶数据按 Profile 隔离持久化（VersionPinManager，并入 AppSettings 总集）；置顶项长按拖拽排序，仅限置顶区间内移动，松手合并回完整置顶列表持久化；主界面长按版本卡快速切换弹窗同步置顶顺序。列表同时改用 DiffUtil 局部刷新：星标/勾选以 payload 局部重绑，收藏与选中切换不再整列重播动画；diff 分发前后锚定视口，收藏/取消收藏时视口纹丝不动，仅数据集变化时才滚动定位选中项；顺带修复 DiffCallback 共用可变列表引用在冷加载快照→重算发射时的越界崩溃
+2. **布局复制**：布局管理页新增布局复制功能，复制时弹框编辑信息并生成随机新 id；克隆前补全轻量对象的按键数据，ControlViewGroup/ViewData 克隆改为深拷贝并传递 dataLoaded 标志，修复副本在编辑器中因懒加载失败而不渲染控件组的问题
+
+#### ⚡ 优化
+
+1. **模组管理自动刷新（#1896）**：下载落盘或模组更新后管理页自动重载（ModsChanged 事件流 + 300ms 防抖），扫描期间的变更事件在完成回调比对补扫；ModListPage 重进不再无条件重扫（与最近一次扫描比对）。同批重构将版本列表、下载清单、搜索改为 ViewModel 状态机：快照先发即时渲染 + 后台全量重算；下载清单按 libraryId 跨页面缓存，重进不再重拉远端 manifest，失败时保留同版本旧列表并提供重试入口；模组详情页 pinnedPageId 固定所属模式，修复模组被下到光影包目录；临时页 dismiss 即移除视图，不再留下可误触的淡出期
+
+#### 🐛 修复
+
+1. **26.3+ 部分模组启动时 UI 冻死**：NeoForge 12 移除了 `-Dfml.earlyprogresswindow` 属性通道（FMLConfig 只读 config/fml.toml），旧旗子失效；早期加载屏的 ANGLE/Vulkan 渲染线程在启动扫描期反复分配 gralloc 缓冲，与启动器 UI 的 present 在 vendor gralloc 进程共享锁上互堵，RenderThread 出不了帧导致整个 UI 冻结直至 ANR；现 generateOptionsTxt 无条件行级合并 fml.toml 写入 `earlyWindowControl = false`（键置文件头部避免落表作用域，其余用户配置保留）
+2. **SDL 渲染下运行时调整窗口尺寸后画面黑边与点击错位**：SDL 窗口不消费 GLFW 窗口事件，游戏内调整分辨率后视图尺寸不变、SizeChanged 不触发，viewport 与 buffer 尺寸脱节；统一收敛到 SdlBridge.syncResolution 同步窗口与渲染尺寸，并统一渲染窗口尺寸计算、恢复 surface 复用分支的渲染状态
+3. **强制分辨率 letterbox 黑边错位**：改由布局回调驱动并按父容器实测尺寸计算，不再依赖可能过期的静态布局快照
+4. **SDL 模式下外置键盘无法在游戏内输入文本**：SDL 渲染路径（MC 26.3+）不注册 GLFW 字符回调，文本唯一通道是 SDL 文本输入通道，而该通道只接收 IME 提交，外置键盘按键不会被合成文本；现通道激活（游戏内文本框聚焦，判定用 native 真实状态）时把打印键字符补经 SDL 文本通道提交、与按键事件成对下发，对齐桌面端 keydown 与字符事件成对到达的语义；通道关闭时只转发按键，不影响游戏按键绑定
+5. **旧格式（64x32）皮肤切换页面后渲染错乱 (#1928)**：surface 重建后重上传的纹理未做尺寸归一化，位图以原始 64x32 尺寸上传却被 64x64 UV 采样，切页触发重上传后整体错位；修复为归一化后回写 texture
+6. **布局编辑页内开关"请求最高刷新率"崩溃 (#1927)**：开关回调直接把宿主强转 JVMActivity，非游戏宿主（布局编辑页）内切换即 ClassCastException；改为 instanceof 判定，仅宿主为 JVMActivity 时应用最高刷新率策略
+7. **Modrinth 无图标项目进收藏页崩溃**：无图标项目 icon_url 为 null，流入 Kotlin 非空字段即崩；两处 toMod() 源头兜底空串
+8. **聚合搜索分类标签泄漏内部键名**：Modrinth 条目的分类/加载器 slug（如 babric）缺少对应本地化串时，getLocalizedText 未命中回退键名本身，列表直接显示 `modrinth_category_babric`；对照 Modrinth API 补齐 13 个缺失串（babric/bta_babric/canvas/geyser/iris/java_agent/legacy_fabric/liteloader/minecraft/nilloader/optifine/ornithe/vanilla），getLocalizedCategory 未命中时回退原始 slug 防止未来再泄漏
+9. **收藏页一键下载不可取消且可重复触发**：解析改为可取消协程，loading 未复位时再次点击提示等待
+10. **自定义渲染器插件 SDL GL 库路径错误**：v1 插件约定 glName/eglName 以 `/` 开头表示相对插件 nativeLibraryDir，SDL GL 分支却当作绝对路径透传，产出 `/libX.so` 坏路径，此前仅靠 SDL dlopen 失败后按 soname 走 LD_LIBRARY_PATH 回落才能工作；现按约定拼接插件目录，并镜像 EGL 分支增加存在性检查——路径不存在时不设置该环境变量，交给 SDL 按自身默认解析
+
+### English
+
+#### ✨ New Features
+
+1. **Pinned favorites in the version list**: Version entries gain a star favorite button (auto_tint follows the theme); pinned entries are placed first in favorite order and the rest sort by real version descending. Pins persist per Profile (VersionPinManager, merged into the AppSettings store). Pinned entries support long-press drag reordering within the pinned range only; on release the order merges back into the full pinned list for persistence, and the main screen's long-press version-card quick-switch popup shows the same order. The list also switched to DiffUtil partial refresh: star/check state rebinds locally via payloads, so favoriting and selection no longer replay the whole list's animation; the viewport is anchored around diff dispatch so favoriting/unfavoriting never scrolls, and scroll-to-selected happens only on dataset changes. Also fixes an out-of-bounds crash from DiffCallback sharing a mutable list reference across cold-load snapshot → recomputed emissions
+2. **Layout copy**: The layout manager gained a copy feature that pops up a dialog to edit the info and generates a random new id. Key data of lightweight objects is completed before cloning, and ControlViewGroup/ViewData clones are now deep copies that carry the dataLoaded flag, fixing copies rendering nothing in the editor due to failed lazy loading
+
+#### ⚡ Improvements
+
+1. **Automatic mod list refresh (#1896)**: The mod manager page reloads automatically after downloads land on disk or mods are updated (ModsChanged event stream with 300ms debounce); changes during a scan are reconciled with a supplementary scan in the completion callback, and re-entering ModListPage no longer rescans unconditionally (compared against the most recent scan). The same rework moves the version list, download manifests, and search onto ViewModel state machines: snapshots emit first for instant rendering with full recomputation in the background; download manifests cache across pages by libraryId so re-entering no longer re-fetches, and failures keep the previous list with a retry entry; the mod detail page pins its owning mode via pinnedPageId, fixing mods being downloaded into the shader-pack directory; temp pages remove their view on dismiss immediately, leaving no mistappable fade-out period
+
+#### 🐛 Bug Fixes
+
+1. **UI freezing when launching modded instances on 26.3+**: NeoForge 12 removed the `-Dfml.earlyprogresswindow` property channel (FMLConfig only reads config/fml.toml), so the old flag stopped working; the early-loading window's ANGLE/Vulkan render thread allocates gralloc buffers repeatedly during the startup scan and deadlocks with the launcher UI's present on the vendor gralloc process's shared lock, starving RenderThread and freezing the whole UI until ANR. generateOptionsTxt now unconditionally merges `earlyWindowControl = false` into fml.toml line-wise (the key goes at the file head to avoid falling into table scope, with other user config preserved)
+2. **Black bars and misaligned clicks after runtime window resize under SDL rendering**: The SDL window consumes no GLFW window events, so changing the resolution in-game left the view size unchanged, SizeChanged never fired, and viewport and buffer sizes diverged; everything now converges on SdlBridge.syncResolution, with render window size computation unified and the render state of the surface-reuse branch restored
+3. **Forced-resolution letterbox misplacement**: Now driven by layout callbacks and computed from the parent container's measured size instead of a possibly stale static layout snapshot
+4. **External keyboards unable to type text in-game under SDL mode**: The SDL render path (MC 26.3+) registers no GLFW char callback, so the only text channel is SDL's text-input channel — which receives IME commits only, and physical keyboard presses never synthesized text. While the channel is active (an in-game text field is focused, judged from the native true state), printable key characters are additionally committed through the SDL text channel paired with the key event, matching desktop semantics where keydown and char events arrive together; with the channel closed only key events are forwarded, leaving game key bindings untouched
+5. **Old-format (64x32) skins rendering incorrectly after switching pages (#1928)**: Textures re-uploaded after surface recreation were not size-normalized — the bitmap uploaded at its native 64x32 was sampled by 64x64 UVs, misplacing everything once a page switch triggered a re-upload; the fix normalizes before writing back to the texture
+6. **"Request highest refresh rate" toggle crashing inside the layout editor (#1927)**: The toggle callback cast its host straight to JVMActivity, throwing ClassCastException in non-game hosts (the layout editor); it now instanceof-checks and only applies the max-refresh-rate policy when the host is a JVMActivity
+7. **Icon-less Modrinth entries crashing the favorites page**: icon_url is null for entries without icons and flowed into a Kotlin non-null field; both toMod() sites now fall back to an empty string
+8. **Aggregation-search category tags leaking internal key names**: When a Modrinth entry's category/loader slug (e.g. babric) lacks a localized string, getLocalizedText fell back to the key itself and the list displayed `modrinth_category_babric`; 13 missing strings were added against the Modrinth API (babric/bta_babric/canvas/geyser/iris/java_agent/legacy_fabric/liteloader/minecraft/nilloader/optifine/ornithe/vanilla), and getLocalizedCategory falls back to the raw slug to prevent future leaks
+9. **Favorites-page one-click download neither cancellable nor re-trigger-safe**: Parsing now runs in a cancellable coroutine, and clicking again while loading has not been reset shows a wait hint
+10. **Wrong SDL GL library path for custom renderer plugins**: The v1 plugin convention is that a leading `/` in glName/eglName means relative to the plugin's nativeLibraryDir, but the SDL GL branch passed it through as absolute, producing broken paths like `/libX.so` that only worked thanks to SDL's soname fallback over LD_LIBRARY_PATH after dlopen failure. The path is now joined against the plugin directory, and mirroring the EGL branch an existence check was added: when the path does not exist the environment variable is left unset, letting SDL resolve by its own defaults
+
 ## [1.3.3.9] - 2026-10-10
 
 ### 中文
