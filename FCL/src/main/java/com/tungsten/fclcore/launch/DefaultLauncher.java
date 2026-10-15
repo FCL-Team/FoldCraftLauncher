@@ -217,9 +217,6 @@ public class DefaultLauncher {
             MioLibPatcherManager.getJvmOptions().forEach(res::add);
         }
 
-        Set<String> classpath = repository.getClasspath(version);
-        addLWJGLClassPath(classpath);
-        classpath.add(FCLPath.MIO_LAUNCH_WRAPPER);
         File jar = repository.getVersionJar(version);
         if (!jar.exists() || !jar.isFile()) {
             String inherits = version.getInheritsFrom();
@@ -227,6 +224,22 @@ public class DefaultLauncher {
                 jar = repository.getVersionJar(inherits);
             }
         }
+        if (VulkanHandDepthFix.isApplicable(options.isVulkanHandDepthFix(), options.isVKDriverSystem(),
+                options.getGraphicsBackend(), javaVersion.getVersion(), version.getMainClass())) {
+            try (InputStream input = context.getAssets().open("game/FCLVulkanCompat.jar")) {
+                Path agent = new File(FCLPath.CACHE_DIR, "compatibility/FCLVulkanCompat.jar").toPath();
+                VulkanHandDepthFix.extractAgent(input, agent);
+                res.add("-Dfcl.vulkan.handDepthFix=true");
+                res.add("-javaagent:" + agent);
+                LOG.info("[VulkanHandDepthFix] Bundled hand-depth workaround requested");
+            } catch (IOException failure) {
+                // A compatibility failure must not prevent an otherwise valid launch.
+                LOG.log(Level.WARNING, "[VulkanHandDepthFix] Unable to extract agent; launching without it", failure);
+            }
+        }
+        Set<String> classpath = repository.getClasspath(version);
+        addLWJGLClassPath(classpath);
+        classpath.add(FCLPath.MIO_LAUNCH_WRAPPER);
         classpath.add(jar.getAbsolutePath());
 
         // Provided Minecraft arguments

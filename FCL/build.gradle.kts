@@ -168,6 +168,26 @@ abstract class FilterJreAssets : Sync() {
     abstract val outputDir: DirectoryProperty
 }
 
+// Keep JVM classfiles out of Android/D8: the standalone Java 17 agent is an APK asset.
+val vulkanCompatAgent = configurations.create("vulkanCompatAgent") {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+dependencies {
+    add(vulkanCompatAgent.name, project(mapOf("path" to ":VulkanCompat", "configuration" to "agentElements")))
+}
+
+abstract class VulkanCompatAssets : Sync() {
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+}
+
+val prepareVulkanCompatAssets = tasks.register<VulkanCompatAssets>("prepareVulkanCompatAssets") {
+    outputDir.convention(layout.buildDirectory.dir("generated/assets/vulkanCompat"))
+    from(vulkanCompatAgent) { into("game") }
+    into(outputDir)
+}
+
 val filterJreAssets = tasks.register<FilterJreAssets>("filterJreAssets") {
     val arch = System.getProperty("arch", "all")
     // Copy/Sync 的 up-to-date 检查不包含 copy spec 的过滤规则，必须显式声明 arch 输入，
@@ -182,6 +202,7 @@ val filterJreAssets = tasks.register<FilterJreAssets>("filterJreAssets") {
 
 androidComponents {
     onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(prepareVulkanCompatAssets) { it.outputDir }
         variant.outputs.forEach { output ->
             if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
                 (output.getFilter(ABI)?.identifier ?: "all").let { abi ->

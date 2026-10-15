@@ -1,0 +1,4 @@
+**/build/
+*.spv
+depth-probe-host
+*.ppm
