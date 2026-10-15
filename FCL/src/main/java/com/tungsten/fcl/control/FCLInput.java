@@ -520,6 +520,18 @@ public class FCLInput implements View.OnCapturedPointerListener {
         if (fclKeycode == FCLKeycodes.KEY_UNKNOWN)
             return (event.getFlags() & KeyEvent.FLAG_FALLBACK) == KeyEvent.FLAG_FALLBACK;
         boolean press = event.getAction() == KeyEvent.ACTION_DOWN;
+        // SDL 渲染路径（MC 26.3+）不注册 GLFW 字符回调，文本唯一通道是 SDL 文本输入通道，
+        // 而该通道只接收 IME 提交，外置键盘按键不会被合成文本。故在通道激活（游戏内文本框
+        // 聚焦）时把打印键字符补经 SDL 文本通道提交，与按键事件成对下发，
+        // 对齐桌面端 keydown 与字符事件成对到达的语义；
+        // 通道关闭时只转发按键，不影响游戏按键绑定。激活判定用 native 真实状态
+        if (press && SdlBridge.getSdlEnabled() && SdlBridge.isSdlRenderActive()
+                && SDLActivity.isTextInputEvent(event) && SdlBridge.isNativeTextInputActive()) {
+            int unicode = event.getUnicodeChar();
+            if (unicode != 0) {
+                SDLActivity.commitTextInput(String.valueOf((char) unicode));
+            }
+        }
         // 物理键盘字符取自设备布局，随 keydown 一次性成对下发；不能再调 sendChar——
         // 那是软键盘纯字符通道，会反查键码补发一对 keydown/keyup，与本按键叠加成双重输入
         int keyChar = press && menu.getCursorMode() == FCLBridge.CursorEnabled ? event.getUnicodeChar() : 0;
