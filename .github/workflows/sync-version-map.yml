@@ -10,6 +10,12 @@ on:
       - "version_map.json"
   workflow_dispatch:
 
+# push 事件可能被平台重复投递，同组并发会在 FCL-Repo 的 commit+push 上
+# 互相踩踏（non-fast-forward 被拒），只保留最新一个实例
+concurrency:
+  group: sync-version-map
+  cancel-in-progress: true
+
 jobs:
   sync:
     runs-on: ubuntu-latest
