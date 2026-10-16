@@ -1432,8 +1432,6 @@
     <string name="file_browser_sort_name">按名称</string>
     <string name="file_browser_sort_size">按大小</string>
     <string name="file_browser_sort_date">按修改时间</string>
-    <string name="file_browser_show_hidden_files">显示隐藏文件</string>
-    <string name="file_browser_hide_hidden_files">隐藏隐藏文件</string>
     <string name="file_browser_refresh">刷新</string>
     <string name="file_browser_batch">批量操作</string>
     <string name="file_browser_select_all">全选</string>

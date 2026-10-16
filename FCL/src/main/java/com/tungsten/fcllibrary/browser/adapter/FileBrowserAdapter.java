@@ -42,17 +42,12 @@ public class FileBrowserAdapter extends FCLAdapter {
     private final DateFormat formatter;
 
     @SuppressLint("SimpleDateFormat")
-    public FileBrowserAdapter(Context context, FileBrowser fileBrowser, Path path, ArrayList<String> selectedFiles, FileBrowserListener listener) {
-        this(context, fileBrowser, path, selectedFiles, SortMode.NAME, true, listener);
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    public FileBrowserAdapter(Context context, FileBrowser fileBrowser, Path path, ArrayList<String> selectedFiles, SortMode sortMode, boolean showHidden, FileBrowserListener listener) {
+    public FileBrowserAdapter(Context context, FileBrowser fileBrowser, Path path, ArrayList<String> selectedFiles, SortMode sortMode, FileBrowserListener listener) {
         super(context);
         this.fileBrowser = fileBrowser;
         this.selectedFiles = selectedFiles;
         this.listener = listener;
-        this.list = FileOperator.getFileList(path, fileBrowser, sortMode, showHidden);
+        this.list = FileOperator.getFileList(path, fileBrowser, sortMode);
 
         this.formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }

@@ -53,7 +53,6 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
 
     private static final String PREFERENCES_NAME = "launcher";
     private static final String KEY_SORT_MODE = "file_browser_sort_mode";
-    private static final String KEY_SHOW_HIDDEN = "file_browser_show_hidden";
 
     private FileBrowser fileBrowser;
     private FileBrowserAdapter adapter;
@@ -75,7 +74,6 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
 
     private Path currentPath;
     private SortMode sortMode;
-    private boolean showHidden;
 
     private ArrayList<String> selectedFiles;
     private ArrayList<Uri> extSelected;
@@ -129,7 +127,6 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
 
         SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
         sortMode = parseSortMode(preferences.getString(KEY_SORT_MODE, null));
-        showHidden = preferences.getBoolean(KEY_SHOW_HIDDEN, false);
 
         mode = findViewById(R.id.mode);
         type = findViewById(R.id.type);
@@ -225,7 +222,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         currentPath = path;
         currentText.setText(path.toString());
         ThemeEngine.getInstance().registerEvent(currentText, () -> currentText.setBackgroundColor(ThemeEngine.getInstance().getTheme().getColor()));
-        adapter = new FileBrowserAdapter(this, fileBrowser, path, selectedFiles, sortMode, showHidden, new FileBrowserListener() {
+        adapter = new FileBrowserAdapter(this, fileBrowser, path, selectedFiles, sortMode, new FileBrowserListener() {
             @Override
             public void onEnterDir(String path) {
                 refreshList(new File(path).toPath());
@@ -368,14 +365,8 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
                 (position, item) -> setSortMode(SortMode.values()[position]));
     }
 
-    private void toggleShowHidden() {
-        showHidden = !showHidden;
-        getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE).edit().putBoolean(KEY_SHOW_HIDDEN, showHidden).apply();
-        refreshList(currentPath);
-    }
-
     /**
-     * 管理菜单：新建、粘贴、排序、隐藏文件开关、批量操作与刷新
+     * 管理菜单：新建、粘贴、排序、批量操作与刷新
      */
     private void showManageMenu() {
         List<String> items = new ArrayList<>();
@@ -388,8 +379,6 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         actions.add(this::pasteClipboard);
         items.add(getString(R.string.file_browser_sort));
         actions.add(this::showSortMenu);
-        items.add(getString(showHidden ? R.string.file_browser_hide_hidden_files : R.string.file_browser_show_hidden_files));
-        actions.add(this::toggleShowHidden);
         // 批量操作会向调用方返回多个路径：单选的文件选择模式（launchSingleSelection）下不提供
         // 入口，否则全选后确认会破坏调用方的单选约定
         boolean singleSelectionChooser = fileBrowser.getLibMode() == LibMode.FILE_CHOOSER
@@ -401,7 +390,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         }
         items.add(getString(R.string.file_browser_refresh));
         actions.add(() -> refreshList(currentPath));
-        ItemSelectionDialog.show(this, getString(R.string.file_browser_manage), items, true, -1,
+        ItemSelectionDialog.show(this, getString(R.string.file_browser_manage), items, false, -1,
                 (position, item) -> actions.get(position).run());
     }
 
@@ -419,7 +408,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
         actions.add(() -> clipboardSelected(true));
         items.add(getString(R.string.file_browser_delete));
         actions.add(this::confirmDeleteSelected);
-        ItemSelectionDialog.show(this, getString(R.string.file_browser_batch), items, true, -1,
+        ItemSelectionDialog.show(this, getString(R.string.file_browser_batch), items, false, -1,
                 (position, item) -> actions.get(position).run());
     }
 
@@ -443,7 +432,7 @@ public class FileBrowserActivity extends FCLActivity implements View.OnClickList
             items.add(getString(R.string.file_browser_share));
             actions.add(() -> shareFile(file));
         }
-        ItemSelectionDialog.show(this, file.getName(), items, true, -1,
+        ItemSelectionDialog.show(this, file.getName(), items, false, -1,
                 (position, item) -> actions.get(position).run());
     }
 

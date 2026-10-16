@@ -10,6 +10,7 @@ import com.tungsten.fcllibrary.browser.SelectedFile
 import com.tungsten.fcllibrary.browser.adapter.FileBrowserAdapter
 import com.tungsten.fcllibrary.browser.adapter.FileBrowserListener
 import com.tungsten.fcllibrary.browser.options.LibMode
+import com.tungsten.fcllibrary.browser.options.SortMode
 import com.tungsten.fcllibrary.component.FCLActivity
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
@@ -61,6 +62,7 @@ class OpenFolderDialog(
                 .create(),
             File(internalPath).toPath(),
             ArrayList<String>(),
+            SortMode.NAME,
             object : FileBrowserListener {
                 override fun onEnterDir(path: String) {
                     internalPath = path
