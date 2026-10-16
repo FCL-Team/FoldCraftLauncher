@@ -85,10 +85,16 @@ class Gamepad(val context: Context, val fclInput: FCLInput) : GamepadHandler {
     }
 
     fun handleMotionEventInput(event: MotionEvent): Boolean {
+        // 手柄瞬断（如数据线接触不良）后系统仍会派发残留事件，event.device 为 null，
+        // 而库内 getGamepadIdentifier 直接调用 device.getDescriptor() 未判空，吞掉事件
+        if (event.device == null)
+            return true
         return manager.handleMotionEventInput(context, event, this)
     }
 
     fun handleKeyEvent(event: KeyEvent): Boolean {
+        if (event.device == null)
+            return true
         return manager.handleKeyEventInput(context, event, this)
     }
 
