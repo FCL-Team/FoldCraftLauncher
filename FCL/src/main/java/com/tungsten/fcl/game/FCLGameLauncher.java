@@ -72,14 +72,16 @@ public final class FCLGameLauncher extends DefaultLauncher {
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Unable to disable forge animation", e);
         }
-        // NeoForge 12（MC 26.3+）移除了 -Dfml.earlyprogresswindow 属性通道（FML 只读本文件），
-        // 其早期加载屏的 ANGLE/Vulkan 渲染在启动期反复分配 gralloc 缓冲，会与启动器 UI 的
-        // present 在 vendor gralloc 锁上互堵（UI 冻死直至 ANR），故与 splash.properties 一样直接关闭。
+        // 仅对 MC 26.3+ 关闭 FML 早期加载屏：其 ANGLE/Vulkan 渲染在启动期反复分配 gralloc 缓冲，
+        // 会与启动器 UI 的 present 在 vendor gralloc 锁上互堵（UI 冻死直至 ANR）。
+        // 更早版本无此冲突，须清掉残留的关闭键，保留模组加载进度动画。
         // 键置于文件头部，不会落入任何表作用域；FML 加载后会按 spec 回写补全注释与其余键。
         File fmlToml = new File(configFolder, "fml.toml");
+        GameVersionNumber gameVersion = GameVersionNumber.asGameVersion(repository.getGameVersion(version).orElse("0.0"));
+        boolean disableEarlyWindow = gameVersion.compareTo("26.3") >= 0;
         if (fmlToml.isFile()) {
             try (BufferedReader bfr = new BufferedReader(new FileReader(fmlToml))) {
-                StringBuilder str = new StringBuilder("earlyWindowControl = false\n");
+                StringBuilder str = new StringBuilder(disableEarlyWindow ? "earlyWindowControl = false\n" : "");
                 String line;
                 while ((line = bfr.readLine()) != null) {
                     if (!line.strip().startsWith("earlyWindowControl")) {
@@ -90,13 +92,13 @@ public final class FCLGameLauncher extends DefaultLauncher {
                     fw.write(str.toString());
                 }
             } catch (IOException e) {
-                Logging.LOG.log(Level.WARNING, "Unable to disable fml early window", e);
+                Logging.LOG.log(Level.WARNING, "Unable to write fml.toml", e);
             }
-        } else {
+        } else if (disableEarlyWindow) {
             try {
                 FileUtils.writeText(fmlToml, "earlyWindowControl = false\n");
             } catch (IOException e) {
-                Logging.LOG.log(Level.WARNING, "Unable to disable fml early window", e);
+                Logging.LOG.log(Level.WARNING, "Unable to write fml.toml", e);
             }
         }
         GameOption gameOption = null;
