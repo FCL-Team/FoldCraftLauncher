@@ -143,10 +143,11 @@ private long loadDialogShowTime = 0;
 
             @Override
             public void onCopy() {
+                // 复制目标始终是当前编辑组：参考组（ghost）控件的复制即"引入"当前组
                 if (selectedView instanceof ControlButton) {
-                    addView(((ControlButton) selectedView).getData().cloneView(), findOwnerGroup(((ControlButton) selectedView).getData()));
+                    addView(((ControlButton) selectedView).getData().cloneView());
                 } else if (selectedView instanceof ControlDirection) {
-                    addView(((ControlDirection) selectedView).getData().cloneView(), findOwnerGroup(((ControlDirection) selectedView).getData()));
+                    addView(((ControlDirection) selectedView).getData().cloneView());
                 }
             }
 
@@ -187,7 +188,7 @@ private long loadDialogShowTime = 0;
 
                 @Override
                 public void onClone(CustomControl view) {
-                    addView(view, findOwnerGroup(button.getData()));
+                    addView(view);
                 }
 
                 @Override
@@ -213,7 +214,7 @@ private long loadDialogShowTime = 0;
 
                 @Override
                 public void onClone(CustomControl view) {
-                    addView(view, findOwnerGroup(direction.getData()));
+                    addView(view);
                 }
 
                 @Override
@@ -375,13 +376,21 @@ private long loadDialogShowTime = 0;
         addView(control.cloneView(), target);
     }
 
-    /** 跨组操作：移动控件到目标组（从归属组删除，id 保持不变） */
+    /**
+     * 跨组操作：移动控件到目标组（从归属组删除，id 保持不变）。
+     * 先预检目标数据并从归属组删除，再加入目标组：跨组加入会整体重建画布，
+     * 若删除前加入，归属组与目标组会同时持有同 id 控件，重建出两个同 id 视图。
+     */
     public void moveControlToGroup(CustomControl control, ControlViewGroup target) {
+        if (target != null && !target.isDataLoaded()) {
+            Toast.makeText(gameMenu.getActivity(), gameMenu.getActivity().getString(R.string.message_data_is_loading), Toast.LENGTH_SHORT).show();
+            return;
+        }
         ControlViewGroup owner = findOwnerGroup(control);
-        addView(control, target);
-        if (owner != null && owner != target) {
+        if (owner != null) {
             removeViewFromGroup(control, owner);
         }
+        addView(control, target);
     }
 
     private void loadView(CustomControl control, boolean parentVisibility, float zOrder, boolean ghost) {
