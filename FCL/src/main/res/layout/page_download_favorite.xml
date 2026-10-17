@@ -155,60 +155,72 @@
         app:layout_constraintStart_toEndOf="@id/filter_panel"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 多选模式操作栏（多选时横跨全宽，替代一键下载按钮） -->
+    <!-- 多选模式操作栏（多选时横跨全宽，替代一键下载按钮）；两行排布，窄屏下整栏仍完整可见 -->
     <com.tungsten.fcllibrary.component.view.FCLLinearLayout
         android:id="@+id/multi_select_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:alpha="0.7"
-        android:gravity="center"
-        android:orientation="horizontal"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/list">
 
-
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/btn_select_all"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/button_select_all"
-            app:ripple="true" />
+            android:orientation="horizontal">
 
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/btn_invert_select"
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/btn_select_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/button_select_all"
+                app:ripple="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/btn_invert_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/favorite_invert_select"
+                app:ripple="true" />
+
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/btn_select_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/favorite_group_edit"
+                app:ripple="true" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/favorite_invert_select"
-            app:ripple="true" />
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
 
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/btn_select_group"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/favorite_group_edit"
-            app:ripple="true" />
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/btn_remove_selected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/favorite_remove_selected"
+                app:ripple="true" />
 
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/btn_remove_selected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/favorite_remove_selected"
-            app:ripple="true" />
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/btn_exit_select"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/dialog_negative"
+                app:ripple="true" />
 
-        <com.tungsten.fcllibrary.component.view.FCLButton
-            android:id="@+id/btn_exit_select"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/dialog_negative"
-            app:ripple="true" />
+        </LinearLayout>
 
     </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
 
