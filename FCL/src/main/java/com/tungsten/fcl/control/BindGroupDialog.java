@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonEventData;
@@ -36,7 +37,7 @@ public class BindGroupDialog extends FCLDialog {
         setCancelable(false);
         setContentView(R.layout.dialog_bind_group);
 
-        LinearLayout container = findViewById(R.id.container);
+        LinearLayoutCompat container = findViewById(R.id.container);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
@@ -77,7 +78,8 @@ public class BindGroupDialog extends FCLDialog {
         });
     }
 
-    private static int parseModeIndex(List<String> bindings, String groupId) {
+    /** 绑定串解析为模式下标：纯 id=1（按下切换）、id:show=2、id:hide=3、未绑定=0 */
+    static int parseModeIndex(List<String> bindings, String groupId) {
         for (String bind : bindings) {
             if (bind.equals(groupId)) return 1;
             if (bind.equals(groupId + ":show")) return 2;
@@ -86,9 +88,9 @@ public class BindGroupDialog extends FCLDialog {
         return 0;
     }
 
-    /** 0=不绑定，1=按下切换（空后缀），2=按下显示，3=按下隐藏；null 表示不写入绑定 */
+    /** 模式下标编码为绑定后缀：0=不绑定（null，不写入），1=按下切换（空后缀），2=按下显示，3=按下隐藏 */
     @Nullable
-    private static String encodeModeSuffix(int index) {
+    static String encodeModeSuffix(int index) {
         switch (index) {
             case 1:
                 return "";
