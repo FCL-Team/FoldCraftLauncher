@@ -20,6 +20,8 @@ import com.tungsten.fcllibrary.component.view.FCLTextView
 enum class LeftMenuTag {
     EDIT_MODE, SHOW_BOUNDARY, CONTROLS_OPACITY, HIDE_ALL, AUTO_FIT, AUTO_FIT_DIST, SNAP_ADJACENT_ONLY,
     CURRENT_CONTROLLER,
+    // 仅编辑模式显示
+    CROSS_GROUP_EDIT,
     ADD_BUTTON, ADD_DIRECTION, MANAGE_BUTTON_STYLE, MANAGE_DIRECTION_STYLE
 }
 
@@ -78,6 +80,7 @@ class LeftMenuAdapter(
         )
         if (gameMenu.isEditMode) {
             rows = rows + listOf(
+                Row.SwitchRow(R.string.edit_cross_group, { gameMenu.isCrossGroupEditEnabled }, LeftMenuTag.CROSS_GROUP_EDIT),
                 Row.ButtonRow(R.string.menu_controls_add_button, listOf(R.string.menu_controls_add_view_button to LeftMenuTag.ADD_BUTTON)),
                 Row.ButtonRow(R.string.menu_controls_add_direction, listOf(R.string.menu_controls_add_view_button to LeftMenuTag.ADD_DIRECTION)),
                 Row.ButtonRow(R.string.menu_controls_button_style, listOf(R.string.menu_controls_manage to LeftMenuTag.MANAGE_BUTTON_STYLE)),
