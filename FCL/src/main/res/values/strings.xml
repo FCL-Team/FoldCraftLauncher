@@ -389,6 +389,7 @@
     <string name="edit_view_delete">Delete View</string>
     <string name="edit_bar_cross_group">Cross-Group</string>
     <string name="edit_bar_cross_group_title">Copy or Move to Another Group</string>
+    <string name="edit_cross_group">Cross-Group Editing</string>
     <string name="dialog_copy">Copy</string>
     <string name="dialog_move">Move</string>
     <string name="select_target_group_title">Select Target Group</string>

@@ -293,6 +293,24 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     }
 
     /**
+     * 编辑会话内是否允许直接编辑参考组控件（跨组编辑）：关闭时参考组仅作参照，不响应编辑触摸。
+     * 默认关闭，避免编辑当前组时误触参考组控件
+     */
+    private boolean crossGroupEditEnabled = false;
+
+    public boolean isCrossGroupEditEnabled() {
+        return crossGroupEditEnabled;
+    }
+
+    public void setCrossGroupEditEnabled(boolean enabled) {
+        crossGroupEditEnabled = enabled;
+        if (!enabled) {
+            // 取消参考组控件的选中，避免操作栏悬停在已冻结的控件上
+            viewManager.clearGhostSelection();
+        }
+    }
+
+    /**
      * 复制控件组：完整克隆按键与方向键数据（控件 id 重新生成），
      * 新组插入源组之后并立即在编辑画布显示
      */
@@ -1136,6 +1154,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 break;
             case SNAP_ADJACENT_ONLY:
                 menuSetting.setSnapAdjacentOnly(checked);
+                break;
+            case CROSS_GROUP_EDIT:
+                setCrossGroupEditEnabled(checked);
                 break;
         }
     }

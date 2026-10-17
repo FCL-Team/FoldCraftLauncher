@@ -356,8 +356,9 @@ public class ControlButton extends AppCompatButton implements CustomView {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // 参考组控件在编辑模式下同样可选中/拖动/编辑（改动写入其归属组），游戏模式下不响应
-        if (ghost && !menu.isEditMode()) {
+        // 参考组控件在编辑模式下同样可选中/拖动/编辑（改动写入其归属组）；
+        // 游戏模式或跨组编辑关闭时仅作参照，不响应触摸
+        if (ghost && !(menu.isEditMode() && menu.isCrossGroupEditEnabled())) {
             return true;
         }
         if (menu.isEditMode()) {

@@ -341,6 +341,7 @@
     <string name="edit_view_delete">删除控件</string>
     <string name="edit_bar_cross_group">跨组</string>
     <string name="edit_bar_cross_group_title">复制或移动到其他控件组</string>
+    <string name="edit_cross_group">跨组编辑</string>
     <string name="dialog_copy">复制</string>
     <string name="dialog_move">移动</string>
     <string name="select_target_group_title">选择目标控件组</string>

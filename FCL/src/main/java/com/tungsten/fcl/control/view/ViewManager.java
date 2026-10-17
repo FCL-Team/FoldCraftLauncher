@@ -74,6 +74,13 @@ private long loadDialogShowTime = 0;
         selectView(null);
     }
 
+    /** 取消参考组控件的选中（跨组编辑开关关闭时，避免操作栏悬停在已冻结的控件上） */
+    public void clearGhostSelection() {
+        if (selectedView != null && selectedView.isGhost()) {
+            clearSelection();
+        }
+    }
+
     /** 拖动/缩放开始时隐藏操作栏，避免悬空 */
     public void hideEditBar() {
         editBar.hideAnimated();
