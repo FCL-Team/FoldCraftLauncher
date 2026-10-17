@@ -6,10 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.mio.dialog.ItemSelectionDialog;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.EditViewDialog;
 import com.tungsten.fcl.control.GameMenu;
-import com.tungsten.fcl.control.SelectTargetGroupDialog;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlViewGroup;
@@ -264,13 +264,19 @@ private long loadDialogShowTime = 0;
             Toast.makeText(gameMenu.getActivity(), R.string.edit_view_no_group, Toast.LENGTH_SHORT).show();
             return;
         }
-        new SelectTargetGroupDialog(gameMenu.getActivity(), candidates, target -> {
-            if (copy) {
-                copyControlToGroup(control, target);
-            } else {
-                moveControlToGroup(control, target);
-            }
-        }).show();
+        ArrayList<String> names = new ArrayList<>();
+        for (ControlViewGroup group : candidates) {
+            names.add(group.getName());
+        }
+        ItemSelectionDialog.show(gameMenu.getActivity(),
+                gameMenu.getActivity().getString(R.string.select_target_group_title), names, true, -1,
+                (position, item) -> {
+                    if (copy) {
+                        copyControlToGroup(control, candidates.get(position));
+                    } else {
+                        moveControlToGroup(control, candidates.get(position));
+                    }
+                });
     }
 
     public void setup() {

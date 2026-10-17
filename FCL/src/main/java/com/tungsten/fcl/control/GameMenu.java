@@ -59,6 +59,7 @@ import com.tungsten.fcl.control.view.LogWindow;
 import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.control.view.TouchPad;
 import com.tungsten.fcl.control.view.ViewManager;
+import com.mio.dialog.ItemSelectionDialog;
 import com.tungsten.fcl.game.sdl.GamepadInputMode;
 import com.tungsten.fcl.game.sdl.SdlBridge;
 import com.tungsten.fcl.game.sdl.SdlSettings;
@@ -370,7 +371,8 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
             @Override
             public void onFailed(Throwable e) {
-                Toast.makeText(getActivity(), getActivity().getString(R.string.message_data_is_loading), Toast.LENGTH_SHORT).show();
+                Logging.LOG.log(Level.WARNING, "Failed to load view group " + group.getId(), e);
+                Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_group_load_failed), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -627,7 +629,13 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                             Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        new SelectTargetGroupDialog(getActivity(), candidates, target -> mergeViewGroup(source, target)).show();
+                        ArrayList<String> names = new ArrayList<>();
+                        for (ControlViewGroup group : candidates) {
+                            names.add(group.getName());
+                        }
+                        ItemSelectionDialog.show(getActivity(),
+                                getActivity().getString(R.string.select_target_group_title), names, true, -1,
+                                (position, item) -> mergeViewGroup(source, candidates.get(position)));
                     }
                 };
                 EditViewGroupDialog dialog = new EditViewGroupDialog(getActivity(), GameMenu.this, group, callback);
