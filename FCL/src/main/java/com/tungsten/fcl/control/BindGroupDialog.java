@@ -29,7 +29,6 @@ public class BindGroupDialog extends FCLDialog {
     private final ButtonEventData.Event event;
 
     private final List<FCLSpinner<String>> modeSpinners = new ArrayList<>();
-    private final List<ControlViewGroup> groups = new ArrayList<>();
 
     public BindGroupDialog(@NonNull Context context, GameMenu menu, ButtonEventData.Event event) {
         super(context);
@@ -45,7 +44,6 @@ public class BindGroupDialog extends FCLDialog {
         if (menu != null && menu.getController() != null) {
             groups.addAll(menu.getController().viewGroups());
         }
-        this.groups.addAll(groups);
         List<String> bound = event.bindViewGroupList();
         for (ControlViewGroup group : groups) {
             ItemBindGroupBinding binding = ItemBindGroupBinding.inflate(LayoutInflater.from(context));
