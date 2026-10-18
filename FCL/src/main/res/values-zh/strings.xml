@@ -1339,7 +1339,7 @@
     <string name="vulkan_check_profile_support">支持</string>
     <string name="vulkan_check_profile_unsupport">不支持</string>
     <string name="vulkan_check_version">Vulkan 版本：%s</string>
-    <string name="vulkan_check_turnip">驱动：%s</string>
+    <string name="vulkan_check_driver">驱动：%s</string>
     <string name="vulkan_check_driver_system">系统驱动</string>
     <string name="vulkan_check_extensions">扩展支持</string>
     <string name="vulkan_check_features">特性支持</string>

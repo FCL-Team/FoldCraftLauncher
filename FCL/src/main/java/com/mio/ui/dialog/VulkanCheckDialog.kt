@@ -23,7 +23,7 @@ import com.tungsten.fcllibrary.util.ConvertUtils
 class VulkanCheckDialog(
     context: Context,
     private val capabilities: VulkanCapabilities?,
-    private val useTurnip: Boolean,
+    private val useCustomDriver: Boolean,
     private val driverName: String?,
     private val onConfirm: (() -> Unit)? = null,
 ) : FCLDialog(context) {
@@ -84,9 +84,9 @@ class VulkanCheckDialog(
 
         //版本号与驱动
         content.addView(textView(context.getString(R.string.vulkan_check_version, capabilities.versionString)))
-        val driverText = if (useTurnip) driverName ?: "Turnip"
+        val driverText = if (useCustomDriver) driverName ?: "Turnip"
         else context.getString(R.string.vulkan_check_driver_system)
-        content.addView(textView(context.getString(R.string.vulkan_check_turnip, driverText)))
+        content.addView(textView(context.getString(R.string.vulkan_check_driver, driverText)))
 
         //各功能/扩展的支持情况与版本依赖标注
         content.addView(sectionTitle(context.getString(R.string.vulkan_check_extensions), themeColor))

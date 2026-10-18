@@ -209,6 +209,10 @@ public class FCLauncher {
         envMap.put("FCL_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("POJAV_NATIVEDIR", config.getContext().getApplicationInfo().nativeLibraryDir);
         envMap.put("DRIVER_PATH", DriverPlugin.getSelected().getPath());
+        // 自定义驱动加载参数：linkerhook 按 DRIVER_LIB 加载驱动库（Turnip/panvk 等），
+        // GPU 门控按 DRIVER_GPU 判定家族（adreno/mali/any）
+        envMap.put("DRIVER_LIB", DriverPlugin.getSelected().getLib());
+        envMap.put("DRIVER_GPU", DriverPlugin.getSelected().getGpu());
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
         envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
         envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath(), config.getLwjglVersion()));

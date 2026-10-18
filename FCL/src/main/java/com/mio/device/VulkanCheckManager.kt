@@ -2,6 +2,7 @@ package com.mio.device
 
 import com.mio.datastore.VulkanCheckPreference
 import com.mio.datastore.appSettingsDataStore
+import com.mio.plugin.DriverPlugin
 import com.tungsten.fcl.FCLApp
 import com.tungsten.fclcore.util.versioning.GameVersionNumber
 import kotlinx.coroutines.Dispatchers
@@ -18,8 +19,12 @@ import java.io.File
  */
 @Serializable
 data class VulkanCheckRecord(
-    val useTurnip: Boolean,
+    val useCustomDriver: Boolean,
     val driverPath: String,
+    /** 检测所用驱动库文件名，用于区分同目录下换库的插件 */
+    val driverLib: String = "",
+    /** 检测所用驱动适配的 GPU 家族 */
+    val driverGpu: String = "",
     /** 检测到的 Vulkan 版本字符串（如 "1.3.2"），检测失败时为空 */
     val apiVersion: String = "",
     /** 设备缺失 EXT divisor 但提供 KHR 扩展，可经 vkshim 合成 */
@@ -68,7 +73,7 @@ object VulkanCheckManager {
     /**
      * 当前驱动状态下是否应经 vkshim 包装加载（divisor 合成或 fillModeNonSolid 模拟任一成立）；
      * 由最近一次检测/缓存读取刷新，启动组装环境变量时读取。
-     * shim 仅包装系统 Vulkan 加载器，Turnip 驱动路径不经过它
+     * shim 仅包装系统 Vulkan 加载器，自定义驱动路径不经过它
      */
     @Volatile
     var needsVulkanShim: Boolean = false
@@ -85,12 +90,12 @@ object VulkanCheckManager {
     /**
      * 执行完整检测并保存结果缓存
      */
-    suspend fun check(useTurnip: Boolean, driverPath: String?): VulkanCapabilities? {
+    suspend fun check(useCustomDriver: Boolean, driver: DriverPlugin.Driver?): VulkanCapabilities? {
         return mutex.withLock {
             withContext(Dispatchers.IO) {
                 val cacheDir = File(FCLApp.getAppContext().cacheDir, "vulkan_check")
-                val capabilities = VulkanChecker.checkCapabilities(useTurnip, driverPath, cacheDir)
-                // shim 仅包装系统 Vulkan 加载器：请求 Turnip 但加载失败回落系统加载器时，
+                val capabilities = VulkanChecker.checkCapabilities(useCustomDriver, driver, cacheDir)
+                // shim 仅包装系统 Vulkan 加载器：请求自定义驱动但加载失败回落系统加载器时，
                 // 检测与游戏运行时实际使用的都是系统驱动，shim 同样适用
                 val needsDivisorShim = capabilities != null && !capabilities.usedCustomDriver &&
                         EXT_VERTEX_ATTRIBUTE_DIVISOR !in capabilities.extensions &&
@@ -112,8 +117,10 @@ object VulkanCheckManager {
                 }
                 saveRecord(
                     VulkanCheckRecord(
-                        useTurnip = useTurnip,
-                        driverPath = if (useTurnip) driverPath.orEmpty() else "",
+                        useCustomDriver = useCustomDriver,
+                        driverPath = if (useCustomDriver) driver?.path.orEmpty() else "",
+                        driverLib = if (useCustomDriver) driver?.lib.orEmpty() else "",
+                        driverGpu = if (useCustomDriver) driver?.gpu.orEmpty() else "",
                         apiVersion = effective?.versionString.orEmpty(),
                         needsDivisorShim = needsDivisorShim,
                         needsFillModeEmulation = needsFillModeEmulation,
@@ -132,13 +139,16 @@ object VulkanCheckManager {
     /**
      * 按缓存评估指定版本的 Vulkan 支持，缓存缺失或与当前驱动状态不一致时返回 [VulkanEnsureResult.NEED_CHECK]
      */
-    suspend fun ensureSupported(gameVersion: String, useTurnip: Boolean, driverPath: String?): VulkanEnsureResult {
+    suspend fun ensureSupported(gameVersion: String, useCustomDriver: Boolean, driver: DriverPlugin.Driver?): VulkanEnsureResult {
         val mcVersion = normalizeMcVersion(gameVersion)
-        val path = if (useTurnip) driverPath.orEmpty() else ""
+        val path = if (useCustomDriver) driver?.path.orEmpty() else ""
+        val lib = if (useCustomDriver) driver?.lib.orEmpty() else ""
+        val gpu = if (useCustomDriver) driver?.gpu.orEmpty() else ""
         val record = loadRecord()?.takeIf { last ->
             //检测器版本、驱动状态一致时设备能力不变，直接按已支持的版本范围判定
             last.version == VulkanRequirements.VULKAN_REQUIREMENTS_VERSION &&
-                    last.useTurnip == useTurnip && last.driverPath == path
+                    last.useCustomDriver == useCustomDriver && last.driverPath == path &&
+                    last.driverLib == lib && last.driverGpu == gpu
         } ?: run {
             //无与当前驱动状态一致的记录，shim 门控回到安全侧（不启用）
             needsVulkanShim = false

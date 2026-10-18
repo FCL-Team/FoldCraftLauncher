@@ -16,7 +16,7 @@ include_directories(
 
 # 检查架构
 if (${ANDROID_ABI} STREQUAL "arm64-v8a")
-    add_definitions(-DADRENO_POSSIBLE)
+    add_definitions(-DCUSTOM_VKDRIVER_POSSIBLE)
 endif ()
 
 # 模块：androidnsbypass - Android linker 命名空间绕过工具库
@@ -73,11 +73,11 @@ target_link_libraries(
         android
 )
 
-# 模块：linkerhook - 拦截 libvulkan 加载器以加载 Turnip 驱动
+# 模块：linkerhook - 拦截 libvulkan 加载器以加载自定义 Vulkan 驱动（Turnip / panvk 等）
 add_library(
         linkerhook
         SHARED
-        driver_helper/internal_android_dlopen_hook/turnip/hook.c
+        driver_helper/internal_android_dlopen_hook/driver/hook.c
 )
 
 target_link_libraries(
@@ -190,7 +190,7 @@ if (${ANDROID_ABI} STREQUAL "arm64-v8a")
 endif ()
 
 # 模块：vulkan_check - Vulkan 设备能力检测
-# dlopen 系统 libvulkan 或经 liblinkerhook 加载 Turnip 驱动后枚举物理设备，
+# dlopen 系统 libvulkan 或经 liblinkerhook 加载自定义驱动后枚举物理设备，
 # 读取 apiVersion/扩展/特性供启动器评估 MC Vulkan 后端支持情况
 add_library(
         vulkan_check

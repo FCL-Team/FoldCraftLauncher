@@ -794,17 +794,17 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 doLaunchVersion(profile, versionId)
                 return@launch
             }
-            val useTurnip = !versionSetting.isVKDriverSystem
-            val driverPath = if (useTurnip) {
-                (DriverPlugin.driverList.find { it.driver == versionSetting.driver }
-                    ?: DriverPlugin.driverList[0]).path
+            val useCustomDriver = !versionSetting.isVKDriverSystem
+            val driver = if (useCustomDriver) {
+                DriverPlugin.driverList.find { it.driver == versionSetting.driver }
+                    ?: DriverPlugin.driverList[0]
             } else null
-            when (VulkanCheckManager.ensureSupported(gameVersion, useTurnip, driverPath)) {
+            when (VulkanCheckManager.ensureSupported(gameVersion, useCustomDriver, driver)) {
                 VulkanEnsureResult.SUPPORTED -> doLaunchVersion(profile, versionId)
                 VulkanEnsureResult.NEED_CHECK ->
-                    promptVulkanCheck(gameVersion, useTurnip, driverPath, profile, versionId)
+                    promptVulkanCheck(gameVersion, useCustomDriver, driver, profile, versionId)
                 VulkanEnsureResult.UNSUPPORTED ->
-                    runVulkanCheckAndDecide(gameVersion, useTurnip, driverPath, profile, versionId)
+                    runVulkanCheckAndDecide(gameVersion, useCustomDriver, driver, profile, versionId)
             }
         }
     }
@@ -812,8 +812,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     /** 无有效检测结果时询问用户是否立即检测；取消则不检测直接启动 */
     private fun promptVulkanCheck(
         gameVersion: String,
-        useTurnip: Boolean,
-        driverPath: String?,
+        useCustomDriver: Boolean,
+        driver: DriverPlugin.Driver?,
         profile: Profile,
         versionId: String?
     ) {
@@ -822,7 +822,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         builder.setMessage(getString(R.string.vulkan_check_launch_tip))
         builder.setPositiveButton(getString(R.string.dialog_positive)) {
             lifecycleScope.launch {
-                runVulkanCheckAndDecide(gameVersion, useTurnip, driverPath, profile, versionId)
+                runVulkanCheckAndDecide(gameVersion, useCustomDriver, driver, profile, versionId)
             }
         }
         builder.setNegativeButton { doLaunchVersion(profile, versionId) }
@@ -832,19 +832,17 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
     /** 执行检测并弹出结果对话框，用户确认后按支持情况继续启动 */
     private suspend fun runVulkanCheckAndDecide(
         gameVersion: String,
-        useTurnip: Boolean,
-        driverPath: String?,
+        useCustomDriver: Boolean,
+        driver: DriverPlugin.Driver?,
         profile: Profile,
         versionId: String?
     ) {
         val capabilities = withContext(Dispatchers.IO) {
-            VulkanCheckManager.check(useTurnip, driverPath)
+            VulkanCheckManager.check(useCustomDriver, driver)
         }
-        // 对话框展示实际生效的驱动：请求 Turnip 但加载失败回落系统加载器时显示系统驱动
+        // 对话框展示实际生效的驱动：请求自定义驱动但加载失败回落系统加载器时显示系统驱动
         val usedCustomDriver = capabilities?.usedCustomDriver == true
-        val driverName = if (usedCustomDriver) {
-            DriverPlugin.driverList.find { it.path == driverPath }?.driver
-        } else null
+        val driverName = if (usedCustomDriver) driver?.driver else null
         VulkanCheckDialog(this, capabilities, usedCustomDriver, driverName) {
             decideVulkanLaunch(gameVersion, capabilities, profile, versionId)
         }.show()

@@ -1,6 +1,7 @@
 package com.mio.device
 
 import androidx.annotation.Keep
+import com.mio.plugin.DriverPlugin
 import com.tungsten.fclcore.util.Logging
 import java.io.File
 import java.util.logging.Level
@@ -17,7 +18,7 @@ data class VulkanCapabilities(
     val apiVersionPatch: Int,
     val extensions: List<String>,
     val features: Map<String, Boolean>,
-    /** 检测时是否实际经自定义驱动（Turnip）加载；请求 Turnip 但加载失败回落系统加载器时为 false */
+    /** 检测时是否实际经自定义驱动加载；请求自定义驱动但加载失败回落系统加载器时为 false */
     val usedCustomDriver: Boolean = false
 ) {
     /** Vulkan 版本字符串 */
@@ -52,18 +53,25 @@ object VulkanChecker {
     }
 
     /**
-     * 查询设备 Vulkan 支持情况，[useTurnip] 时经 liblinkerhook 加载 [driverPath] 下的 Turnip 驱动
+     * 查询设备 Vulkan 支持情况，[useCustomDriver] 时经 liblinkerhook 加载 [driver] 声明的自定义驱动
+     * （目录 [DriverPlugin.Driver.path] 下的 [DriverPlugin.Driver.lib]，GPU 家族门控用 [DriverPlugin.Driver.gpu]）
      * @return 如果不支持 Vulkan 或初始化失败，返回 null
      */
     fun checkCapabilities(
-        useTurnip: Boolean,
-        driverPath: String?,
+        useCustomDriver: Boolean,
+        driver: DriverPlugin.Driver?,
         cacheDir: File?
     ): VulkanCapabilities? {
         return try {
             // native 侧把该目录作为驱动补丁文件的输出目录，不存在时 dlopen 补丁会直接失败
             cacheDir?.mkdirs()
-            nativeCheckVulkan(useTurnip, driverPath, cacheDir?.absolutePath)
+            nativeCheckVulkan(
+                useCustomDriver,
+                driver?.path,
+                driver?.lib,
+                driver?.gpu,
+                cacheDir?.absolutePath
+            )
         } catch (e: UnsatisfiedLinkError) {
             Logging.LOG.log(Level.WARNING, "$TAG: Native library or method not found", e)
             null
@@ -80,8 +88,10 @@ object VulkanChecker {
 
     @JvmStatic
     private external fun nativeCheckVulkan(
-        useTurnip: Boolean,
+        useCustomDriver: Boolean,
         driverPath: String?,
+        driverLib: String?,
+        driverGpu: String?,
         cacheDir: String?
     ): VulkanCapabilities?
 }

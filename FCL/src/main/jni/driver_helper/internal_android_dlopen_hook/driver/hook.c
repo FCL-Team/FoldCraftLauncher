@@ -1,5 +1,7 @@
 //
-// linkerhook：拦截 libvulkan 加载器的 android_dlopen_ext，懒创建 Turnip 驱动命名空间
+// linkerhook：拦截 libvulkan 加载器的 android_dlopen_ext，懒创建自定义驱动命名空间。
+// 驱动库名经 DRIVER_LIB 环境变量注入（Turnip 为 libvulkan_freedreno.so，
+// panvk 为 libvulkan_panfrost.so 等），目录经 DRIVER_PATH 注入
 //
 
 #include <string.h>
@@ -12,36 +14,39 @@
 
 #include "log.h"
 
-static void* turnipHandle;
+static void* driverHandle;
 
-static struct android_namespace_t* turnipNs;
+static struct android_namespace_t* driverNs;
 
 static uint64_t (*atrace_get_enabled_tags_p)();
 
 __attribute__((visibility("default"), used)) void *android_dlopen_ext(const char *filename, int flags, const android_dlextinfo *extinfo) {
     if(!strstr(filename, "vulkan."))
         return private_dlopen_ext(filename, flags, extinfo, &android_dlopen_ext);
-    if (!turnipHandle){
+    if (!driverHandle){
         // 此命名空间必须隔离，避免污染其他库
-        turnipNs = private_create_namespace(
-                "turnip-driver-NS",
+        driverNs = private_create_namespace(
+                "custom-driver-NS",
                 NULL,
                 getenv("DRIVER_PATH"),
                 // 继承调用方命名空间已加载的库列表；
                 // 创建后仅从创建时给定的路径查找链接
                 ANDROID_NAMESPACE_TYPE_SHARED_ISOLATED,
                 NULL,
-                // libvulkan 加载器自身在 vulkanLoaderNs 中，其已加载的 NEEDED 即 Turnip 的 NEEDED
+                // libvulkan 加载器自身在 vulkanLoaderNs 中，其已加载的 NEEDED 即驱动的 NEEDED
                 extinfo->library_namespace,
                 __builtin_return_address(0)
                 );
-        turnipHandle = linker_ns_dlopen("libvulkan_freedreno.so", RTLD_LOCAL | RTLD_NOW, turnipNs);
-        if(turnipHandle == NULL) {
-            printf("AdrenoSupp: Failed to load Turnip!\n%s\n", dlerror());
+        const char* driverLib = getenv("DRIVER_LIB");
+        if (driverLib == NULL || !*driverLib)
+            driverLib = "libvulkan_freedreno.so";
+        driverHandle = linker_ns_dlopen(driverLib, RTLD_LOCAL | RTLD_NOW, driverNs);
+        if(driverHandle == NULL) {
+            printf("DriverSupp: Failed to load %s!\n%s\n", driverLib, dlerror());
             return NULL;
         }
     }
-    return turnipHandle;
+    return driverHandle;
 }
 
 __attribute__((visibility("default"), used)) void *android_load_sphal_library(const char *filename, int flags) {

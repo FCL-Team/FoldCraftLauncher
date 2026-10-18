@@ -1,5 +1,6 @@
 //
-// Vulkan 设备能力检测：dlopen 系统 libvulkan 或经 liblinkerhook 加载 Turnip 驱动，
+// Vulkan 设备能力检测：dlopen 系统 libvulkan 或经 liblinkerhook 加载自定义驱动
+// （Turnip / panvk 等，库名经 DRIVER_LIB 注入），
 // 创建实例并枚举物理设备，读取 apiVersion、设备扩展与特性，回传给 Kotlin 层评估
 //
 
@@ -15,7 +16,7 @@
 #include <androidnsbypass/nsbypass_t.h>
 #include <androidnsbypass/nsbypass.h>
 
-#ifdef ADRENO_POSSIBLE
+#ifdef CUSTOM_VKDRIVER_POSSIBLE
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #endif
@@ -58,6 +59,27 @@ static void vulkan_log(JNIEnv *env, const char *level, const char *fmt, ...) {
 #define VULKAN_LOADER_PATH "/system/lib/libvulkan.so"
 #endif
 
+/* 覆盖环境变量并返回原值（无原值时返回 NULL）；value 为 NULL 时清除该变量 */
+static char *override_env(const char *name, const char *value) {
+    const char *previous = getenv(name);
+    char *saved = previous ? strdup(previous) : NULL;
+    if (value)
+        setenv(name, value, 1);
+    else
+        unsetenv(name);
+    return saved;
+}
+
+/* 恢复 override_env 保存的原值；saved 为 NULL 时清除该变量 */
+static void restore_env(const char *name, char *saved) {
+    if (saved) {
+        setenv(name, saved, 1);
+        free(saved);
+    } else {
+        unsetenv(name);
+    }
+}
+
 JNIEXPORT void JNICALL
 Java_com_mio_device_VulkanChecker_nativeSetLogCallback(
         JNIEnv *env,
@@ -80,10 +102,23 @@ Java_com_mio_device_VulkanChecker_nativeSetLogCallback(
     }
 }
 
-#ifdef ADRENO_POSSIBLE
+#ifdef CUSTOM_VKDRIVER_POSSIBLE
 
-/* 与 egl_bridge.c 的 checkAdrenoGraphics 一致：建 GLES3 上下文读取 GL_VENDOR/GL_RENDERER */
-static bool check_adreno_graphics() {
+/* 门控当前设备是否为所选驱动适配的 GPU 家族，与 egl_bridge.c 的 checkDriverGpuFamily 一致：
+ * DRIVER_GPU 为 adreno（默认）/ mali / any */
+static bool check_driver_gpu_family(const char *vendor, const char *renderer) {
+    if (!vendor || !renderer)
+        return false;
+    const char *family = getenv("DRIVER_GPU");
+    if (family && strcmp(family, "mali") == 0)
+        return strcmp(vendor, "ARM") == 0 && strstr(renderer, "Mali") != NULL;
+    if (family && strcmp(family, "any") == 0)
+        return true;
+    return strcmp(vendor, "Qualcomm") == 0 && strstr(renderer, "Adreno") != NULL;
+}
+
+/* 与 egl_bridge.c 的 checkDriverGpu 一致：建 GLES3 上下文读取 GL_VENDOR/GL_RENDERER */
+static bool check_driver_gpu() {
     EGLDisplay eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     if (eglDisplay == EGL_NO_DISPLAY || eglInitialize(eglDisplay, NULL, NULL) != EGL_TRUE)
         return false;
@@ -119,21 +154,21 @@ static bool check_adreno_graphics() {
     const char *vendor = (const char *) glGetString(GL_VENDOR);
     const char *renderer = (const char *) glGetString(GL_RENDERER);
 
-    bool is_adreno = (vendor && renderer && strcmp(vendor, "Qualcomm") == 0 && strstr(renderer, "Adreno") != NULL);
+    bool gpuMatches = check_driver_gpu_family(vendor, renderer);
 
     eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
     eglDestroyContext(eglDisplay, context);
     eglTerminate(eglDisplay);
 
-    return is_adreno;
+    return gpuMatches;
 }
 
 /**
- * 与 egl_bridge.c 的 loadTurnipVulkan 同链路：创建隔离命名空间并预载 liblinkerhook，
- * 由 hook 拦截系统 libvulkan 的驱动加载转至 DRIVER_PATH 下的 Turnip
+ * 与 egl_bridge.c 的 loadCustomVulkan 同链路：创建隔离命名空间并预载 liblinkerhook，
+ * 由 hook 拦截系统 libvulkan 的驱动加载转至 DRIVER_PATH 下的 DRIVER_LIB
  */
-static void *load_turnip_vulkan(const char *cache_dir) {
-    if (!check_adreno_graphics())
+static void *load_custom_vulkan(const char *cache_dir) {
+    if (!check_driver_gpu())
         return NULL;
 
     struct android_namespace_t *ns = private_create_namespace(
@@ -159,13 +194,13 @@ static void *load_turnip_vulkan(const char *cache_dir) {
 
 #define LOAD_VK_FUNC(name) PFN_##name p##name = (PFN_##name)dlsym(vulkan_handle, #name)
 
-static jobject do_check_vulkan(JNIEnv *env, jboolean jUseTurnip, const char *driverPath, const char *cacheDir) {
+static jobject do_check_vulkan(JNIEnv *env, jboolean jUseCustomDriver, const char *driverPath, const char *driverLib, const char *cacheDir) {
     void *vulkan_handle = NULL;
     bool customDriver = false;
-    if (jUseTurnip == JNI_TRUE && driverPath && cacheDir) {
-#ifdef ADRENO_POSSIBLE
+    if (jUseCustomDriver == JNI_TRUE && driverPath && cacheDir) {
+#ifdef CUSTOM_VKDRIVER_POSSIBLE
         if (android_get_device_api_level() >= 28) {
-            vulkan_handle = load_turnip_vulkan(cacheDir);
+            vulkan_handle = load_custom_vulkan(cacheDir);
             customDriver = vulkan_handle != NULL;
         }
 #endif
@@ -179,8 +214,8 @@ static jobject do_check_vulkan(JNIEnv *env, jboolean jUseTurnip, const char *dri
         return NULL;
     }
 
-    LOG_I("Vulkan library loaded: %s", customDriver ? "custom driver (Turnip)" : "system loader");
-    if (jUseTurnip == JNI_TRUE && !customDriver) {
+    LOG_I("Vulkan library loaded: %s", customDriver ? (driverLib && *driverLib ? driverLib : "custom driver") : "system loader");
+    if (jUseCustomDriver == JNI_TRUE && !customDriver) {
         LOG_W("Custom driver was requested but failed to load; using the system loader instead.");
     }
 
@@ -522,37 +557,43 @@ JNIEXPORT jobject JNICALL
 Java_com_mio_device_VulkanChecker_nativeCheckVulkan(
         JNIEnv *env,
         jclass clazz,
-        jboolean jUseTurnip,
+        jboolean jUseCustomDriver,
         jstring jDriverPath,
+        jstring jDriverLib,
+        jstring jDriverGpu,
         jstring jCacheDir
 ) {
     (void) clazz;
 
     const char *driverPath = jDriverPath ? (*env)->GetStringUTFChars(env, jDriverPath, NULL) : NULL;
+    const char *driverLib = jDriverLib ? (*env)->GetStringUTFChars(env, jDriverLib, NULL) : NULL;
+    const char *driverGpu = jDriverGpu ? (*env)->GetStringUTFChars(env, jDriverGpu, NULL) : NULL;
     const char *cacheDir = jCacheDir ? (*env)->GetStringUTFChars(env, jCacheDir, NULL) : NULL;
 
-    // 加载器到首次 vkCreateInstance 才枚举硬件驱动，hook 在那一刻经 DRIVER_PATH
-    // 定位驱动目录，因此须让它覆盖整个检测过程，结束后再恢复原值
-    bool turnipRequested = jUseTurnip == JNI_TRUE && driverPath && cacheDir;
+    // 加载器到首次 vkCreateInstance 才枚举硬件驱动，hook 在那一刻经 DRIVER_PATH/DRIVER_LIB
+    // 定位并加载驱动，GPU 门控经 DRIVER_GPU 判定家族，
+    // 三者须覆盖整个检测过程，结束后再恢复原值
+    bool customRequested = jUseCustomDriver == JNI_TRUE && driverPath && cacheDir;
     char *oldDriverPath = NULL;
-    if (turnipRequested) {
-        const char *previous = getenv("DRIVER_PATH");
-        if (previous) oldDriverPath = strdup(previous);
-        setenv("DRIVER_PATH", driverPath, 1);
+    char *oldDriverLib = NULL;
+    char *oldDriverGpu = NULL;
+    if (customRequested) {
+        oldDriverPath = override_env("DRIVER_PATH", driverPath);
+        oldDriverLib = override_env("DRIVER_LIB", driverLib);
+        oldDriverGpu = override_env("DRIVER_GPU", driverGpu);
     }
 
-    jobject result = do_check_vulkan(env, jUseTurnip, driverPath, cacheDir);
+    jobject result = do_check_vulkan(env, jUseCustomDriver, driverPath, driverLib, cacheDir);
 
-    if (turnipRequested) {
-        if (oldDriverPath) {
-            setenv("DRIVER_PATH", oldDriverPath, 1);
-            free(oldDriverPath);
-        } else {
-            unsetenv("DRIVER_PATH");
-        }
+    if (customRequested) {
+        restore_env("DRIVER_PATH", oldDriverPath);
+        restore_env("DRIVER_LIB", oldDriverLib);
+        restore_env("DRIVER_GPU", oldDriverGpu);
     }
 
     if (driverPath) (*env)->ReleaseStringUTFChars(env, jDriverPath, driverPath);
+    if (driverLib) (*env)->ReleaseStringUTFChars(env, jDriverLib, driverLib);
+    if (driverGpu) (*env)->ReleaseStringUTFChars(env, jDriverGpu, driverGpu);
     if (cacheDir) (*env)->ReleaseStringUTFChars(env, jCacheDir, cacheDir);
     return result;
 }

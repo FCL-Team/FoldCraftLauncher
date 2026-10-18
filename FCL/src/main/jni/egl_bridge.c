@@ -120,12 +120,25 @@ EXTERNAL_API void *pojavGetCurrentContext() {
     return br_get_current();
 }
 
-// 已加载的 Vulkan 句柄缓存（set_vulkan_ptr 与 loadTurnipVulkan 共用，各 ABI 都需要）
+// 已加载的 Vulkan 句柄缓存（set_vulkan_ptr 与 loadCustomVulkan 共用，各 ABI 都需要）
 static void* g_vulkan_ptr = NULL;
 
-#ifdef ADRENO_POSSIBLE
+#ifdef CUSTOM_VKDRIVER_POSSIBLE
 
-bool checkAdrenoGraphics() {
+// 门控当前设备是否为所选驱动适配的 GPU 家族（DRIVER_GPU：adreno / mali / any，
+// 未设置时按 adreno 处理以兼容旧环境）；经 GLES 上下文读取 GL_VENDOR/GL_RENDERER 判定
+bool checkDriverGpuFamily(const char* vendor, const char* renderer) {
+    if (!vendor || !renderer)
+        return false;
+    const char* family = getenv("DRIVER_GPU");
+    if (family && strcmp(family, "mali") == 0)
+        return strcmp(vendor, "ARM") == 0 && strstr(renderer, "Mali") != NULL;
+    if (family && strcmp(family, "any") == 0)
+        return true;
+    return strcmp(vendor, "Qualcomm") == 0 && strstr(renderer, "Adreno") != NULL;
+}
+
+bool checkDriverGpu() {
     EGLDisplay eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
     if (eglDisplay == EGL_NO_DISPLAY || eglInitialize(eglDisplay, NULL, NULL) != EGL_TRUE)
         return false;
@@ -161,20 +174,20 @@ bool checkAdrenoGraphics() {
     const char* vendor = (const char*)glGetString(GL_VENDOR);
     const char* renderer = (const char*)glGetString(GL_RENDERER);
 
-    bool is_adreno = (vendor && renderer && strcmp(vendor, "Qualcomm") == 0 && strstr(renderer, "Adreno") != NULL);
+    bool gpuMatches = checkDriverGpuFamily(vendor, renderer);
 
     eglMakeCurrent(eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
     eglDestroyContext(eglDisplay, context);
     eglTerminate(eglDisplay);
 
-    return is_adreno;
+    return gpuMatches;
 }
 
 static struct android_namespace_t* vulkanLoaderNs;
 
-void* loadTurnipVulkan() {
+void* loadCustomVulkan() {
     if (g_vulkan_ptr) return g_vulkan_ptr;
-    if (!checkAdrenoGraphics())
+    if (!checkDriverGpu())
         return NULL;
 
     const char* cache_dir = getenv("TMPDIR");
@@ -214,10 +227,12 @@ static void set_vulkan_ptr(void* ptr) {
 
 void load_vulkan() {
     if(getenv("VULKAN_DRIVER_SYSTEM") == NULL && android_get_device_api_level() >= 28) {
-#ifdef ADRENO_POSSIBLE
-        void* result = loadTurnipVulkan();
+#ifdef CUSTOM_VKDRIVER_POSSIBLE
+        void* result = loadCustomVulkan();
         if(result != NULL) {
-            FCL_LOG("AdrenoSupp: Loaded Turnip, loader address: %p", result);
+            const char* driverLib = getenv("DRIVER_LIB");
+            FCL_LOG("DriverSupp: Loaded custom driver (%s), loader address: %p",
+                    driverLib && *driverLib ? driverLib : "libvulkan_freedreno.so", result);
             set_vulkan_ptr(result);
             return;
         }
