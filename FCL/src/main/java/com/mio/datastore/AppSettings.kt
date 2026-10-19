@@ -119,11 +119,14 @@ data class AppSettingsPreference(
 )
 
 object AppSettingsSerializer : Serializer<AppSettingsPreference> {
+    // 忽略未知 key：字段改名或删除后旧数据仍可解码，避免整体回退默认值丢失其余设置
+    private val json = Json { ignoreUnknownKeys = true }
+
     override val defaultValue: AppSettingsPreference = AppSettingsPreference()
 
     override suspend fun readFrom(input: InputStream): AppSettingsPreference {
         return try {
-            Json.decodeFromString<AppSettingsPreference>(input.readBytes().decodeToString())
+            json.decodeFromString<AppSettingsPreference>(input.readBytes().decodeToString())
         } catch (_: SerializationException) {
             defaultValue
         }

@@ -19,8 +19,9 @@ import java.io.File
  */
 @Serializable
 data class VulkanCheckRecord(
-    val useCustomDriver: Boolean,
-    val driverPath: String,
+    /** 默认 false 兼容旧数据：useTurnip 改名前的记录按系统驱动状态解码 */
+    val useCustomDriver: Boolean = false,
+    val driverPath: String = "",
     /** 检测所用驱动库文件名，用于区分同目录下换库的插件 */
     val driverLib: String = "",
     /** 检测所用驱动适配的 GPU 家族 */
