@@ -1,5 +1,37 @@
 # Changelog
 
+## [1.3.4.1] - 2026-10-20
+
+### 中文
+
+#### ✨ 新功能
+
+1. **游戏内全屏显示开关**：右菜单功能分类新增「全屏显示」开关，与启动器设置页的全屏功能同一实现——切换时经 ThemeEngine 更新持久化值并一步应用到当前窗口，后续焦点恢复/onPostResume 会按主题值重放全屏标志，保证与启动器行为一致
+2. **自定义 Vulkan 驱动加载泛化**：驱动插件新增可选 meta-data 声明——`driver_lib`（驱动库文件名，缺省 libvulkan_freedreno.so）与 `driver_gpu`（adreno/mali/any，缺省 adreno），旧 Turnip 插件不受影响；linkerhook 按 `DRIVER_LIB` 环境变量加载驱动库，GPU 门控经 `DRIVER_GPU` 判定家族，Adreno 专属路径改为 checkDriverGpuFamily；检测链路 useTurnip 更名 useCustomDriver 并传递完整 Driver（路径/库名/GPU 家族），VulkanCheckRecord 记录 driverLib/driverGpu 参与缓存身份，检测缓存键随更名自动重检一次；由此支持 Mali 平台的 panvk 驱动（库名 libvulkan_panfrost.so）
+
+#### 🐛 修复
+
+1. **关闭 FML 早期加载屏误伤老版本**：上一版无条件写入 `earlyWindowControl = false`，该键在 26.3 以下 Forge 同样生效，导致模组加载进度动画被关；现按游戏版本分流——26.3+ 维持写入（规避 gralloc 互堵 UI 冻死），更早版本不创建 fml.toml 并清除已存在文件中的残留关闭键，恢复早期加载屏
+2. **Vulkan 驱动设置改名后全部设置被重置**：useTurnip 更名 useCustomDriver 后旧 DataStore 数据反序列化失败，所有设置回退默认值；现 DataStore 配置忽略未知 key，并为 Vulkan 记录补默认值
+3. **收藏页多选操作栏窄屏溢出 (#1938)**：多选操作栏改为两行排布，修复窄屏下按钮溢出屏幕、无法取消多选
+4. **内置文件管理器看不到 .minecraft 等隐藏目录 (#1935)**：移除隐藏文件过滤与「显示隐藏文件」开关，始终显示全部文件，修复以「.」开头的目录在添加游戏路径等场景不可见
+5. **手柄瞬断后 NPE 崩溃 (#1936)**：手柄瞬间断开后残留事件携带的 device 为 null，事件处理解引用即崩；现判空跳过残留事件
+
+### English
+
+#### ✨ New Features
+
+1. **In-game fullscreen toggle**: The right menu's feature section gains a "Fullscreen display" toggle, sharing the same implementation as the launcher settings page — toggling updates the persisted value through ThemeEngine and applies it to the current window in one step, and subsequent focus restoration/onPostResume replays the fullscreen flags from the theme value, keeping behavior consistent with the launcher
+2. **Generalized custom Vulkan driver loading**: Driver plugins gain optional meta-data declarations — `driver_lib` (driver library file name, defaulting to libvulkan_freedreno.so) and `driver_gpu` (adreno/mali/any, defaulting to adreno); existing Turnip plugins are unaffected. The linkerhook loads the driver library via the `DRIVER_LIB` environment variable, GPU gating goes through `DRIVER_GPU` family checks, and the Adreno-specific path became checkDriverGpuFamily. The detection chain renamed useTurnip to useCustomDriver and passes a full Driver (path/lib/gpu family); VulkanCheckRecord now records driverLib/driverGpu as part of the cache identity, and the detection cache re-checks once automatically due to the renamed key. This enables Mali panvk drivers (library name libvulkan_panfrost.so)
+
+#### 🐛 Bug Fixes
+
+1. **FML early-loading window disabled on older MC versions too**: The previous release wrote `earlyWindowControl = false` unconditionally, and the key also takes effect on pre-26.3 Forge, turning off the mod-loading progress animation; the write is now version-gated — 26.3+ keeps it (avoiding the gralloc deadlock that froze the UI), while older versions no longer create fml.toml and clear any leftover disable key from existing files, restoring the early-loading screen
+2. **All settings reset after the Vulkan driver setting was renamed**: After useTurnip was renamed to useCustomDriver, old DataStore data failed to deserialize and every setting fell back to defaults; the DataStore config now ignores unknown keys and Vulkan records gained default values
+3. **Favorites-page multi-select action bar overflowing on narrow screens (#1938)**: The action bar is now laid out in two rows, fixing buttons overflowing the screen on narrow displays which made it impossible to exit multi-select
+4. **Built-in file manager hiding .minecraft and other dot-directories (#1935)**: The hidden-file filter and its "show hidden files" toggle were removed; all files are always shown, fixing dot-prefixed directories being invisible when adding game paths and similar flows
+5. **NPE crash after a gamepad momentarily disconnects (#1936)**: Stale events after a momentary disconnect carried a null device and crashed on dereference; they are now skipped on a null check
+
 ## [1.3.4.0] - 2026-10-15
 
 ### 中文
