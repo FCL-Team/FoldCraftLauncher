@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1340,
-    "versionName": "1.3.4.0",
-    "date": "2026.10.15",
+    "versionCode": 1341,
+    "versionName": "1.3.4.1",
+    "date": "2026.10.20",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. The version list supports pinned favorites: entries gain a star button, pinned entries are placed first in favorite order, long-press and drag to reorder them, and pins are stored per profile.\n2. The layout manager gained a layout copy feature that pops up a dialog to edit the info and generates a random new id; the mod manager page now reloads automatically after downloads land on disk or mods are updated.\n3. Fixed the UI freezing when launching modded instances on 26.3+: the FML early-loading window is now force-disabled, as its render thread and the launcher UI used to block each other on shared graphics buffers.\n4. Fixed black bars and misaligned clicks after resizing the window at runtime under SDL rendering; the forced-resolution letterbox is now driven by layout callbacks and computed from the parent container's measured size.\n5. Fixed external keyboards being unable to type text in-game under SDL mode.\n6. Fixed old-format (64x32) skins rendering incorrectly after switching pages.\n7. Fixed the \"request highest refresh rate\" toggle crashing inside the layout editor, Modrinth entries without icons crashing the favorites page, and unknown aggregation-search category tags leaking internal key names.\n8. Favorites-page download counts are now formatted per locale (wan/yi, K/M/B); the SDL GL library path of custom renderer plugins is joined per the plugin path convention and checked for existence."
+        "text": "(Translated from Chinese by AI)\n1. The in-game right menu gains a \"Fullscreen display\" toggle: the same feature as the launcher settings page, applied to the current window immediately and persisted with the theme settings.\n2. Custom Vulkan driver loading is generalized: driver plugins can declare the driver library name and the target GPU family (adreno/mali/any), enabling Mali panvk drivers; existing Turnip plugins are unaffected.\n3. Disabling the FML early-loading window now only applies to MC 26.3+; older versions get the mod-loading progress animation back.\n4. Fixed all settings being reset because old data failed to decode after the Vulkan driver setting was renamed (DataStore now ignores unknown keys and Vulkan records gained default values).\n5. The favorites page's multi-select action bar is now laid out in two rows, fixing buttons overflowing the screen on narrow displays which made it impossible to exit multi-select (#1938).\n6. The built-in file manager now always shows all files (the hidden-file filter and its toggle were removed), fixing \".minecraft\" and other dot-prefixed directories being invisible (#1935).\n7. Fixed an NPE crash from stale gamepad events whose device is null after a momentary disconnect (#1936)."
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.版本列表支持收藏置顶：条目新增星标收藏，置顶项按收藏顺序前置，长按拖拽调整置顶顺序，数据按配置文件隔离\n2.布局管理页新增布局复制功能，复制时弹框编辑信息并生成随机新 id；模组管理页在下载落盘或模组更新后自动刷新列表\n3.修复 26.3+ 部分模组启动时 UI 冻死：强制关闭 FML 早期加载屏，其渲染线程与启动器界面曾在图形缓冲上互相阻塞\n4.修复 SDL 渲染下运行时调整窗口尺寸后画面黑边与点击错位；强制分辨率黑边改由布局回调驱动、按父容器实测尺寸计算\n5.修复 SDL 模式下外置键盘无法在游戏内输入文本\n6.修复旧格式（64x32）皮肤切换页面后渲染错乱\n7.修复布局编辑页内开关\"请求最高刷新率\"崩溃、Modrinth 无图标项目进收藏页崩溃、聚合搜索未知分类标签泄漏内部键名\n8.收藏页下载量按语言环境换算显示（万/亿、K/M/B）；自定义渲染器插件的 SDL GL 库路径按插件约定拼接并校验存在性"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.右菜单新增「全屏显示」开关：与启动器设置页的全屏功能相同，切换即时生效并持久化到主题设置\n2.自定义 Vulkan 驱动加载泛化：驱动插件可声明驱动库名与目标 GPU 家族（adreno/mali/any），支持 Mali panvk 驱动；旧 Turnip 插件不受影响\n3.关闭 FML 早期加载屏现仅对 MC 26.3+ 生效，更早版本恢复模组加载进度动画\n4.修复 Vulkan 驱动设置项改名后旧数据解码失败导致全部设置被重置\n5.收藏页多选操作栏改为两行排布，修复窄屏下按钮溢出屏幕、无法取消多选 (#1938)\n6.内置文件管理器始终显示全部文件（移除隐藏文件过滤与「显示隐藏文件」开关），修复 .minecraft 等以「.」开头的目录不可见 (#1935)\n7.修复手柄瞬间断开后残留事件的 device 为 null 导致崩溃 (#1936)"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/8d761a2e88aa",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.0/FCL-release-1.3.4.0-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/37f18e890024",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.1/FCL-release-1.3.4.1-all.apk"
   }
 ]
