@@ -294,9 +294,14 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         getWindow().setAttributes(attributes);
     }
 
+    /** 清除 surface 的帧率投票。clearFrameRate 是 API 34 才有的方法，按 33 守卫会在 Android 13 上 NoSuchMethodError */
     private void clearSurfaceFrameRate() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && gameSurface != null) {
+        if (gameSurface == null) return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             gameSurface.clearFrameRate();
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // API 30~33 没有 clearFrameRate,按规范投 0 帧率即等价清除
+            gameSurface.setFrameRate(0f, Surface.FRAME_RATE_COMPATIBILITY_DEFAULT);
         }
     }
 
