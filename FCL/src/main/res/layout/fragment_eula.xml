@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 用户协议与隐私政策确认页：左侧页签切换两份文档，右侧为说明与同意/不同意按钮 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -17,22 +18,66 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- 1dp 竖线固定在 70% 处，左右两栏都以它为界 -->
+    <View
+        android:id="@+id/split"
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/bg_tab_top_rounded"
+        app:follow_theme="true"
+        app:layout_constraintEnd_toStartOf="@id/split"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:tabMode="fixed"
+        app:tabTextAppearance="@style/TabTextAppearance"
+        app:tabUnboundedRipple="false">
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/legal_eula" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/legal_privacy" />
+
+    </com.tungsten.fcllibrary.component.view.FCLTabLayout>
+
     <ScrollView
         android:id="@+id/eula_parent"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintEnd_toStartOf="@id/split"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title"
-        app:layout_constraintWidth_percent="0.7">
+        app:layout_constraintTop_toBottomOf="@id/tab_layout">
 
         <com.tungsten.fcllibrary.component.view.FCLTextView
             android:id="@+id/eula"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp" />
+            android:background="@drawable/bg_container_white"
+            android:padding="10dp"
+            app:auto_text_background_tint="true"
+            app:auto_text_tint="true" />
 
     </ScrollView>
 
@@ -40,21 +85,35 @@
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.35"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintBottom_toBottomOf="@id/eula_parent"
+        app:layout_constraintEnd_toEndOf="@id/eula_parent"
+        app:layout_constraintStart_toStartOf="@id/eula_parent"
+        app:layout_constraintTop_toTopOf="@id/eula_parent" />
 
-    <View
-        android:id="@+id/split"
-        android:layout_width="1dp"
+    <ScrollView
+        android:id="@+id/summary_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@android:color/darker_gray"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/eula_parent"
-        app:layout_constraintTop_toBottomOf="@id/title" />
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintBottom_toTopOf="@id/next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/split"
+        app:layout_constraintTop_toBottomOf="@id/title">
+
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_container_white"
+            android:padding="10dp"
+            android:text="@string/legal_summary"
+            app:auto_text_background_tint="true"
+            app:auto_text_tint="true" />
+
+    </ScrollView>
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/next"
@@ -62,8 +121,22 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:enabled="false"
+        android:text="@string/legal_agree"
+        app:layout_constraintBottom_toTopOf="@id/disagree"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/split"
+        app:ripple="true" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/disagree"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginBottom="8dp"
-        android:text="@string/splash_eula_next"
+        android:text="@string/legal_disagree"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/split"

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="legal_document_dir">vi</string>
+    <string name="legal_eula">Thỏa thuận người dùng</string>
+    <string name="legal_privacy">Chính sách quyền riêng tư</string>
+    <string name="legal_summary">Trước khi bắt đầu, vui lòng đọc Thỏa thuận người dùng và Chính sách quyền riêng tư ở bên trái. Khi nhấn “Đồng ý và tiếp tục”, bạn xác nhận rằng mình đã đọc và đồng ý với cả hai tài liệu. FCL không yêu cầu bất kỳ quyền nào và không kết nối Internet trước khi bạn đồng ý. Bạn có thể xem lại cả hai tài liệu hoặc rút lại sự đồng ý bất cứ lúc nào tại “Cài đặt &gt; Giới thiệu”.</string>
+    <string name="legal_agree">Đồng ý và tiếp tục</string>
+    <string name="legal_disagree">Không đồng ý và thoát</string>
+    <string name="legal_load_failed">Không thể tải tài liệu này. Vui lòng cài đặt lại FCL.</string>
+    <string name="legal_withdraw">Rút lại sự đồng ý</string>
+    <string name="legal_withdraw_confirm">Sau khi bạn rút lại sự đồng ý, FCL sẽ thoát ngay và yêu cầu bạn đồng ý lại vào lần khởi động tiếp theo. Tệp trò chơi, tài khoản và cài đặt trên thiết bị này sẽ không bị xóa. Để xóa chúng, hãy xóa dữ liệu của FCL trong cài đặt hệ thống hoặc gỡ cài đặt FCL.</string>
+    <string name="legal_withdraw_positive">Rút lại và thoát</string>
+</resources>

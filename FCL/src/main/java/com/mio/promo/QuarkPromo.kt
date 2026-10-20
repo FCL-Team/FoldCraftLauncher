@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import com.mio.datastore.appSettingsDataStore
 import com.mio.util.openLink
 import com.tungsten.fcl.R
+import com.tungsten.fcl.util.RegionUtils
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.util.LocaleUtils
 import kotlinx.coroutines.flow.first
@@ -33,7 +34,7 @@ object QuarkPromo {
      * 正常中签弹窗，点「打开夸克网盘」跳浏览器并取消本次启动，点「开始游戏」继续启动。
      */
     fun interceptLaunch(activity: FragmentActivity, onProceed: () -> Unit) {
-        if (!LocaleUtils.isChinese(activity) || !LocaleUtils.IS_CHINA_MAINLAND) {
+        if (!LocaleUtils.isChinese(activity) || !RegionUtils.isChinaMainlandMachine()) {
             onProceed()
             return
         }

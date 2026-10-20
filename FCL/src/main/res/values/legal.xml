@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    用户协议与隐私政策相关文案。本文件不在 Weblate 管理范围内（Weblate 只管理 strings.xml），
+    由维护者与 assets/legal/ 下的协议文本一起直接维护，每种语言一份。
+    legal_document_dir 是该语言在 assets/legal/ 下的文档目录，随界面语言走 Android 资源匹配，
+    没有 legal.xml 的语言回退到本文件（英文）。
+-->
+<resources>
+    <string name="legal_document_dir">en</string>
+    <string name="legal_eula">User Agreement</string>
+    <string name="legal_privacy">Privacy Policy</string>
+    <string name="legal_summary">Before you start, please read the User Agreement and the Privacy Policy on the left. Tapping Agree and Continue means that you have read and agree to both documents. FCL does not request any permission or connect to the internet before you agree. You can review both documents or withdraw your consent at any time in Settings &gt; About.</string>
+    <string name="legal_agree">Agree and Continue</string>
+    <string name="legal_disagree">Disagree and Exit</string>
+    <string name="legal_load_failed">Failed to load this document. Please reinstall FCL.</string>
+    <string name="legal_withdraw">Withdraw Consent</string>
+    <string name="legal_withdraw_confirm">After you withdraw consent, FCL exits immediately and asks for your consent again the next time it starts. Game files, accounts and settings on this device are not deleted. To delete them, clear the data of FCL in system settings or uninstall FCL.</string>
+    <string name="legal_withdraw_positive">Withdraw and Exit</string>
+</resources>

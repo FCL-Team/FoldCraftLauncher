@@ -1,0 +1,81 @@
+Fold Craft Launcher Gizlilik Politikası
+
+Sürüm: 1
+Son güncelleme: 20 Ekim 2026
+
+Fold Craft Launcher ("FCL"), FCL-Team tarafından geliştirilen, Minecraft: Java Edition için açık kaynaklı bir başlatıcıdır. Gizliliğinize önem veriyoruz. Bu politika, FCL'nin hangi bilgileri işlediğini, bunu neden yaptığını, bilgilerin nereye gönderildiğini ve bunları nasıl yönetebileceğinizi açıklar. FCL'yi kullanmadan önce lütfen dikkatlice okuyun.
+
+1. Genel bakış
+
+1) FCL'nin bir hesap sistemi yoktur. FCL-Team kişisel verilerinizi satmaz veya kiralamaz.
+2) FCL, analiz, reklam veya anlık bildirim amaçlı hiçbir üçüncü taraf SDK içermez.
+3) Verilerin çoğu yalnızca cihazınızda kalır. Yalnızca çevrimiçi özellikleri kullandığınızda cihazınız ilgili hizmetlere doğrudan bağlanır ve bu hizmetler IP adresiniz gibi ağ isteği bilgilerini alır.
+4) Bu politikayı ve Kullanıcı Sözleşmesi'ni kabul edene kadar FCL hiçbir izin istemez ve internete bağlanmaz.
+
+2. Cihazınızda saklanan bilgiler
+
+FCL aşağıdaki bilgileri cihazınızda işler ve saklar. FCL-Team bu bilgilere erişemez.
+
+1) Hesap bilgileri: çevrimdışı hesapların kullanıcı adları ve UUID'leri; Microsoft hesaplarının ve harici kimlik doğrulama hesaplarının kullanıcı adları, UUID'leri, görünüm bilgileri ve oturum açma kimlik bilgileri (erişim belirteçleri ve yenileme belirteçleri gibi). Hesap bilgileri FCL'nin özel uygulama depolama alanında saklanır ve yalnızca ilgili hizmetlerde oturum açmak ve oyunu başlatmak için kullanılır.
+2) Oyun verileri: oyun sürümleri, modlar, mod paketleri, kaynak paketleri, gölgelendirici paketleri, dünyalar, ekran görüntüleri, kontrol düzenleri ve benzeri dosyalar. Bunlar paylaşılan depolama alanındaki FCL klasöründe veya FCL'ye özel uygulama depolama alanında saklanır. Paylaşılan depolama alanındaki dosyalara dosya yöneticileri ve depolama izni olan diğer uygulamalar erişebilir.
+3) Ayarlar: başlatıcı ayarları, oyun ayarları, favoriler, indirme geçmişi ve benzeri veriler.
+4) Günlükler ve çökme raporları: başlatıcı günlükleri, oyun günlükleri, çok oyunculu günlükleri ve çökme raporları. Bunlar cihazınızın markasını ve modelini, sistem sürümünü, işlemci, grafik ve bellek bilgilerini, dosya yollarını ve oyun içi oyuncu adlarını içerebilir. Günlükler paylaşılan depolama alanındaki FCL klasöründe saklanır ve siz kendiniz paylaşmadıkça veya yüklemedikçe cihazınızdan çıkmaz.
+
+3. Çevrimiçi özellikler ve üçüncü taraf hizmetler
+
+Aşağıdaki özellikleri kullandığınızda cihazınız ilgili hizmetlere doğrudan bağlanır. Bu hizmetler IP adresinizi ve isteği yerine getirmek için gereken içeriği (istenen dosya veya arama terimleri gibi) alır; bazı istekler FCL sürümünü de içerir. Bu hizmetler üçüncü taraflarca veya diğer açık kaynak projelerce işletilir ve bilgileri kendi gizlilik politikalarına göre işler. FCL-Team bu hizmetler üzerinde denetime sahip değildir.
+
+1) Güncelleme denetimi ve duyurular: FCL, sürüm bilgilerini ve başlatıcı duyurularını otomatik olarak GitHub'dan, arayüz dili Çince olduğunda ise Gitee'den alır.
+2) Oyun ve mod yükleyici indirmeleri: Oyunu, varlıkları, kütüphaneleri ve mod yükleyicileri indirirken FCL, seçtiğiniz indirme kaynağına bağlı olarak Mojang ve Microsoft'un resmî sunucularına, BMCLAPI yansısına ve Forge, NeoForge, Fabric, Quilt, LiteLoader, OptiFine, Cleanroom ile bunların bağımlılık depolarının sunucularına veya yansılarına (HMCL'nin sağladığı meta veri hizmeti dâhil) bağlanır.
+3) İçerik arama ve indirme: Modları, mod paketlerini, kaynak paketlerini, gölgelendirici paketlerini ve dünyaları ararken, incelerken ve indirirken FCL, CurseForge'a, Modrinth'e veya bunların yansısı MCIM'e bağlanır ve içeriklerin simgelerini ve ekran görüntülerini yükler. İstekler arama terimlerinizi ve filtrelerinizi içerir.
+4) Hesap girişi: Microsoft hesaplarında FCL, yetkilendirmeyi Microsoft'un oturum açma sayfası üzerinden tamamlar, ardından oyun profilinizi ve oyun sahipliğinizi almak için Xbox Live'a ve Minecraft hizmetlerine bağlanır. Oturum açma yanıtını almak için FCL, cihazınızda yalnızca cihazınızın erişebildiği bir hizmeti geçici olarak başlatır. Harici kimlik doğrulama hesaplarında FCL, eklediğiniz kimlik doğrulama sunucusuna bağlanır ve authlib-injector bileşenini indirir.
+5) Görünümler: Görünümleri gösterirken, yüklerken veya değiştirirken FCL, Mojang'ın görünüm hizmetine veya kullandığınız harici kimlik doğrulama sunucusuna bağlanır. Çevrimdışı hesapların görünümleri yalnızca cihazınızda işlenir.
+6) Kontrol düzeni deposu: Kontrol düzenlerini incelerken ve indirirken FCL, GitHub'a veya repo.miawa.cn yansısına bağlanır.
+7) Günlük yükleme: Yalnızca siz bir günlüğü yüklemeyi seçtiğinizde FCL, seçilen günlüğü mclo.gs'ye (arayüz dili Çince olduğunda logshare.cn'ye) yükler ve bir bağlantı oluşturur. Bağlantıya sahip olan herkes günlüğü görüntüleyebilir. Yüklemeden önce FCL günlükteki oyun erişim belirteçlerini gizler; ancak günlük, 2. bölümün 4) maddesinde sayılan bilgileri yine de içerebilir.
+8) Terracotta çok oyunculu: Yalnızca çok oyunculu özelliği etkinleştirip oyunda bir oda oluşturduğunuzda veya bir odaya katıldığınızda kullanılır. FCL, Terracotta düğüm listesini alır ve EasyTier aracılığıyla sanal bir ağ kurar. Oturum sırasında cihazınız; Terracotta düğümleri, herkese açık EasyTier düğümleri ve aynı odadaki diğer oyuncuların cihazlarıyla ağ adresleri gibi bağlantı kurmak için gereken bilgileri paylaşır ve odadaki diğer oyuncular oyuncu adınızı görebilir. İlgili yasa ve düzenlemeler gereğince FCL, Çin anakarasında Terracotta çok oyunculu hizmetini sunmaz.
+9) Bölge tespiti: FCL önce cihazınızın saat dilimine ve sistem bölgesine bakarak cihazın Çin anakarasında olup olamayacağını belirler. Yalnızca öyle göründüğünde FCL, her açılıştan sonra bir kez, bazı özelliklerin yerel yasalara göre kısıtlanması gerekip gerekmediğine karar vermek için ipwho.is'ye (ipwhois.io tarafından sağlanır) genel IP adresinizin ülkesini veya bölgesini sorar. Bu hizmet IP adresinizi alır. Sonuç yalnızca bellekte tutulur ve FCL kapatıldığında silinir.
+10) Oyunun ağ bağlantıları: Oyun çalışırken oyun ve modlar, örneğin katıldığınız sunuculara bağlanmak için internete kendileri bağlanır; bu, FCL'nin denetiminde değildir. Oyunun alan adlarını çözümleyebilmesi için FCL, oyun için sistem DNS'ini ve genel DNS sunucularını yapılandırır: Sistem dili Basitleştirilmiş Çince (Çin) olduğunda AliDNS ve DNSPod, diğer durumlarda Cloudflare kullanılır. Oyunun çözümlediği alan adları bu DNS hizmetlerine gönderilir.
+11) Harici bağlantılar ve tanıtımlar: Belgelere, topluluklara, sponsorluk sayfalarına, MC百科'ya (mcmod.cn), bulut depolama hizmetlerine ve benzeri sayfalara giden bağlantılar yalnızca siz dokunduktan sonra tarayıcıda veya ilgili uygulamada açılır. Cihaz bölgesi Çin anakarası olan ve Çince arayüzü kullanan kullanıcılar, oyunu başlatmadan önce zaman zaman Quark Cloud Drive tanıtımı görebilir. FCL bu nedenle bilgilerinizi hiçbir üçüncü tarafla paylaşmaz.
+
+4. İzinler
+
+1) Depolama: oyun dosyalarını yönetmek, mod paketlerini ve kontrol düzenlerini içe ve dışa aktarmak ve günlükleri kaydetmek için paylaşılan depolama alanındaki FCL klasörünü okuma ve yazma.
+2) Ağ ve ağ durumu: yukarıdaki çevrimiçi özellikler için ve bağlanmadan önce ağın kullanılabilir olup olmadığını denetlemek için.
+3) Bildirimler: indirme ilerlemesini, oyun durumunu ve çok oyunculu durumunu göstermek.
+4) Ön plan hizmetleri: indirmeleri arka planda sürdürmek, oyun işlemini çalışır durumda tutmak ve çok oyunculu bağlantıları korumak.
+5) VPN: yalnızca Terracotta çok oyunculu özelliğini kullandığınızda, gereken sanal ağı kurmak için istenir. FCL bu izni diğer uygulamaların ağ verilerini toplamak veya değiştirmek için kullanmaz.
+6) Mikrofon: yalnızca başlatıcı ayarlarında kendiniz istedikten sonra verilir ve sesli sohbet modları gibi mikrofon gerektiren oyun içi özellikler tarafından kullanılır.
+7) Uygulama yükleme ve kaldırma: indirilen FCL güncellemelerini yüklemek ve FCL eklentilerini kaldırmak.
+8) Yüklü uygulamaları görüntüleme: FCL, cihazınızda yüklü olan FCL eklentilerini (oluşturucular, sürücüler ve FFmpeg eklentisi gibi) arar. FCL yalnızca eklentileri tanımak için gereken bilgileri okur ve uygulama listesini yüklemez.
+9) Titreşim ve cihazı uyanık tutma: dokunmatik kontroller için titreşimli geri bildirim ve indirmeler ile oyun sırasında cihazın uyku moduna geçmesini önlemek.
+
+Verdiğiniz izinleri sistem ayarlarından istediğiniz zaman geri alabilirsiniz; ancak ilgili özellikler çalışmayı durdurabilir.
+
+Ayrıca oyunda yapıştırma gibi bir işlem yaptığınızda oyun panoyu okuyabilir. FCL içeriği yalnızca oyuna iletir ve yüklemez. FCL; IMEI, Android Kimliği, MAC adresi veya reklam kimliği gibi cihaz tanımlayıcılarını okumaz.
+
+5. Saklama ve güvenlik
+
+1) Bilgileriniz cihazınızda saklanır ve ne kadar süre saklanacağına siz karar verirsiniz. FCL'yi kaldırmak veya verilerini sistem ayarlarından temizlemek, özel uygulama depolama alanındaki verileri siler. Paylaşılan depolama alanındaki FCL klasörünü kendiniz silmeniz gerekir.
+2) Lütfen cihazınızı güvende tutun. Günlükleri, mod paketlerini veya oyun klasörlerini paylaşmadan önce, herkese açık hâle getirmek istemediğiniz bilgiler içerip içermediklerini kontrol edin.
+
+6. Haklarınız
+
+1) FCL'de hesapları, görünümleri, ayarları ve oyun dosyalarını görüntüleyebilir, değiştirebilir ve silebilirsiniz.
+2) Çok oyunculu gibi isteğe bağlı özellikleri istediğiniz zaman kapatabilir ve izinleri sistem ayarlarından yönetebilirsiniz.
+3) Onayınızı "Ayarlar > Hakkında > Gizlilik Politikası" bölümünden geri çekebilirsiniz. Bunun ardından FCL hemen kapanır ve bir sonraki kullanımdan önce onayınızı yeniden ister. Onayın geri çekilmesi cihazınızdaki verileri otomatik olarak silmez.
+4) Üçüncü taraf hizmetlerin işlediği bilgiler için haklarınızı ilgili hizmetlerin gizlilik politikalarına göre kullanın.
+
+7. Reşit olmayanlar
+
+Reşit değilseniz lütfen bu politikayı ebeveyniniz veya yasal vasinizle birlikte okuyun ve FCL'yi yalnızca onların onayıyla kullanın.
+
+8. Bu politikadaki değişiklikler
+
+Bu politika, FCL'nin özellikleri değiştikçe güncellenebilir. Güncellemeden sonra FCL, açılışta yeni sürümü gösterir ve onayınızı yeniden ister.
+
+9. İletişim
+
+Bu politika hakkında sorularınız varsa bize şu adresten ulaşın:
+https://github.com/FCL-Team/FoldCraftLauncher/issues
+
+Bu politika birden fazla dilde sunulmaktadır. Dil sürümleri arasında farklılık olması durumunda Basitleştirilmiş Çince sürüm esas alınır.

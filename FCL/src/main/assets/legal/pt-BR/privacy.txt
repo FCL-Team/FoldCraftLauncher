@@ -1,0 +1,81 @@
+Política de Privacidade do Fold Craft Launcher
+
+Versão: 1
+Última atualização: 20 de outubro de 2026
+
+O Fold Craft Launcher ("FCL") é um launcher de código aberto para Minecraft: Java Edition desenvolvido pela FCL-Team. Nós nos importamos com a sua privacidade. Esta política explica quais informações o FCL processa, por quê, para onde elas são enviadas e como você pode gerenciá-las. Leia-a com atenção antes de usar o FCL.
+
+1. Visão geral
+
+1) O FCL não tem sistema de contas próprio. A FCL-Team não vende nem aluga suas informações pessoais.
+2) O FCL não inclui nenhum SDK de terceiros para análise, publicidade ou notificações push.
+3) A maior parte dos dados fica no seu dispositivo. Somente quando você usa recursos online o seu dispositivo se conecta diretamente aos serviços correspondentes, que recebem informações da requisição de rede, como o seu endereço IP.
+4) O FCL não solicita nenhuma permissão nem se conecta à internet antes de você concordar com esta política e com o Contrato do Usuário.
+
+2. Informações armazenadas no seu dispositivo
+
+O FCL processa e armazena as seguintes informações no seu dispositivo. A FCL-Team não tem acesso a elas.
+
+1) Informações de conta: nomes de usuário e UUIDs de contas offline; nomes de usuário, UUIDs, informações de skin e credenciais de login (como tokens de acesso e tokens de atualização) de contas Microsoft e de contas de autenticação externa. As informações de conta ficam no armazenamento privado do aplicativo FCL e são usadas apenas para entrar nos serviços correspondentes e iniciar o jogo.
+2) Dados do jogo: versões do jogo, mods, modpacks, pacotes de recursos, pacotes de shaders, mundos, capturas de tela, layouts de controle e arquivos semelhantes. Eles ficam na pasta FCL do armazenamento compartilhado ou no armazenamento específico do aplicativo FCL. Arquivos no armazenamento compartilhado podem ser acessados por gerenciadores de arquivos e outros aplicativos com permissão de armazenamento.
+3) Configurações: configurações do launcher, configurações do jogo, favoritos, histórico de downloads e dados semelhantes.
+4) Registros e relatórios de falhas: registros do launcher, registros do jogo, registros do multijogador e relatórios de falhas. Eles podem conter a marca e o modelo do dispositivo, a versão do sistema, informações de processador, placa gráfica e memória, caminhos de arquivos e nomes de jogador no jogo. Os registros ficam na pasta FCL do armazenamento compartilhado e só saem do seu dispositivo se você mesmo os compartilhar ou enviar.
+
+3. Recursos online e serviços de terceiros
+
+Quando você usa os recursos abaixo, o seu dispositivo se conecta diretamente aos serviços correspondentes. Esses serviços recebem o seu endereço IP e o conteúdo necessário para atender à requisição (como o arquivo solicitado ou os termos de pesquisa), e algumas requisições também incluem a versão do FCL. Esses serviços são operados por terceiros ou por outros projetos de código aberto e tratam as informações conforme suas próprias políticas de privacidade. A FCL-Team não tem controle sobre eles.
+
+1) Verificação de atualizações e avisos: o FCL obtém automaticamente informações de versão e avisos do launcher no GitHub, ou no Gitee quando o idioma da interface é chinês.
+2) Download do jogo e de carregadores de mods: ao baixar o jogo, assets, bibliotecas e carregadores de mods, o FCL se conecta, conforme a fonte de download que você escolher, aos servidores oficiais da Mojang e da Microsoft, ao espelho BMCLAPI e a servidores ou espelhos do Forge, NeoForge, Fabric, Quilt, LiteLoader, OptiFine, Cleanroom e de seus repositórios de dependências, incluindo o serviço de metadados fornecido pelo HMCL.
+3) Pesquisa e download de conteúdo: ao pesquisar, navegar e baixar mods, modpacks, pacotes de recursos, pacotes de shaders e mundos, o FCL se conecta ao CurseForge, ao Modrinth ou ao espelho MCIM e carrega ícones e capturas de tela do conteúdo. As requisições incluem seus termos de pesquisa e filtros.
+4) Login de contas: para contas Microsoft, o FCL conclui a autorização pela página de login da Microsoft e depois se conecta ao Xbox Live e aos serviços do Minecraft para obter o seu perfil de jogo e a posse do jogo. Para receber o retorno do login, o FCL inicia temporariamente um serviço no seu dispositivo que só pode ser acessado pelo próprio dispositivo. Para contas de autenticação externa, o FCL se conecta ao servidor de autenticação que você adicionou e baixa o componente authlib-injector.
+5) Skins: ao exibir, enviar ou trocar skins, o FCL se conecta ao serviço de skins da Mojang ou ao servidor de autenticação externa que você usa. As skins de contas offline são processadas apenas no seu dispositivo.
+6) Repositório de layouts de controle: ao navegar e baixar layouts de controle, o FCL se conecta ao GitHub ou ao espelho repo.miawa.cn.
+7) Envio de registros: somente quando você escolhe enviar um registro, o FCL envia o registro selecionado ao mclo.gs (ao logshare.cn quando o idioma da interface é chinês) e gera um link. Qualquer pessoa com o link pode ver o registro. Antes do envio, o FCL oculta os tokens de acesso do jogo no registro, mas ele ainda pode conter as informações listadas no item 4) da seção 2.
+8) Multijogador Terracotta: usado somente quando você ativa o multijogador e cria uma sala ou entra em uma sala no jogo. O FCL obtém a lista de nós do Terracotta e cria uma rede virtual por meio do EasyTier. Durante a sessão, o seu dispositivo troca as informações necessárias para estabelecer conexões, como endereços de rede, com nós do Terracotta, nós públicos do EasyTier e os dispositivos de outros jogadores na mesma sala, e os outros jogadores da sala podem ver o seu nome de jogador. Devido às leis e regulamentos aplicáveis, o FCL não oferece o serviço multijogador Terracotta na China continental.
+9) Detecção de região: primeiro, o FCL usa o fuso horário e a região do sistema do seu dispositivo para verificar se o dispositivo pode estar na China continental. Somente se parecer estar, o FCL consulta uma vez, após cada inicialização, o ipwho.is (fornecido pela ipwhois.io) para saber o país ou a região do seu endereço IP público e decidir se alguns recursos precisam ser restringidos conforme as leis locais. O serviço recebe o seu endereço IP. O resultado fica apenas na memória e é descartado quando o FCL é encerrado.
+10) Rede do jogo: durante a execução, o jogo e os mods se conectam à internet por conta própria, por exemplo aos servidores em que você entra; o FCL não controla isso. Para que o jogo consiga resolver nomes de domínio, o FCL configura para ele o DNS do sistema e DNS públicos: AliDNS e DNSPod quando o idioma do sistema é chinês simplificado (China), e Cloudflare nos demais casos. Os nomes de domínio que o jogo resolve são enviados a esses serviços de DNS.
+11) Links externos e promoções: links para documentação, comunidades, patrocínio, MC百科 (mcmod.cn), armazenamento em nuvem e páginas semelhantes só são abertos no navegador ou no aplicativo correspondente depois que você toca neles. Usuários cuja região do dispositivo é a China continental e que usam a interface em chinês podem ver ocasionalmente uma promoção do Quark Cloud Drive antes de iniciar o jogo. O FCL não compartilha suas informações com terceiros por causa disso.
+
+4. Permissões
+
+1) Armazenamento: ler e gravar a pasta FCL no armazenamento compartilhado para gerenciar arquivos do jogo, importar e exportar modpacks e layouts de controle e salvar registros.
+2) Rede e estado da rede: para os recursos online acima e para verificar se há uma rede disponível antes de conectar.
+3) Notificações: mostrar o progresso dos downloads, o estado do jogo e o estado do multijogador.
+4) Serviços em primeiro plano: continuar downloads em segundo plano, manter o processo do jogo em execução e manter as conexões do multijogador.
+5) VPN: solicitada apenas quando você usa o multijogador Terracotta, para criar a rede virtual necessária. O FCL não usa essa permissão para coletar ou modificar dados de rede de outros aplicativos.
+6) Microfone: concedido apenas depois que você o solicita nas configurações do launcher, para recursos do jogo que precisam de microfone, como mods de chat de voz.
+7) Instalar e desinstalar aplicativos: instalar atualizações baixadas do FCL e desinstalar plugins do FCL.
+8) Ver aplicativos instalados: o FCL procura no seu dispositivo plugins do FCL instalados, como renderizadores, drivers e o plugin FFmpeg. O FCL lê apenas as informações necessárias para identificar plugins e não envia a lista de aplicativos.
+9) Vibração e manter o dispositivo ativo: resposta tátil dos controles de toque e impedir que o dispositivo entre em suspensão durante downloads e partidas.
+
+Você pode revogar as permissões concedidas nas configurações do sistema a qualquer momento, embora os recursos relacionados possam deixar de funcionar.
+
+Além disso, o jogo pode ler a área de transferência quando você cola algo no jogo. O FCL apenas repassa o conteúdo ao jogo e não o envia. O FCL não lê identificadores do dispositivo, como IMEI, Android ID, endereço MAC ou ID de publicidade.
+
+5. Armazenamento e segurança
+
+1) Suas informações ficam no seu dispositivo, e você decide por quanto tempo mantê-las. Desinstalar o FCL ou limpar os dados dele nas configurações do sistema apaga os dados do armazenamento privado do aplicativo. A pasta FCL no armazenamento compartilhado precisa ser apagada por você.
+2) Mantenha o seu dispositivo seguro. Antes de compartilhar registros, modpacks ou pastas do jogo, verifique se eles contêm informações que você não quer tornar públicas.
+
+6. Seus direitos
+
+1) Você pode ver, alterar e excluir contas, skins, configurações e arquivos do jogo no FCL.
+2) Você pode desativar recursos opcionais, como o multijogador, a qualquer momento e gerenciar permissões nas configurações do sistema.
+3) Você pode retirar o seu consentimento em "Configurações > Sobre > Política de Privacidade". O FCL é encerrado imediatamente e pede o seu consentimento novamente antes do próximo uso. Retirar o consentimento não apaga automaticamente os dados do seu dispositivo.
+4) Para informações tratadas por serviços de terceiros, exerça seus direitos conforme as políticas de privacidade desses serviços.
+
+7. Menores de idade
+
+Se você for menor de idade, leia esta política com seus pais ou responsável legal e use o FCL somente com o consentimento deles.
+
+8. Alterações desta política
+
+Esta política pode ser atualizada conforme os recursos do FCL mudarem. Após uma atualização, o FCL mostra a nova versão na inicialização e pede o seu consentimento novamente.
+
+9. Contato
+
+Se tiver dúvidas sobre esta política, fale conosco em:
+https://github.com/FCL-Team/FoldCraftLauncher/issues
+
+Esta política está disponível em vários idiomas. Em caso de divergência entre as versões, prevalece a versão em chinês simplificado.

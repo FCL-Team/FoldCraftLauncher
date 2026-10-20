@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="legal_document_dir">pt-BR</string>
+    <string name="legal_eula">Contrato do Usuário</string>
+    <string name="legal_privacy">Política de Privacidade</string>
+    <string name="legal_summary">Antes de começar, leia o Contrato do Usuário e a Política de Privacidade à esquerda. Ao tocar em “Concordar e continuar”, você confirma que leu e concorda com os dois documentos. O FCL não solicita nenhuma permissão nem se conecta à internet antes de você concordar. Você pode rever os dois documentos ou retirar o seu consentimento a qualquer momento em “Configurações &gt; Sobre”.</string>
+    <string name="legal_agree">Concordar e continuar</string>
+    <string name="legal_disagree">Discordar e sair</string>
+    <string name="legal_load_failed">Não foi possível carregar este documento. Reinstale o FCL.</string>
+    <string name="legal_withdraw">Retirar consentimento</string>
+    <string name="legal_withdraw_confirm">Depois que você retirar o consentimento, o FCL será encerrado imediatamente e pedirá o seu consentimento novamente na próxima inicialização. Arquivos do jogo, contas e configurações deste dispositivo não serão apagados. Para apagá-los, limpe os dados do FCL nas configurações do sistema ou desinstale o FCL.</string>
+    <string name="legal_withdraw_positive">Retirar e sair</string>
+</resources>

@@ -69,6 +69,7 @@ import com.tungsten.fcl.ui.main.MainUI
 import com.tungsten.fcl.ui.version.VersionListViewModel
 import com.tungsten.fcl.ui.version.Versions
 import com.tungsten.fcl.upgrade.UpdateChecker
+import com.tungsten.fcl.util.LegalAgreement
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorAccount
@@ -153,6 +154,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
         binding = ActivityMainBinding.inflate(layoutInflater)
         sharedPreferences = getSharedPreferences("launcher", MODE_PRIVATE)
         setContentView(binding.root)
+        // 协议版本更新后，进程被回收再由系统直接恢复主界面时不会经过启动页：回到启动页重新确认
+        if (!LegalAgreement.isAccepted(this)) {
+            startActivity(Intent(this, SplashActivity::class.java))
+            finish()
+            return
+        }
         loadBackground()
         ThemeEngine.getInstance().addRefreshListener(themeRefreshListener)
 

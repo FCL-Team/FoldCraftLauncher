@@ -1,0 +1,81 @@
+Chính sách quyền riêng tư Fold Craft Launcher
+
+Phiên bản: 1
+Cập nhật lần cuối: ngày 20 tháng 10 năm 2026
+
+Fold Craft Launcher ("FCL") là một trình khởi chạy mã nguồn mở dành cho Minecraft: Java Edition do FCL-Team phát triển. Chúng tôi coi trọng quyền riêng tư của bạn. Chính sách này giải thích FCL xử lý những thông tin nào, vì sao, thông tin được gửi đến đâu và bạn có thể quản lý chúng như thế nào. Vui lòng đọc kỹ trước khi sử dụng FCL.
+
+1. Tổng quan
+
+1) FCL không có hệ thống tài khoản riêng. FCL-Team không bán hay cho thuê thông tin cá nhân của bạn.
+2) FCL không tích hợp bất kỳ SDK phân tích, quảng cáo hay thông báo đẩy nào của bên thứ ba.
+3) Phần lớn dữ liệu chỉ được lưu trên thiết bị của bạn. Chỉ khi bạn sử dụng các tính năng trực tuyến, thiết bị của bạn mới kết nối trực tiếp đến các dịch vụ tương ứng, và các dịch vụ này sẽ nhận được thông tin yêu cầu mạng như địa chỉ IP của bạn.
+4) Trước khi bạn đồng ý với chính sách này và Thỏa thuận người dùng, FCL không yêu cầu bất kỳ quyền nào và không kết nối Internet.
+
+2. Thông tin được lưu trên thiết bị của bạn
+
+FCL xử lý và lưu trữ các thông tin sau trên thiết bị của bạn. FCL-Team không thể truy cập các thông tin này.
+
+1) Thông tin tài khoản: tên người dùng và UUID của tài khoản ngoại tuyến; tên người dùng, UUID, thông tin skin và thông tin đăng nhập (như mã truy cập và mã làm mới) của tài khoản Microsoft và tài khoản xác thực bên ngoài. Thông tin tài khoản được lưu trong bộ nhớ riêng của ứng dụng FCL và chỉ dùng để đăng nhập vào dịch vụ tương ứng và khởi chạy trò chơi.
+2) Dữ liệu trò chơi: các phiên bản trò chơi, mod, gói mod, gói tài nguyên, gói shader, thế giới, ảnh chụp màn hình, bố cục điều khiển và các tệp tương tự. Chúng được lưu trong thư mục FCL ở bộ nhớ dùng chung hoặc trong bộ nhớ dành riêng cho ứng dụng FCL. Các tệp trong bộ nhớ dùng chung có thể bị trình quản lý tệp và các ứng dụng khác có quyền bộ nhớ truy cập.
+3) Cài đặt: cài đặt trình khởi chạy, cài đặt trò chơi, mục yêu thích, lịch sử tải xuống và các dữ liệu tương tự.
+4) Nhật ký và báo cáo sự cố: nhật ký trình khởi chạy, nhật ký trò chơi, nhật ký nhiều người chơi và báo cáo sự cố. Chúng có thể chứa thương hiệu và kiểu máy của thiết bị, phiên bản hệ thống, thông tin bộ xử lý, đồ họa và bộ nhớ, đường dẫn tệp và tên người chơi trong trò chơi. Nhật ký được lưu trong thư mục FCL ở bộ nhớ dùng chung và chỉ rời khỏi thiết bị khi chính bạn chia sẻ hoặc tải chúng lên.
+
+3. Tính năng trực tuyến và dịch vụ của bên thứ ba
+
+Khi bạn sử dụng các tính năng dưới đây, thiết bị của bạn kết nối trực tiếp đến các dịch vụ tương ứng. Các dịch vụ này nhận địa chỉ IP của bạn và nội dung cần thiết để thực hiện yêu cầu (như tệp được yêu cầu hoặc từ khóa tìm kiếm), và một số yêu cầu còn kèm theo phiên bản FCL. Các dịch vụ này do bên thứ ba hoặc các dự án mã nguồn mở khác vận hành và xử lý thông tin theo chính sách quyền riêng tư của riêng họ. FCL-Team không kiểm soát được các dịch vụ này.
+
+1) Kiểm tra cập nhật và thông báo: FCL tự động lấy thông tin phiên bản và thông báo của trình khởi chạy từ GitHub, hoặc từ Gitee khi ngôn ngữ giao diện là tiếng Trung.
+2) Tải trò chơi và trình tải mod: khi tải trò chơi, tài nguyên, thư viện và trình tải mod, tùy theo nguồn tải xuống bạn chọn, FCL kết nối đến các máy chủ chính thức của Mojang và Microsoft, máy chủ gương BMCLAPI, cùng các máy chủ hoặc máy chủ gương của Forge, NeoForge, Fabric, Quilt, LiteLoader, OptiFine, Cleanroom và các kho phụ thuộc của chúng, bao gồm dịch vụ siêu dữ liệu do HMCL cung cấp.
+3) Tìm kiếm và tải nội dung: khi tìm kiếm, duyệt và tải mod, gói mod, gói tài nguyên, gói shader và thế giới, FCL kết nối đến CurseForge, Modrinth hoặc máy chủ gương MCIM của chúng, đồng thời tải biểu tượng và ảnh chụp màn hình của nội dung. Các yêu cầu bao gồm từ khóa tìm kiếm và bộ lọc của bạn.
+4) Đăng nhập tài khoản: với tài khoản Microsoft, FCL hoàn tất ủy quyền qua trang đăng nhập của Microsoft, sau đó kết nối đến Xbox Live và các dịch vụ Minecraft để lấy hồ sơ trò chơi và tình trạng sở hữu trò chơi của bạn. Để nhận phản hồi sau khi đăng nhập, FCL tạm thời khởi chạy trên thiết bị một dịch vụ mà chỉ chính thiết bị của bạn truy cập được. Với tài khoản xác thực bên ngoài, FCL kết nối đến máy chủ xác thực mà bạn đã thêm và tải thành phần authlib-injector.
+5) Skin: khi hiển thị, tải lên hoặc thay đổi skin, FCL kết nối đến dịch vụ skin của Mojang hoặc máy chủ xác thực bên ngoài mà bạn sử dụng. Skin của tài khoản ngoại tuyến chỉ được xử lý trên thiết bị của bạn.
+6) Kho bố cục điều khiển: khi duyệt và tải bố cục điều khiển, FCL kết nối đến GitHub hoặc máy chủ gương repo.miawa.cn.
+7) Tải nhật ký lên: chỉ khi bạn chủ động chọn tải nhật ký lên, FCL mới tải nhật ký đã chọn lên mclo.gs (lên logshare.cn khi ngôn ngữ giao diện là tiếng Trung) và tạo một liên kết. Bất kỳ ai có liên kết đều có thể xem nhật ký. Trước khi tải lên, FCL ẩn các mã truy cập trò chơi trong nhật ký, nhưng nhật ký vẫn có thể chứa các thông tin được liệt kê ở mục 4) phần 2.
+8) Nhiều người chơi Terracotta: chỉ được sử dụng khi bạn bật chế độ nhiều người chơi và tạo hoặc tham gia một phòng trong trò chơi. FCL lấy danh sách nút Terracotta và xây dựng một mạng ảo thông qua EasyTier. Trong phiên chơi, thiết bị của bạn trao đổi các thông tin cần thiết để thiết lập kết nối, chẳng hạn như địa chỉ mạng, với các nút Terracotta, các nút công khai của EasyTier và thiết bị của những người chơi khác trong cùng phòng, và những người chơi khác trong phòng có thể thấy tên người chơi của bạn. Theo luật pháp và quy định liên quan, FCL không cung cấp dịch vụ nhiều người chơi Terracotta tại Trung Quốc đại lục.
+9) Phát hiện khu vực: trước tiên, FCL dựa vào múi giờ và khu vực hệ thống của thiết bị để xác định liệu thiết bị có thể đang ở Trung Quốc đại lục hay không. Chỉ khi có vẻ như vậy, sau mỗi lần khởi động FCL mới truy vấn ipwho.is (do ipwhois.io cung cấp) một lần để biết quốc gia hoặc khu vực của địa chỉ IP công khai của bạn, nhằm quyết định có cần hạn chế một số tính năng theo luật pháp địa phương hay không. Dịch vụ này nhận địa chỉ IP của bạn. Kết quả chỉ được giữ trong bộ nhớ và bị xóa khi FCL thoát.
+10) Kết nối mạng của trò chơi: khi chạy, trò chơi và các mod tự kết nối Internet, chẳng hạn như đến các máy chủ bạn tham gia; FCL không kiểm soát việc này. Để trò chơi có thể phân giải tên miền, FCL cấu hình cho trò chơi DNS hệ thống và DNS công cộng: AliDNS và DNSPod khi ngôn ngữ hệ thống là tiếng Trung giản thể (Trung Quốc), và Cloudflare trong các trường hợp khác. Các tên miền mà trò chơi phân giải sẽ được gửi đến các dịch vụ DNS này.
+11) Liên kết bên ngoài và quảng bá: các liên kết đến tài liệu, cộng đồng, trang tài trợ, MC百科 (mcmod.cn), dịch vụ lưu trữ đám mây và các trang tương tự chỉ được mở trong trình duyệt hoặc ứng dụng tương ứng sau khi bạn nhấn vào. Người dùng có khu vực thiết bị là Trung Quốc đại lục và sử dụng giao diện tiếng Trung đôi khi có thể thấy quảng bá Quark Cloud Drive trước khi khởi chạy trò chơi. FCL không vì thế mà chia sẻ thông tin của bạn với bất kỳ bên thứ ba nào.
+
+4. Quyền
+
+1) Bộ nhớ: đọc và ghi thư mục FCL trong bộ nhớ dùng chung để quản lý tệp trò chơi, nhập và xuất gói mod và bố cục điều khiển, và lưu nhật ký.
+2) Mạng và trạng thái mạng: cho các tính năng trực tuyến nêu trên và để kiểm tra mạng có khả dụng hay không trước khi kết nối.
+3) Thông báo: hiển thị tiến trình tải xuống, trạng thái trò chơi và trạng thái nhiều người chơi.
+4) Dịch vụ nền trước: tiếp tục tải xuống ở chế độ nền, duy trì tiến trình trò chơi và duy trì kết nối nhiều người chơi.
+5) VPN: chỉ được yêu cầu khi bạn sử dụng tính năng nhiều người chơi Terracotta, để xây dựng mạng ảo cần thiết. FCL không dùng quyền này để thu thập hoặc sửa đổi dữ liệu mạng của các ứng dụng khác.
+6) Micrô: chỉ được cấp sau khi chính bạn yêu cầu trong cài đặt trình khởi chạy, dành cho các tính năng trong trò chơi cần micrô, chẳng hạn như các mod trò chuyện thoại.
+7) Cài đặt và gỡ cài đặt ứng dụng: cài đặt các bản cập nhật FCL đã tải xuống và gỡ cài đặt plugin FCL.
+8) Xem các ứng dụng đã cài đặt: FCL tìm các plugin FCL đã cài đặt trên thiết bị của bạn, chẳng hạn như trình kết xuất, trình điều khiển và plugin FFmpeg. FCL chỉ đọc thông tin cần thiết để nhận diện plugin và không tải danh sách ứng dụng lên.
+9) Rung và giữ thiết bị hoạt động: phản hồi rung cho điều khiển cảm ứng và ngăn thiết bị chuyển sang chế độ ngủ khi đang tải xuống và chơi trò chơi.
+
+Bạn có thể thu hồi các quyền đã cấp trong cài đặt hệ thống bất cứ lúc nào, tuy nhiên các tính năng liên quan có thể ngừng hoạt động.
+
+Ngoài ra, trò chơi có thể đọc bộ nhớ tạm khi bạn dán nội dung trong trò chơi. FCL chỉ chuyển nội dung cho trò chơi và không tải nó lên. FCL không đọc các mã định danh thiết bị như IMEI, Android ID, địa chỉ MAC hay ID quảng cáo.
+
+5. Lưu trữ và bảo mật
+
+1) Thông tin của bạn được lưu trên thiết bị của bạn và bạn quyết định lưu giữ trong bao lâu. Gỡ cài đặt FCL hoặc xóa dữ liệu của FCL trong cài đặt hệ thống sẽ xóa dữ liệu trong bộ nhớ riêng của ứng dụng. Bạn cần tự xóa thư mục FCL trong bộ nhớ dùng chung.
+2) Hãy giữ thiết bị của bạn an toàn. Trước khi chia sẻ nhật ký, gói mod hoặc thư mục trò chơi, hãy kiểm tra xem chúng có chứa thông tin mà bạn không muốn công khai hay không.
+
+6. Quyền của bạn
+
+1) Bạn có thể xem, thay đổi và xóa tài khoản, skin, cài đặt và tệp trò chơi trong FCL.
+2) Bạn có thể tắt các tính năng tùy chọn như nhiều người chơi bất cứ lúc nào và quản lý quyền trong cài đặt hệ thống.
+3) Bạn có thể rút lại sự đồng ý tại "Cài đặt > Giới thiệu > Chính sách quyền riêng tư". Sau đó FCL sẽ thoát ngay và yêu cầu bạn đồng ý lại trước lần sử dụng tiếp theo. Việc rút lại sự đồng ý không tự động xóa dữ liệu trên thiết bị của bạn.
+4) Đối với thông tin do các dịch vụ bên thứ ba xử lý, hãy thực hiện quyền của bạn theo chính sách quyền riêng tư của các dịch vụ đó.
+
+7. Trẻ vị thành niên
+
+Nếu bạn là trẻ vị thành niên, vui lòng đọc chính sách này cùng cha mẹ hoặc người giám hộ hợp pháp và chỉ sử dụng FCL khi được họ đồng ý.
+
+8. Thay đổi chính sách
+
+Chính sách này có thể được cập nhật khi các tính năng của FCL thay đổi. Sau khi cập nhật, FCL sẽ hiển thị phiên bản mới khi khởi động và yêu cầu bạn đồng ý lại.
+
+9. Liên hệ
+
+Nếu bạn có thắc mắc về chính sách này, vui lòng liên hệ với chúng tôi tại:
+https://github.com/FCL-Team/FoldCraftLauncher/issues
+
+Chính sách này được cung cấp bằng nhiều ngôn ngữ. Nếu các phiên bản ngôn ngữ có sự khác biệt, phiên bản tiếng Trung giản thể sẽ được ưu tiên.

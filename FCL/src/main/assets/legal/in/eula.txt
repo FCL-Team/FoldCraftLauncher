@@ -1,0 +1,70 @@
+Perjanjian Pengguna Fold Craft Launcher
+
+Versi: 1
+Terakhir diperbarui: 20 Oktober 2026
+
+Selamat datang di Fold Craft Launcher ("FCL"), peluncur gratis dan sumber terbuka untuk Minecraft: Java Edition yang dikembangkan oleh FCL-Team. Harap baca perjanjian ini dan Kebijakan Privasi dengan saksama sebelum menggunakan FCL. Dengan mengetuk "Setuju dan lanjutkan", Anda menyatakan telah membaca, memahami, dan menyetujui seluruh isi perjanjian ini dan Kebijakan Privasi. Jika Anda tidak setuju, jangan gunakan FCL.
+
+1. Lisensi perangkat lunak
+
+1) FCL adalah perangkat lunak bebas yang dirilis di bawah GNU General Public License versi 3 (GPL-3.0). Perjanjian ini tidak membatasi hak apa pun yang Anda miliki berdasarkan GPL-3.0. Jika perjanjian ini bertentangan dengan GPL-3.0, yang berlaku adalah GPL-3.0. Kode sumber:
+https://github.com/FCL-Team/FoldCraftLauncher
+2) FCL disediakan secara gratis, dan FCL-Team tidak pernah memungut biaya atas penggunaannya. Anda dapat mendukung proyek ini secara sukarela.
+3) Komponen pihak ketiga yang digunakan oleh FCL tunduk pada lisensinya masing-masing.
+
+2. Hubungan dengan Minecraft
+
+1) FCL adalah peluncur tidak resmi. FCL tidak berafiliasi dengan dan tidak didukung oleh Mojang Studios, Microsoft, maupun NetEase.
+2) Minecraft adalah merek dagang Mojang Synergies AB. Hak atas game Minecraft dan konten terkait dimiliki oleh pemegang haknya masing-masing. FCL tidak menyediakan atau menjual lisensi Minecraft.
+3) Saat memainkan Minecraft, Anda wajib mematuhi Perjanjian Lisensi Pengguna Akhir Minecraft dan ketentuan terkait, serta memperoleh game melalui jalur yang sah.
+
+3. Pembatasan regional
+
+1) Beberapa fitur mungkin tidak tersedia karena hukum dan peraturan di negara atau wilayah Anda.
+2) Berdasarkan hukum dan peraturan yang berlaku, FCL saat ini tidak menyediakan unduhan konten game maupun layanan multipemain Terracotta di Tiongkok daratan. Pengguna di Tiongkok daratan dapat mengunduh Minecraft China Edition dari situs web resmi Minecraft:
+https://mc.163.com/
+3) FCL menentukan apakah pembatasan ini berlaku berdasarkan zona waktu, wilayah sistem, dan lokasi jaringan perangkat Anda, sebagaimana dijelaskan dalam Kebijakan Privasi.
+
+4. Penggunaan yang diperbolehkan
+
+Saat menggunakan FCL, Anda setuju untuk:
+1) mematuhi hukum dan peraturan di negara atau wilayah Anda;
+2) tidak menggunakan FCL untuk kegiatan ilegal dan tidak melanggar hak kekayaan intelektual, privasi, atau hak sah lainnya milik orang lain;
+3) tidak menyebarkan konten ilegal atau yang melanggar hak, termasuk tetapi tidak terbatas pada modpack, mod, paket sumber daya, dunia, dan tata letak kontrol;
+4) mematuhi aturan server game, layanan multipemain, dan layanan pihak ketiga lainnya yang Anda gunakan;
+5) tidak menyerang, mengganggu, atau merusak FCL maupun layanan terkait, serta tidak menghalangi orang lain menggunakannya.
+
+5. Konten dan layanan pihak ketiga
+
+1) Mod, modpack, paket sumber daya, paket shader, dunia, skin, tata letak kontrol, dan konten lain yang diperoleh melalui FCL disediakan oleh pihak ketiga dan merupakan milik pembuat aslinya. Patuhi lisensi yang berlaku.
+2) Sumber unduhan, platform konten, layanan akun, node multipemain, dan layanan lain yang dihubungi oleh FCL disediakan oleh operatornya masing-masing. FCL-Team tidak bertanggung jawab atas ketersediaan, keamanan, legalitas, atau konten layanan tersebut, dan Anda wajib mematuhi ketentuan layanannya.
+3) FCL tidak meninjau konten pihak ketiga. Anda menggunakan konten pihak ketiga atas risiko Anda sendiri.
+4) FCL mungkin berisi promosi atau tautan sponsor dari pihak ketiga. Layanan terkait disediakan oleh pihak ketiga.
+
+6. Penafian
+
+1) FCL disediakan "sebagaimana adanya", tanpa jaminan apa pun, baik tersurat maupun tersirat, termasuk tetapi tidak terbatas pada jaminan kelayakan untuk diperdagangkan, kesesuaian untuk tujuan tertentu, dan tidak adanya pelanggaran.
+2) Tidak ada jaminan bahwa FCL akan berfungsi di setiap perangkat atau memenuhi semua kebutuhan Anda.
+3) Anda menanggung akibat dari penggunaan FCL atau konten pihak ketiga, seperti kehilangan data, masalah perangkat, atau pemblokiran akun. Cadangkan dunia dan data penting Anda secara berkala.
+
+7. Batasan tanggung jawab
+
+Sejauh diizinkan oleh hukum yang berlaku, FCL-Team dan para kontributornya tidak bertanggung jawab atas kerugian langsung, tidak langsung, insidental, khusus, atau konsekuensial apa pun yang timbul dari penggunaan atau ketidakmampuan menggunakan FCL.
+
+8. Kekayaan intelektual
+
+1) Hak atas kode sumber, nama, dan ikon FCL dimiliki oleh FCL-Team dan para kontributornya. Penggunaan kode sumber diatur oleh GPL-3.0.
+2) Merek dagang, nama, dan logo pihak ketiga yang disebutkan dalam FCL merupakan milik pemiliknya masing-masing.
+
+9. Perubahan dan pengakhiran
+
+1) FCL-Team dapat memperbarui perjanjian ini seiring perubahan hukum, peraturan, atau fitur. Setelah pembaruan, FCL akan menampilkan versi baru saat dijalankan dan meminta persetujuan Anda kembali.
+2) Anda dapat berhenti menggunakan dan mencopot FCL kapan saja.
+
+10. Ketentuan lain
+
+1) Kebijakan Privasi merupakan bagian dari perjanjian ini.
+2) Jika ada ketentuan dalam perjanjian ini yang dinyatakan tidak sah, ketentuan lainnya tetap berlaku.
+3) Perjanjian ini tersedia dalam beberapa bahasa. Jika terdapat perbedaan antarversi bahasa, yang berlaku adalah versi bahasa Tionghoa Sederhana.
+4) Jika ada pertanyaan, silakan hubungi kami di:
+https://github.com/FCL-Team/FoldCraftLauncher/issues

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="legal_document_dir">de</string>
+    <string name="legal_eula">Nutzungsvereinbarung</string>
+    <string name="legal_privacy">Datenschutzerklärung</string>
+    <string name="legal_summary">Bitte lesen Sie vor dem Start die Nutzungsvereinbarung und die Datenschutzerklärung auf der linken Seite. Durch Tippen auf „Zustimmen und fortfahren“ bestätigen Sie, dass Sie beide Dokumente gelesen haben und ihnen zustimmen. Vor Ihrer Zustimmung fordert FCL keine Berechtigungen an und stellt keine Internetverbindung her. Sie können beide Dokumente jederzeit unter „Einstellungen &gt; Über den Launcher“ einsehen oder Ihre Zustimmung widerrufen.</string>
+    <string name="legal_agree">Zustimmen und fortfahren</string>
+    <string name="legal_disagree">Ablehnen und beenden</string>
+    <string name="legal_load_failed">Das Dokument konnte nicht geladen werden. Bitte installieren Sie FCL neu.</string>
+    <string name="legal_withdraw">Zustimmung widerrufen</string>
+    <string name="legal_withdraw_confirm">Nach dem Widerruf wird FCL sofort beendet und fragt beim nächsten Start erneut nach Ihrer Zustimmung. Spieldateien, Konten und Einstellungen auf diesem Gerät werden nicht gelöscht. Um sie zu entfernen, löschen Sie die Daten von FCL in den Systemeinstellungen oder deinstallieren Sie FCL.</string>
+    <string name="legal_withdraw_positive">Widerrufen und beenden</string>
+</resources>

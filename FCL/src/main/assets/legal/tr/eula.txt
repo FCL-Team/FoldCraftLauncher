@@ -1,0 +1,70 @@
+Fold Craft Launcher Kullanıcı Sözleşmesi
+
+Sürüm: 1
+Son güncelleme: 20 Ekim 2026
+
+Fold Craft Launcher'a ("FCL") hoş geldiniz. FCL, FCL-Team tarafından geliştirilen, Minecraft: Java Edition için ücretsiz ve açık kaynaklı bir başlatıcıdır. FCL'yi kullanmadan önce bu sözleşmeyi ve Gizlilik Politikası'nı dikkatlice okuyun. "Kabul et ve devam et" düğmesine dokunarak bu sözleşmeyi ve Gizlilik Politikası'nı okuduğunuzu, anladığınızı ve tamamını kabul ettiğinizi onaylamış olursunuz. Kabul etmiyorsanız FCL'yi kullanmayın.
+
+1. Yazılım lisansı
+
+1) FCL, GNU Genel Kamu Lisansı sürüm 3 (GPL-3.0) kapsamında yayımlanan özgür bir yazılımdır. Bu sözleşme, GPL-3.0 kapsamında sahip olduğunuz hakları sınırlamaz. Bu sözleşme ile GPL-3.0 arasında çelişki olması durumunda GPL-3.0 geçerlidir. Kaynak kodu:
+https://github.com/FCL-Team/FoldCraftLauncher
+2) FCL ücretsiz olarak sunulur ve FCL-Team kullanımı için hiçbir zaman ücret talep etmez. Projeyi isteğe bağlı olarak destekleyebilirsiniz.
+3) FCL'nin kullandığı üçüncü taraf bileşenler kendi lisanslarına tabidir.
+
+2. Minecraft ile ilişki
+
+1) FCL resmî olmayan bir başlatıcıdır. Mojang Studios, Microsoft veya NetEase ile hiçbir bağlantısı yoktur ve bu şirketler tarafından onaylanmamıştır.
+2) Minecraft, Mojang Synergies AB'nin ticari markasıdır. Minecraft oyunu ve ilgili içerikler üzerindeki haklar ilgili hak sahiplerine aittir. FCL, Minecraft lisansı sağlamaz veya satmaz.
+3) Minecraft oynarken Minecraft Son Kullanıcı Lisans Sözleşmesi'ne ve ilgili koşullara uymalı, oyunu yasal yollarla edinmelisiniz.
+
+3. Bölgesel kısıtlamalar
+
+1) Bazı özellikler, ülkenizin veya bölgenizin yasa ve düzenlemeleri nedeniyle kullanılamayabilir.
+2) İlgili yasa ve düzenlemeler gereğince FCL, Çin anakarasında şu anda oyunla ilgili içerik indirme özelliğini ve Terracotta çok oyunculu hizmetini sunmamaktadır. Çin anakarasındaki kullanıcılar Minecraft China Edition'ı resmî Minecraft web sitesinden indirebilir:
+https://mc.163.com/
+3) FCL, Gizlilik Politikası'nda açıklandığı gibi, bu kısıtlamaların uygulanıp uygulanmayacağına cihazınızın saat dilimi, sistem bölgesi ve ağ konumuna göre karar verir.
+
+4. Kabul edilebilir kullanım
+
+FCL'yi kullanırken şunları kabul edersiniz:
+1) ülkenizin veya bölgenizin yasa ve düzenlemelerine uymak;
+2) FCL'yi yasa dışı faaliyetler için kullanmamak ve başkalarının fikrî mülkiyet haklarını, gizliliğini veya diğer meşru haklarını ihlal etmemek;
+3) mod paketleri, modlar, kaynak paketleri, dünyalar ve kontrol düzenleri dâhil ancak bunlarla sınırlı olmamak üzere yasa dışı veya hak ihlali içeren içerik dağıtmamak;
+4) kullandığınız oyun sunucularının, çok oyunculu hizmetlerin ve diğer üçüncü taraf hizmetlerin kurallarına uymak;
+5) FCL'ye veya ilgili hizmetlere saldırmamak, bunları aksatmamak veya bunlara zarar vermemek ve başkalarının bunları kullanmasını engellememek.
+
+5. Üçüncü taraf içerik ve hizmetler
+
+1) FCL aracılığıyla edinilen modlar, mod paketleri, kaynak paketleri, gölgelendirici paketleri, dünyalar, görünümler, kontrol düzenleri ve diğer içerikler üçüncü taraflarca sağlanır ve asıl sahiplerine aittir. İlgili lisanslara uyun.
+2) FCL'nin bağlandığı indirme kaynakları, içerik platformları, hesap hizmetleri, çok oyunculu düğümler ve diğer hizmetler, ilgili işletmecileri tarafından sağlanır. FCL-Team bu hizmetlerin erişilebilirliğinden, güvenliğinden, yasallığından veya içeriğinden sorumlu değildir; bu hizmetlerin kullanım koşullarına uymanız gerekir.
+3) FCL üçüncü taraf içerikleri incelemez. Üçüncü taraf içerikleri kendi sorumluluğunuzda kullanırsınız.
+4) FCL üçüncü taraf tanıtımları veya sponsorluk bağlantıları içerebilir. İlgili hizmetler üçüncü taraflarca sağlanır.
+
+6. Garanti reddi
+
+1) FCL, satılabilirlik, belirli bir amaca uygunluk ve hak ihlali olmaması garantileri dâhil ancak bunlarla sınırlı olmamak üzere, açık veya örtük hiçbir garanti verilmeksizin "olduğu gibi" sunulur.
+2) FCL'nin her cihazda çalışacağı veya tüm ihtiyaçlarınızı karşılayacağı garanti edilmez.
+3) FCL'nin veya üçüncü taraf içeriklerin kullanımından doğan veri kaybı, cihaz sorunları veya hesap yasakları gibi sonuçlar size aittir. Önemli dünyalarınızı ve verilerinizi düzenli olarak yedekleyin.
+
+7. Sorumluluğun sınırlandırılması
+
+Yürürlükteki hukukun izin verdiği azami ölçüde, FCL-Team ve katkıda bulunanlar, FCL'nin kullanılmasından veya kullanılamamasından doğan doğrudan, dolaylı, arızi, özel veya sonuç niteliğindeki hiçbir zarardan sorumlu değildir.
+
+8. Fikrî mülkiyet
+
+1) FCL'nin kaynak kodu, adı ve simgesi üzerindeki haklar FCL-Team'e ve katkıda bulunanlara aittir. Kaynak kodunun kullanımı GPL-3.0'a tabidir.
+2) FCL'de adı geçen üçüncü taraf ticari markaları, adları ve logoları ilgili sahiplerine aittir.
+
+9. Değişiklikler ve fesih
+
+1) FCL-Team, yasalar, düzenlemeler veya özellikler değiştikçe bu sözleşmeyi güncelleyebilir. Güncellemeden sonra FCL, açılışta yeni sürümü gösterir ve onayınızı yeniden ister.
+2) FCL'yi kullanmayı istediğiniz zaman bırakabilir ve kaldırabilirsiniz.
+
+10. Diğer hükümler
+
+1) Gizlilik Politikası bu sözleşmenin bir parçasıdır.
+2) Bu sözleşmenin herhangi bir hükmünün geçersiz sayılması, diğer hükümlerin geçerliliğini etkilemez.
+3) Bu sözleşme birden fazla dilde sunulmaktadır. Dil sürümleri arasında farklılık olması durumunda Basitleştirilmiş Çince sürüm esas alınır.
+4) Sorularınız varsa bize şu adresten ulaşın:
+https://github.com/FCL-Team/FoldCraftLauncher/issues

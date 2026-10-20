@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="legal_document_dir">fa</string>
+    <string name="legal_eula">موافقت‌نامهٔ کاربری</string>
+    <string name="legal_privacy">سیاست حفظ حریم خصوصی</string>
+    <string name="legal_summary">پیش از شروع، لطفاً موافقت‌نامهٔ کاربری و سیاست حفظ حریم خصوصی را در سمت راست بخوانید. با لمس «موافقم و ادامه می‌دهم» تأیید می‌کنید که هر دو سند را خوانده‌اید و با آن‌ها موافقید. تا پیش از موافقت شما، FCL هیچ مجوزی درخواست نمی‌کند و به اینترنت متصل نمی‌شود. می‌توانید هر زمان هر دو سند را از مسیر «تنظیمات &gt; درباره ما» ببینید یا موافقت خود را پس بگیرید.</string>
+    <string name="legal_agree">موافقم و ادامه می‌دهم</string>
+    <string name="legal_disagree">موافق نیستم و خارج می‌شوم</string>
+    <string name="legal_load_failed">بارگیری این سند ممکن نشد. لطفاً FCL را دوباره نصب کنید.</string>
+    <string name="legal_withdraw">پس گرفتن موافقت</string>
+    <string name="legal_withdraw_confirm">پس از پس گرفتن موافقت، FCL بی‌درنگ بسته می‌شود و در اجرای بعدی دوباره موافقت شما را درخواست می‌کند. فایل‌های بازی، حساب‌ها و تنظیمات روی این دستگاه حذف نمی‌شوند. برای حذف آن‌ها، داده‌های FCL را در تنظیمات سیستم پاک کنید یا FCL را حذف کنید.</string>
+    <string name="legal_withdraw_positive">پس گرفتن و خروج</string>
+</resources>

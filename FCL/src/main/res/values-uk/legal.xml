@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="legal_document_dir">uk</string>
+    <string name="legal_eula">Угода користувача</string>
+    <string name="legal_privacy">Політика конфіденційності</string>
+    <string name="legal_summary">Перед початком роботи прочитайте Угоду користувача та Політику конфіденційності ліворуч. Натискаючи «Прийняти й продовжити», ви підтверджуєте, що прочитали й приймаєте обидва документи. До вашої згоди FCL не запитує дозволів і не підключається до інтернету. Пізніше ви можете будь-коли переглянути обидва документи або відкликати згоду в розділі «Налаштування &gt; Про лаунчер».</string>
+    <string name="legal_agree">Прийняти й продовжити</string>
+    <string name="legal_disagree">Відхилити й вийти</string>
+    <string name="legal_load_failed">Не вдалося завантажити документ. Перевстановіть FCL.</string>
+    <string name="legal_withdraw">Відкликати згоду</string>
+    <string name="legal_withdraw_confirm">Після відкликання згоди FCL одразу закриється й під час наступного запуску знову запитає вашу згоду. Ігрові файли, облікові записи й налаштування на пристрої не буде видалено. Щоб видалити їх, очистьте дані FCL у налаштуваннях системи або видаліть FCL.</string>
+    <string name="legal_withdraw_positive">Відкликати й вийти</string>
+</resources>

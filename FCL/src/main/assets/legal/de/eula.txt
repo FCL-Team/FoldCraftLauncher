@@ -1,0 +1,70 @@
+Nutzungsvereinbarung für Fold Craft Launcher
+
+Version: 1
+Zuletzt aktualisiert: 20. Oktober 2026
+
+Willkommen bei Fold Craft Launcher („FCL“), einem kostenlosen Open-Source-Launcher für Minecraft: Java Edition, der von FCL-Team entwickelt wird. Bitte lesen Sie diese Vereinbarung und die Datenschutzerklärung sorgfältig, bevor Sie FCL verwenden. Durch Tippen auf „Zustimmen und fortfahren“ bestätigen Sie, dass Sie diese Vereinbarung und die Datenschutzerklärung vollständig gelesen und verstanden haben und ihnen zustimmen. Wenn Sie nicht zustimmen, verwenden Sie FCL nicht.
+
+1. Softwarelizenz
+
+1) FCL ist freie Software und wird unter der GNU General Public License Version 3 (GPL-3.0) veröffentlicht. Diese Vereinbarung schränkt keine Rechte ein, die Ihnen die GPL-3.0 gewährt. Bei Widersprüchen zwischen dieser Vereinbarung und der GPL-3.0 hat die GPL-3.0 Vorrang. Quellcode:
+https://github.com/FCL-Team/FoldCraftLauncher
+2) FCL wird kostenlos bereitgestellt, und FCL-Team verlangt für die Nutzung niemals eine Gebühr. Sie können das Projekt freiwillig unterstützen.
+3) Komponenten von Drittanbietern, die FCL verwendet, unterliegen ihren eigenen Lizenzen.
+
+2. Verhältnis zu Minecraft
+
+1) FCL ist ein inoffizieller Launcher. Er steht in keiner Verbindung zu Mojang Studios, Microsoft oder NetEase und wird von diesen nicht unterstützt.
+2) Minecraft ist eine Marke von Mojang Synergies AB. Die Rechte am Spiel Minecraft und an zugehörigen Inhalten liegen bei den jeweiligen Rechteinhabern. FCL stellt keine Lizenzen für Minecraft bereit und verkauft keine.
+3) Wenn Sie Minecraft spielen, müssen Sie den Endbenutzer-Lizenzvertrag von Minecraft und die zugehörigen Bedingungen einhalten und das Spiel auf legalem Weg erwerben.
+
+3. Regionale Einschränkungen
+
+1) Einige Funktionen können aufgrund der Gesetze und Vorschriften Ihres Landes oder Ihrer Region nicht verfügbar sein.
+2) Aufgrund einschlägiger Gesetze und Vorschriften bietet FCL in Festlandchina derzeit keine Downloads von Spielinhalten und keinen Terracotta-Mehrspielerdienst an. Nutzer in Festlandchina können Minecraft China Edition auf der offiziellen Minecraft-Website herunterladen:
+https://mc.163.com/
+3) FCL entscheidet anhand der Zeitzone, der Systemregion und des Netzwerkstandorts Ihres Geräts, ob diese Einschränkungen gelten, wie in der Datenschutzerklärung beschrieben.
+
+4. Zulässige Nutzung
+
+Bei der Nutzung von FCL verpflichten Sie sich,
+1) die Gesetze und Vorschriften Ihres Landes oder Ihrer Region einzuhalten;
+2) FCL nicht für rechtswidrige Zwecke zu verwenden und weder geistiges Eigentum noch die Privatsphäre oder sonstige berechtigte Rechte anderer zu verletzen;
+3) keine rechtswidrigen oder rechtsverletzenden Inhalte zu verbreiten, einschließlich, aber nicht beschränkt auf Modpacks, Mods, Ressourcenpakete, Welten und Steuerungslayouts;
+4) die Regeln der von Ihnen genutzten Spielserver, Mehrspielerdienste und anderen Drittanbieterdienste zu befolgen;
+5) FCL und zugehörige Dienste nicht anzugreifen, zu stören oder zu beschädigen und andere nicht an deren Nutzung zu hindern.
+
+5. Inhalte und Dienste von Drittanbietern
+
+1) Mods, Modpacks, Ressourcenpakete, Shaderpakete, Welten, Skins, Steuerungslayouts und andere über FCL bezogene Inhalte werden von Dritten bereitgestellt und gehören ihren ursprünglichen Urhebern. Beachten Sie die jeweiligen Lizenzen.
+2) Downloadquellen, Inhaltsplattformen, Kontodienste, Mehrspielerknoten und andere Dienste, mit denen sich FCL verbindet, werden von ihren jeweiligen Betreibern bereitgestellt. FCL-Team ist nicht für deren Verfügbarkeit, Sicherheit, Rechtmäßigkeit oder Inhalte verantwortlich, und Sie müssen deren Nutzungsbedingungen einhalten.
+3) FCL prüft keine Inhalte von Drittanbietern. Sie nutzen Inhalte von Drittanbietern auf eigenes Risiko.
+4) FCL kann Werbung oder Sponsoring-Links von Drittanbietern enthalten. Die zugehörigen Dienste werden von Dritten bereitgestellt.
+
+6. Haftungsausschluss
+
+1) FCL wird „wie besehen“ bereitgestellt, ohne ausdrückliche oder stillschweigende Gewährleistungen jeglicher Art, einschließlich, aber nicht beschränkt auf die Gewährleistung der Marktgängigkeit, der Eignung für einen bestimmten Zweck und der Nichtverletzung von Rechten.
+2) Es wird nicht garantiert, dass FCL auf jedem Gerät funktioniert oder alle Ihre Anforderungen erfüllt.
+3) Sie tragen die Folgen der Nutzung von FCL oder von Inhalten Dritter, etwa Datenverlust, Geräteprobleme oder Kontosperrungen. Sichern Sie wichtige Welten und Daten regelmäßig.
+
+7. Haftungsbeschränkung
+
+Soweit nach geltendem Recht zulässig, haften FCL-Team und seine Mitwirkenden nicht für direkte, indirekte, zufällige, besondere oder Folgeschäden, die aus der Nutzung oder der Unmöglichkeit der Nutzung von FCL entstehen.
+
+8. Geistiges Eigentum
+
+1) Die Rechte am Quellcode, am Namen und am Symbol von FCL liegen bei FCL-Team und seinen Mitwirkenden. Die Nutzung des Quellcodes richtet sich nach der GPL-3.0.
+2) In FCL genannte Marken, Namen und Logos Dritter gehören ihren jeweiligen Inhabern.
+
+9. Änderung und Beendigung
+
+1) FCL-Team kann diese Vereinbarung aktualisieren, wenn sich Gesetze, Vorschriften oder Funktionen ändern. Nach einer Aktualisierung zeigt FCL beim Start die neue Fassung an und bittet Sie erneut um Ihre Zustimmung.
+2) Sie können die Nutzung von FCL jederzeit beenden und FCL deinstallieren.
+
+10. Sonstiges
+
+1) Die Datenschutzerklärung ist Bestandteil dieser Vereinbarung.
+2) Sollte eine Bestimmung dieser Vereinbarung unwirksam sein, bleiben die übrigen Bestimmungen davon unberührt.
+3) Diese Vereinbarung ist in mehreren Sprachen verfügbar. Bei Abweichungen zwischen den Sprachfassungen ist die Fassung in vereinfachtem Chinesisch maßgeblich.
+4) Wenn Sie Fragen haben, wenden Sie sich bitte an uns:
+https://github.com/FCL-Team/FoldCraftLauncher/issues

@@ -61,7 +61,7 @@
 - `BMCLAPIDownloadProvider`：主替换表覆盖 piston-meta/piston-data/launcher.mojang→root、libraries.minecraft.net→root/libraries、forge/neoforge/liteloader/fabric maven→root/maven、authlib-injector→root/mirrors/...、Maven Central→腾讯云、hmcl.glavo.site 元数据→alist.8mi.tech；另有 `fallbackReplacement`（Modrinth/CurseForge API→`mod.mcimirror.top`），**只在主表未命中时**启用且候选含原 URL。并发 `max(cpu*2, 6)`。
 - `AutoDownloadProvider`（FCL 的 multiple source 实现）：版本列表与文件下载用两条独立 provider 候选链；`getVersionList` 返回 `MultipleSourceVersionList`，其 `refreshAsync(gameVersion)` 动态构建递归 fallback 任务链（execute 里若依赖失败且还有后端则现场生成 nextTask），成功则把后端结果合并进自身 multimap，全部失败才抛（并把任务 significance 降为 MINOR）。
 - `DownloadProviderWrapper`：volatile provider 热替换（设置变更即时生效），**关键设计**：同一组件类型复用同一代理 `ComponentVersionList` 实例（ConcurrentMap 缓存），refresh 完成后把真实 provider 的结果 `putAll` 进代理——否则"刷新合并与读取会落在不同实例上"。全局 `refreshAsync()` 抛 UnsupportedOperationException。
-- FCL 侧 `fcl/setting/DownloadProviders.java`：`versionListSource` 与 `fileDownloadSource` 两个独立设置项；DEFAULT 时按 `LocaleUtils.IS_CHINA_MAINLAND` 决定 BMCLAPI/Mojang 先后；通过 `FXUtils.observeWeak` 监听设置变化调 `PROVIDER_WRAPPER.setProvider(...)`；并联动 `FetchTask.setDownloadExecutorConcurrency`（task 包）设置下载线程。
+- FCL 侧 `fcl/setting/DownloadProviders.java`：`versionListSource` 与 `fileDownloadSource` 两个独立设置项；DEFAULT 时按 `RegionUtils.isChinaMainlandMachine()`（fcl/util，设备地区）决定 BMCLAPI/Mojang 先后；通过 `FXUtils.observeWeak` 监听设置变化调 `PROVIDER_WRAPPER.setProvider(...)`；并联动 `FetchTask.setDownloadExecutorConcurrency`（task 包）设置下载线程。
 
 ### 2. VersionList 体系
 

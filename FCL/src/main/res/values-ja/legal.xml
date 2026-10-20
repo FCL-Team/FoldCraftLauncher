@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="legal_document_dir">ja</string>
+    <string name="legal_eula">利用規約</string>
+    <string name="legal_privacy">プライバシーポリシー</string>
+    <string name="legal_summary">ご利用を始める前に、左側の利用規約とプライバシーポリシーをお読みください。「同意して続行」をタップすると、両方の文書を読み、同意したものとみなされます。同意いただくまで、FCL は権限を要求せず、インターネットにも接続しません。両方の文書は「設定 &gt; アプリについて」からいつでも確認でき、同意を撤回することもできます。</string>
+    <string name="legal_agree">同意して続行</string>
+    <string name="legal_disagree">同意せずに終了</string>
+    <string name="legal_load_failed">文書を読み込めませんでした。FCL を再インストールしてください。</string>
+    <string name="legal_withdraw">同意を撤回</string>
+    <string name="legal_withdraw_confirm">同意を撤回すると FCL はすぐに終了し、次回の起動時に改めて同意を求めます。このデバイス上のゲームファイル、アカウント、設定は削除されません。削除するには、システム設定で FCL のデータを消去するか、FCL をアンインストールしてください。</string>
+    <string name="legal_withdraw_positive">撤回して終了</string>
+</resources>

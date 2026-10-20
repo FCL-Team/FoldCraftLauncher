@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="legal_document_dir">in</string>
+    <string name="legal_eula">Perjanjian Pengguna</string>
+    <string name="legal_privacy">Kebijakan Privasi</string>
+    <string name="legal_summary">Sebelum mulai, harap baca Perjanjian Pengguna dan Kebijakan Privasi di sebelah kiri. Dengan mengetuk “Setuju dan lanjutkan”, Anda menyatakan telah membaca dan menyetujui kedua dokumen tersebut. FCL tidak meminta izin apa pun dan tidak terhubung ke internet sebelum Anda setuju. Anda dapat melihat kembali kedua dokumen atau menarik persetujuan kapan saja di “Pengaturan &gt; Tentang”.</string>
+    <string name="legal_agree">Setuju dan lanjutkan</string>
+    <string name="legal_disagree">Tolak dan keluar</string>
+    <string name="legal_load_failed">Dokumen ini gagal dimuat. Harap pasang ulang FCL.</string>
+    <string name="legal_withdraw">Tarik persetujuan</string>
+    <string name="legal_withdraw_confirm">Setelah Anda menarik persetujuan, FCL akan langsung ditutup dan meminta persetujuan Anda kembali saat dijalankan berikutnya. File game, akun, dan pengaturan di perangkat ini tidak akan dihapus. Untuk menghapusnya, hapus data FCL di pengaturan sistem atau copot FCL.</string>
+    <string name="legal_withdraw_positive">Tarik dan keluar</string>
+</resources>

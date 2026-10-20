@@ -1,0 +1,81 @@
+Fold Craft Launcher Privacy Policy
+
+Version: 1
+Last updated: October 20, 2026
+
+Fold Craft Launcher ("FCL") is an open-source launcher for Minecraft: Java Edition developed by FCL-Team. We care about your privacy. This policy explains what information FCL processes, why it does so, where the information is sent, and how you can manage it. Please read it carefully before using FCL.
+
+1. Overview
+
+1) FCL has no account system. FCL-Team does not sell or rent your personal information.
+2) FCL does not include any third-party analytics, advertising or push notification SDKs.
+3) Most data stays on your device. Only when you use online features does your device connect directly to the corresponding services, which then receive network request information such as your IP address.
+4) FCL does not request any permission or connect to the internet until you agree to this policy and the User Agreement.
+
+2. Information stored on your device
+
+FCL processes and stores the following information on your device. FCL-Team has no access to it.
+
+1) Account information: usernames and UUIDs of offline accounts; usernames, UUIDs, skin information and sign-in credentials (such as access tokens and refresh tokens) of Microsoft accounts and external authentication accounts. Account information is stored in the private app storage of FCL and is used only to sign in to the corresponding services and launch the game.
+2) Game data: game versions, mods, modpacks, resource packs, shader packs, worlds, screenshots, control layouts and similar files. They are stored in the FCL folder on shared storage or in the app-specific storage of FCL. Files on shared storage may be accessible to file managers and other apps that have storage permission.
+3) Settings: launcher settings, game settings, favorites, download records and similar data.
+4) Logs and crash reports: launcher logs, game logs, multiplayer logs and crash reports. They may contain your device brand and model, system version, processor and graphics information, memory information, file paths and in-game player names. Logs are stored in the FCL folder on shared storage and never leave your device unless you share or upload them yourself.
+
+3. Online features and third-party services
+
+When you use the following features, your device connects directly to the corresponding services. These services receive your IP address and the content needed to fulfill the request (such as the requested file or search keywords), and some requests also include the FCL version. These services are operated by third parties or other open-source projects and process information under their own privacy policies. FCL-Team has no control over them.
+
+1) Update checks and announcements: FCL automatically fetches version information and launcher announcements from GitHub, or from Gitee when the interface language is Chinese.
+2) Game and mod loader downloads: when downloading the game, assets, libraries and mod loaders, FCL connects, depending on the download source you choose, to the official servers of Mojang and Microsoft, the BMCLAPI mirror, and servers or mirrors of Forge, NeoForge, Fabric, Quilt, LiteLoader, OptiFine, Cleanroom and their dependency repositories, including the metadata service provided by HMCL.
+3) Content search and downloads: when searching, browsing and downloading mods, modpacks, resource packs, shader packs and worlds, FCL connects to CurseForge, Modrinth or their mirror MCIM, and loads icons and screenshots of the content. Requests include your search keywords and filters.
+4) Account sign-in: for Microsoft accounts, FCL completes authorization through the Microsoft sign-in page, then connects to Xbox Live and Minecraft services to obtain your game profile and game ownership. To receive the sign-in callback, FCL temporarily starts a service on your device that only your device can access. For external authentication accounts, FCL connects to the authentication server you added and downloads the authlib-injector component.
+5) Skins: when displaying, uploading or changing skins, FCL connects to the Mojang skin service or the external authentication server you use. Skins of offline accounts are processed only on your device.
+6) Control layout repository: when browsing and downloading control layouts, FCL connects to GitHub or the mirror repo.miawa.cn.
+7) Log upload: only when you choose to upload a log does FCL upload the selected log to mclo.gs (logshare.cn when the interface language is Chinese) and generate a link. Anyone with the link can view the log. Before uploading, FCL hides game access tokens in the log, but the log may still contain the information listed in item 4) of section 2.
+8) Terracotta multiplayer: used only when you enable multiplayer and create or join a room in the game. FCL fetches the Terracotta node list and builds a virtual network through EasyTier. During a session, your device exchanges the information needed to establish connections, such as network addresses, with Terracotta nodes, EasyTier public nodes and the devices of other players in the same room, and other players in the room can see your player name. Due to relevant laws and regulations, FCL does not provide the Terracotta multiplayer service in Chinese Mainland.
+9) Region detection: FCL first uses the time zone and system region of your device to determine whether the device may be in Chinese Mainland. Only if it appears to be, FCL queries ipwho.is (provided by ipwhois.io) once after each start for the country or region of your public IP address, to decide whether some features must be restricted under local laws and regulations. The service receives your IP address. The result is kept only in memory and discarded when FCL exits.
+10) Game networking: while running, the game and its mods connect to the internet on their own, for example to the servers you join; FCL does not control this. So that the game can resolve domain names, FCL configures the system DNS and public DNS for the game: AliDNS and DNSPod when the system language is Simplified Chinese (China), and Cloudflare otherwise. Domain names that the game resolves are sent to these DNS services.
+11) External links and promotions: links to documentation, communities, sponsorship, MC百科 (mcmod.cn), cloud drives and similar pages open in a browser or the corresponding app only after you tap them. Users whose device region is Chinese Mainland and who use the Chinese interface may occasionally see a promotion for Quark Cloud Drive before launching the game. FCL does not share your information with any third party for this.
+
+4. Permissions
+
+1) Storage: read and write the FCL folder on shared storage to manage game files, import and export modpacks and control layouts, and save logs.
+2) Network and network state: for the online features above, and to check whether a network is available before connecting.
+3) Notifications: show download progress, game status and multiplayer status.
+4) Foreground services: continue downloads in the background, keep the game process running and maintain multiplayer connections.
+5) VPN: requested only when you use Terracotta multiplayer, to build the virtual network needed for multiplayer. FCL does not use this permission to collect or modify the network data of other apps.
+6) Microphone: granted only after you request it in the launcher settings, for in-game features that need a microphone, such as voice chat mods.
+7) Install and uninstall apps: install downloaded FCL updates, and uninstall FCL plugins.
+8) View installed apps: FCL looks for installed FCL plugins on your device, such as renderers, drivers and the FFmpeg plugin. FCL reads only the information needed to identify plugins and does not upload the app list.
+9) Vibration and keeping the device awake: vibration feedback for touch controls, and keeping the device from sleeping during downloads and gameplay.
+
+You can revoke granted permissions in system settings at any time, though related features may stop working.
+
+In addition, the game may read the clipboard when you paste in the game. FCL only passes the content to the game and does not upload it. FCL does not read device identifiers such as the IMEI, Android ID, MAC address or advertising ID.
+
+5. Storage and security
+
+1) Your information is stored on your device, and you decide how long to keep it. Uninstalling FCL or clearing its data in system settings deletes the data in its private app storage. You need to delete the FCL folder on shared storage yourself.
+2) Please keep your device secure. Before sharing logs, modpacks or game folders, check whether they contain information you do not want to make public.
+
+6. Your rights
+
+1) You can view, change and delete accounts, skins, settings and game files in FCL.
+2) You can turn off optional features such as multiplayer at any time, and manage permissions in system settings.
+3) You can withdraw your consent in Settings > About > Privacy Policy. FCL then exits immediately and asks for your consent again before you can use it. Withdrawing consent does not automatically delete data on your device.
+4) For information processed by third-party services, exercise your rights under the privacy policies of those services.
+
+7. Minors
+
+If you are a minor, please read this policy together with your parent or guardian, and use FCL only with their consent.
+
+8. Changes to this policy
+
+This policy may be updated as the features of FCL change. After an update, FCL shows the new version at startup and asks for your consent again.
+
+9. Contact us
+
+If you have any questions about this policy, please let us know at:
+https://github.com/FCL-Team/FoldCraftLauncher/issues
+
+This policy is available in several languages. If the language versions differ, the Simplified Chinese version prevails.

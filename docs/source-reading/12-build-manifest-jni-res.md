@@ -49,7 +49,7 @@
 - `app_runtime/caciocavallo`（1.10，AWT 桥，含 ResConfHack.jar）与 `caciocavallo17`（1.19.1，含 cacio-agent/tta）。
 - `src/main/jreAssets/app_runtime/java/`（构建期拷入）：jre8/17/21/25 四套 JRE，各含 `universal.tar.xz` + `bin-{arm,arm64,x86,x86_64}.tar.xz`（jre25 无 x86）+ version。
 - `game/`：MioLaunchWrapper.jar、MioLibPatcher.jar、HMCLTransformerDiscoveryService-1.0.jar、4 个 log4j2 配置、versions.txt/version-alias.csv/unlisted-versions.json。
-- 其他：controllers/00000000.json（默认手柄布局）、img/（steve/alex 皮肤+skin_model）、microsoft_auth.html、mod_data.txt、modpack_data.txt、options.txt、eula.txt。
+- 其他：controllers/00000000.json（默认手柄布局）、img/（steve/alex 皮肤+skin_model）、microsoft_auth.html、mod_data.txt、modpack_data.txt、options.txt、legal/<语言目录>/{eula,privacy}.txt（13 种语言的用户协议与隐私政策，目录由各语言 values-*/legal.xml 的 legal_document_dir 指定）。
 
 ## 六、根目录与 libs 依赖
 

@@ -23,7 +23,7 @@
 
 ```
 FCLApp（轻量 Application，仅跟踪 currentActivity）
- ├─ SplashActivity → EulaFragment/RuntimeFragment（EULA/权限/运行时解压）
+ ├─ SplashActivity → EulaFragment/RuntimeFragment（用户协议与隐私政策/权限/运行时解压）
  │   └─ enterLauncher：RendererManager → JavaManager → Controllers → ConfigHolder.init
  ├─ MainActivity（ViewPager2 纵向承载 8 个 UI，UIManager 管理，页面随回收销毁不保留状态）
  ├─ JVMActivity（游戏/Jar 执行器共用，TextureView 驱动，静态 fclBridge 单游戏）

@@ -37,12 +37,13 @@
 - **整合包导出三连**：ModpackTypeSelectionPage（mcbbs/multimc/server/curseforge/modrinth）→ ModpackInfoPage（按各类型 Options 显隐字段、双向绑定、校验）→ ModpackFileSelectionPage（文件树勾选白名单，后台建树、ModAdviser 建议）→ 对应 ExportTask + TaskDialog。
 
 ### 4. DownloadUI（FCLCommonUI 但自建三层内容，非分页复用）
-- 页 id 15010~15016。**结构独特**：contentContainer 里常驻三个视图——`VersionInstallPage`(GAME)、共享的 **DownloadPage**（5 个下载模式共用一个实例）、`FavoritePage`；临时页用自维护 overlay + `tempPageStack`（不同于 FCLMultiPageUI 栈），带 200ms 淡入淡出/下滑返回过渡；TabLayout 7 个 tab（游戏/整合包/模组/资源包/世界/光影/收藏），切换时 `dismissAllTempPages()` + 可见性切换 + `downloadPage.switchType(pageId)`。attach 监听：重新可见时刷新打开中的 RemoteModInfoPage 推荐版本（目录/版本可能在别处被切换）。还有 TabLayout 宽度变化自愈（scrollSelectedTabIntoView）。
+- 页 id 15010~15016。**结构独特**：contentContainer 内的页面层（pageContainer）常驻三个视图——`VersionInstallPage`(GAME)、共享的 **DownloadPage**（5 个下载模式共用一个实例）、`FavoritePage`；临时页用自维护 overlay + `tempPageStack`（不同于 FCLMultiPageUI 栈），带 200ms 淡入淡出/下滑返回过渡；TabLayout 7 个 tab（游戏/整合包/模组/资源包/世界/光影/收藏），切换时 `dismissAllTempPages()` + 可见性切换 + `downloadPage.switchType(pageId)`。attach 监听：重新可见时刷新打开中的 RemoteModInfoPage 推荐版本（目录/版本可能在别处被切换）。还有 TabLayout 宽度变化自愈（scrollSelectedTabIntoView）。
 - **DownloadPage（聚合搜索核心）**：`switchType` 按 pageId 建仓库（世界固定 CurseForge，其余 LocalizedRepository 双源）+ 下载回调（动态取当前 profile/版本，避免切目录后下到旧目录）+ 恢复 `DownloadSearchViewModel.State`（挂 Activity ViewModelStore，按 pageId 保存搜索词/版本/分类/排序/页码/源/结果/adapter——切回不重搜、不重载图）。**聚合搜索** `searchAggregated`：两源 CompletableFuture 并行 + 交错合并（CF 在前）+ 跨平台去重（归一化 slug/title 一致且更新时间差 ≤7 天才隐藏）+ 单源失败降级提示。分类用统一静态表 **DownloadCategories**（"cfId/mrSlug" 标记，源自 PCL xaml）；世界模式动态拉 CF 分类树。分页/跳页/重试、翻译搜索（TranslationDialog，中文名→英文名回填搜索）、一键下载 `downloadWithDependencies`（ModDependenciesResolver 解析 REQUIRED 前置闭包、已安装去重）、批量 `downloadModsBatch`（解析任务本身进下载面板带进度）。
 - **临时页链**：RemoteModListAdapter 条目 → **RemoteModInfoPage**（版本按游戏版本分组 SimpleMultimap、推荐版本按 LibraryAnalyzer 的 mcv+loader、已安装检测、收藏星形、mcmod 链接、截图 RecyclerView）→ **RemoteModVersionPage**（版本列表；整合包模式直接下载，模组模式进 **RemoteModDownloadPage**）→ RemoteModDownloadPage（依赖分组列表、单独下载/saveAs/一键下载/返回按钮一次 onBackPressed×3）。
 - **收藏体系**（com.mio.data.FavoriteManager，Room+StateFlow）：**FavoritePage** 左侧类别×分组双维筛选（自绘 FilterOptionRow 胶囊行+计数徽标）、多选批量改分组/取消收藏、一键批量下载（解析匹配当前 mcv/loader → FavoriteBatchDialog 勾选 → downloadModsBatch）；**FavoriteAdapter** DiffUtil 差量、左滑菜单（SwipeMenuLayout 互斥）；**FavoriteActions.kt** `bindFavoriteIcon/handleFavoriteClick`（未收藏先弹 GroupSelectionDialog 选分组）；GroupManageDialog 增删改分组。注意 FavoritePage 注释的坑：**FCLPage 超类构造期间回调 onCreate，属性初始化器会在 onCreate 赋值后再执行覆盖，因此字段必须 lateinit**。
 - **version 安装**：**VersionInstallPage**（release/snapshot/old/aprilFools 勾选过滤+搜索+刷新）→ **VersionInstallInfoPage**（InstallerItemGroup 组件勾选；版本名自动生成"1.20.1-Fabric"等，手动改后停止自动；选 Fabric/Quilt 自动带最新 API；GameBuilder.buildAsync 安装，成功后 mkdir mods；`alertFailureMessage` 静态方法集中翻译各类安装异常，被 manage 包复用）→ **InstallerListPage(download)**（某组件版本列表，release/snapshot/old 过滤、wiki 链接、保存 URL）。
 - **modpack 安装**：`Versions.importModpack` → **ModpackSelectionPage**（本地文件/远程 URL）→ **LocalModpackPage**（探测编码→读 manifest；手工包特殊警告+installAsVersion=false 走 ModpackInstaller.getModpackInstallTask(profile,file,name,charset)；describe 显 HTML 描述）或 **RemoteModpackPage**（server-manifest.json）；**ModpackInstaller.installModpack** 统一 TaskDialog + ModpackCompletionException/FileNotFound 特判；updateVersion != null 时走 ModpackHelper.getUpdateTask 并显示在 ManageUI 临时页（版本更新流程）。
+- **中国大陆地区下载受限**（参考 HMCL-dev/HMCL#7017）：`RegionUtils.observeChinaMainlandNetwork` 判定受限时隐藏页签与页面层，内容层只显示 `view_download_region_notice`（附中国版官网按钮）；临时页覆盖层不受影响（本地整合包导入等，与 HMCL 一致），`DownloadPage.openModDetail/jumpToModPage` 外部入口直接返回；ManageUI 的 InstallerListPage 组件安装/升级入口改弹提示框。网络检测未完成时按受限处理，完成且判定不受限后恢复。
 
 ### 5. AccountUI（FCLCommonUI 无分页）
 - 三入口：离线/微软（CreateAccountDialog 传工厂）、外置登录服务器（AddAuthlibInjectorServerDialog 两步向导：locateServer 联网校验 → 加入 config().authlibInjectorServers）。ServerListAdapter 展示服务器列表（点击即以其工厂开登录框）。
@@ -52,6 +53,7 @@
 ### 6. SettingUI（FCLMultiPageUI + TabLayout，4 页）
 - 页 id 15030~15034。0=VersionSettingPage(global=true)、1=**LauncherSettingPage**、2=**PluginManagePage**、3=**AboutPage**。onPageCreated 对 VersionSettingPage 注入 `loadVersion(profile,null)`；onResume 联动 PluginManagePage.onHostResume（系统卸载返回后重扫插件）。
 - **LauncherSettingPage/LauncherSettingAdapter**：与版本设置同款 Row+Tag 机制（LauncherSettingTag：CHECK_UPDATE/SHOW_CHANGELOG/EXPORT_LOG/权限/四组主题色 set/fetch/reset、亮暗背景、视频背景+音量、光标/菜单图标、语言/主题模式 Spinner、下载源/线程、动画速度/色彩透明度/振动等）；语言切换 `getActivity().recreate()`；亮暗切换因 configChanges 含 uiMode 需手动 `ThemeEngine.refreshTheme()`；从背景取色用 Palette（muted/vibrant）；SeekBar 行复用时**先摘监听再 setMax/progress**（钳制回调会把旧行 tag 的值写进错误设置项）。
+- **AboutPage**：链接列表末尾两项查看随安装包分发的用户协议与隐私政策（`LegalAgreement.load` 后台读取，FCLAlertDialog 展示）；隐私政策弹窗带「撤回同意」，确认后清除同意记录并退出进程，下次启动重新走确认页。
 - DocIndex/DocCategoryAdapter/ArticleAdapter 是帮助文档选择器组件（ArticleAdapter 打开 fcl-team.github.io 文档页），当前 SettingUI 未挂载第 5 页，属遗留代码。
 
 ### 7. ControllerUI（FCLMultiPageUI 无 tab，2 页）
@@ -59,7 +61,7 @@
 - 1=**ControllerRepoPage**(15041)：布局仓库（GitHub/国内镜像双源 index.json+category.json，语言/设备/分类筛选，regex: 搜索）；checkUpdate 对比 versionCode；ControllerDownloadPage 详情（Glide 截图、历史版本 OldVersionDialog）；下载逻辑两处相同：**下载前先备份旧文件到 cache、移除旧 Controller，失败回滚**。onBackPressed：临时页→仓库页→退出。
 
 ### 8. MultiplayerUI（FCLCommonUI 无分页，Terracotta）
-- 纯说明/开关页：三段教程切换（主/房主/客人）、EasyTier 链接、反馈按钮隐藏（TODO 注释）。`enable_multiplayer` 开关写 SharedPreferences "third_party"/"terracotta"，首次开启需确认 `terracotta_user_notice` 版本（Terracotta.getUserNoticeVersion），并申请通知权限；导出 terracotta.log。
+- 纯说明/开关页：三段教程切换（主/房主/客人）、EasyTier 链接、反馈按钮隐藏（TODO 注释）。`enable_multiplayer` 开关写 SharedPreferences "third_party"/"terracotta"，首次开启需确认 `terracotta_user_notice` 版本（Terracotta.getUserNoticeVersion），并申请通知权限；导出 terracotta.log。中国大陆网络地区显示 `terracotta_china` 提示并禁用开关（只改显示状态，不改写偏好）。
 
 ## 三、关键交互流程
 

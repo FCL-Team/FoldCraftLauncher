@@ -1,0 +1,70 @@
+Contrato do Usuário do Fold Craft Launcher
+
+Versão: 1
+Última atualização: 20 de outubro de 2026
+
+Boas-vindas ao Fold Craft Launcher ("FCL"), um launcher gratuito e de código aberto para Minecraft: Java Edition desenvolvido pela FCL-Team. Leia este contrato e a Política de Privacidade com atenção antes de usar o FCL. Ao tocar em "Concordar e continuar", você confirma que leu, entendeu e concorda integralmente com este contrato e com a Política de Privacidade. Se você não concordar, não use o FCL.
+
+1. Licença do software
+
+1) O FCL é um software livre distribuído sob a GNU General Public License versão 3 (GPL-3.0). Este contrato não limita nenhum direito que você tenha sob a GPL-3.0. Se este contrato entrar em conflito com a GPL-3.0, prevalece a GPL-3.0. Código-fonte:
+https://github.com/FCL-Team/FoldCraftLauncher
+2) O FCL é oferecido gratuitamente, e a FCL-Team nunca cobra pelo seu uso. Você pode apoiar o projeto voluntariamente.
+3) Os componentes de terceiros usados pelo FCL estão sujeitos às suas próprias licenças.
+
+2. Relação com o Minecraft
+
+1) O FCL é um launcher não oficial. Ele não é afiliado à Mojang Studios, à Microsoft nem à NetEase, nem é endossado por elas.
+2) Minecraft é uma marca registrada da Mojang Synergies AB. Os direitos sobre o jogo Minecraft e os conteúdos relacionados pertencem aos respectivos titulares. O FCL não fornece nem vende licenças do Minecraft.
+3) Ao jogar Minecraft, você deve cumprir o Contrato de Licença de Usuário Final do Minecraft e os termos relacionados, e obter o jogo por meios legítimos.
+
+3. Restrições regionais
+
+1) Alguns recursos podem não estar disponíveis devido às leis e regulamentos do seu país ou região.
+2) Devido às leis e regulamentos aplicáveis, o FCL atualmente não oferece downloads de conteúdo de jogo nem o serviço multijogador Terracotta na China continental. Usuários da China continental podem baixar o Minecraft China Edition no site oficial do Minecraft:
+https://mc.163.com/
+3) O FCL decide se essas restrições se aplicam com base no fuso horário, na região do sistema e na localização de rede do seu dispositivo, conforme descrito na Política de Privacidade.
+
+4. Uso aceitável
+
+Ao usar o FCL, você concorda em:
+1) cumprir as leis e regulamentos do seu país ou região;
+2) não usar o FCL para atividades ilegais nem violar a propriedade intelectual, a privacidade ou outros direitos legítimos de terceiros;
+3) não distribuir conteúdo ilegal ou que viole direitos, incluindo, entre outros, modpacks, mods, pacotes de recursos, mundos e layouts de controle;
+4) seguir as regras dos servidores de jogo, serviços multijogador e outros serviços de terceiros que você usa;
+5) não atacar, perturbar ou danificar o FCL ou serviços relacionados, nem atrapalhar o uso por outras pessoas.
+
+5. Conteúdo e serviços de terceiros
+
+1) Mods, modpacks, pacotes de recursos, pacotes de shaders, mundos, skins, layouts de controle e outros conteúdos obtidos pelo FCL são fornecidos por terceiros e pertencem aos seus autores originais. Respeite as licenças aplicáveis.
+2) Fontes de download, plataformas de conteúdo, serviços de conta, nós multijogador e outros serviços aos quais o FCL se conecta são fornecidos por seus respectivos operadores. A FCL-Team não se responsabiliza pela disponibilidade, segurança, legalidade ou conteúdo desses serviços, e você deve seguir os termos de serviço deles.
+3) O FCL não revisa conteúdo de terceiros. Você usa conteúdo de terceiros por sua própria conta e risco.
+4) O FCL pode conter promoções ou links de patrocínio de terceiros. Os serviços relacionados são fornecidos por terceiros.
+
+6. Isenção de garantias
+
+1) O FCL é fornecido "no estado em que se encontra", sem garantias de qualquer tipo, expressas ou implícitas, incluindo, entre outras, garantias de comercialização, adequação a uma finalidade específica e não violação.
+2) Não há garantia de que o FCL funcione em todos os dispositivos nem de que atenda a todas as suas necessidades.
+3) Você arca com as consequências do uso do FCL ou de conteúdo de terceiros, como perda de dados, problemas no dispositivo ou banimento de contas. Faça backup regularmente de mundos e dados importantes.
+
+7. Limitação de responsabilidade
+
+Na extensão máxima permitida pela legislação aplicável, a FCL-Team e seus colaboradores não se responsabilizam por quaisquer danos diretos, indiretos, incidentais, especiais ou consequenciais decorrentes do uso ou da impossibilidade de uso do FCL.
+
+8. Propriedade intelectual
+
+1) Os direitos sobre o código-fonte, o nome e o ícone do FCL pertencem à FCL-Team e a seus colaboradores. O uso do código-fonte é regido pela GPL-3.0.
+2) As marcas, nomes e logotipos de terceiros mencionados no FCL pertencem aos respectivos titulares.
+
+9. Alterações e encerramento
+
+1) A FCL-Team pode atualizar este contrato conforme mudem as leis, os regulamentos ou os recursos. Após uma atualização, o FCL mostra a nova versão na inicialização e pede o seu consentimento novamente.
+2) Você pode parar de usar e desinstalar o FCL a qualquer momento.
+
+10. Disposições gerais
+
+1) A Política de Privacidade faz parte deste contrato.
+2) Se alguma disposição deste contrato for considerada inválida, as demais disposições continuam em vigor.
+3) Este contrato está disponível em vários idiomas. Em caso de divergência entre as versões, prevalece a versão em chinês simplificado.
+4) Se tiver dúvidas, fale conosco em:
+https://github.com/FCL-Team/FoldCraftLauncher/issues

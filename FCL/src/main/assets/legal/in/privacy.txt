@@ -1,0 +1,81 @@
+Kebijakan Privasi Fold Craft Launcher
+
+Versi: 1
+Terakhir diperbarui: 20 Oktober 2026
+
+Fold Craft Launcher ("FCL") adalah peluncur sumber terbuka untuk Minecraft: Java Edition yang dikembangkan oleh FCL-Team. Kami peduli terhadap privasi Anda. Kebijakan ini menjelaskan informasi apa saja yang diproses oleh FCL, alasannya, ke mana informasi tersebut dikirim, dan bagaimana Anda dapat mengelolanya. Harap baca dengan saksama sebelum menggunakan FCL.
+
+1. Ikhtisar
+
+1) FCL tidak memiliki sistem akun sendiri. FCL-Team tidak menjual atau menyewakan informasi pribadi Anda.
+2) FCL tidak menyertakan SDK pihak ketiga apa pun untuk analitik, iklan, atau notifikasi push.
+3) Sebagian besar data hanya tersimpan di perangkat Anda. Hanya ketika Anda menggunakan fitur daring, perangkat Anda terhubung langsung ke layanan terkait, dan layanan tersebut menerima informasi permintaan jaringan seperti alamat IP Anda.
+4) Sebelum Anda menyetujui kebijakan ini dan Perjanjian Pengguna, FCL tidak meminta izin apa pun dan tidak terhubung ke internet.
+
+2. Informasi yang disimpan di perangkat Anda
+
+FCL memproses dan menyimpan informasi berikut di perangkat Anda. FCL-Team tidak dapat mengaksesnya.
+
+1) Informasi akun: nama pengguna dan UUID akun luring; nama pengguna, UUID, informasi skin, dan kredensial masuk (seperti token akses dan token pembaruan) akun Microsoft dan akun autentikasi eksternal. Informasi akun disimpan di penyimpanan privat aplikasi FCL dan hanya digunakan untuk masuk ke layanan terkait dan menjalankan game.
+2) Data game: versi game, mod, modpack, paket sumber daya, paket shader, dunia, tangkapan layar, tata letak kontrol, dan file serupa. Data ini disimpan di folder FCL pada penyimpanan bersama atau di penyimpanan khusus aplikasi FCL. File di penyimpanan bersama dapat diakses oleh pengelola file dan aplikasi lain yang memiliki izin penyimpanan.
+3) Pengaturan: pengaturan peluncur, pengaturan game, favorit, riwayat unduhan, dan data serupa.
+4) Log dan laporan kerusakan: log peluncur, log game, log multipemain, dan laporan kerusakan. Log ini dapat berisi merek dan model perangkat, versi sistem, informasi prosesor, grafis, dan memori, jalur file, serta nama pemain dalam game. Log disimpan di folder FCL pada penyimpanan bersama dan tidak akan keluar dari perangkat Anda kecuali Anda sendiri membagikan atau mengunggahnya.
+
+3. Fitur daring dan layanan pihak ketiga
+
+Saat Anda menggunakan fitur di bawah ini, perangkat Anda terhubung langsung ke layanan terkait. Layanan tersebut menerima alamat IP Anda dan konten yang diperlukan untuk memenuhi permintaan (seperti file yang diminta atau kata kunci pencarian), dan sebagian permintaan juga menyertakan versi FCL. Layanan ini dioperasikan oleh pihak ketiga atau proyek sumber terbuka lain dan memproses informasi sesuai kebijakan privasinya masing-masing. FCL-Team tidak memiliki kendali atas layanan tersebut.
+
+1) Pemeriksaan pembaruan dan pengumuman: FCL secara otomatis mengambil informasi versi dan pengumuman peluncur dari GitHub, atau dari Gitee jika bahasa antarmuka adalah bahasa Tionghoa.
+2) Unduhan game dan pemuat mod: saat mengunduh game, aset, pustaka, dan pemuat mod, FCL terhubung, sesuai sumber unduhan yang Anda pilih, ke server resmi Mojang dan Microsoft, mirror BMCLAPI, serta server atau mirror Forge, NeoForge, Fabric, Quilt, LiteLoader, OptiFine, Cleanroom dan repositori dependensinya, termasuk layanan metadata yang disediakan oleh HMCL.
+3) Pencarian dan unduhan konten: saat mencari, menjelajahi, dan mengunduh mod, modpack, paket sumber daya, paket shader, dan dunia, FCL terhubung ke CurseForge, Modrinth, atau mirror-nya, MCIM, serta memuat ikon dan tangkapan layar konten. Permintaan berisi kata kunci pencarian dan filter Anda.
+4) Masuk akun: untuk akun Microsoft, FCL menyelesaikan otorisasi melalui halaman masuk Microsoft, lalu terhubung ke Xbox Live dan layanan Minecraft untuk mendapatkan profil game dan status kepemilikan game Anda. Untuk menerima respons setelah masuk, FCL untuk sementara menjalankan layanan di perangkat Anda yang hanya dapat diakses dari perangkat itu sendiri. Untuk akun autentikasi eksternal, FCL terhubung ke server autentikasi yang Anda tambahkan dan mengunduh komponen authlib-injector.
+5) Skin: saat menampilkan, mengunggah, atau mengganti skin, FCL terhubung ke layanan skin Mojang atau server autentikasi eksternal yang Anda gunakan. Skin akun luring hanya diproses di perangkat Anda.
+6) Repositori tata letak kontrol: saat menjelajahi dan mengunduh tata letak kontrol, FCL terhubung ke GitHub atau mirror repo.miawa.cn.
+7) Unggah log: hanya jika Anda memilih untuk mengunggah log, FCL akan mengunggah log yang dipilih ke mclo.gs (ke logshare.cn jika bahasa antarmuka adalah bahasa Tionghoa) dan membuat tautan. Siapa pun yang memiliki tautan tersebut dapat melihat log. Sebelum mengunggah, FCL menyembunyikan token akses game di dalam log, tetapi log tersebut masih dapat berisi informasi yang tercantum pada butir 4) bagian 2.
+8) Multipemain Terracotta: hanya digunakan ketika Anda mengaktifkan multipemain dan membuat atau bergabung ke ruang di dalam game. FCL mengambil daftar node Terracotta dan membangun jaringan virtual melalui EasyTier. Selama sesi, perangkat Anda bertukar informasi yang diperlukan untuk membangun koneksi, seperti alamat jaringan, dengan node Terracotta, node publik EasyTier, dan perangkat pemain lain di ruang yang sama, dan pemain lain di ruang tersebut dapat melihat nama pemain Anda. Berdasarkan hukum dan peraturan yang berlaku, FCL tidak menyediakan layanan multipemain Terracotta di Tiongkok daratan.
+9) Deteksi wilayah: pertama-tama, FCL menggunakan zona waktu dan wilayah sistem perangkat Anda untuk menentukan apakah perangkat mungkin berada di Tiongkok daratan. Hanya jika tampaknya demikian, FCL akan menanyakan satu kali setelah setiap kali dijalankan kepada ipwho.is (disediakan oleh ipwhois.io) negara atau wilayah alamat IP publik Anda, untuk memutuskan apakah beberapa fitur harus dibatasi sesuai hukum setempat. Layanan ini menerima alamat IP Anda. Hasilnya hanya disimpan di memori dan dibuang saat FCL ditutup.
+10) Jaringan game: saat berjalan, game dan mod terhubung ke internet secara mandiri, misalnya ke server yang Anda masuki; hal ini tidak dikendalikan oleh FCL. Agar game dapat menerjemahkan nama domain, FCL mengonfigurasi DNS sistem dan DNS publik untuk game: AliDNS dan DNSPod jika bahasa sistem adalah bahasa Tionghoa Sederhana (Tiongkok), dan Cloudflare untuk kasus lainnya. Nama domain yang diterjemahkan oleh game dikirim ke layanan DNS tersebut.
+11) Tautan eksternal dan promosi: tautan ke dokumentasi, komunitas, halaman sponsor, MC百科 (mcmod.cn), penyimpanan awan, dan halaman serupa hanya dibuka di peramban atau aplikasi terkait setelah Anda mengetuknya. Pengguna dengan wilayah perangkat Tiongkok daratan yang menggunakan antarmuka bahasa Tionghoa sesekali dapat melihat promosi Quark Cloud Drive sebelum menjalankan game. FCL tidak membagikan informasi Anda kepada pihak ketiga mana pun karena hal ini.
+
+4. Izin
+
+1) Penyimpanan: membaca dan menulis folder FCL di penyimpanan bersama untuk mengelola file game, mengimpor dan mengekspor modpack serta tata letak kontrol, dan menyimpan log.
+2) Jaringan dan status jaringan: untuk fitur daring di atas dan untuk memeriksa apakah jaringan tersedia sebelum terhubung.
+3) Notifikasi: menampilkan kemajuan unduhan, status game, dan status multipemain.
+4) Layanan latar depan: melanjutkan unduhan di latar belakang, menjaga proses game tetap berjalan, dan mempertahankan koneksi multipemain.
+5) VPN: hanya diminta saat Anda menggunakan multipemain Terracotta, untuk membangun jaringan virtual yang diperlukan. FCL tidak menggunakan izin ini untuk mengumpulkan atau mengubah data jaringan aplikasi lain.
+6) Mikrofon: hanya diberikan setelah Anda sendiri memintanya di pengaturan peluncur, untuk fitur dalam game yang memerlukan mikrofon, seperti mod obrolan suara.
+7) Memasang dan mencopot aplikasi: memasang pembaruan FCL yang telah diunduh dan mencopot plugin FCL.
+8) Melihat aplikasi terpasang: FCL mencari plugin FCL yang terpasang di perangkat Anda, seperti perender, driver, dan plugin FFmpeg. FCL hanya membaca informasi yang diperlukan untuk mengenali plugin dan tidak mengunggah daftar aplikasi.
+9) Getaran dan menjaga perangkat tetap aktif: umpan balik getaran untuk kontrol sentuh dan mencegah perangkat masuk ke mode tidur selama pengunduhan dan permainan.
+
+Anda dapat mencabut izin yang telah diberikan di pengaturan sistem kapan saja, tetapi fitur terkait mungkin berhenti berfungsi.
+
+Selain itu, game dapat membaca papan klip saat Anda menempelkan sesuatu di dalam game. FCL hanya meneruskan konten tersebut ke game dan tidak mengunggahnya. FCL tidak membaca pengenal perangkat seperti IMEI, Android ID, alamat MAC, atau ID iklan.
+
+5. Penyimpanan dan keamanan
+
+1) Informasi Anda disimpan di perangkat Anda, dan Anda yang menentukan berapa lama informasi itu disimpan. Mencopot FCL atau menghapus datanya di pengaturan sistem akan menghapus data di penyimpanan privat aplikasi. Folder FCL di penyimpanan bersama perlu Anda hapus sendiri.
+2) Jagalah keamanan perangkat Anda. Sebelum membagikan log, modpack, atau folder game, periksa apakah isinya mengandung informasi yang tidak ingin Anda publikasikan.
+
+6. Hak Anda
+
+1) Anda dapat melihat, mengubah, dan menghapus akun, skin, pengaturan, dan file game di FCL.
+2) Anda dapat menonaktifkan fitur opsional seperti multipemain kapan saja dan mengelola izin di pengaturan sistem.
+3) Anda dapat menarik persetujuan Anda di "Pengaturan > Tentang > Kebijakan Privasi". Setelah itu FCL akan langsung ditutup dan meminta persetujuan Anda kembali sebelum digunakan lagi. Menarik persetujuan tidak otomatis menghapus data di perangkat Anda.
+4) Untuk informasi yang diproses oleh layanan pihak ketiga, gunakan hak Anda sesuai kebijakan privasi layanan tersebut.
+
+7. Anak di bawah umur
+
+Jika Anda masih di bawah umur, harap baca kebijakan ini bersama orang tua atau wali Anda dan gunakan FCL hanya dengan persetujuan mereka.
+
+8. Perubahan kebijakan ini
+
+Kebijakan ini dapat diperbarui seiring perubahan fitur FCL. Setelah pembaruan, FCL akan menampilkan versi baru saat dijalankan dan meminta persetujuan Anda kembali.
+
+9. Hubungi kami
+
+Jika Anda memiliki pertanyaan tentang kebijakan ini, silakan hubungi kami di:
+https://github.com/FCL-Team/FoldCraftLauncher/issues
+
+Kebijakan ini tersedia dalam beberapa bahasa. Jika terdapat perbedaan antarversi bahasa, yang berlaku adalah versi bahasa Tionghoa Sederhana.

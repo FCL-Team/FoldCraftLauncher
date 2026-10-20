@@ -39,7 +39,7 @@
 
 ## 六、anim / ui / util
 
-`DynamicIslandAnim`：8 个缩放 ObjectAnimator + 2 秒后淡出，mark 计数 + 线程中断防旧动画串扰，速度取自 theme.animationSpeed。`ui/ProgressDialog`：极简不可取消 FCLDialog 内嵌 FCLProgressBar（透明背景浮于全屏模糊上）。`util`：ConvertUtils（dp/px、角度弧度、Base64 位图）；LocaleUtils（11 种语言枚举、createConfigurationContext 换语言、IS_CHINA_MAINLAND 按时区+国家判断、world_time 格式化）；LogSharingUtils（日志上传/分享，**自动附 hs_err JVM 崩溃报告并脱敏 --accessToken**，8MB 上限）。
+`DynamicIslandAnim`：8 个缩放 ObjectAnimator + 2 秒后淡出，mark 计数 + 线程中断防旧动画串扰，速度取自 theme.animationSpeed。`ui/ProgressDialog`：极简不可取消 FCLDialog 内嵌 FCLProgressBar（透明背景浮于全屏模糊上）。`util`：ConvertUtils（dp/px、角度弧度、Base64 位图）；LocaleUtils（11 种语言枚举、createConfigurationContext 换语言、world_time 格式化；原 IS_CHINA_MAINLAND 地区判断已移至 fcl/util/RegionUtils）；LogSharingUtils（日志上传/分享，**自动附 hs_err JVM 崩溃报告并脱敏 --accessToken**，8MB 上限）。
 
 ## 七、值得注意的细节与坑
 
