@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.mio.skin.AnimationDialog;
-import com.mio.skin.SkinAnimations;
 import com.mio.skin.SkinRenderer;
 import com.mio.skin.SkinTextureLoader;
 import com.mio.skin.SkinViewer;
@@ -80,14 +79,11 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
         skinViewer.setOnDoubleClick(() -> {
             Context context = getContext();
             if (context instanceof Activity && !((Activity) context).isDestroyed() && !((Activity) context).isFinishing()) {
-                new AnimationDialog(context, renderer.getAnimationId(), renderer.getSolidLayerEnabled(), renderer.getUpperBodySeparated(), clipId -> {
-                    renderer.playAnimation(clipId);
+                new AnimationDialog(context, renderer.getAnimation(), renderer.getOverlayEnabled(), animation -> {
+                    renderer.playAnimation(animation);
                     saveSkinSettings(context, renderer);
                 }, enabled -> {
-                    renderer.setSolidLayerEnabled(enabled);
-                    saveSkinSettings(context, renderer);
-                }, separated -> {
-                    renderer.setUpperBodySeparated(separated);
+                    renderer.setOverlayEnabled(enabled);
                     saveSkinSettings(context, renderer);
                 }).show();
             }
