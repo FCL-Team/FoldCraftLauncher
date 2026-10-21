@@ -24,7 +24,8 @@ import kotlin.math.sqrt
  *
  * 生命周期：onResume/onPause 控制帧循环（surface 未就绪时记忆状态）；
  * surface 销毁时在 UI 线程同步等待渲染线程释放 EGL，避免SurfaceTexture 过早释放。
- * 手势：单指拖动旋转、双指捏合缩放（0.7~2.0）、单击压扁、松手偏航回正、双击弹设置。
+ * 手势：单指拖动旋转、双指捏合缩放（0.7~2.0）、单击压扁、松手偏航回正、双击弹设置；
+ * 鼠标/触控板悬停时头部注视跟随光标。
  */
 class SkinViewer @JvmOverloads constructor(
     context: Context,
@@ -176,6 +177,22 @@ class SkinViewer @JvmOverloads constructor(
         } catch (_: Throwable) {
         }
         return true
+    }
+
+    /** 鼠标/触控板悬停驱动头部注视跟随（无 hover 事件的纯触屏场景不受影响） */
+    override fun onHoverEvent(event: MotionEvent): Boolean {
+        when (event.actionMasked) {
+            MotionEvent.ACTION_HOVER_ENTER, MotionEvent.ACTION_HOVER_MOVE ->
+                if (width > 0 && height > 0) {
+                    renderer?.setGaze(
+                        event.x / width * 2f - 1f,
+                        event.y / height * 2f - 1f
+                    )
+                }
+
+            MotionEvent.ACTION_HOVER_EXIT -> renderer?.clearGaze()
+        }
+        return super.onHoverEvent(event)
     }
 
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {

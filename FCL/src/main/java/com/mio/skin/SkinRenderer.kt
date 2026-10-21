@@ -53,6 +53,20 @@ class SkinRenderer(context: Context) {
     /** 点按压扁起始时刻（[elapsed] 秒），-1 表示无进行中的压扁 */
     private var squashStart = -1f
 
+    /** 注视目标激活标志与归一化坐标 -1..1（UI 线程写，渲染线程读） */
+    @Volatile
+    private var gazeActive = false
+
+    @Volatile
+    private var gazeX = 0f
+
+    @Volatile
+    private var gazeY = 0f
+
+    // 注视当前角（弧度，渲染线程每帧向目标平滑推进）
+    private var gazeYaw = 0f
+    private var gazePitch = 0f
+
     // 动画切换混合：起点快照与归一化进度（1 为完成）
     private var blendFrom: PoseSnapshot? = null
     private var blendProgress = 1f
@@ -140,6 +154,18 @@ class SkinRenderer(context: Context) {
         squashStart = elapsed
     }
 
+    /** 设置注视目标（视图归一化坐标 -1..1），头部平滑转向目标方向 */
+    fun setGaze(x: Float, y: Float) {
+        gazeX = x
+        gazeY = y
+        gazeActive = true
+    }
+
+    /** 清除注视目标，头部缓慢回正 */
+    fun clearGaze() {
+        gazeActive = false
+    }
+
     /**
      * 切换动画并重置姿态与进度；切换前快照当前姿态做短促混合，避免硬切跳变。
      */
@@ -196,6 +222,7 @@ class SkinRenderer(context: Context) {
         }
         animation.update(model, deltaSeconds)
         applyPoseBlend(deltaSeconds)
+        applyGaze(deltaSeconds)
 
         val distance = cameraDistance()
         Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, distance, 0f, 0f, 0f, 0f, 1f, 0f)
@@ -262,6 +289,31 @@ class SkinRenderer(context: Context) {
     private fun wrapDegrees(degrees: Float): Float {
         val wrapped = (degrees + 180f) % 360f
         return (if (wrapped < 0f) wrapped + 360f else wrapped) - 180f
+    }
+
+    /**
+     * 头部注视平滑跟随：目标方向指数逼近（tau 0.1s）。
+     * 目标方位补偿视图偏航使注视始终朝屏幕方向，头部限角内截断（模型背对时不强拧）；
+     * 叠加在动画姿态之后（动画会逐帧重写头部旋转）。
+     */
+    private fun applyGaze(deltaSeconds: Float) {
+        val desiredYaw = if (gazeActive) gazeX * GAZE_RANGE_X else 0f
+        val desiredPitch = if (gazeActive) gazeY * GAZE_RANGE_Y else 0f
+        val targetYaw = (desiredYaw - wrapDegrees(rotationY) * DEG_TO_RAD)
+            .coerceIn(-GAZE_RANGE_X, GAZE_RANGE_X)
+        if (gazeYaw == targetYaw && gazePitch == desiredPitch) {
+            return
+        }
+        val factor = 1f - exp(-deltaSeconds / GAZE_TAU)
+        gazeYaw += (targetYaw - gazeYaw) * factor
+        gazePitch += (desiredPitch - gazePitch) * factor
+        // 收敛到位后精确贴合，避免无限小步进
+        if (abs(gazeYaw - targetYaw) < GAZE_EPSILON && abs(gazePitch - desiredPitch) < GAZE_EPSILON) {
+            gazeYaw = targetYaw
+            gazePitch = desiredPitch
+        }
+        model.head.rotationY += gazeYaw
+        model.head.rotationX += gazePitch
     }
 
     /** 全部部件的姿态快照，动画切换时捕获 */
@@ -499,6 +551,14 @@ class SkinRenderer(context: Context) {
 
         /** 压扁支点：模型脚底的局部 y */
         private const val SQUASH_PIVOT_Y = -16f
+
+        /** 头部注视的水平/垂直限角（弧度）、平滑时间常数（秒）与收敛阈值 */
+        private val GAZE_RANGE_X = Math.toRadians(60.0).toFloat()
+        private val GAZE_RANGE_Y = Math.toRadians(53.0).toFloat()
+        private const val GAZE_TAU = 0.1f
+        private const val GAZE_EPSILON = 0.0005f
+
+        private const val DEG_TO_RAD = (Math.PI / 180.0).toFloat()
 
         /** 挤出侧壁的背光亮度系数（参考 3d-Skin-Layers 的方向光照观感） */
         private const val EXTRUSION_SHADE = 0.92f
