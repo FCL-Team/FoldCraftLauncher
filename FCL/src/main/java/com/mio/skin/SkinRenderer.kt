@@ -11,6 +11,8 @@ import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.skin.InvalidSkinException
 import com.tungsten.fclcore.util.skin.NormalizedSkin
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.exp
 import kotlin.math.tan
 
 /**
@@ -40,6 +42,16 @@ class SkinRenderer(context: Context) {
     private var scale = 1f
     private var rotationX = 0f
     private var rotationY = 0f
+
+    /** 拖拽结束后的偏航回正进行中（UI 线程置位，渲染线程消费） */
+    @Volatile
+    private var recentering = false
+
+    // 渲染帧累计时间（秒），驱动点按压扁脉冲
+    private var elapsed = 0f
+
+    /** 点按压扁起始时刻（[elapsed] 秒），-1 表示无进行中的压扁 */
+    private var squashStart = -1f
 
     // 动画切换混合：起点快照与归一化进度（1 为完成）
     private var blendFrom: PoseSnapshot? = null
@@ -101,8 +113,9 @@ class SkinRenderer(context: Context) {
      */
     fun setTexture(skin: Bitmap?, cape: Bitmap?) = updateTexture(skin, cape)
 
-    /** 单指拖动旋转，输入为像素增量（已除以屏幕密度） */
+    /** 单指拖动旋转，输入为像素增量（已除以屏幕密度）；拖拽期间取消回正 */
     fun rotateStep(dx: Float, dy: Float) {
+        recentering = false
         if (abs(dx) >= 1f) {
             rotationY += ROTATE_STEP * dx
         }
@@ -115,6 +128,16 @@ class SkinRenderer(context: Context) {
 
     fun setScale(value: Float) {
         scale = value.coerceIn(MIN_SCALE, MAX_SCALE)
+    }
+
+    /** 拖拽结束，偏航沿最短路径缓慢收敛回正面（俯仰保留用户视角） */
+    fun onDragEnd() {
+        recentering = true
+    }
+
+    /** 点按压扁：模型 Y 向压缩、XZ 鼓出的弹簧脉冲 */
+    fun squashTap() {
+        squashStart = elapsed
     }
 
     /**
@@ -161,6 +184,16 @@ class SkinRenderer(context: Context) {
         consumePendingUpdate()
         GLES20.glClearColor(0f, 0f, 0f, 0f)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
+        elapsed += deltaSeconds
+        if (recentering) {
+            // 偏航归一化到 ±180 后指数收敛回正面
+            rotationY = wrapDegrees(rotationY)
+            val next = rotationY * exp(-deltaSeconds / RECENTER_TAU)
+            rotationY = if (abs(next) < RECENTER_EPSILON) 0f else next
+            if (rotationY == 0f) {
+                recentering = false
+            }
+        }
         animation.update(model, deltaSeconds)
         applyPoseBlend(deltaSeconds)
 
@@ -186,6 +219,14 @@ class SkinRenderer(context: Context) {
             0f,
             1f
         )
+        val squash = currentSquash()
+        if (squash < 1f) {
+            // 点按压扁以脚底为支点：Y 压缩、XZ 等比鼓出
+            val bulge = 1f + (1f - squash) * 0.5f
+            Matrix.translateM(wrapperMatrix, 0, 0f, SQUASH_PIVOT_Y, 0f)
+            Matrix.scaleM(wrapperMatrix, 0, bulge, squash, bulge)
+            Matrix.translateM(wrapperMatrix, 0, 0f, -SQUASH_PIVOT_Y, 0f)
+        }
         Matrix.rotateM(wrapperMatrix, 0, rotationX, 1f, 0f, 0f)
         Matrix.rotateM(wrapperMatrix, 0, rotationY, 0f, 1f, 0f)
 
@@ -203,6 +244,25 @@ class SkinRenderer(context: Context) {
     }
 
     // ---- 内部实现 ----
+
+    /** 当前压扁系数（1 为原状）：阻尼弹簧脉冲，t=0 瞬间压至最低点后振荡回弹 */
+    private fun currentSquash(): Float {
+        if (squashStart < 0f) {
+            return 1f
+        }
+        val t = elapsed - squashStart
+        if (t > SQUASH_DURATION) {
+            squashStart = -1f
+            return 1f
+        }
+        return 1f - SQUASH_DEPTH * exp(-SQUASH_DAMPING * t) * cos(SQUASH_FREQUENCY * t)
+    }
+
+    /** 归一化角度到 (-180, 180] */
+    private fun wrapDegrees(degrees: Float): Float {
+        val wrapped = (degrees + 180f) % 360f
+        return (if (wrapped < 0f) wrapped + 360f else wrapped) - 180f
+    }
 
     /** 全部部件的姿态快照，动画切换时捕获 */
     private class PoseSnapshot(model: PlayerModel) {
@@ -422,6 +482,23 @@ class SkinRenderer(context: Context) {
 
         /** 动画切换姿态混合时长（秒） */
         private const val BLEND_SECONDS = 0.25f
+
+        /** 拖拽松手后偏航回正的时间常数（秒） */
+        private const val RECENTER_TAU = 0.35f
+
+        /** 偏航回正的收敛阈值（度），小于此直接归零结束 */
+        private const val RECENTER_EPSILON = 0.1f
+
+        /** 点按压扁深度（相对模型高度）与弹簧参数 */
+        private const val SQUASH_DEPTH = 0.08f
+        private const val SQUASH_DAMPING = 10f
+        private const val SQUASH_FREQUENCY = 24f
+
+        /** 点按压扁弹簧截断时长（秒） */
+        private const val SQUASH_DURATION = 1f
+
+        /** 压扁支点：模型脚底的局部 y */
+        private const val SQUASH_PIVOT_Y = -16f
 
         /** 挤出侧壁的背光亮度系数（参考 3d-Skin-Layers 的方向光照观感） */
         private const val EXTRUSION_SHADE = 0.92f
