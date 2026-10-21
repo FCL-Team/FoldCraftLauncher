@@ -41,6 +41,10 @@ class SkinRenderer(context: Context) {
     private var rotationX = 0f
     private var rotationY = 0f
 
+    // 动画切换混合：起点快照与归一化进度（1 为完成）
+    private var blendFrom: PoseSnapshot? = null
+    private var blendProgress = 1f
+
     /** 当前绑定的皮肤/披风位图（UI 线程读写，[setTexture] 更新） */
     var texture: Array<Bitmap?> = arrayOf(defaultSkin(), null)
         private set
@@ -114,9 +118,14 @@ class SkinRenderer(context: Context) {
     }
 
     /**
-     * 切换动画并重置姿态与进度（语义同 skinview3d 的 viewer.animation setter）。
+     * 切换动画并重置姿态与进度；切换前快照当前姿态做短促混合，避免硬切跳变。
      */
     fun playAnimation(animation: PlayerAnimation) {
+        if (animation === this.animation) {
+            return
+        }
+        blendFrom = PoseSnapshot(model)
+        blendProgress = 0f
         this.animation = animation
         model.resetJoints()
     }
@@ -153,6 +162,7 @@ class SkinRenderer(context: Context) {
         GLES20.glClearColor(0f, 0f, 0f, 0f)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
         animation.update(model, deltaSeconds)
+        applyPoseBlend(deltaSeconds)
 
         val distance = cameraDistance()
         Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, distance, 0f, 0f, 0f, 0f, 1f, 0f)
@@ -193,6 +203,36 @@ class SkinRenderer(context: Context) {
     }
 
     // ---- 内部实现 ----
+
+    /** 全部部件的姿态快照，动画切换时捕获 */
+    private class PoseSnapshot(model: PlayerModel) {
+        val parts = (model.skinParts + model.cape).map {
+            floatArrayOf(
+                it.posX, it.posY, it.posZ,
+                it.rotationX, it.rotationY, it.rotationZ
+            )
+        }
+    }
+
+    /** 快照向当前动画姿态插值（smoothstep），消除动画切换硬切跳变 */
+    private fun applyPoseBlend(deltaSeconds: Float) {
+        val from = blendFrom ?: return
+        blendProgress = (blendProgress + deltaSeconds / BLEND_SECONDS).coerceAtMost(1f)
+        val t = blendProgress * blendProgress * (3f - 2f * blendProgress)
+        val parts = model.skinParts + model.cape
+        from.parts.forEachIndexed { index, snap ->
+            val part = parts[index]
+            part.posX = snap[0] + (part.posX - snap[0]) * t
+            part.posY = snap[1] + (part.posY - snap[1]) * t
+            part.posZ = snap[2] + (part.posZ - snap[2]) * t
+            part.rotationX = snap[3] + (part.rotationX - snap[3]) * t
+            part.rotationY = snap[4] + (part.rotationY - snap[4]) * t
+            part.rotationZ = snap[5] + (part.rotationZ - snap[5]) * t
+        }
+        if (blendProgress >= 1f) {
+            blendFrom = null
+        }
+    }
 
     private fun drawPart(part: PlayerModel.Part) {
         for ((index, mesh) in part.meshes.withIndex()) {
@@ -379,6 +419,9 @@ class SkinRenderer(context: Context) {
         private const val MIN_SCALE = 0.7f
         private const val MAX_SCALE = 2.0f
         private const val ROTATE_STEP = 2f
+
+        /** 动画切换姿态混合时长（秒） */
+        private const val BLEND_SECONDS = 0.25f
 
         /** 挤出侧壁的背光亮度系数（参考 3d-Skin-Layers 的方向光照观感） */
         private const val EXTRUSION_SHADE = 0.92f
