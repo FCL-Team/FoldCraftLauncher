@@ -148,7 +148,7 @@ class SkinRenderer(context: Context) {
         scale = value.coerceIn(MIN_SCALE, MAX_SCALE)
     }
 
-    /** 拖拽结束，偏航沿最短路径缓慢收敛回正面（俯仰保留用户视角），注视恢复判定 */
+    /** 拖拽结束，偏航与俯仰一起沿最短路径缓慢收敛回正面，注视恢复判定 */
     fun onDragEnd() {
         dragging = false
         recentering = true
@@ -212,11 +212,13 @@ class SkinRenderer(context: Context) {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
         elapsed += deltaSeconds
         if (recentering) {
-            // 偏航归一化到 ±180 后指数收敛回正面
+            // 偏航归一化到 ±180 后与俯仰一起指数收敛回正面
             rotationY = wrapDegrees(rotationY)
-            val next = rotationY * exp(-deltaSeconds / RECENTER_TAU)
-            rotationY = if (abs(next) < RECENTER_EPSILON) 0f else next
-            if (rotationY == 0f) {
+            val nextYaw = rotationY * exp(-deltaSeconds / RECENTER_TAU)
+            rotationY = if (abs(nextYaw) < RECENTER_EPSILON) 0f else nextYaw
+            val nextPitch = rotationX * exp(-deltaSeconds / RECENTER_TAU)
+            rotationX = if (abs(nextPitch) < RECENTER_EPSILON) 0f else nextPitch
+            if (rotationY == 0f && rotationX == 0f) {
                 recentering = false
             }
         }
