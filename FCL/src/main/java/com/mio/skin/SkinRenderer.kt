@@ -47,6 +47,10 @@ class SkinRenderer(context: Context) {
     @Volatile
     private var recentering = false
 
+    /** 用户正在拖拽旋转（UI 线程写，渲染线程读），期间注视挂起 */
+    @Volatile
+    private var dragging = false
+
     // 渲染帧累计时间（秒），驱动点按压扁脉冲
     private var elapsed = 0f
 
@@ -67,9 +71,8 @@ class SkinRenderer(context: Context) {
     private var gazeYaw = 0f
     private var gazePitch = 0f
 
-    // 动画切换混合：起点快照与归一化进度（1 为完成）
-    private var blendFrom: PoseSnapshot? = null
-    private var blendProgress = 1f
+    /** 注视切断锁存：模型背对时置位，拖回恢复角以内复位（渲染线程） */
+    private var gazeCut = false
 
     /** 当前绑定的皮肤/披风位图（UI 线程读写，[setTexture] 更新） */
     var texture: Array<Bitmap?> = arrayOf(defaultSkin(), null)
@@ -127,8 +130,9 @@ class SkinRenderer(context: Context) {
      */
     fun setTexture(skin: Bitmap?, cape: Bitmap?) = updateTexture(skin, cape)
 
-    /** 单指拖动旋转，输入为像素增量（已除以屏幕密度）；拖拽期间取消回正 */
+    /** 单指拖动旋转，输入为像素增量（已除以屏幕密度）；拖拽期间取消回正并挂起注视 */
     fun rotateStep(dx: Float, dy: Float) {
+        dragging = true
         recentering = false
         if (abs(dx) >= 1f) {
             rotationY += ROTATE_STEP * dx
@@ -144,8 +148,9 @@ class SkinRenderer(context: Context) {
         scale = value.coerceIn(MIN_SCALE, MAX_SCALE)
     }
 
-    /** 拖拽结束，偏航沿最短路径缓慢收敛回正面（俯仰保留用户视角） */
+    /** 拖拽结束，偏航沿最短路径缓慢收敛回正面（俯仰保留用户视角），注视恢复判定 */
     fun onDragEnd() {
+        dragging = false
         recentering = true
     }
 
@@ -167,14 +172,9 @@ class SkinRenderer(context: Context) {
     }
 
     /**
-     * 切换动画并重置姿态与进度；切换前快照当前姿态做短促混合，避免硬切跳变。
+     * 切换动画并重置姿态与进度（语义同 skinview3d 的 viewer.animation setter）。
      */
     fun playAnimation(animation: PlayerAnimation) {
-        if (animation === this.animation) {
-            return
-        }
-        blendFrom = PoseSnapshot(model)
-        blendProgress = 0f
         this.animation = animation
         model.resetJoints()
     }
@@ -221,7 +221,6 @@ class SkinRenderer(context: Context) {
             }
         }
         animation.update(model, deltaSeconds)
-        applyPoseBlend(deltaSeconds)
         applyGaze(deltaSeconds)
 
         val distance = cameraDistance()
@@ -292,58 +291,38 @@ class SkinRenderer(context: Context) {
     }
 
     /**
-     * 头部注视平滑跟随：目标方向指数逼近（tau 0.1s）。
-     * 目标方位补偿视图偏航使注视始终朝屏幕方向，头部限角内截断（模型背对时不强拧）；
-     * 叠加在动画姿态之后（动画会逐帧重写头部旋转）。
+     * 头部注视平滑跟随：目标方向指数逼近（tau 0.1s），叠加在动画姿态之后（动画会逐帧重写头部旋转）。
+     * 拖拽期间与模型背对（超过切断角）时注视放弃、头部回落原位，模型拖回恢复角以内自动恢复；
+     * 跟随时目标方位补偿视图偏航，使注视始终朝屏幕方向。
      */
     private fun applyGaze(deltaSeconds: Float) {
-        val desiredYaw = if (gazeActive) gazeX * GAZE_RANGE_X else 0f
-        val desiredPitch = if (gazeActive) gazeY * GAZE_RANGE_Y else 0f
-        val targetYaw = (desiredYaw - wrapDegrees(rotationY) * DEG_TO_RAD)
-            .coerceIn(-GAZE_RANGE_X, GAZE_RANGE_X)
-        if (gazeYaw == targetYaw && gazePitch == desiredPitch) {
+        val yawDegrees = wrapDegrees(rotationY)
+        val yawAbs = abs(yawDegrees)
+        if (dragging || yawAbs > GAZE_CUT_OFF) {
+            gazeCut = true
+        } else if (yawAbs < GAZE_CUT_ON) {
+            gazeCut = false
+        }
+        val follow = gazeActive && !gazeCut
+        val targetYaw = if (follow) {
+            (gazeX * GAZE_RANGE_X - yawDegrees * DEG_TO_RAD).coerceIn(-GAZE_RANGE_X, GAZE_RANGE_X)
+        } else {
+            0f
+        }
+        val targetPitch = if (follow) gazeY * GAZE_RANGE_Y else 0f
+        if (gazeYaw == targetYaw && gazePitch == targetPitch) {
             return
         }
         val factor = 1f - exp(-deltaSeconds / GAZE_TAU)
         gazeYaw += (targetYaw - gazeYaw) * factor
-        gazePitch += (desiredPitch - gazePitch) * factor
+        gazePitch += (targetPitch - gazePitch) * factor
         // 收敛到位后精确贴合，避免无限小步进
-        if (abs(gazeYaw - targetYaw) < GAZE_EPSILON && abs(gazePitch - desiredPitch) < GAZE_EPSILON) {
+        if (abs(gazeYaw - targetYaw) < GAZE_EPSILON && abs(gazePitch - targetPitch) < GAZE_EPSILON) {
             gazeYaw = targetYaw
-            gazePitch = desiredPitch
+            gazePitch = targetPitch
         }
         model.head.rotationY += gazeYaw
         model.head.rotationX += gazePitch
-    }
-
-    /** 全部部件的姿态快照，动画切换时捕获 */
-    private class PoseSnapshot(model: PlayerModel) {
-        val parts = (model.skinParts + model.cape).map {
-            floatArrayOf(
-                it.posX, it.posY, it.posZ,
-                it.rotationX, it.rotationY, it.rotationZ
-            )
-        }
-    }
-
-    /** 快照向当前动画姿态插值（smoothstep），消除动画切换硬切跳变 */
-    private fun applyPoseBlend(deltaSeconds: Float) {
-        val from = blendFrom ?: return
-        blendProgress = (blendProgress + deltaSeconds / BLEND_SECONDS).coerceAtMost(1f)
-        val t = blendProgress * blendProgress * (3f - 2f * blendProgress)
-        val parts = model.skinParts + model.cape
-        from.parts.forEachIndexed { index, snap ->
-            val part = parts[index]
-            part.posX = snap[0] + (part.posX - snap[0]) * t
-            part.posY = snap[1] + (part.posY - snap[1]) * t
-            part.posZ = snap[2] + (part.posZ - snap[2]) * t
-            part.rotationX = snap[3] + (part.rotationX - snap[3]) * t
-            part.rotationY = snap[4] + (part.rotationY - snap[4]) * t
-            part.rotationZ = snap[5] + (part.rotationZ - snap[5]) * t
-        }
-        if (blendProgress >= 1f) {
-            blendFrom = null
-        }
     }
 
     private fun drawPart(part: PlayerModel.Part) {
@@ -532,8 +511,9 @@ class SkinRenderer(context: Context) {
         private const val MAX_SCALE = 2.0f
         private const val ROTATE_STEP = 2f
 
-        /** 动画切换姿态混合时长（秒） */
-        private const val BLEND_SECONDS = 0.25f
+        /** 注视切断角与迟滞恢复角：模型偏航越过切断角放弃注视，拖回恢复角以内才重新跟随 */
+        private val GAZE_CUT_OFF = Math.toRadians(90.0).toFloat()
+        private val GAZE_CUT_ON = Math.toRadians(75.0).toFloat()
 
         /** 拖拽松手后偏航回正的时间常数（秒） */
         private const val RECENTER_TAU = 0.35f
