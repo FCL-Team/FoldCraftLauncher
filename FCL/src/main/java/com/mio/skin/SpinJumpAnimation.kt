@@ -4,9 +4,8 @@ import kotlin.math.abs
 import kotlin.math.sin
 
 /**
- * 「邦友的酒」式旋转弹跳：整体匀速自转 + 欢快上下蹦跳，双臂水平展开随节奏扇动。
- * 自转角速度与点击效果的固定播放时长（[SkinRenderer] EFFECT_DURATION）配合，
- * 恰好转完整圈数，效果结束复位时无角度跳变。
+ * 「邦友的酒」式旋转 Q 弹：整体匀速自转，模型像果冻一样在触地相位被压扁、
+ * 弹起相位拉伸回弹，双臂水平展开随节奏扇动，不产生跳跃位移。
  */
 class SpinJumpAnimation : PlayerAnimation() {
 
@@ -14,21 +13,16 @@ class SpinJumpAnimation : PlayerAnimation() {
         // 整体匀速自转
         player.rootRotationY = progress * SPIN_SPEED
 
-        // 上下弹跳（0.45s 一跳）与落地屈膝缓冲
+        // Q 弹形变：0.45s 一个压弹周期，触地压扁（Y 压、XZ 鼓），弹起时拉伸回原
         val t = progress * PI / 0.45f
         val bounce = abs(sin(t))
-        player.rootY = bounce * 2.5f
-        val legBend = (1f - bounce) * 0.4f
-        player.leftLeg.rotationX = -legBend
-        player.rightLeg.rotationX = -legBend
+        player.rootScaleY = 0.82f + bounce * 0.26f
+        player.rootScaleXZ = 1.12f - bounce * 0.17f
 
         // 双臂水平展开，随节奏上下扇动
         val flap = sin(t) * 0.25f
         player.leftArm.rotationZ = PI / 2f + flap
         player.rightArm.rotationZ = -PI / 2f - flap
-
-        // 身体随节奏轻微摇摆
-        player.rootRotationZ = sin(t) * 0.06f
     }
 
     companion object {

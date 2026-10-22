@@ -250,6 +250,10 @@ class PlayerModel {
     var rootRotationY = 0f
     var rootRotationZ = 0f
 
+    /** 玩家整体形变（Q 弹压扁拉伸），1 为原状；以脚底为支点应用 */
+    var rootScaleY = 1f
+    var rootScaleXZ = 1f
+
     private var skinPixels: IntArray? = null
     private var skinBitmapWidth = 0
 
@@ -310,6 +314,8 @@ class PlayerModel {
         rootRotationX = 0f
         rootRotationY = 0f
         rootRotationZ = 0f
+        rootScaleY = 1f
+        rootScaleXZ = 1f
     }
 
     /**
