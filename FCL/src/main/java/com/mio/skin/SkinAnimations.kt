@@ -42,7 +42,13 @@ object SkinAnimations {
         Entry("swim", R.string.animation_swim, { SwimAnimation() }, SwimAnimation::class.java),
         Entry("crouch", R.string.animation_crouch, { CrouchAnimation() }, CrouchAnimation::class.java),
         Entry("wave", R.string.animation_wave, { WaveAnimation() }, WaveAnimation::class.java),
-        Entry("hit", R.string.animation_hit, { HitAnimation() }, HitAnimation::class.java)
+        Entry("hit", R.string.animation_hit, { HitAnimation() }, HitAnimation::class.java),
+        Entry(
+            "spin_jump",
+            R.string.animation_spin_jump,
+            { SpinJumpAnimation() },
+            SpinJumpAnimation::class.java
+        )
     )
 
     /** 按 id 创建动画实例，未知 id（含旧版持久化值）回退走路 */

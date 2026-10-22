@@ -1487,6 +1487,7 @@
     <string name="animation_swim">游泳</string>
     <string name="animation_hands_up_running">举手奔跑</string>
     <string name="animation_hands_up_jumping">举手蹦跳</string>
+    <string name="animation_spin_jump">旋转弹跳</string>
     <string name="quark_promo_title">支持 FCL</string>
     <string name="quark_promo_message">这是你第 %1$d 次启动游戏！\n\n如果 FCL 对你有帮助，欢迎动动手指打开夸克网盘，注册或登录后点击保存到网盘（不用下载），就是对我们最大的支持，十分感谢～</string>
     <string name="quark_promo_open">打开夸克网盘</string>

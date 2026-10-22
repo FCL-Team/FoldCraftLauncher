@@ -24,7 +24,7 @@ import kotlin.math.sqrt
  *
  * 生命周期：onResume/onPause 控制帧循环（surface 未就绪时记忆状态）；
  * surface 销毁时在 UI 线程同步等待渲染线程释放 EGL，避免SurfaceTexture 过早释放。
- * 手势：单指拖动旋转、双指捏合缩放（0.7~2.0）、单击压扁、松手偏航回正、双击弹设置；
+ * 手势：单指拖动旋转、双指捏合缩放（0.7~2.0）、单击触发旋转弹跳效果、松手回正、双击弹设置；
  * 鼠标/触控板悬停时头部注视跟随光标。
  */
 class SkinViewer @JvmOverloads constructor(
@@ -57,7 +57,7 @@ class SkinViewer @JvmOverloads constructor(
     private var lastTapY = 0f
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
 
-    // 本次按下的起点（单击压扁的位移判定）
+    // 本次按下的起点（单击判定的位移阈值）
     private var downX = 0f
     private var downY = 0f
 
@@ -131,13 +131,13 @@ class SkinViewer @JvmOverloads constructor(
                     }
                 }
                 if (event.actionMasked == MotionEvent.ACTION_UP) {
-                    // 单击（短按未拖动）触发点按压扁；无论是否拖动，手势结束都开始偏航回正
+                    // 单击（短按未拖动）触发旋转弹跳效果；无论是否拖动，手势结束都开始回正
                     val dx = x - downX
                     val dy = y - downY
                     if (event.eventTime - event.downTime < TAP_INTERVAL &&
                         dx * dx + dy * dy < touchSlop * touchSlop
                     ) {
-                        renderer?.squashTap()
+                        renderer?.playSpinJumpEffect()
                     }
                     renderer?.onDragEnd()
                 }
@@ -391,7 +391,7 @@ class SkinViewer @JvmOverloads constructor(
     companion object {
         private const val DOUBLE_TAP_INTERVAL = 300L
 
-        /** 单击压扁的按压时长上限（毫秒） */
+        /** 单击触发的按压时长上限（毫秒） */
         private const val TAP_INTERVAL = 250L
 
         /** 帧率上限 60fps 的帧间隔（略低于 16.67ms，容忍 vsync 时间戳抖动） */

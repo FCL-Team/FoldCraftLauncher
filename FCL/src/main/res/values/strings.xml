@@ -1640,6 +1640,7 @@
     <string name="animation_swim">Swim</string>
     <string name="animation_hands_up_running">Hands-up Running</string>
     <string name="animation_hands_up_jumping">Hands-up Jumping</string>
+    <string name="animation_spin_jump">Spin Jump</string>
     <string name="quark_promo_title">Support FCL</string>
     <string name="quark_promo_message">This is your %1$dth game launch!\n\nIf FCL has been helpful to you, feel free to take a moment to open Quark Drive, sign up or log in and tap the Save to Drive button (no download needed). It would mean a lot to us. Thank you so much!</string>
     <string name="quark_promo_open">Open Quark Drive</string>

@@ -11,7 +11,6 @@ import com.tungsten.fclcore.task.Schedulers
 import com.tungsten.fclcore.util.skin.InvalidSkinException
 import com.tungsten.fclcore.util.skin.NormalizedSkin
 import kotlin.math.abs
-import kotlin.math.cos
 import kotlin.math.exp
 import kotlin.math.tan
 
@@ -51,11 +50,13 @@ class SkinRenderer(context: Context) {
     @Volatile
     private var dragging = false
 
-    // 渲染帧累计时间（秒），驱动点按压扁脉冲
-    private var elapsed = 0f
+    /** 点击触发的旋转弹跳效果动画；非 null 时效果优先于 [animation] 播放（UI 线程写，渲染线程读写） */
+    @Volatile
+    private var effectAnimation: PlayerAnimation? = null
 
-    /** 点按压扁起始时刻（[elapsed] 秒），-1 表示无进行中的压扁 */
-    private var squashStart = -1f
+    /** 效果剩余时长（秒），与 [effectAnimation] 配对 */
+    @Volatile
+    private var effectRemain = 0f
 
     /** 注视目标激活标志与归一化坐标 -1..1（UI 线程写，渲染线程读） */
     @Volatile
@@ -154,9 +155,11 @@ class SkinRenderer(context: Context) {
         recentering = true
     }
 
-    /** 点按压扁：模型 Y 向压缩、XZ 鼓出的弹簧脉冲 */
-    fun squashTap() {
-        squashStart = elapsed
+    /** 点击效果：播放旋转弹跳动画固定时长（自转恰好转完整圈数），结束后恢复原动画 */
+    fun playSpinJumpEffect() {
+        effectAnimation = SpinJumpAnimation()
+        effectRemain = EFFECT_DURATION
+        model.resetJoints()
     }
 
     /** 设置注视目标（视图归一化坐标 -1..1），头部平滑转向目标方向 */
@@ -172,10 +175,12 @@ class SkinRenderer(context: Context) {
     }
 
     /**
-     * 切换动画并重置姿态与进度（语义同 skinview3d 的 viewer.animation setter）。
+     * 切换动画并重置姿态与进度（语义同 skinview3d 的 viewer.animation setter），
+     * 进行中的点击效果一并取消。
      */
     fun playAnimation(animation: PlayerAnimation) {
         this.animation = animation
+        effectAnimation = null
         model.resetJoints()
     }
 
@@ -210,7 +215,6 @@ class SkinRenderer(context: Context) {
         consumePendingUpdate()
         GLES20.glClearColor(0f, 0f, 0f, 0f)
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
-        elapsed += deltaSeconds
         if (recentering) {
             // 偏航归一化到 ±180 后与俯仰一起指数收敛回正面
             rotationY = wrapDegrees(rotationY)
@@ -222,13 +226,23 @@ class SkinRenderer(context: Context) {
                 recentering = false
             }
         }
-        animation.update(model, deltaSeconds)
+        val effect = effectAnimation
+        if (effect != null) {
+            effect.update(model, deltaSeconds)
+            effectRemain -= deltaSeconds
+            if (effectRemain <= 0f) {
+                effectAnimation = null
+                model.resetJoints()
+            }
+        } else {
+            animation.update(model, deltaSeconds)
+        }
         applyGaze(deltaSeconds)
 
         val distance = cameraDistance()
         Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, distance, 0f, 0f, 0f, 0f, 1f, 0f)
         Matrix.multiplyMM(pvMatrix, 0, projMatrix, 0, viewMatrix, 0)
-        // 玩家整体偏移与倾斜（动画驱动）→ 模型整体旋转（拖动手势）：先 X 后 Y，与旧版固定管线旋转顺序一致
+        // 玩家整体偏移与旋转（动画驱动，XYZ 序同部件）→ 模型整体旋转（拖动手势）：先 X 后 Y，与旧版固定管线旋转顺序一致
         Matrix.setIdentityM(wrapperMatrix, 0)
         Matrix.translateM(wrapperMatrix, 0, model.rootX, model.rootY, model.rootZ)
         Matrix.rotateM(
@@ -242,19 +256,19 @@ class SkinRenderer(context: Context) {
         Matrix.rotateM(
             wrapperMatrix,
             0,
+            Math.toDegrees(model.rootRotationY.toDouble()).toFloat(),
+            0f,
+            1f,
+            0f
+        )
+        Matrix.rotateM(
+            wrapperMatrix,
+            0,
             Math.toDegrees(model.rootRotationZ.toDouble()).toFloat(),
             0f,
             0f,
             1f
         )
-        val squash = currentSquash()
-        if (squash < 1f) {
-            // 点按压扁以脚底为支点：Y 压缩、XZ 等比鼓出
-            val bulge = 1f + (1f - squash) * 0.5f
-            Matrix.translateM(wrapperMatrix, 0, 0f, SQUASH_PIVOT_Y, 0f)
-            Matrix.scaleM(wrapperMatrix, 0, bulge, squash, bulge)
-            Matrix.translateM(wrapperMatrix, 0, 0f, -SQUASH_PIVOT_Y, 0f)
-        }
         Matrix.rotateM(wrapperMatrix, 0, rotationX, 1f, 0f, 0f)
         Matrix.rotateM(wrapperMatrix, 0, rotationY, 0f, 1f, 0f)
 
@@ -272,19 +286,6 @@ class SkinRenderer(context: Context) {
     }
 
     // ---- 内部实现 ----
-
-    /** 当前压扁系数（1 为原状）：阻尼弹簧脉冲，t=0 瞬间压至最低点后振荡回弹 */
-    private fun currentSquash(): Float {
-        if (squashStart < 0f) {
-            return 1f
-        }
-        val t = elapsed - squashStart
-        if (t > SQUASH_DURATION) {
-            squashStart = -1f
-            return 1f
-        }
-        return 1f - SQUASH_DEPTH * exp(-SQUASH_DAMPING * t) * cos(SQUASH_FREQUENCY * t)
-    }
 
     /** 归一化角度到 (-180, 180] */
     private fun wrapDegrees(degrees: Float): Float {
@@ -523,18 +524,10 @@ class SkinRenderer(context: Context) {
         /** 偏航回正的收敛阈值（度），小于此直接归零结束 */
         private const val RECENTER_EPSILON = 0.1f
 
-        /** 点按压扁深度（相对模型高度）与弹簧参数 */
-        private const val SQUASH_DEPTH = 0.08f
-        private const val SQUASH_DAMPING = 10f
-        private const val SQUASH_FREQUENCY = 24f
+        /** 点击旋转弹跳效果的固定播放时长（秒）：与 SpinJumpAnimation.SPIN_SPEED 配合恰好转整 3 圈 */
+        private const val EFFECT_DURATION = 3f
 
-        /** 点按压扁弹簧截断时长（秒） */
-        private const val SQUASH_DURATION = 1f
-
-        /** 压扁支点：模型脚底的局部 y */
-        private const val SQUASH_PIVOT_Y = -16f
-
-        /** 头部注视的水平/垂直限角（弧度）、平滑时间常数（秒）与收敛阈值 */
+        /** 注视切断角与迟滞恢复角：模型偏航越过切断角放弃注视，拖回恢复角以内才重新跟随 */
         private val GAZE_RANGE_X = Math.toRadians(60.0).toFloat()
         private val GAZE_RANGE_Y = Math.toRadians(53.0).toFloat()
         private const val GAZE_TAU = 0.1f
