@@ -67,6 +67,10 @@ class SkinRenderer(context: Context) {
     @Volatile
     private var gazeY = 0f
 
+    /** 最近一次注视事件的时间戳（纳秒），用于鼠标事件断流后超时回正 */
+    @Volatile
+    private var gazeNanos = 0L
+
     // 注视当前角（弧度，渲染线程每帧向目标平滑推进）
     private var gazeYaw = 0f
     private var gazePitch = 0f
@@ -164,6 +168,7 @@ class SkinRenderer(context: Context) {
         gazeX = x
         gazeY = y
         gazeActive = true
+        gazeNanos = System.nanoTime()
     }
 
     /** 清除注视目标，头部缓慢回正 */
@@ -308,13 +313,17 @@ class SkinRenderer(context: Context) {
 
     /**
      * 头部注视平滑跟随：目标方向指数逼近（tau 0.1s），叠加在动画姿态之后（动画会逐帧重写头部旋转）。
-     * 拖拽期间与模型背对（超过切断角）时注视放弃、头部回落原位，模型拖回恢复角以内自动恢复；
-     * 跟随时目标方位补偿视图偏航，使注视始终朝屏幕方向。
+     * 拖拽与回正期间、以及模型背对（超过切断角）时注视放弃、头部回落原位，
+     * 模型静止转回恢复角以内后自动恢复；跟随时目标方位补偿视图偏航，使注视始终朝屏幕方向。
      */
     private fun applyGaze(deltaSeconds: Float) {
+        // 鼠标事件断流（如 hover exit 丢失）后超时回正，避免头部僵在偏转位
+        if (gazeActive && System.nanoTime() - gazeNanos > GAZE_TIMEOUT_NANOS) {
+            gazeActive = false
+        }
         val yawDegrees = wrapDegrees(rotationY)
         val yawAbs = abs(yawDegrees)
-        if (dragging || yawAbs > GAZE_CUT_OFF) {
+        if (dragging || recentering || yawAbs > GAZE_CUT_OFF) {
             gazeCut = true
         } else if (yawAbs < GAZE_CUT_ON) {
             gazeCut = false
@@ -553,6 +562,9 @@ class SkinRenderer(context: Context) {
         private val GAZE_RANGE_Y = Math.toRadians(53.0).toFloat()
         private const val GAZE_TAU = 0.1f
         private const val GAZE_EPSILON = 0.0005f
+
+        /** 注视事件断流超时（纳秒）：超时视为鼠标已离开，头部回正 */
+        private const val GAZE_TIMEOUT_NANOS = 10_000_000_000L
 
         private const val DEG_TO_RAD = (Math.PI / 180.0).toFloat()
 
