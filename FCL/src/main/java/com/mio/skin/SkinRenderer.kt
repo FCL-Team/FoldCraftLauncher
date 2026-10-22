@@ -53,7 +53,7 @@ class SkinRenderer(context: Context) {
     /** 点按压扁起始时刻（[elapsed] 秒），-1 表示无进行中的压扁 */
     private var squashStart = -1f
 
-    /** 当前绑定的皮肤/披风位图（UI 线程读写，[setTexture] 更新） */
+    /** 当前绑定的皮肤/披风位图，皮肤为归一化后的布局（surface 重建时 onSurfaceCreated 直接重上传） */
     var texture: Array<Bitmap?> = arrayOf(defaultSkin(), null)
         private set
 
@@ -80,27 +80,31 @@ class SkinRenderer(context: Context) {
     private var pendingCape: Bitmap? = null
 
     @Volatile
-    private var pendingSlim = false
+    private var pendingSlim = true
 
     @Volatile
     private var pendingHasUpdate = false
+
+    init {
+        // 初始默认皮肤 alex 为 slim 布局，模型须与之匹配，否则手臂贴图采样到透明区域
+        model.setSlim(true)
+    }
 
     // ---- 对外 API（任意线程可调）----
 
     /**
      * 更新皮肤纹理，模型类型从皮肤图像自动检测。
-     * 同步更新 [texture]（当前纹理可读回，attach 重喂时不会退回默认皮肤）。
+     * [texture] 在归一化完成后由 [scheduleTextureUpdate] 同步更新，
+     * surface 重建重上传时与渲染实际使用的纹理一致。
      */
     fun updateTexture(skin: Bitmap?, cape: Bitmap?) {
-        texture = arrayOf(skin, cape)
         scheduleTextureUpdate(skin, cape, null)
     }
 
     /**
-     * 更新皮肤纹理并显式指定模型（[slim] 覆盖图像自动检测，null 时仍按图像检测）。
+     * 更新皮肤纹理并指定模型：[slim] 非空时覆盖图像自动检测，为空时从皮肤图像检测。
      */
     fun updateTexture(skin: Bitmap?, cape: Bitmap?, slim: Boolean?) {
-        texture = arrayOf(skin, cape)
         scheduleTextureUpdate(skin, cape, slim)
     }
 
@@ -322,13 +326,16 @@ class SkinRenderer(context: Context) {
         return distance.coerceIn(10f, 256f)
     }
 
-    /** 在 UI 线程做皮肤归一化（旧格式转换/slim 检测），再交由渲染线程下一帧消费 */
+    /** 在 UI 线程做皮肤归一化（旧格式转换/slim 检测），归一化结果回写 [texture] 供 surface 重建时重上传，再交由渲染线程下一帧消费 */
     private fun scheduleTextureUpdate(skin: Bitmap?, cape: Bitmap?, slimOverride: Boolean?) {
         Schedulers.androidUIThread().execute {
             try {
                 val normalized = NormalizedSkin(skin)
-                pendingSkin =
+                val normalizedSkin =
                     if (normalized.isOldFormat) normalized.normalizedTexture else normalized.originalTexture
+                // surface 重建重上传时会按 64x64 布局的 UV 采样，texture 若存原始 64x32 位图会导致渲染错乱
+                texture = arrayOf(normalizedSkin, cape)
+                pendingSkin = normalizedSkin
                 pendingCape = cape
                 pendingSlim = slimOverride ?: normalized.isSlim
                 pendingHasUpdate = true
