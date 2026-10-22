@@ -43,40 +43,15 @@ class SkinRenderer(context: Context) {
     private var rotationX = 0f
     private var rotationY = 0f
 
-    /** 拖拽结束后的偏航回正进行中（UI 线程置位，渲染线程消费） */
+    /** 拖拽结束后的回正进行中（UI 线程置位，渲染线程消费） */
     @Volatile
     private var recentering = false
-
-    /** 用户正在拖拽旋转（UI 线程写，渲染线程读），期间注视挂起 */
-    @Volatile
-    private var dragging = false
 
     // 渲染帧累计时间（秒），驱动点按压扁脉冲
     private var elapsed = 0f
 
     /** 点按压扁起始时刻（[elapsed] 秒），-1 表示无进行中的压扁 */
     private var squashStart = -1f
-
-    /** 注视目标激活标志与归一化坐标 -1..1（UI 线程写，渲染线程读） */
-    @Volatile
-    private var gazeActive = false
-
-    @Volatile
-    private var gazeX = 0f
-
-    @Volatile
-    private var gazeY = 0f
-
-    /** 最近一次注视事件的时间戳（纳秒），用于鼠标事件断流后超时回正 */
-    @Volatile
-    private var gazeNanos = 0L
-
-    // 注视当前角（弧度，渲染线程每帧向目标平滑推进）
-    private var gazeYaw = 0f
-    private var gazePitch = 0f
-
-    /** 注视切断锁存：模型背对时置位，拖回恢复角以内复位（渲染线程） */
-    private var gazeCut = false
 
     /** 当前绑定的皮肤/披风位图（UI 线程读写，[setTexture] 更新） */
     var texture: Array<Bitmap?> = arrayOf(defaultSkin(), null)
@@ -134,9 +109,8 @@ class SkinRenderer(context: Context) {
      */
     fun setTexture(skin: Bitmap?, cape: Bitmap?) = updateTexture(skin, cape)
 
-    /** 单指拖动旋转，输入为像素增量（已除以屏幕密度）；拖拽期间取消回正并挂起注视 */
+    /** 单指拖动旋转，输入为像素增量（已除以屏幕密度）；拖拽期间取消回正 */
     fun rotateStep(dx: Float, dy: Float) {
-        dragging = true
         recentering = false
         if (abs(dx) >= 1f) {
             rotationY += ROTATE_STEP * dx
@@ -152,28 +126,14 @@ class SkinRenderer(context: Context) {
         scale = value.coerceIn(MIN_SCALE, MAX_SCALE)
     }
 
-    /** 拖拽结束，偏航与俯仰一起沿最短路径缓慢收敛回正面，注视恢复判定 */
+    /** 拖拽结束，偏航与俯仰一起沿最短路径缓慢收敛回正面 */
     fun onDragEnd() {
-        dragging = false
         recentering = true
     }
 
     /** 点按压扁：模型 Y 向压缩、XZ 鼓出的弹簧脉冲 */
     fun squashTap() {
         squashStart = elapsed
-    }
-
-    /** 设置注视目标（视图归一化坐标 -1..1），头部平滑转向目标方向 */
-    fun setGaze(x: Float, y: Float) {
-        gazeX = x
-        gazeY = y
-        gazeActive = true
-        gazeNanos = System.nanoTime()
-    }
-
-    /** 清除注视目标，头部缓慢回正 */
-    fun clearGaze() {
-        gazeActive = false
     }
 
     /**
@@ -228,7 +188,6 @@ class SkinRenderer(context: Context) {
             }
         }
         animation.update(model, deltaSeconds)
-        applyGaze(deltaSeconds)
 
         val distance = cameraDistance()
         Matrix.setLookAtM(viewMatrix, 0, 0f, 0f, distance, 0f, 0f, 0f, 0f, 1f, 0f)
@@ -309,45 +268,6 @@ class SkinRenderer(context: Context) {
     private fun wrapDegrees(degrees: Float): Float {
         val wrapped = (degrees + 180f) % 360f
         return (if (wrapped < 0f) wrapped + 360f else wrapped) - 180f
-    }
-
-    /**
-     * 头部注视平滑跟随：目标方向指数逼近（tau 0.1s），叠加在动画姿态之后（动画会逐帧重写头部旋转）。
-     * 拖拽与回正期间、以及模型背对（超过切断角）时注视放弃、头部回落原位，
-     * 模型静止转回恢复角以内后自动恢复；跟随时目标方位补偿视图偏航，使注视始终朝屏幕方向。
-     */
-    private fun applyGaze(deltaSeconds: Float) {
-        // 鼠标事件断流（如 hover exit 丢失）后超时回正，避免头部僵在偏转位
-        if (gazeActive && System.nanoTime() - gazeNanos > GAZE_TIMEOUT_NANOS) {
-            gazeActive = false
-        }
-        val yawDegrees = wrapDegrees(rotationY)
-        val yawAbs = abs(yawDegrees)
-        if (dragging || recentering || yawAbs > GAZE_CUT_OFF) {
-            gazeCut = true
-        } else if (yawAbs < GAZE_CUT_ON) {
-            gazeCut = false
-        }
-        val follow = gazeActive && !gazeCut
-        val targetYaw = if (follow) {
-            (gazeX * GAZE_RANGE_X - yawDegrees * DEG_TO_RAD).coerceIn(-GAZE_RANGE_X, GAZE_RANGE_X)
-        } else {
-            0f
-        }
-        val targetPitch = if (follow) gazeY * GAZE_RANGE_Y else 0f
-        if (gazeYaw == targetYaw && gazePitch == targetPitch) {
-            return
-        }
-        val factor = 1f - exp(-deltaSeconds / GAZE_TAU)
-        gazeYaw += (targetYaw - gazeYaw) * factor
-        gazePitch += (targetPitch - gazePitch) * factor
-        // 收敛到位后精确贴合，避免无限小步进
-        if (abs(gazeYaw - targetYaw) < GAZE_EPSILON && abs(gazePitch - targetPitch) < GAZE_EPSILON) {
-            gazeYaw = targetYaw
-            gazePitch = targetPitch
-        }
-        model.head.rotationY += gazeYaw
-        model.head.rotationX += gazePitch
     }
 
     private fun drawPart(part: PlayerModel.Part) {
@@ -536,10 +456,6 @@ class SkinRenderer(context: Context) {
         private const val MAX_SCALE = 2.0f
         private const val ROTATE_STEP = 2f
 
-        /** 注视切断角与迟滞恢复角：模型偏航越过切断角放弃注视，拖回恢复角以内才重新跟随 */
-        private val GAZE_CUT_OFF = Math.toRadians(90.0).toFloat()
-        private val GAZE_CUT_ON = Math.toRadians(75.0).toFloat()
-
         /** 拖拽松手后偏航回正的时间常数（秒） */
         private const val RECENTER_TAU = 0.35f
 
@@ -556,17 +472,6 @@ class SkinRenderer(context: Context) {
 
         /** 压扁/形变支点：模型脚底的局部 y */
         private const val SQUASH_PIVOT_Y = -16f
-
-        /** 注视切断角与迟滞恢复角：模型偏航越过切断角放弃注视，拖回恢复角以内才重新跟随 */
-        private val GAZE_RANGE_X = Math.toRadians(60.0).toFloat()
-        private val GAZE_RANGE_Y = Math.toRadians(53.0).toFloat()
-        private const val GAZE_TAU = 0.1f
-        private const val GAZE_EPSILON = 0.0005f
-
-        /** 注视事件断流超时（纳秒）：超时视为鼠标已离开，头部回正 */
-        private const val GAZE_TIMEOUT_NANOS = 10_000_000_000L
-
-        private const val DEG_TO_RAD = (Math.PI / 180.0).toFloat()
 
         /** 挤出侧壁的背光亮度系数（参考 3d-Skin-Layers 的方向光照观感） */
         private const val EXTRUSION_SHADE = 0.92f
