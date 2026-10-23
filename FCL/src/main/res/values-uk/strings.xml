@@ -953,7 +953,4 @@
     <string name="renderer_source">Джерело:</string>
     <string name="renderer_source_builtin">Вбудований</string>
     <string name="animation_idle">Стояння</string>
-    <string name="animation_idle_variant_1">Стояння 1</string>
-    <string name="animation_idle_variant_2">Стояння 2</string>
-    <string name="animation_idle_variant_3">Стояння 3</string>
 </resources>

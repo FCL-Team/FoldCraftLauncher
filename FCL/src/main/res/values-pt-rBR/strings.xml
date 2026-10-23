@@ -914,7 +914,4 @@
     <string name="renderer_source">Fonte:</string>
     <string name="renderer_source_builtin">Integrado</string>
     <string name="animation_idle">Parado</string>
-    <string name="animation_idle_variant_1">Parado 1</string>
-    <string name="animation_idle_variant_2">Parado 2</string>
-    <string name="animation_idle_variant_3">Parado 3</string>
 </resources>

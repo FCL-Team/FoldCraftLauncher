@@ -24,7 +24,7 @@ import kotlin.math.sqrt
  *
  * 生命周期：onResume/onPause 控制帧循环（surface 未就绪时记忆状态）；
  * surface 销毁时在 UI 线程同步等待渲染线程释放 EGL，避免SurfaceTexture 过早释放。
- * 手势与旧版一致：单指拖动旋转、双指捏合缩放（0.7~2.0）。
+ * 手势：单指拖动旋转、双指捏合缩放（0.7~2.0）、单击压扁、松手回正、双击弹设置；
  */
 class SkinViewer @JvmOverloads constructor(
     context: Context,
@@ -55,6 +55,10 @@ class SkinViewer @JvmOverloads constructor(
     private var lastTapX = 0f
     private var lastTapY = 0f
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+
+    // 本次按下的起点（单击压扁的位移判定）
+    private var downX = 0f
+    private var downY = 0f
 
     // 渲染线程（renderHandler 仅在 renderThread 非 null 时有效）
     private var renderThread: HandlerThread? = null
@@ -103,6 +107,8 @@ class SkinViewer @JvmOverloads constructor(
                 val x = event.x
                 val y = event.y
                 if (event.action == MotionEvent.ACTION_DOWN) {
+                    downX = x
+                    downY = y
                     // 双击检测：两次按下间隔短且位置接近
                     val now = System.currentTimeMillis()
                     val dx = x - lastTapX
@@ -122,6 +128,17 @@ class SkinViewer @JvmOverloads constructor(
                     } else {
                         renderer?.rotateStep((x - previousX) / density, (y - previousY) / density)
                     }
+                }
+                if (event.actionMasked == MotionEvent.ACTION_UP) {
+                    // 单击（短按未拖动）触发点按压扁；无论是否拖动，手势结束都开始回正
+                    val dx = x - downX
+                    val dy = y - downY
+                    if (event.eventTime - event.downTime < TAP_INTERVAL &&
+                        dx * dx + dy * dy < touchSlop * touchSlop
+                    ) {
+                        renderer?.squashTap()
+                    }
+                    renderer?.onDragEnd()
                 }
                 previousX = x
                 previousY = y
@@ -356,6 +373,9 @@ class SkinViewer @JvmOverloads constructor(
 
     companion object {
         private const val DOUBLE_TAP_INTERVAL = 300L
+
+        /** 单击压扁的按压时长上限（毫秒） */
+        private const val TAP_INTERVAL = 250L
 
         /** 帧率上限 60fps 的帧间隔（略低于 16.67ms，容忍 vsync 时间戳抖动） */
         private const val FRAME_INTERVAL_NANOS = 16_000_000L
