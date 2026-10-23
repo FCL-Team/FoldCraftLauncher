@@ -152,7 +152,6 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
                     buttonStyle.setFillColorPressed(style.getFillColorPressed());
                     changeDirectionStyle();
                 });
-                dialog.setGameMenu(menu);
                 dialog.show();
             });
         }

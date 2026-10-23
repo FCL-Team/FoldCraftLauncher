@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
-import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 
@@ -26,7 +25,6 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
     private FCLButton positive;
 
     private ListView listView;
-    private GameMenu menu;
 
     public interface Callback {
         void onStyleSelect(ControlButtonStyle style);
@@ -78,24 +76,13 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
         }
         if (v == editStyle) {
             AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
+                // update the registered style in place: keeps object identity and list position,
+                // so all buttons holding it re-render through style observation (renames included)
                 ControlButtonStyle before = adapter.getSelectedStyle();
-                int i = ButtonStyles.getStyles().indexOf(before);
-                String beforeName = before.getName();
-                ButtonStyles.removeStyles(before);
-                ButtonStyles.addStyle(style, i);
+                before.setAll(style);
+                ButtonStyles.saveStyles();
                 refreshList();
-                adapter.setSelectedStyle(style);
-                if (menu != null) {
-                    ControlViewGroup viewGroup = menu.getViewGroup();
-                    if (viewGroup != null) {
-                        viewGroup.getViewData().buttonList().forEach(it -> {
-                            String name = it.getStyle().getName();
-                            if (name.equals(style.getName()) || name.equals(beforeName)) {
-                                it.setStyle(style);
-                            }
-                        });
-                    }
-                }
+                adapter.setSelectedStyle(before);
             });
             dialog.show();
         }
@@ -105,9 +92,5 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
                 callback.onStyleSelect(adapter.getSelectedStyle());
             }
         }
-    }
-
-    public void setGameMenu(GameMenu menu) {
-        this.menu = menu;
     }
 }

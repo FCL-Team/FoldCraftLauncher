@@ -67,7 +67,12 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
     }
 
     public void setStyle(ControlButtonStyle style) {
+        ControlButtonStyle oldValue = styleProperty.get();
+        if (oldValue != null)
+            oldValue.removeListener(styleInvalidationListener);
         styleProperty.set(style);
+        if (style != null)
+            style.addListener(styleInvalidationListener);
     }
 
     public ControlButtonStyle getStyle() {
@@ -113,7 +118,11 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
         this.id = id;
 
         addPropertyChangedListener(onInvalidating(this::invalidate));
+        // re-render when the held style object's properties change in place
+        getStyle().addListener(styleInvalidationListener);
     }
+
+    private final InvalidationListener styleInvalidationListener = observable -> invalidate();
 
     public void addPropertyChangedListener(InvalidationListener listener) {
         textProperty.addListener(listener);

@@ -48,7 +48,12 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
     }
 
     public void setStyle(ControlDirectionStyle style) {
+        ControlDirectionStyle oldValue = styleProperty.get();
+        if (oldValue != null)
+            oldValue.removeListener(styleInvalidationListener);
         styleProperty.set(style);
+        if (style != null)
+            style.addListener(styleInvalidationListener);
     }
 
     public ControlDirectionStyle getStyle() {
@@ -94,7 +99,11 @@ public class ControlDirectionData implements Cloneable, Observable, CustomContro
         this.id = id;
 
         addPropertyChangedListener(onInvalidating(this::invalidate));
+        // re-render when the held style object's properties change in place
+        getStyle().addListener(styleInvalidationListener);
     }
+
+    private final InvalidationListener styleInvalidationListener = observable -> invalidate();
 
     public void addPropertyChangedListener(InvalidationListener listener) {
         styleProperty.addListener(listener);

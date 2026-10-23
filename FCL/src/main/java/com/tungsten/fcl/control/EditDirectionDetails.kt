@@ -69,7 +69,7 @@ internal class EditDirectionDetails(
             DirectionStyleDialog(context, true, target) { style ->
                 data.setStyle(style)
                 infoBinding.styleText.text = style.name
-            }.apply { setGameMenu(menu) }.show()
+            }.show()
         }
     }
 

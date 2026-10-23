@@ -72,7 +72,7 @@ internal class EditButtonDetails(
             ButtonStyleDialog(context, true, target) { style ->
                 data.style = style
                 infoBinding.styleText.text = style.name
-            }.apply { setGameMenu(menu) }.show()
+            }.show()
         }
     }
 
