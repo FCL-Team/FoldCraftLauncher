@@ -18,6 +18,7 @@ import com.mio.device.VulkanCheckManager;
 import com.mio.plugin.DriverPlugin;
 import com.mio.plugin.FFmpegPlugin;
 import com.mio.plugin.NativeLibPlugin;
+import com.mio.plugin.RendererPlugin;
 import com.oracle.dalvik.VMLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.Architecture;
@@ -405,6 +406,30 @@ public class FCLauncher {
                 envMap.put("POJAVEXEC_EGL", renderer.getEglName());
             } else if (renderer.isEqual(Renderer.ID_FREEDRENO)) {
                 envMap.put("POJAV_RENDERER", "gallium_freedreno");
+            } else if (renderer.isEqual(Renderer.ID_MOBILEGLUES)) {
+                envMap.put("POJAV_RENDERER", "opengles3_mobileglues");
+                envMap.put("LIBGL_ES", "3");
+                envMap.put("LIBGL_EGL", "libmobileglues.so");
+                envMap.put("POJAVEXEC_EGL", "libmobileglues.so");
+                // MG_COUNT_LAUNCH：仅统计经启动器启动的会话；MG_DIR_PATH：留空回落 /sdcard/MG
+                Map<String, String> mgPrefs = RendererPlugin.builtinEnvPrefs(Renderer.ID_MOBILEGLUES);
+                String mgCount = mgPrefs.get("MG_COUNT_LAUNCH@enabled");
+                if (mgCount == null || Boolean.parseBoolean(mgCount)) {
+                    envMap.put("MG_COUNT_LAUNCH", "1");
+                }
+                String mgDir = mgPrefs.get("MG_DIR_PATH");
+                if (mgDir != null && !mgDir.isEmpty()) {
+                    envMap.put("MG_DIR_PATH", mgDir);
+                }
+            } else if (renderer.isEqual(Renderer.ID_SFPEW)) {
+                envMap.put("POJAV_RENDERER", "opengles3_sfpew");
+                envMap.put("POJAVEXEC_EGL", "libEGL.so");
+                // SFPEW 后端为系统 libEGL；单线程单上下文优化默认开启
+                Map<String, String> sfpewPrefs = RendererPlugin.builtinEnvPrefs(Renderer.ID_SFPEW);
+                String relaxed = sfpewPrefs.get("SFPEW_RELAXED_CONTEXT@enabled");
+                if (relaxed == null || Boolean.parseBoolean(relaxed)) {
+                    envMap.put("SFPEW_RELAXED_CONTEXT", "1");
+                }
             }
         }
     }

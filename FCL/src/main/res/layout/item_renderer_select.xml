@@ -15,7 +15,7 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/check"
+        app:layout_constraintEnd_toStartOf="@id/config"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,7 +27,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@id/check"
+        app:layout_constraintEnd_toStartOf="@id/config"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title" />
 
@@ -39,9 +39,20 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textSize="12sp"
-        app:layout_constraintEnd_toStartOf="@id/check"
+        app:layout_constraintEnd_toStartOf="@id/config"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/version" />
+
+    <com.tungsten.fcllibrary.component.view.FCLImageView
+        android:id="@+id/config"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/ic_baseline_settings_24"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/check"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.tungsten.fcllibrary.component.view.FCLImageView
         android:id="@+id/check"
