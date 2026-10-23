@@ -26,10 +26,14 @@ import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.util.Logging;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,6 +41,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FCLauncher {
 
@@ -411,15 +418,14 @@ public class FCLauncher {
                 envMap.put("LIBGL_ES", "3");
                 envMap.put("LIBGL_EGL", "libmobileglues.so");
                 envMap.put("POJAVEXEC_EGL", "libmobileglues.so");
-                // MG_COUNT_LAUNCH：仅统计经启动器启动的会话；MG_DIR_PATH：留空回落 /sdcard/MG
+                // 内置版使用独立配置：不共用 /sdcard/MG，配置写在应用私有存储并经 MG_DIR_PATH 指向
                 Map<String, String> mgPrefs = RendererPlugin.builtinEnvPrefs(Renderer.ID_MOBILEGLUES);
+                File mgDir = new File(config.getContext().getFilesDir(), "mobileglues");
+                writeMobileGluesConfig(mgDir, mgPrefs);
+                envMap.put("MG_DIR_PATH", mgDir.getAbsolutePath());
                 String mgCount = mgPrefs.get("MG_COUNT_LAUNCH@enabled");
                 if (mgCount == null || Boolean.parseBoolean(mgCount)) {
                     envMap.put("MG_COUNT_LAUNCH", "1");
-                }
-                String mgDir = mgPrefs.get("MG_DIR_PATH");
-                if (mgDir != null && !mgDir.isEmpty()) {
-                    envMap.put("MG_DIR_PATH", mgDir);
                 }
             } else if (renderer.isEqual(Renderer.ID_SFPEW)) {
                 envMap.put("POJAV_RENDERER", "opengles3_sfpew");
@@ -463,6 +469,74 @@ public class FCLauncher {
             }
         }
 
+    }
+
+    /**
+     * 把内置 MobileGlues 的用户配置写成 MG/config.json（键名与默认值对齐官方 MGConfig）。
+     * 已有文件先读入再覆盖已知键，保留原生侧认识的未知键（如 hideMGEnvLevel）；内容无变化时不重写。
+     */
+    private static void writeMobileGluesConfig(File mgDir, Map<String, String> prefs) {
+        File cfgFile = new File(mgDir, "config.json");
+        JSONObject json = new JSONObject();
+        String oldCfg = null;
+        if (cfgFile.isFile()) {
+            try {
+                oldCfg = new String(readFileBytes(cfgFile), StandardCharsets.UTF_8);
+                json = new JSONObject(oldCfg);
+            } catch (Throwable ignored) {
+                json = new JSONObject();
+            }
+        }
+        try {
+            json.put("enableANGLE", mgPrefInt(prefs, "enableANGLE", 1));
+            json.put("enableNoError", mgPrefInt(prefs, "enableNoError", 0));
+            json.put("angleDepthClearFixMode", mgToggleInt(prefs, "angleDepthClearFixMode", false));
+            json.put("customGLVersion", mgPrefInt(prefs, "customGLVersion", 0));
+            json.put("maxGlslCacheSize", mgPrefInt(prefs, "maxGlslCacheSize", 32));
+            json.put("enableExtTimerQuery", mgToggleInt(prefs, "enableExtTimerQuery", true));
+            json.put("enableExtComputeShader", mgToggleInt(prefs, "enableExtComputeShader", false));
+            json.put("enableExtDirectStateAccess", mgToggleInt(prefs, "enableExtDirectStateAccess", false));
+            json.put("fsr1Setting", mgPrefInt(prefs, "fsr1Setting", 0));
+        } catch (JSONException ignored) {
+            return;
+        }
+        String newCfg = json.toString();
+        if (newCfg.equals(oldCfg)) return;
+        try {
+            mgDir.mkdirs();
+            try (FileOutputStream out = new FileOutputStream(cfgFile)) {
+                out.write(newCfg.getBytes(StandardCharsets.UTF_8));
+            }
+        } catch (IOException ignored) {
+        }
+    }
+
+    /** 读取用户配置的整数值；未设置回落默认，显式清空视为 -1（MG 语义：≤0 关闭），非法值回落默认 */
+    private static int mgPrefInt(Map<String, String> prefs, String key, int def) {
+        String v = prefs.get(key);
+        if (v == null) return def;
+        v = v.trim();
+        if (v.isEmpty()) return -1;
+        try {
+            return Integer.parseInt(v);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    /** 开关型用户配置转 MG 的 0/1 整数（原生端以 >0 判真） */
+    private static int mgToggleInt(Map<String, String> prefs, String key, boolean def) {
+        String v = prefs.get(key + "@enabled");
+        boolean on = v == null ? def : Boolean.parseBoolean(v);
+        return on ? 1 : 0;
+    }
+
+    private static byte[] readFileBytes(File file) throws IOException {
+        byte[] data = new byte[(int) file.length()];
+        try (DataInputStream in = new DataInputStream(new FileInputStream(file))) {
+            in.readFully(data);
+        }
+        return data;
     }
 
     private static void setUpJavaRuntime(FCLConfig config, FCLBridge bridge) throws IOException {
