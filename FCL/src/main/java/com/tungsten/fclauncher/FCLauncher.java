@@ -423,6 +423,7 @@ public class FCLauncher {
                 }
             } else if (renderer.isEqual(Renderer.ID_SFPEW)) {
                 envMap.put("POJAV_RENDERER", "opengles3_sfpew");
+                envMap.put("LIBGL_ES", "3");
                 envMap.put("POJAVEXEC_EGL", "libEGL.so");
                 // SFPEW 后端为系统 libEGL；单线程单上下文优化默认开启
                 Map<String, String> sfpewPrefs = RendererPlugin.builtinEnvPrefs(Renderer.ID_SFPEW);
