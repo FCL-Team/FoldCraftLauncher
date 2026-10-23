@@ -39,17 +39,20 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
     data class EnvSpec(
         val key: String,
         val type: EnvType,
+        /** 标题（一般为变量名） */
         val title: String,
         /** selectable 候选值（含默认值），其他类型为空 */
-        val options: List<String>,
+        val options: List<String> = emptyList(),
         /** customizable 提示用默认值 */
-        val defaultValue: String?,
+        val defaultValue: String? = null,
         /** selectable 是否带启用开关（check 非 null 时） */
-        val checkable: Boolean,
+        val checkable: Boolean = false,
         /** 当前开关状态（selectable / toggleable） */
         val enabled: Boolean,
         /** 当前值（selectable 选中值 / customizable 输入文本） */
         val value: String,
+        /** 标题下的功能说明（可空；内置渲染器有，v2 插件暂无） */
+        val description: String? = null,
     )
 
     /** 对话框确认后单项的回传值；enabled/value 为 null 表示该项无此状态 */
@@ -279,117 +282,104 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
         return when (rendererId) {
             Renderer.ID_MOBILEGLUES -> listOf(
                 EnvSpec(
-                    "MG_COUNT_LAUNCH",
-                    EnvType.TOGGLEABLE,
-                    context.getString(R.string.renderer_config_mg_count_launch),
-                    emptyList(),
-                    null,
-                    false,
-                    prefs["MG_COUNT_LAUNCH$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: true,
-                    "1"
+                    key = "MG_COUNT_LAUNCH",
+                    type = EnvType.TOGGLEABLE,
+                    title = "MG_COUNT_LAUNCH",
+                    description = context.getString(R.string.renderer_config_mg_count_launch_desc),
+                    enabled = prefs["MG_COUNT_LAUNCH$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: true,
+                    value = "1"
                 ),
                 EnvSpec(
-                    "enableANGLE",
-                    EnvType.SELECTABLE,
-                    context.getString(R.string.renderer_config_mg_angle),
-                    listOf("0", "1", "2", "3"),
-                    null,
-                    false,
-                    true,
-                    prefs["enableANGLE"] ?: "1"
+                    key = "enableANGLE",
+                    type = EnvType.SELECTABLE,
+                    title = "enableANGLE",
+                    description = context.getString(R.string.renderer_config_mg_angle_desc),
+                    options = listOf("0", "1", "2", "3"),
+                    checkable = false,
+                    enabled = true,
+                    value = prefs["enableANGLE"] ?: "1"
                 ),
                 EnvSpec(
-                    "enableNoError",
-                    EnvType.SELECTABLE,
-                    context.getString(R.string.renderer_config_mg_noerror),
-                    listOf("0", "1", "2", "3"),
-                    null,
-                    false,
-                    true,
-                    prefs["enableNoError"] ?: "0"
+                    key = "enableNoError",
+                    type = EnvType.SELECTABLE,
+                    title = "enableNoError",
+                    description = context.getString(R.string.renderer_config_mg_noerror_desc),
+                    options = listOf("0", "1", "2", "3"),
+                    checkable = false,
+                    enabled = true,
+                    value = prefs["enableNoError"] ?: "0"
                 ),
                 EnvSpec(
-                    "angleDepthClearFixMode",
-                    EnvType.TOGGLEABLE,
-                    context.getString(R.string.renderer_config_mg_depthfix),
-                    emptyList(),
-                    null,
-                    false,
-                    prefs["angleDepthClearFixMode$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: false,
-                    "1"
+                    key = "angleDepthClearFixMode",
+                    type = EnvType.TOGGLEABLE,
+                    title = "angleDepthClearFixMode",
+                    description = context.getString(R.string.renderer_config_mg_depthfix_desc),
+                    enabled = prefs["angleDepthClearFixMode$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: false,
+                    value = "1"
                 ),
                 EnvSpec(
-                    "customGLVersion",
-                    EnvType.SELECTABLE,
-                    context.getString(R.string.renderer_config_mg_glversion),
-                    listOf("0", "46", "45", "44", "43", "42", "41", "40", "33", "32"),
-                    null,
-                    false,
-                    true,
-                    prefs["customGLVersion"] ?: "0"
+                    key = "customGLVersion",
+                    type = EnvType.SELECTABLE,
+                    title = "customGLVersion",
+                    description = context.getString(R.string.renderer_config_mg_glversion_desc),
+                    options = listOf("0", "46", "45", "44", "43", "42", "41", "40", "33", "32"),
+                    checkable = false,
+                    enabled = true,
+                    value = prefs["customGLVersion"] ?: "0"
                 ),
                 EnvSpec(
-                    "maxGlslCacheSize",
-                    EnvType.CUSTOMIZABLE,
-                    context.getString(R.string.renderer_config_mg_glslcache),
-                    emptyList(),
-                    "32",
-                    false,
-                    true,
-                    prefs["maxGlslCacheSize"] ?: "32"
+                    key = "maxGlslCacheSize",
+                    type = EnvType.CUSTOMIZABLE,
+                    title = "maxGlslCacheSize",
+                    description = context.getString(R.string.renderer_config_mg_glslcache_desc),
+                    defaultValue = "32",
+                    enabled = true,
+                    value = prefs["maxGlslCacheSize"] ?: "32"
                 ),
                 EnvSpec(
-                    "enableExtTimerQuery",
-                    EnvType.TOGGLEABLE,
-                    context.getString(R.string.renderer_config_mg_ext_timer),
-                    emptyList(),
-                    null,
-                    false,
-                    prefs["enableExtTimerQuery$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: true,
-                    "1"
+                    key = "enableExtTimerQuery",
+                    type = EnvType.TOGGLEABLE,
+                    title = "enableExtTimerQuery",
+                    description = context.getString(R.string.renderer_config_mg_ext_timer_desc),
+                    enabled = prefs["enableExtTimerQuery$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: true,
+                    value = "1"
                 ),
                 EnvSpec(
-                    "enableExtComputeShader",
-                    EnvType.TOGGLEABLE,
-                    context.getString(R.string.renderer_config_mg_ext_compute),
-                    emptyList(),
-                    null,
-                    false,
-                    prefs["enableExtComputeShader$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: false,
-                    "1"
+                    key = "enableExtComputeShader",
+                    type = EnvType.TOGGLEABLE,
+                    title = "enableExtComputeShader",
+                    description = context.getString(R.string.renderer_config_mg_ext_compute_desc),
+                    enabled = prefs["enableExtComputeShader$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: false,
+                    value = "1"
                 ),
                 EnvSpec(
-                    "enableExtDirectStateAccess",
-                    EnvType.TOGGLEABLE,
-                    context.getString(R.string.renderer_config_mg_ext_dsa),
-                    emptyList(),
-                    null,
-                    false,
-                    prefs["enableExtDirectStateAccess$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: false,
-                    "1"
+                    key = "enableExtDirectStateAccess",
+                    type = EnvType.TOGGLEABLE,
+                    title = "enableExtDirectStateAccess",
+                    description = context.getString(R.string.renderer_config_mg_ext_dsa_desc),
+                    enabled = prefs["enableExtDirectStateAccess$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: false,
+                    value = "1"
                 ),
                 EnvSpec(
-                    "fsr1Setting",
-                    EnvType.SELECTABLE,
-                    context.getString(R.string.renderer_config_mg_fsr1),
-                    listOf("0", "1", "2", "3", "4"),
-                    null,
-                    false,
-                    true,
-                    prefs["fsr1Setting"] ?: "0"
+                    key = "fsr1Setting",
+                    type = EnvType.SELECTABLE,
+                    title = "fsr1Setting",
+                    description = context.getString(R.string.renderer_config_mg_fsr1_desc),
+                    options = listOf("0", "1", "2", "3", "4"),
+                    checkable = false,
+                    enabled = true,
+                    value = prefs["fsr1Setting"] ?: "0"
                 )
             )
 
             Renderer.ID_SFPEW -> listOf(
                 EnvSpec(
-                    "SFPEW_RELAXED_CONTEXT",
-                    EnvType.TOGGLEABLE,
-                    context.getString(R.string.renderer_config_sfpew_relaxed_context),
-                    emptyList(),
-                    null,
-                    false,
-                    prefs["SFPEW_RELAXED_CONTEXT$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: true,
-                    "1"
+                    key = "SFPEW_RELAXED_CONTEXT",
+                    type = EnvType.TOGGLEABLE,
+                    title = "SFPEW_RELAXED_CONTEXT",
+                    description = context.getString(R.string.renderer_config_sfpew_relaxed_context_desc),
+                    enabled = prefs["SFPEW_RELAXED_CONTEXT$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: true,
+                    value = "1"
                 )
             )
 

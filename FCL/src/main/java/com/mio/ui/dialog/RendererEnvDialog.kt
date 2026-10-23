@@ -74,6 +74,16 @@ class RendererEnvDialog(
             layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
         }
         header.addView(label)
+        if (!spec.description.isNullOrEmpty()) {
+            row.addView(FCLTextView(context).apply {
+                text = spec.description
+                textSize = 12f
+                layoutParams = LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            })
+        }
 
         when (spec.type) {
             EnvType.SELECTABLE -> {

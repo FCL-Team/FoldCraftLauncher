@@ -1083,17 +1083,28 @@
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+)</string>
     <string name="settings_fcl_renderer_mobileglues" translatable="false">MobileGlues (OpenGL 4.0, 1.17+)</string>
     <string name="settings_fcl_renderer_sfpew" translatable="false">SimpleFPEWrapper (OpenGL 2.1 compat / 3.2+)</string>
-    <string name="renderer_config_mg_count_launch">MG_COUNT_LAUNCH — count only launcher-started sessions</string>
-    <string name="renderer_config_mg_angle">enableANGLE — 0=DisableIfPossible, 1=EnableIfPossible, 2=ForceDisable, 3=ForceEnable</string>
-    <string name="renderer_config_mg_noerror">enableNoError — 0=Auto, 1=Off, 2=Ignore shader/program, 3=Ignore shader/program/FBO</string>
-    <string name="renderer_config_mg_depthfix">angleDepthClearFixMode — ANGLE depth clear fix</string>
-    <string name="renderer_config_mg_glversion">customGLVersion — 0=Default, otherwise OpenGL 4.6–3.2</string>
-    <string name="renderer_config_mg_glslcache">maxGlslCacheSize — MiB, &lt;=0 disables</string>
+    <string name="renderer_config_mg_count_launch">MG_COUNT_LAUNCH</string>
+    <string name="renderer_config_mg_count_launch_desc">Report a launch session to MobileGlues only when the game is started from the launcher; benchmarks and tools are not counted</string>
+    <string name="renderer_config_mg_angle">enableANGLE</string>
+    <string name="renderer_config_mg_angle_desc">ANGLE (GLES-on-Vulkan) backend: 0=disable if possible, 1=enable if possible, 2=force disable, 3=force enable</string>
+    <string name="renderer_config_mg_noerror">enableNoError</string>
+    <string name="renderer_config_mg_noerror_desc">Ignore GL errors for compatibility and speed: 0=auto, 1=off, 2=ignore shader/program errors, 3=also ignore framebuffer errors</string>
+    <string name="renderer_config_mg_depthfix">angleDepthClearFixMode</string>
+    <string name="renderer_config_mg_depthfix_desc">Workaround for broken depth clears when the ANGLE backend is active; enable if the world renders through geometry</string>
+    <string name="renderer_config_mg_glversion">customGLVersion</string>
+    <string name="renderer_config_mg_glversion_desc">OpenGL version reported to the game: 0=decided by MobileGlues, otherwise fixed 4.6 down to 3.2</string>
+    <string name="renderer_config_mg_glslcache">maxGlslCacheSize</string>
+    <string name="renderer_config_mg_glslcache_desc">Shader translation cache limit in MiB; &lt;=0 disables caching. Larger values speed up repeated shader compilation</string>
     <string name="renderer_config_mg_ext_timer">enableExtTimerQuery</string>
+    <string name="renderer_config_mg_ext_timer_desc">Expose the timer_query extension, required by some performance profiling mods</string>
     <string name="renderer_config_mg_ext_compute">enableExtComputeShader</string>
+    <string name="renderer_config_mg_ext_compute_desc">Expose the compute shader extension, required by a few mods</string>
     <string name="renderer_config_mg_ext_dsa">enableExtDirectStateAccess</string>
-    <string name="renderer_config_mg_fsr1">fsr1Setting — 0=Off, 1=UltraQuality, 2=Quality, 3=Balanced, 4=Performance</string>
-    <string name="renderer_config_sfpew_relaxed_context">SFPEW_RELAXED_CONTEXT — one context per thread optimization</string>
+    <string name="renderer_config_mg_ext_dsa_desc">Expose the GL_EXT_direct_state_access extension</string>
+    <string name="renderer_config_mg_fsr1">fsr1Setting</string>
+    <string name="renderer_config_mg_fsr1_desc">FSR1 upscaling preset that trades quality for FPS: 0=off, 1=UltraQuality, 2=Quality, 3=Balanced, 4=Performance</string>
+    <string name="renderer_config_sfpew_relaxed_context">SFPEW_RELAXED_CONTEXT</string>
+    <string name="renderer_config_sfpew_relaxed_context_desc">Optimization assuming the game keeps one GL context per thread for its whole lifetime; significantly cuts matrix-op overhead. Disable if rendering breaks</string>
 
     <string name="settings_fcl_driver">Vulkan Driver</string>
     <string name="settings_fcl_driver_desc">Choose the Vulkan driver implementation.</string>
