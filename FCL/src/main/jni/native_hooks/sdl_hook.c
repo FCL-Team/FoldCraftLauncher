@@ -53,6 +53,8 @@ SDL_Window *SDL_CreateWindowWithProperties(uint32_t props);
 
 void SDL_DestroyWindow(SDL_Window *window);
 
+bool SDL_SetWindowSize(SDL_Window *window, int w, int h);
+
 // egl_bridge.c（libpojavexec.so），SDL 路径下经 EGL 交换代理计帧
 void calculateFPS(void);
 
@@ -312,6 +314,20 @@ static void custom_SDL_DestroyWindow_Func(SDL_Window *window) {
     BYTEHOOK_POP_STACK();
 }
 
+// --- Android 尺寸语义下的窗口缩放请求吞并 ---
+
+// SDL3 的 Android 驱动不实现 SetWindowSize 回调，SDL_SetWindowSize 会直接返回
+// SDL_Unsupported。Cleanroom 的 setInitialDisplayMode 在启动期硬调 window.size()
+// （SDL.check 直接抛 SDLException），1.12.2 因此启动即崩。本集成模式下窗口尺寸
+// 由注入的 Android Surface 决定（与创建时的请求值同理，见 reusePrimaryWindow），
+// 缩放请求无实际意义，返回成功即可；调用方随后经 SDL_GetWindowSize 读回真实尺寸。
+static bool custom_SDL_SetWindowSize_Func(SDL_Window *window, int w, int h) {
+    (void) window;
+    (void) w;
+    (void) h;
+    return true;
+}
+
 // launcher 集成通知与会话 hint 设置（InitSubSystem hook 与 dlsym 代理共用）
 static bool sdlInitSubSystemPrepare(SDL_InitFlags flags) {
     // Call notifyLauncher on SDL_InitSubSystem, this sets up all the JNI stuff needed by SDL.
@@ -440,11 +456,16 @@ void create_sdl_hooks(bytehook_hook_all_t bytehook_hook_all_p) {
     bytehook_stub_t stub_SDL_DestroyWindow = bytehook_hook_all_p(NULL, "SDL_DestroyWindow",
                                                                  &custom_SDL_DestroyWindow_Func,
                                                                  NULL, NULL);
+    // Android 尺寸语义下吞并缩放请求（见 custom_SDL_SetWindowSize_Func）
+    bytehook_stub_t stub_SDL_SetWindowSize = bytehook_hook_all_p(NULL, "SDL_SetWindowSize",
+                                                                 &custom_SDL_SetWindowSize_Func,
+                                                                 NULL, NULL);
     LOG_TO_I(
-            "SDL_Hook: Successfully initialized SDL hooks, stubs: InitSubSystem=%p GetWindowFromEvent=%p GetWindowFromID=%p LoadFunction=%p CreateWindow=%p CreateWindowWithProps=%p LoadObject=%p UnloadObject=%p DestroyWindow=%p",
+            "SDL_Hook: Successfully initialized SDL hooks, stubs: InitSubSystem=%p GetWindowFromEvent=%p GetWindowFromID=%p LoadFunction=%p CreateWindow=%p CreateWindowWithProps=%p LoadObject=%p UnloadObject=%p DestroyWindow=%p SetWindowSize=%p",
             stub_SDL_InitSubSystem, stub_SDL_GetWindowFromEvent, stub_SDL_GetWindowFromID,
-            stub_SDL_LoadFunction, stub_SDL_CreateWindow, stub_SDL_CreateWindowWithProperties,
-            stub_SDL_LoadObject, stub_SDL_UnloadObject, stub_SDL_DestroyWindow);
+            stub_SDL_CreateWindow, stub_SDL_CreateWindowWithProperties,
+            stub_SDL_LoadObject, stub_SDL_UnloadObject, stub_SDL_DestroyWindow,
+            stub_SDL_SetWindowSize);
 }
 
 // ---------- dlsym 层代理 ----------
@@ -472,6 +493,8 @@ typedef void *(*sdlLoadFunction_t)(void *, const char *);
 
 typedef void (*sdlUnloadObject_t)(void *);
 
+typedef bool (*sdlSetWindowSize_t)(SDL_Window *, int, int);
+
 static sdlInitSubSystem_t realSdlInitSubSystem;
 static sdlCreateWindow_t realSdlCreateWindow;
 static sdlCreateWindowWithProperties_t realSdlCreateWindowWithProperties;
@@ -481,6 +504,7 @@ static sdlGetWindowFromID_t realSdlGetWindowFromID;
 static sdlLoadObject_t realSdlLoadObject;
 static sdlLoadFunction_t realSdlLoadFunction;
 static sdlUnloadObject_t realSdlUnloadObject;
+static sdlSetWindowSize_t realSdlSetWindowSize;
 
 static bool proxy_SDL_InitSubSystem(SDL_InitFlags flags) {
     if (!sdlInitSubSystemPrepare(flags)) return false;
@@ -575,6 +599,14 @@ static void proxy_SDL_UnloadObject(void *handle) {
     realSdlUnloadObject(handle);
 }
 
+// 与 custom_SDL_SetWindowSize_Func 同一语义，服务 dlsym 解析的调用方
+static bool proxy_SDL_SetWindowSize(SDL_Window *window, int w, int h) {
+    (void) window;
+    (void) w;
+    (void) h;
+    return true;
+}
+
 /** customDlsym 出口：把 SDL 符号解析换成 dlsym 层代理；返回 NULL 表示不拦截 */
 void *sdlDlsymProxy(const char *symbol, void *real) {    if (strcmp(symbol, "SDL_InitSubSystem") == 0) {
         if (realSdlInitSubSystem == NULL) realSdlInitSubSystem = (sdlInitSubSystem_t) real;
@@ -613,6 +645,10 @@ void *sdlDlsymProxy(const char *symbol, void *real) {    if (strcmp(symbol, "SDL
     if (strcmp(symbol, "SDL_UnloadObject") == 0) {
         if (realSdlUnloadObject == NULL) realSdlUnloadObject = (sdlUnloadObject_t) real;
         return (void *) proxy_SDL_UnloadObject;
+    }
+    if (strcmp(symbol, "SDL_SetWindowSize") == 0) {
+        if (realSdlSetWindowSize == NULL) realSdlSetWindowSize = (sdlSetWindowSize_t) real;
+        return (void *) proxy_SDL_SetWindowSize;
     }
     return NULL;
 }
