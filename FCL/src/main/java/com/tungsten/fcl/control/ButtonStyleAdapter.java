@@ -12,12 +12,13 @@ import android.view.ViewGroup;
 import androidx.appcompat.widget.AppCompatButton;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.control.data.ButtonStyles;
+import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
+import com.tungsten.fcl.control.data.ControlViewGroup;
+import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
-import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.view.FCLImageButton;
@@ -25,10 +26,27 @@ import com.tungsten.fcllibrary.component.view.FCLRadioButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
 
+import java.util.List;
+
 public class ButtonStyleAdapter extends FCLAdapter {
 
-    private final ObservableList<ControlButtonStyle> list;
+    /**
+     * 样式列表条目：sourceName 为 null 表示本布局样式；否则为来源布局名（跨布局导入展示，只可选不可改删）。
+     */
+    public static class Entry {
+        public final ControlButtonStyle style;
+        public final String sourceName;
+
+        public Entry(ControlButtonStyle style, String sourceName) {
+            this.style = style;
+            this.sourceName = sourceName;
+        }
+    }
+
+    private final Controller controller;
+    private final List<Entry> entries;
     private final boolean select;
+    private final Runnable onStyleRemoved;
 
     private final ObjectProperty<ControlButtonStyle> selectedStyle = new SimpleObjectProperty<>(this, "style", null);
 
@@ -44,16 +62,52 @@ public class ButtonStyleAdapter extends FCLAdapter {
         return selectedStyle.get();
     }
 
-    public ButtonStyleAdapter(Context context, ObservableList<ControlButtonStyle> list, boolean select, ControlButtonStyle initStyle) {
-        super(context);
-        this.list = list;
-        this.select = select;
-
-        if (initStyle != null && ButtonStyles.getStyles().stream().anyMatch(it -> it.getName().equals(initStyle.getName()))) {
-            selectedStyle.set(initStyle);
-        } else {
-            selectedStyle.set(list.get(0));
+    public ButtonStyleAdapter.Entry getSelectedEntry() {
+        for (ButtonStyleAdapter.Entry entry : entries) {
+            if (entry.style == selectedStyle.get()) {
+                return entry;
+            }
         }
+        return null;
+    }
+
+    public ButtonStyleAdapter(Context context, Controller controller, List<Entry> entries, boolean select, ControlButtonStyle initStyle, Runnable onStyleRemoved) {
+        super(context);
+        this.controller = controller;
+        this.entries = entries;
+        this.select = select;
+        this.onStyleRemoved = onStyleRemoved;
+
+        ControlButtonStyle initial = null;
+        if (initStyle != null) {
+            for (Entry entry : entries) {
+                if (entry.sourceName == null && entry.style.getName().equals(initStyle.getName())) {
+                    initial = entry.style;
+                    break;
+                }
+            }
+        }
+        if (initial == null) {
+            for (Entry entry : entries) {
+                if (entry.sourceName == null) {
+                    initial = entry.style;
+                    break;
+                }
+            }
+        }
+        if (initial == null && !entries.isEmpty()) {
+            initial = entries.get(0).style;
+        }
+        selectedStyle.set(initial);
+    }
+
+    public int indexOfLocal(String name) {
+        for (int i = 0; i < entries.size(); i++) {
+            if (entries.get(i).sourceName == null && entries.get(i).style.getName().equals(name)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     static class ViewHolder {
@@ -65,7 +119,7 @@ public class ButtonStyleAdapter extends FCLAdapter {
 
     @Override
     public Object getItem(int i) {
-        return list.get(i);
+        return entries.get(i).style;
     }
 
     @Override
@@ -75,7 +129,19 @@ public class ButtonStyleAdapter extends FCLAdapter {
 
     @Override
     public int getCount() {
-        return list.size();
+        return entries.size();
+    }
+
+    private int countReferences(String name) {
+        int count = 0;
+        for (ControlViewGroup group : controller.viewGroups()) {
+            for (ControlButtonData data : group.getViewData().buttonList()) {
+                if (data.getStyle().getName().equals(name)) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -93,7 +159,8 @@ public class ButtonStyleAdapter extends FCLAdapter {
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
-        ControlButtonStyle style = list.get(i);
+        ButtonStyleAdapter.Entry entry = entries.get(i);
+        ControlButtonStyle style = entry.style;
         GradientDrawable drawableNormal = new GradientDrawable();
         drawableNormal.setCornerRadius(ConvertUtils.dip2px(getContext(), style.getCornerRadius() / 10f));
         drawableNormal.setStroke(ConvertUtils.dip2px(getContext(), style.getStrokeWidth() / 10f), style.getStrokeColor());
@@ -122,7 +189,12 @@ public class ButtonStyleAdapter extends FCLAdapter {
             }
             return true;
         });
-        viewHolder.name.setText(style.getName());
+        if (entry.sourceName == null) {
+            viewHolder.name.setText(style.getName());
+        } else {
+            // 其他布局的样式：标注来源布局，选中确认时导入复制进当前布局
+            viewHolder.name.setText(getContext().getString(R.string.style_name_from, style.getName(), entry.sourceName));
+        }
         viewHolder.name.setSelected(true);
         if (select) {
             viewHolder.radioButton.setVisibility(View.VISIBLE);
@@ -132,19 +204,33 @@ public class ButtonStyleAdapter extends FCLAdapter {
         viewHolder.radioButton.checkProperty().unbind();
         viewHolder.radioButton.checkProperty().bind(Bindings.createBooleanBinding(() -> selectedStyle.get() == style, selectedStyle));
         viewHolder.radioButton.setOnClickListener(view1 -> selectedStyle.set(style));
-        viewHolder.delete.setOnClickListener(view1 -> {
-            FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-            builder.setCancelable(false);
-            builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
-            builder.setMessage(getContext().getString(R.string.style_warning_delete));
-            builder.setPositiveButton(() -> {
-                ButtonStyles.removeStyles(style);
-                ButtonStyles.checkStyles();
-                notifyDataSetChanged();
+        if (entry.sourceName == null) {
+            viewHolder.delete.setVisibility(View.VISIBLE);
+            viewHolder.delete.setOnClickListener(view1 -> {
+                controller.ensureAllLoaded();
+                int references = countReferences(style.getName());
+                String message = references > 0
+                        ? getContext().getString(R.string.style_warning_delete_refs, references)
+                        : getContext().getString(R.string.style_warning_delete_unused);
+                FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+                builder.setCancelable(false);
+                builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+                builder.setMessage(message);
+                builder.setPositiveButton(() -> {
+                    controller.removeButtonStyle(style);
+                    controller.saveToDisk();
+                    if (onStyleRemoved != null) {
+                        onStyleRemoved.run();
+                    }
+                });
+                builder.setNegativeButton(null);
+                builder.create().show();
             });
-            builder.setNegativeButton(null);
-            builder.create().show();
-        });
+        } else {
+            // 其他布局的样式归其布局管理，此处只可导入
+            viewHolder.delete.setVisibility(View.GONE);
+            viewHolder.delete.setOnClickListener(null);
+        }
         return view;
     }
 }

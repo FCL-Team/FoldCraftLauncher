@@ -170,7 +170,9 @@ private long loadDialogShowTime = 0;
                     ControlButtonData newData = ((ControlButtonData) view).clone();
                     button.getData().setText(newData.getText());
                     button.getData().setBaseInfo(newData.getBaseInfo());
-                    button.getData().setStyle(newData.getStyle());
+                    // 按名挂回布局样式表对象：编辑副本持有的是脱离样式表的克隆件，
+                    // 直接写回会让该按键失去与样式表的对象身份，后续样式修改不再同步
+                    button.getData().setStyle(gameMenu.getController().findButtonStyleByName(newData.getStyle().getName()));
                     button.getData().setEvent(newData.getEvent());
                     saveController();
                     if (selectedView == button) {
@@ -196,7 +198,8 @@ private long loadDialogShowTime = 0;
                 public void onPositive(CustomControl view) {
                     ControlDirectionData newData = ((ControlDirectionData) view).clone();
                     direction.getData().setBaseInfo(newData.getBaseInfo());
-                    direction.getData().setStyle(newData.getStyle());
+                    // 同按键：按名挂回布局样式表对象，保持对象身份一致
+                    direction.getData().setStyle(gameMenu.getController().findDirectionStyleByName(newData.getStyle().getName()));
                     direction.getData().setEvent(newData.getEvent());
                     saveController();
                     if (selectedView == direction) {

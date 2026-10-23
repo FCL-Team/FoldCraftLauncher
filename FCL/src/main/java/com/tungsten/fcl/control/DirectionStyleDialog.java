@@ -10,13 +10,21 @@ import androidx.annotation.Nullable;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
-import com.tungsten.fcl.control.data.DirectionStyles;
+import com.tungsten.fcl.setting.Controller;
+import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class DirectionStyleDialog extends FCLDialog implements View.OnClickListener {
 
+    private final Controller controller;
     private final boolean select;
+    private final boolean allowForeign;
     private final ControlDirectionStyle initStyle;
     private final Callback callback;
 
@@ -30,9 +38,11 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
         void onStyleSelect(ControlDirectionStyle style);
     }
 
-    public DirectionStyleDialog(@NonNull Context context, boolean select, @Nullable ControlDirectionStyle initStyle, Callback callback) {
+    public DirectionStyleDialog(@NonNull Context context, Controller controller, boolean select, boolean allowForeign, @Nullable ControlDirectionStyle initStyle, Callback callback) {
         super(context);
+        this.controller = controller;
         this.select = select;
+        this.allowForeign = allowForeign;
         this.initStyle = initStyle;
         this.callback = callback;
         if (getWindow() != null) {
@@ -58,29 +68,70 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
 
     private DirectionStyleAdapter adapter;
 
+    /**
+     * 本布局样式 + （选择模式下）其他布局的样式：跨布局条目标注来源布局，
+     * 与本地同名的不再重复展示；选中确认时导入复制进当前布局。
+     */
+    private List<DirectionStyleAdapter.Entry> buildEntries() {
+        List<DirectionStyleAdapter.Entry> entries = new ArrayList<>();
+        for (ControlDirectionStyle style : controller.getDirectionStyles()) {
+            entries.add(new DirectionStyleAdapter.Entry(style, null));
+        }
+        if (select && allowForeign) {
+            Set<String> ownNames = new HashSet<>();
+            for (ControlDirectionStyle style : controller.getDirectionStyles()) {
+                ownNames.add(style.getName());
+            }
+            for (Controller other : Controllers.getControllers()) {
+                if (other == controller) {
+                    continue;
+                }
+                for (ControlDirectionStyle style : other.getDirectionStyles()) {
+                    if (!ownNames.contains(style.getName())) {
+                        entries.add(new DirectionStyleAdapter.Entry(style, other.getName()));
+                    }
+                }
+            }
+        }
+        return entries;
+    }
+
     public void refreshList() {
-        adapter = new DirectionStyleAdapter(getContext(), DirectionStyles.getStyles(), select, initStyle);
+        adapter = new DirectionStyleAdapter(getContext(), controller, buildEntries(), select, initStyle, this::refreshList);
         listView.setAdapter(adapter);
         if (initStyle != null)
-            listView.setSelection(DirectionStyles.findStyleIndexByName(initStyle.getName()));
+            listView.setSelection(adapter.indexOfLocal(initStyle.getName()));
     }
 
     @Override
     public void onClick(View v) {
         if (v == addStyle) {
-            AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), null, false, style -> {
-                DirectionStyles.addStyle(style);
+            AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), controller, null, false, style -> {
+                controller.addOrUpdateDirectionStyle(style);
+                controller.saveToDisk();
                 refreshList();
             });
             dialog.show();
         }
         if (v == editStyle) {
-            AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), adapter.getSelectedStyle(), true, style -> {
+            DirectionStyleAdapter.Entry entry = adapter.getSelectedEntry();
+            if (entry == null) {
+                return;
+            }
+            ControlDirectionStyle selected = entry.style;
+            if (entry.sourceName != null) {
+                // 跨布局样式先导入复制为本布局样式，再编辑本地副本
+                controller.addOrUpdateDirectionStyle(selected.clone());
+                controller.saveToDisk();
+                selected = controller.findDirectionStyleByName(selected.getName());
+                refreshList();
+            }
+            final ControlDirectionStyle before = selected;
+            AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), controller, before, true, style -> {
                 // update the registered style in place: keeps object identity and list position,
                 // so all directions holding it re-render through style observation (renames included)
-                ControlDirectionStyle before = adapter.getSelectedStyle();
                 before.setAll(style);
-                DirectionStyles.saveStyles();
+                controller.saveToDisk();
                 refreshList();
                 adapter.setSelectedStyle(before);
             });
@@ -89,7 +140,17 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
         if (v == positive) {
             dismiss();
             if (callback != null && select) {
-                callback.onStyleSelect(adapter.getSelectedStyle());
+                DirectionStyleAdapter.Entry entry = adapter.getSelectedEntry();
+                if (entry == null) {
+                    return;
+                }
+                ControlDirectionStyle selected = entry.style;
+                if (entry.sourceName != null) {
+                    controller.addOrUpdateDirectionStyle(selected.clone());
+                    controller.saveToDisk();
+                    selected = controller.findDirectionStyleByName(selected.getName());
+                }
+                callback.onStyleSelect(selected);
             }
         }
     }
