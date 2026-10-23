@@ -2,26 +2,20 @@ package com.tungsten.fclauncher.keycodes;
 
 import android.view.KeyEvent;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AndroidKeycodeMap {
 
-    private static final int[] ANDROID_KEYCODES = new int[99];
-    private static final int[] FCL_KEYCODES = new int[99];
-
-    private static int count = 0;
+    private static final Map<Integer, Integer> KEY_MAP = new HashMap<>();
 
     private static void add(int androidKeycode, int fclKeycode) {
-        ANDROID_KEYCODES[count] = androidKeycode;
-        FCL_KEYCODES[count] = fclKeycode;
-        count++;
+        KEY_MAP.put(androidKeycode, fclKeycode);
     }
 
     public static int convertKeycode(int androidKeycode) {
-        int index = Arrays.binarySearch(ANDROID_KEYCODES, androidKeycode);
-        if (index >= 0)
-            return FCL_KEYCODES[index];
-        return FCLKeycodes.KEY_UNKNOWN;
+        Integer fclKeycode = KEY_MAP.get(androidKeycode);
+        return fclKeycode != null ? fclKeycode : FCLKeycodes.KEY_UNKNOWN;
     }
 
     static {
@@ -38,8 +32,6 @@ public class AndroidKeycodeMap {
         add(KeyEvent.KEYCODE_7,                              FCLKeycodes.KEY_7);
         add(KeyEvent.KEYCODE_8,                              FCLKeycodes.KEY_8);
         add(KeyEvent.KEYCODE_9,                              FCLKeycodes.KEY_9);
-
-        add(KeyEvent.KEYCODE_POUND,                          FCLKeycodes.KEY_3);
 
         add(KeyEvent.KEYCODE_DPAD_UP,                        FCLKeycodes.KEY_UP);
         add(KeyEvent.KEYCODE_DPAD_DOWN,                      FCLKeycodes.KEY_DOWN);
@@ -72,7 +64,7 @@ public class AndroidKeycodeMap {
         add(KeyEvent.KEYCODE_X,                              FCLKeycodes.KEY_X);
         add(KeyEvent.KEYCODE_Y,                              FCLKeycodes.KEY_Y);
         add(KeyEvent.KEYCODE_Z,                              FCLKeycodes.KEY_Z);
-        
+
         add(KeyEvent.KEYCODE_COMMA,                          FCLKeycodes.KEY_COMMA);
         add(KeyEvent.KEYCODE_PERIOD,                         FCLKeycodes.KEY_DOT);
 
@@ -95,7 +87,7 @@ public class AndroidKeycodeMap {
         add(KeyEvent.KEYCODE_SEMICOLON,                      FCLKeycodes.KEY_SEMICOLON);
         add(KeyEvent.KEYCODE_APOSTROPHE,                     FCLKeycodes.KEY_APOSTROPHE);
         add(KeyEvent.KEYCODE_SLASH,                          FCLKeycodes.KEY_SLASH);
-        add(KeyEvent.KEYCODE_AT,                             FCLKeycodes.KEY_2);
+        add(KeyEvent.KEYCODE_PLUS,                           FCLKeycodes.KEY_KPPLUS);
 
         add(KeyEvent.KEYCODE_PAGE_UP,                        FCLKeycodes.KEY_PAGEUP);
         add(KeyEvent.KEYCODE_PAGE_DOWN,                      FCLKeycodes.KEY_PAGEDOWN);
@@ -107,8 +99,15 @@ public class AndroidKeycodeMap {
 
         add(KeyEvent.KEYCODE_CAPS_LOCK,                      FCLKeycodes.KEY_CAPSLOCK);
         add(KeyEvent.KEYCODE_BREAK,                          FCLKeycodes.KEY_PAUSE);
+        add(KeyEvent.KEYCODE_MOVE_HOME,                      FCLKeycodes.KEY_HOME);
         add(KeyEvent.KEYCODE_MOVE_END,                       FCLKeycodes.KEY_END);
         add(KeyEvent.KEYCODE_INSERT,                         FCLKeycodes.KEY_INSERT);
+        add(KeyEvent.KEYCODE_FORWARD_DEL,                    FCLKeycodes.KEY_DELETE);
+        add(KeyEvent.KEYCODE_SCROLL_LOCK,                    FCLKeycodes.KEY_SCROLLLOCK);
+        add(KeyEvent.KEYCODE_SYSRQ,                          FCLKeycodes.KEY_SYSRQ);
+        add(KeyEvent.KEYCODE_MENU,                           FCLKeycodes.KEY_MENU);
+        add(KeyEvent.KEYCODE_META_LEFT,                      FCLKeycodes.KEY_LEFTMATA);
+        add(KeyEvent.KEYCODE_META_RIGHT,                     FCLKeycodes.KEY_RIGHTMETA);
 
         add(KeyEvent.KEYCODE_F1,                             FCLKeycodes.KEY_F1);
         add(KeyEvent.KEYCODE_F2,                             FCLKeycodes.KEY_F2);
@@ -134,6 +133,10 @@ public class AndroidKeycodeMap {
         add(KeyEvent.KEYCODE_NUMPAD_7,                       FCLKeycodes.KEY_KP7);
         add(KeyEvent.KEYCODE_NUMPAD_8,                       FCLKeycodes.KEY_KP8);
         add(KeyEvent.KEYCODE_NUMPAD_9,                       FCLKeycodes.KEY_KP9);
+        add(KeyEvent.KEYCODE_NUMPAD_DIVIDE,                  FCLKeycodes.KEY_KPSLASH);
+        add(KeyEvent.KEYCODE_NUMPAD_MULTIPLY,                FCLKeycodes.KEY_KPASTERISK);
+        add(KeyEvent.KEYCODE_NUMPAD_SUBTRACT,                FCLKeycodes.KEY_KPMINUS);
+        add(KeyEvent.KEYCODE_NUMPAD_ADD,                     FCLKeycodes.KEY_KPPLUS);
         add(KeyEvent.KEYCODE_NUMPAD_DOT,                     FCLKeycodes.KEY_KPDOT);
         add(KeyEvent.KEYCODE_NUMPAD_COMMA,                   FCLKeycodes.KEY_KPCOMMA);
         add(KeyEvent.KEYCODE_NUMPAD_ENTER,                   FCLKeycodes.KEY_KPENTER);

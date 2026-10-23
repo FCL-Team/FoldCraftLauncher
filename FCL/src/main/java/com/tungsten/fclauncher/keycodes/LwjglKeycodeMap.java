@@ -88,7 +88,6 @@ public class LwjglKeycodeMap {
         add(LwjglGlfwKeycode.KEY_SLASH, FCLKeycodes.KEY_SLASH);
         add(LwjglGlfwKeycode.KEY_PAGE_UP, FCLKeycodes.KEY_PAGEUP);
         add(LwjglGlfwKeycode.KEY_PAGE_DOWN, FCLKeycodes.KEY_PAGEDOWN);
-        add(LwjglGlfwKeycode.KEY_ESCAPE, FCLKeycodes.KEY_ESC);
         add(LwjglGlfwKeycode.KEY_LEFT_CONTROL, FCLKeycodes.KEY_LEFTCTRL);
         add(LwjglGlfwKeycode.KEY_RIGHT_CONTROL, FCLKeycodes.KEY_RIGHTCTRL);
         add(LwjglGlfwKeycode.KEY_CAPS_LOCK, FCLKeycodes.KEY_CAPSLOCK);
@@ -126,5 +125,11 @@ public class LwjglKeycodeMap {
         add(LwjglGlfwKeycode.KEY_KP_ENTER, FCLKeycodes.KEY_KPENTER);
         add(LwjglGlfwKeycode.KEY_KP_EQUAL, FCLKeycodes.KEY_KPEQUAL);
         add(LwjglGlfwKeycode.KEY_DELETE, FCLKeycodes.KEY_DELETE);
+        add(LwjglGlfwKeycode.KEY_SCROLL_LOCK, FCLKeycodes.KEY_SCROLLLOCK);
+        add(LwjglGlfwKeycode.KEY_PRINT_SCREEN, FCLKeycodes.KEY_SYSRQ);
+        add(LwjglGlfwKeycode.KEY_MENU, FCLKeycodes.KEY_MENU);
+        add(LwjglGlfwKeycode.KEY_LEFT_SUPER, FCLKeycodes.KEY_LEFTMATA);
+        add(LwjglGlfwKeycode.KEY_RIGHT_SUPER, FCLKeycodes.KEY_RIGHTMETA);
+        add(LwjglGlfwKeycode.KEY_COMMA, FCLKeycodes.KEY_KPCOMMA);
     }
 }

@@ -32,7 +32,7 @@ package com.tungsten.fclauncher.keycodes;
 @SuppressWarnings("unused")
 public class LwjglGlfwKeycode {
     /** The unknown key. */
-    public static final short KEY_UNKNOWN = 0; // should be -1
+    public static final short KEY_UNKNOWN = -1;
 
     /** Printable keys. */
     public static final short

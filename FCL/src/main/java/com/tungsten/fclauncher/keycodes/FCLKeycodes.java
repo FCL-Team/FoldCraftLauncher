@@ -115,6 +115,7 @@ public final class FCLKeycodes {
 
     public static final int  KEY_LEFTMATA        = 125;
     public static final int  KEY_RIGHTMETA       = 126;
+    public static final int  KEY_MENU            = 139;
 
     public static final int  KEY_F13             = 183;
     public static final int  KEY_F14             = 184;

@@ -24,6 +24,7 @@ import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.keycodes.AndroidKeycodeMap;
 import com.tungsten.fclauncher.keycodes.EfficientAndroidLWJGLKeycode;
 import com.tungsten.fclauncher.keycodes.FCLKeycodes;
+import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 import com.tungsten.fclauncher.keycodes.LwjglKeycodeMap;
 
 import org.libsdl.app.SDLActivity;
@@ -140,12 +141,19 @@ public class FCLInput implements View.OnCapturedPointerListener {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     public void sendKeyEvent(int keycode, boolean press) {
         sendKeyEvent(keycode, 0, press);
     }
 
     public void sendKeyEvent(int keycode, int keyChar, boolean press) {
+        sendKeyEvent(keycode, keyChar, press, false);
+    }
+
+    /**
+     * @param isKeyRepeat 系统自动重复的按下事件，用于区分 Caps Lock / Num Lock 的首次按下
+     */
+    @SuppressWarnings("ConstantConditions")
+    public void sendKeyEvent(int keycode, int keyChar, boolean press, boolean isKeyRepeat) {
         if (menu.getBridge() != null) {
             if (MOUSE_MAP.containsKey(keycode) && MOUSE_MAP.get(keycode) != null) {
                 if (isDuplicateMouseButtonEvent(keycode, press)) {
@@ -154,8 +162,8 @@ public class FCLInput implements View.OnCapturedPointerListener {
                 menu.getBridge().pushEventMouseButton(MOUSE_MAP.get(keycode), press);
             } else {
                 int code = LwjglKeycodeMap.convertKeycode(keycode);
-                if (code >= 0) {
-                    CallbackBridge.setModifiers(code, press);
+                if (code != LwjglGlfwKeycode.KEY_UNKNOWN) {
+                    CallbackBridge.setModifiers(code, press, isKeyRepeat);
                 }
                 menu.getBridge().pushEventKey(keycode, keyChar, press);
             }
@@ -492,7 +500,8 @@ public class FCLInput implements View.OnCapturedPointerListener {
             }
             return true;
         }
-        if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+        // 软键盘文本输入框唤起时，物理 Enter 提交输入并收起；否则作为普通按键转发游戏
+        if (event.getKeyCode() == KeyEvent.KEYCODE_ENTER && menu.getTouchCharInput().isEnabled()) {
             if (event.getAction() == KeyEvent.ACTION_UP) {
                 menu.getTouchCharInput().hide();
             }
@@ -535,7 +544,7 @@ public class FCLInput implements View.OnCapturedPointerListener {
         // 物理键盘字符取自设备布局，随 keydown 一次性成对下发；不能再调 sendChar——
         // 那是软键盘纯字符通道，会反查键码补发一对 keydown/keyup，与本按键叠加成双重输入
         int keyChar = press && menu.getCursorMode() == FCLBridge.CursorEnabled ? event.getUnicodeChar() : 0;
-        sendKeyEvent(fclKeycode, keyChar, press);
+        sendKeyEvent(fclKeycode, keyChar, press, event.getRepeatCount() > 0);
         return true;
     }
 

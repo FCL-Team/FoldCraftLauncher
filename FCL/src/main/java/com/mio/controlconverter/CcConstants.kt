@@ -117,7 +117,7 @@ object CcConstants {
     )
 
     val ZL_ONLY_KEYS: Set<String> = setOf(
-        "GLFW_KEY_WORLD_1", "GLFW_KEY_WORLD_2", "GLFW_KEY_F25", "GLFW_KEY_MENU",
+        "GLFW_KEY_WORLD_1", "GLFW_KEY_WORLD_2", "GLFW_KEY_F25",
         "GLFW_KEY_LAST", "GLFW_MOD_SHIFT", "GLFW_MOD_CONTROL", "GLFW_MOD_ALT",
         "GLFW_MOD_SUPER", "GLFW_MOD_CAPS_LOCK", "GLFW_MOD_NUM_LOCK",
         "GLFW_MOUSE_BUTTON_4", "GLFW_MOUSE_BUTTON_5", "GLFW_MOUSE_BUTTON_6",
@@ -249,6 +249,7 @@ object CcConstants {
         "GLFW_KEY_RIGHT_CONTROL" to 97L,
         "GLFW_KEY_RIGHT_ALT" to 100L,
         "GLFW_KEY_RIGHT_SUPER" to 126L,
+        "GLFW_KEY_MENU" to 139L,
     )
     val FCL_TO_GLFW: Map<Long, String> = GLFW_TO_FCL.entries.associate { (k, v) -> v to k }
 
@@ -261,7 +262,6 @@ object CcConstants {
         "GLFW_KEY_F25" to (GLFW_TO_FCL["GLFW_KEY_F24"]!! to "FCL has no F25; substituted with F24"),
         "GLFW_KEY_WORLD_1" to (GLFW_TO_FCL["GLFW_KEY_UNKNOWN"]!! to "FCL has no WORLD_1; substituted with UNKNOWN"),
         "GLFW_KEY_WORLD_2" to (GLFW_TO_FCL["GLFW_KEY_UNKNOWN"]!! to "FCL has no WORLD_2; substituted with UNKNOWN"),
-        "GLFW_KEY_MENU" to (GLFW_TO_FCL["GLFW_KEY_UNKNOWN"]!! to "FCL has no menu key; substituted with UNKNOWN"),
         "GLFW_KEY_LAST" to (GLFW_TO_FCL["GLFW_KEY_UNKNOWN"]!! to "FCL has no LAST sentinel key; substituted with UNKNOWN"),
         "GLFW_MOD_SHIFT" to (GLFW_TO_FCL["GLFW_KEY_LEFT_SHIFT"]!! to "FCL has no modifier event; substituted with left shift"),
         "GLFW_MOD_CONTROL" to (GLFW_TO_FCL["GLFW_KEY_LEFT_CONTROL"]!! to "FCL has no modifier event; substituted with left control"),

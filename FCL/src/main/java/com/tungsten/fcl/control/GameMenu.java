@@ -76,8 +76,7 @@ import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleBooleanProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleIntegerProperty;
-import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
-import com.tungsten.fclcore.fakefx.collections.FXCollections;
+import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.util.Logging;
@@ -91,6 +90,8 @@ import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLTabLayout;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 import com.tungsten.fcllibrary.util.ConvertUtils;
+
+import org.lwjgl.glfw.CallbackBridge;
 
 import java.io.File;
 import java.io.IOException;
@@ -879,6 +880,8 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         }
         fclInput.stopCaptureWatchdog();
         fclInput.resetExternalMouseState();
+        // 分屏、来电等切后台场景不一定触发 onWindowFocusChanged(false)，此处兜底复位修饰键状态
+        CallbackBridge.resetInputState();
         cancelKeyBindListen();
         gyroscope.disableSensor();
     }

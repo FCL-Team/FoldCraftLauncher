@@ -189,7 +189,7 @@ public class CallbackBridge {
         // TODO CHECK: This may cause input issue, not receive input!
         if (keycode != 0) {
             int code = LwjglKeycodeMap.convertKeycode(keycode);
-            if (code <= 0) {
+            if (code == LwjglGlfwKeycode.KEY_UNKNOWN) {
                 return;
             }
             nativeSendKey(code, scancode, isDown ? 1 : 0, modifiers);
@@ -381,26 +381,37 @@ public class CallbackBridge {
         return currMods;
     }
 
-    public static void setModifiers(int keyCode, boolean isDown) {
+    /**
+     * 更新修饰键状态：左右同组修饰键等价。Caps Lock / Num Lock 为锁存键，
+     * 仅在非重复的按下事件翻转，抬起与系统自动重复不改变状态
+     */
+    public static void setModifiers(int keyCode, boolean isDown, boolean isKeyRepeat) {
         switch (keyCode) {
             case LwjglGlfwKeycode.KEY_LEFT_SHIFT:
+            case LwjglGlfwKeycode.KEY_RIGHT_SHIFT:
                 CallbackBridge.holdingShift = isDown;
                 break;
 
             case LwjglGlfwKeycode.KEY_LEFT_CONTROL:
+            case LwjglGlfwKeycode.KEY_RIGHT_CONTROL:
                 CallbackBridge.holdingCtrl = isDown;
                 break;
 
             case LwjglGlfwKeycode.KEY_LEFT_ALT:
+            case LwjglGlfwKeycode.KEY_RIGHT_ALT:
                 CallbackBridge.holdingAlt = isDown;
                 break;
 
             case LwjglGlfwKeycode.KEY_CAPS_LOCK:
-                CallbackBridge.holdingCapslock = isDown;
+                if (isDown && !isKeyRepeat) {
+                    CallbackBridge.holdingCapslock = !CallbackBridge.holdingCapslock;
+                }
                 break;
 
             case LwjglGlfwKeycode.KEY_NUM_LOCK:
-                CallbackBridge.holdingNumlock = isDown;
+                if (isDown && !isKeyRepeat) {
+                    CallbackBridge.holdingNumlock = !CallbackBridge.holdingNumlock;
+                }
                 break;
         }
     }
