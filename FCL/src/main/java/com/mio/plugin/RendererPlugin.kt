@@ -289,14 +289,94 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
                     "1"
                 ),
                 EnvSpec(
-                    "MG_DIR_PATH",
-                    EnvType.CUSTOMIZABLE,
-                    context.getString(R.string.renderer_config_mg_dir_path),
-                    emptyList(),
-                    "",
+                    "enableANGLE",
+                    EnvType.SELECTABLE,
+                    context.getString(R.string.renderer_config_mg_angle),
+                    listOf("0", "1", "2", "3"),
+                    null,
                     false,
                     true,
-                    prefs["MG_DIR_PATH"].orEmpty()
+                    prefs["enableANGLE"] ?: "1"
+                ),
+                EnvSpec(
+                    "enableNoError",
+                    EnvType.SELECTABLE,
+                    context.getString(R.string.renderer_config_mg_noerror),
+                    listOf("0", "1", "2", "3"),
+                    null,
+                    false,
+                    true,
+                    prefs["enableNoError"] ?: "0"
+                ),
+                EnvSpec(
+                    "angleDepthClearFixMode",
+                    EnvType.TOGGLEABLE,
+                    context.getString(R.string.renderer_config_mg_depthfix),
+                    emptyList(),
+                    null,
+                    false,
+                    prefs["angleDepthClearFixMode$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: false,
+                    "1"
+                ),
+                EnvSpec(
+                    "customGLVersion",
+                    EnvType.SELECTABLE,
+                    context.getString(R.string.renderer_config_mg_glversion),
+                    listOf("0", "46", "45", "44", "43", "42", "41", "40", "33", "32"),
+                    null,
+                    false,
+                    true,
+                    prefs["customGLVersion"] ?: "0"
+                ),
+                EnvSpec(
+                    "maxGlslCacheSize",
+                    EnvType.CUSTOMIZABLE,
+                    context.getString(R.string.renderer_config_mg_glslcache),
+                    emptyList(),
+                    "32",
+                    false,
+                    true,
+                    prefs["maxGlslCacheSize"] ?: "32"
+                ),
+                EnvSpec(
+                    "enableExtTimerQuery",
+                    EnvType.TOGGLEABLE,
+                    context.getString(R.string.renderer_config_mg_ext_timer),
+                    emptyList(),
+                    null,
+                    false,
+                    prefs["enableExtTimerQuery$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: true,
+                    "1"
+                ),
+                EnvSpec(
+                    "enableExtComputeShader",
+                    EnvType.TOGGLEABLE,
+                    context.getString(R.string.renderer_config_mg_ext_compute),
+                    emptyList(),
+                    null,
+                    false,
+                    prefs["enableExtComputeShader$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: false,
+                    "1"
+                ),
+                EnvSpec(
+                    "enableExtDirectStateAccess",
+                    EnvType.TOGGLEABLE,
+                    context.getString(R.string.renderer_config_mg_ext_dsa),
+                    emptyList(),
+                    null,
+                    false,
+                    prefs["enableExtDirectStateAccess$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: false,
+                    "1"
+                ),
+                EnvSpec(
+                    "fsr1Setting",
+                    EnvType.SELECTABLE,
+                    context.getString(R.string.renderer_config_mg_fsr1),
+                    listOf("0", "1", "2", "3", "4"),
+                    null,
+                    false,
+                    true,
+                    prefs["fsr1Setting"] ?: "0"
                 )
             )
 
