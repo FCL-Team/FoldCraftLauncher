@@ -8,7 +8,6 @@ import com.mio.util.getScreenWidth
 import com.mio.util.getScreenHeight
 import com.tungsten.fcl.control.data.BaseInfoData
 import com.tungsten.fcl.control.data.ButtonEventData
-import com.tungsten.fcl.control.data.ButtonStyles
 import com.tungsten.fcl.control.data.ControlButtonData
 import com.tungsten.fcl.databinding.ViewEditButtonEventBinding
 import com.tungsten.fcl.databinding.ViewEditButtonEventChildBinding
@@ -65,8 +64,9 @@ internal class EditButtonDetails(
 
         infoBinding.styleText.text = data.style.name
         infoBinding.style.setOnClickListener {
-            val target = ButtonStyles.findStyleByName(data.style.name)
-            ButtonStyleDialog(context, true, target) { style ->
+            val controller = menu?.controller ?: return@setOnClickListener
+            val target = controller.findButtonStyleByName(data.style.name)
+            ButtonStyleDialog(context, controller, true, true, target) { style ->
                 data.style = style
                 infoBinding.styleText.text = style.name
             }.show()
