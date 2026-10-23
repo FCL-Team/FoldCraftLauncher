@@ -29,8 +29,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import com.tungsten.fclcore.util.DigestUtils;
 import com.tungsten.fclcore.util.gson.JsonUtils;
+import com.tungsten.fclcore.util.io.ChecksumMismatchException;
 import com.tungsten.fclcore.util.io.FileUtils;
+
+import org.jetbrains.annotations.Nullable;
 
 public final class GetTask extends FetchTask<String> {
 
@@ -70,10 +74,10 @@ public final class GetTask extends FetchTask<String> {
     }
 
     @Override
-    protected Context getContext(URLConnection conn, boolean checkETag) {
+    protected Context getContext(URLConnection conn, boolean checkETag, @Nullable String bmclapiHash) {
         int length = conn.getContentLength();
         final var baos = new ByteArrayOutputStream(length <= 0 ? 8192 : length);
-        
+
         return new Context() {
             @Override
             public void write(byte[] buffer, int offset, int len) {
@@ -83,6 +87,13 @@ public final class GetTask extends FetchTask<String> {
             @Override
             public void close() throws IOException {
                 if (!isSuccess()) return;
+
+                // 在解码与写缓存之前先按 BMCLAPI 哈希校验原始字节，防止损坏内容进入文本结果或缓存
+                if (bmclapiHash != null) {
+                    String actualHash = DigestUtils.digestToString("SHA-1", baos.toByteArray());
+                    if (!bmclapiHash.equalsIgnoreCase(actualHash))
+                        throw new ChecksumMismatchException("SHA-1", bmclapiHash, actualHash);
+                }
 
                 String result = baos.toString(charset.name());
                 setResult(result);

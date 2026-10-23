@@ -164,16 +164,24 @@ public final class NetworkUtils {
         return resolveConnection(conn, null);
     }
 
+    public static HttpURLConnection resolveConnection(HttpURLConnection conn, List<String> redirects) throws IOException {
+        return resolveConnection(conn, redirects, null);
+    }
+
     /**
      * This method is a work-around that aims to solve problem when "Location" in
      * stupid server's response is not encoded.
      *
      * @see <a href="https://github.com/curl/curl/issues/473">Issue with libcurl</a>
      * @param conn the stupid http connection.
+     * @param redirectResponses if non-null, collects the response headers of every redirect hop in order,
+     *                          so that callers can read intermediate headers which are otherwise
+     *                          discarded (e.g. x-bmclapi-hash on BMCLAPI master's 302 response)
      * @return manually redirected http connection.
      * @throws IOException if an I/O error occurs.
      */
-    public static HttpURLConnection resolveConnection(HttpURLConnection conn, List<String> redirects) throws IOException {
+    public static HttpURLConnection resolveConnection(HttpURLConnection conn, List<String> redirects,
+                                                      List<Map<String, List<String>>> redirectResponses) throws IOException {
         int redirect = 0;
         while (true) {
 
@@ -186,6 +194,9 @@ public final class NetworkUtils {
             int code = conn.getResponseCode();
             if (code >= 300 && code <= 307 && code != 306 && code != 304) {
                 String newURL = conn.getHeaderField("Location");
+                if (redirectResponses != null) {
+                    redirectResponses.add(conn.getHeaderFields());
+                }
                 conn.disconnect();
 
                 if (redirects != null) {

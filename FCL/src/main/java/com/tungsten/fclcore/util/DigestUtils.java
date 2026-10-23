@@ -17,12 +17,15 @@
  */
 package com.tungsten.fclcore.util;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Pattern;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -32,6 +35,12 @@ public final class DigestUtils {
     }
 
     private static final int STREAM_BUFFER_LENGTH = 1024;
+
+    private static final Pattern SHA1_PATTERN = Pattern.compile("[0-9a-f]{40}", Pattern.CASE_INSENSITIVE);
+
+    public static boolean isSha1Digest(@Nullable String s) {
+        return s != null && SHA1_PATTERN.matcher(s).matches();
+    }
 
     public static MessageDigest getDigest(String algorithm) {
         try {

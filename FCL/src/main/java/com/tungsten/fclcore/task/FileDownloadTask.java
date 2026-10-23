@@ -17,6 +17,7 @@
  */
 package com.tungsten.fclcore.task;
 
+import static com.tungsten.fclcore.util.DigestUtils.digestToString;
 import static com.tungsten.fclcore.util.DigestUtils.getDigest;
 
 import java.io.File;
@@ -32,6 +33,8 @@ import java.util.*;
 import java.util.logging.Level;
 
 import static java.util.Objects.requireNonNull;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.tungsten.fclcore.util.Hex;
 import com.tungsten.fclcore.util.Logging;
@@ -188,7 +191,7 @@ public class FileDownloadTask extends FetchTask<Void> {
     }
 
     @Override
-    protected Context getContext(URLConnection conn, boolean checkETag) throws IOException {
+    protected Context getContext(URLConnection conn, boolean checkETag, @Nullable String bmclapiHash) throws IOException {
         Path temp = Files.createTempFile(null, null);
         RandomAccessFile rFile = new RandomAccessFile(temp.toFile(), "rw");
         MessageDigest digest = integrityCheck == null ? null : integrityCheck.createDigest();
@@ -237,11 +240,22 @@ public class FileDownloadTask extends FetchTask<Void> {
                 // Integrity check
                 if (integrityCheck != null) {
                     integrityCheck.performCheck(digest);
+                } else if (bmclapiHash != null) {
+                    // 没有显式校验值时以 BMCLAPI 哈希兜底，防止节点切换/重试后落下损坏的文件
+                    String actualHash = digestToString("SHA-1", temp);
+                    if (!bmclapiHash.equalsIgnoreCase(actualHash))
+                        throw new ChecksumMismatchException("SHA-1", bmclapiHash, actualHash);
                 }
 
                 if (caching && integrityCheck != null) {
                     try {
                         repository.cacheFile(file.toPath(), integrityCheck.getAlgorithm(), integrityCheck.getChecksum());
+                    } catch (IOException e) {
+                        Logging.LOG.log(Level.WARNING, "Failed to cache file", e);
+                    }
+                } else if (caching && bmclapiHash != null) {
+                    try {
+                        repository.cacheFile(file.toPath(), "SHA-1", bmclapiHash);
                     } catch (IOException e) {
                         Logging.LOG.log(Level.WARNING, "Failed to cache file", e);
                     }
