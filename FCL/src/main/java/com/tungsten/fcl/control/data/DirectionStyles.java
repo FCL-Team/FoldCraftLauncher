@@ -115,23 +115,24 @@ public class DirectionStyles {
     }
 
     public static void addStyle(ControlDirectionStyle style) {
-        if (!initialized) return;
-        boolean add = true;
-        for (ControlDirectionStyle directionStyle : getStyles())
-            if (directionStyle.getName().equals(style.getName()))
-                add = false;
-        if (add)
-            styles.add(style);
+        addStyle(style, getStyles().size());
     }
 
     public static void addStyle(ControlDirectionStyle style, int index) {
-        if (!initialized) return;
-        boolean add = true;
-        for (ControlDirectionStyle directionStyle : getStyles())
-            if (directionStyle.getName().equals(style.getName()))
-                add = false;
-        if (add)
-            styles.add(index, style);
+        if (!initialized || style == null)
+            return;
+        for (ControlDirectionStyle directionStyle : getStyles()) {
+            if (directionStyle.getName().equals(style.getName())) {
+                // update the registered style in place instead of dropping the new one,
+                // so re-loading a controller picks up modified style properties;
+                // keep the object identity because buttons hold references to it.
+                // the list extractor doesn't fire on in-place property changes, so persist explicitly
+                directionStyle.setAll(style);
+                saveStyles();
+                return;
+            }
+        }
+        styles.add(index, style);
     }
 
     public static void removeStyles(ControlDirectionStyle style) {

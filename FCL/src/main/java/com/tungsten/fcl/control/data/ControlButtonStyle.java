@@ -292,21 +292,29 @@ public class ControlButtonStyle implements Cloneable, Observable {
         observableHelper.invalidate();
     }
 
+    /**
+     * Copy all properties from {@code other} to this style.
+     */
+    public void setAll(ControlButtonStyle other) {
+        setName(other.getName());
+        setTextColor(other.getTextColor());
+        setTextSize(other.getTextSize());
+        setStrokeColor(other.getStrokeColor());
+        setStrokeWidth(other.getStrokeWidth());
+        setCornerRadius(other.getCornerRadius());
+        setFillColor(other.getFillColor());
+        setTextColorPressed(other.getTextColorPressed());
+        setTextSizePressed(other.getTextSizePressed());
+        setStrokeColorPressed(other.getStrokeColorPressed());
+        setStrokeWidthPressed(other.getStrokeWidthPressed());
+        setCornerRadiusPressed(other.getCornerRadiusPressed());
+        setFillColorPressed(other.getFillColorPressed());
+    }
+
     @Override
     public ControlButtonStyle clone() {
         ControlButtonStyle style = new ControlButtonStyle(getName());
-        style.setTextColor(getTextColor());
-        style.setTextSize(getTextSize());
-        style.setStrokeColor(getStrokeColor());
-        style.setStrokeWidth(getStrokeWidth());
-        style.setCornerRadius(getCornerRadius());
-        style.setFillColor(getFillColor());
-        style.setTextColorPressed(getTextColorPressed());
-        style.setTextSizePressed(getTextSizePressed());
-        style.setStrokeColorPressed(getStrokeColorPressed());
-        style.setStrokeWidthPressed(getStrokeWidthPressed());
-        style.setCornerRadiusPressed(getCornerRadiusPressed());
-        style.setFillColorPressed(getFillColorPressed());
+        style.setAll(this);
         return style;
     }
 

@@ -134,12 +134,20 @@ public class ControlDirectionStyle implements Cloneable, Observable {
         observableHelper.invalidate();
     }
 
+    /**
+     * Copy all properties from {@code other} to this style.
+     */
+    public void setAll(ControlDirectionStyle other) {
+        setName(other.getName());
+        setStyleType(other.getStyleType());
+        getButtonStyle().setAll(other.getButtonStyle());
+        getRockerStyle().setAll(other.getRockerStyle());
+    }
+
     @Override
     public ControlDirectionStyle clone() {
         ControlDirectionStyle style = new ControlDirectionStyle(getName());
-        style.setStyleType(getStyleType());
-        style.setButtonStyle(getButtonStyle().clone());
-        style.setRockerStyle(getRockerStyle().clone());
+        style.setAll(this);
         return style;
     }
 
@@ -438,22 +446,29 @@ public class ControlDirectionStyle implements Cloneable, Observable {
             observableHelper.invalidate();
         }
 
+        /**
+         * Copy all properties from {@code other} to this style.
+         */
+        public void setAll(ButtonStyle other) {
+            setInterval(other.getInterval());
+            setTextColor(other.getTextColor());
+            setTextSize(other.getTextSize());
+            setStrokeColor(other.getStrokeColor());
+            setStrokeWidth(other.getStrokeWidth());
+            setCornerRadius(other.getCornerRadius());
+            setFillColor(other.getFillColor());
+            setTextColorPressed(other.getTextColorPressed());
+            setTextSizePressed(other.getTextSizePressed());
+            setStrokeColorPressed(other.getStrokeColorPressed());
+            setStrokeWidthPressed(other.getStrokeWidthPressed());
+            setCornerRadiusPressed(other.getCornerRadiusPressed());
+            setFillColorPressed(other.getFillColorPressed());
+        }
+
         @Override
         public ButtonStyle clone() {
             ButtonStyle style = new ButtonStyle();
-            style.setInterval(getInterval());
-            style.setTextColor(getTextColor());
-            style.setTextSize(getTextSize());
-            style.setStrokeColor(getStrokeColor());
-            style.setStrokeWidth(getStrokeWidth());
-            style.setCornerRadius(getCornerRadius());
-            style.setFillColor(getFillColor());
-            style.setTextColorPressed(getTextColorPressed());
-            style.setTextSizePressed(getTextSizePressed());
-            style.setStrokeColorPressed(getStrokeColorPressed());
-            style.setStrokeWidthPressed(getStrokeWidthPressed());
-            style.setCornerRadiusPressed(getCornerRadiusPressed());
-            style.setFillColorPressed(getFillColorPressed());
+            style.setAll(this);
             return style;
         }
 
@@ -701,18 +716,25 @@ public class ControlDirectionStyle implements Cloneable, Observable {
             observableHelper.invalidate();
         }
 
+        /**
+         * Copy all properties from {@code other} to this style.
+         */
+        public void setAll(RockerStyle other) {
+            setRockerSize(other.getRockerSize());
+            setBgCornerRadius(other.getBgCornerRadius());
+            setBgStrokeColor(other.getBgStrokeColor());
+            setBgStrokeWidth(other.getBgStrokeWidth());
+            setBgFillColor(other.getBgFillColor());
+            setRockerCornerRadius(other.getRockerCornerRadius());
+            setRockerStrokeColor(other.getRockerStrokeColor());
+            setRockerStrokeWidth(other.getRockerStrokeWidth());
+            setRockerFillColor(other.getRockerFillColor());
+        }
+
         @Override
         public RockerStyle clone() {
             RockerStyle style = new RockerStyle();
-            style.setRockerSize(getRockerSize());
-            style.setBgCornerRadius(getBgCornerRadius());
-            style.setBgStrokeWidth(getBgStrokeWidth());
-            style.setBgStrokeColor(getBgStrokeColor());
-            style.setBgFillColor(getBgFillColor());
-            style.setRockerCornerRadius(getRockerCornerRadius());
-            style.setRockerStrokeWidth(getRockerStrokeWidth());
-            style.setRockerStrokeColor(getRockerStrokeColor());
-            style.setRockerFillColor(getRockerFillColor());
+            style.setAll(this);
             return style;
         }
 
