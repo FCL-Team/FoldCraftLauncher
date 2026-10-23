@@ -27,11 +27,11 @@ class SpinJumpAnimation : PlayerAnimation() {
         player.leftArm.rotationZ = ARM_OUT
         player.rightArm.rotationZ = -ARM_OUT
 
-        // Q 弹形变：0.45s 一个压弹周期，触地压扁（Y 压、XZ 鼓），弹起时拉伸回原
+        // Q 弹形变：0.45s 一个压弹周期，触地狠压且横向大幅拉宽，弹起时纵向拉伸、横向恢复原状
         val t = progress * PI / 0.45f
         val bounce = abs(sin(t))
-        player.rootScaleY = 0.82f + bounce * 0.26f
-        player.rootScaleXZ = 1.12f - bounce * 0.17f
+        player.rootScaleY = 0.68f + bounce * 0.44f
+        player.rootScaleXZ = 1.30f - bounce * 0.30f
     }
 
     companion object {
