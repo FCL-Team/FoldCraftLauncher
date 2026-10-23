@@ -22,7 +22,9 @@ import com.tungsten.fcllibrary.component.view.FCLImageButton;
 import com.tungsten.fcllibrary.component.view.FCLRadioButton;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DirectionStyleAdapter extends FCLAdapter {
 
@@ -39,10 +41,18 @@ public class DirectionStyleAdapter extends FCLAdapter {
         }
     }
 
+    /**
+     * 来源筛选值：null = 全部；{@link #FILTER_LOCAL} = 仅本布局样式；其他值 = 对应来源布局名。
+     */
+    public static final String FILTER_LOCAL = "";
+
     private final Controller controller;
-    private final List<Entry> entries;
+    private final List<Entry> allEntries;
+    private final List<Entry> entries = new ArrayList<>();
     private final boolean select;
     private final Runnable onStyleRemoved;
+    private final Consumer<ControlDirectionStyle> onStyleEdit;
+    private String filter;
 
     private final ObjectProperty<ControlDirectionStyle> selectedStyle = new SimpleObjectProperty<>(this, "style", null);
 
@@ -59,7 +69,7 @@ public class DirectionStyleAdapter extends FCLAdapter {
     }
 
     public DirectionStyleAdapter.Entry getSelectedEntry() {
-        for (DirectionStyleAdapter.Entry entry : entries) {
+        for (DirectionStyleAdapter.Entry entry : allEntries) {
             if (entry.style == selectedStyle.get()) {
                 return entry;
             }
@@ -67,12 +77,18 @@ public class DirectionStyleAdapter extends FCLAdapter {
         return null;
     }
 
-    public DirectionStyleAdapter(Context context, Controller controller, List<Entry> entries, boolean select, ControlDirectionStyle initStyle, Runnable onStyleRemoved) {
+    public List<Entry> getEntries() {
+        return allEntries;
+    }
+
+    public DirectionStyleAdapter(Context context, Controller controller, List<Entry> entries, boolean select, ControlDirectionStyle initStyle, Runnable onStyleRemoved, Consumer<ControlDirectionStyle> onStyleEdit) {
         super(context);
         this.controller = controller;
-        this.entries = entries;
+        this.allEntries = entries;
         this.select = select;
         this.onStyleRemoved = onStyleRemoved;
+        this.onStyleEdit = onStyleEdit;
+        this.entries.addAll(entries);
 
         ControlDirectionStyle initial = null;
         if (initStyle != null) {
@@ -97,6 +113,22 @@ public class DirectionStyleAdapter extends FCLAdapter {
         selectedStyle.set(initial);
     }
 
+    /**
+     * 按来源筛选（null = 全部），立即刷新列表；选中项不受筛选影响。
+     */
+    public void setFilter(String filter) {
+        this.filter = filter;
+        entries.clear();
+        for (Entry entry : allEntries) {
+            if (filter == null
+                    || (FILTER_LOCAL.equals(filter) && entry.sourceName == null)
+                    || (filter.equals(entry.sourceName))) {
+                entries.add(entry);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     public int indexOfLocal(String name) {
         for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).sourceName == null && entries.get(i).style.getName().equals(name)) {
@@ -110,6 +142,7 @@ public class DirectionStyleAdapter extends FCLAdapter {
         ControlDirection direction;
         FCLTextView name;
         FCLRadioButton radioButton;
+        FCLImageButton edit;
         FCLImageButton delete;
     }
 
@@ -150,6 +183,7 @@ public class DirectionStyleAdapter extends FCLAdapter {
             viewHolder.direction = view.findViewById(R.id.direction);
             viewHolder.name = view.findViewById(R.id.name);
             viewHolder.radioButton = view.findViewById(R.id.radio_button);
+            viewHolder.edit = view.findViewById(R.id.edit);
             viewHolder.delete = view.findViewById(R.id.delete);
             view.setTag(viewHolder);
         } else {
@@ -178,6 +212,18 @@ public class DirectionStyleAdapter extends FCLAdapter {
         viewHolder.radioButton.checkProperty().unbind();
         viewHolder.radioButton.checkProperty().bind(Bindings.createBooleanBinding(() -> selectedStyle.get() == style, selectedStyle));
         viewHolder.radioButton.setOnClickListener(view1 -> selectedStyle.set(style));
+        if (entry.sourceName == null) {
+            // 本布局样式：条目上直接编辑；其他布局的样式归其布局管理，此处只可导入
+            viewHolder.edit.setVisibility(View.VISIBLE);
+            viewHolder.edit.setOnClickListener(view1 -> {
+                if (onStyleEdit != null) {
+                    onStyleEdit.accept(style);
+                }
+            });
+        } else {
+            viewHolder.edit.setVisibility(View.GONE);
+            viewHolder.edit.setOnClickListener(null);
+        }
         if (entry.sourceName == null && !select) {
             viewHolder.delete.setOnClickListener(view1 -> {
                 controller.ensureAllLoaded();

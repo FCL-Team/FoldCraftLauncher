@@ -16,6 +16,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <com.tungsten.fcllibrary.component.view.FCLSpinner
+        android:id="@+id/filter_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
@@ -26,7 +36,7 @@
         android:dividerHeight="5dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/positive"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintTop_toBottomOf="@+id/filter_spinner" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/add_style"
@@ -35,15 +45,6 @@
         android:text="@string/menu_control_style_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <com.tungsten.fcllibrary.component.view.FCLButton
-        android:id="@+id/edit_style"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:text="@string/menu_control_style_edit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/add_style" />
 
     <com.tungsten.fcllibrary.component.view.FCLButton
         android:id="@+id/positive"
