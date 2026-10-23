@@ -13,7 +13,6 @@ import com.google.gson.reflect.TypeToken;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.terracotta.profile.ProfileKind;
 import com.mio.util.AndroidUtilKt;
-import com.tungsten.fcl.util.RegionUtils;
 import com.tungsten.fcl.util.RequestCodes;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyObjectProperty;
@@ -71,12 +70,6 @@ public class Terracotta {
     public static void initialize(FCLActivity context) {
         if (initialized)
             return;
-
-        // 根据相关法律法规，中国大陆地区不提供陶瓦联机服务（界面入口已隐藏，此处兜底，不加载联机核心）
-        if (RegionUtils.isChinaMainlandNetwork()) {
-            Logging.LOG.log(Level.WARNING, "Terracotta is unavailable in Chinese Mainland");
-            return;
-        }
 
         notificationListener = observable -> {
             TerracottaState.Ready state = stateProperty().get();

@@ -29,7 +29,6 @@ import com.tungsten.fcl.fragment.RuntimeFragment
 import com.tungsten.fcl.setting.ConfigHolder
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.util.LegalAgreement
-import com.tungsten.fcl.util.RegionUtils
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.util.Logging
@@ -128,8 +127,6 @@ class SplashActivity : FCLActivity() {
             async(Dispatchers.IO) {
                 FCLPath.loadPaths(this@SplashActivity)
                 Logging.start(Paths.get(FCLPath.LOG_DIR))
-                // 已同意用户协议与隐私政策：尽早发起网络地区检测（仅中国大陆设备联网），供下载、联机页面使用
-                RegionUtils.init()
                 initState()
             }.await()
             if (lwjgl && cacio && cacio17 && java8 && java17 && java21 && java25 && jna) {

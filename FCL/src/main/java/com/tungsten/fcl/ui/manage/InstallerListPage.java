@@ -18,7 +18,6 @@ import com.tungsten.fcl.ui.InstallerItem;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.mio.util.AndroidUtilKt;
-import com.tungsten.fcl.util.RegionUtils;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
@@ -109,11 +108,6 @@ public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadab
                 installerItem.upgradable.set(libraryConfigurable);
                 installerItem.installable.set(true);
                 installerItem.action.set(() -> {
-                    // 根据相关法律法规，中国大陆地区暂不提供游戏相关内容下载（与下载页一致）
-                    if (RegionUtils.isChinaMainlandNetwork()) {
-                        showDownloadRestrictedDialog();
-                        return;
-                    }
                     com.tungsten.fcl.ui.download.version.InstallerListPage page = new com.tungsten.fcl.ui.download.version.InstallerListPage(getContext(), FCLPage.PAGE_ID_TEMP, gameVersion, libraryId, remoteVersion -> {
                         if (libraryVersion == null) {
                             finish(profile, remoteVersion);
@@ -139,15 +133,6 @@ public class InstallerListPage extends FCLPage implements ManageUI.VersionLoadab
                 addView(installerItem);
             }
         }, Schedulers.androidUIThread());
-    }
-
-    private void showDownloadRestrictedDialog() {
-        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
-        builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
-        builder.setMessage(getContext().getString(R.string.download_china));
-        builder.setPositiveButton(getContext().getString(R.string.download_china_official_site), () -> AndroidUtilKt.openLink(getContext(), RegionUtils.CHINA_EDITION_URL));
-        builder.setNegativeButton(null);
-        builder.create().show();
     }
 
     public void installOffline() {

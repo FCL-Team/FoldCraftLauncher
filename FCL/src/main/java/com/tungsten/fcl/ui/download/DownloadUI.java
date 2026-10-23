@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.download;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -10,13 +9,11 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.tabs.TabLayout;
 import com.mio.data.FavoriteManager;
-import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.ui.download.common.DownloadPage;
 import com.tungsten.fcl.ui.download.common.RemoteModInfoPage;
 import com.tungsten.fcl.ui.download.favorite.FavoritePage;
 import com.tungsten.fcl.ui.download.version.VersionInstallPage;
-import com.tungsten.fcl.util.RegionUtils;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLCommonUI;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
@@ -28,7 +25,6 @@ import java.util.ArrayList;
 /**
  * 下载 UI：游戏安装页与 5 个下载模式（Mod/整合包/资源包/世界/光影）共享一个
  * DownloadPage 实例，tab 切换只更新数据源与恢复状态，不重复创建页面。
- * 中国大陆地区（{@link RegionUtils} 网络地区判定）按相关法律法规隐藏页签与全部下载页面，仅显示受限提示。
  */
 public class DownloadUI extends FCLCommonUI {
 
@@ -46,10 +42,6 @@ public class DownloadUI extends FCLCommonUI {
     public FCLUILayout container;
 
     private FrameLayout contentContainer;
-    /** 页面层：游戏安装页 + 共享下载页 + 收藏页，地区受限时整体隐藏 */
-    private FrameLayout pageContainer;
-    /** 中国大陆地区下载受限提示，与页面层同处内容层（临时页打开时随内容层一起隐藏） */
-    private View regionNotice;
     private FrameLayout overlay;
 
     private VersionInstallPage versionInstallPage;
@@ -83,23 +75,18 @@ public class DownloadUI extends FCLCommonUI {
             }
         });
 
-        // 内容层：页面层（游戏安装页 + 共享下载页 + 收藏页）+ 中国大陆地区下载受限提示
+        // 内容层：游戏安装页 + 共享下载页 + 收藏页
         contentContainer = new FrameLayout(getContext());
         container.addView(contentContainer, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-        pageContainer = new FrameLayout(getContext());
-        contentContainer.addView(pageContainer, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         FavoriteManager.init(getContext());
         versionInstallPage = new VersionInstallPage(getContext(), PAGE_ID_DOWNLOAD_GAME);
         downloadPage = new DownloadPage(getContext());
         favoritePage = new FavoritePage(getContext(), PAGE_ID_DOWNLOAD_FAVORITE, downloadPage);
-        pageContainer.addView(versionInstallPage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-        pageContainer.addView(downloadPage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-        pageContainer.addView(favoritePage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        contentContainer.addView(versionInstallPage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        contentContainer.addView(downloadPage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        contentContainer.addView(favoritePage.getContentView(), new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         downloadPage.getContentView().setVisibility(View.GONE);
         favoritePage.getContentView().setVisibility(View.GONE);
-        regionNotice = LayoutInflater.from(getContext()).inflate(R.layout.view_download_region_notice, contentContainer, false);
-        regionNotice.findViewById(R.id.official_site).setOnClickListener(v -> AndroidUtilKt.openLink(getContext(), RegionUtils.CHINA_EDITION_URL));
-        contentContainer.addView(regionNotice);
 
         // 临时页覆盖层
         overlay = new FrameLayout(getContext());
@@ -124,19 +111,6 @@ public class DownloadUI extends FCLCommonUI {
 
             }
         });
-
-        // 根据相关法律法规，中国大陆地区暂不提供游戏相关内容下载（参考 HMCL-dev/HMCL#7017）
-        RegionUtils.observeChinaMainlandNetwork(this::applyRegionRestriction);
-    }
-
-    /**
-     * 地区受限时隐藏页签与页面层，只显示受限提示；网络地区检测完成且判定不受限时恢复。
-     * 临时页覆盖层不受影响（本地整合包导入等，与 HMCL 一致），模组详情页的外部入口由 DownloadPage 拦截
-     */
-    private void applyRegionRestriction(boolean restricted) {
-        tabLayout.setVisibility(restricted ? View.GONE : View.VISIBLE);
-        pageContainer.setVisibility(restricted ? View.GONE : View.VISIBLE);
-        regionNotice.setVisibility(restricted ? View.VISIBLE : View.GONE);
     }
 
     private void switchTab(int position) {

@@ -19,7 +19,6 @@ import com.tungsten.fcl.databinding.ItemMenuSpinnerBinding
 import com.tungsten.fcl.databinding.ItemMenuSwitchBinding
 import com.tungsten.fcl.game.sdl.SdlSettings
 import com.tungsten.fcl.setting.MenuSetting
-import com.tungsten.fcl.util.RegionUtils
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
 import com.tungsten.fcllibrary.component.view.FCLSpinner
@@ -113,10 +112,9 @@ class RightMenuAdapter(
     private val screenWidth = getScreenWidth()
     private val screenHeight = getScreenHeight()
     private val density = context.resources.displayMetrics.density
-    // 根据相关法律法规，中国大陆地区不提供陶瓦联机服务，不显示联机菜单入口
     private val multiplayerEnabled =
         context.getSharedPreferences("third_party", Context.MODE_PRIVATE)
-            .getBoolean("terracotta", false) && !RegionUtils.isChinaMainlandNetwork()
+            .getBoolean("terracotta", false)
 
     private val typeSwitch = 1
     private val typeButton = 2

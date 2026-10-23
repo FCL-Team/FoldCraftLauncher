@@ -1,7 +1,7 @@
 Fold Craft Launcher Privacy Policy
 
-Version: 1
-Last updated: October 20, 2026
+Version: 2
+Last updated: October 23, 2026
 
 Fold Craft Launcher ("FCL") is an open-source launcher for Minecraft: Java Edition developed by FCL-Team. We care about your privacy. This policy explains what information FCL processes, why it does so, where the information is sent, and how you can manage it. Please read it carefully before using FCL.
 
@@ -32,8 +32,8 @@ When you use the following features, your device connects directly to the corres
 5) Skins: when displaying, uploading or changing skins, FCL connects to the Mojang skin service or the external authentication server you use. Skins of offline accounts are processed only on your device.
 6) Control layout repository: when browsing and downloading control layouts, FCL connects to GitHub or the mirror repo.miawa.cn.
 7) Log upload: only when you choose to upload a log does FCL upload the selected log to mclo.gs (logshare.cn when the interface language is Chinese) and generate a link. Anyone with the link can view the log. Before uploading, FCL hides game access tokens in the log, but the log may still contain the information listed in item 4) of section 2.
-8) Terracotta multiplayer: used only when you enable multiplayer and create or join a room in the game. FCL fetches the Terracotta node list and builds a virtual network through EasyTier. During a session, your device exchanges the information needed to establish connections, such as network addresses, with Terracotta nodes, EasyTier public nodes and the devices of other players in the same room, and other players in the room can see your player name. Due to relevant laws and regulations, FCL does not provide the Terracotta multiplayer service in Chinese Mainland.
-9) Region detection: FCL first uses the time zone and system region of your device to determine whether the device may be in Chinese Mainland. Only if it appears to be, FCL queries ipwho.is (provided by ipwhois.io) once after each start for the country or region of your public IP address, to decide whether some features must be restricted under local laws and regulations. The service receives your IP address. The result is kept only in memory and discarded when FCL exits.
+8) Terracotta multiplayer: used only when you enable multiplayer and create or join a room in the game. FCL fetches the Terracotta node list and builds a virtual network through EasyTier. During a session, your device exchanges the information needed to establish connections, such as network addresses, with Terracotta nodes, EasyTier public nodes and the devices of other players in the same room, and other players in the room can see your player name.
+9) Region detection: FCL determines whether the device may be in Chinese Mainland using only the time zone and system region of your device, for example to prefer a nearby download mirror. This judgment runs entirely on your device: FCL does not query your IP address or any network service for it.
 10) Game networking: while running, the game and its mods connect to the internet on their own, for example to the servers you join; FCL does not control this. So that the game can resolve domain names, FCL configures the system DNS and public DNS for the game: AliDNS and DNSPod when the system language is Simplified Chinese (China), and Cloudflare otherwise. Domain names that the game resolves are sent to these DNS services.
 11) External links and promotions: links to documentation, communities, sponsorship, MC百科 (mcmod.cn), cloud drives and similar pages open in a browser or the corresponding app only after you tap them. Users whose device region is Chinese Mainland and who use the Chinese interface may occasionally see a promotion for Quark Cloud Drive before launching the game. FCL does not share your information with any third party for this.
 

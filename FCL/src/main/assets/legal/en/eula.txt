@@ -1,7 +1,7 @@
 Fold Craft Launcher User Agreement
 
-Version: 1
-Last updated: October 20, 2026
+Version: 2
+Last updated: October 23, 2026
 
 Welcome to Fold Craft Launcher ("FCL"), a free and open-source launcher for Minecraft: Java Edition developed by FCL-Team. Please read this agreement and the Privacy Policy carefully before using FCL. By tapping "Agree and Continue", you confirm that you have read, understood and agreed to this agreement and the Privacy Policy in full. If you do not agree, do not use FCL.
 
@@ -18,12 +18,10 @@ https://github.com/FCL-Team/FoldCraftLauncher
 2) Minecraft is a trademark of Mojang Synergies AB. Rights to the Minecraft game and related content belong to their respective owners. FCL does not provide or sell licenses for Minecraft.
 3) When playing Minecraft, you must comply with the Minecraft End User License Agreement and related terms, and obtain the game through legitimate channels.
 
-3. Regional restrictions
+3. Regional features
 
 1) Some features may be unavailable due to the laws and regulations of your country or region.
-2) Due to relevant laws and regulations, FCL does not currently provide downloads of game-related content or the Terracotta multiplayer service in Chinese Mainland. Users in Chinese Mainland can download Minecraft China Edition from the official Minecraft website:
-https://mc.163.com/
-3) FCL decides whether these restrictions apply based on your device's time zone, system region and network location, as described in the Privacy Policy.
+2) FCL determines the device region using only the device's time zone and system region, for example to prefer a nearby download mirror. This judgment runs entirely on your device and does not query your network location, as described in the Privacy Policy.
 
 4. Acceptable use
 

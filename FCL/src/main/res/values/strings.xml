@@ -373,8 +373,6 @@
     <string name="datapack_add">Install datapack</string>
     <string name="datapack_choose_datapack">Select a datapack to import</string>
 
-    <string name="download_china">Due to relevant laws and regulations, FCL does not currently support downloading game-related content in Chinese Mainland. Please visit the official Minecraft website to download Minecraft China Edition.</string>
-    <string name="download_china_official_site">Visit the Official Minecraft Website</string>
     <string name="download_code_404">File not found on the remote server: %s</string>
     <string name="download_failed">Failed to download %1$s, response code: %2$d</string>
     <string name="download_failed_empty">No versions are available</string>
@@ -1259,7 +1257,6 @@
     <string name="terracotta_export_log_share">Share Multiplayer Core log</string>
     <string name="terracotta_export_log_share_null">No log found, please export the Multiplayer Core log first</string>
     <string name="terracotta_status_uninitialized_desc">You legally promise to strictly abide by all laws and regulations of your country or region during the multiplayer process.</string>
-    <string name="terracotta_china">Due to relevant laws and regulations, FCL does not currently provide the Terracotta multiplayer service in Chinese Mainland.</string>
     <string name="terracotta_confirm">User Notice\n\nTerracotta is a third-party open source free software. Please provide feedback on any issues you encounter through the relevant channels during use.\nTerracotta uses P2P technology. After a successful connection, users in the room will connect directly to each other, and no third-party server will relay your traffic. The final multiplayer experience largely depends on the network conditions of the participants.\nDuring the entire multiplayer process, you must strictly comply with all laws and regulations of your country and region.</string>
     <string name="terracotta_menu">Multiplayer Menu</string>
     <string name="terracotta_menu_open">Open</string>

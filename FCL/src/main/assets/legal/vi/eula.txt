@@ -1,7 +1,7 @@
 Thỏa thuận người dùng Fold Craft Launcher
 
-Phiên bản: 1
-Cập nhật lần cuối: ngày 20 tháng 10 năm 2026
+Phiên bản: 2
+Cập nhật lần cuối: ngày 23 tháng 10 năm 2026
 
 Chào mừng bạn đến với Fold Craft Launcher ("FCL"), một trình khởi chạy miễn phí và mã nguồn mở dành cho Minecraft: Java Edition do FCL-Team phát triển. Vui lòng đọc kỹ thỏa thuận này và Chính sách quyền riêng tư trước khi sử dụng FCL. Khi nhấn "Đồng ý và tiếp tục", bạn xác nhận rằng mình đã đọc, hiểu và đồng ý toàn bộ thỏa thuận này cùng Chính sách quyền riêng tư. Nếu không đồng ý, vui lòng không sử dụng FCL.
 
@@ -18,12 +18,10 @@ https://github.com/FCL-Team/FoldCraftLauncher
 2) Minecraft là nhãn hiệu của Mojang Synergies AB. Quyền đối với trò chơi Minecraft và các nội dung liên quan thuộc về chủ sở hữu tương ứng. FCL không cung cấp hay bán giấy phép Minecraft.
 3) Khi chơi Minecraft, bạn phải tuân thủ Thỏa thuận cấp phép người dùng cuối của Minecraft và các điều khoản liên quan, đồng thời có được trò chơi qua kênh hợp pháp.
 
-3. Hạn chế theo khu vực
+3. Tính năng theo khu vực
 
 1) Một số tính năng có thể không khả dụng do luật pháp và quy định của quốc gia hoặc khu vực của bạn.
-2) Theo luật pháp và quy định liên quan, FCL hiện không cung cấp tính năng tải xuống nội dung liên quan đến trò chơi và dịch vụ nhiều người chơi Terracotta tại Trung Quốc đại lục. Người dùng tại Trung Quốc đại lục có thể tải Minecraft China Edition từ trang web chính thức của Minecraft:
-https://mc.163.com/
-3) FCL quyết định có áp dụng các hạn chế này hay không dựa trên múi giờ, khu vực hệ thống và vị trí mạng của thiết bị, như được mô tả trong Chính sách quyền riêng tư.
+2) FCL xác định khu vực của thiết bị chỉ dựa vào múi giờ và khu vực hệ thống của thiết bị, ví dụ để ưu tiên máy chủ tải xuống gần hơn. Việc đánh giá này hoàn toàn thực hiện trên thiết bị của bạn và không truy vấn vị trí mạng của bạn, như được mô tả trong Chính sách quyền riêng tư.
 
 4. Sử dụng hợp lệ
 

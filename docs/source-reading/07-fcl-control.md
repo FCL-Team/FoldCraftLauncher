@@ -51,6 +51,6 @@
 2. TouchCharInput 优先走 SDL 输入框（SdlBridge.isSdlRenderActive 时切 SDLActivity.enableSDLEditKeyboard），否则本地 IME；静态 sActiveInput 供 SDL 侧统一关闭。
 3. 一处明显笔误：GameMenu.initCursorView 中 Y 偏移用了 `setOffsetY(menuSetting.getMouseOffsetX())`（X 写到 Y）。
 4. ButtonEventData 的 "Movable" 大写键名、ControlDirectionData.equals 参数类型错写成 ControlButtonData（无害但易踩）。
-5. MultiplayerDialog 是 Terracotta/EasyTier 联机的状态机 UI（仅当 third_party 中 terracotta 开关打开且网络地区不在中国大陆时右菜单才显示入口）；download 包三类只服务于在线布局下载页。
+5. MultiplayerDialog 是 Terracotta/EasyTier 联机的状态机 UI（仅当 third_party 中 terracotta 开关打开时右菜单才显示入口）；download 包三类只服务于在线布局下载页。
 6. LogWindow 有 200 条/200ms 熔断自动关闭防日志刷屏卡顿；fps/memory 各自独立线程每秒采样。
 7. LeftMenuAdapter/RightMenuAdapter 的 SeekBar 行复用前必须摘旧监听（setMax/setMin 会触发旧回调把数值写错行）——代码注释明确记录了这个坑。

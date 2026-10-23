@@ -24,7 +24,7 @@ import java.io.InputStream;
 public final class LegalAgreement {
 
     /** 当前协议版本，需与 assets/legal 下各文档开头标注的版本号一致 */
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     private static final String PREFERENCES = "launcher";
     private static final String KEY_ACCEPTED_VERSION = "legal_agreement_version";

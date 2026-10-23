@@ -1,7 +1,7 @@
 Nutzungsvereinbarung für Fold Craft Launcher
 
-Version: 1
-Zuletzt aktualisiert: 20. Oktober 2026
+Version: 2
+Zuletzt aktualisiert: 23. Oktober 2026
 
 Willkommen bei Fold Craft Launcher („FCL“), einem kostenlosen Open-Source-Launcher für Minecraft: Java Edition, der von FCL-Team entwickelt wird. Bitte lesen Sie diese Vereinbarung und die Datenschutzerklärung sorgfältig, bevor Sie FCL verwenden. Durch Tippen auf „Zustimmen und fortfahren“ bestätigen Sie, dass Sie diese Vereinbarung und die Datenschutzerklärung vollständig gelesen und verstanden haben und ihnen zustimmen. Wenn Sie nicht zustimmen, verwenden Sie FCL nicht.
 
@@ -18,12 +18,10 @@ https://github.com/FCL-Team/FoldCraftLauncher
 2) Minecraft ist eine Marke von Mojang Synergies AB. Die Rechte am Spiel Minecraft und an zugehörigen Inhalten liegen bei den jeweiligen Rechteinhabern. FCL stellt keine Lizenzen für Minecraft bereit und verkauft keine.
 3) Wenn Sie Minecraft spielen, müssen Sie den Endbenutzer-Lizenzvertrag von Minecraft und die zugehörigen Bedingungen einhalten und das Spiel auf legalem Weg erwerben.
 
-3. Regionale Einschränkungen
+3. Regionale Funktionen
 
 1) Einige Funktionen können aufgrund der Gesetze und Vorschriften Ihres Landes oder Ihrer Region nicht verfügbar sein.
-2) Aufgrund einschlägiger Gesetze und Vorschriften bietet FCL in Festlandchina derzeit keine Downloads von Spielinhalten und keinen Terracotta-Mehrspielerdienst an. Nutzer in Festlandchina können Minecraft China Edition auf der offiziellen Minecraft-Website herunterladen:
-https://mc.163.com/
-3) FCL entscheidet anhand der Zeitzone, der Systemregion und des Netzwerkstandorts Ihres Geräts, ob diese Einschränkungen gelten, wie in der Datenschutzerklärung beschrieben.
+2) FCL bestimmt die Geräteregion allein anhand der Zeitzone und der Systemregion des Geräts, etwa um bevorzugt einen nahen Download-Spiegel zu wählen. Diese Prüfung erfolgt vollständig auf Ihrem Gerät und fragt Ihren Netzwerkstandort nicht ab, wie in der Datenschutzerklärung beschrieben.
 
 4. Zulässige Nutzung
 

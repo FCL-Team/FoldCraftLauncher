@@ -17,7 +17,6 @@ import androidx.core.content.FileProvider;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.terracotta.Terracotta;
-import com.tungsten.fcl.util.RegionUtils;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.Task;
@@ -45,7 +44,6 @@ public class MultiplayerUI extends FCLCommonUI implements View.OnClickListener, 
     private FCLSwitch switchMultiplayer;
     private LinearLayoutCompat extraLayout;
     private FCLButton shareLog;
-    private View regionNotice;
 
     public MultiplayerUI(Context context, int id) {
         super(context, id);
@@ -87,23 +85,6 @@ public class MultiplayerUI extends FCLCommonUI implements View.OnClickListener, 
         shareLog = findViewById(R.id.export_log);
         extraLayout.setVisibility(switchMultiplayer.isChecked() ? View.VISIBLE : View.GONE);
         shareLog.setOnClickListener(this);
-
-        // 根据相关法律法规，中国大陆地区不提供陶瓦联机服务
-        regionNotice = findViewById(R.id.region_notice);
-        RegionUtils.observeChinaMainlandNetwork(this::applyRegionRestriction);
-    }
-
-    /**
-     * 地区受限时显示提示并禁用联机开关；只改显示状态，不改写已保存的开关偏好
-     */
-    private void applyRegionRestriction(boolean restricted) {
-        regionNotice.setVisibility(restricted ? View.VISIBLE : View.GONE);
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences("third_party", Context.MODE_PRIVATE);
-        switchMultiplayer.setOnCheckedChangeListener(null);
-        switchMultiplayer.setChecked(!restricted && sharedPreferences.getBoolean("terracotta", false));
-        switchMultiplayer.setOnCheckedChangeListener(this);
-        switchMultiplayer.setEnabled(!restricted);
-        extraLayout.setVisibility(switchMultiplayer.isChecked() ? View.VISIBLE : View.GONE);
     }
 
 

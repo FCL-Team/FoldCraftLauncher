@@ -1,7 +1,7 @@
 Chính sách quyền riêng tư Fold Craft Launcher
 
-Phiên bản: 1
-Cập nhật lần cuối: ngày 20 tháng 10 năm 2026
+Phiên bản: 2
+Cập nhật lần cuối: ngày 23 tháng 10 năm 2026
 
 Fold Craft Launcher ("FCL") là một trình khởi chạy mã nguồn mở dành cho Minecraft: Java Edition do FCL-Team phát triển. Chúng tôi coi trọng quyền riêng tư của bạn. Chính sách này giải thích FCL xử lý những thông tin nào, vì sao, thông tin được gửi đến đâu và bạn có thể quản lý chúng như thế nào. Vui lòng đọc kỹ trước khi sử dụng FCL.
 
@@ -32,8 +32,8 @@ Khi bạn sử dụng các tính năng dưới đây, thiết bị của bạn k
 5) Skin: khi hiển thị, tải lên hoặc thay đổi skin, FCL kết nối đến dịch vụ skin của Mojang hoặc máy chủ xác thực bên ngoài mà bạn sử dụng. Skin của tài khoản ngoại tuyến chỉ được xử lý trên thiết bị của bạn.
 6) Kho bố cục điều khiển: khi duyệt và tải bố cục điều khiển, FCL kết nối đến GitHub hoặc máy chủ gương repo.miawa.cn.
 7) Tải nhật ký lên: chỉ khi bạn chủ động chọn tải nhật ký lên, FCL mới tải nhật ký đã chọn lên mclo.gs (lên logshare.cn khi ngôn ngữ giao diện là tiếng Trung) và tạo một liên kết. Bất kỳ ai có liên kết đều có thể xem nhật ký. Trước khi tải lên, FCL ẩn các mã truy cập trò chơi trong nhật ký, nhưng nhật ký vẫn có thể chứa các thông tin được liệt kê ở mục 4) phần 2.
-8) Nhiều người chơi Terracotta: chỉ được sử dụng khi bạn bật chế độ nhiều người chơi và tạo hoặc tham gia một phòng trong trò chơi. FCL lấy danh sách nút Terracotta và xây dựng một mạng ảo thông qua EasyTier. Trong phiên chơi, thiết bị của bạn trao đổi các thông tin cần thiết để thiết lập kết nối, chẳng hạn như địa chỉ mạng, với các nút Terracotta, các nút công khai của EasyTier và thiết bị của những người chơi khác trong cùng phòng, và những người chơi khác trong phòng có thể thấy tên người chơi của bạn. Theo luật pháp và quy định liên quan, FCL không cung cấp dịch vụ nhiều người chơi Terracotta tại Trung Quốc đại lục.
-9) Phát hiện khu vực: trước tiên, FCL dựa vào múi giờ và khu vực hệ thống của thiết bị để xác định liệu thiết bị có thể đang ở Trung Quốc đại lục hay không. Chỉ khi có vẻ như vậy, sau mỗi lần khởi động FCL mới truy vấn ipwho.is (do ipwhois.io cung cấp) một lần để biết quốc gia hoặc khu vực của địa chỉ IP công khai của bạn, nhằm quyết định có cần hạn chế một số tính năng theo luật pháp địa phương hay không. Dịch vụ này nhận địa chỉ IP của bạn. Kết quả chỉ được giữ trong bộ nhớ và bị xóa khi FCL thoát.
+8) Nhiều người chơi Terracotta: chỉ được sử dụng khi bạn bật chế độ nhiều người chơi và tạo hoặc tham gia một phòng trong trò chơi. FCL lấy danh sách nút Terracotta và xây dựng một mạng ảo thông qua EasyTier. Trong phiên chơi, thiết bị của bạn trao đổi các thông tin cần thiết để thiết lập kết nối, chẳng hạn như địa chỉ mạng, với các nút Terracotta, các nút công khai của EasyTier và thiết bị của những người chơi khác trong cùng phòng, và những người chơi khác trong phòng có thể thấy tên người chơi của bạn.
+9) Phát hiện khu vực: FCL xác định liệu thiết bị có thể đang ở Trung Quốc đại lục hay không chỉ dựa vào múi giờ và khu vực hệ thống của thiết bị, ví dụ để ưu tiên máy chủ tải xuống gần hơn. Việc đánh giá này hoàn toàn thực hiện trên thiết bị của bạn: FCL không truy vấn địa chỉ IP của bạn hay bất kỳ dịch vụ mạng nào cho việc này.
 10) Kết nối mạng của trò chơi: khi chạy, trò chơi và các mod tự kết nối Internet, chẳng hạn như đến các máy chủ bạn tham gia; FCL không kiểm soát việc này. Để trò chơi có thể phân giải tên miền, FCL cấu hình cho trò chơi DNS hệ thống và DNS công cộng: AliDNS và DNSPod khi ngôn ngữ hệ thống là tiếng Trung giản thể (Trung Quốc), và Cloudflare trong các trường hợp khác. Các tên miền mà trò chơi phân giải sẽ được gửi đến các dịch vụ DNS này.
 11) Liên kết bên ngoài và quảng bá: các liên kết đến tài liệu, cộng đồng, trang tài trợ, MC百科 (mcmod.cn), dịch vụ lưu trữ đám mây và các trang tương tự chỉ được mở trong trình duyệt hoặc ứng dụng tương ứng sau khi bạn nhấn vào. Người dùng có khu vực thiết bị là Trung Quốc đại lục và sử dụng giao diện tiếng Trung đôi khi có thể thấy quảng bá Quark Cloud Drive trước khi khởi chạy trò chơi. FCL không vì thế mà chia sẻ thông tin của bạn với bất kỳ bên thứ ba nào.
 

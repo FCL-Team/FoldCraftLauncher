@@ -1,7 +1,7 @@
 Fold Craft Launcher Gizlilik Politikası
 
-Sürüm: 1
-Son güncelleme: 20 Ekim 2026
+Sürüm: 2
+Son güncelleme: 23 Ekim 2026
 
 Fold Craft Launcher ("FCL"), FCL-Team tarafından geliştirilen, Minecraft: Java Edition için açık kaynaklı bir başlatıcıdır. Gizliliğinize önem veriyoruz. Bu politika, FCL'nin hangi bilgileri işlediğini, bunu neden yaptığını, bilgilerin nereye gönderildiğini ve bunları nasıl yönetebileceğinizi açıklar. FCL'yi kullanmadan önce lütfen dikkatlice okuyun.
 
@@ -32,8 +32,8 @@ Aşağıdaki özellikleri kullandığınızda cihazınız ilgili hizmetlere doğ
 5) Görünümler: Görünümleri gösterirken, yüklerken veya değiştirirken FCL, Mojang'ın görünüm hizmetine veya kullandığınız harici kimlik doğrulama sunucusuna bağlanır. Çevrimdışı hesapların görünümleri yalnızca cihazınızda işlenir.
 6) Kontrol düzeni deposu: Kontrol düzenlerini incelerken ve indirirken FCL, GitHub'a veya repo.miawa.cn yansısına bağlanır.
 7) Günlük yükleme: Yalnızca siz bir günlüğü yüklemeyi seçtiğinizde FCL, seçilen günlüğü mclo.gs'ye (arayüz dili Çince olduğunda logshare.cn'ye) yükler ve bir bağlantı oluşturur. Bağlantıya sahip olan herkes günlüğü görüntüleyebilir. Yüklemeden önce FCL günlükteki oyun erişim belirteçlerini gizler; ancak günlük, 2. bölümün 4) maddesinde sayılan bilgileri yine de içerebilir.
-8) Terracotta çok oyunculu: Yalnızca çok oyunculu özelliği etkinleştirip oyunda bir oda oluşturduğunuzda veya bir odaya katıldığınızda kullanılır. FCL, Terracotta düğüm listesini alır ve EasyTier aracılığıyla sanal bir ağ kurar. Oturum sırasında cihazınız; Terracotta düğümleri, herkese açık EasyTier düğümleri ve aynı odadaki diğer oyuncuların cihazlarıyla ağ adresleri gibi bağlantı kurmak için gereken bilgileri paylaşır ve odadaki diğer oyuncular oyuncu adınızı görebilir. İlgili yasa ve düzenlemeler gereğince FCL, Çin anakarasında Terracotta çok oyunculu hizmetini sunmaz.
-9) Bölge tespiti: FCL önce cihazınızın saat dilimine ve sistem bölgesine bakarak cihazın Çin anakarasında olup olamayacağını belirler. Yalnızca öyle göründüğünde FCL, her açılıştan sonra bir kez, bazı özelliklerin yerel yasalara göre kısıtlanması gerekip gerekmediğine karar vermek için ipwho.is'ye (ipwhois.io tarafından sağlanır) genel IP adresinizin ülkesini veya bölgesini sorar. Bu hizmet IP adresinizi alır. Sonuç yalnızca bellekte tutulur ve FCL kapatıldığında silinir.
+8) Terracotta çok oyunculu: Yalnızca çok oyunculu özelliği etkinleştirip oyunda bir oda oluşturduğunuzda veya bir odaya katıldığınızda kullanılır. FCL, Terracotta düğüm listesini alır ve EasyTier aracılığıyla sanal bir ağ kurar. Oturum sırasında cihazınız; Terracotta düğümleri, herkese açık EasyTier düğümleri ve aynı odadaki diğer oyuncuların cihazlarıyla ağ adresleri gibi bağlantı kurmak için gereken bilgileri paylaşır ve odadaki diğer oyuncular oyuncu adınızı görebilir.
+9) Bölge tespiti: FCL, cihazın Çin anakarasında olup olamayacağını yalnızca cihazınızın saat dilimine ve sistem bölgesine bakarak belirler, örneğin daha yakın bir indirme yansısını tercih etmek için. Bu değerlendirme tamamen cihazınızda yapılır: FCL bunun için IP adresinizi veya herhangi bir ağ hizmetini sorgulamaz.
 10) Oyunun ağ bağlantıları: Oyun çalışırken oyun ve modlar, örneğin katıldığınız sunuculara bağlanmak için internete kendileri bağlanır; bu, FCL'nin denetiminde değildir. Oyunun alan adlarını çözümleyebilmesi için FCL, oyun için sistem DNS'ini ve genel DNS sunucularını yapılandırır: Sistem dili Basitleştirilmiş Çince (Çin) olduğunda AliDNS ve DNSPod, diğer durumlarda Cloudflare kullanılır. Oyunun çözümlediği alan adları bu DNS hizmetlerine gönderilir.
 11) Harici bağlantılar ve tanıtımlar: Belgelere, topluluklara, sponsorluk sayfalarına, MC百科'ya (mcmod.cn), bulut depolama hizmetlerine ve benzeri sayfalara giden bağlantılar yalnızca siz dokunduktan sonra tarayıcıda veya ilgili uygulamada açılır. Cihaz bölgesi Çin anakarası olan ve Çince arayüzü kullanan kullanıcılar, oyunu başlatmadan önce zaman zaman Quark Cloud Drive tanıtımı görebilir. FCL bu nedenle bilgilerinizi hiçbir üçüncü tarafla paylaşmaz.
 

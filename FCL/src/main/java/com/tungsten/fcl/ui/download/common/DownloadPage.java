@@ -27,7 +27,6 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.TranslationDialog;
 import com.tungsten.fcl.ui.version.Versions;
-import com.tungsten.fcl.util.RegionUtils;
 import com.mio.download.DownloadManager;
 import com.mio.data.ModsChanged;
 import com.mio.util.AndroidUtilKt;
@@ -1265,15 +1264,11 @@ public class DownloadPage extends FCLPage implements View.OnClickListener {
      * 调用前需确保页面模式与条目类别一致（见 switchType），保证下载回调落到正确目录
      */
     public void openModDetail(RemoteMod mod) {
-        // 中国大陆地区下载页只显示受限提示，外部入口不再打开详情（下载）页
-        if (RegionUtils.isChinaMainlandNetwork()) return;
         RemoteModInfoPage page = new RemoteModInfoPage(getContext(), FCLPage.PAGE_ID_TEMP, this, mod, callback);
         UIManager.getInstance().getDownloadUI().showTempPage(page);
     }
 
     public void jumpToModPage(RemoteMod mod) {
-        // 同上：从模组管理页跳转时只切到下载页显示受限提示
-        if (RegionUtils.isChinaMainlandNetwork()) return;
         String source = mod.getData() instanceof CurseAddon
                 ? getContext().getString(R.string.mods_curseforge)
                 : getContext().getString(R.string.mods_modrinth);

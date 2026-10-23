@@ -1,7 +1,7 @@
 Fold Craft Launcher Kullanıcı Sözleşmesi
 
-Sürüm: 1
-Son güncelleme: 20 Ekim 2026
+Sürüm: 2
+Son güncelleme: 23 Ekim 2026
 
 Fold Craft Launcher'a ("FCL") hoş geldiniz. FCL, FCL-Team tarafından geliştirilen, Minecraft: Java Edition için ücretsiz ve açık kaynaklı bir başlatıcıdır. FCL'yi kullanmadan önce bu sözleşmeyi ve Gizlilik Politikası'nı dikkatlice okuyun. "Kabul et ve devam et" düğmesine dokunarak bu sözleşmeyi ve Gizlilik Politikası'nı okuduğunuzu, anladığınızı ve tamamını kabul ettiğinizi onaylamış olursunuz. Kabul etmiyorsanız FCL'yi kullanmayın.
 
@@ -18,12 +18,10 @@ https://github.com/FCL-Team/FoldCraftLauncher
 2) Minecraft, Mojang Synergies AB'nin ticari markasıdır. Minecraft oyunu ve ilgili içerikler üzerindeki haklar ilgili hak sahiplerine aittir. FCL, Minecraft lisansı sağlamaz veya satmaz.
 3) Minecraft oynarken Minecraft Son Kullanıcı Lisans Sözleşmesi'ne ve ilgili koşullara uymalı, oyunu yasal yollarla edinmelisiniz.
 
-3. Bölgesel kısıtlamalar
+3. Bölgesel özellikler
 
 1) Bazı özellikler, ülkenizin veya bölgenizin yasa ve düzenlemeleri nedeniyle kullanılamayabilir.
-2) İlgili yasa ve düzenlemeler gereğince FCL, Çin anakarasında şu anda oyunla ilgili içerik indirme özelliğini ve Terracotta çok oyunculu hizmetini sunmamaktadır. Çin anakarasındaki kullanıcılar Minecraft China Edition'ı resmî Minecraft web sitesinden indirebilir:
-https://mc.163.com/
-3) FCL, Gizlilik Politikası'nda açıklandığı gibi, bu kısıtlamaların uygulanıp uygulanmayacağına cihazınızın saat dilimi, sistem bölgesi ve ağ konumuna göre karar verir.
+2) FCL, cihaz bölgesini yalnızca cihazın saat dilimine ve sistem bölgesine bakarak belirler, örneğin daha yakın bir indirme yansısını tercih etmek için. Bu değerlendirme tamamen cihazınızda yapılır ve ağ konumunuzu sorgulamaz, Gizlilik Politikası'nda açıklandığı gibi.
 
 4. Kabul edilebilir kullanım
 
