@@ -352,6 +352,18 @@ public class FCLauncher {
                     }
                 });
             }
+            // 运行时才能确定的路径类 env 补全：只补缺，不覆盖插件显式设置的值
+            if (!envMap.containsKey("MESA_GLSL_CACHE_DIR")) {
+                envMap.put("MESA_GLSL_CACHE_DIR", config.getContext().getCacheDir().getAbsolutePath());
+            }
+            if ("gallium_virgl".equals(envMap.get("POJAV_RENDERER")) && !envMap.containsKey("VTEST_SOCKET_NAME")) {
+                envMap.put("VTEST_SOCKET_NAME", new File(config.getContext().getCacheDir(), ".virgl_test").getAbsolutePath());
+            }
+            // 插件目录内带 virgl test server 时交给原生侧从该绝对路径加载（原生默认只在主 APK 目录找）
+            File vts = new File(rendererLibPath(renderer), "libvirgl_test_server.so");
+            if (vts.isFile()) {
+                envMap.put("VIRGL_TEST_SERVER", vts.getAbsolutePath());
+            }
             return;
         }
         if (renderer.isEqual(Renderer.ID_GL4ES) || renderer.isEqual(Renderer.ID_VGPU)) {

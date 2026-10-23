@@ -61,7 +61,13 @@ void loadSymbolsVirGL() {
 
     char *fileName = calloc(1, 1024);
 
-    sprintf(fileName, "%s/libvirgl_test_server.so", getenv("POJAV_NATIVEDIR"));
+    // 启动器为插件渲染器注入 VIRGL_TEST_SERVER（插件目录内绝对路径）；缺省时回落主 APK 目录
+    const char *vts = getenv("VIRGL_TEST_SERVER");
+    if (vts != NULL) {
+        snprintf(fileName, 1024, "%s", vts);
+    } else {
+        snprintf(fileName, 1024, "%s/libvirgl_test_server.so", getenv("POJAV_NATIVEDIR"));
+    }
     void *handle = dlopen(fileName, RTLD_LAZY);
     printf("VirGL: libvirgl_test_server = %p\n", handle);
     if (!handle) {
