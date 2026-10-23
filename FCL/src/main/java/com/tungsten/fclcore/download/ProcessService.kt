@@ -91,7 +91,16 @@ class ProcessService : Service() {
     private var exitCodeWritten = false
 
     fun startProcess(config: FCLConfig) {
-        val bridge = FCLauncher.launchAPIInstaller(config)
+        // launchAPIInstaller 抛出即进程内异常：不能任其顶出 onStartCommand 崩掉 :jvm，
+        // 否则连续两次安装尝试就会被 AMS 标记 bad process，后续启动直接被拒绝
+        val bridge = try {
+            FCLauncher.launchAPIInstaller(config)
+        } catch (e: Throwable) {
+            Logging.LOG.log(Level.WARNING, "Installer JVM failed to launch", e)
+            writeExitCode(-1)
+            Process.killProcess(Process.myPid())
+            return
+        }
         val callback: FCLBridgeCallback = object : FCLBridgeCallback {
             override fun onCursorModeChange(mode: Int) {
                 // Ignore

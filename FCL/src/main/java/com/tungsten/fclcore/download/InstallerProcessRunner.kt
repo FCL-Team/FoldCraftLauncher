@@ -48,6 +48,9 @@ object InstallerProcessRunner {
     /** 服务启动重试次数 */
     private const val START_RETRY_TIMES = 5
 
+    /** AMS 拒绝拉起进程时 SecurityException 消息里的标记：进程此前多次崩溃已被标记 bad */
+    private const val PROCESS_BAD_MARK = "process is bad"
+
     /** 进程级自动重试次数（首次正常运行之外）：超时后重启 :jvm 进程重跑同一命令 */
     private const val PROCESS_MAX_RETRIES = 1
 
@@ -318,6 +321,11 @@ object InstallerProcessRunner {
                 context.startForegroundService(intent)
                 return
             } catch (e: Throwable) {
+                // :jvm 被系统标记 bad 后几分钟内都会拒绝拉起，短暂重试必然失败，
+                // 直接以明确提示结束，提示用户等待或重启应用
+                if (e is SecurityException && e.message?.contains(PROCESS_BAD_MARK) == true) {
+                    throw IOException(context.getString(R.string.installer_process_bad_state), e)
+                }
                 lastError = e
                 if (i < START_RETRY_TIMES - 1) {
                     delay(500L)

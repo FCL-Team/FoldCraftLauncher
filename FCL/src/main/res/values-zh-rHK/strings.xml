@@ -454,6 +454,7 @@
     <string name="installer_recent_logs">最近日誌：</string>
     <string name="installer_process_retrying">安裝器進程超時，正在重試（%1$d/%2$d）…</string>
     <string name="installer_process_start_error">無法啟動安裝器進程</string>
+    <string name="installer_process_bad_state">安裝器進程多次崩潰，已被系統暫時禁止啟動，請稍候或重啟應用後重試</string>
     <string name="installer_process_no_exit_code">安裝器進程未返回退出碼，可能已經異常退出</string>
     <string name="installer_process_no_response">安裝器進程無回應，已強制結束</string>
     <string name="installer_process_failed_to_start">安裝器進程啟動失敗</string>

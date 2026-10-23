@@ -555,6 +555,7 @@
     <string name="installer_recent_logs">Recent logs:</string>
     <string name="installer_process_retrying">Installer process timed out, retrying (%1$d/%2$d)…</string>
     <string name="installer_process_start_error">Failed to start installer process</string>
+    <string name="installer_process_bad_state">The installer process has crashed repeatedly and is temporarily blocked by the system. Wait a moment or restart the app, then try again</string>
     <string name="installer_process_no_exit_code">Installer process did not return an exit code, it may have exited abnormally</string>
     <string name="installer_process_no_response">Installer process is not responding, forcibly terminated</string>
     <string name="installer_process_failed_to_start">Installer process failed to start</string>
