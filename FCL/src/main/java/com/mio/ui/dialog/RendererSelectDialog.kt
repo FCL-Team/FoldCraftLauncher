@@ -3,7 +3,9 @@ package com.mio.ui.dialog
 import android.content.Context
 import android.view.WindowManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.mio.data.Renderer
 import com.mio.manager.RendererManager
+import com.mio.plugin.RendererPlugin
 import com.mio.ui.adapter.RendererSelectItemAdapter
 import com.mio.ui.adapter.SpacingItemDecoration
 import com.mio.util.getScreenHeight
@@ -35,10 +37,20 @@ class RendererSelectDialog(
         setContentView(binding.root)
         binding.title.text = context.getString(R.string.settings_fcl_renderer)
         val currentId = currentRendererId()
+        // 齿轮图标：内置渲染器的可配置环境变量，复用插件页同款 RendererEnvDialog
+        val configCallback: (Renderer) -> Unit = { renderer ->
+            val specs = RendererPlugin.builtinEnvSpecs(context, renderer.id)
+            if (specs.isNotEmpty()) {
+                RendererEnvDialog(context, renderer.name, specs) { values ->
+                    RendererPlugin.updateBuiltinEnvConfigs(context, renderer.id, values)
+                }.show()
+            }
+        }
         val adapter = RendererSelectItemAdapter(
             context,
             RendererManager.rendererList,
-            currentId
+            currentId,
+            configCallback
         ) { renderer ->
             val versionSetting =
                 if (isGlobal) Profiles.getSelectedProfile().globalVersionSetting else Profiles.getSelectedProfile().versionSetting

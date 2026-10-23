@@ -6,6 +6,7 @@ import com.mio.data.Renderer
 import com.mio.datastore.appSettingsDataStore
 import com.mio.manager.RendererManager
 import com.tungsten.fcl.FCLApp
+import com.tungsten.fcl.R
 import com.tungsten.fclcore.util.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -227,23 +228,113 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
             v.value?.let { flat[key] = it }
             v.enabled?.let { flat[key + ENABLED_SUFFIX] = it.toString() }
         }
-        envPrefs = envPrefs.toMutableMap().apply { put(packageName, flat) }
+        storeEnvPrefs(context, packageName, flat)
+        val entry = v2Entries[packageName] ?: return
+        val renderer = buildV2Renderer(packageName, entry)
+        addRenderer(renderer)
+        RendererManager.replaceRenderer(renderer)
+    }
+
+    /** 更新内存缓存并异步落盘某键的扁平环境变量配置（插件与内置渲染器共用） */
+    private fun storeEnvPrefs(context: Context, key: String, flat: Map<String, String>) {
+        envPrefs = envPrefs.toMutableMap().apply { put(key, flat) }
         saveScope.launch {
             runCatching {
                 context.appSettingsDataStore.updateData { pref ->
                     pref.copy(plugin = pref.plugin.copy(
                         rendererEnvPrefs = pref.plugin.rendererEnvPrefs.toMutableMap()
-                            .apply { put(packageName, flat) }
+                            .apply { put(key, flat) }
                     ))
                 }
             }.onFailure { e ->
                 Logging.LOG.log(Level.SEVERE, "保存插件环境变量配置失败", e)
             }
         }
-        val entry = v2Entries[packageName] ?: return
-        val renderer = buildV2Renderer(packageName, entry)
-        addRenderer(renderer)
-        RendererManager.replaceRenderer(renderer)
+    }
+
+    // ---------- 内置渲染器配置（MobileGlues / SimpleFPEWrapper） ----------
+    // 内置渲染器没有插件包名，复用 envPrefs 存储并以 "builtin:" 前缀伪键区分；
+    // 配置入口为渲染器选择列表的齿轮图标，编辑用与插件页相同的 RendererEnvDialog
+
+    @JvmField
+    val BUILTIN_MOBILEGLUES_KEY = "builtin:mobileglues"
+
+    @JvmField
+    val BUILTIN_SFPEW_KEY = "builtin:sfpew"
+
+    private fun builtinKey(rendererId: String): String? = when (rendererId) {
+        Renderer.ID_MOBILEGLUES -> BUILTIN_MOBILEGLUES_KEY
+        Renderer.ID_SFPEW -> BUILTIN_SFPEW_KEY
+        else -> null
+    }
+
+    /** 内置渲染器是否提供可配置环境变量（渲染器列表齿轮图标的显隐依据） */
+    fun hasBuiltinEnvConfig(rendererId: String): Boolean = builtinKey(rendererId) != null
+
+    /** 内置渲染器的可配置环境变量列表（已应用用户配置的当前值） */
+    fun builtinEnvSpecs(context: Context, rendererId: String): List<EnvSpec> {
+        val key = builtinKey(rendererId) ?: return emptyList()
+        ensureInit()
+        val prefs = envPrefs[key].orEmpty()
+        return when (rendererId) {
+            Renderer.ID_MOBILEGLUES -> listOf(
+                EnvSpec(
+                    "MG_COUNT_LAUNCH",
+                    EnvType.TOGGLEABLE,
+                    context.getString(R.string.renderer_config_mg_count_launch),
+                    emptyList(),
+                    null,
+                    false,
+                    prefs["MG_COUNT_LAUNCH$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: true,
+                    "1"
+                ),
+                EnvSpec(
+                    "MG_DIR_PATH",
+                    EnvType.CUSTOMIZABLE,
+                    context.getString(R.string.renderer_config_mg_dir_path),
+                    emptyList(),
+                    "",
+                    false,
+                    true,
+                    prefs["MG_DIR_PATH"].orEmpty()
+                )
+            )
+
+            Renderer.ID_SFPEW -> listOf(
+                EnvSpec(
+                    "SFPEW_RELAXED_CONTEXT",
+                    EnvType.TOGGLEABLE,
+                    context.getString(R.string.renderer_config_sfpew_relaxed_context),
+                    emptyList(),
+                    null,
+                    false,
+                    prefs["SFPEW_RELAXED_CONTEXT$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: true,
+                    "1"
+                )
+            )
+
+            else -> emptyList()
+        }
+    }
+
+    /** 启动链路读取内置渲染器的扁平配置（FCLauncher 注入 env 用） */
+    @JvmStatic
+    fun builtinEnvPrefs(rendererId: String): Map<String, String> {
+        val key = builtinKey(rendererId) ?: return emptyMap()
+        ensureInit()
+        return envPrefs[key].orEmpty()
+    }
+
+    /** 内置渲染器配置对话框确认后保存（无 v2 渲染器重建） */
+    fun updateBuiltinEnvConfigs(context: Context, rendererId: String, values: Map<String, EnvValue>) {
+        val key = builtinKey(rendererId) ?: return
+        ensureInit()
+        val flat = mutableMapOf<String, String>()
+        values.forEach { (k, v) ->
+            v.value?.let { flat[k] = it }
+            v.enabled?.let { flat[k + ENABLED_SUFFIX] = it.toString() }
+        }
+        storeEnvPrefs(context, key, flat)
     }
 
     /** 触发 AbstractPlugin 的懒初始化（插件扫描 + v1/v2 解析） */

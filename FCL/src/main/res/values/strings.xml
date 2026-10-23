@@ -1092,6 +1092,11 @@
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Kopper Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+)</string>
+    <string name="settings_fcl_renderer_mobileglues" translatable="false">MobileGlues (OpenGL 4.0, 1.17+)</string>
+    <string name="settings_fcl_renderer_sfpew" translatable="false">SimpleFPEWrapper (OpenGL 2.1 compat / 3.2+)</string>
+    <string name="renderer_config_mg_count_launch">MG_COUNT_LAUNCH — count only launcher-started sessions</string>
+    <string name="renderer_config_mg_dir_path">MG_DIR_PATH — MobileGlues data directory (empty = /sdcard/MG)</string>
+    <string name="renderer_config_sfpew_relaxed_context">SFPEW_RELAXED_CONTEXT — one context per thread optimization</string>
 
     <string name="settings_fcl_driver">Vulkan Driver</string>
     <string name="settings_fcl_driver_desc">Choose the Vulkan driver implementation.</string>
