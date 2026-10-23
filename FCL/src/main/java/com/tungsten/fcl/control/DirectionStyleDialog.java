@@ -14,6 +14,7 @@ import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
+import com.tungsten.fcllibrary.component.view.FCLSpinner;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,8 +30,9 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
     private final Callback callback;
 
     private FCLButton addStyle;
-    private FCLButton editStyle;
     private FCLButton positive;
+    private FCLSpinner<String> filterSpinner;
+    private String filterSource;
 
     private ListView listView;
 
@@ -52,17 +54,17 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
         setCancelable(false);
 
         addStyle = findViewById(R.id.add_style);
-        editStyle = findViewById(R.id.edit_style);
         positive = findViewById(R.id.positive);
+        filterSpinner = findViewById(R.id.filter_spinner);
         addStyle.setOnClickListener(this);
-        editStyle.setOnClickListener(this);
         positive.setOnClickListener(this);
 
         listView = findViewById(R.id.list);
         refreshList();
+        setupFilterSpinner();
 
         if (!select) {
-            editStyle.setVisibility(View.GONE);
+            filterSpinner.setVisibility(View.GONE);
         }
     }
 
@@ -97,10 +99,51 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
     }
 
     public void refreshList() {
-        adapter = new DirectionStyleAdapter(getContext(), controller, buildEntries(), select, initStyle, this::refreshList);
+        adapter = new DirectionStyleAdapter(getContext(), controller, buildEntries(), select, initStyle, this::refreshList, this::openEditDialog);
+        adapter.setFilter(filterSource);
         listView.setAdapter(adapter);
         if (initStyle != null)
             listView.setSelection(adapter.indexOfLocal(initStyle.getName()));
+    }
+
+    /**
+     * 来源筛选：全部 / 本布局 / 各来源布局。仅选择模式且允许跨布局导入时展示。
+     */
+    private void setupFilterSpinner() {
+        if (!(select && allowForeign)) {
+            return;
+        }
+        List<String> options = new ArrayList<>();
+        options.add(getContext().getString(R.string.style_filter_all));
+        options.add(getContext().getString(R.string.menu_controls_local));
+        List<String> sources = new ArrayList<>();
+        for (DirectionStyleAdapter.Entry entry : adapter.getEntries()) {
+            if (entry.sourceName != null && !sources.contains(entry.sourceName)) {
+                sources.add(entry.sourceName);
+                options.add(entry.sourceName);
+            }
+        }
+        filterSpinner.setItems(options);
+        filterSpinner.setSelection(0);
+        filterSpinner.setOnItemSelectedListener((index, item) -> {
+            filterSource = index == 0 ? null : (index == 1 ? DirectionStyleAdapter.FILTER_LOCAL : sources.get(index - 2));
+            adapter.setFilter(filterSource);
+        });
+        filterSpinner.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 条目编辑图标回调：就地更新注册表中的样式对象，保持对象同一性，
+     * 所有持有该样式的按键经观察自动重渲染（改名也生效）。
+     */
+    private void openEditDialog(ControlDirectionStyle before) {
+        AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), controller, before, true, style -> {
+            before.setAll(style);
+            controller.saveToDisk();
+            refreshList();
+            adapter.setSelectedStyle(before);
+        });
+        dialog.show();
     }
 
     @Override
@@ -110,30 +153,6 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
                 controller.addOrUpdateDirectionStyle(style);
                 controller.saveToDisk();
                 refreshList();
-            });
-            dialog.show();
-        }
-        if (v == editStyle) {
-            DirectionStyleAdapter.Entry entry = adapter.getSelectedEntry();
-            if (entry == null) {
-                return;
-            }
-            ControlDirectionStyle selected = entry.style;
-            if (entry.sourceName != null) {
-                // 跨布局样式先导入复制为本布局样式，再编辑本地副本
-                controller.addOrUpdateDirectionStyle(selected.clone());
-                controller.saveToDisk();
-                selected = controller.findDirectionStyleByName(selected.getName());
-                refreshList();
-            }
-            final ControlDirectionStyle before = selected;
-            AddDirectionStyleDialog dialog = new AddDirectionStyleDialog(getContext(), controller, before, true, style -> {
-                // update the registered style in place: keeps object identity and list position,
-                // so all directions holding it re-render through style observation (renames included)
-                before.setAll(style);
-                controller.saveToDisk();
-                refreshList();
-                adapter.setSelectedStyle(before);
             });
             dialog.show();
         }

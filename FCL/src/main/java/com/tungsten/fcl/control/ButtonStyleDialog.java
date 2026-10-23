@@ -14,6 +14,7 @@ import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
+import com.tungsten.fcllibrary.component.view.FCLSpinner;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,8 +30,9 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
     private final Callback callback;
 
     private FCLButton addStyle;
-    private FCLButton editStyle;
     private FCLButton positive;
+    private FCLSpinner<String> filterSpinner;
+    private String filterSource;
 
     private ListView listView;
 
@@ -52,17 +54,17 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
         setCancelable(false);
 
         addStyle = findViewById(R.id.add_style);
-        editStyle = findViewById(R.id.edit_style);
         positive = findViewById(R.id.positive);
+        filterSpinner = findViewById(R.id.filter_spinner);
         addStyle.setOnClickListener(this);
-        editStyle.setOnClickListener(this);
         positive.setOnClickListener(this);
 
         listView = findViewById(R.id.list);
         refreshList();
+        setupFilterSpinner();
 
         if (!select) {
-            editStyle.setVisibility(View.GONE);
+            filterSpinner.setVisibility(View.GONE);
         }
     }
 
@@ -97,10 +99,51 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
     }
 
     public void refreshList() {
-        adapter = new ButtonStyleAdapter(getContext(), controller, buildEntries(), select, initStyle, this::refreshList);
+        adapter = new ButtonStyleAdapter(getContext(), controller, buildEntries(), select, initStyle, this::refreshList, this::openEditDialog);
+        adapter.setFilter(filterSource);
         listView.setAdapter(adapter);
         if (initStyle != null)
             listView.setSelection(adapter.indexOfLocal(initStyle.getName()));
+    }
+
+    /**
+     * 来源筛选：全部 / 本布局 / 各来源布局。仅选择模式且允许跨布局导入时展示。
+     */
+    private void setupFilterSpinner() {
+        if (!(select && allowForeign)) {
+            return;
+        }
+        List<String> options = new ArrayList<>();
+        options.add(getContext().getString(R.string.style_filter_all));
+        options.add(getContext().getString(R.string.menu_controls_local));
+        List<String> sources = new ArrayList<>();
+        for (ButtonStyleAdapter.Entry entry : adapter.getEntries()) {
+            if (entry.sourceName != null && !sources.contains(entry.sourceName)) {
+                sources.add(entry.sourceName);
+                options.add(entry.sourceName);
+            }
+        }
+        filterSpinner.setItems(options);
+        filterSpinner.setSelection(0);
+        filterSpinner.setOnItemSelectedListener((index, item) -> {
+            filterSource = index == 0 ? null : (index == 1 ? ButtonStyleAdapter.FILTER_LOCAL : sources.get(index - 2));
+            adapter.setFilter(filterSource);
+        });
+        filterSpinner.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * 条目编辑图标回调：就地更新注册表中的样式对象，保持对象同一性，
+     * 所有持有该样式的按键经观察自动重渲染（改名也生效）。
+     */
+    private void openEditDialog(ControlButtonStyle before) {
+        AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), controller, before, true, style -> {
+            before.setAll(style);
+            controller.saveToDisk();
+            refreshList();
+            adapter.setSelectedStyle(before);
+        });
+        dialog.show();
     }
 
     @Override
@@ -110,30 +153,6 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
                 controller.addOrUpdateButtonStyle(style);
                 controller.saveToDisk();
                 refreshList();
-            });
-            dialog.show();
-        }
-        if (v == editStyle) {
-            ButtonStyleAdapter.Entry entry = adapter.getSelectedEntry();
-            if (entry == null) {
-                return;
-            }
-            ControlButtonStyle selected = entry.style;
-            if (entry.sourceName != null) {
-                // 跨布局样式先导入复制为本布局样式，再编辑本地副本
-                controller.addOrUpdateButtonStyle(selected.clone());
-                controller.saveToDisk();
-                selected = controller.findButtonStyleByName(entry.style.getName());
-                refreshList();
-            }
-            final ControlButtonStyle before = selected;
-            AddButtonStyleDialog dialog = new AddButtonStyleDialog(getContext(), controller, before, true, style -> {
-                // 就地更新注册表中的样式对象：保持对象同一性，
-                // 所有持有该样式的按键经观察自动重渲染，改名也生效
-                before.setAll(style);
-                controller.saveToDisk();
-                refreshList();
-                adapter.setSelectedStyle(before);
             });
             dialog.show();
         }
