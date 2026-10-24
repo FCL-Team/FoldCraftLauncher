@@ -520,7 +520,9 @@ public class ControlDirection extends RelativeLayout implements CustomView {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (ghost) {
+        // 参考组控件在编辑模式下同样可选中/拖动/编辑（改动写入其归属组）；
+        // 游戏模式或跨组编辑关闭时仅作参照，不响应触摸
+        if (ghost && !(menu != null && menu.isEditMode() && menu.isCrossGroupEditEnabled())) {
             return true;
         }
         if (menu != null && menu.isEditMode()) {

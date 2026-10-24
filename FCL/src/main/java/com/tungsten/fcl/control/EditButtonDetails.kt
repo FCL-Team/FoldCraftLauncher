@@ -10,15 +10,12 @@ import com.tungsten.fcl.control.data.BaseInfoData
 import com.tungsten.fcl.control.data.ButtonEventData
 import com.tungsten.fcl.control.data.ButtonStyles
 import com.tungsten.fcl.control.data.ControlButtonData
-import com.tungsten.fcl.control.data.ControlViewGroup
 import com.tungsten.fcl.databinding.ViewEditButtonEventBinding
 import com.tungsten.fcl.databinding.ViewEditButtonEventChildBinding
 import com.tungsten.fcl.databinding.ViewEditButtonInfoBinding
 import com.tungsten.fcl.util.FXUtils
-import com.tungsten.fclcore.fakefx.collections.FXCollections
 import com.tungsten.fcllibrary.component.view.FCLSpinner
 import com.tungsten.fcllibrary.util.ConvertUtils
-import java.util.stream.Collectors
 
 /** 按钮控件编辑页：文本 / 位置尺寸 / 样式 + 触发事件配置 */
 internal class EditButtonDetails(
@@ -142,14 +139,7 @@ internal class EditButtonDetails(
                 ).show()
             }
             bindGroup.setOnClickListener {
-                val selected = FXCollections.observableArrayList<ControlViewGroup>().apply {
-                    menu?.controller?.viewGroups()
-                        ?.filter { event.bindViewGroupList().contains(it.id) }
-                        ?.let { addAll(it) }
-                }
-                ViewGroupDialog(context, menu, true, selected) { viewGroups ->
-                    event.setBindViewGroup(FXCollections.observableList(viewGroups.stream().map { it.id }.collect(Collectors.toList())))
-                }.show()
+                BindGroupDialog(context, menu, event).show()
             }
         }
     }
