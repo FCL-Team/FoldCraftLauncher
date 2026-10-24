@@ -2892,6 +2892,36 @@ public final class GLCapabilities {
     public final boolean GL_AMD_vertex_shader_tessellator;
     /** When true, {@code AMD_vertex_shader_viewport_index} is supported. */
     public final boolean GL_AMD_vertex_shader_viewport_index;
+    // Cleanroom 的 lwjgly（LWJGL2 API 兼容层）按含 APPLE 扩展位的 GLCapabilities 编译，
+    // 其 ContextCapabilities 构造器直接 getfield 本类字段，缺声明即 NoSuchFieldError 启动崩
+    /** When true, {@code APPLE_aux_depth_stencil} is supported. */
+    public final boolean GL_APPLE_aux_depth_stencil;
+    /** When true, {@code APPLE_client_storage} is supported. */
+    public final boolean GL_APPLE_client_storage;
+    /** When true, {@code APPLE_element_array} is supported. */
+    public final boolean GL_APPLE_element_array;
+    /** When true, {@code APPLE_fence} is supported. */
+    public final boolean GL_APPLE_fence;
+    /** When true, {@code APPLE_float_pixels} is supported. */
+    public final boolean GL_APPLE_float_pixels;
+    /** When true, {@code APPLE_flush_buffer_range} is supported. */
+    public final boolean GL_APPLE_flush_buffer_range;
+    /** When true, {@code APPLE_object_purgeable} is supported. */
+    public final boolean GL_APPLE_object_purgeable;
+    /** When true, {@code APPLE_rgb_422} is supported. */
+    public final boolean GL_APPLE_rgb_422;
+    /** When true, {@code APPLE_row_bytes} is supported. */
+    public final boolean GL_APPLE_row_bytes;
+    /** When true, {@code APPLE_texture_range} is supported. */
+    public final boolean GL_APPLE_texture_range;
+    /** When true, {@code APPLE_vertex_array_object} is supported. */
+    public final boolean GL_APPLE_vertex_array_object;
+    /** When true, {@code APPLE_vertex_array_range} is supported. */
+    public final boolean GL_APPLE_vertex_array_range;
+    /** When true, {@code APPLE_vertex_program_evaluators} is supported. */
+    public final boolean GL_APPLE_vertex_program_evaluators;
+    /** When true, {@code APPLE_ycbcr_422} is supported. */
+    public final boolean GL_APPLE_ycbcr_422;
     /** When true, {@code ARB_arrays_of_arrays} is supported. */
     public final boolean GL_ARB_arrays_of_arrays;
     /** When true, {@code ARB_base_instance} is supported. */
@@ -3742,6 +3772,20 @@ public final class GLCapabilities {
         GL_AMD_vertex_shader_layer = ext.contains("GL_AMD_vertex_shader_layer");
         GL_AMD_vertex_shader_tessellator = check_AMD_vertex_shader_tessellator(provider, caps, ext);
         GL_AMD_vertex_shader_viewport_index = ext.contains("GL_AMD_vertex_shader_viewport_index");
+        GL_APPLE_aux_depth_stencil = ext.contains("GL_APPLE_aux_depth_stencil");
+        GL_APPLE_client_storage = ext.contains("GL_APPLE_client_storage");
+        GL_APPLE_element_array = ext.contains("GL_APPLE_element_array");
+        GL_APPLE_fence = ext.contains("GL_APPLE_fence");
+        GL_APPLE_float_pixels = ext.contains("GL_APPLE_float_pixels");
+        GL_APPLE_flush_buffer_range = ext.contains("GL_APPLE_flush_buffer_range");
+        GL_APPLE_object_purgeable = ext.contains("GL_APPLE_object_purgeable");
+        GL_APPLE_rgb_422 = ext.contains("GL_APPLE_rgb_422");
+        GL_APPLE_row_bytes = ext.contains("GL_APPLE_row_bytes");
+        GL_APPLE_texture_range = ext.contains("GL_APPLE_texture_range");
+        GL_APPLE_vertex_array_object = ext.contains("GL_APPLE_vertex_array_object");
+        GL_APPLE_vertex_array_range = ext.contains("GL_APPLE_vertex_array_range");
+        GL_APPLE_vertex_program_evaluators = ext.contains("GL_APPLE_vertex_program_evaluators");
+        GL_APPLE_ycbcr_422 = ext.contains("GL_APPLE_ycbcr_422");
         GL_ARB_arrays_of_arrays = ext.contains("GL_ARB_arrays_of_arrays");
         GL_ARB_base_instance = check_ARB_base_instance(provider, caps, ext);
         GL_ARB_bindless_texture = check_ARB_bindless_texture(provider, caps, ext);
