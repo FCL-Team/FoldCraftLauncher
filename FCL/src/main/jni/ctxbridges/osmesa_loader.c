@@ -24,15 +24,14 @@ void* (*OSMesaGetProcAddress_p)(const char* funcName);
 
 bool dlsym_OSMesa() {
     void *dl_handle = NULL;
-    if (pojav_environ->config_renderer == RENDERER_VIRGL) {
-        dl_handle = dlopen("libOSMesa_81.so", RTLD_LOCAL | RTLD_LAZY);
-    } else {
-        char *lib_name = getenv("LIB_MESA_NAME");
-        if (!lib_name) {
-            lib_name = "libOSMesa_8.so";
-        }
-        dl_handle = dlopen(lib_name, RTLD_LOCAL | RTLD_LAZY);
+    // 插件渲染器经 LIB_MESA_NAME 提供插件目录内的绝对路径；裸库名只有库位于
+    // 主 APK 目录（旧内置布局）时才能被类加载器命名空间解析到
+    char *lib_name = getenv("LIB_MESA_NAME");
+    if (lib_name == NULL || *lib_name == '\0') {
+        lib_name = (pojav_environ->config_renderer == RENDERER_VIRGL)
+                   ? "libOSMesa_81.so" : "libOSMesa_8.so";
     }
+    dl_handle = dlopen(lib_name, RTLD_LOCAL | RTLD_LAZY);
     if (dl_handle == NULL) return false;
     OSMesaGetProcAddress_p = dlsym(dl_handle, "OSMesaGetProcAddress");
     if (OSMesaGetProcAddress_p == NULL) {
