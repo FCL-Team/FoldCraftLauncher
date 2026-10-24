@@ -415,5 +415,4 @@
     <string name="game_crash_reason_mod_repeat_installation">Karena game saat ini telah berulang kali memasang beberapa Mod yang identik, setiap Mod hanya dapat muncul sekali. Harap hapus Mod duplikat tersebut lalu mulai ulang game.</string>
     <string name="game_crash_reason_forge_error">Forge mungkin telah memberikan informasi kesalahan.\nAnda dapat melihat log dan melakukan pemrosesan yang sesuai berdasarkan informasi log dalam laporan kesalahan.\nJika Anda tidak melihat pesan kesalahan, Anda dapat melihat laporan kesalahan untuk memahami bagaimana kesalahan tersebut terjadi.\n%1$s</string>
     <string name="game_crash_reason_mod_resolution0">Permainan saat ini tidak dapat dilanjutkan karena beberapa masalah Mod.\nAnda dapat memeriksa log untuk menemukan modul yang mengalami kesalahan.</string>
-    <string name="download_china">Karena peraturan dan undang-undang yang bersangkutan, FCL saat ini tidak mendukung unduhan konten terkait game di Tiongkok Daratan. Silakan kunjungi situs web resmi Minecraft untuk mengunduh Minecraft China Edition.</string>
 </resources>
