@@ -517,8 +517,8 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
 
             Task.runAsync(() -> {
                 for (SelectedFile file : files) {
-                    String name = file.fileName(getActivity());
                     try {
+                        String name = file.fileName(getActivity());
                         if (file.isContent()) {
                             modManager.addMod(getActivity(), file.getUri(), name);
                         } else {
@@ -527,7 +527,7 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
                         succeeded.add(name);
                     } catch (Exception e) {
                         LOG.log(Level.WARNING, "Unable to add mod " + file.getPath(), e);
-                        failed.add(name);
+                        failed.add(file.fileName(getActivity()));
 
                         // Actually addMod will not throw exceptions because FileChooser has already filtered files.
                     }

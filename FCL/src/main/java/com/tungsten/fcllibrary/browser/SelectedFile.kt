@@ -30,14 +30,19 @@ class SelectedFile(val uri: Uri) {
     /** 文件名（不含目录部分） */
     fun fileName(context: Context): String {
         if (!isContent) return file?.name ?: ""
-        val cursor = context.contentResolver.query(uri, null, null, null, null)
-            ?: return uri.lastPathSegment ?: ""
-        cursor.use {
-            val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            if (index == -1 || !it.moveToFirst()) {
-                return uri.lastPathSegment ?: ""
+        return try {
+            val cursor = context.contentResolver.query(uri, null, null, null, null)
+                ?: return uri.lastPathSegment ?: ""
+            cursor.use {
+                val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                if (index == -1 || !it.moveToFirst()) {
+                    return uri.lastPathSegment ?: ""
+                }
+                it.getString(index) ?: uri.lastPathSegment ?: ""
             }
-            return it.getString(index) ?: uri.lastPathSegment ?: ""
+        } catch (_: Exception) {
+            // 部分文件管理器多选返回的 uri 未授予读权限，query 抛 SecurityException
+            uri.lastPathSegment ?: "unknown"
         }
     }
 
