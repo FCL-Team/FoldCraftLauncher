@@ -1075,6 +1075,11 @@
     <string name="style_name">名称</string>
     <string name="style_warning_delete">你确定要删除该样式吗？</string>
     <string name="style_warning_exist">该样式已存在！</string>
+    <string name="style_filter_all">全部样式</string>
+    <string name="menu_controls_local">本布局</string>
+    <string name="style_name_from">%1$s（来自%2$s）</string>
+    <string name="style_warning_delete_refs">此样式被 %1$d 个控件引用，删除后这些控件将回退到默认样式。确定删除？</string>
+    <string name="style_warning_delete_unused">该样式未被任何控件引用，确定删除？</string>
     <string name="style_warning_name">请先填充名称！</string>
     <string name="style_button">按键样式</string>
     <string name="style_button_normal">常规状态</string>

@@ -16,8 +16,8 @@ import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
+import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcllibrary.component.dialog.EditDialog;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
@@ -49,15 +49,17 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
 
     private ControlButtonStyle style;
     private boolean isEdit;
+    private Controller controller;
 
     public interface Callback {
         void onStyleAdd(ControlButtonStyle style);
     }
 
-    public AddButtonStyleDialog(@NonNull Context context, ControlButtonStyle beforeStyle, boolean isEdit, Callback callback) {
+    public AddButtonStyleDialog(@NonNull Context context, Controller controller, ControlButtonStyle beforeStyle, boolean isEdit, Callback callback) {
         super(context);
         setContentView(R.layout.dialog_add_button_style);
         setCancelable(false);
+        this.controller = controller;
         this.callback = callback;
         this.style = beforeStyle == null ? new ControlButtonStyle("") : beforeStyle.clone();
         this.isEdit = isEdit;
@@ -351,7 +353,7 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == positive) {
-            if (!isEdit && ButtonStyles.getStyles().stream().anyMatch(it -> it.getName().equals(style.getName()))) {
+            if (!isEdit && controller.getButtonStyles().stream().anyMatch(it -> it.getName().equals(style.getName()))) {
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_exist), Toast.LENGTH_SHORT).show();
             } else if (StringUtils.isBlank(style.getName())) {
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_name), Toast.LENGTH_SHORT).show();

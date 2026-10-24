@@ -13,8 +13,8 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.BaseInfoData;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
-import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.view.ControlDirection;
+import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.fakefx.beans.binding.Bindings;
 import com.tungsten.fclcore.fakefx.beans.property.IntegerProperty;
@@ -51,16 +51,17 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
     private ControlButtonStyle buttonStyle;
     private boolean isEdit;
     private ControlButtonStyle beforeStyle;
-    private GameMenu menu;
+    private Controller controller;
 
     public interface Callback {
         void onStyleAdd(ControlDirectionStyle style);
     }
 
-    public AddDirectionStyleDialog(@NonNull Context context, ControlDirectionStyle beforeStyle, boolean isEdit, Callback callback) {
+    public AddDirectionStyleDialog(@NonNull Context context, Controller controller, ControlDirectionStyle beforeStyle, boolean isEdit, Callback callback) {
         super(context);
         setContentView(R.layout.dialog_add_direction_style);
         setCancelable(false);
+        this.controller = controller;
         this.callback = callback;
         this.style = beforeStyle == null ? new ControlDirectionStyle("") : beforeStyle.clone();
         this.isEdit = isEdit;
@@ -136,7 +137,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             style.getButtonStyle().fillColorPressedProperty().bind(buttonStyle.fillColorPressedProperty());
 
             buttonStyleSet.setOnClickListener(v -> {
-                ButtonStyleDialog dialog = new ButtonStyleDialog(getContext(), true, buttonStyle, style -> {
+                ButtonStyleDialog dialog = new ButtonStyleDialog(getContext(), controller, true, false, buttonStyle, style -> {
                     buttonStyle.setName(style.getName());
                     buttonStyle.setTextSize(style.getTextSize());
                     buttonStyle.setTextColor(style.getTextColor());
@@ -334,7 +335,7 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (v == positive) {
-            if (!isEdit && DirectionStyles.getStyles().stream().anyMatch(it -> it.getName().equals(style.getName()))) {
+            if (!isEdit && controller.getDirectionStyles().stream().anyMatch(it -> it.getName().equals(style.getName()))) {
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_exist), Toast.LENGTH_SHORT).show();
             } else if (StringUtils.isBlank(style.getName())) {
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_name), Toast.LENGTH_SHORT).show();
@@ -375,9 +376,5 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
         });
         dialog.getEditText().setInputType(EditorInfo.TYPE_NUMBER_FLAG_DECIMAL);
         dialog.show();
-    }
-
-    public void setGameMenu(GameMenu menu) {
-        this.menu = menu;
     }
 }
