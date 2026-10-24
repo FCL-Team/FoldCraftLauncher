@@ -27,7 +27,8 @@ import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.DownloadUI;
-import com.tungsten.fcl.util.ModTranslations;
+import com.tungsten.fcl.addon.AddonProjectInfoRegistry;
+import com.tungsten.fclcore.mod.ModProjectInfo;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -817,7 +818,7 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
         private final LocalModFile localModFile;
         private final String title;
         private final String message;
-        private final ModTranslations.Mod mod;
+        private final ModProjectInfo projectInfo;
         private RemoteMod remoteMod;
 
         ModInfoObject(Context context, LocalModFile localModFile) {
@@ -836,7 +837,7 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
                 message.append(", ").append(context.getString(R.string.archive_author)).append(": ").append(localModFile.getAuthors());
             this.message = message.toString();
 
-            this.mod = ModTranslations.MOD.getMod(localModFile.getId(), localModFile.getName());
+            this.projectInfo = AddonProjectInfoRegistry.MOD.getInfo(localModFile.getId(), localModFile.getName());
         }
 
         public BooleanProperty getActive() {
@@ -855,8 +856,8 @@ public class ModListPage extends FCLPage implements ManageUI.VersionLoadable, Vi
             return localModFile;
         }
 
-        public ModTranslations.Mod getMod() {
-            return mod;
+        public ModProjectInfo getProjectInfo() {
+            return projectInfo;
         }
 
         public RemoteMod getRemoteMod() {

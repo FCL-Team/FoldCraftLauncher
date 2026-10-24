@@ -14,12 +14,13 @@ import com.mio.data.FavoriteManager;
 import com.mio.data.favorite.DownloadFavoriteEntity;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fcl.R;
+import com.tungsten.fclcore.mod.AddonProjectInfo;
+import com.tungsten.fcl.addon.AddonProjectInfoRegistry;
 import com.tungsten.fcl.setting.Profile;
 import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.ui.download.DownloadUI;
 import com.tungsten.fcl.ui.download.favorite.FavoriteActionsKt;
-import com.tungsten.fcl.util.ModTranslations;
 import com.tungsten.fclcore.download.LibraryAnalyzer;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.ModLoaderType;
@@ -54,10 +55,11 @@ import java.util.stream.Collectors;
 public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
 
     private final RemoteModRepository repository;
-    private final ModTranslations translations;
     private final RemoteMod addon;
     private final RemoteModVersionPage.DownloadCallback callback;
     private final DownloadPage page;
+    /** 匹配到的 mcmod 本地化条目，无翻译或类型不受支持时为 null */
+    private final @Nullable AddonProjectInfo mod;
     /**
      * 本页内容所属的下载模式，创建时固定。
      * 共享下载页的模式可能在别处被切换（如收藏页对齐模式），
@@ -101,7 +103,8 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         // 聚合搜索的列表混合两源条目，按条目自身来源取仓库；单源模式即当前仓库
         this.repository = page.repositoryFor(addon);
         this.addon = addon;
-        this.translations = ModTranslations.getTranslationsByRepositoryType(repository.getType());
+        AddonProjectInfoRegistry<?> registry = AddonProjectInfoRegistry.getByAddonType(repository.getType());
+        this.mod = registry != null ? registry.getInfoByCurseForgeId(addon.getSlug()) : null;
         this.callback = callback;
 
         create();
@@ -109,9 +112,8 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
         // 原 onStart 逻辑：页面构造即填充内容并加载
         icon.setImageDrawable(null);
         Glide.with(getContext()).load(addon.getIconUrl()).into(icon);
-        ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
-        mcmod.setVisibility(mod == null ? View.GONE : View.VISIBLE);
-        name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : addon.getTitle());
+        mcmod.setVisibility(mod != null && mod.mcmodUrl() != null ? View.VISIBLE : View.GONE);
+        name.setText(mod != null && LocaleUtils.isChinese(getContext()) ? mod.displayName() : addon.getTitle());
         description.setText(addon.getDescription());
         List<String> categories = addon.getCategories().stream().map(it -> page.getLocalizedCategory(addon, it)).collect(Collectors.toList());
         StringBuilder stringBuilder = new StringBuilder();
@@ -332,9 +334,8 @@ public class RemoteModInfoPage extends FCLPage implements View.OnClickListener {
             loadModVersions();
         }
         if (v == mcmod) {
-            ModTranslations.Mod mod = translations.getModByCurseForgeId(addon.getSlug());
-            if (mod != null) {
-                String url = translations.getMcmodUrl(mod);
+            String url = mod != null ? mod.mcmodUrl() : null;
+            if (url != null) {
                 AndroidUtilKt.openLink(getContext(), url);
             }
         }

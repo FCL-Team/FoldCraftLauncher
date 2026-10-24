@@ -19,13 +19,16 @@ package com.tungsten.fcl.game;
 
 import static com.tungsten.fclcore.util.Logging.LOG;
 
-import com.tungsten.fcl.util.ModTranslations;
+import com.tungsten.fclcore.mod.AddonProjectInfo;
+import com.tungsten.fcl.addon.AddonProjectInfoRegistry;
 import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.mod.LocalModFile;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fclcore.mod.RemoteModRepository;
 import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.StringUtils;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -45,15 +48,16 @@ public abstract class LocalizedRemoteModRepository implements RemoteModRepositor
 
     @Override
     public SearchResult search(DownloadProvider downloadProvider, String gameVersion, Category category, int pageOffset, int pageSize, String searchFilter, SortType sort, SortOrder sortOrder) throws IOException {
-        if (!StringUtils.containsChinese(searchFilter)) {
+        @Nullable AddonProjectInfoRegistry<?> registry = AddonProjectInfoRegistry.getByAddonType(getType());
+        if (registry == null || !StringUtils.containsChinese(searchFilter)) {
             return getBackedRemoteModRepository().search(downloadProvider, gameVersion, category, pageOffset, pageSize, searchFilter, sort, sortOrder);
         }
 
         Set<String> englishSearchFiltersSet = new LinkedHashSet<>(INITIAL_CAPACITY);
 
         int count = 0;
-        for (ModTranslations.Mod mod : ModTranslations.getTranslationsByRepositoryType(getType()).searchMod(searchFilter)) {
-            String englishSearchFilter = String.join(" ", StringUtils.tokenize(StringUtils.isNotBlank(mod.subname()) ? mod.subname() : mod.name()));
+        for (AddonProjectInfo mod : registry.search(searchFilter)) {
+            String englishSearchFilter = String.join(" ", StringUtils.tokenize(StringUtils.isNotBlank(mod.subName()) ? mod.subName() : mod.mainName()));
             if (StringUtils.isNotBlank(englishSearchFilter)) {
                 englishSearchFiltersSet.add(englishSearchFilter);
             }
@@ -85,8 +89,8 @@ public abstract class LocalizedRemoteModRepository implements RemoteModRepositor
                     continue;
                 }
 
-                ModTranslations.Mod chineseTranslation = ModTranslations.getTranslationsByRepositoryType(getType()).getModByCurseForgeId(remoteMod.getSlug());
-                if (chineseTranslation != null && !StringUtils.isBlank(chineseTranslation.name()) && StringUtils.containsChinese(chineseTranslation.name())) {
+                AddonProjectInfo chineseTranslation = registry.getInfoByCurseForgeId(remoteMod.getSlug());
+                if (chineseTranslation != null && !StringUtils.isBlank(chineseTranslation.mainName()) && StringUtils.containsChinese(chineseTranslation.mainName())) {
                     searchResultArray[chineseIndex++] = remoteMod;
                 } else {
                     searchResultArray[englishIndex--] = remoteMod;
@@ -97,11 +101,11 @@ public abstract class LocalizedRemoteModRepository implements RemoteModRepositor
 
         StringUtils.LevCalculator levCalculator = new StringUtils.LevCalculator();
         return new SearchResult(Stream.concat(Arrays.stream(searchResultArray, 0, chineseIndex).map(remoteMod -> {
-            ModTranslations.Mod chineseRemoteMod = ModTranslations.getTranslationsByRepositoryType(getType()).getModByCurseForgeId(remoteMod.getSlug());
-            if (chineseRemoteMod == null || StringUtils.isBlank(chineseRemoteMod.name()) || !StringUtils.containsChinese(chineseRemoteMod.name())) {
+            AddonProjectInfo chineseRemoteMod = registry.getInfoByCurseForgeId(remoteMod.getSlug());
+            if (chineseRemoteMod == null || StringUtils.isBlank(chineseRemoteMod.mainName()) || !StringUtils.containsChinese(chineseRemoteMod.mainName())) {
                 return Pair.pair(remoteMod, Integer.MAX_VALUE);
             }
-            String chineseRemoteModName = chineseRemoteMod.name();
+            String chineseRemoteModName = chineseRemoteMod.mainName();
             if (searchFilter.isEmpty() || chineseRemoteModName.isEmpty()) {
                 return Pair.pair(remoteMod, Math.max(searchFilter.length(), chineseRemoteModName.length()));
             }

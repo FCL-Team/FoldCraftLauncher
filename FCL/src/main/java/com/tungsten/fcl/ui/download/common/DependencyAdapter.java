@@ -6,7 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.util.ModTranslations;
+import com.tungsten.fclcore.mod.AddonProjectInfo;
+import com.tungsten.fcl.addon.AddonProjectInfoRegistry;
 import com.tungsten.fclcore.mod.RemoteMod;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 import com.tungsten.fcllibrary.util.LocaleUtils;
@@ -68,8 +69,9 @@ public class DependencyAdapter extends FCLAdapter {
         }
         RemoteMod remoteMod = list.get(i);
         viewHolder.parent.setOnClickListener(v -> callback.onItemSelect(remoteMod));
-        ModTranslations.Mod mod = ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType()).getModByCurseForgeId(remoteMod.getSlug());
-        viewHolder.name.setText(getContext().getString(R.string.mods_dependency) + ": " + (mod != null && LocaleUtils.isChinese(getContext()) ? mod.getDisplayName() : remoteMod.getTitle()));
+        AddonProjectInfoRegistry<?> registry = AddonProjectInfoRegistry.getByAddonType(downloadPage.repository.getType());
+        AddonProjectInfo mod = registry != null ? registry.getInfoByCurseForgeId(remoteMod.getSlug()) : null;
+        viewHolder.name.setText(getContext().getString(R.string.mods_dependency) + ": " + (mod != null && LocaleUtils.isChinese(getContext()) ? mod.displayName() : remoteMod.getTitle()));
         return view;
     }
 

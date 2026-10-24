@@ -13,7 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.DialogTranslationBinding
 import com.tungsten.fcl.databinding.ItemTranslationBinding
-import com.tungsten.fcl.util.ModTranslations
+import com.tungsten.fcl.addon.AddonProjectInfoRegistry
+import com.tungsten.fclcore.mod.AddonProjectInfo
 import com.tungsten.fclcore.mod.RemoteModRepository
 import com.tungsten.fcllibrary.component.dialog.FCLDialog
 import com.tungsten.fcllibrary.component.view.FCLEditText
@@ -60,8 +61,8 @@ class TranslationDialog(
                     val str = runCatching {
                         editable?.toString()
                     }.getOrNull() ?: return@launch
-                    val mods = ModTranslations.getTranslationsByRepositoryType(repository.type)
-                        .searchMod(str)
+                    val mods = AddonProjectInfoRegistry.getByAddonType(repository.type)
+                        ?.search(str) ?: emptyList()
                     withContext(Dispatchers.Main) {
                         adapter.update(mods)
                     }
@@ -72,7 +73,7 @@ class TranslationDialog(
 
     inner class TranslationAdapter(
         val context: Context,
-        private val translationList: MutableList<ModTranslations.Mod>,
+        private val translationList: MutableList<AddonProjectInfo>,
         val callback: (String) -> Unit
     ) :
         RecyclerView.Adapter<TranslationAdapter.TranslationViewHolder>() {
@@ -94,14 +95,14 @@ class TranslationDialog(
         override fun onBindViewHolder(holder: TranslationViewHolder, position: Int) {
             val binding = ItemTranslationBinding.bind(holder.itemView)
             val mod = translationList[position]
-            binding.text.text = "${mod.name()} ${mod.subname()} ${mod.abbr()}"
+            binding.text.text = "${mod.mainName()} ${mod.subName()} ${mod.abbrName()}"
             binding.root.setOnClickListener {
-                callback(mod.subname().ifEmpty { mod.abbr() })
+                callback(mod.subName().ifEmpty { mod.abbrName() })
             }
         }
 
         @SuppressLint("NotifyDataSetChanged")
-        fun update(translationList: List<ModTranslations.Mod>) {
+        fun update(translationList: List<AddonProjectInfo>) {
             this.translationList.clear()
             this.translationList.addAll(translationList)
             notifyDataSetChanged()

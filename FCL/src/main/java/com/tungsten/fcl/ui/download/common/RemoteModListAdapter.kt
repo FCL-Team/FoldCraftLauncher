@@ -25,9 +25,9 @@ import com.tungsten.fcl.activity.MainActivity
 import com.tungsten.fcl.databinding.ItemRemoteModBinding
 import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.ui.download.DownloadUI
+import com.tungsten.fcl.addon.AddonProjectInfoRegistry
 import com.tungsten.fcl.ui.download.favorite.bindFavoriteIcon
 import com.tungsten.fcl.ui.download.favorite.handleFavoriteClick
-import com.tungsten.fcl.util.ModTranslations
 import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.mod.RemoteMod
 import com.tungsten.fclcore.mod.RemoteModRepository
@@ -68,8 +68,7 @@ class RemoteModListAdapter(
         MainActivity.getInstance().lifecycleScope.launch {
             withContext(Dispatchers.Default) {
                 // 后台预热 Mod 翻译数据，避免首次 bind 时在主线程解析大文件造成卡顿
-                ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType())
-                    .preload()
+                AddonProjectInfoRegistry.getByAddonType(downloadPage.repository.getType())?.preload()
             }
             refreshInstalledState()
         }
@@ -290,10 +289,10 @@ class RemoteModListAdapter(
 
     private fun buildTitle(remoteMod: RemoteMod): String {
         val mod =
-            ModTranslations.getTranslationsByRepositoryType(downloadPage.repository.getType())
-                .getModByCurseForgeId(remoteMod.slug)
+            AddonProjectInfoRegistry.getByAddonType(downloadPage.repository.getType())
+                ?.getInfoByCurseForgeId(remoteMod.slug)
         val title =
-            if (mod != null && LocaleUtils.isChinese(context)) mod.getDisplayName() else remoteMod.title
+            if (mod != null && LocaleUtils.isChinese(context)) mod.displayName() else remoteMod.title
         return if (downloadPage.pageId == DownloadUI.PAGE_ID_DOWNLOAD_MOD && modIdList.contains(remoteMod.modID)) {
             "[${context.getString(R.string.installed)}] $title"
         } else {

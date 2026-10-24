@@ -157,9 +157,10 @@ class LocalModListAdapter(
         val stringBuilder = StringBuilder()
         val modLoaderType = getModLoader(modInfoObject.modInfo.modLoaderType)
         stringBuilder.append(modLoaderType)
-        if (modInfoObject.mod != null && LocaleUtils.isChinese(context)) {
+        val projectInfo = modInfoObject.projectInfo
+        if (projectInfo != null && LocaleUtils.isChinese(context)) {
             val pre = if (modLoaderType == "") "" else "   "
-            stringBuilder.append(pre).append(modInfoObject.mod.getDisplayName())
+            stringBuilder.append(pre).append(projectInfo.displayName())
         }
         return stringBuilder.toString()
     }
@@ -376,8 +377,8 @@ class LocalModListAdapter(
             .into(binding.icon)
         binding.name.text = mod.title
         binding.jump.visibility = View.VISIBLE
-        if (modInfoObject.mod != null && LocaleUtils.isChinese(context)) {
-            val name = modInfoObject.mod.name()
+        modInfoObject.projectInfo?.let { projectInfo ->
+            val name = projectInfo.mainName()
             if (name.isNotEmpty() && StringUtils.containsChinese(name)) {
                 binding.name.text = "[${name}]${mod.title}"
             }
