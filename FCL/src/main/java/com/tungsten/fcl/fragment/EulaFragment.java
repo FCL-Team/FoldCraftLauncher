@@ -13,6 +13,7 @@ import android.widget.ScrollView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.text.method.LinkMovementMethodCompat;
 
 import com.google.android.material.tabs.TabLayout;
@@ -20,6 +21,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.SplashActivity;
 import com.tungsten.fcl.util.LegalAgreement;
 import com.tungsten.fcllibrary.component.FCLFragment;
+import com.tungsten.fcllibrary.component.theme.ThemeData;
 import com.tungsten.fcllibrary.component.theme.ThemeEngine;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
@@ -114,7 +116,12 @@ public class EulaFragment extends FCLFragment implements View.OnClickListener {
         content.setText(contents[position]);
         Linkify.addLinks(content, Linkify.WEB_URLS);
         content.setMovementMethod(LinkMovementMethodCompat.getInstance());
-        content.setLinkTextColor(ThemeEngine.getInstance().getTheme().getColor());
+        // 正文容器被刷成主题色（见 fragment_eula.xml 的 auto_text_background_tint），
+        // 链接不能再用主色：背景亮（正文黑）时取压暗变体、背景暗（正文白）时取提亮变体，
+        // 与背景和正文同时拉开差距
+        ThemeData theme = ThemeEngine.getInstance().getTheme();
+        boolean lightBackground = ColorUtils.calculateLuminance(theme.getColor()) >= 0.5;
+        content.setLinkTextColor(lightBackground ? theme.getOpaqueDkColor() : theme.getOpaqueLtColor());
         scrollView.scrollTo(0, 0);
     }
 
