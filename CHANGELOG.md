@@ -1,5 +1,55 @@
 # Changelog
 
+## [1.3.4.2] - 2026-10-25
+
+### 中文
+
+#### ✨ 新功能
+
+1. **皮肤 3D 预览回归 GLES 手写模型渲染器**：自历史快照恢复刚体模型渲染器（TextureView + GLES 2.0 + 程序化动画），删除 GLTF 烘焙动画实现与模型资产；动画选择与 3D 皮肤层开关沿用既有 DataStore schema 持久化，移除 GLTF 专属的身体腿部分离开关；新增交互——单击点按压扁（弹簧脉冲）、拖拽松手偏航与俯仰自动回正；顺带补齐旧 GLES 链遗留修复：surface 重建后披风纹理未重传、64x32 旧格式皮肤切页错乱（归一化回写 texture）、初始默认皮肤与模型类型不匹配
+2. **「邦友的酒」旋转 Q 弹动画**：匀速自转 + 果冻式压扁回弹（PlayerModel 新增 rootRotationY 自转轴与 rootScaleY/rootScaleXZ 形变通道）；新增坐姿动作——双腿前抬微开随节奏晃动、身体轻微下沉；压扁相位横向拉宽至 1.18，弹起相位恢复原宽不再收窄
+
+#### ⚡ 优化
+
+1. **模组中文名数据重构（同步 HMCL #6987）**：ModTranslations 主线程惰性解析替换为 AddonProjectInfoRegistry（软引用缓存，随用随载）；数据文件由 mod_data.txt 迁移为 addon/mod.csv 新格式（含 modrinthId 列）并新增 modpack.csv 整合包数据；中文搜索、下载页、模组列表、翻译弹窗全链适配
+2. **BMCLAPI 慢速节点主动切换**：FetchTask 按 10 秒窗口观测下载速度，预计剩余下载时间超过一个窗口才切换节点且最多两次，避免频繁切换抖动；x-bmclapi-hash 响应头全链收集（FetchTask/GetTask/FileDownloadTask），用于完整性校验并让哈希缓存直接命中，省去为校验而重复下载的开销
+
+#### 🐛 修复
+
+1. **Cleanroom 启动崩溃 (#1962)**：崩溃一——Cleanroom setInitialDisplayMode 硬调 window.size()，SDL3 Android 驱动无 SetWindowSize 回调返回 Unsupported 即崩，sdl_hook 双层拦截（bytehook GOT + dlsym 出口）该调用直接返回成功，尺寸由注入 Surface 决定，调用方经 SDL_GetWindowSize 读回真实值；崩溃二——Cleanroom 自带 lwjgly（LWJGL2 API 层）按含 APPLE 扩展位的 LWJGL 3.4.3 GLCapabilities 编译，被 FCL 排 classpath 最前的定制 3.4.1 lwjgl.jar 遮蔽抛 NoSuchFieldError，对 lwjgly 全量类 javap 枚举字段引用取差集，补齐恰好缺失的 14 个 GL_APPLE_* 扩展布尔
+2. **文件多选导入资源包/光影/模组崩溃 (#1961)**：SelectedFile.fileName 对未授权 uri 的 query 解析异常兜底；导入循环内单文件失败只计入失败列表，不再中断整个导入
+3. **Android 13 进游戏闪退**：clearFrameRate() 是 API 34 才有的方法，原 TIRAMISU(33) 守卫在 Android 13 上触发 NoSuchMethodError——游戏 Surface 就绪且关闭最高刷新率开关时直接崩溃；现守卫提升到 API 34，API 30~33 改用 setFrameRate(0) 等价清除，顺带修复 Android 11/12 上关闭开关后帧率投票残留
+4. **控制器样式编辑不生效 (#1957)**：样式同名注册改为就地更新，修复重载布局后 textSize 等属性修改不生效；样式编辑改为就地更新并让按键数据监听样式属性，修复首次进编辑页改字号不实时刷新
+5. **安装器启动异常后空转**：launchAPIInstaller 异常改为回写退出码并自杀进程，"process is bad" 场景快速失败，不再空转重试
+
+#### ➖ 移除
+
+1. **中国大陆地区限制 (#1955)**：移除启动时的网络归属地查询与游戏下载功能的地区禁用逻辑，用户协议文本同步更新
+
+### English
+
+#### ✨ New Features
+
+1. **3D skin preview returned to a hand-written GLES model renderer**: The rigid-body model renderer (TextureView + GLES 2.0 + procedural animations) was restored from a historical snapshot, deleting the GLTF baked-animation implementation and model assets; animation selection and the 3D skin layer toggle keep using the existing DataStore schema, and the GLTF-specific body/leg split toggle was removed. New interactions: tap to squish the model (spring pulse), drag and release to auto-recenter yaw and pitch. Leftover fixes of the old GLES chain were carried over: cape texture not re-uploaded after surface recreation, old-format 64x32 skins rendering misaligned after page switches (normalized write-back to texture), and the initial default skin not matching the model type
+2. **New playful "spin jump" Q-bouncy animation**: Constant-speed rotation + jelly-style squash and bounce (PlayerModel gained a rootRotationY spin axis and rootScaleY/rootScaleXZ deformation channels); a new sitting pose — legs raised and slightly apart, swaying with the rhythm while the body sinks a little; the squish phase widens the model horizontally to 1.18x and the bounce phase restores the original width
+
+#### ⚡ Improvements
+
+1. **Mod Chinese-translation data reworked (synced with HMCL #6987)**: The lazily-parsed ModTranslations was replaced by AddonProjectInfoRegistry (soft-reference cache, loaded on demand); the data file moved from mod_data.txt to the new addon/mod.csv format (with a modrinthId column) plus a new modpack.csv for modpacks; the Chinese-name search, download page, mod list, and translation dialogs were adapted across the chain
+2. **BMCLAPI slow-node auto-switching**: FetchTask observes download speed over 10-second windows and switches nodes only when the estimated remaining time exceeds one window, at most twice, avoiding switch jitter; the x-bmclapi-hash response header is collected across the whole chain (FetchTask/GetTask/FileDownloadTask) for integrity verification and direct hash-cache hits, saving the re-download otherwise needed for hash verification
+
+#### 🐛 Bug Fixes
+
+1. **Cleanroom startup crash (#1962)**: Crash one — Cleanroom's setInitialDisplayMode calls window.size() directly, and the SDL3 Android driver has no SetWindowSize callback and returns Unsupported, crashing the game; the sdl_hook dual-layer interception (bytehook GOT + dlsym outlet) now returns success for that call, the size is decided by the injected Surface, and callers read the real value back via SDL_GetWindowSize. Crash two — Cleanroom bundles lwjgly (the LWJGL2 API layer) compiled against an LWJGL 3.4.3 GLCapabilities that includes the APPLE extension bits, which got shadowed by FCL's customized 3.4.1 lwjgl.jar placed first on the classpath and threw NoSuchFieldError; field references were enumerated across all lwjgly classes via javap, and the exactly-14 missing GL_APPLE_* extension booleans were added
+2. **Crash when importing resource packs/shaders/mods via multi-file selection (#1961)**: SelectedFile.fileName gained a fallback for query-parsing exceptions on unauthorized URIs; a single failed file inside the import loop now only counts toward the failure list instead of interrupting the whole import
+3. **Crash when entering the game on Android 13**: clearFrameRate() only exists since API 34, and the old TIRAMISU(33) guard triggered NoSuchMethodError on Android 13 — crashing whenever the game surface was ready and the max-refresh-rate toggle was off; the guard is now raised to API 34 and API 30~33 use an equivalent setFrameRate(0), which also fixes the frame-rate vote lingering after turning the toggle off on Android 11/12
+4. **Controller style edits not taking effect (#1957)**: Same-name style registration now updates in place, fixing textSize and other property edits not applying after a layout reload; style editing also updates in place and key data now listens to style properties, fixing font-size changes not refreshing live on first entry to the editor
+5. **Installer process idling after a launch failure**: launchAPIInstaller exceptions now write back the exit code and kill the process, failing fast on "process is bad" instead of spinning in retry loops
+
+#### ➖ Removals
+
+1. **Mainland-China region restriction (#1955)**: The network region lookup at startup and the region-based disabling of game downloads were removed; the user agreement text was updated accordingly
+
 ## [1.3.4.1] - 2026-10-20
 
 ### 中文
