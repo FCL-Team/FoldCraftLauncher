@@ -1001,6 +1001,13 @@ public class GLFW
     }
 
     public static void glfwSetWindowMonitor(@NativeType("GLFWwindow *") long window, @NativeType("GLFWmonitor *") long monitor, int xpos, int ypos, int width, int height, int refreshRate) {
+        // LWJGLXX 的全屏/无边框退出分支会把未初始化的 savedW/savedH（0）原样传回，
+        // 若照单全收窗口会塌缩成 0×0（Actinium 在标题界面同步窗口模式时触发）。
+        // 非正尺寸不是任何调用方的合法意图，直接丢弃整个调用，监视器状态保持不变。
+        if (width <= 0 || height <= 0) {
+            System.out.println("GLFW: Blocked invalid monitor size for window " + window + ", width=" + width + ", height=" + height);
+            return;
+        }
         // weird calculation to fake pointer
         mGLFWWindowMonitor = window * monitor;
     }
@@ -1253,6 +1260,11 @@ public class GLFW
     }
 
     public static void glfwSetWindowSize(long window, int width, int height) {
+        // 同 glfwSetWindowMonitor：非正尺寸来自 LWJGLXX 未初始化的恢复分支，丢弃以保住窗口尺寸
+        if (width <= 0 || height <= 0) {
+            System.out.println("GLFW: Blocked invalid size for window " + window + ", width=" + width + ", height=" + height);
+            return;
+        }
         internalGetWindow(window).width = width;
         internalGetWindow(window).height = height;
 
