@@ -19,6 +19,19 @@ class PlayerModel {
         val offsetZ: Float = 0f
     )
 
+    /**
+     * 体素化第二层的定义：SolidSkinLayer 与皮肤规范 UV 矩形（[宽, 高, 深, u, v]），
+     * 以及体素输出空间的包围盒（第二层盒子的 min/max，单位 MC 像素）。
+     * name 沿用 3D Skin Layers 的部件命名，供体素层的缩放校正识别头/身。
+     */
+    class SolidLayerPart(
+        val layer: SolidSkinLayer,
+        val name: String,
+        val def: IntArray,
+        val boundsMin: FloatArray,
+        val boundsMax: FloatArray
+    )
+
     /** 可旋转部件，rotation 围绕挂点旋转；挂点位置可被动画修改（resetJoints 恢复） */
     class Part(
         val baseX: Float,
@@ -36,8 +49,8 @@ class PlayerModel {
         var rotationY = 0f
         var rotationZ = 0f
 
-        /** 第二层轮廓挤出网格（与第二层网格同矩阵绘制，无则为 null） */
-        var extrusion: OverlayExtrusion? = null
+        /** 体素化第二层（仅六个第二层部件；3D 皮肤层开启时替代第二层面片绘制） */
+        var solidLayer: SolidLayerPart? = null
     }
 
     val head = Part(
@@ -167,81 +180,6 @@ class PlayerModel {
 
     val skinParts: List<Part> = listOf(head, body, rightArm, leftArm, rightLeg, leftLeg)
 
-    /**
-     * 第二层轮廓挤出网格：为 overlay 不透明像素的边缘生成侧壁（颜色取临近色块），
-     * 使第二层边缘实心化，增强 3D 效果。
-     */
-    val headExtrusion =
-        OverlayExtrusion(9f, 9f, 9f, 8f, 8f, 8f, 32f, 0f, SKIN_TEXTURE_WIDTH, SKIN_TEXTURE_HEIGHT)
-    val bodyExtrusion = OverlayExtrusion(
-        8.5f,
-        12.5f,
-        4.5f,
-        8f,
-        12f,
-        4f,
-        16f,
-        32f,
-        SKIN_TEXTURE_WIDTH,
-        SKIN_TEXTURE_HEIGHT
-    )
-    val rightArmExtrusion = OverlayExtrusion(
-        4.5f,
-        12.5f,
-        4.5f,
-        4f,
-        12f,
-        4f,
-        40f,
-        32f,
-        SKIN_TEXTURE_WIDTH,
-        SKIN_TEXTURE_HEIGHT
-    )
-    val leftArmExtrusion = OverlayExtrusion(
-        4.5f,
-        12.5f,
-        4.5f,
-        4f,
-        12f,
-        4f,
-        48f,
-        48f,
-        SKIN_TEXTURE_WIDTH,
-        SKIN_TEXTURE_HEIGHT
-    )
-    val rightLegExtrusion = OverlayExtrusion(
-        4.5f,
-        12.5f,
-        4.5f,
-        4f,
-        12f,
-        4f,
-        0f,
-        32f,
-        SKIN_TEXTURE_WIDTH,
-        SKIN_TEXTURE_HEIGHT
-    )
-    val leftLegExtrusion = OverlayExtrusion(
-        4.5f,
-        12.5f,
-        4.5f,
-        4f,
-        12f,
-        4f,
-        0f,
-        48f,
-        SKIN_TEXTURE_WIDTH,
-        SKIN_TEXTURE_HEIGHT
-    )
-    val overlayExtrusions: List<OverlayExtrusion> = listOf(
-        headExtrusion,
-        bodyExtrusion,
-        rightArmExtrusion,
-        leftArmExtrusion,
-        rightLegExtrusion,
-        leftLegExtrusion
-    )
-
     /** 玩家整体偏移与倾斜（飞行俯身/游泳下潜/奔跑的跳跃躲闪倾斜、旋转弹跳的自转，其余动画为 0） */
     var rootX = 0f
     var rootY = 0f
@@ -268,13 +206,27 @@ class PlayerModel {
         rightLeg.pivotY = -6f
         leftLeg.pivotY = -6f
         cape.rotationY = Math.PI.toFloat()
-        // 挤出网格跟随所属部件的第二层网格矩阵
-        head.extrusion = headExtrusion
-        body.extrusion = bodyExtrusion
-        rightArm.extrusion = rightArmExtrusion
-        leftArm.extrusion = leftArmExtrusion
-        rightLeg.extrusion = rightLegExtrusion
-        leftLeg.extrusion = leftLegExtrusion
+        // 体素化第二层：def 为皮肤规范 UV 矩形（宽,高,深,u,v），bounds 为第二层盒子
+        // 的包围盒——体素尺寸 = 盒尺寸/def，体素天然比第一层像素大（帽子 9/8），
+        // 与 3D Skin Layers 的缩放校正观感一致
+        head.solidLayer = SolidLayerPart(
+            SolidSkinLayer(), "Hat_Layer", intArrayOf(8, 8, 8, 32, 0),
+            floatArrayOf(-4.5f, -4.5f, -4.5f), floatArrayOf(4.5f, 4.5f, 4.5f)
+        )
+        body.solidLayer = SolidLayerPart(
+            SolidSkinLayer(), "Body_Layer", intArrayOf(8, 12, 4, 16, 32),
+            floatArrayOf(-4.25f, -6.25f, -2.25f), floatArrayOf(4.25f, 6.25f, 2.25f)
+        )
+        rightArm.solidLayer = armSolidLayer(rightArm, "Right_Arm_Layer", 40, 32)
+        leftArm.solidLayer = armSolidLayer(leftArm, "Left_Arm_Layer", 48, 48)
+        rightLeg.solidLayer = SolidLayerPart(
+            SolidSkinLayer(), "Right_Leg_Layer", intArrayOf(4, 12, 4, 0, 32),
+            floatArrayOf(-2.25f, -6.25f, -2.25f), floatArrayOf(2.25f, 6.25f, 2.25f)
+        )
+        leftLeg.solidLayer = SolidLayerPart(
+            SolidSkinLayer(), "Left_Leg_Layer", intArrayOf(4, 12, 4, 0, 48),
+            floatArrayOf(-2.25f, -6.25f, -2.25f), floatArrayOf(2.25f, 6.25f, 2.25f)
+        )
     }
 
     /**
@@ -319,12 +271,12 @@ class PlayerModel {
     }
 
     /**
-     * 用皮肤像素重建全部第二层挤出网格（仅渲染线程调用，皮肤纹理更新时触发）。
+     * 用皮肤像素重建全部体素化第二层（仅渲染线程调用，皮肤纹理更新时触发）。
      */
-    fun rebuildOverlayExtrusions(pixels: IntArray, bitmapWidth: Int) {
+    fun rebuildSolidLayers(pixels: IntArray, bitmapWidth: Int) {
         skinPixels = pixels
         skinBitmapWidth = bitmapWidth
-        overlayExtrusions.forEach { it.rebuild(pixels, bitmapWidth) }
+        rebuildAllSolidLayers()
     }
 
     /**
@@ -333,7 +285,7 @@ class PlayerModel {
     fun resetGpuResources() {
         skinParts.forEach { part -> part.meshes.forEach { it.box.resetGpuResources() } }
         cape.meshes.forEach { it.box.resetGpuResources() }
-        overlayExtrusions.forEach { it.resetGpuResources() }
+        skinParts.forEach { part -> part.solidLayer?.layer?.resetGpuResources() }
     }
 
     private fun applySlimArms() {
@@ -383,9 +335,28 @@ class PlayerModel {
             12f,
             4f
         )
-        // 手臂挤出网格几何随 slim 变化，setGeometry 内部会用缓存的皮肤像素重建
-        rightArmExtrusion.setGeometry(armOverlayWidth, 12.5f, 4.5f, armWidth, 12f, 4f, 40f, 32f)
-        leftArmExtrusion.setGeometry(armOverlayWidth, 12.5f, 4.5f, armWidth, 12f, 4f, 48f, 48f)
+        // 手臂体素层的定义随 slim 变化（def 宽 3/4、包围盒 ±1.75/±2.25），layer 复用保留 VBO
+        rightArm.solidLayer = armSolidLayer(rightArm, "Right_Arm_Layer", 40, 32)
+        leftArm.solidLayer = armSolidLayer(leftArm, "Left_Arm_Layer", 48, 48)
+        rebuildAllSolidLayers()
+    }
+
+    private fun armSolidLayer(part: Part, name: String, u: Int, v: Int): SolidLayerPart {
+        val half = if (slim) 1.75f else 2.25f
+        val width = if (slim) 3 else 4
+        return SolidLayerPart(
+            part.solidLayer?.layer ?: SolidSkinLayer(), name, intArrayOf(width, 12, 4, u, v),
+            floatArrayOf(-half, -6.25f, -2.25f), floatArrayOf(half, 6.25f, 2.25f)
+        )
+    }
+
+    private fun rebuildAllSolidLayers() {
+        val pixels = skinPixels ?: return
+        skinParts.forEach { part ->
+            part.solidLayer?.let { s ->
+                s.layer.rebuild(s.boundsMin, s.boundsMax, s.name, s.def, pixels, skinBitmapWidth)
+            }
+        }
     }
 
     companion object {

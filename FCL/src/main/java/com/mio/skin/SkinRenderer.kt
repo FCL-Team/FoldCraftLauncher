@@ -23,7 +23,10 @@ import kotlin.math.tan
  * 距离 = 4.5 + 16.5/tan(fov/2)/zoom/scale（clamp 10~256），
  * scale 为手势缩放（等价旧版 0.7~2.0 的模型缩放）。
  * 纹理经 GLUtils.texImage2D 上传（预乘 alpha），混合 GL_ONE/GL_ONE_MINUS_SRC_ALPHA，
- * 片元 alpha<0.1 丢弃（等价旧版 glAlphaFunc）；无光照（与旧版观感一致）。
+ * 片元 alpha<0.1 丢弃（等价旧版 glAlphaFunc）。
+ * 3D 皮肤层开启时第二层由体素化网格（[SolidSkinLayer]，复刻 3D Skin Layers）呈现：
+ * 全不透明像素立体化并施加方向光照（环境光 0.70 + 漫反射 0.42），半透明像素回落
+ * 零厚度面片（第二遍关深度写绘制）；关闭时第二层整体回落原版面片。
  */
 class SkinRenderer(context: Context) {
 
@@ -61,8 +64,10 @@ class SkinRenderer(context: Context) {
     private var program = 0
     private var positionLocation = 0
     private var texCoordLocation = 0
+    private var normalLocation = 0
     private var mvpMatrixLocation = 0
-    private var shadeLocation = 0
+    private var normalMatrixLocation = 0
+    private var lightMixLocation = 0
     private var skinTextureId = 0
     private var capeTextureId = 0
     private val projMatrix = FloatArray(16)
@@ -71,6 +76,8 @@ class SkinRenderer(context: Context) {
     private val wrapperMatrix = FloatArray(16)
     private val modelMatrix = FloatArray(16)
     private val mvpMatrix = FloatArray(16)
+    private val solidMatrix = FloatArray(16)
+    private val solidMvpMatrix = FloatArray(16)
 
     // UI 线程 → 渲染线程 的待处理纹理更新
     @Volatile
@@ -158,11 +165,15 @@ class SkinRenderer(context: Context) {
         program = buildProgram()
         positionLocation = GLES20.glGetAttribLocation(program, "aPosition")
         texCoordLocation = GLES20.glGetAttribLocation(program, "aTexCoord")
+        normalLocation = GLES20.glGetAttribLocation(program, "aNormal")
         mvpMatrixLocation = GLES20.glGetUniformLocation(program, "uMVPMatrix")
-        shadeLocation = GLES20.glGetUniformLocation(program, "uShade")
-        GLES20.glUniform1f(shadeLocation, 1f)
+        normalMatrixLocation = GLES20.glGetUniformLocation(program, "uNormalMatrix")
+        lightMixLocation = GLES20.glGetUniformLocation(program, "uLightMix")
         GLES20.glEnableVertexAttribArray(positionLocation)
         GLES20.glEnableVertexAttribArray(texCoordLocation)
+        // 面片不携带法线：禁用法线属性并给固定常量，片元光照恒为 1（与旧无光照观感一致）
+        GLES20.glDisableVertexAttribArray(normalLocation)
+        GLES20.glVertexAttrib3f(normalLocation, 0f, 0f, 1f)
         GLES20.glEnable(GLES20.GL_DEPTH_TEST)
         GLES20.glDepthFunc(GLES20.GL_LEQUAL)
         GLES20.glEnable(GLES20.GL_BLEND)
@@ -306,19 +317,51 @@ class SkinRenderer(context: Context) {
             )
             Matrix.translateM(modelMatrix, 0, part.pivotX, part.pivotY, part.pivotZ)
             Matrix.translateM(modelMatrix, 0, mesh.offsetX, mesh.offsetY, mesh.offsetZ)
-            Matrix.multiplyMM(mvpMatrix, 0, pvMatrix, 0, modelMatrix, 0)
-            GLES20.glUniformMatrix4fv(mvpMatrixLocation, 1, false, mvpMatrix, 0)
-            GLES20.glUniform1f(shadeLocation, 1f)
-            mesh.box.draw(positionLocation, texCoordLocation)
-            // 挤出侧壁与第二层网格同矩阵绘制，整体调暗模拟背光，增强立体感
-            if (index == 1 && overlayEnabled) {
-                part.extrusion?.let {
-                    GLES20.glUniform1f(shadeLocation, EXTRUSION_SHADE)
-                    it.draw(positionLocation, texCoordLocation)
-                    GLES20.glUniform1f(shadeLocation, 1f)
-                }
+
+            val solid = if (index == 1 && overlayEnabled) part.solidLayer else null
+            if (solid != null) {
+                // 体素立方体先画（写深度，方向光照）。体素空间 x/z 与部件局部空间反向
+                // （同 GLTF 资产经 blockbench_export 节点 rotY(180°) 对齐），绘制矩阵补同款旋转
+                System.arraycopy(modelMatrix, 0, solidMatrix, 0, 16)
+                Matrix.rotateM(solidMatrix, 0, 180f, 0f, 1f, 0f)
+                Matrix.multiplyMM(solidMvpMatrix, 0, pvMatrix, 0, solidMatrix, 0)
+                GLES20.glUniformMatrix4fv(mvpMatrixLocation, 1, false, solidMvpMatrix, 0)
+                GLES20.glUniformMatrix4fv(normalMatrixLocation, 1, false, solidMatrix, 0)
+                solid.layer.draw(
+                    positionLocation,
+                    texCoordLocation,
+                    normalLocation,
+                    lightMixLocation,
+                    mvpMatrixLocation,
+                    normalMatrixLocation,
+                    solidMvpMatrix,
+                    solidMatrix
+                )
+                // 第二遍：全不透明像素已由体素呈现，面片仅用于呈现半透明像素——
+                // 关深度写（不遮挡披风等后续混合）并把深度比较收紧为 GL_LESS
+                // （面片位于体素表面内侧，深度量化同值时不盖染立方体）
+                GLES20.glDepthMask(false)
+                GLES20.glDepthFunc(GLES20.GL_LESS)
+                bindUnlitAttribs()
+                Matrix.multiplyMM(mvpMatrix, 0, pvMatrix, 0, modelMatrix, 0)
+                GLES20.glUniformMatrix4fv(mvpMatrixLocation, 1, false, mvpMatrix, 0)
+                mesh.box.draw(positionLocation, texCoordLocation)
+                GLES20.glDepthFunc(GLES20.GL_LEQUAL)
+                GLES20.glDepthMask(true)
+            } else {
+                bindUnlitAttribs()
+                Matrix.multiplyMM(mvpMatrix, 0, pvMatrix, 0, modelMatrix, 0)
+                GLES20.glUniformMatrix4fv(mvpMatrixLocation, 1, false, mvpMatrix, 0)
+                mesh.box.draw(positionLocation, texCoordLocation)
             }
         }
+    }
+
+    /** 面片绘制前的属性/uniform 状态：法线属性禁用（固定常量），光照混合为 0（无光照） */
+    private fun bindUnlitAttribs() {
+        GLES20.glDisableVertexAttribArray(normalLocation)
+        GLES20.glVertexAttrib3f(normalLocation, 0f, 0f, 1f)
+        GLES20.glUniform1f(lightMixLocation, 0f)
     }
 
     private fun cameraDistance(): Float {
@@ -354,10 +397,10 @@ class SkinRenderer(context: Context) {
         model.setSlim(pendingSlim)
         pendingSkin?.let {
             skinTextureId = uploadTexture(skinTextureId, it)
-            // 用皮肤像素重建第二层轮廓挤出网格（边缘实心化）
+            // 用皮肤像素重建体素化第二层（3D 皮肤层开启时的实心渲染网格）
             val pixels = IntArray(it.width * it.height)
             it.getPixels(pixels, 0, it.width, 0, 0, it.width, it.height)
-            model.rebuildOverlayExtrusions(pixels, it.width)
+            model.rebuildSolidLayers(pixels, it.width)
         }
         pendingSkin = null
         val cape = pendingCape
@@ -435,24 +478,32 @@ class SkinRenderer(context: Context) {
     companion object {
         private const val VERTEX_SHADER = """
             uniform mat4 uMVPMatrix;
+            uniform mat4 uNormalMatrix;
             attribute vec4 aPosition;
             attribute vec2 aTexCoord;
+            attribute vec3 aNormal;
             varying vec2 vTexCoord;
+            varying vec3 vNormal;
             void main() {
                 gl_Position = uMVPMatrix * aPosition;
                 vTexCoord = aTexCoord;
+                vNormal = (uNormalMatrix * vec4(aNormal, 0.0)).xyz;
             }
         """
 
         private const val FRAGMENT_SHADER = """
             precision mediump float;
             uniform sampler2D uTexture;
-            uniform float uShade;
+            uniform float uLightMix;
             varying vec2 vTexCoord;
+            varying vec3 vNormal;
             void main() {
                 vec4 color = texture2D(uTexture, vTexCoord);
                 if (color.a < 0.1) discard;
-                gl_FragColor = vec4(color.rgb * uShade, color.a);
+                // 体素第二层：环境光 0.70 + 方向漫反射 0.42（光源归一化 (2,4,3)，同 Axolotl）；
+                // 面片 uLightMix=0 保持无光照观感
+                float light = mix(1.0, 0.70 + 0.42 * max(dot(normalize(vNormal), vec3(0.371, 0.743, 0.557)), 0.0), uLightMix);
+                gl_FragColor = vec4(color.rgb * light, color.a);
             }
         """
 
@@ -480,9 +531,6 @@ class SkinRenderer(context: Context) {
 
         /** 压扁/形变支点：模型脚底的局部 y */
         private const val SQUASH_PIVOT_Y = -16f
-
-        /** 挤出侧壁的背光亮度系数（参考 3d-Skin-Layers 的方向光照观感） */
-        private const val EXTRUSION_SHADE = 0.92f
 
         private val FOV_TAN = tan(Math.toRadians(FOV / 2.0)).toFloat()
 
