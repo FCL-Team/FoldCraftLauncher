@@ -59,6 +59,7 @@ import com.tungsten.fcl.control.view.LogWindow;
 import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.control.view.TouchPad;
 import com.tungsten.fcl.control.view.ViewManager;
+import com.mio.dialog.ItemSelectionDialog;
 import com.tungsten.fcl.game.sdl.GamepadInputMode;
 import com.tungsten.fcl.game.sdl.SdlBridge;
 import com.tungsten.fcl.game.sdl.SdlSettings;
@@ -292,6 +293,24 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     }
 
     /**
+     * 编辑会话内是否允许直接编辑参考组控件（跨组编辑）：关闭时参考组仅作参照，不响应编辑触摸。
+     * 默认关闭，避免编辑当前组时误触参考组控件
+     */
+    private boolean crossGroupEditEnabled = false;
+
+    public boolean isCrossGroupEditEnabled() {
+        return crossGroupEditEnabled;
+    }
+
+    public void setCrossGroupEditEnabled(boolean enabled) {
+        crossGroupEditEnabled = enabled;
+        if (!enabled) {
+            // 取消参考组控件的选中，避免操作栏悬停在已冻结的控件上
+            viewManager.clearGhostSelection();
+        }
+    }
+
+    /**
      * 复制控件组：完整克隆按键与方向键数据（控件 id 重新生成），
      * 新组插入源组之后并立即在编辑画布显示
      */
@@ -331,6 +350,49 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             viewManager.initializeController();
         });
         dialog.show();
+    }
+
+    /**
+     * 控件组合并：把 source 的全部控件移动到 target（控件 id 保持不变），原组保留但清空。
+     * 双方按键数据未加载时先按需加载再执行。
+     */
+    private void mergeViewGroup(ControlViewGroup source, ControlViewGroup target) {
+        if (source == null || target == null || source == target) {
+            return;
+        }
+        loadGroupThen(source, () -> loadGroupThen(target, () -> {
+            for (ControlButtonData button : new ArrayList<>(source.getViewData().buttonList())) {
+                target.getViewData().addButton(button);
+            }
+            for (ControlDirectionData direction : new ArrayList<>(source.getViewData().directionList())) {
+                target.getViewData().addDirection(direction);
+            }
+            source.getViewData().buttonList().clear();
+            source.getViewData().directionList().clear();
+            viewManager.saveController();
+            rightMenuAdapter.rebuild();
+            viewManager.initializeController();
+        }));
+    }
+
+    /** 数据就绪后（必要时按需加载）在主线程执行动作 */
+    private void loadGroupThen(ControlViewGroup group, Runnable action) {
+        if (group.isDataLoaded()) {
+            action.run();
+            return;
+        }
+        Controllers.loadViewGroup(getController(), group, new Controllers.ViewGroupLoadCallback() {
+            @Override
+            public void onLoaded(ControlViewGroup viewGroup) {
+                action.run();
+            }
+
+            @Override
+            public void onFailed(Throwable e) {
+                Logging.LOG.log(Level.WARNING, "Failed to load view group " + group.getId(), e);
+                Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_group_load_failed), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /**
@@ -562,12 +624,39 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
             @Override
             public void onEditGroupEdit(@NonNull ControlViewGroup group) {
-                EditViewGroupDialog dialog = new EditViewGroupDialog(getActivity(), GameMenu.this, group, (name, visibility) -> {
-                    group.setName(name);
-                    group.setVisibility(visibility);
-                    getController().updateViewGroup(group);
-                    rightMenuAdapter.rebuild();
-                });
+                EditViewGroupDialog.Callback callback = new EditViewGroupDialog.Callback() {
+                    @Override
+                    public void onPositive(String name, ControlViewGroup.Visibility visibility) {
+                        group.setName(name);
+                        group.setVisibility(visibility);
+                        getController().updateViewGroup(group);
+                        rightMenuAdapter.rebuild();
+                    }
+
+                    @Override
+                    public boolean supportsMerge() {
+                        return true;
+                    }
+
+                    @Override
+                    public void onMergeToGroup(ControlViewGroup source) {
+                        // 选择目标组后把 source 全部控件转移过去（控件组合并）
+                        ArrayList<ControlViewGroup> candidates = new ArrayList<>(getController().viewGroups());
+                        candidates.remove(source);
+                        if (candidates.isEmpty()) {
+                            Toast.makeText(getActivity(), getActivity().getString(R.string.edit_view_no_group), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        ArrayList<String> names = new ArrayList<>();
+                        for (ControlViewGroup group : candidates) {
+                            names.add(group.getName());
+                        }
+                        ItemSelectionDialog.show(getActivity(),
+                                getActivity().getString(R.string.select_target_group_title), names, true, -1,
+                                (position, item) -> mergeViewGroup(source, candidates.get(position)));
+                    }
+                };
+                EditViewGroupDialog dialog = new EditViewGroupDialog(getActivity(), GameMenu.this, group, callback);
                 dialog.show();
             }
 
@@ -1065,6 +1154,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 break;
             case SNAP_ADJACENT_ONLY:
                 menuSetting.setSnapAdjacentOnly(checked);
+                break;
+            case CROSS_GROUP_EDIT:
+                setCrossGroupEditEnabled(checked);
                 break;
         }
     }

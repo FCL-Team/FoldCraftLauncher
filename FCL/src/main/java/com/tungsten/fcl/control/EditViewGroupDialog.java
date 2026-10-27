@@ -31,6 +31,14 @@ public class EditViewGroupDialog extends FCLDialog implements View.OnClickListen
 
     public interface Callback {
         void onPositive(String name, ControlViewGroup.Visibility visibility);
+
+        /** 是否支持把该组控件合并到其他组：无内容可合并的入口（新建组）返回 false，对话框不显示合并按钮 */
+        default boolean supportsMerge() {
+            return false;
+        }
+
+        /** 把该组全部控件合并（移动）到所选目标组，保留原组 */
+        default void onMergeToGroup(ControlViewGroup source) {}
     }
 
     public EditViewGroupDialog(@NonNull Context context, GameMenu menu, ControlViewGroup viewGroup, Callback callback) {
@@ -53,8 +61,14 @@ public class EditViewGroupDialog extends FCLDialog implements View.OnClickListen
 
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);
+        FCLButton merge = findViewById(R.id.merge);
+        merge.setVisibility(callback.supportsMerge() ? View.VISIBLE : View.GONE);
         positive.setOnClickListener(this);
         negative.setOnClickListener(this);
+        merge.setOnClickListener(v -> {
+            dismiss();
+            callback.onMergeToGroup(viewGroup);
+        });
     }
 
     @Override
