@@ -3,8 +3,13 @@
  * 参考 DirectAudio.h（https://github.com/openjdk/jdk17u/blob/master/src/java.desktop/share/native/libjsound/DirectAudio.h）。
  *
  * libopenal 由 FCLauncher 在 JVM 启动前以 RTLD_GLOBAL 预加载，这里按 soname
- * 复用同一实例；进入每个后端接口时把共享 ALC context 置为调用线程 current，
- * 避免同线程上游戏自身的 AL context 被误用。
+ * 复用同一实例；桥接自建独立的 device/context，但只通过 alcSetThreadContext 把它
+ * 设为调用线程私有 current，退出前还原原值，绝不触碰进程全局 current——
+ * alcMakeContextCurrent 会同时改写全局 current 并清空调用线程的 TLS，游戏侧
+ * （paulscode/LWJGL）的 context 会被抢占：其线程上的 AL 调用全部落进桥接
+ * context，source ID 尽数失效；被孤立的 context 还会被 OpenAL Soft 1.25+ 的
+ * alcCloseDevice 以 "Releasing orphaned context" 隐式销毁，原版音效全失
+ * （issue #1969）。
  *
  * 本后端只接收 OpenAL 原生格式（16-bit signed LE / 8-bit unsigned LE，1~2 声道），
  * 请求格式与其不一致时的符号/大小端/增益转换由 DirectAudioDevice.c 通用层完成；
@@ -61,7 +66,11 @@ typedef int ALCsizei;
 typedef ALCdevice* (*alcOpenDeviceFn)(const ALCchar*);
 typedef ALCboolean (*alcCloseDeviceFn)(ALCdevice*);
 typedef ALCcontext* (*alcCreateContextFn)(ALCdevice*, const ALCint*);
+typedef void (*alcDestroyContextFn)(ALCcontext*);
 typedef ALCboolean (*alcMakeContextCurrentFn)(ALCcontext*);
+typedef ALCcontext* (*alcGetCurrentContextFn)(void);
+typedef ALCcontext* (*alcGetThreadContextFn)(void);
+typedef ALCboolean (*alcSetThreadContextFn)(ALCcontext*);
 typedef ALCdevice* (*alcCaptureOpenDeviceFn)(const ALCchar*, ALCuint, ALCenum, ALCsizei);
 typedef ALCboolean (*alcCaptureCloseDeviceFn)(ALCdevice*);
 typedef void (*alcCaptureStartFn)(ALCdevice*);
@@ -88,7 +97,11 @@ static ALCcontext* g_context = NULL;
 static alcOpenDeviceFn p_alcOpenDevice;
 static alcCloseDeviceFn p_alcCloseDevice;
 static alcCreateContextFn p_alcCreateContext;
+static alcDestroyContextFn p_alcDestroyContext;
 static alcMakeContextCurrentFn p_alcMakeContextCurrent;
+static alcGetCurrentContextFn p_alcGetCurrentContext;
+static alcGetThreadContextFn p_alcGetThreadContext;   /* 可选：缺失时按无旧 TLS 处理 */
+static alcSetThreadContextFn p_alcSetThreadContext;   /* 可选：缺失时退回全局 current */
 static alcCaptureOpenDeviceFn p_alcCaptureOpenDevice;
 static alcCaptureCloseDeviceFn p_alcCaptureCloseDevice;
 static alcCaptureStartFn p_alcCaptureStart;
@@ -116,6 +129,16 @@ static void* jsound_dlsym(void* lib, const char* name, int* ok) {
     return sym;
 }
 
+/* current context 守卫：ctxEnter/ctxLeave 之间，桥接 context 只对调用线程可见 */
+typedef struct {
+    ALCcontext* prevThread; /* 进入前调用线程的 TLS current（退出时还原） */
+    ALCcontext* prevGlobal; /* 兜底路径进入前的全局 current（退出时还原） */
+    int viaTls;
+} JsoundCtxGuard;
+
+static int jsound_ctxActivate(JsoundCtxGuard* g);
+static void jsound_ctxLeave(JsoundCtxGuard* g);
+
 /* g_engineLock 持有下初始化 OpenAL 库与默认设备 */
 static int jsound_initEngineLocked(void) {
     if (g_engineReady) {
@@ -133,7 +156,14 @@ static int jsound_initEngineLocked(void) {
     p_alcOpenDevice = (alcOpenDeviceFn) jsound_dlsym(lib, "alcOpenDevice", &ok);
     p_alcCloseDevice = (alcCloseDeviceFn) jsound_dlsym(lib, "alcCloseDevice", &ok);
     p_alcCreateContext = (alcCreateContextFn) jsound_dlsym(lib, "alcCreateContext", &ok);
+    p_alcDestroyContext = (alcDestroyContextFn) jsound_dlsym(lib, "alcDestroyContext", &ok);
     p_alcMakeContextCurrent = (alcMakeContextCurrentFn) jsound_dlsym(lib, "alcMakeContextCurrent", &ok);
+    p_alcGetCurrentContext = (alcGetCurrentContextFn) jsound_dlsym(lib, "alcGetCurrentContext", &ok);
+    p_alcSetThreadContext = (alcSetThreadContextFn) dlsym(lib, "alcSetThreadContext");
+    p_alcGetThreadContext = (alcGetThreadContextFn) dlsym(lib, "alcGetThreadContext");
+    if (p_alcSetThreadContext == NULL) {
+        JSOUND_LOGW("alcSetThreadContext 不可用，退回全局 current（可能与游戏音频引擎互相抢占）");
+    }
     p_alcCaptureOpenDevice = (alcCaptureOpenDeviceFn) jsound_dlsym(lib, "alcCaptureOpenDevice", &ok);
     p_alcCaptureCloseDevice = (alcCaptureCloseDeviceFn) jsound_dlsym(lib, "alcCaptureCloseDevice", &ok);
     p_alcCaptureStart = (alcCaptureStartFn) jsound_dlsym(lib, "alcCaptureStart", &ok);
@@ -161,27 +191,63 @@ static int jsound_initEngineLocked(void) {
         return 0;
     }
     g_context = p_alcCreateContext(g_device, NULL);
-    if (g_context == NULL || p_alcMakeContextCurrent(g_context) != JSOUND_ALC_TRUE) {
-        JSOUND_LOGE("创建/激活 ALC context 失败");
+    if (g_context == NULL) {
+        JSOUND_LOGE("创建 ALC context 失败");
+        p_alcCloseDevice(g_device);
+        g_device = NULL;
+        return 0;
+    }
+    /* 自检也走受控激活，不在全局 current 留痕 */
+    JsoundCtxGuard guard;
+    if (!jsound_ctxActivate(&guard)) {
+        JSOUND_LOGE("激活 ALC context 失败");
+        jsound_ctxLeave(&guard);
+        p_alcDestroyContext(g_context);
         g_context = NULL;
         p_alcCloseDevice(g_device);
         g_device = NULL;
         return 0;
     }
+    jsound_ctxLeave(&guard);
     g_engineReady = 1;
-    JSOUND_LOGI("OpenAL 设备就绪");
+    JSOUND_LOGI("OpenAL 设备就绪（current 走 %s）",
+                p_alcSetThreadContext != NULL ? "线程局部 context" : "全局 context 还原兜底");
     return 1;
 }
 
-/* 进入后端接口时调用：确保引擎就绪并把 context 置为当前线程 */
-static int jsound_ctxEnter(void) {
+/* 引擎就绪的前提下激活桥接 context；须与 jsound_ctxLeave 在同线程成对调用 */
+static int jsound_ctxActivate(JsoundCtxGuard* g) {
+    if (p_alcSetThreadContext != NULL) {
+        g->viaTls = 1;
+        g->prevThread = p_alcGetThreadContext != NULL ? p_alcGetThreadContext() : NULL;
+        if (p_alcSetThreadContext(g_context) == JSOUND_ALC_TRUE) {
+            return 1;
+        }
+        /* 设置失败则 TLS 未动，转兜底路径 */
+        g->viaTls = 0;
+    }
+    g->prevGlobal = p_alcGetCurrentContext();
+    return p_alcMakeContextCurrent(g_context) == JSOUND_ALC_TRUE;
+}
+
+/* 进入后端接口时调用：确保引擎就绪并激活桥接 context */
+static int jsound_ctxEnter(JsoundCtxGuard* g) {
+    memset(g, 0, sizeof(*g));
     pthread_mutex_lock(&g_engineLock);
     int ok = jsound_initEngineLocked();
     pthread_mutex_unlock(&g_engineLock);
-    if (ok) {
-        p_alcMakeContextCurrent(g_context);
+    if (!ok) {
+        return 0;
     }
-    return ok;
+    return jsound_ctxActivate(g);
+}
+
+static void jsound_ctxLeave(JsoundCtxGuard* g) {
+    if (g->viaTls) {
+        p_alcSetThreadContext(g->prevThread);
+    } else {
+        p_alcMakeContextCurrent(g->prevGlobal);
+    }
 }
 
 static void jsound_msleep(long ms) {
@@ -295,11 +361,13 @@ void* DAUDIO_Open(INT32 mixerIndex, INT32 deviceID, int isSource,
     if (encoding != DAUDIO_PCM || frameSize <= 0 || (channels != 1 && channels != 2)) {
         return NULL;
     }
-    if (!jsound_ctxEnter()) {
+    JsoundCtxGuard guard;
+    if (!jsound_ctxEnter(&guard)) {
         return NULL;
     }
     LineInfo* info = (LineInfo*) calloc(1, sizeof(LineInfo));
     if (info == NULL) {
+        jsound_ctxLeave(&guard);
         return NULL;
     }
     info->isSource = isSource;
@@ -310,6 +378,7 @@ void* DAUDIO_Open(INT32 mixerIndex, INT32 deviceID, int isSource,
     if (isSource) {
         if (info->alFormat == JSOUND_AL_NONE) {
             free(info);
+            jsound_ctxLeave(&guard);
             return NULL;
         }
         p_alGenSources(1, &info->source);
@@ -322,6 +391,7 @@ void* DAUDIO_Open(INT32 mixerIndex, INT32 deviceID, int isSource,
     } else {
         if (info->alFormat == JSOUND_AL_NONE) {
             free(info);
+            jsound_ctxLeave(&guard);
             return NULL;
         }
         int frames = bufferSizeInBytes / frameSize;
@@ -336,16 +406,19 @@ void* DAUDIO_Open(INT32 mixerIndex, INT32 deviceID, int isSource,
         if (info->capture == NULL) {
             JSOUND_LOGW("alcCaptureOpenDevice 失败（%d Hz, %d bit, %d ch）", info->sampleRate, sampleSizeInBits, channels);
             free(info);
+            jsound_ctxLeave(&guard);
             return NULL;
         }
         info->captureCapacityBytes = frames * frameSize;
     }
+    jsound_ctxLeave(&guard);
     return info;
 }
 
 int DAUDIO_Start(void* id, int isSource) {
     LineInfo* info = (LineInfo*) id;
-    if (!jsound_ctxEnter()) {
+    JsoundCtxGuard guard;
+    if (!jsound_ctxEnter(&guard)) {
         return FALSE;
     }
     if (isSource) {
@@ -354,12 +427,14 @@ int DAUDIO_Start(void* id, int isSource) {
     } else {
         p_alcCaptureStart(info->capture);
     }
+    jsound_ctxLeave(&guard);
     return TRUE;
 }
 
 int DAUDIO_Stop(void* id, int isSource) {
     LineInfo* info = (LineInfo*) id;
-    if (!jsound_ctxEnter()) {
+    JsoundCtxGuard guard;
+    if (!jsound_ctxEnter(&guard)) {
         return FALSE;
     }
     if (isSource) {
@@ -368,6 +443,7 @@ int DAUDIO_Stop(void* id, int isSource) {
     } else {
         p_alcCaptureStop(info->capture);
     }
+    jsound_ctxLeave(&guard);
     return TRUE;
 }
 
@@ -377,10 +453,12 @@ void DAUDIO_Close(void* id, int isSource) {
         return;
     }
     if (isSource) {
-        if (jsound_ctxEnter()) {
+        JsoundCtxGuard guard;
+        if (jsound_ctxEnter(&guard)) {
             p_alSourcei(info->source, JSOUND_AL_BUFFER, JSOUND_AL_NONE);
             p_alDeleteBuffers(PLAYBACK_BUFFERS, info->buffers);
             p_alDeleteSources(1, &info->source);
+            jsound_ctxLeave(&guard);
         }
     } else if (info->capture != NULL) {
         p_alcCaptureStop(info->capture);
@@ -394,7 +472,8 @@ int DAUDIO_Write(void* id, char* data, int byteSize) {
     if (byteSize <= 0 || info->frameSize <= 0) {
         return -1;
     }
-    if (!jsound_ctxEnter()) {
+    JsoundCtxGuard guard;
+    if (!jsound_ctxEnter(&guard)) {
         return -1;
     }
     int written = 0;
@@ -421,6 +500,7 @@ int DAUDIO_Write(void* id, char* data, int byteSize) {
         written += n;
         jsound_ensurePlaying(info);
     }
+    jsound_ctxLeave(&guard);
     return written;
 }
 
@@ -459,11 +539,14 @@ int DAUDIO_GetBufferSize(void* id, int isSource) {
 int DAUDIO_StillDraining(void* id, int isSource) {
     LineInfo* info = (LineInfo*) id;
     if (isSource) {
-        if (!jsound_ctxEnter()) {
+        JsoundCtxGuard guard;
+        if (!jsound_ctxEnter(&guard)) {
             return FALSE;
         }
         jsound_reclaim(info);
-        return (info->started && info->queuedCount > 0) ? TRUE : FALSE;
+        int draining = (info->started && info->queuedCount > 0) ? TRUE : FALSE;
+        jsound_ctxLeave(&guard);
+        return draining;
     }
     return info->started ? TRUE : FALSE;
 }
@@ -471,10 +554,12 @@ int DAUDIO_StillDraining(void* id, int isSource) {
 int DAUDIO_Flush(void* id, int isSource) {
     LineInfo* info = (LineInfo*) id;
     if (isSource) {
-        if (!jsound_ctxEnter()) {
+        JsoundCtxGuard guard;
+        if (!jsound_ctxEnter(&guard)) {
             return FALSE;
         }
         jsound_dropQueued(info);
+        jsound_ctxLeave(&guard);
     } else {
         /* 丢弃已采集未读的样本 */
         ALCint available = 0;
@@ -495,7 +580,8 @@ int DAUDIO_Flush(void* id, int isSource) {
 int DAUDIO_GetAvailable(void* id, int isSource) {
     LineInfo* info = (LineInfo*) id;
     if (isSource) {
-        if (!jsound_ctxEnter()) {
+        JsoundCtxGuard guard;
+        if (!jsound_ctxEnter(&guard)) {
             return 0;
         }
         jsound_reclaim(info);
@@ -504,7 +590,9 @@ int DAUDIO_GetAvailable(void* id, int isSource) {
             int idx = (info->ringHead + i) % PLAYBACK_BUFFERS;
             queuedBytes += info->bufferLens[idx];
         }
-        return info->capacityBytes - queuedBytes;
+        int available = info->capacityBytes - queuedBytes;
+        jsound_ctxLeave(&guard);
+        return available;
     }
     ALCint available = 0;
     p_alcGetIntegerv(info->capture, JSOUND_ALC_CAPTURE_SAMPLES, 1, &available);
@@ -521,7 +609,8 @@ INT64 DAUDIO_GetBytePosition(void* id, int isSource, INT64 javaBytePos) {
         /* 已排空（含 flush/underrun），设备内无未播数据 */
         return javaBytePos;
     }
-    if (!jsound_ctxEnter()) {
+    JsoundCtxGuard guard;
+    if (!jsound_ctxEnter(&guard)) {
         return javaBytePos;
     }
     INT64 queuedBytes = 0;
@@ -530,16 +619,18 @@ INT64 DAUDIO_GetBytePosition(void* id, int isSource, INT64 javaBytePos) {
         queuedBytes += info->bufferLens[idx];
     }
     /* 加上正在播放那块内的精确偏移 */
+    INT64 position = javaBytePos - queuedBytes;
     ALint state = 0;
     p_alGetSourcei(info->source, JSOUND_AL_SOURCE_STATE, &state);
     if (state == JSOUND_AL_PLAYING) {
         ALint offset = 0;
         p_alGetSourcei(info->source, JSOUND_AL_BYTE_OFFSET, &offset);
         if (offset > 0 && offset < queuedBytes) {
-            return javaBytePos - queuedBytes + offset;
+            position = javaBytePos - queuedBytes + offset;
         }
     }
-    return javaBytePos - queuedBytes;
+    jsound_ctxLeave(&guard);
+    return position;
 }
 
 void DAUDIO_SetBytePosition(void* id, int isSource, INT64 javaBytePos) {
