@@ -82,6 +82,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -117,6 +119,7 @@ class LauncherHelper(
     }
     private val mainScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
     private var scaleFactor = 1.0
+    private var cursorOffset = 0.0
     private var launchJob: Job? = null
 
     /** 启动阶段列表（与原任务链 withStagesHint 一致），驱动弹窗任务列表的阶段行展示 */
@@ -145,22 +148,29 @@ class LauncherHelper(
         launchingStepsPane.setCancel(TaskCancellationAction(Runnable { launchJob?.cancel() }))
         launchJob = CoroutineScope(Dispatchers.IO).launch {
             try {
-                launch0()
-                withContext(Dispatchers.Main) {
-                    currentStage?.let { launchingStepsPane.succeedStage(it) }
-                    launchingStepsPane.dismiss()
+                try {
+                    launch0()
+                    withContext(Dispatchers.Main) {
+                        currentStage?.let { launchingStepsPane.succeedStage(it) }
+                        launchingStepsPane.dismiss()
+                    }
+                } catch (_: CancellationException) {
+                    // 用户主动取消（TaskDialog 取消按钮或检查弹窗中选择取消）：幂等关闭启动弹窗。
+                    // NonCancellable：经取消按钮取消时 Job 已取消，普通 withContext 在入口即抛出
+                    withContext(NonCancellable + Dispatchers.Main) {
+                        launchingStepsPane.dismiss()
+                    }
+                } catch (e: Throwable) {
+                    // NonCancellable：错误冒出瞬间被取消时（Job 已取消）仍须关闭弹窗并提示错误
+                    withContext(NonCancellable + Dispatchers.Main) {
+                        currentStage?.let { launchingStepsPane.failStage(it) }
+                        launchingStepsPane.dismiss()
+                        showLaunchErrorMessage(e)
+                    }
                 }
-            } catch (_: CancellationException) {
-                // 用户主动取消（TaskDialog 取消按钮或检查弹窗中选择取消）：幂等关闭启动弹窗。
-                // 注意经弹窗选择取消时 Job 并未真正 cancel，withContext 可正常执行；
-                // 经取消按钮取消时 Job 已取消、弹窗也已关闭，此处直接抛出即可
-                withContext(Dispatchers.Main) { launchingStepsPane.dismiss() }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    currentStage?.let { launchingStepsPane.failStage(it) }
-                    launchingStepsPane.dismiss()
-                    showLaunchErrorMessage(e)
-                }
+            } finally {
+                // 登录进度回调在 logIn 的 finally 中已解除注册，此处收掉常驻 scope 防泄漏
+                mainScope.cancel()
             }
         }
     }
@@ -186,7 +196,7 @@ class LauncherHelper(
         enterStage("launch.state.mods")
         // 全量 mod 扫描一次，供 lwjgl3ify 补丁、modloader 与渲染器检查共用
         val scannedMods = scanMods(repository, selectedVersion)
-        // GTNH/lwjgl3ify 兼容：mods 目录存在 lwjgl3ify 时改写版本 JSON，以 RFB + Java17+ 启动
+        // GTNH/lwjgl3ify 兼容：mods 目录存在 lwjgl3ify 时在内存中合并 RFB 启动清单（不落盘），以 RFB + Java17+ 启动
         Lwjgl3ifyPatcher.patchIfNeeded(repository, selectedVersion, scannedMods, versionRef)
         val gameVersion = repository.getGameVersion(versionRef.get())
         val integrityCheck = repository.unmarkVersionLaunchedAbnormally(selectedVersion)
@@ -231,18 +241,32 @@ class LauncherHelper(
         val authInfo = logIn()
 
         enterStage("launch.state.waiting_launching")
+        var menuSetting: MenuSetting? = null
         try {
-            val menuSetting = GsonBuilder().setPrettyPrinting().create()
+            menuSetting = GsonBuilder().setPrettyPrinting().create()
                 .fromJson(
                     FileUtils.readText(File(FCLPath.FILES_DIR + "/menu_setting.json")),
                     MenuSetting::class.java
                 )
-            scaleFactor = menuSetting?.windowScale ?: 1.0
         } catch (_: Throwable) {
-            scaleFactor = 1.0
         }
+        if (menuSetting != null) {
+            scaleFactor = menuSetting.windowScale
+            cursorOffset = menuSetting.cursorOffset
+        } else {
+            scaleFactor = 1.0
+            cursorOffset = 0.0
+        }
+        // 强制分辨率已迁移到游戏内菜单（MenuSetting），启动前同步进静态配置
+        FCLBridge.initForceResolution(menuSetting)
         val launchOptions =
-            repository.getLaunchOptions(selectedVersion, javaVersion, profile.gameDir, scaleFactor)
+            repository.getLaunchOptions(
+                selectedVersion,
+                javaVersion,
+                profile.gameDir,
+                scaleFactor,
+                cursorOffset
+            )
         val launcher = FCLGameLauncher(context, repository, version, authInfo, launchOptions)
 
         var jnaVersion: String? = null
@@ -348,7 +372,10 @@ class LauncherHelper(
             builder.setPositiveButton(positiveText) { cont.resume(Choice.CANCEL) }
             builder.setNegativeButton(negativeText) { cont.resume(Choice.CONTINUE) }
             if (neutralText != null) builder.setNeutralButton(neutralText) { cont.resume(Choice.NEUTRAL) }
-            builder.create().show()
+            val dialog = builder.create()
+            // 启动协程被取消（如任务弹窗点取消）时一并收掉停留屏幕上的检查弹窗
+            cont.invokeOnCancellation { dialog.dismiss() }
+            dialog.show()
         }
     }
 
@@ -645,7 +672,10 @@ class LauncherHelper(
     private suspend fun awaitLoginChoice(create: ((LoginChoice) -> Unit) -> FCLDialog): LoginChoice =
         withContext(Dispatchers.Main) {
             suspendCancellableCoroutine { cont ->
-                create { choice -> cont.resume(choice) }.show()
+                val dialog = create { choice -> cont.resume(choice) }
+                // 启动协程被取消（如任务弹窗点取消）时一并收掉停留屏幕上的登录弹窗
+                cont.invokeOnCancellation { dialog.dismiss() }
+                dialog.show()
             }
         }
 
@@ -660,8 +690,8 @@ class LauncherHelper(
         }
     }
 
-    /** 主线程展示启动失败原因（按异常类型整理文案） */
-    private fun showLaunchErrorMessage(ex: Exception) {
+    /** 主线程展示启动失败原因（按异常类型整理文案，兜底分支直接打印堆栈） */
+    private fun showLaunchErrorMessage(ex: Throwable) {
         val message: String = when (ex) {
             is ModpackCompletionException ->
                 if (ex.cause is FileNotFoundException)

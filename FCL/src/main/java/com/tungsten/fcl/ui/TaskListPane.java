@@ -99,8 +99,9 @@ public final class TaskListPane extends FCLAdapter {
         return executor == null;
     }
 
-    /** 展示模式下接入执行器：任务行与阶段图标随执行器事件更新 */
+    /** 展示模式下接入执行器：任务行与阶段图标随执行器事件更新；多次接入时解除上一个执行器的监听 */
     public void attachExecutor(TaskExecutor executor) {
+        if (attachedExecutor != null) attachedExecutor.removeTaskListener(taskListener);
         attachedExecutor = executor;
         executor.addTaskListener(taskListener);
     }
