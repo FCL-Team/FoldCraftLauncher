@@ -19,6 +19,30 @@ int (*vtest_main_p)(int argc, char **argv);
 
 void (*vtest_swap_buffers_p)(void);
 
+// OSMesa 要求一块可写的用户缓冲区作为颜色缓冲（宽*高*4 字节）。
+// 呈现实际由 vtest 服务端经自身 EGL surface 直出，不经这块内存，
+// 但缓冲区必须真实可写——否则首帧 flush 会写进任意地址
+static void *virgl_framebuffer = NULL;
+static int virgl_fb_width = 0;
+static int virgl_fb_height = 0;
+
+// 分配失败时保留旧缓冲不动（返回 NULL），调用方据此跳过本次 MakeCurrent
+static void *virgl_ensure_framebuffer(int width, int height) {
+    if (virgl_framebuffer != NULL && virgl_fb_width == width && virgl_fb_height == height) {
+        return virgl_framebuffer;
+    }
+    void *buffer = calloc((size_t) width * (size_t) height, 4);
+    if (buffer == NULL) {
+        printf("VirGL: allocate %dx%d OSMesa color buffer failed\n", width, height);
+        return NULL;
+    }
+    free(virgl_framebuffer);
+    virgl_framebuffer = buffer;
+    virgl_fb_width = width;
+    virgl_fb_height = height;
+    return virgl_framebuffer;
+}
+
 void *virglGetCurrentContext() {
     return (void *) OSMesaGetCurrentContext_p();
 }
@@ -30,8 +54,10 @@ void virglSwapBuffers() {
 
 void virglMakeCurrent(void *window) {
     printf("OSMDroid: making current\n");
+    void *framebuffer = virgl_ensure_framebuffer(pojav_environ->savedWidth, pojav_environ->savedHeight);
+    if (framebuffer == NULL) return;
     OSMesaMakeCurrent_p((OSMesaContext) window,
-                        setbuffer,
+                        framebuffer,
                         GL_UNSIGNED_BYTE,
                         pojav_environ->savedWidth,
                         pojav_environ->savedHeight);
@@ -61,7 +87,13 @@ void loadSymbolsVirGL() {
 
     char *fileName = calloc(1, 1024);
 
-    sprintf(fileName, "%s/libvirgl_test_server.so", getenv("POJAV_NATIVEDIR"));
+    // 启动器为插件渲染器注入 VIRGL_TEST_SERVER（插件目录内绝对路径）；缺省时回落主 APK 目录
+    const char *vts = getenv("VIRGL_TEST_SERVER");
+    if (vts != NULL) {
+        snprintf(fileName, 1024, "%s", vts);
+    } else {
+        snprintf(fileName, 1024, "%s/libvirgl_test_server.so", getenv("POJAV_NATIVEDIR"));
+    }
     void *handle = dlopen(fileName, RTLD_LAZY);
     printf("VirGL: libvirgl_test_server = %p\n", handle);
     if (!handle) {
