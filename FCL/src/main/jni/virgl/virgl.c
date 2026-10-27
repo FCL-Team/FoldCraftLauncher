@@ -26,12 +26,18 @@ static void *virgl_framebuffer = NULL;
 static int virgl_fb_width = 0;
 static int virgl_fb_height = 0;
 
+// 分配失败时保留旧缓冲不动（返回 NULL），调用方据此跳过本次 MakeCurrent
 static void *virgl_ensure_framebuffer(int width, int height) {
     if (virgl_framebuffer != NULL && virgl_fb_width == width && virgl_fb_height == height) {
         return virgl_framebuffer;
     }
+    void *buffer = calloc((size_t) width * (size_t) height, 4);
+    if (buffer == NULL) {
+        printf("VirGL: allocate %dx%d OSMesa color buffer failed\n", width, height);
+        return NULL;
+    }
     free(virgl_framebuffer);
-    virgl_framebuffer = calloc((size_t) width * (size_t) height, 4);
+    virgl_framebuffer = buffer;
     virgl_fb_width = width;
     virgl_fb_height = height;
     return virgl_framebuffer;
@@ -48,8 +54,10 @@ void virglSwapBuffers() {
 
 void virglMakeCurrent(void *window) {
     printf("OSMDroid: making current\n");
+    void *framebuffer = virgl_ensure_framebuffer(pojav_environ->savedWidth, pojav_environ->savedHeight);
+    if (framebuffer == NULL) return;
     OSMesaMakeCurrent_p((OSMesaContext) window,
-                        virgl_ensure_framebuffer(pojav_environ->savedWidth, pojav_environ->savedHeight),
+                        framebuffer,
                         GL_UNSIGNED_BYTE,
                         pojav_environ->savedWidth,
                         pojav_environ->savedHeight);
