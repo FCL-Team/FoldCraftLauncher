@@ -389,22 +389,17 @@ public class FCLauncher {
             envMap.put("POJAV_RENDERER", "opengles3");
             envMap.put("POJAVEXEC_EGL", "libEGL.so");
         } else {
+            // VirGL/Freedreno 已剥离为插件（走上方提前返回），内置渲染器中仅剩 ZINK 走此分支
             envMap.put("MESA_GLSL_CACHE_DIR", config.getContext().getCacheDir().getAbsolutePath());
-            envMap.put("MESA_GL_VERSION_OVERRIDE", renderer.isEqual(Renderer.ID_VIRGL) ? "4.3" : "4.6");
-            envMap.put("MESA_GLSL_VERSION_OVERRIDE", renderer.isEqual(Renderer.ID_VIRGL) ? "430" : "460");
+            envMap.put("MESA_GL_VERSION_OVERRIDE", "4.6");
+            envMap.put("MESA_GLSL_VERSION_OVERRIDE", "460");
             envMap.put("force_glsl_extensions_warn", "true");
             envMap.put("allow_higher_compat_version", "true");
             envMap.put("allow_glsl_extension_directive_midshader", "true");
-            envMap.put("VTEST_SOCKET_NAME", new File(config.getContext().getCacheDir().getAbsolutePath(), ".virgl_test").getAbsolutePath());
-            if (renderer.isEqual(Renderer.ID_VIRGL)) {
-                envMap.put("POJAV_RENDERER", "gallium_virgl");
-                envMap.put("OSMESA_NO_FLUSH_FRONTBUFFER", "1");
-            } else if (renderer.isEqual(Renderer.ID_ZINK)) {
+            if (renderer.isEqual(Renderer.ID_ZINK)) {
                 envMap.put("POJAV_RENDERER", "opengles3_desktopgl_zink_kopper");
                 envMap.put("LIBGL_ES", "3");
                 envMap.put("POJAVEXEC_EGL", renderer.getEglName());
-            } else if (renderer.isEqual(Renderer.ID_FREEDRENO)) {
-                envMap.put("POJAV_RENDERER", "gallium_freedreno");
             }
         }
     }
