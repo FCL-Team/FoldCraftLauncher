@@ -65,6 +65,9 @@ class SwipeMenuLayout @JvmOverloads constructor(
         if (childCount > 1) {
             getChildAt(1).bringToFront()
         }
+        // 关闭态不绘制菜单层：内容层背景随主题透明度变半透后，垫底菜单（收藏按钮）会从底下透出。
+        // 用 INVISIBLE 不用 GONE，保留测量宽度供滑动手势使用
+        menuView?.visibility = View.INVISIBLE
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -97,6 +100,7 @@ class SwipeMenuLayout @JvmOverloads constructor(
                 val dy = ev.y - downY
                 if (abs(dx) > touchSlop && abs(dx) > abs(dy)) {
                     dragging = true
+                    menuView?.visibility = View.VISIBLE
                     requestParentDisallowIntercept(true)
                     return true
                 }
@@ -163,6 +167,8 @@ class SwipeMenuLayout @JvmOverloads constructor(
         content.animate().cancel()
         val opening = target < 0f && !menuOpen
         val closing = target == 0f && menuOpen
+        // 展开动画全程可见（收起动画同样保持可见，待内容层盖住后在结束时隐藏，避免闪烁）
+        if (target < 0f) menuView?.visibility = View.VISIBLE
         content.animate()
             .translationX(target)
             .setDuration(200)
@@ -176,6 +182,7 @@ class SwipeMenuLayout @JvmOverloads constructor(
                 override fun onAnimationEnd(animation: Animator) {
                     if (cancelled) return
                     menuOpen = target < 0f
+                    menuView?.visibility = if (menuOpen) View.VISIBLE else View.INVISIBLE
                     if (opening) onMenuStateChangeListener?.onMenuOpened()
                     if (closing) onMenuStateChangeListener?.onMenuClosed()
                 }
