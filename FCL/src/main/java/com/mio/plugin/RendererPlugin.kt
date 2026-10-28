@@ -395,6 +395,16 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
         return envPrefs[key].orEmpty()
     }
 
+    /** 开关型配置的启用状态读取（键名后缀约定收口于此，供 Java 侧注入 env / 写 MG 配置用；未配置回落默认值） */
+    @JvmStatic
+    fun toggleEnabled(prefs: Map<String, String>, key: String, def: Boolean): Boolean =
+        prefs[key + ENABLED_SUFFIX]?.toBooleanStrictOrNull() ?: def
+
+    /** 配置键是否被用户显式配置过（值键或开关键任一存在；未配置的键交由渲染器自管默认值） */
+    @JvmStatic
+    fun isConfigured(prefs: Map<String, String>, key: String): Boolean =
+        prefs.containsKey(key) || prefs.containsKey(key + ENABLED_SUFFIX)
+
     /** 内置渲染器配置对话框确认后保存（无 v2 渲染器重建） */
     fun updateBuiltinEnvConfigs(context: Context, rendererId: String, values: Map<String, EnvValue>) {
         val key = builtinKey(rendererId) ?: return
