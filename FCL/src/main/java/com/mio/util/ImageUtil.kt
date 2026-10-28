@@ -2,6 +2,7 @@ package com.mio.util
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.view.View
 import com.bumptech.glide.Glide
@@ -44,12 +45,22 @@ class ImageUtil {
                     override fun onLoadFailed(errorDrawable: Drawable?) {
                     }
 
-                    override fun onResourceReady(
-                        resource: Drawable,
-                        transition: Transition<in Drawable>?
-                    ) {
-                        view.background = resource
-                    }
+            override fun onResourceReady(
+                resource: Drawable,
+                transition: Transition<in Drawable>?
+            ) {
+                // centerCrop 产物的 Bitmap 归 Glide 位图池所有：请求被清除（视图 detach、
+                // 同视图再次加载）或内存紧张触发池回收时会 recycle，而 background 会被
+                // 视图持续绘制，直接引用会导致 "Canvas: trying to use a recycled bitmap" 崩溃，
+                // 必须复制为自持位图后再设背景
+                val source = (resource as? BitmapDrawable)?.bitmap
+                if (source != null && !source.isRecycled) {
+                    view.background = BitmapDrawable(
+                        view.resources,
+                        source.copy(source.config ?: Bitmap.Config.ARGB_8888, false)
+                    )
+                }
+            }
 
                 })
 
