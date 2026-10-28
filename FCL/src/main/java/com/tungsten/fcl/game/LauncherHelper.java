@@ -53,6 +53,7 @@ import com.tungsten.fcl.setting.Profiles;
 import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
+import com.tungsten.fcl.util.JnaNatives;
 import com.tungsten.fcl.util.TaskCancellationAction;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.FCLPath;
@@ -262,6 +263,9 @@ public final class LauncherHelper {
                             }
                             if (jnaVersion != null) {
                                 launcher.setJnaVersion(jnaVersion);
+                                // assets 未携带的 JNA 版本现场补齐 natives（assets 复制或 Maven Central 下载），
+                                // 否则 jna.boot.library.path 落空后 JNA 会从 MC jar 抽取 glibc 链接的 so 导致启动崩溃
+                                JnaNatives.ensureNativeLibrary(context, jnaVersion);
                             }
                             if (lwjglVersion != null) {
                                 launcher.setLwjglVersion(lwjglVersion);
