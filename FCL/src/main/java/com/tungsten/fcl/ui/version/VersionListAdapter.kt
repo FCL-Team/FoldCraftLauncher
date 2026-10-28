@@ -60,6 +60,21 @@ class VersionListAdapter(val context: Context, initList: List<VersionListItem>) 
         holder: ViewHolder,
         position: Int
     ) {
+        bindContent(holder, position)
+        val binding = ItemVersionBinding.bind(holder.itemView)
+        // 入场动画只在整行重绑（新条目进视口）时播放：数据刷新走 PAYLOAD_CONTENT
+        // 局部重绑，若在此重播动画，一次列表刷新会让可见条目整体横滑一遍，
+        // 表现为切换版本时列表异常跳动
+        playTranslationX(
+            binding.root,
+            ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
+            -100f,
+            0f
+        ).start()
+    }
+
+    /** 数据字段与交互监听的完整绑定，整行重绑与 PAYLOAD_CONTENT 局部重绑共用 */
+    private fun bindContent(holder: ViewHolder, position: Int) {
         val versionListItem = versionList[position]
         val binding = ItemVersionBinding.bind(holder.itemView)
         // 勾选态不与条目对象做属性绑定（diff 局部刷新后未重绑的条目会持有旧对象，
@@ -71,7 +86,6 @@ class VersionListAdapter(val context: Context, initList: List<VersionListItem>) 
         if (versionListItem.tag != null) {
             binding.tag.text = versionListItem.tag
         }
-        binding.subtitle.text = versionListItem.libraries
         binding.radioButton.setOnClickListener {
             versionListItem.profile.selectedVersion = versionListItem.version
         }
@@ -112,30 +126,29 @@ class VersionListAdapter(val context: Context, initList: List<VersionListItem>) 
             versionListItem.libraries,
             versionListItem.modCount
         )
-        playTranslationX(
-            binding.root,
-            ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
-            -100f,
-            0f
-        ).start()
     }
 
-    /** 星标/勾选状态局部重绑：仅切换对应控件，不重建整行绑定也不播放入场动画 */
+    /** 星标/勾选/内容变化局部重绑：只切换对应控件，不重建视图也不播放入场动画 */
     override fun onBindViewHolder(
         holder: ViewHolder,
         position: Int,
         payloads: MutableList<Any>
     ) {
         var partial = false
-        val binding = ItemVersionBinding.bind(holder.itemView)
         val item = versionList[position]
-        if (payloads.any { it === PAYLOAD_PIN }) {
+        if (payloads.any { it === PAYLOAD_CONTENT }) {
             partial = true
-            bindPin(binding, item.isPinned)
-        }
-        if (payloads.any { it === PAYLOAD_SELECTION }) {
-            partial = true
-            binding.radioButton.setCheckValue(item.version == lastSelected)
+            bindContent(holder, position)
+        } else {
+            val binding = ItemVersionBinding.bind(holder.itemView)
+            if (payloads.any { it === PAYLOAD_PIN }) {
+                partial = true
+                bindPin(binding, item.isPinned)
+            }
+            if (payloads.any { it === PAYLOAD_SELECTION }) {
+                partial = true
+                binding.radioButton.setCheckValue(item.version == lastSelected)
+            }
         }
         if (!partial) {
             onBindViewHolder(holder, position)
@@ -307,7 +320,8 @@ class VersionListAdapter(val context: Context, initList: List<VersionListItem>) 
         override fun areContentsTheSame(oldPos: Int, newPos: Int): Boolean =
             sameItem(oldList[oldPos], newList[newPos])
 
-        /** 仅星标状态变化时给出 payload 局部重绑；其余内容变化走整行重绑 */
+        /** 星标变化走 PAYLOAD_PIN，其余内容变化走 PAYLOAD_CONTENT 局部重绑；
+         *  返回 null 会触发整行重绑 + itemAnimator 交叉淡出，数据刷新时整列闪烁 */
         override fun getChangePayload(oldPos: Int, newPos: Int): Any? {
             val oldItem = oldList[oldPos]
             val newItem = newList[newPos]
@@ -318,7 +332,7 @@ class VersionListAdapter(val context: Context, initList: List<VersionListItem>) 
             ) {
                 PAYLOAD_PIN
             } else {
-                null
+                PAYLOAD_CONTENT
             }
         }
     }
@@ -326,6 +340,7 @@ class VersionListAdapter(val context: Context, initList: List<VersionListItem>) 
     companion object {
         private val PAYLOAD_PIN = Any()
         private val PAYLOAD_SELECTION = Any()
+        private val PAYLOAD_CONTENT = Any()
 
         private fun sameItem(a: VersionListItem, b: VersionListItem): Boolean =
             a.version == b.version && a.libraries == b.libraries && a.tag == b.tag

@@ -151,7 +151,13 @@ class VersionListPage(context: Context?, id: Int) :
             val entriesChanged = entryIds != lastEntryIds
             lastEntryIds = entryIds
             if (entriesChanged) {
-                binding.versionList.scrollToPosition(children.indexOf(selected))
+                // 仅当选中项不在可见范围内时才滚动定位（首次加载/安装/删除后）；
+                // 选中项已在视口内时拽动视口会被感知为列表跳动
+                val index = children.indexOf(selected)
+                val manager = binding.versionList.layoutManager as? LinearLayoutManager
+                if (manager == null || index !in manager.findFirstCompletelyVisibleItemPosition()..manager.findLastCompletelyVisibleItemPosition()) {
+                    binding.versionList.scrollToPosition(index)
+                }
             }
         }
     }
