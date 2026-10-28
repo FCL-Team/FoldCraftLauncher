@@ -20,7 +20,7 @@ import java.util.function.Consumer
 class RendererSelectDialog(
     context: Context,
     val isGlobal: Boolean,
-    val callback: Consumer<String>
+    callback: Consumer<Renderer>
 ) : FCLDialog(context) {
 
     init {
@@ -56,7 +56,7 @@ class RendererSelectDialog(
                 if (isGlobal) Profiles.getSelectedProfile().globalVersionSetting else Profiles.getSelectedProfile().versionSetting
             versionSetting.renderer = renderer.id
             dismiss()
-            callback.accept(renderer.des)
+            callback.accept(renderer)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.addItemDecoration(

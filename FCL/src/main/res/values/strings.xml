@@ -1571,6 +1571,13 @@
     <string name="tip_hide_menu_view">The menu view is hidden. Press the volume key to open the menu.</string>
     <string name="modloader">ModLoader</string>
     <string name="message_warn_renderer_global_setting">The version you have currently selected has enabled per-instance settings, so the renderer selected here cannot be applied to the current version. Suggest long pressing the "Launch" button to select the renderer.</string>
+    <string name="renderer_override_title">Renderer Overrides</string>
+    <string name="renderer_override_desc">Assign a renderer to each version individually; versions left as "Follow Settings" use the renderer from global/per-version settings.</string>
+    <string name="renderer_follow_settings">Follow Settings</string>
+    <string name="renderer_clear_override">Clear Override</string>
+    <string name="renderer_update_override">Update Override</string>
+    <string name="renderer_keep_override">Keep Override</string>
+    <string name="message_warn_renderer_override_shadow">Version %1$s has a per-version renderer override (currently %2$s), so the renderer you just selected will NOT take effect for it.</string>
     <string name="message_select_url">Please select a link to download (it will open in your browser).</string>
     <string name="supported_mc_version">Supported MC version:</string>
     <string name="renderer_source">Source:</string>
