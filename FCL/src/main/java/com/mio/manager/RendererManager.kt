@@ -12,6 +12,8 @@ object RendererManager {
     lateinit var RENDERER_VGPU: Renderer
     lateinit var RENDERER_ZINK: Renderer
     lateinit var RENDERER_NGGL4ES: Renderer
+    lateinit var RENDERER_MOBILEGLUES: Renderer
+    lateinit var RENDERER_SFPEW: Renderer
     private var isInit = false
 
     @JvmStatic
@@ -81,6 +83,32 @@ object RendererManager {
             displayMaxMCver = "26.2"
         )
 
+        RENDERER_MOBILEGLUES = Renderer(
+            "MobileGlues",
+            context.getString(R.string.settings_fcl_renderer_mobileglues),
+            "libmobileglues.so",
+            "libmobileglues.so",
+            "",
+            null,
+            null,
+            Renderer.ID_MOBILEGLUES,
+            "1.17",
+            ""
+        )
+
+        RENDERER_SFPEW = Renderer(
+            "SimpleFPEWrapper",
+            context.getString(R.string.settings_fcl_renderer_sfpew),
+            "libSimpleFPEWrapper.so",
+            "libEGL.so",
+            "",
+            null,
+            null,
+            Renderer.ID_SFPEW,
+            "",
+            ""
+        )
+
         RendererPlugin.init(context)
         addRenderer()
         DriverPlugin.init(context)
@@ -91,6 +119,8 @@ object RendererManager {
         rendererList.add(RENDERER_GL4ES)
         rendererList.add(RENDERER_VGPU)
         rendererList.add(RENDERER_ZINK)
+        rendererList.add(RENDERER_MOBILEGLUES)
+        rendererList.add(RENDERER_SFPEW)
         rendererList.addAll(RendererPlugin.rendererList)
     }
 

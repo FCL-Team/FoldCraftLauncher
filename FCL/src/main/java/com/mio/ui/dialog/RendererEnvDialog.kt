@@ -74,6 +74,14 @@ class RendererEnvDialog(
             layoutParams = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
         }
         header.addView(label)
+        val descriptionView = if (!spec.description.isNullOrEmpty()) FCLTextView(context).apply {
+            text = spec.description
+            textSize = 12f
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        } else null
 
         when (spec.type) {
             EnvType.SELECTABLE -> {
@@ -123,6 +131,8 @@ class RendererEnvDialog(
                 row.addView(header)
             }
         }
+        // 说明文字插在标题行之后、控件之前（row 的首个子项恒为 header）
+        descriptionView?.let { row.addView(it, 1) }
         return row
     }
 
