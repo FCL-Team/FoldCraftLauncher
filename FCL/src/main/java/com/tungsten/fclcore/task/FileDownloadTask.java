@@ -17,7 +17,6 @@
  */
 package com.tungsten.fclcore.task;
 
-import static com.tungsten.fclcore.util.DigestUtils.digestToString;
 import static com.tungsten.fclcore.util.DigestUtils.getDigest;
 
 import java.io.File;
@@ -195,12 +194,17 @@ public class FileDownloadTask extends FetchTask<Void> {
         Path temp = Files.createTempFile(null, null);
         RandomAccessFile rFile = new RandomAccessFile(temp.toFile(), "rw");
         MessageDigest digest = integrityCheck == null ? null : integrityCheck.createDigest();
+        // BMCLAPI 兜底哈希必须边写边算：close() 执行时 temp 已 move 成目标文件，不能再读盘校验
+        MessageDigest bmclapiDigest = bmclapiHash == null ? null : getDigest("SHA-1");
 
         return new Context() {
             @Override
             public void write(byte[] buffer, int offset, int len) throws IOException {
                 if (digest != null) {
                     digest.update(buffer, offset, len);
+                }
+                if (bmclapiDigest != null) {
+                    bmclapiDigest.update(buffer, offset, len);
                 }
 
                 rFile.write(buffer, offset, len);
@@ -242,7 +246,7 @@ public class FileDownloadTask extends FetchTask<Void> {
                     integrityCheck.performCheck(digest);
                 } else if (bmclapiHash != null) {
                     // 没有显式校验值时以 BMCLAPI 哈希兜底，防止节点切换/重试后落下损坏的文件
-                    String actualHash = digestToString("SHA-1", temp);
+                    String actualHash = Hex.encodeHex(bmclapiDigest.digest());
                     if (!bmclapiHash.equalsIgnoreCase(actualHash))
                         throw new ChecksumMismatchException("SHA-1", bmclapiHash, actualHash);
                 }
