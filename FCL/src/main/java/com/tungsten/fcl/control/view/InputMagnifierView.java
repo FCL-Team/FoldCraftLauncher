@@ -401,14 +401,25 @@ public class InputMagnifierView extends FrameLayout {
             if (frame == null) {
                 return 1;
             }
-            return clamp(Math.round(getWidth() / zoom), 1, frame.getWidth());
+            float width = getWidth() / zoom;
+            return clamp(Math.round(width * sourceScale(width, getHeight() / zoom)),
+                    1, frame.getWidth());
         }
 
         private int sourceHeight(float zoom) {
             if (frame == null) {
                 return 1;
             }
-            return clamp(Math.round(getHeight() / zoom), 1, frame.getHeight());
+            float height = getHeight() / zoom;
+            return clamp(Math.round(height * sourceScale(getWidth() / zoom, height)),
+                    1, frame.getHeight());
+        }
+
+        private float sourceScale(float width, float height) {
+            if (frame == null) {
+                return 1.0f;
+            }
+            return Math.min(1.0f, Math.min(frame.getWidth() / width, frame.getHeight() / height));
         }
 
         private float clampedCenterX(int sourceWidth) {
