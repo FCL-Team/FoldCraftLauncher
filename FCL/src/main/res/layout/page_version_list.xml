@@ -76,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_tab_top_rounded"
                 app:follow_theme="true"
-                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:layout_scrollFlags="scroll"
                 app:tabMode="auto"
                 app:tabTextAppearance="@style/TabTextAppearance"
                 app:tabUnboundedRipple="false">
