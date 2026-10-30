@@ -16,7 +16,8 @@
     <ScrollView
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
-        android:layout_height="320dp">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <com.tungsten.fcllibrary.component.view.FCLLinearLayout
             android:id="@+id/container"

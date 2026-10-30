@@ -15,7 +15,6 @@ import com.tungsten.fcl.databinding.ItemBindGroupBinding;
 import com.tungsten.fclcore.fakefx.collections.FXCollections;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
-import com.tungsten.fcllibrary.util.ConvertUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,7 @@ public class BindGroupDialog extends FCLDialog {
     public BindGroupDialog(@NonNull Context context, GameMenu menu, ButtonEventData.Event event) {
         super(context);
         this.event = event;
-        setCancelable(false);
+        setCancelable(true);
         setContentView(R.layout.dialog_bind_group);
 
         LinearLayoutCompat container = findViewById(R.id.container);
