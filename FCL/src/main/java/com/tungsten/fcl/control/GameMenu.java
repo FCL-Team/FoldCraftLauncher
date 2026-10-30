@@ -55,6 +55,7 @@ import com.tungsten.fcl.control.data.QuickInputTexts;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
 import com.tungsten.fcl.control.view.GameItemBar;
+import com.tungsten.fcl.control.view.InputMagnifierView;
 import com.tungsten.fcl.control.view.LogWindow;
 import com.tungsten.fcl.control.view.MenuView;
 import com.tungsten.fcl.control.view.TouchPad;
@@ -128,6 +129,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     public DraggableTextView fpsText;
     public DraggableTextView memoryText;
     private TouchCharInput touchCharInput;
+    private InputMagnifierView inputMagnifier;
     private TouchControllerInputView touchControllerInputView;
     private FCLProgressBar launchProgress;
     private CursorView cursorView;
@@ -224,6 +226,12 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
     public TouchCharInput getTouchCharInput() {
         return touchCharInput;
+    }
+
+    public void captureMagnifierFrame() {
+        if (inputMagnifier != null) {
+            inputMagnifier.captureFrame();
+        }
     }
 
     private final BooleanProperty editModeProperty = new SimpleBooleanProperty(this, "editMode", false);
@@ -829,11 +837,13 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         fpsText = findViewById(R.id.fps);
         memoryText = findViewById(R.id.memory);
         touchCharInput = findViewById(R.id.input_scanner);
+        inputMagnifier = findViewById(R.id.input_magnifier);
         touchControllerInputView = findViewById(R.id.touchcontroller_input_view);
         launchProgress = findViewById(R.id.launch_progress);
         cursorView = findViewById(R.id.cursor);
 
         if (!isSimulated()) {
+            inputMagnifier.setup(activity.findViewById(R.id.texture_view), touchCharInput, menuSetting);
             ImageUtil.loadInto(baseLayout, ThemeEngine.getInstance().getTheme().getBackground(activity));
             launchProgress.setVisibility(View.VISIBLE);
             assert getBridge() != null;
@@ -1251,6 +1261,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 break;
             case SOFT_KEYBOARD_ADJUST:
                 menuSetting.setDisableSoftKeyAdjust(checked);
+                break;
+            case IME_MAGNIFIER_AUTO_SHOW:
+                menuSetting.setImeMagnifierAutoShow(checked);
                 break;
             case FORCE_RESOLUTION:
                 menuSetting.setForceResolution(checked);

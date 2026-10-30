@@ -83,6 +83,12 @@
             android:layout_centerHorizontal="true"
             android:visibility="gone" />
 
+        <com.tungsten.fcl.control.view.InputMagnifierView
+            android:id="@+id/input_magnifier"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
     </RelativeLayout>
 
     <RelativeLayout

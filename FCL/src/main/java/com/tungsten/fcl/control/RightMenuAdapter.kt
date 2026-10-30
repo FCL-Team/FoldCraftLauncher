@@ -38,7 +38,8 @@ enum class RightMenuCategory(@param:StringRes val titleRes: Int) {
 enum class RightMenuTag {
     // 功能
     LOCK_VIEW, HIDE_VIEW, SHOW_FPS, OPEN_MULTIPLAYER, OPEN_QUICK_INPUT, OPEN_SEND_KEY, FULLSCREEN,
-    SOFT_KEYBOARD_ADJUST, ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, WINDOW_SCALE, CURSOR_OFFSET,
+    SOFT_KEYBOARD_ADJUST, IME_MAGNIFIER_AUTO_SHOW,
+    ITEM_BAR_WIDTH, ITEM_BAR_HEIGHT, WINDOW_SCALE, CURSOR_OFFSET,
 
     // 手势
     DISABLE_GESTURE, GESTURE_MODE, DISABLE_LEFT_TOUCH, SLIDE_ACCELERATION, DISTANCE_ACCELERATION,
@@ -188,6 +189,11 @@ class RightMenuAdapter(
                 R.string.menu_settings_sdl_auto_show_ime,
                 { SdlSettings.sdlAutoShowIme.value },
                 RightMenuTag.SDL_AUTO_SHOW_IME
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_ime_magnifier_auto_show,
+                { menuSetting.isImeMagnifierAutoShow },
+                RightMenuTag.IME_MAGNIFIER_AUTO_SHOW
             ),
             Row.SwitchRow(
                 R.string.settings_launcher_ignore_notch,

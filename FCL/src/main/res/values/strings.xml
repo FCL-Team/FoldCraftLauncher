@@ -704,6 +704,8 @@
     <string name="menu_settings_gamepad_input_mode_mapped">Mapped</string>
     <string name="menu_settings_gamepad_input_mode_sdl_direct">SDL Direct</string>
     <string name="menu_settings_sdl_auto_show_ime">Auto Show IME (SDL)</string>
+    <string name="menu_settings_ime_magnifier_auto_show">Show Magnifier by Default While Typing</string>
+    <string name="game_magnifier_show">Show Game Magnifier</string>
     <string name="gamepad_mode_prompt_title">Gamepad Input Mode</string>
     <string name="gamepad_mode_prompt_description">A gamepad input was detected. Choose how gamepad input should be handled:</string>
     <string name="gamepad_mode_prompt_mapped_summary">Map gamepad buttons and sticks to virtual keyboard and mouse. Suitable for older versions or games without native gamepad support.</string>
