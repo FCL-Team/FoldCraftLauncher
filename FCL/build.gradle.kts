@@ -76,8 +76,8 @@ android {
         applicationId = "com.tungsten.fcl"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = 1342
-        versionName = "1.3.4.2"
+        versionCode = 1343
+        versionName = "1.3.4.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
