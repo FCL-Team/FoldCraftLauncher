@@ -43,14 +43,12 @@ import com.tungsten.fcl.BuildConfig;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.JVMActivity;
 import com.tungsten.fcl.activity.JVMCrashActivity;
-import com.tungsten.fcl.control.data.ButtonStyles;
 import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
-import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.data.QuickInputTexts;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
@@ -401,16 +399,17 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     private void selectViewGroup(@Nullable ControlViewGroup viewGroup) {
         setViewGroup(viewGroup);
         if (viewGroup != null) {
+            Controller controller = getController();
             viewGroup.getViewData().buttonList().forEach(it -> {
                 String name = it.getStyle().getName();
-                ControlButtonStyle style = ButtonStyles.findStyleByName(name);
+                ControlButtonStyle style = controller.findButtonStyleByName(name);
                 if (name.equals(style.getName())) {
                     it.setStyle(style);
                 }
             });
             viewGroup.getViewData().directionList().forEach(it -> {
                 String name = it.getStyle().getName();
-                ControlDirectionStyle style = DirectionStyles.findStyleByName(name);
+                ControlDirectionStyle style = controller.findDirectionStyleByName(name);
                 if (name.equals(style.getName())) {
                     it.setStyle(style);
                 }
@@ -780,12 +779,6 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         if (!Controllers.isInitialized()) {
             Controllers.init();
         }
-        if (!ButtonStyles.isInitialized()) {
-            ButtonStyles.init();
-        }
-        if (!DirectionStyles.isInitialized()) {
-            DirectionStyles.init();
-        }
         if (!QuickInputTexts.isInitialized()) {
             QuickInputTexts.init();
         }
@@ -1120,12 +1113,12 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 break;
             }
             case MANAGE_BUTTON_STYLE: {
-                ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity(), false, null, null);
+                ButtonStyleDialog dialog = new ButtonStyleDialog(getActivity(), getController(), false, false, null, null);
                 dialog.show();
                 break;
             }
             case MANAGE_DIRECTION_STYLE: {
-                DirectionStyleDialog dialog = new DirectionStyleDialog(getActivity(), false, null, null);
+                DirectionStyleDialog dialog = new DirectionStyleDialog(getActivity(), getController(), false, false, null, null);
                 dialog.show();
                 break;
             }

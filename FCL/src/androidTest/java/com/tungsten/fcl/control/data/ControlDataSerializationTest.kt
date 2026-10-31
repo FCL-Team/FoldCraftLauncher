@@ -134,10 +134,9 @@ class ControlDataSerializationTest {
 
     @Test
     fun controlButtonRoundTrip() {
-        ButtonStyles.init()
         val button = ControlButtonData(UUID.randomUUID().toString())
         button.setText("测试按钮")
-        button.setStyle(ButtonStyles.findStyleByName("Default"))
+        button.setStyle(ControlButtonStyle.DEFAULT_BUTTON_STYLE)
         button.getBaseInfo().setAbsoluteWidth(120)
         button.getEvent().getClickEvent().setQuickInput(true)
 
@@ -154,8 +153,6 @@ class ControlDataSerializationTest {
 
     @Test
     fun controllerRoundTrip() {
-        ButtonStyles.init()
-        DirectionStyles.init()
         val viewGroup = ControlViewGroup(UUID.randomUUID().toString())
         viewGroup.setName("测试布局")
         val button = ControlButtonData(UUID.randomUUID().toString())
@@ -182,7 +179,6 @@ class ControlDataSerializationTest {
 
     @Test
     fun assetSampleParsesWithHandWrittenSerializers() {
-        ButtonStyles.init()
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val json = context.assets.open("controllers/00000000.json").bufferedReader().use { it.readText() }
         val root = JsonParser.parseString(json) as JsonObject
