@@ -28,6 +28,7 @@ import com.mio.manager.RendererManager
 import com.mio.minecraft.ModCheckException
 import com.mio.minecraft.ModChecker
 import com.mio.plugin.NativeLibPlugin
+import com.mio.plugin.RendererPlugin
 import com.mio.util.ParseUtil
 import com.mio.util.getLocalizedText
 import com.mio.util.hasStringId
@@ -44,6 +45,7 @@ import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.setting.VersionSetting
 import com.tungsten.fcl.ui.TaskDialog
 import com.tungsten.fcl.ui.UIManager
+import com.tungsten.fcl.util.JnaNatives
 import com.tungsten.fcl.util.TaskCancellationAction
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.utils.FCLPath
@@ -133,7 +135,7 @@ class LauncherHelper(
     )
     private var currentStage: String? = null
 
-    /** 启动前确认框的按钮选择：positive 取消启动，negative 继续，neutral 由调用方处理 */
+    /** 启动前确认框的按钮选择：默认 positive 取消启动、negative 继续，调用方可重定义按钮语义（如 Java 检查中 positive 为自动选择） */
     private enum class Choice { CONTINUE, NEUTRAL, CANCEL }
 
     /** 登录异常弹窗的按钮选择 */
@@ -175,10 +177,10 @@ class LauncherHelper(
         }
     }
 
-    /** 进入下一启动阶段：前一阶段打勾，当前阶段标记开始 */
+    /** 进入下一启动阶段：上一真正进入的阶段打勾，当前阶段标记开始 */
     private fun enterStage(stage: String) {
-        val index = launchStages.indexOf(stage)
-        if (index > 0) launchingStepsPane.succeedStage(launchStages[index - 1])
+        // 按 currentStage 而非列表固定前一项打勾，isNotCheckGame 跳过 dependencies 时不会错位
+        currentStage?.let { launchingStepsPane.succeedStage(it) }
         launchingStepsPane.beginStage(stage)
         currentStage = stage
     }
@@ -196,6 +198,8 @@ class LauncherHelper(
         enterStage("launch.state.mods")
         // 全量 mod 扫描一次，供 lwjgl3ify 补丁、modloader 与渲染器检查共用
         val scannedMods = scanMods(repository, selectedVersion)
+        // 装有自实现 FPE 模拟的模组（Angelica/Actinium 等）时本次启动跳过 SFPEW 兼容层
+        RendererPlugin.setFpeEmulatorModsPresent(scannedMods)
         // GTNH/lwjgl3ify 兼容：mods 目录存在 lwjgl3ify 时在内存中合并 RFB 启动清单（不落盘），以 RFB + Java17+ 启动
         Lwjgl3ifyPatcher.patchIfNeeded(repository, selectedVersion, scannedMods, versionRef)
         val gameVersion = repository.getGameVersion(versionRef.get())
@@ -285,7 +289,12 @@ class LauncherHelper(
                 }
             }
         }
-        jnaVersion?.let(launcher::setJnaVersion)
+        jnaVersion?.let {
+            launcher.setJnaVersion(it)
+            // assets 未携带的 JNA 版本现场补齐 natives（assets 复制或 Maven Central 下载），
+            // 否则 jna.boot.library.path 落空后 JNA 会从 MC jar 抽取 glibc 链接的 so 导致启动崩溃
+            JnaNatives.ensureNativeLibrary(context, it)
+        }
         lwjglVersion?.let(launcher::setLwjglVersion)
 
         val fclBridge = launcher.launch()
@@ -419,7 +428,10 @@ class LauncherHelper(
         }
         try {
             if (version.isNotEmpty()) {
-                if (renderer.minMCver.isNotEmpty() && GameVersionNumber.compare(
+                // SFPEW 兼容层启用时补齐固定管线能力，旧版 MC 可正常运行，跳过 min 下界判定；
+                // max 上界保留——层不扩展渲染器自身的现代 GL 上限
+                val sfpewLayer = RendererPlugin.isSfpewLayerEnabled(renderer)
+                if (renderer.minMCver.isNotEmpty() && !sfpewLayer && GameVersionNumber.compare(
                         version,
                         renderer.minMCver
                     ) < 0

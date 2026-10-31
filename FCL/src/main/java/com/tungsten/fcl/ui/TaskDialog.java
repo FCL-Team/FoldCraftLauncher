@@ -160,6 +160,8 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
 
     /** 纯展示模式：预先固定显示阶段列表，阶段状态由外部流程（如启动协程）驱动 */
     public void setStages(List<String> stages) {
+        // 重复调用时释放上一个任务列表，避免监听与视图树残留（与 setExecutor 非展示路径一致）
+        if (taskListPane != null) taskListPane.release();
         taskListPane = new TaskListPane(getContext(), stages);
         taskListView.setAdapter(taskListPane);
     }
