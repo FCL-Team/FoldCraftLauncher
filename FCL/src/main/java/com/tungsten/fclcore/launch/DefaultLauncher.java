@@ -258,11 +258,16 @@ public class DefaultLauncher {
         res.add("mio.Wrapper");
         res.add(version.getMainClass());
 
-        res.addAll(Arguments.parseStringArguments(version.getMinecraftArguments().map(StringUtils::tokenize).orElseGet(ArrayList::new), configuration));
+        List<String> minecraftArguments = Arguments.parseStringArguments(version.getMinecraftArguments().map(StringUtils::tokenize).orElseGet(ArrayList::new), configuration);
+        res.addAll(minecraftArguments);
 
         Map<String, Boolean> features = getFeatures();
-        version.getArguments().map(Arguments::getGame).ifPresent(arguments -> res.addAll(Arguments.parseArguments(arguments, configuration, features)));
-        if (version.getMinecraftArguments().isPresent()) {
+        if (minecraftArguments.isEmpty()) {
+            version.getArguments().map(Arguments::getGame).ifPresent(arguments -> res.addAll(Arguments.parseArguments(arguments, configuration, features)));
+        } else {
+            // 旧式 minecraftArguments 已含全套标准游戏参数,新式 arguments.game 是其在 1.13+ 的等价物;
+            // 两者并存时(如 MultiMC 整合包导入)重复拼接会让 ModLauncher 的 joptsimple
+            // 抛出 MultipleArgumentsForOptionException(Found multiple arguments for option gameDir)
             res.addAll(Arguments.parseArguments(this.getDefaultGameArguments(), configuration, features));
         }
         if (argumentsFromAuthInfo != null && argumentsFromAuthInfo.getGame() != null && !argumentsFromAuthInfo.getGame().isEmpty())

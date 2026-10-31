@@ -205,6 +205,34 @@ public final class MultiMCInstancePatch {
         return value != null && !value.isEmpty() ? value : Collections.emptyList();
     }
 
+    /** 官方 minecraftArguments 模板中的标准 flag,其值恒为 {@code ${...}} 占位符,由基础版本提供 */
+    private static final Set<String> STANDARD_GAME_FLAGS = new HashSet<>(Arrays.asList(
+            "--username", "--version", "--gameDir", "--assetsDir", "--assetIndex",
+            "--uuid", "--accessToken", "--userType", "--versionType", "--clientId", "--xuid", "--userProperties"));
+
+    /**
+     * 剥离 Json-Patch minecraftArguments 中的官方标准参数对(flag + ${...} 占位值),
+     * 返回加载器附加的参数(如 {@code --fml.neoForgeVersion 21.1.242 --launchTarget forgeclient})。
+     * flag 带非占位符具体值时视为有意覆盖,原样保留。
+     */
+    private static List<Argument> extractExtraGameArguments(List<String> minecraftArguments) {
+        List<Argument> result = new ArrayList<>();
+        for (int i = 0; i < minecraftArguments.size(); i++) {
+            String token = minecraftArguments.get(i);
+            String next = i + 1 < minecraftArguments.size() ? minecraftArguments.get(i + 1) : null;
+            if (STANDARD_GAME_FLAGS.contains(token) && next != null && isPlaceholder(next)) {
+                i++;
+            } else {
+                result.add(new StringArgument(token));
+            }
+        }
+        return result;
+    }
+
+    private static boolean isPlaceholder(String value) {
+        return value.startsWith("${") && value.endsWith("}");
+    }
+
     private static <T> List<T> dropDuplicate(List<T> original) {
         Set<T> values = new HashSet<>();
         List<T> result = new ArrayList<>();
@@ -355,13 +383,16 @@ public final class MultiMCInstancePatch {
             }
         }
 
-        // 合成参数以老格式 minecraftArguments 字符串承载,补丁合并时覆盖基础版本的官方参数,
-        // 避免与新格式 game args 被启动器重复拼接
+        // 合成参数以新格式 game args 承载(对齐 HMCL main)。FCL 会在基础版本之上叠加本补丁,
+        // 基础版本(原版 json 或 meta 的 net.minecraft 补丁)已提供全套标准参数,
+        // 因此这里剥离 Json-Patch minecraftArguments 中的标准占位参数对,只保留加载器附加项(--fml.*、--launchTarget 等),
+        // 避免补丁合并后同一参数出现两份,导致 ModLauncher 的 joptsimple 抛出 MultipleArgumentsForOptionException
+        List<Argument> extraGameArguments = extractExtraGameArguments(minecraftArguments);
         Version patch = new Version("multimc", null, 1,
-                new Arguments().withJvm(jvmArguments), mainClass, libraries);
-        if (!minecraftArguments.isEmpty()) {
-            patch = patch.setMinecraftArguments(String.join(" ", minecraftArguments));
-        }
+                extraGameArguments.isEmpty()
+                        ? new Arguments().withJvm(jvmArguments)
+                        : new Arguments(extraGameArguments, jvmArguments),
+                mainClass, libraries);
         if (mainJar != null) {
             LibraryDownloadInfo download = mainJar.getDownload();
             patch = patch.setDownloads(Collections.singletonMap(DownloadType.CLIENT, new DownloadInfo(download.getUrl(), download.getSha1())));
