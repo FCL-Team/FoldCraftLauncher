@@ -205,6 +205,34 @@ public final class MultiMCInstancePatch {
         return value != null && !value.isEmpty() ? value : Collections.emptyList();
     }
 
+    /** 官方 minecraftArguments 模板中的标准 flag,其值恒为 {@code ${...}} 占位符,由基础版本提供 */
+    private static final Set<String> STANDARD_GAME_FLAGS = new HashSet<>(Arrays.asList(
+            "--username", "--version", "--gameDir", "--assetsDir", "--assetIndex",
+            "--uuid", "--accessToken", "--userType", "--versionType", "--clientId", "--xuid", "--userProperties"));
+
+    /**
+     * 剥离 Json-Patch minecraftArguments 中的官方标准参数对(flag + ${...} 占位值),
+     * 返回加载器附加的参数(如 {@code --fml.neoForgeVersion 21.1.242 --launchTarget forgeclient})。
+     * flag 带非占位符具体值时视为有意覆盖,原样保留。
+     */
+    private static List<Argument> extractExtraGameArguments(List<String> minecraftArguments) {
+        List<Argument> result = new ArrayList<>();
+        for (int i = 0; i < minecraftArguments.size(); i++) {
+            String token = minecraftArguments.get(i);
+            String next = i + 1 < minecraftArguments.size() ? minecraftArguments.get(i + 1) : null;
+            if (STANDARD_GAME_FLAGS.contains(token) && next != null && isPlaceholder(next)) {
+                i++;
+            } else {
+                result.add(new StringArgument(token));
+            }
+        }
+        return result;
+    }
+
+    private static boolean isPlaceholder(String value) {
+        return value.startsWith("${") && value.endsWith("}");
+    }
+
     private static <T> List<T> dropDuplicate(List<T> original) {
         Set<T> values = new HashSet<>();
         List<T> result = new ArrayList<>();
@@ -355,11 +383,30 @@ public final class MultiMCInstancePatch {
             }
         }
 
-        // 合成参数以老格式 minecraftArguments 字符串承载,补丁合并时覆盖基础版本的官方参数,
-        // 避免与新格式 game args 被启动器重复拼接
-        Version patch = new Version("multimc", null, 1,
-                new Arguments().withJvm(jvmArguments), mainClass, libraries);
-        if (!minecraftArguments.isEmpty()) {
+        // 合成参数按基座(net.minecraft 组件)的参数格式选承载方式:
+        // legacy 基座(<1.13)保持完整 legacy 串整体覆盖(MultiMC 语义)——若剥离标准占位参数对、
+        // 改以新式 game args 承载,合并后基座 legacy 串仍非空,DefaultLauncher 的互斥逻辑会丢弃
+        // arguments.game 中的加载器附加项(--tweakClass 等),老版 Forge 将静默不加载;
+        // 新式基座(1.13+)的基础版本已提供全套标准参数,剥离 Json-Patch minecraftArguments 中的
+        // 标准占位参数对,只保留加载器附加项(--fml.*、--launchTarget 等)以新式 game args 承载,
+        // 避免补丁合并后同一参数出现两份,导致 ModLauncher 的 joptsimple 抛出 MultipleArgumentsForOptionException
+        boolean legacyBase = false;
+        for (MultiMCInstancePatch item : patches) {
+            if (MultiMCComponents.GAME.equals(item.getID())) {
+                legacyBase = item.getMinecraftArguments() != null;
+                break;
+            }
+        }
+
+        Arguments arguments = new Arguments().withJvm(jvmArguments);
+        if (!legacyBase) {
+            List<Argument> extraGameArguments = extractExtraGameArguments(minecraftArguments);
+            if (!extraGameArguments.isEmpty()) {
+                arguments = arguments.withGame(extraGameArguments);
+            }
+        }
+        Version patch = new Version("multimc", null, 1, arguments, mainClass, libraries);
+        if (legacyBase && !minecraftArguments.isEmpty()) {
             patch = patch.setMinecraftArguments(String.join(" ", minecraftArguments));
         }
         if (mainJar != null) {
