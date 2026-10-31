@@ -383,16 +383,32 @@ public final class MultiMCInstancePatch {
             }
         }
 
-        // 合成参数以新格式 game args 承载(对齐 HMCL main)。FCL 会在基础版本之上叠加本补丁,
-        // 基础版本(原版 json 或 meta 的 net.minecraft 补丁)已提供全套标准参数,
-        // 因此这里剥离 Json-Patch minecraftArguments 中的标准占位参数对,只保留加载器附加项(--fml.*、--launchTarget 等),
+        // 合成参数按基座(net.minecraft 组件)的参数格式选承载方式:
+        // legacy 基座(<1.13)保持完整 legacy 串整体覆盖(MultiMC 语义)——若剥离标准占位参数对、
+        // 改以新式 game args 承载,合并后基座 legacy 串仍非空,DefaultLauncher 的互斥逻辑会丢弃
+        // arguments.game 中的加载器附加项(--tweakClass 等),老版 Forge 将静默不加载;
+        // 新式基座(1.13+)的基础版本已提供全套标准参数,剥离 Json-Patch minecraftArguments 中的
+        // 标准占位参数对,只保留加载器附加项(--fml.*、--launchTarget 等)以新式 game args 承载,
         // 避免补丁合并后同一参数出现两份,导致 ModLauncher 的 joptsimple 抛出 MultipleArgumentsForOptionException
-        List<Argument> extraGameArguments = extractExtraGameArguments(minecraftArguments);
-        Version patch = new Version("multimc", null, 1,
-                extraGameArguments.isEmpty()
-                        ? new Arguments().withJvm(jvmArguments)
-                        : new Arguments(extraGameArguments, jvmArguments),
-                mainClass, libraries);
+        boolean legacyBase = false;
+        for (MultiMCInstancePatch item : patches) {
+            if (MultiMCComponents.GAME.equals(item.getID())) {
+                legacyBase = item.getMinecraftArguments() != null;
+                break;
+            }
+        }
+
+        Arguments arguments = new Arguments().withJvm(jvmArguments);
+        if (!legacyBase) {
+            List<Argument> extraGameArguments = extractExtraGameArguments(minecraftArguments);
+            if (!extraGameArguments.isEmpty()) {
+                arguments = arguments.withGame(extraGameArguments);
+            }
+        }
+        Version patch = new Version("multimc", null, 1, arguments, mainClass, libraries);
+        if (legacyBase && !minecraftArguments.isEmpty()) {
+            patch = patch.setMinecraftArguments(String.join(" ", minecraftArguments));
+        }
         if (mainJar != null) {
             LibraryDownloadInfo download = mainJar.getDownload();
             patch = patch.setDownloads(Collections.singletonMap(DownloadType.CLIENT, new DownloadInfo(download.getUrl(), download.getSha1())));

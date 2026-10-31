@@ -376,4 +376,50 @@ public class MultiMCLaunchArgsTest {
         assertEquals(vanillaOnly, gameArgsAfter(merged));
         assertEquals(vanillaOnly, gameArgsBefore(merged));
     }
+
+    // ---------- 用例:legacy 基座(<1.13)+ 老式 Forge 导入 ----------
+
+    /** 1.8.9 原版组件 Json-Patch(带 formatVersion,供 resolveArtifact 使用):仅 legacy minecraftArguments */
+    private static final String VANILLA_8_MULTIMC_PATCH_JSON = """
+            {
+              "formatVersion": 1,
+              "uid": "net.minecraft",
+              "version": "1.8.9",
+              "priority": 0,
+              "mainClass": "net.minecraft.client.main.Main",
+              "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}"
+            }""";
+
+    /** 1.12.2 Forge 本地补丁(MultiMC ForgeInstaller 生成物形态):完整 legacy minecraftArguments,含 FMLTweaker */
+    private static final String FORGE_1122_MULTIMC_PATCH_JSON = """
+            {
+              "formatVersion": 1,
+              "uid": "net.minecraftforge",
+              "version": "14.23.5.2860",
+              "mainClass": "net.minecraft.launchwrapper.Launch",
+              "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type} --tweakClass net.minecraftforge.fml.common.launcher.FMLTweaker --versionType Forge"
+            }""";
+
+    /**
+     * legacy 基座下合成补丁必须以完整 legacy 串整体覆盖(MultiMC 语义),而非剥离后以 game args 承载:
+     * 若走剥离路径,合并后基座 legacy 串仍非空,DefaultLauncher 的互斥逻辑会丢弃 game args 中的
+     * --tweakClass,老版 Forge 静默不加载(mods 全部失效)。
+     */
+    @Test
+    public void legacyBase_oldForgeImport_tweakClassPreserved() throws VersionNotFoundException {
+        MultiMCInstancePatch vanilla = MultiMCInstancePatch.read("net.minecraft", VANILLA_8_MULTIMC_PATCH_JSON);
+        MultiMCInstancePatch forge = MultiMCInstancePatch.read("net.minecraftforge", FORGE_1122_MULTIMC_PATCH_JSON);
+        Version multimcPatch = MultiMCInstancePatch.resolveArtifact(Arrays.asList(vanilla, forge), "天境冒险").getPatch();
+
+        // 合成补丁自身:以 minecraftArguments 承载完整参数,不带 game args
+        assertTrue(multimcPatch.getMinecraftArguments().isPresent());
+        assertNull(multimcPatch.getArguments().orElseThrow(AssertionError::new).getGame());
+
+        // 合并后:两代拼接逻辑下 FMLTweaker 均必须在列(修改前后启动行为一致)
+        Version merged = merge(parseVersion(VANILLA_8_PATCH_JSON), multimcPatch);
+        assertTrue("老版 Forge 的 FMLTweaker 丢失(Forge 将静默不加载): " + gameArgsBefore(merged),
+                gameArgsBefore(merged).contains("net.minecraftforge.fml.common.launcher.FMLTweaker"));
+        assertTrue("老版 Forge 的 FMLTweaker 丢失(Forge 将静默不加载): " + gameArgsAfter(merged),
+                gameArgsAfter(merged).contains("net.minecraftforge.fml.common.launcher.FMLTweaker"));
+    }
 }
