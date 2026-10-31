@@ -592,7 +592,6 @@
     <string name="modpack_type_mcbbs_export">Pode ser importado por FCL, HMCL e MultiMC</string>
     <string name="modpack_type_modrinth">Modrinth</string>
     <string name="modpack_type_multimc">MultiMC</string>
-    <string name="modpack_type_multimc_export">Pode ser importado por FCL, HMCL e MultiMC</string>
     <string name="modpack_type_server">Atualizar automaticamente o modpack do servidor</string>
     <string name="modpack_type_server_export">Permite que o proprietário do servidor atualize a instância do jogo remotamente</string>
     <string name="modpack_type_server_malformed">Manifesto do modpack inválido. Consulte o fabricante do modpack do servidor para corrigir este problema.</string>

@@ -677,7 +677,6 @@
     <string name="modpack_type_mcbbs_export">Có thể được nhập bởi FCL, HMCL và MultiMC</string>
     <string name="modpack_type_modrinth">Modrinth</string>
     <string name="modpack_type_multimc">MultiMC</string>
-    <string name="modpack_type_multimc_export">Có thể được nhập bởi FCL, HMCL và MultiMC</string>
     <string name="modpack_type_server">Modpack Tự động Cập nhật từ Máy chủ</string>
     <string name="modpack_type_server_export">Cho phép chủ sở hữu máy chủ cập nhật instance trò chơi từ xa</string>
     <string name="modpack_type_server_malformed">Tệp kê khai modpack không hợp lệ, vui lòng tham khảo nhà sản xuất modpack máy chủ để khắc phục sự cố này.</string>

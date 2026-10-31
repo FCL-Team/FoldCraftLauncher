@@ -633,7 +633,6 @@
     <string name="modpack_type_mcbbs_export">可以被 FCL，HMCL 同 MultiMC 導入</string>
     <string name="modpack_type_modrinth">Modrinth</string>
     <string name="modpack_type_multimc">MultiMC</string>
-    <string name="modpack_type_multimc_export">可以被 FCL，HMCL 同 MultiMC 導入</string>
     <string name="modpack_type_server">伺服器自動更新整合包</string>
     <string name="modpack_type_server_export">允許伺服器管理員遠程更新遊戲客戶端</string>
     <string name="modpack_type_server_malformed">伺服器整合包配置格式錯誤，請聯繫伺服器管理員解決此問題</string>

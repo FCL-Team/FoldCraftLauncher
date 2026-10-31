@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatDialog;
 
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.Profile;
-import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.ui.TaskDialog;
 import com.tungsten.fcl.ui.UIManager;
 import com.tungsten.fcl.util.TaskCancellationAction;
@@ -23,8 +22,6 @@ import com.tungsten.fclcore.mod.ModpackExportInfo;
 import com.tungsten.fclcore.mod.curse.CurseForgeModpackExportTask;
 import com.tungsten.fclcore.mod.mcbbs.McbbsModpackExportTask;
 import com.tungsten.fclcore.mod.modrinth.ModrinthModpackExportTask;
-import com.tungsten.fclcore.mod.multimc.MultiMCInstanceConfiguration;
-import com.tungsten.fclcore.mod.multimc.MultiMCModpackExportTask;
 import com.tungsten.fclcore.mod.server.ServerModpackExportTask;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
@@ -217,9 +214,6 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
                     case ModpackTypeSelectionPage.MODPACK_TYPE_MCBBS:
                         exportTask = exportAsMcbbs(exportInfo, modpackFile);
                         break;
-                    case ModpackTypeSelectionPage.MODPACK_TYPE_MULTIMC:
-                        exportTask = exportAsMultiMC(exportInfo, modpackFile);
-                        break;
                     case ModpackTypeSelectionPage.MODPACK_TYPE_SERVER:
                         exportTask = exportAsServer(exportInfo, modpackFile);
                         break;
@@ -254,50 +248,6 @@ public class ModpackFileSelectionPage extends FCLPage implements View.OnClickLis
             @Override
             public void execute() {
                 dependency = new McbbsModpackExportTask(profile.getRepository(), version, exportInfo, modpackFile);
-            }
-
-            @Override
-            public Collection<Task<?>> getDependencies() {
-                return Collections.singleton(dependency);
-            }
-        }.setSignificance(Task.TaskSignificance.MINOR);
-    }
-
-    private Task<?> exportAsMultiMC(ModpackExportInfo exportInfo, File modpackFile) {
-        return new Task<Void>() {
-            Task<?> dependency;
-
-            @Override
-            public void execute() {
-                VersionSetting vs = profile.getVersionSetting(version);
-                dependency = new MultiMCModpackExportTask(profile.getRepository(), version, exportInfo.getWhitelist(),
-                        new MultiMCInstanceConfiguration(
-                                "OneSix",
-                                exportInfo.getName() + "-" + exportInfo.getVersion(),
-                                null,
-                                null,
-                                "",
-                                "",
-                                null,
-                                exportInfo.getDescription(),
-                                null,
-                                exportInfo.getJavaArguments(),
-                                false,
-                                854,
-                                480,
-                                vs.getMaxMemory(),
-                                exportInfo.getMinMemory(),
-                                false,
-                                /* showConsoleOnError */ true,
-                                /* autoCloseConsole */ false,
-                                /* overrideMemory */ true,
-                                /* overrideJavaLocation */ false,
-                                /* overrideJavaArgs */ true,
-                                /* overrideConsole */ true,
-                                /* overrideCommands */ true,
-                                /* overrideWindow */ true,
-                                /* iconKey */ null // TODO
-                        ), modpackFile);
             }
 
             @Override

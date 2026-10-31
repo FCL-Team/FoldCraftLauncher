@@ -592,7 +592,6 @@
     <string name="modpack_type_mcbbs_export">می تواند توسط FCL، HMCL و MultiMC وارد شود</string>
     <string name="modpack_type_modrinth">Modrinth</string>
     <string name="modpack_type_multimc">MultiMC</string>
-    <string name="modpack_type_multimc_export">می تواند توسط FCL، HMCL و MultiMC وارد شود</string>
     <string name="modpack_type_server">بروزرسانی خودکار مادپک از سرور</string>
     <string name="modpack_type_server_export">به مالک سرور اجازه می دهد تا نمونه بازی را از راه دور بروزرسانی کند</string>
     <string name="modpack_type_server_malformed">مانیفست مادپک نامعتبر است، لطفا برای رفع این مشکل به سازنده مادپک سرور مراجعه کنید.</string>

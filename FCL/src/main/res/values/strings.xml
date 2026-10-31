@@ -807,7 +807,6 @@
     <string name="modpack_type_curseforge">CurseForge</string>
     <string name="modpack_type_curseforge_export">Can be imported by the CurseForge app and most launchers</string>
     <string name="modpack_type_multimc">MultiMC</string>
-    <string name="modpack_type_multimc_export">Can be imported by FCL, HMCL and MultiMC</string>
     <string name="modpack_type_server">Auto-Update Modpack from Server</string>
     <string name="modpack_type_server_export">Allows server owner to update the game instance remotely</string>
     <string name="modpack_type_server_malformed">Invalid modpack manifest, please refer to the server modpack maker to fix this issue.</string>

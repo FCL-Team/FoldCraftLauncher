@@ -36,7 +36,6 @@ import com.tungsten.fclcore.mod.mcbbs.McbbsModpackExportTask;
 import com.tungsten.fclcore.mod.modrinth.ModrinthCompletionTask;
 import com.tungsten.fclcore.mod.modrinth.ModrinthModpackExportTask;
 import com.tungsten.fclcore.mod.modrinth.ModrinthInstallTask;
-import com.tungsten.fclcore.mod.multimc.MultiMCModpackExportTask;
 import com.tungsten.fclcore.mod.multimc.MultiMCModpackInstallTask;
 import com.tungsten.fclcore.mod.server.ServerModpackCompletionTask;
 import com.tungsten.fclcore.mod.server.ServerModpackExportTask;
@@ -164,7 +163,7 @@ public final class TaskListPane extends FCLAdapter {
                     task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_server)));
                 } else if (task instanceof HMCLModpackInstallTask) {
                     task.setName(getContext().getString(R.string.modpack_install, getContext().getString(R.string.modpack_type_hmcl)));
-                } else if (task instanceof McbbsModpackExportTask || task instanceof MultiMCModpackExportTask || task instanceof ServerModpackExportTask
+                } else if (task instanceof McbbsModpackExportTask || task instanceof ServerModpackExportTask
                         || task instanceof CurseForgeModpackExportTask || task instanceof ModrinthModpackExportTask) {
                     task.setName(getContext().getString(R.string.modpack_export));
                 } else if (task instanceof MinecraftInstanceTask) {

@@ -548,7 +548,6 @@
     <string name="modpack_type_mcbbs">MCBBS-Typ</string>
     <string name="modpack_type_hmcl">HMCL-Typ</string>
     <string name="modpack_type_mcbbs_export">Kann von FCL, HMCL und MultiMC importiert werden</string>
-    <string name="modpack_type_multimc_export">Kann von FCL, HMCL und MultiMC importiert werden</string>
     <string name="modpack_type_server">Automatisches Update des Modpacks vom Server</string>
     <string name="modpack_type_server_export">Ermöglicht dem Serverbesitzer, das Spielprofil remote zu aktualisieren</string>
     <string name="modpack_type_server_malformed">Ungültiges Modpack-Manifest. Kontaktieren Sie den Hersteller des Modpack-Servers, um dieses Problem zu beheben.</string>

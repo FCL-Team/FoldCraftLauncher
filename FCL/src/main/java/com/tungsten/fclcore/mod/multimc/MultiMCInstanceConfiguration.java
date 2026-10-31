@@ -312,36 +312,6 @@ public final class MultiMCInstanceConfiguration implements ModpackManifest {
         return iconKey;
     }
 
-    public Properties toProperties() {
-        Properties p = new Properties();
-        if (instanceType != null) p.setProperty("InstanceType", instanceType);
-        p.setProperty("AutoCloseConsole", Boolean.toString(autoCloseConsole));
-        if (gameVersion != null) p.setProperty("IntendedVersion", gameVersion);
-        if (javaPath != null) p.setProperty("JavaPath", javaPath);
-        if (jvmArgs != null) p.setProperty("JvmArgs", jvmArgs);
-        p.setProperty("LaunchMaximized", Boolean.toString(fullscreen));
-        if (maxMemory != null) p.setProperty("MaxMemAlloc", Integer.toString(maxMemory));
-        if (minMemory != null) p.setProperty("MinMemAlloc", Integer.toString(minMemory));
-        if (height != null) p.setProperty("MinecraftWinHeight", Integer.toString(height));
-        if (width != null) p.setProperty("MinecraftWinWidth", Integer.toString(width));
-        p.setProperty("OverrideCommands", Boolean.toString(overrideCommands));
-        p.setProperty("OverrideConsole", Boolean.toString(overrideConsole));
-        p.setProperty("OverrideJavaArgs", Boolean.toString(overrideJavaArgs));
-        p.setProperty("OverrideJavaLocation", Boolean.toString(overrideJavaLocation));
-        p.setProperty("OverrideMemory", Boolean.toString(overrideMemory));
-        p.setProperty("OverrideWindow", Boolean.toString(overrideWindow));
-        if (permGen != null) p.setProperty("PermGen", Integer.toString(permGen));
-        if (postExitCommand != null) p.setProperty("PostExitCommand", postExitCommand);
-        if (preLaunchCommand != null) p.setProperty("PreLaunchCommand", preLaunchCommand);
-        p.setProperty("ShowConsole", Boolean.toString(showConsole));
-        p.setProperty("ShowConsoleOnError", Boolean.toString(showConsoleOnError));
-        if (wrapperCommand != null) p.setProperty("WrapperCommand", wrapperCommand);
-        if (name != null) p.setProperty("name", name);
-        if (notes != null) p.setProperty("notes", notes);
-        if (iconKey != null) p.setProperty("iconKey", iconKey);
-        return p;
-    }
-
     public MultiMCManifest getMmcPack() {
         return mmcPack;
     }

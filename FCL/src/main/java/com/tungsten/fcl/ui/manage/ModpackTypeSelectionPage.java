@@ -10,7 +10,6 @@ import com.tungsten.fclcore.mod.ModpackExportInfo;
 import com.tungsten.fclcore.mod.curse.CurseForgeModpackExportTask;
 import com.tungsten.fclcore.mod.mcbbs.McbbsModpackExportTask;
 import com.tungsten.fclcore.mod.modrinth.ModrinthModpackExportTask;
-import com.tungsten.fclcore.mod.multimc.MultiMCModpackExportTask;
 import com.tungsten.fclcore.mod.server.ServerModpackExportTask;
 import com.tungsten.fclcore.task.Task;
 import com.tungsten.fcllibrary.component.ui.FCLPage;
@@ -23,7 +22,6 @@ public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickLis
     private final String version;
 
     private FCLLinearLayout mcbbs;
-    private FCLLinearLayout multimc;
     private FCLLinearLayout server;
     private FCLLinearLayout curseforge;
     private FCLLinearLayout modrinth;
@@ -38,12 +36,10 @@ public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickLis
     public void onCreate() {
         super.onCreate();
         mcbbs = findViewById(R.id.mcbbs);
-        multimc = findViewById(R.id.multimc);
         server = findViewById(R.id.server);
         curseforge = findViewById(R.id.curseforge);
         modrinth = findViewById(R.id.modrinth);
         mcbbs.setOnClickListener(this);
-        multimc.setOnClickListener(this);
         server.setOnClickListener(this);
         curseforge.setOnClickListener(this);
         modrinth.setOnClickListener(this);
@@ -58,10 +54,6 @@ public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickLis
         if (v == mcbbs) {
             type = MODPACK_TYPE_MCBBS;
             options = McbbsModpackExportTask.OPTION;
-        }
-        if (v == multimc) {
-            type = MODPACK_TYPE_MULTIMC;
-            options = MultiMCModpackExportTask.OPTION;
         }
         if (v == server) {
             type = MODPACK_TYPE_SERVER;
@@ -80,7 +72,6 @@ public class ModpackTypeSelectionPage extends FCLPage implements View.OnClickLis
     }
 
     public static final String MODPACK_TYPE_MCBBS = "mcbbs";
-    public static final String MODPACK_TYPE_MULTIMC = "multimc";
     public static final String MODPACK_TYPE_SERVER = "server";
     public static final String MODPACK_TYPE_CURSEFORGE = "curseforge";
     public static final String MODPACK_TYPE_MODRINTH = "modrinth";

@@ -572,7 +572,6 @@
     <string name="modpack_type_mcbbs">Тип MCBBS</string>
     <string name="modpack_type_hmcl">Тип HMCL</string>
     <string name="modpack_type_mcbbs_export">Может быть импортирован FCL, HMCL и MultiMC</string>
-    <string name="modpack_type_multimc_export">Может быть импортирован FCL, HMCL и MultiMC</string>
     <string name="modpack_type_server">Автоматическое обновление модпака с сервера</string>
     <string name="modpack_type_server_export">Позволяет владельцу сервера удаленно обновлять профиль игры</string>
     <string name="modpack_type_server_malformed">Неверный манифест модпака. Обратитесь к производителю модпак сервера, чтобы исправить эту проблему.</string>
