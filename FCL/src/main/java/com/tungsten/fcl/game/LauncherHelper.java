@@ -170,6 +170,8 @@ public final class LauncherHelper {
                     // 全量 mod 扫描一次，供 lwjgl3ify 补丁、modloader 与渲染器检查共用
                     List<LocalModFile> scannedMods = scanMods(repository, selectedVersion);
                     scannedModsRef.set(scannedMods);
+                    // 装有自实现 FPE 模拟的模组（Angelica/Actinium 等）时本次启动跳过 SFPEW 兼容层
+                    RendererPlugin.setFpeEmulatorModsPresent(scannedMods);
                     // GTNH/lwjgl3ify 兼容：mods 目录存在 lwjgl3ify 时在内存中合并 RFB 启动清单（不落盘），以 RFB + Java17+ 启动
                     Lwjgl3ifyPatcher.patchIfNeeded(repository, selectedVersion, scannedMods, version);
                     gameVersionRef.set(repository.getGameVersion(version.get()));

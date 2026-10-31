@@ -7,6 +7,7 @@ import com.mio.datastore.appSettingsDataStore
 import com.mio.manager.RendererManager
 import com.tungsten.fcl.FCLApp
 import com.tungsten.fcl.R
+import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.util.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -276,6 +277,28 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
         Renderer.ID_NGGL4ES, Renderer.ID_GL4ES, Renderer.ID_VGPU, Renderer.ID_ZINK
     )
 
+    /** 自实现 FPE 模拟的模组 id（上游 AAMC 同款检测）：这类模组接管旧版渲染链，层只剩透传开销 */
+    private val FPE_EMULATOR_MOD_IDS = setOf("angelica", "actinium")
+
+    /** 本次启动是否装了自实现 FPE 的模组（LauncherHelper mods 扫描后写入，仅进程内有效） */
+    @Volatile
+    private var fpeEmulatorModPresent = false
+
+    /**
+     * 启动链 mods 扫描后调用：检测是否装了自实现 FPE 模拟的模组（Angelica/Actinium 等）。
+     * 检测到即整层跳过（含内置渲染器），仅对活跃模组生效。
+     */
+    @JvmStatic
+    fun setFpeEmulatorModsPresent(mods: List<LocalModFile>?) {
+        val present = mods != null && mods.any { it.isActive && it.id in FPE_EMULATOR_MOD_IDS }
+        fpeEmulatorModPresent = present
+        if (present) {
+            val ids = mods!!.filter { it.isActive && it.id in FPE_EMULATOR_MOD_IDS }
+                .joinToString(", ") { it.id }
+            Logging.LOG.info("FPE emulator mod detected ($ids), SFPEW compatibility layer disabled")
+        }
+    }
+
     private fun builtinKey(rendererId: String): String? = when (rendererId) {
         Renderer.ID_MOBILEGLUES -> BUILTIN_MOBILEGLUES_KEY
         else -> null
@@ -289,11 +312,13 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
 
     /**
      * 该渲染器启动时是否叠加 SFPEW 兼容层（启动链路注入 env 的依据）。
+     * 装有自实现 FPE 的模组时整层跳过；
      * 内置渲染器行为已知：默认启用，仅自带 FPE 的内置渲染器硬编码关闭；
      * 外部插件渲染器行为未知：由高级设置里的全局开关控制，默认关闭（用户显式开启）。
      */
     @JvmStatic
     fun isSfpewLayerEnabled(renderer: Renderer): Boolean {
+        if (fpeEmulatorModPresent) return false
         if (renderer.path.isEmpty()) {
             return renderer.id !in FPE_CAPABLE_BUILTIN_IDS
         }
