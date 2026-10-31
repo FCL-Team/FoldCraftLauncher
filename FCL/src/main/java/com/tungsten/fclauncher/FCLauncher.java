@@ -667,7 +667,32 @@ public class FCLauncher {
         bridge.setupExitTrap(bridge);
         FCLBridge.initializeHooks();
         log(bridge, "Hook success");
-        int exitCode = VMLauncher.launchJVM(args);
+        // 三段拆分直启（native 侧 JNI_CreateJavaVM，不再经 JLI 解析 argv）：
+        // args 结构 = [java 可执行占位, ...JVM 选项, (-cp, classpath)?, mio.Wrapper, ...应用参数]
+        ArrayList<String> vmArgs = new ArrayList<>();
+        String classpath = null;
+        int wrapperIndex = -1;
+        for (int i = 1; i < args.length; i++) {
+            String a = args[i];
+            if (a.equals("mio.Wrapper")) {
+                wrapperIndex = i;
+                break;
+            }
+            if (a.equals("-cp") || a.equals("-classpath")) {
+                if (i + 1 >= args.length)
+                    throw new IOException("Missing classpath value after " + a);
+                classpath = args[++i];
+                continue;
+            }
+            vmArgs.add(a);
+        }
+        if (wrapperIndex < 0)
+            throw new IOException("Main class mio.Wrapper not found in launch arguments");
+        if (classpath != null)
+            vmArgs.add("-Djava.class.path=" + classpath);
+        String[] appArgs = new String[args.length - wrapperIndex - 1];
+        System.arraycopy(args, wrapperIndex + 1, appArgs, 0, appArgs.length);
+        int exitCode = VMLauncher.launchJVM(vmArgs.toArray(new String[0]), "mio.Wrapper", appArgs);
         bridge.onExit(exitCode);
     }
 
