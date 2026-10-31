@@ -53,7 +53,12 @@ class RendererSelectItemAdapter(
             else -> ""
         }
         binding.version.text = context.getString(R.string.supported_mc_version) + " " +
-            ver.ifEmpty { context.getString(R.string.message_unknown) }
+            ver.ifEmpty {
+                // 内置渲染器无版本边界即声明全版本可跑（如 MG+SFPEW 层组合）；插件无声明则保持未知
+                context.getString(
+                    if (renderer.path.isEmpty()) R.string.renderer_version_all else R.string.message_unknown
+                )
+            }
         binding.source.text = context.getString(R.string.renderer_source) + " " +
             renderer.source.ifEmpty { context.getString(R.string.renderer_source_builtin) }
         binding.root.setOnClickListener { callback(renderer) }

@@ -73,6 +73,9 @@ class RendererSelectDialog(
             // rendererList 是同一实例被 clear 后重填，直接全量刷新
             adapter.notifyDataSetChanged()
         }
+        binding.advanced.setOnClickListener {
+            RendererAdvancedDialog(context).show()
+        }
         binding.cancel.setOnClickListener {
             dismiss()
         }

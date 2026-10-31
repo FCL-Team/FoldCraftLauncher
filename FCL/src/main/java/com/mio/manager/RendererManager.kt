@@ -13,7 +13,6 @@ object RendererManager {
     lateinit var RENDERER_ZINK: Renderer
     lateinit var RENDERER_NGGL4ES: Renderer
     lateinit var RENDERER_MOBILEGLUES: Renderer
-    lateinit var RENDERER_SFPEW: Renderer
     private var isInit = false
 
     @JvmStatic
@@ -83,6 +82,8 @@ object RendererManager {
             displayMaxMCver = "26.2"
         )
 
+        // SFPEW 兼容层对内置 MG 硬编码启用，组合后无 MC 版本下界（旧版固定管线由层补齐），
+        // 故注册信息不再声明 minMCver（版本门控与列表展示均按无下界处理）
         RENDERER_MOBILEGLUES = Renderer(
             "MobileGlues",
             context.getString(R.string.settings_fcl_renderer_mobileglues),
@@ -92,21 +93,9 @@ object RendererManager {
             null,
             null,
             Renderer.ID_MOBILEGLUES,
-            "1.17",
-            ""
-        )
-
-        RENDERER_SFPEW = Renderer(
-            "SimpleFPEWrapper",
-            context.getString(R.string.settings_fcl_renderer_sfpew),
-            "libSimpleFPEWrapper.so",
-            "libEGL.so",
             "",
-            null,
-            null,
-            Renderer.ID_SFPEW,
-            "",
-            ""
+            "26.3-snapshot-3",
+            displayMaxMCver = "26.2"
         )
 
         RendererPlugin.init(context)
@@ -120,7 +109,6 @@ object RendererManager {
         rendererList.add(RENDERER_VGPU)
         rendererList.add(RENDERER_ZINK)
         rendererList.add(RENDERER_MOBILEGLUES)
-        rendererList.add(RENDERER_SFPEW)
         rendererList.addAll(RendererPlugin.rendererList)
     }
 

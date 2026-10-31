@@ -7,6 +7,7 @@ import com.mio.datastore.appSettingsDataStore
 import com.mio.manager.RendererManager
 import com.tungsten.fcl.FCLApp
 import com.tungsten.fcl.R
+import com.tungsten.fclcore.mod.LocalModFile
 import com.tungsten.fclcore.util.Logging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -255,20 +256,94 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
         }
     }
 
-    // ---------- 内置渲染器配置（MobileGlues / SimpleFPEWrapper） ----------
+    // ---------- 内置渲染器配置（MobileGlues）与 SFPEW 兼容层配置 ----------
     // 内置渲染器没有插件包名，复用 envPrefs 存储并以 "builtin:" 前缀伪键区分；
-    // 配置入口为渲染器选择列表的齿轮图标，编辑用与插件页相同的 RendererEnvDialog
+    // 配置入口为渲染器选择列表的齿轮图标，编辑用与插件页相同的 RendererEnvDialog。
+    // SFPEW 兼容层对内置渲染器按 AAMC 同款硬编码规则：默认启用，仅对自带 FPE/完整 GL 的内置渲染器关闭；
+    // 外部插件渲染器行为未知，由渲染器选择对话框"高级设置"里的全局开关控制（默认关闭，用户显式开启）
 
     @JvmField
     val BUILTIN_MOBILEGLUES_KEY = "builtin:mobileglues"
 
-    @JvmField
-    val BUILTIN_SFPEW_KEY = "builtin:sfpew"
+    /** SFPEW 兼容层配置伪键：插件层开关与层全局项（SFPEW_RELAXED_CONTEXT） */
+    private const val SFPEW_LAYER_KEY = "layer:sfpew"
+
+    /** SFPEW 兼容层配置键名（高级设置读写） */
+    const val SFPEW_LAYER_PLUGINS = "SFPEW_LAYER_PLUGINS"
+    const val SFPEW_LAYER_RELAXED_CONTEXT = "SFPEW_RELAXED_CONTEXT"
+
+    /** 自带 FPE/完整 GL 的内置渲染器：叠加层对其硬编码关闭（上游 AAMC 同款规则） */
+    private val FPE_CAPABLE_BUILTIN_IDS = setOf(
+        Renderer.ID_NGGL4ES, Renderer.ID_GL4ES, Renderer.ID_VGPU, Renderer.ID_ZINK
+    )
+
+    /** 自实现 FPE 模拟的模组 id（上游 AAMC 同款检测）：这类模组接管旧版渲染链，层只剩透传开销 */
+    private val FPE_EMULATOR_MOD_IDS = setOf("angelica", "actinium")
+
+    /** 本次启动是否装了自实现 FPE 的模组（LauncherHelper mods 扫描后写入，仅进程内有效） */
+    @Volatile
+    private var fpeEmulatorModPresent = false
+
+    /**
+     * 启动链 mods 扫描后调用：检测是否装了自实现 FPE 模拟的模组（Angelica/Actinium 等）。
+     * 检测到即整层跳过（含内置渲染器），仅对活跃模组生效。
+     */
+    @JvmStatic
+    fun setFpeEmulatorModsPresent(mods: List<LocalModFile>?) {
+        val present = mods != null && mods.any { it.isActive && it.id in FPE_EMULATOR_MOD_IDS }
+        fpeEmulatorModPresent = present
+        if (present) {
+            val ids = mods!!.filter { it.isActive && it.id in FPE_EMULATOR_MOD_IDS }
+                .joinToString(", ") { it.id }
+            Logging.LOG.info("FPE emulator mod detected ($ids), SFPEW compatibility layer disabled")
+        }
+    }
 
     private fun builtinKey(rendererId: String): String? = when (rendererId) {
         Renderer.ID_MOBILEGLUES -> BUILTIN_MOBILEGLUES_KEY
-        Renderer.ID_SFPEW -> BUILTIN_SFPEW_KEY
         else -> null
+    }
+
+    /** 兼容层伪键下的扁平配置读取（未初始化时懒初始化插件扫描） */
+    private fun sfpewLayerPrefs(): Map<String, String> {
+        ensureInit()
+        return envPrefs[SFPEW_LAYER_KEY].orEmpty()
+    }
+
+    /**
+     * 该渲染器启动时是否叠加 SFPEW 兼容层（启动链路注入 env 的依据）。
+     * 装有自实现 FPE 的模组时整层跳过；
+     * 内置渲染器行为已知：默认启用，仅自带 FPE 的内置渲染器硬编码关闭；
+     * 外部插件渲染器行为未知：由高级设置里的全局开关控制，默认关闭（用户显式开启）。
+     */
+    @JvmStatic
+    fun isSfpewLayerEnabled(renderer: Renderer): Boolean {
+        if (fpeEmulatorModPresent) return false
+        if (renderer.path.isEmpty()) {
+            return renderer.id !in FPE_CAPABLE_BUILTIN_IDS
+        }
+        return toggleEnabled(sfpewLayerPrefs(), SFPEW_LAYER_PLUGINS, false)
+    }
+
+    /** 插件渲染器兼容层全局开关（高级设置读写；默认关闭） */
+    fun isSfpewPluginLayerEnabled(): Boolean =
+        toggleEnabled(sfpewLayerPrefs(), SFPEW_LAYER_PLUGINS, false)
+
+    fun setSfpewPluginLayerEnabled(context: Context, enabled: Boolean) {
+        val flat = sfpewLayerPrefs().toMutableMap()
+        flat[SFPEW_LAYER_PLUGINS + ENABLED_SUFFIX] = enabled.toString()
+        storeEnvPrefs(context, SFPEW_LAYER_KEY, flat)
+    }
+
+    /** 兼容层 relaxed context 全局开关（高级设置读写；strict 为默认，仅启动链路注入 env 用） */
+    @JvmStatic
+    fun isSfpewRelaxedContextEnabled(): Boolean =
+        toggleEnabled(sfpewLayerPrefs(), SFPEW_LAYER_RELAXED_CONTEXT, false)
+
+    fun setSfpewRelaxedContextEnabled(context: Context, enabled: Boolean) {
+        val flat = sfpewLayerPrefs().toMutableMap()
+        flat[SFPEW_LAYER_RELAXED_CONTEXT + ENABLED_SUFFIX] = enabled.toString()
+        storeEnvPrefs(context, SFPEW_LAYER_KEY, flat)
     }
 
     /** 内置渲染器是否提供可配置环境变量（渲染器列表齿轮图标的显隐依据） */
@@ -369,17 +444,6 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
                     checkable = false,
                     enabled = true,
                     value = prefs["fsr1Setting"] ?: "0"
-                )
-            )
-
-            Renderer.ID_SFPEW -> listOf(
-                EnvSpec(
-                    key = "SFPEW_RELAXED_CONTEXT",
-                    type = EnvType.TOGGLEABLE,
-                    title = "SFPEW_RELAXED_CONTEXT",
-                    description = context.getString(R.string.renderer_config_sfpew_relaxed_context_desc),
-                    enabled = prefs["SFPEW_RELAXED_CONTEXT$ENABLED_SUFFIX"]?.toBooleanStrictOrNull() ?: true,
-                    value = "1"
                 )
             )
 

@@ -39,6 +39,7 @@ import com.mio.manager.RendererManager;
 import com.mio.minecraft.ModCheckException;
 import com.mio.minecraft.ModChecker;
 import com.mio.plugin.NativeLibPlugin;
+import com.mio.plugin.RendererPlugin;
 import com.mio.util.LoginProgressKt;
 import com.mio.util.ParseUtil;
 import com.tungsten.fcl.FCLApp;
@@ -169,6 +170,8 @@ public final class LauncherHelper {
                     // 全量 mod 扫描一次，供 lwjgl3ify 补丁、modloader 与渲染器检查共用
                     List<LocalModFile> scannedMods = scanMods(repository, selectedVersion);
                     scannedModsRef.set(scannedMods);
+                    // 装有自实现 FPE 模拟的模组（Angelica/Actinium 等）时本次启动跳过 SFPEW 兼容层
+                    RendererPlugin.setFpeEmulatorModsPresent(scannedMods);
                     // GTNH/lwjgl3ify 兼容：mods 目录存在 lwjgl3ify 时在内存中合并 RFB 启动清单（不落盘），以 RFB + Java17+ 启动
                     Lwjgl3ifyPatcher.patchIfNeeded(repository, selectedVersion, scannedMods, version);
                     gameVersionRef.set(repository.getGameVersion(version.get()));
@@ -454,7 +457,10 @@ public final class LauncherHelper {
             try {
                 CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
                 if (!version.isEmpty()) {
-                    if (!renderer.getMinMCver().isEmpty()) {
+                    // SFPEW 兼容层启用时补齐固定管线能力，旧版 MC 可正常运行，跳过 min 下界判定；
+                    // max 上界保留——层不扩展渲染器自身的现代 GL 上限
+                    boolean sfpewLayer = RendererPlugin.isSfpewLayerEnabled(renderer);
+                    if (!renderer.getMinMCver().isEmpty() && !sfpewLayer) {
                         if (GameVersionNumber.compare(version, renderer.getMinMCver()) < 0) {
                             Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
                                     .setCancelable(false)
