@@ -28,6 +28,7 @@ import com.tungsten.fclcore.download.legacyfabric.LegacyFabricAPIVersionList;
 import com.tungsten.fclcore.download.legacyfabric.LegacyFabricVersionList;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderBMCLVersionList;
 import com.tungsten.fclcore.download.neoforge.NeoForgeBMCLVersionList;
+import com.tungsten.fclcore.download.neoforge.NeoForgeRemoteVersion;
 import com.tungsten.fclcore.download.optifine.OptiFineBMCLVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltAPIVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltVersionList;
@@ -36,6 +37,7 @@ import com.tungsten.fclcore.util.Pair;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -166,6 +168,16 @@ public final class BMCLAPIDownloadProvider implements DownloadProvider {
 
     @Override
     public List<URL> injectURLWithCandidates(String baseURL) {
+        // NeoForged Maven 走专用镜像规则：BMCLAPI 优先，保留官方源，并追加 CurseForge CDN（同步自 HMCL #7092）
+        List<String> neoforgeCandidates = NeoForgeRemoteVersion.getMirrorCandidates(baseURL, true);
+        if (neoforgeCandidates != null) {
+            List<URL> neoforgeResult = new ArrayList<>(neoforgeCandidates.size());
+            for (String candidate : neoforgeCandidates) {
+                neoforgeResult.add(NetworkUtils.toURL(candidate));
+            }
+            return neoforgeResult;
+        }
+
         String injected = injectURL(replacement, baseURL);
         if (injected.equals(baseURL)) {
             String fallbackInjected = injectURL(fallbackReplacement, baseURL);

@@ -7,6 +7,7 @@ import com.tungsten.fclcore.download.DownloadProvider;
 import com.tungsten.fclcore.task.GetTask;
 import com.tungsten.fclcore.task.Task;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -36,9 +37,10 @@ public final class NeoForgeOfficialVersionList extends ComponentVersionList<NeoF
 
     @Override
     public Task<?> refreshAsync() {
+        // 元数据同时提供 NeoForged Maven 与 CurseForge CDN 镜像两个来源，任一可用即可（同步自 HMCL #7092）
         return Task.allOf(
-                new GetTask(downloadProvider.injectURLWithCandidates(OLD_URL)).thenGetJsonAsync(OfficialAPIResult.class),
-                new GetTask(downloadProvider.injectURLWithCandidates(META_URL)).thenGetJsonAsync(OfficialAPIResult.class)
+                new GetTask(downloadProvider.injectURLsWithCandidates(Arrays.asList(OLD_URL, NeoForgeRemoteVersion.MIRROR_OLD_URL))).thenGetJsonAsync(OfficialAPIResult.class),
+                new GetTask(downloadProvider.injectURLsWithCandidates(Arrays.asList(META_URL, NeoForgeRemoteVersion.MIRROR_META_URL))).thenGetJsonAsync(OfficialAPIResult.class)
         ).thenAcceptAsync(results -> {
             lock.writeLock().lock();
 

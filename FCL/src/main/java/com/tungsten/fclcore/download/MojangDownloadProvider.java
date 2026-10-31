@@ -26,6 +26,7 @@ import com.tungsten.fclcore.download.legacyfabric.LegacyFabricAPIVersionList;
 import com.tungsten.fclcore.download.legacyfabric.LegacyFabricVersionList;
 import com.tungsten.fclcore.download.liteloader.LiteLoaderVersionList;
 import com.tungsten.fclcore.download.neoforge.NeoForgeOfficialVersionList;
+import com.tungsten.fclcore.download.neoforge.NeoForgeRemoteVersion;
 import com.tungsten.fclcore.download.optifine.OptiFineBMCLVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltAPIVersionList;
 import com.tungsten.fclcore.download.quilt.QuiltVersionList;
@@ -33,6 +34,7 @@ import com.tungsten.fclcore.game.GameComponentType;
 import com.tungsten.fclcore.util.io.NetworkUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -126,6 +128,11 @@ public class MojangDownloadProvider implements DownloadProvider {
      */
     @Override
     public List<URL> injectURLWithCandidates(String baseURL) {
+        // maven.neoforged.net 在部分网络环境下不可达，追加 BMCLAPI 与 CurseForge CDN 镜像候选（同步自 HMCL #7092）
+        List<String> neoforgeCandidates = NeoForgeRemoteVersion.getMirrorCandidates(baseURL, false);
+        if (neoforgeCandidates != null) {
+            return toURLs(neoforgeCandidates);
+        }
         if (baseURL.startsWith("https://libraries.minecraft.net/")) {
             String path = baseURL.substring("https://libraries.minecraft.net/".length());
             return Arrays.asList(
@@ -134,6 +141,14 @@ public class MojangDownloadProvider implements DownloadProvider {
                     NetworkUtils.toURL("https://repo1.maven.org/maven2/" + path));
         }
         return DownloadProvider.super.injectURLWithCandidates(baseURL);
+    }
+
+    private static List<URL> toURLs(List<String> urls) {
+        List<URL> result = new ArrayList<>(urls.size());
+        for (String url : urls) {
+            result.add(NetworkUtils.toURL(url));
+        }
+        return result;
     }
 
     @Override
