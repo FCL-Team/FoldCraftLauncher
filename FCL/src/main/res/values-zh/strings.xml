@@ -628,6 +628,8 @@
     <string name="menu_settings_gamepad_input_mode_mapped">映射（控制布局）</string>
     <string name="menu_settings_gamepad_input_mode_sdl_direct">SDL 直通</string>
     <string name="menu_settings_sdl_auto_show_ime">自动唤起输入法（SDL）</string>
+    <string name="menu_settings_ime_magnifier_auto_show">输入时默认弹出放大镜</string>
+    <string name="game_magnifier_show">显示游戏放大镜</string>
     <string name="gamepad_mode_prompt_title">手柄输入模式</string>
     <string name="gamepad_mode_prompt_description">检测到手柄输入，请选择手柄输入的处理方式：</string>
     <string name="gamepad_mode_prompt_mapped_summary">手柄按键/摇杆映射为虚拟键鼠，适合旧版本或无原生手柄支持的游戏</string>

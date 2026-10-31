@@ -71,6 +71,13 @@ class MenuSetting {
             changed()
         }
 
+    var isImeMagnifierAutoShow: Boolean = true
+        set(value) {
+            if (field == value) return
+            field = value
+            changed()
+        }
+
     var isShowLog: Boolean = false
         set(value) {
             if (field == value) return
@@ -383,6 +390,7 @@ class MenuSetting {
                 addProperty("showFps", src.isShowFps)
                 addProperty("showMemory", src.isShowMemory)
                 addProperty("disableSoftKeyAdjust", src.isDisableSoftKeyAdjust)
+                addProperty("imeMagnifierAutoShow", src.isImeMagnifierAutoShow)
                 addProperty("showLog", src.isShowLog)
                 addProperty("autoShowLog", src.isAutoShowLog)
                 addProperty("performanceMode", src.isPerformanceMode)
@@ -439,6 +447,7 @@ class MenuSetting {
                 ms.isShowFps = json["showFps"]?.asBoolean ?: false
                 ms.isShowMemory = json["showMemory"]?.asBoolean ?: false
                 ms.isDisableSoftKeyAdjust = json["disableSoftKeyAdjust"]?.asBoolean ?: false
+                ms.isImeMagnifierAutoShow = json["imeMagnifierAutoShow"]?.asBoolean ?: true
                 ms.isShowLog = json["showLog"]?.asBoolean ?: false
                 ms.isAutoShowLog = json["autoShowLog"]?.asBoolean ?: false
                 ms.isPerformanceMode = json["performanceMode"]?.asBoolean ?: false

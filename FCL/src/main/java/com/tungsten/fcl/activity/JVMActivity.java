@@ -376,6 +376,9 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surfaceTexture) {
+        if (menuType == MenuType.GAME) {
+            ((GameMenu) menu).captureMagnifierFrame();
+        }
         if (output == 1) {
             menu.onGraphicOutput();
             output++;
