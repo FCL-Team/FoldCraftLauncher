@@ -34,6 +34,10 @@ extern EGLBoolean (*eglQuerySurface_p)( 	EGLDisplay display,
 // 包装层在 makeCurrent 时记录线程本地上下文观测、swap 前清空立即模式批次；未启用时为 NULL
 extern EGLBoolean (*sfpew_eglMakeCurrent_p) (EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx);
 extern EGLBoolean (*sfpew_eglSwapBuffers_p) (EGLDisplay dpy, EGLSurface draw);
+// 建/毁上下文同样是包装层入口（经其 eglGetProcAddress 解析）：native-profile 逐上下文
+// 自动开关以包装层看到建上下文请求为前提。旧版包装库未提供时保持 NULL，建/毁回落底座 EGL
+extern EGLContext (*sfpew_eglCreateContext_p) (EGLDisplay dpy, EGLConfig config, EGLContext share_list, const EGLint *attrib_list);
+extern EGLBoolean (*sfpew_eglDestroyContext_p) (EGLDisplay dpy, EGLContext ctx);
 
 bool dlsym_EGL();
 void* getProcAddress(const char* procname);

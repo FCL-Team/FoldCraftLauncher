@@ -37,6 +37,8 @@ __eglMustCastToProperFunctionPointerType (*eglGetProcAddress_p) (const char *pro
 // SFPEW 包装生命周期入口；非 SFPEW 渲染器保持 NULL，调用方回落系统 EGL
 EGLBoolean (*sfpew_eglMakeCurrent_p) (EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx);
 EGLBoolean (*sfpew_eglSwapBuffers_p) (EGLDisplay dpy, EGLSurface draw);
+EGLContext (*sfpew_eglCreateContext_p) (EGLDisplay dpy, EGLConfig config, EGLContext share_list, const EGLint *attrib_list);
+EGLBoolean (*sfpew_eglDestroyContext_p) (EGLDisplay dpy, EGLContext ctx);
 
 bool dlsym_EGL() {
     char* gles = getenv("LIBGL_GLES");
@@ -83,6 +85,17 @@ bool dlsym_EGL() {
             printf("EGLLoader: SFPEW lifecycle resolution failed, falling back to system EGL\n");
             sfpew_eglMakeCurrent_p = NULL;
             sfpew_eglSwapBuffers_p = NULL;
+        } else {
+            // 生命周期入口就绪后才接管建/毁：native-profile 逐上下文自动开关要求建上下文
+            // 经包装层解析（上下文请求不可见则分类无从发生）；旧版包装库缺入口时保持 NULL，
+            // 建/毁整体回落底座，避免包装层建、底座毁的所有权错配
+            sfpew_eglCreateContext_p = (void*) sfpew_get_proc("eglCreateContext");
+            sfpew_eglDestroyContext_p = (void*) sfpew_get_proc("eglDestroyContext");
+            if (sfpew_eglCreateContext_p == NULL || sfpew_eglDestroyContext_p == NULL) {
+                printf("EGLLoader: SFPEW context entry points unavailable, context creation stays on base EGL\n");
+                sfpew_eglCreateContext_p = NULL;
+                sfpew_eglDestroyContext_p = NULL;
+            }
         }
     }
     return true;

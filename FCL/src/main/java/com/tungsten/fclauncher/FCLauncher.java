@@ -309,7 +309,14 @@ public class FCLauncher {
         }
         // SDL 需要独立的 GL/EGL 库绝对路径（GL 用渲染器 GL 库、EGL 用渲染器 EGL 库）。
         // 必须对所有渲染器路径生效（插件渲染器在 inner 中途 return）
-        String egl = envMap.get("POJAVEXEC_EGL");
+        String egl;
+        if (RendererPlugin.isSfpewLayerEnabled(renderer)) {
+            // 兼容层开启：SDL 的 EGL 与 GL 一并走包装层（包装库导出完整 EGL 面，SDL 建上下文
+            // 同样经 native-profile 分类）；底座只经 SFPEW_EGL 承担
+            egl = FCLPath.NATIVE_LIB_DIR + "/libSimpleFPEWrapper.so";
+        } else {
+            egl = envMap.get("POJAVEXEC_EGL");
+        }
         if (egl != null && !egl.startsWith("/")) {
             File candidate = new File(rendererLibPath(renderer), egl);
             // 仅当库真实打包在渲染器目录内才给 SDL 绝对路径；

@@ -68,13 +68,16 @@ EXTERNAL_API void pojavTerminate() {
     switch (pojav_environ->config_renderer) {
         case RENDERER_GL4ES: {
             // detach 优先走 SFPEW 包装层：swap/makeCurrent 不经包装时立即模式批次可能未清空，
-            // 先经包装层 drain 再由系统 EGL 销毁（安全生命周期顺序，销毁仍归系统 EGL 所有）
+            // 先经包装层 drain；销毁与创建同源——SFPEW 接管建上下文后上下文可能由包装层持有，
+            // 销毁须经包装层入口，包装库缺入口时回落系统 EGL（此时上下文均为底座所有）
             EGLBoolean (*terminate_make_current)(EGLDisplay, EGLSurface, EGLSurface, EGLContext) =
                     sfpew_eglMakeCurrent_p != NULL ? sfpew_eglMakeCurrent_p : eglMakeCurrent_p;
+            EGLBoolean (*terminate_destroy_context)(EGLDisplay, EGLContext) =
+                    sfpew_eglDestroyContext_p != NULL ? sfpew_eglDestroyContext_p : eglDestroyContext_p;
             terminate_make_current(potatoBridge.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE,
                                    EGL_NO_CONTEXT);
             eglDestroySurface_p(potatoBridge.eglDisplay, potatoBridge.eglSurface);
-            eglDestroyContext_p(potatoBridge.eglDisplay, potatoBridge.eglContext);
+            terminate_destroy_context(potatoBridge.eglDisplay, potatoBridge.eglContext);
             eglTerminate_p(potatoBridge.eglDisplay);
             eglReleaseThread_p();
 
