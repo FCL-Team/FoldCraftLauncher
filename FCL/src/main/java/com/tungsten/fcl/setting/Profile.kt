@@ -72,6 +72,23 @@ class Profile {
     val versionSetting: VersionSetting
         get() = repository.getVersionSetting(selectedVersion)
 
+    /**
+     * 每版本渲染器覆盖（版本 id → renderer id）。
+     * 独立于 usesGlobal：命中时启动直接使用该值，优先级高于特定/全局设置中的渲染器，
+     * 用于多版本各配各的渲染器而不必开启整份独立设置。
+     */
+    val rendererOverrides: MutableMap<String, String> = LinkedHashMap()
+
+    fun getRendererOverride(versionId: String?): String? =
+        versionId?.let { rendererOverrides[it] }
+
+    /** rendererId 传 null 表示清除覆盖，版本回到跟随设置 */
+    fun setRendererOverride(versionId: String, rendererId: String?) {
+        if (rendererId == null) rendererOverrides.remove(versionId)
+        else rendererOverrides[versionId] = rendererId
+        onChanged?.invoke()
+    }
+
     constructor(name: String, gameDir: File) : this(
         name,
         gameDir,
@@ -147,6 +164,7 @@ class Profile {
                 add("global", context.serialize(src.globalVersionSetting))
                 addProperty("gameDir", src.gameDir.path)
                 addProperty("selectedMinecraftVersion", src.selectedVersion)
+                add("rendererOverrides", context.serialize(src.rendererOverrides))
             }
         }
 
@@ -162,7 +180,12 @@ class Profile {
                 File(json["gameDir"]?.asString ?: ""),
                 context.deserialize(json["global"], VersionSetting::class.java),
                 json["selectedMinecraftVersion"]?.asString ?: ""
-            )
+            ).also { profile ->
+                // 反序列化阶段直接填 map，不经 setRendererOverride（不触发保存）
+                (json["rendererOverrides"] as? JsonObject)?.entrySet()?.forEach { entry ->
+                    profile.rendererOverrides[entry.key] = entry.value.asString
+                }
+            }
         }
     }
 }

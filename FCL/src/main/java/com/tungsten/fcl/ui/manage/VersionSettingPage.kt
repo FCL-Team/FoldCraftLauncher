@@ -8,6 +8,7 @@ import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mio.device.VulkanCheckManager
+import com.mio.manager.RendererManager
 import com.mio.plugin.DriverPlugin.driverList
 import com.mio.plugin.DriverPlugin.selected
 import com.mio.ui.adapter.SpacingItemDecoration
@@ -364,16 +365,75 @@ class VersionSettingPage(
             }
 
             VersionSettingTag.EDIT_RENDERER -> {
-                RendererSelectDialog(context, globalSetting) {
-                    if (globalSetting && !getSelectedProfile().versionSetting.isUsesGlobal) {
-                        val builder = FCLAlertDialog.Builder(context)
-                        builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
-                        builder.setMessage(context.getString(R.string.message_warn_renderer_global_setting))
-                        builder.setNegativeButton(
-                            context.getString(com.tungsten.fcl.R.string.dialog_positive),
-                            null
-                        )
-                        builder.create().show()
+                RendererSelectDialog(context, globalSetting) { picked ->
+                    val profile = getSelectedProfile()
+                    if (globalSetting) {
+                        // 全局页：提醒使用独立设置的当前版本；渲染器覆盖提示仅检测当前选中版本
+                        val notes = mutableListOf<String>()
+                        if (!profile.versionSetting.isUsesGlobal) {
+                            notes += context.getString(R.string.message_warn_renderer_global_setting)
+                        }
+                        val selectedVersion = profile.selectedVersion
+                        val selectedOverride = selectedVersion?.let { profile.getRendererOverride(it) }
+                        val shadowed = if (selectedVersion != null && selectedOverride != null &&
+                            selectedOverride != picked.id &&
+                            profile.getVersionSetting(selectedVersion).isUsesGlobal
+                        ) {
+                            selectedVersion to selectedOverride
+                        } else null
+                        if (shadowed != null) {
+                            notes += context.getString(
+                                R.string.message_warn_renderer_override_shadow,
+                                shadowed.first,
+                                RendererManager.getRenderer(shadowed.second).des
+                            )
+                        }
+                        if (notes.isNotEmpty()) {
+                            val builder = FCLAlertDialog.Builder(context)
+                            builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+                            builder.setMessage(notes.joinToString("\n\n"))
+                            if (shadowed != null) {
+                                builder.setPositiveButton(context.getString(R.string.renderer_update_override)) {
+                                    profile.setRendererOverride(shadowed.first, picked.id)
+                                }
+                                builder.setNeutralButton(context.getString(R.string.renderer_clear_override)) {
+                                    profile.setRendererOverride(shadowed.first, null)
+                                }
+                                builder.setNegativeButton(context.getString(R.string.renderer_keep_override), null)
+                            } else {
+                                builder.setNegativeButton(
+                                    context.getString(com.tungsten.fcl.R.string.dialog_positive),
+                                    null
+                                )
+                            }
+                            builder.create().show()
+                        }
+                    } else {
+                        // 局部快照：versionId 是页面可变属性，对话框回调里不能依赖智能转换
+                        val vid = versionId
+                        // 特定版本页：该版本有渲染器覆盖时，此处修改不会生效
+                        if (vid != null) {
+                            val override = profile.getRendererOverride(vid)
+                            if (override != null && override != picked.id) {
+                                val builder = FCLAlertDialog.Builder(context)
+                                builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+                                builder.setMessage(
+                                    context.getString(
+                                        R.string.message_warn_renderer_override_shadow,
+                                        vid,
+                                        RendererManager.getRenderer(override).des
+                                    )
+                                )
+                                builder.setPositiveButton(context.getString(R.string.renderer_update_override)) {
+                                    profile.setRendererOverride(vid, picked.id)
+                                }
+                                builder.setNeutralButton(context.getString(R.string.renderer_clear_override)) {
+                                    profile.setRendererOverride(vid, null)
+                                }
+                                builder.setNegativeButton(context.getString(R.string.renderer_keep_override), null)
+                                builder.create().show()
+                            }
+                        }
                     }
                     adapter.refreshRow(VersionSettingTag.EDIT_RENDERER)
                 }.show()

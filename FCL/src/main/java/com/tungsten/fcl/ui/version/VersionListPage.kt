@@ -7,6 +7,7 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
+import com.mio.ui.dialog.RendererOverrideDialog
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.PageVersionListBinding
 import com.tungsten.fcl.setting.Profiles
@@ -42,6 +43,7 @@ class VersionListPage(context: Context?, id: Int) :
         binding = PageVersionListBinding.bind(contentView)
         binding.refresh.setOnClickListener(this)
         binding.newProfile.setOnClickListener(this)
+        binding.renderer.setOnClickListener(this)
 
         viewModel = ViewModelProvider(getActivity()).get(VersionListViewModel::class.java)
         observeWhileAttached(viewModel.state) { render(it) }
@@ -176,6 +178,10 @@ class VersionListPage(context: Context?, id: Int) :
         if (view === binding.newProfile) {
             val dialog = AddProfileDialog(context)
             dialog.show()
+        }
+        if (view === binding.renderer) {
+            // 静态入口：对话框内列出全部版本逐个设置渲染器覆盖，默认跟随全局/特定版本设置
+            RendererOverrideDialog(context).show()
         }
     }
 }

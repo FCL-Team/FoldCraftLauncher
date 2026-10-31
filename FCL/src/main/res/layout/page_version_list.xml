@@ -52,6 +52,19 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="8dp"
         android:text="@string/version_new_profile"
+        app:layout_constraintBottom_toTopOf="@id/renderer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_percent="0.3"
+        app:ripple="true" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/renderer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="@string/settings_fcl_renderer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_percent="0.3"
