@@ -19,8 +19,10 @@ static volatile jmethodID exitTrap_method;
 static JavaVM *exitTrap_jvm;
 static volatile jmethodID log_method;
 static JavaVM *log_pipe_jvm;
-static int fclFd[2];
-static pthread_t logger;
+// 当前 stdio 重定向管道两端：读端移交给 logger 线程；原始写端保留（不 close），
+// 供下一轮重定向唤醒旧 logger 退出（同进程多轮 JVM 的安装器复用场景）
+static volatile int fclLogReadFd = -1;
+static volatile int fclLogWriteFd = -1;
 static jobject object_FCLBridge;
 
 void correctUtfBytes(char *bytes) {
@@ -76,7 +78,8 @@ void correctUtfBytes(char *bytes) {
     }
 }
 
-static void *logger_thread() {
+static void *logger_thread(void *arg) {
+    int *fds = arg;
     JNIEnv *env;
     JavaVM *vm = log_pipe_jvm;
     (*vm)->AttachCurrentThread(vm, &env, NULL);
@@ -85,16 +88,20 @@ static void *logger_thread() {
     jstring str;
     while (1) {
         memset(buffer, '\0', sizeof(buffer));
-        _s = read(fclFd[0], buffer, sizeof(buffer) - 1);
-        if (_s < 0) {
-            __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to read log!");
-            close(fclFd[0]);
-            close(fclFd[1]);
+        _s = read(fds[0], buffer, sizeof(buffer) - 1);
+        if (_s <= 0) {
+            // 读端被新一轮重定向关闭（EBADF）或管道 EOF：退出本线程。
+            // 旧实现在 EOF 时 continue 会空转烧 CPU，复用场景下必须退出
+            if (_s < 0) {
+                __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to read log!");
+            }
+            close(fds[0]);
+            close(fds[1]);
             (*vm)->DetachCurrentThread(vm);
+            free(fds);
             return NULL;
-        } else {
-            buffer[_s] = '\0';
         }
+        buffer[_s] = '\0';
         if (buffer[0] == '\0')
             continue;
         else {
@@ -113,16 +120,31 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv *env, jobject
     setvbuf(stdout, 0, _IOLBF, 0);
     setvbuf(stderr, 0, _IONBF, 0);
     object_FCLBridge = (*env)->NewGlobalRef(env, jobject);
-    if (pipe(fclFd) < 0) {
+    int fds[2];
+    if (pipe(fds) < 0) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to create log pipe!");
         return 1;
     }
-    if (dup2(fclFd[1], STDOUT_FILENO) != STDOUT_FILENO ||
-        dup2(fclFd[1], STDERR_FILENO) != STDERR_FILENO) {
+    int *arg = malloc(sizeof(int) * 2);
+    if (arg == NULL) {
+        close(fds[0]);
+        close(fds[1]);
+        return 1;
+    }
+    arg[0] = fds[0];
+    arg[1] = fds[1];
+    if (dup2(fds[1], STDOUT_FILENO) != STDOUT_FILENO ||
+        dup2(fds[1], STDERR_FILENO) != STDERR_FILENO) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "failed to redirect stdio!");
+        free(arg);
+        close(fds[0]);
+        close(fds[1]);
         return 2;
     }
-    close(fclFd[1]);
+    int oldRead = fclLogReadFd;
+    int oldWrite = fclLogWriteFd;
+    fclLogReadFd = fds[0];
+    fclLogWriteFd = fds[1];
     jclass bridge = (*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge");
     log_method = (*env)->GetMethodID(env, bridge, "receiveLog", "(Ljava/lang/String;)V");
     if (!log_method) {
@@ -131,8 +153,19 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv *env, jobject
     }
     FCL_LOG("Log pipe ready.");
     (*env)->GetJavaVM(env, &log_pipe_jvm);
-    int result = pthread_create(&logger, 0, logger_thread, 0);
+    // 回收上一轮 logger：写一个换行唤醒其 read 返回（内容投递时新回调尚未挂上，会被丢弃），
+    // 再关闭旧读端使其在下一轮 read 时以 EBADF 退出——避免两个线程同读一条管道交错分发
+    if (oldWrite >= 0) {
+        write(oldWrite, "\n", 1);
+        close(oldWrite);
+    }
+    if (oldRead >= 0) {
+        close(oldRead);
+    }
+    pthread_t logger;
+    int result = pthread_create(&logger, 0, logger_thread, arg);
     if (result != 0) {
+        free(arg);
         return 5;
     }
     pthread_detach(logger);
