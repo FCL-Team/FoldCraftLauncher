@@ -1092,8 +1092,9 @@
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+)</string>
     <string name="settings_fcl_renderer_zink" translatable="false">Kopper Zink (OpenGL 4.6)</string>
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+)</string>
-    <string name="settings_fcl_renderer_mobileglues" translatable="false">MobileGlues (OpenGL 4.0, 1.17+)</string>
+    <string name="settings_fcl_renderer_mobileglues" translatable="false">MobileGlues (OpenGL 4.0)</string>
     <string name="renderer_sfpew_advanced">Advanced</string>
+    <string name="renderer_version_all">All versions</string>
     <string name="renderer_sfpew_plugin_layer">SFPEW compatibility layer (renderer plugins)</string>
     <string name="renderer_sfpew_layer_desc">Overlay the SimpleFPEWrapper OpenGL compatibility layer on renderer plugins without a fixed-function pipeline, for legacy titles that use OpenGL 1.x/2.1-style rendering. Built-in renderers follow known behavior automatically</string>
     <string name="renderer_config_mg_count_launch">MG_COUNT_LAUNCH</string>

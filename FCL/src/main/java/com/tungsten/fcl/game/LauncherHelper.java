@@ -39,6 +39,7 @@ import com.mio.manager.RendererManager;
 import com.mio.minecraft.ModCheckException;
 import com.mio.minecraft.ModChecker;
 import com.mio.plugin.NativeLibPlugin;
+import com.mio.plugin.RendererPlugin;
 import com.mio.util.LoginProgressKt;
 import com.mio.util.ParseUtil;
 import com.tungsten.fcl.FCLApp;
@@ -454,7 +455,10 @@ public final class LauncherHelper {
             try {
                 CompletableFuture<Task<FCLBridge>> future = new CompletableFuture<>();
                 if (!version.isEmpty()) {
-                    if (!renderer.getMinMCver().isEmpty()) {
+                    // SFPEW 兼容层启用时补齐固定管线能力，旧版 MC 可正常运行，跳过 min 下界判定；
+                    // max 上界保留——层不扩展渲染器自身的现代 GL 上限
+                    boolean sfpewLayer = RendererPlugin.isSfpewLayerEnabled(renderer);
+                    if (!renderer.getMinMCver().isEmpty() && !sfpewLayer) {
                         if (GameVersionNumber.compare(version, renderer.getMinMCver()) < 0) {
                             Schedulers.androidUIThread().execute(() -> new FCLAlertDialog.Builder(context)
                                     .setCancelable(false)

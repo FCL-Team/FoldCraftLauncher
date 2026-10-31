@@ -978,8 +978,9 @@
     <string name="settings_fcl_renderer_desc">选择 OpenGL 渲染器实现</string>
     <string name="settings_fcl_renderer_vgpu">VGPU (OpenGL 2.1+)</string>
     <string name="settings_fcl_renderer_nggl4es">Krypton Wrapper (OpenGL 3.1+)</string>
-    <string name="settings_fcl_renderer_mobileglues" translatable="false">MobileGlues (OpenGL 4.0, 1.17+)</string>
+    <string name="settings_fcl_renderer_mobileglues" translatable="false">MobileGlues (OpenGL 4.0)</string>
     <string name="renderer_sfpew_advanced">高级设置</string>
+    <string name="renderer_version_all">全部版本</string>
     <string name="renderer_sfpew_plugin_layer">SFPEW 兼容层（渲染器插件）</string>
     <string name="renderer_sfpew_layer_desc">为无固定管线能力的外部渲染器插件叠加 SimpleFPEWrapper OpenGL 兼容层，用于旧式 OpenGL 1.x/2.1 渲染的程序；内置渲染器按已知行为自动处理</string>
     <string name="renderer_config_mg_count_launch">MG_COUNT_LAUNCH</string>

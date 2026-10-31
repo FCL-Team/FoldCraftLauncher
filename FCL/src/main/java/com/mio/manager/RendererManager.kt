@@ -82,6 +82,8 @@ object RendererManager {
             displayMaxMCver = "26.2"
         )
 
+        // SFPEW 兼容层对内置 MG 硬编码启用，组合后无 MC 版本下界（旧版固定管线由层补齐），
+        // 故注册信息不再声明 minMCver（版本门控与列表展示均按无下界处理）
         RENDERER_MOBILEGLUES = Renderer(
             "MobileGlues",
             context.getString(R.string.settings_fcl_renderer_mobileglues),
@@ -91,7 +93,7 @@ object RendererManager {
             null,
             null,
             Renderer.ID_MOBILEGLUES,
-            "1.17",
+            "",
             ""
         )
 
