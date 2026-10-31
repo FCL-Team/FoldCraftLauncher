@@ -34,6 +34,10 @@ EGLBoolean (*eglQuerySurface_p)( 	EGLDisplay display,
                                     EGLint * value);
 __eglMustCastToProperFunctionPointerType (*eglGetProcAddress_p) (const char *procname);
 
+// SFPEW 包装生命周期入口；非 SFPEW 渲染器保持 NULL，调用方回落系统 EGL
+EGLBoolean (*sfpew_eglMakeCurrent_p) (EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx);
+EGLBoolean (*sfpew_eglSwapBuffers_p) (EGLDisplay dpy, EGLSurface draw);
+
 bool dlsym_EGL() {
     char* gles = getenv("LIBGL_GLES");
     char* eglName = (strncmp(gles ? gles : "", "libGLESv2_angle.so", 18) == 0) ? "libEGL_angle.so" : getenv("POJAVEXEC_EGL");
@@ -64,6 +68,23 @@ bool dlsym_EGL() {
     eglTerminate_p = (void*) eglGetProcAddress_p("eglTerminate");
     eglGetCurrentSurface_p = (void*) eglGetProcAddress_p("eglGetCurrentSurface");
     eglQuerySurface_p = (void*) eglGetProcAddress_p("eglQuerySurface");
+
+    // SFPEW 兼容层启用时（Java 侧注入 SFPEW_LAYER=1）按文档宿主集成指引解析包装生命周期入口，
+    // makeCurrent/swap 经包装层记录上下文切换、swap 前清空立即模式批次；解析失败回落系统入口（strict 模式仍可逐入口对账）
+    if (getenv("SFPEW_LAYER") != NULL) {
+        void* wrapper = dlopen("libSimpleFPEWrapper.so", RTLD_NOW | RTLD_LOCAL);
+        void* (*sfpew_get_proc)(const char*) =
+                wrapper != NULL ? (void* (*)(const char*)) dlsym(wrapper, "eglGetProcAddress") : NULL;
+        if (sfpew_get_proc != NULL) {
+            sfpew_eglMakeCurrent_p = (void*) sfpew_get_proc("eglMakeCurrent");
+            sfpew_eglSwapBuffers_p = (void*) sfpew_get_proc("eglSwapBuffers");
+        }
+        if (sfpew_eglMakeCurrent_p == NULL || sfpew_eglSwapBuffers_p == NULL) {
+            printf("EGLLoader: SFPEW lifecycle resolution failed, falling back to system EGL\n");
+            sfpew_eglMakeCurrent_p = NULL;
+            sfpew_eglSwapBuffers_p = NULL;
+        }
+    }
     return true;
 }
 

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/pluginLayerTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/renderer_sfpew_plugin_layer"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <com.tungsten.fcllibrary.component.view.FCLSwitch
+        android:id="@+id/pluginLayerSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/renderer_sfpew_plugin_layer"
+        app:layout_constraintBottom_toBottomOf="@id/pluginLayerTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/pluginLayerTitle" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/pluginLayerDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/renderer_sfpew_layer_desc"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@id/pluginLayerTitle" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/relaxedTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/renderer_config_sfpew_relaxed_context"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/pluginLayerDesc" />
+
+    <com.tungsten.fcllibrary.component.view.FCLSwitch
+        android:id="@+id/relaxedSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/renderer_config_sfpew_relaxed_context"
+        app:layout_constraintBottom_toBottomOf="@id/relaxedTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/relaxedTitle" />
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/relaxedDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="@string/renderer_config_sfpew_relaxed_context_desc"
+        android:textSize="12sp"
+        app:layout_constraintTop_toBottomOf="@id/relaxedTitle" />
+
+    <com.tungsten.fcllibrary.component.view.FCLButton
+        android:id="@+id/done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/button_done"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/relaxedDesc" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,6 @@ object RendererManager {
     lateinit var RENDERER_ZINK: Renderer
     lateinit var RENDERER_NGGL4ES: Renderer
     lateinit var RENDERER_MOBILEGLUES: Renderer
-    lateinit var RENDERER_SFPEW: Renderer
     private var isInit = false
 
     @JvmStatic
@@ -96,19 +95,6 @@ object RendererManager {
             ""
         )
 
-        RENDERER_SFPEW = Renderer(
-            "SimpleFPEWrapper",
-            context.getString(R.string.settings_fcl_renderer_sfpew),
-            "libSimpleFPEWrapper.so",
-            "libEGL.so",
-            "",
-            null,
-            null,
-            Renderer.ID_SFPEW,
-            "",
-            ""
-        )
-
         RendererPlugin.init(context)
         addRenderer()
         DriverPlugin.init(context)
@@ -120,7 +106,6 @@ object RendererManager {
         rendererList.add(RENDERER_VGPU)
         rendererList.add(RENDERER_ZINK)
         rendererList.add(RENDERER_MOBILEGLUES)
-        rendererList.add(RENDERER_SFPEW)
         rendererList.addAll(RendererPlugin.rendererList)
     }
 

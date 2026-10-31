@@ -30,6 +30,11 @@ extern EGLBoolean (*eglQuerySurface_p)( 	EGLDisplay display,
                                            EGLint attribute,
                                            EGLint * value);
 
+// SFPEW 兼容层（SFPEW_LAYER=1 时启用）：从 libSimpleFPEWrapper.so 解析的包装生命周期入口。
+// 包装层在 makeCurrent 时记录线程本地上下文观测、swap 前清空立即模式批次；未启用时为 NULL
+extern EGLBoolean (*sfpew_eglMakeCurrent_p) (EGLDisplay dpy, EGLSurface draw, EGLSurface read, EGLContext ctx);
+extern EGLBoolean (*sfpew_eglSwapBuffers_p) (EGLDisplay dpy, EGLSurface draw);
+
 bool dlsym_EGL();
 void* getProcAddress(const char* procname);
 

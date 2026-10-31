@@ -188,6 +188,10 @@ public class FCLauncher {
     private static String[] rebaseArgs(FCLConfig config, String libraryPath) {
         ArrayList<String> argList = new ArrayList<>(Arrays.asList(config.getArgs()));
         argList.add(0, config.getJavaPath() + "/bin/java");
+        // SFPEW 兼容层开启时游戏 GL 符号经包装层句柄解析（LWJGL 按 libname 加载），底座渲染器只承担 EGL 与驱动
+        String glLibName = RendererPlugin.isSfpewLayerEnabled(config.getRenderer())
+                ? FCLPath.NATIVE_LIB_DIR + "/libSimpleFPEWrapper.so"
+                : config.getRenderer().getGLPath();
         String[] args = new String[argList.size()];
         for (int i = 0; i < argList.size(); i++) {
             String a = argList.get(i);
@@ -195,7 +199,7 @@ public class FCLauncher {
                 a = "-Djava.library.path=${natives_directory}";
             }
             a = a.replace("${natives_directory}", libraryPath);
-            args[i] = a.replace("${gl_lib_name}", config.getRenderer().getGLPath())
+            args[i] = a.replace("${gl_lib_name}", glLibName)
                     .replace("${egl_lib_name}", config.getRenderer().getEGLPath());
         }
         return args;
@@ -290,9 +294,21 @@ public class FCLauncher {
 
     private static void addRendererEnv(FCLConfig config, HashMap<String, String> envMap) {
         addRendererEnvInner(config, envMap);
+        Renderer renderer = config.getRenderer();
+        // SFPEW 兼容层（内置渲染器按 AAMC 硬编码规则默认启用、自带 FPE 者关闭；插件渲染器由高级设置开关控制）：
+        // 包装后端与底座 EGL 同源（SFPEW_EGL=POJAVEXEC_EGL），native 桥按 SFPEW_LAYER 路由 makeCurrent/swap 生命周期
+        if (RendererPlugin.isSfpewLayerEnabled(renderer)) {
+            envMap.put("SFPEW_LAYER", "1");
+            String sfpewEgl = envMap.get("POJAVEXEC_EGL");
+            if (sfpewEgl != null) {
+                envMap.put("SFPEW_EGL", sfpewEgl);
+            }
+            if (RendererPlugin.isSfpewRelaxedContextEnabled()) {
+                envMap.put("SFPEW_RELAXED_CONTEXT", "1");
+            }
+        }
         // SDL 需要独立的 GL/EGL 库绝对路径（GL 用渲染器 GL 库、EGL 用渲染器 EGL 库）。
         // 必须对所有渲染器路径生效（插件渲染器在 inner 中途 return）
-        Renderer renderer = config.getRenderer();
         String egl = envMap.get("POJAVEXEC_EGL");
         if (egl != null && !egl.startsWith("/")) {
             File candidate = new File(rendererLibPath(renderer), egl);
@@ -307,20 +323,26 @@ public class FCLauncher {
         if (egl != null) {
             envMap.put("SDL_EGL_LIBRARY", egl);
         }
-        String gl = renderer.getGlName();
-        if (!gl.isEmpty()) {
-            // v1 插件约定：glName 以 / 开头表示相对插件 nativeLibraryDir（与 eglName 一致），须拼上插件目录
-            if (gl.startsWith("/")) {
-                if (!renderer.getPath().isEmpty()) {
-                    gl = renderer.getPath() + gl;
+        String gl;
+        if (RendererPlugin.isSfpewLayerEnabled(renderer)) {
+            // 兼容层开启：GL 库固定为包装层（打包在主 APK native 目录），底座只承担 EGL
+            gl = FCLPath.NATIVE_LIB_DIR + "/libSimpleFPEWrapper.so";
+        } else {
+            gl = renderer.getGlName();
+            if (!gl.isEmpty()) {
+                // v1 插件约定：glName 以 / 开头表示相对插件 nativeLibraryDir（与 eglName 一致），须拼上插件目录
+                if (gl.startsWith("/")) {
+                    if (!renderer.getPath().isEmpty()) {
+                        gl = renderer.getPath() + gl;
+                    }
+                } else {
+                    gl = rendererLibPath(renderer) + "/" + gl;
                 }
-            } else {
-                gl = rendererLibPath(renderer) + "/" + gl;
             }
-            // 与 SDL_EGL_LIBRARY 同策略：路径不存在时不设置，交给 SDL 按自身默认解析
-            if (new File(gl).isFile()) {
-                envMap.put("SDL_OPENGL_LIBRARY", gl);
-            }
+        }
+        // 与 SDL_EGL_LIBRARY 同策略：路径不存在时不设置，交给 SDL 按自身默认解析
+        if (!gl.isEmpty() && new File(gl).isFile()) {
+            envMap.put("SDL_OPENGL_LIBRARY", gl);
         }
     }
 
@@ -420,15 +442,6 @@ public class FCLauncher {
                 envMap.put("MG_DIR_PATH", mgDir.getAbsolutePath());
                 if (RendererPlugin.toggleEnabled(mgPrefs, "MG_COUNT_LAUNCH", true)) {
                     envMap.put("MG_COUNT_LAUNCH", "1");
-                }
-            } else if (renderer.isEqual(Renderer.ID_SFPEW)) {
-                envMap.put("POJAV_RENDERER", "opengles3_sfpew");
-                envMap.put("LIBGL_ES", "3");
-                envMap.put("POJAVEXEC_EGL", "libEGL.so");
-                // SFPEW 后端为系统 libEGL；单线程单上下文优化默认开启
-                Map<String, String> sfpewPrefs = RendererPlugin.builtinEnvPrefs(Renderer.ID_SFPEW);
-                if (RendererPlugin.toggleEnabled(sfpewPrefs, "SFPEW_RELAXED_CONTEXT", true)) {
-                    envMap.put("SFPEW_RELAXED_CONTEXT", "1");
                 }
             }
         }
