@@ -668,32 +668,55 @@ public class FCLauncher {
         FCLBridge.initializeHooks();
         log(bridge, "Hook success");
         // 三段拆分直启（native 侧 JNI_CreateJavaVM，不再经 JLI 解析 argv）：
-        // args 结构 = [java 可执行占位, ...JVM 选项, (-cp, classpath)?, mio.Wrapper, ...应用参数]
+        // args 结构 = [java 可执行占位, ...JVM 选项, 主类, ...应用参数]。
+        // 主类动态识别——游戏流程是 mio.Wrapper，安装器流程直接是目标工具类（如 FART），
+        // 不可硬编码。带值 JVM 选项（值可能不以 - 开头）须成对吞掉，防止把选项值误判为主类
         ArrayList<String> vmArgs = new ArrayList<>();
         String classpath = null;
-        int wrapperIndex = -1;
-        for (int i = 1; i < args.length; i++) {
+        String launchMainClass = null;
+        int mainClassIndex = -1;
+        List<String> valuedOptions = Arrays.asList(
+                "-cp", "-classpath", "--class-path",
+                "--add-exports", "--add-opens", "--add-reads", "--add-modules", "--limit-modules",
+                "--patch-module", "--enable-native-access", "--upgrade-module-path", "--module-path");
+        for (int i = 1; i < args.length && mainClassIndex < 0; i++) {
             String a = args[i];
-            if (a.equals("mio.Wrapper")) {
-                wrapperIndex = i;
-                break;
-            }
-            if (a.equals("-cp") || a.equals("-classpath")) {
+            if (a.equals("-cp") || a.equals("-classpath") || a.equals("--class-path")) {
                 if (i + 1 >= args.length)
                     throw new IOException("Missing classpath value after " + a);
                 classpath = args[++i];
-                continue;
+            } else if (valuedOptions.contains(a)) {
+                if (i + 1 >= args.length)
+                    throw new IOException("Missing value after JVM option " + a);
+                vmArgs.add(a);
+                vmArgs.add(args[++i]);
+            } else if (a.startsWith("-")) {
+                vmArgs.add(a);
+            } else {
+                launchMainClass = a;
+                mainClassIndex = i;
             }
-            vmArgs.add(a);
         }
-        if (wrapperIndex < 0)
-            throw new IOException("Main class mio.Wrapper not found in launch arguments");
+        if (mainClassIndex < 0)
+            throw new IOException("No main class found in launch arguments");
         if (classpath != null)
             vmArgs.add("-Djava.class.path=" + classpath);
-        String[] appArgs = new String[args.length - wrapperIndex - 1];
-        System.arraycopy(args, wrapperIndex + 1, appArgs, 0, appArgs.length);
-        int exitCode = VMLauncher.launchJVM(vmArgs.toArray(new String[0]), "mio.Wrapper", appArgs);
+        String[] appArgs = new String[args.length - mainClassIndex - 1];
+        System.arraycopy(args, mainClassIndex + 1, appArgs, 0, appArgs.length);
+        int exitCode = VMLauncher.launchJVM(getJvmLibPath(config), vmArgs.toArray(new String[0]), launchMainClass, appArgs);
         bridge.onExit(exitCode);
+    }
+
+    /**
+     * 推导目标 JRE 的 libjvm.so 绝对路径（与 setUpJavaRuntime 的定位一致），
+     * 供 launchJVM 显式 dlopen——RTLD_DEFAULT 在 app 进程会命中 ART 的同名导出（EEXIST）
+     */
+    private static String getJvmLibPath(FCLConfig config) throws IOException {
+        String javaPath = config.getJavaPath();
+        String javaLibDir = javaPath + getJavaLibDir(javaPath);
+        if (isJDK8(javaPath))
+            javaLibDir = javaPath + "/jre" + getJavaLibDir(javaPath);
+        return javaLibDir + getJvmLibDir(javaPath) + "/libjvm.so";
     }
 
     public static FCLBridge launchMinecraft(FCLConfig config) {

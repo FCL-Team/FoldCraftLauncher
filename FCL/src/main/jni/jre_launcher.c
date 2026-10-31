@@ -72,7 +72,7 @@ _Noreturn static void vm_abort_hook(void) {
     vm_exit_hook(SIGABRT);
 }
 
-static jint launchJVM(JNIEnv *env, char **vmArgs, int vmArgCount, const char *mainClass,
+static jint launchJVM(JNIEnv *env, const char *jvmLibPath, char **vmArgs, int vmArgCount, const char *mainClass,
                       char **appArgs, int appArgCount) {
     // Unset all signal handlers to create a good slate for JVM signal detection.
     // (原 JLI 路径行为保留)
@@ -89,8 +89,14 @@ static jint launchJVM(JNIEnv *env, char **vmArgs, int vmArgCount, const char *ma
     }
     setup_exit_waiter();
 
-    // setUpJavaRuntime 已以 RTLD_GLOBAL 装入 libjvm.so，符号在全局作用域
-    JNI_CreateJavaVM_t createJavaVM = (JNI_CreateJavaVM_t) dlsym(RTLD_DEFAULT, "JNI_CreateJavaVM");
+    // 显式按路径 dlopen 目标 HotSpot：app 进程里 ART 已创建 VM 且导出同名
+    // JNI_CreateJavaVM，若经 RTLD_DEFAULT 查符号会命中 ART 侧并返回 JNI_EEXIST(-5)
+    void *libjvm = dlopen(jvmLibPath, RTLD_NOW | RTLD_GLOBAL);
+    if (libjvm == NULL) {
+        FCL_INTERNAL_LOG("dlopen(%s) failed: %s", jvmLibPath, dlerror());
+        return -1;
+    }
+    JNI_CreateJavaVM_t createJavaVM = (JNI_CreateJavaVM_t) dlsym(libjvm, "JNI_CreateJavaVM");
     if (createJavaVM == NULL) {
         FCL_INTERNAL_LOG("JNI_CreateJavaVM = NULL: %s", dlerror());
         return -1;
@@ -172,18 +178,24 @@ static jint launchJVM(JNIEnv *env, char **vmArgs, int vmArgCount, const char *ma
 /*
  * Class:     com_oracle_dalvik_VMLauncher
  * Method:    launchJVM
- * Signature: ([Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)I
+ * Signature: (Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;)I
  */
 jint JNICALL
-Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, jclass clazz, jobjectArray vmArgsArray,
+Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, jclass clazz, jstring jvmLibPath,
+                                            jobjectArray vmArgsArray,
                                             jstring mainClass, jobjectArray appArgsArray) {
-    if (vmArgsArray == NULL || mainClass == NULL || appArgsArray == NULL) {
+    if (jvmLibPath == NULL || vmArgsArray == NULL || mainClass == NULL || appArgsArray == NULL) {
         FCL_LOG("Args array null, returning");
         return 0;
     }
 
     const char *mainClassUtf = (*env)->GetStringUTFChars(env, mainClass, NULL);
     if (mainClassUtf == NULL) return -1;
+    const char *jvmLibPathUtf = (*env)->GetStringUTFChars(env, jvmLibPath, NULL);
+    if (jvmLibPathUtf == NULL) {
+        (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
+        return -1;
+    }
 
     int vmArgCount = (*env)->GetArrayLength(env, vmArgsArray);
     int appArgCount = (*env)->GetArrayLength(env, appArgsArray);
@@ -192,11 +204,12 @@ Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, jclass clazz, jobjectAr
 
     FCL_LOG("Done processing args");
 
-    jint res = launchJVM(env, vmArgs, vmArgCount, mainClassUtf, appArgs, appArgCount);
+    jint res = launchJVM(env, jvmLibPathUtf, vmArgs, vmArgCount, mainClassUtf, appArgs, appArgCount);
 
     FCL_LOG("Going to free args");
 
     (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
+    (*env)->ReleaseStringUTFChars(env, jvmLibPath, jvmLibPathUtf);
     free_char_array(env, vmArgsArray, (const char **) vmArgs);
     free_char_array(env, appArgsArray, (const char **) appArgs);
 
