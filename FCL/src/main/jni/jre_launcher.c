@@ -5,6 +5,7 @@
 // 原地停车（System.exit 永不返回到游戏代码，进程终止权收归启动器），由 futex
 // waiter 线程经 nominal_exit 走 ART 侧 FCLBridge.onExit 通知启动器——与旧
 // bytehook exit 拦截/SIGABRT pipe waiter 链路同终点，但不再依赖 PLT hook。
+// 被替代的原启动方式：参考 PojavLauncher（https://github.com/PojavLauncherTeam/PojavLauncher/blob/v3_openjdk/app_pojavlauncher/src/main/jni/jre_launcher.c）
 //
 
 #include <dlfcn.h>
@@ -15,7 +16,6 @@
 #include <signal.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/syscall.h>
@@ -24,14 +24,13 @@
 #include "fcl/fcl_internal.h"
 #include "utils.h"
 
-#define MAIN_CLASS_MAX 128
-
 typedef jint (*JNI_CreateJavaVM_t)(JavaVM **, JNIEnv **, void *);
 
 // futex 初值 1=待命；hook 置 0 并 WAKE，waiter 从 WAIT 返回后取走退出码，
 // 处理完复位待命——同一进程内连续多轮 JVM（如 installer 多阶段）各轮共用该 waiter
 static volatile uint32_t futex_word = 1;
-static int exit_info_code = 0;
+// hook（游戏 JVM 线程）写 / waiter 线程读，原子访问消除跨线程数据竞争
+static _Atomic int exit_info_code = 0;
 
 static void *exit_waiter_thread(void *unused) {
     (void) unused;
@@ -120,6 +119,8 @@ static jint launchJVM(JNIEnv *env, const char *jvmLibPath, char **vmArgs, int vm
     JavaVMInitArgs initArgs;
     initArgs.nOptions = optionCount;
     initArgs.options = options;
+    // JLI 时代未知选项由 java launcher 报错退出，直启改为静默忽略：跨 JRE 容错优先，
+    // 旧 JVM 收到新版本的选项时不再硬性失败（代价是错误选项不再可见）
     initArgs.ignoreUnrecognized = JNI_TRUE;
     initArgs.version = JNI_VERSION_1_6;
 
@@ -133,9 +134,12 @@ static jint launchJVM(JNIEnv *env, const char *jvmLibPath, char **vmArgs, int vm
     }
     FCL_LOG("Game JVM created");
 
-    // mainClass 点分形式转 JNI 斜杠形式
-    char mainClassPath[MAIN_CLASS_MAX];
-    snprintf(mainClassPath, sizeof(mainClassPath), "%s", mainClass);
+    // mainClass 点分形式转 JNI 斜杠形式（动态分配，不设长度上限）
+    char *mainClassPath = strdup(mainClass);
+    if (mainClassPath == NULL) {
+        FCL_INTERNAL_LOG("Failed to allocate main class buffer");
+        return -1;
+    }
     for (char *p = mainClassPath; *p != '\0'; p++) {
         if (*p == '.') *p = '/';
     }
@@ -144,6 +148,7 @@ static jint launchJVM(JNIEnv *env, const char *jvmLibPath, char **vmArgs, int vm
     if (mainClazz == NULL) {
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionDescribe(gameEnv);
         FCL_INTERNAL_LOG("FindClass(%s) failed", mainClassPath);
+        free(mainClassPath);
         (*gameVM)->DestroyJavaVM(gameVM);
         return -1;
     }
@@ -152,9 +157,11 @@ static jint launchJVM(JNIEnv *env, const char *jvmLibPath, char **vmArgs, int vm
     if (mainMethod == NULL) {
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionDescribe(gameEnv);
         FCL_INTERNAL_LOG("GetStaticMethodID(main) on %s failed", mainClassPath);
+        free(mainClassPath);
         (*gameVM)->DestroyJavaVM(gameVM);
         return -1;
     }
+    free(mainClassPath);
 
     jobjectArray appArgsArray = convert_from_char_array(gameEnv, appArgs, appArgCount);
     if (appArgsArray == NULL) {

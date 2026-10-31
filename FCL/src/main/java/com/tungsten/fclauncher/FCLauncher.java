@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 import org.json.JSONException;
@@ -670,17 +672,29 @@ public class FCLauncher {
         // 三段拆分直启（native 侧 JNI_CreateJavaVM，不再经 JLI 解析 argv）：
         // args 结构 = [java 可执行占位, ...JVM 选项, 主类, ...应用参数]。
         // 主类动态识别——游戏流程是 mio.Wrapper，安装器流程直接是目标工具类（如 FART），
-        // 不可硬编码。带值 JVM 选项（值可能不以 - 开头）须成对吞掉，防止把选项值误判为主类
+        // 不可硬编码。带值 JVM 选项（值可能不以 - 开头）须成对吞掉，防止把选项值误判为主类，
+        // 并合并为等号形式：JNI_CreateJavaVM 逐条解析 JavaVMOption，分离的「选项 + 值」
+        // 是两条互不相干的 option（未识别项被静默忽略）；-p 是 --module-path 的 launcher
+        // 别名，JVM 侧不认短名。-jar 在此展开：jar 即 classpath（应用类加载器会自行展开
+        // jar manifest 的 Class-Path），主类取 manifest 的 Main-Class
         ArrayList<String> vmArgs = new ArrayList<>();
         String classpath = null;
         String launchMainClass = null;
         int mainClassIndex = -1;
         List<String> valuedOptions = Arrays.asList(
-                "-cp", "-classpath", "--class-path",
+                "-cp", "-classpath", "--class-path", "-p",
                 "--add-exports", "--add-opens", "--add-reads", "--add-modules", "--limit-modules",
                 "--patch-module", "--enable-native-access", "--upgrade-module-path", "--module-path");
         for (int i = 1; i < args.length && mainClassIndex < 0; i++) {
             String a = args[i];
+            if (a.equals("-jar")) {
+                if (i + 1 >= args.length)
+                    throw new IOException("Missing jar path after -jar");
+                classpath = args[++i]; // -jar 下 jar 独占 classpath，忽略其他 classpath 设置
+                launchMainClass = readJarManifestMainClass(classpath);
+                mainClassIndex = i;
+                break;
+            }
             if (a.equals("-cp") || a.equals("-classpath") || a.equals("--class-path")) {
                 if (i + 1 >= args.length)
                     throw new IOException("Missing classpath value after " + a);
@@ -688,8 +702,7 @@ public class FCLauncher {
             } else if (valuedOptions.contains(a)) {
                 if (i + 1 >= args.length)
                     throw new IOException("Missing value after JVM option " + a);
-                vmArgs.add(a);
-                vmArgs.add(args[++i]);
+                vmArgs.add((a.equals("-p") ? "--module-path" : a) + "=" + args[++i]);
             } else if (a.startsWith("-")) {
                 vmArgs.add(a);
             } else {
@@ -717,6 +730,17 @@ public class FCLauncher {
         if (isJDK8(javaPath))
             javaLibDir = javaPath + "/jre" + getJavaLibDir(javaPath);
         return javaLibDir + getJvmLibDir(javaPath) + "/libjvm.so";
+    }
+
+    /** -jar 启动的 jar 的主类（java launcher 语义：取 manifest 的 Main-Class） */
+    private static String readJarManifestMainClass(String jarPath) throws IOException {
+        try (JarFile jar = new JarFile(jarPath)) {
+            Attributes attrs = jar.getManifest() == null ? null : jar.getManifest().getMainAttributes();
+            String mainClass = attrs == null ? null : attrs.getValue(Attributes.Name.MAIN_CLASS);
+            if (mainClass == null || mainClass.isEmpty())
+                throw new IOException("Main-Class manifest attribute not found in " + jarPath);
+            return mainClass.trim();
+        }
     }
 
     public static FCLBridge launchMinecraft(FCLConfig config) {
