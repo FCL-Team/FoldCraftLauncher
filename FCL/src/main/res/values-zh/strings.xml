@@ -515,6 +515,11 @@
     <string name="install_new_game_already_exists">当前版本已存在，请换一个名称。</string>
     <string name="install_new_game_malformed">无效的名称</string>
     <string name="install_success">安装成功</string>
+
+    <string name="modpack_completion_confirm">检测到以下整合包文件缺失，启动时将自动补全恢复。如属主动删除或更新，可跳过本次，或直接关闭自动补全。\n%s</string>
+    <string name="modpack_completion_continue">继续补全</string>
+    <string name="modpack_completion_skip">跳过本次</string>
+    <string name="modpack_completion_disable">不再自动补全</string>
     <string name="jar_execute">执行Jar文件</string>
     <string name="jar_execute_custom_args">使用自定义参数执行</string>
     <string name="jar_executor_crash_title">Jar Executor 意外退出</string>
@@ -949,6 +954,8 @@
     <string name="search_last_page">最后一页</string>
     <string name="settings_advanced_dont_check_game_completeness">不检查游戏完整性</string>
     <string name="settings_advanced_dont_check_game_completeness_desc">跳过游戏文件完整性检查以加快启动</string>
+    <string name="settings_advanced_dont_restore_modpack">不自动恢复整合包文件</string>
+    <string name="settings_advanced_dont_restore_modpack_desc">整合包版本启动时会自动补全缺失的整合包文件（包括模组）。开启后不再自动补全，被删除或更新的文件将保持原样。</string>
     <string name="settings_advanced_dont_check_jvm_validity">不检查 JVM 兼容性</string>
     <string name="settings_advanced_dont_check_jvm_validity_desc">跳过 JVM 有效性检查</string>
     <string name="settings_advanced_dont_check_mod">不检查模组兼容性</string>
