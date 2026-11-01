@@ -94,8 +94,7 @@ object RendererManager {
             null,
             Renderer.ID_MOBILEGLUES,
             "",
-            "26.3-snapshot-3",
-            displayMaxMCver = "26.2"
+            ""
         )
 
         RendererPlugin.init(context)
