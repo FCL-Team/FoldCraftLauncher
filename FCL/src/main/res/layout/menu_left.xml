@@ -21,7 +21,38 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/left_menu_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="10dp" />
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1" />
+
+    <!-- 编辑模式撤销/恢复：抽屉底部固定操作区（列表不随其滚动），显隐跟随编辑模式开关 -->
+    <LinearLayout
+        android:id="@+id/edit_history_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/edit_history_undo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="@string/edit_history_undo"
+            android:textSize="12sp" />
+
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/edit_history_redo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:text="@string/edit_history_redo"
+            android:textSize="12sp" />
+    </LinearLayout>
 
 </LinearLayout>
