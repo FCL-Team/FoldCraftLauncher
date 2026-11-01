@@ -449,12 +449,8 @@ class VersionSettingPage(
                     )
                     builder.create().show()
                 }
-                adapter.update(
-                    lastVersionSetting,
-                    modpack.get(),
-                    enableSpecificSettings.get(),
-                    usedMemory.get()
-                )
+                // 仅增删随开关显隐的驱动行，不触发全量重绑，保留开关自身的滑动动画
+                adapter.updateVulkanDriverRow()
             }
 
             else -> {}
