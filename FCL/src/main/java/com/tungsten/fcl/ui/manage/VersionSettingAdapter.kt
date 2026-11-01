@@ -106,6 +106,24 @@ class VersionSettingAdapter(
         notifyDataSetChanged()
     }
 
+    /**
+     * 「使用系统 Vulkan 驱动」开关切换后的局部刷新。
+     * 该开关只控制下方自定义驱动行的显隐：全量 rebuild 会把开关行一并重绑，
+     * 而 RecyclerView 复用重绑发生在 detach 状态下，setChecked 会取消用户点按
+     * 触发的滑块动画，表现为开关无动画直接跳变。这里仅插入/移除驱动行，
+     * 开关行保留原视图，动画正常播放。
+     */
+    fun updateVulkanDriverRow() {
+        val newRows = buildRows()
+        val oldIndex = rows.indexOfFirst { it is Row.ValueRow && it.editTag == VersionSettingTag.EDIT_DRIVER }
+        val newIndex = newRows.indexOfFirst { it is Row.ValueRow && it.editTag == VersionSettingTag.EDIT_DRIVER }
+        rows = newRows
+        when {
+            oldIndex >= 0 && newIndex < 0 -> notifyItemRemoved(oldIndex)
+            oldIndex < 0 && newIndex >= 0 -> notifyItemInserted(newIndex)
+        }
+    }
+
     /** 对话框修改属性后局部刷新对应行（行未显示时下次 bind 自然读到新值） */
     fun refreshRow(tag: VersionSettingTag) {
         val index = rows.indexOfFirst { it.rowTag == tag }
@@ -401,7 +419,10 @@ class VersionSettingAdapter(
         binding.switchView.text = context.getString(row.labelRes)
         binding.switchView.isEnabled = !row.disabled
         binding.switchView.setOnCheckedChangeListener(null)
-        binding.switchView.isChecked = row.value()
+        // 复用重绑时状态一致则跳过 setChecked：detach 状态下它走取消动画的吸附分支
+        if (binding.switchView.isChecked != row.value()) {
+            binding.switchView.isChecked = row.value()
+        }
         binding.switchView.setOnCheckedChangeListener { _, checked -> row.onToggle(checked) }
         binding.switchView.setOnLongClickListener(
             if (row.longClick) View.OnLongClickListener {
