@@ -1104,6 +1104,18 @@
     <string name="renderer_config_mg_angle_desc">ANGLE (GLES-on-Vulkan) backend: 0=disable if possible, 1=enable if possible, 2=force disable, 3=force enable</string>
     <string name="renderer_config_mg_noerror">enableNoError</string>
     <string name="renderer_config_mg_noerror_desc">Ignore GL errors for compatibility and speed: 0=auto, 1=off, 2=ignore shader/program errors, 3=also ignore framebuffer errors</string>
+    <!-- Title of the global MultiDraw backend order in MobileGlues renderer settings (MG 2.0.1+) -->
+    <string name="renderer_config_mg_multidraw_order_desc">Higher strategies are preferred; failed strategies fall back in this order</string>
+    <!-- Description of the checkbox enabling a function-specific MultiDraw order -->
+    <string name="renderer_config_mg_multidraw_exception_desc">Enable to use an independent strategy order instead of the global order</string>
+    <!-- MultiDraw strategy matching a native GLES core or extension function -->
+    <string name="renderer_config_mg_multidraw_native">Native / Native EXT</string>
+    <!-- Description of the native MultiDraw strategy -->
+    <string name="renderer_config_mg_multidraw_native_desc">Matches the equivalent GLES core or extension function when available</string>
+    <!-- MultiDraw backend that submits every draw separately -->
+    <string name="renderer_config_mg_multidraw_unroll">Draw One by One</string>
+    <!-- MultiDraw backend using compute shaders -->
+    <string name="renderer_config_mg_multidraw_compute">Compute Shader</string>
     <string name="renderer_config_mg_depthfix">angleDepthClearFixMode</string>
     <string name="renderer_config_mg_depthfix_desc">Workaround for broken depth clears when the ANGLE backend is active; enable if the world renders through geometry</string>
     <string name="renderer_config_mg_glversion">customGLVersion</string>

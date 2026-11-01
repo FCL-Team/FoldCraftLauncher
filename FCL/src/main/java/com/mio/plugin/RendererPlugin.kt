@@ -34,7 +34,7 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
     private const val ENABLED_SUFFIX = "@enabled"
 
     /** 可配置环境变量类型（供配置对话框区分控件） */
-    enum class EnvType { SELECTABLE, CUSTOMIZABLE, TOGGLEABLE }
+    enum class EnvType { SELECTABLE, CUSTOMIZABLE, TOGGLEABLE, ORDERED }
 
     /** 单个可配置环境变量在对话框中展示/编辑所需的完整信息 */
     data class EnvSpec(
@@ -54,7 +54,44 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
         val value: String,
         /** 标题下的功能说明（可空；内置渲染器有，v2 插件暂无） */
         val description: String? = null,
+        /** ordered（方案偏好序）配置的完整定义，其他类型为空 */
+        val ordered: OrderedSpec? = null,
     )
+
+    /** ordered 条目的单个候选项 */
+    data class OrderedOption(
+        val value: String,
+        /** 展示名（内置渲染器构建时已本地化） */
+        val label: String,
+        val description: String? = null,
+    )
+
+    /**
+     * ordered（方案偏好序）配置定义：值为逗号分隔的后端序列，序列即偏好序，
+     * 候选集合与默认序必须同源覆盖（对齐 ZL2 #2165 OrderedChoiceEntry 语义）
+     */
+    data class OrderedSpec(
+        /** 全部候选后端 */
+        val options: List<OrderedOption>,
+        /** 默认偏好序（恰好覆盖全部候选；剔除未知项的补尾、继承展开都以此序兜底） */
+        val defaultOrder: List<String>,
+        /** 从哪个前置条目继承（全局序），空为无继承的全局条目 */
+        val inheritFrom: String? = null,
+        /** 继承展开时父序伪项 native 在本条目对应的真实后端 */
+        val nativeValue: String? = null,
+    ) {
+        init {
+            require(options.isNotEmpty() && options.map { it.value }.toSet().size == options.size) {
+                "OrderedSpec options must be non-empty and unique"
+            }
+            require(defaultOrder.size == options.size && options.map { it.value }.toSet() == defaultOrder.toSet()) {
+                "OrderedSpec defaultOrder must cover every option exactly once"
+            }
+            require(inheritFrom == null || nativeValue != null) {
+                "OrderedSpec inheriting from a parent must provide nativeValue"
+            }
+        }
+    }
 
     /** 对话框确认后单项的回传值；enabled/value 为 null 表示该项无此状态 */
     data class EnvValue(val enabled: Boolean? = null, val value: String? = null)
@@ -372,7 +409,8 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
                     options = listOf("0", "1", "2", "3"),
                     checkable = false,
                     enabled = true,
-                    value = prefs["enableANGLE"] ?: "1"
+                    // MG 2.0.1 起缺省语义为 DisableIfPossible（上游 settings.cpp 缺省分支），回落值随上游对齐
+                    value = prefs["enableANGLE"] ?: "0"
                 ),
                 EnvSpec(
                     key = "enableNoError",
@@ -383,7 +421,8 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
                     checkable = false,
                     enabled = true,
                     value = prefs["enableNoError"] ?: "0"
-                ),
+                )
+            ) + multidrawEnvSpecs(prefs, context) + listOf(
                 EnvSpec(
                     key = "angleDepthClearFixMode",
                     type = EnvType.TOGGLEABLE,
@@ -451,6 +490,66 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
         }
     }
 
+    /**
+     * MG 2.0.1 MultiDraw 方案排序：全局序（multidrawOrder）+ 五个函数级异常条目
+     * （默认关闭 = 跟随全局序；启用时刻把当前全局序展开为快照落盘，此后不再跟随）。
+     * 键名/候选集合/默认序对齐上游 settings.cpp 与 ZL2 #2165。
+     */
+    private fun multidrawEnvSpecs(prefs: Map<String, String>, context: Context): List<EnvSpec> {
+        fun option(value: String): OrderedOption = when (value) {
+            "native" -> OrderedOption(
+                "native",
+                context.getString(R.string.renderer_config_mg_multidraw_native),
+                context.getString(R.string.renderer_config_mg_multidraw_native_desc)
+            )
+            "unroll" -> OrderedOption("unroll", context.getString(R.string.renderer_config_mg_multidraw_unroll))
+            "compute" -> OrderedOption("compute", context.getString(R.string.renderer_config_mg_multidraw_compute))
+            "multiindirect" -> OrderedOption("multiindirect", "MultiIndirect")
+            "multibasevertex" -> OrderedOption("multibasevertex", "MultiBaseVertex")
+            "multiarrays" -> OrderedOption("multiarrays", "MultiArrays")
+            "indirect" -> OrderedOption("indirect", "Indirect")
+            "basevertex" -> OrderedOption("basevertex", "BaseVertex")
+            else -> OrderedOption(value, value)
+        }
+
+        val globalOrder = MG_MULTIDRAW_ORDERS.getValue("multidrawOrder")
+        val globalOrdered = OrderedSpec(options = globalOrder.map(::option), defaultOrder = globalOrder)
+        val globalValue = coerceOrder(prefs["multidrawOrder"], globalOrdered)
+
+        val exceptions = MG_MULTIDRAW_ORDERS.filterKeys { it != "multidrawOrder" }.map { (key, order) ->
+            val ordered = OrderedSpec(
+                options = order.map(::option),
+                defaultOrder = order,
+                inheritFrom = "multidrawOrder",
+                nativeValue = MG_MULTIDRAW_NATIVES.getValue(key)
+            )
+            val enabled = prefs[key + ENABLED_SUFFIX]?.toBooleanStrictOrNull() ?: false
+            EnvSpec(
+                key = key,
+                type = EnvType.ORDERED,
+                title = MD_MULTIDRAW_EXCEPTION_TITLES.getValue(key),
+                description = context.getString(R.string.renderer_config_mg_multidraw_exception_desc),
+                checkable = true,
+                enabled = enabled,
+                // 未启用条目的展示值为当前全局序的继承展开（即启用时刻的快照来源），已启用条目取已存快照
+                value = if (enabled) coerceOrder(prefs[key], ordered) else expandOrder(globalValue, ordered),
+                ordered = ordered
+            )
+        }
+
+        return listOf(
+            EnvSpec(
+                key = "multidrawOrder",
+                type = EnvType.ORDERED,
+                title = "multidrawOrder",
+                description = context.getString(R.string.renderer_config_mg_multidraw_order_desc),
+                enabled = true,
+                value = globalValue,
+                ordered = globalOrdered
+            )
+        ) + exceptions
+    }
+
     /** 启动链路读取内置渲染器的扁平配置（FCLauncher 注入 env 用） */
     @JvmStatic
     fun builtinEnvPrefs(rendererId: String): Map<String, String> {
@@ -463,6 +562,11 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
     @JvmStatic
     fun toggleEnabled(prefs: Map<String, String>, key: String, def: Boolean): Boolean =
         prefs[key + ENABLED_SUFFIX]?.toBooleanStrictOrNull() ?: def
+
+    /** 开关键是否被显式记录过（区分"从未配置"与"显式关闭"；启动链路摘除 config.json 残留键用） */
+    @JvmStatic
+    fun isToggleConfigured(prefs: Map<String, String>, key: String): Boolean =
+        prefs.containsKey(key + ENABLED_SUFFIX)
 
     /** 配置键是否被用户显式配置过（值键或开关键任一存在；未配置的键交由渲染器自管默认值） */
     @JvmStatic
@@ -551,3 +655,55 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
         items.add(renderer)
     }
 }
+
+/** MG 2.0.1 MultiDraw 各条目的候选集合与默认偏好序（序列即偏好序）。对齐上游
+ *  MobileGlues-cpp/config/settings.cpp 的 k_md_default_global_order / k_md_entries，勿随手改动 */
+val MG_MULTIDRAW_ORDERS: Map<String, List<String>> = mapOf(
+    "multidrawOrder" to listOf(
+        "native", "multiindirect", "multibasevertex", "multiarrays", "indirect", "basevertex", "unroll", "compute"
+    ),
+    "multidrawOrderArrays" to listOf("multiarrays", "multiindirect", "unroll"),
+    "multidrawOrderElements" to listOf("multiarrays", "multiindirect", "multibasevertex", "indirect", "unroll"),
+    "multidrawOrderElementsBaseVertex" to listOf(
+        "multibasevertex", "multiindirect", "indirect", "basevertex", "unroll", "compute"
+    ),
+    "multidrawOrderArraysIndirect" to listOf("multiindirect", "indirect"),
+    "multidrawOrderElementsIndirect" to listOf("multiindirect", "indirect"),
+)
+
+/** 函数级异常条目中父序伪项 native 对应的真实后端（同源 settings.cpp 的 native_backend 字段） */
+val MG_MULTIDRAW_NATIVES: Map<String, String> = mapOf(
+    "multidrawOrderArrays" to "multiarrays",
+    "multidrawOrderElements" to "multiarrays",
+    "multidrawOrderElementsBaseVertex" to "multibasevertex",
+    "multidrawOrderArraysIndirect" to "multiindirect",
+    "multidrawOrderElementsIndirect" to "multiindirect",
+)
+
+/** 函数级异常条目的展示标题（对齐上游入口点名） */
+val MD_MULTIDRAW_EXCEPTION_TITLES: Map<String, String> = mapOf(
+    "multidrawOrderArrays" to "glMultiDrawArrays",
+    "multidrawOrderElements" to "glMultiDrawElements",
+    "multidrawOrderElementsBaseVertex" to "glMultiDrawElementsBaseVertex",
+    "multidrawOrderArraysIndirect" to "glMultiDrawArraysIndirect",
+    "multidrawOrderElementsIndirect" to "glMultiDrawElementsIndirect",
+)
+
+/** ordered 值规整：剔除未知项、去重保首见、缺失项按默认序补尾（对 config.json 手编值宽容解析） */
+fun coerceOrder(raw: String?, spec: RendererPlugin.OrderedSpec): String {
+    val known = spec.options.associateBy { it.value }
+    val parsed = raw?.split(',')?.mapNotNull { known[it.trim()] }.orEmpty()
+    val missing = spec.defaultOrder.mapNotNull { known[it] }
+        .filterNot { option -> parsed.any { it.value == option.value } }
+    return (parsed + missing).distinctBy { it.value }.joinToString(",") { it.value }
+}
+
+/** ordered 继承展开：父序中伪项 native 替换为本条目真实后端后再规整（候选外的项被剔除、缺项补尾） */
+fun expandOrder(parentOrder: String, spec: RendererPlugin.OrderedSpec): String =
+    coerceOrder(
+        parentOrder.split(',').joinToString(",") { segment ->
+            val value = segment.trim()
+            if (value == "native") spec.nativeValue ?: value else value
+        },
+        spec
+    )

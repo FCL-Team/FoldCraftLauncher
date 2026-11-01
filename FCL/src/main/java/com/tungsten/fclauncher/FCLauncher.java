@@ -518,10 +518,17 @@ public class FCLauncher {
         }
     }
 
+    /** 函数级 MultiDraw 异常键（MG 2.0.1）：启用写快照序，显式关闭摘除残留，未配置不触碰 */
+    private static final String[] MG_MULTIDRAW_EXCEPTION_KEYS = {
+        "multidrawOrderArrays", "multidrawOrderElements", "multidrawOrderElementsBaseVertex",
+        "multidrawOrderArraysIndirect", "multidrawOrderElementsIndirect"
+    };
+
     /** 仅合并用户显式配置过的键（开关型只写开关键，无值键）；默认值须与 RendererPlugin.builtinEnvSpecs 一致 */
     private static void mergeMobileGluesConfig(JSONObject json, Map<String, String> prefs) throws JSONException {
         if (RendererPlugin.isConfigured(prefs, "enableANGLE")) {
-            json.put("enableANGLE", mgPrefInt(prefs, "enableANGLE", 1));
+            // MG 2.0.1 起缺省语义为 DisableIfPossible（上游 settings.cpp），回落值随上游对齐
+            json.put("enableANGLE", mgPrefInt(prefs, "enableANGLE", 0));
         }
         if (RendererPlugin.isConfigured(prefs, "enableNoError")) {
             json.put("enableNoError", mgPrefInt(prefs, "enableNoError", 0));
@@ -546,6 +553,28 @@ public class FCLauncher {
         }
         if (RendererPlugin.isConfigured(prefs, "fsr1Setting")) {
             json.put("fsr1Setting", mgPrefInt(prefs, "fsr1Setting", 0));
+        }
+        // multidrawOrder / multidrawOrder<入口>（MG 2.0.1）：值 = 逗号分隔的方案偏好序（全局序可含伪项 native，
+        // 由 MG 在各入口展开）；对话框回传值已规整为全量合法序
+        if (RendererPlugin.isConfigured(prefs, "multidrawOrder")) {
+            String v = prefs.get("multidrawOrder");
+            if (v != null && !v.trim().isEmpty()) {
+                json.put("multidrawOrder", v.trim());
+            }
+        }
+        for (String key : MG_MULTIDRAW_EXCEPTION_KEYS) {
+            if (!RendererPlugin.isToggleConfigured(prefs, key)) {
+                continue;
+            }
+            if (RendererPlugin.toggleEnabled(prefs, key, false)) {
+                String v = prefs.get(key);
+                if (v != null && !v.trim().isEmpty()) {
+                    json.put(key, v.trim());
+                }
+            } else {
+                // 显式关闭：摘除此前启用时写入的键，交还全局序；未配置过则不触碰（保留手编 / MG 自管值）
+                json.remove(key);
+            }
         }
     }
 

@@ -990,6 +990,18 @@
     <string name="renderer_config_mg_angle_desc">ANGLE（GLES on Vulkan）后端：0=可能时禁用 1=可能时启用 2=强制禁用 3=强制启用</string>
     <string name="renderer_config_mg_noerror">enableNoError</string>
     <string name="renderer_config_mg_noerror_desc">忽略 GL 错误以换取兼容性与速度：0=自动 1=不忽略 2=忽略着色器/程序错误 3=同时忽略帧缓冲错误</string>
+    <!-- MG 2.0.1+ 渲染器设置中的全局 MultiDraw 方案排序 -->
+    <string name="renderer_config_mg_multidraw_order_desc">越靠前越优先；运行中某方案失效时会按此顺序向后回退</string>
+    <!-- 启用函数级 MultiDraw 独立排序的开关说明 -->
+    <string name="renderer_config_mg_multidraw_exception_desc">启用后为此函数使用独立方案排序，不再跟随全局排序</string>
+    <!-- 匹配 GLES 核心或扩展中原生函数的 MultiDraw 方案 -->
+    <string name="renderer_config_mg_multidraw_native">原生 / 原生 EXT</string>
+    <!-- 原生 MultiDraw 方案说明 -->
+    <string name="renderer_config_mg_multidraw_native_desc">自动匹配 GLES 核心或扩展中同形的函数（若存在）</string>
+    <!-- 逐条提交每次绘制的 MultiDraw 后端 -->
+    <string name="renderer_config_mg_multidraw_unroll">逐条绘制</string>
+    <!-- 使用计算着色器的 MultiDraw 后端 -->
+    <string name="renderer_config_mg_multidraw_compute">计算着色器</string>
     <string name="renderer_config_mg_depthfix">angleDepthClearFixMode</string>
     <string name="renderer_config_mg_depthfix_desc">ANGLE 后端下深度清除异常的修复；若世界渲染穿透可尝试开启</string>
     <string name="renderer_config_mg_glversion">customGLVersion</string>
