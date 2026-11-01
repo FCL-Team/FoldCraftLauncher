@@ -159,7 +159,9 @@ public class FCLGameRepository extends DefaultGameRepository {
         super.refreshVersionsImpl();
         versions.keySet().forEach(this::loadLocalVersionSetting);
         versions.keySet().forEach(version -> {
-            if (isModpack(version)) {
+            // 整合包版本仅在首次检测（尚无本地设置文件）时自动开启特定设置；
+            // 已有设置则尊重用户对"使用全局设置"的选择，避免每次刷新都覆盖回来
+            if (isModpack(version) && !localVersionSettings.containsKey(version)) {
                 specializeVersionSetting(version);
             }
         });

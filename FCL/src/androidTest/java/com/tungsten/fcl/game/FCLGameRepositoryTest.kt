@@ -190,6 +190,25 @@ class FCLGameRepositoryTest {
         assertEquals(4096, vs2.maxMemory)
     }
 
+    /** 整合包版本首次检测自动开启特定设置；用户切回全局后刷新不再强制覆盖 */
+    @Test
+    fun modpackVersionSpecificSettingRespectsUserChoice() {
+        writeVersion("1.0")
+        writeModpackConfig("1.0", """{"type":"curse","manifest":{}}""")
+        val repo = newRepository()
+        repo.refreshVersions()
+        // 首次检测（无 fclversion.cfg）：自动开启特定设置
+        assertFalse(repo.getVersionSetting("1.0").isUsesGlobal)
+        // 用户主动切回全局设置
+        repo.globalizeVersionSetting("1.0")
+        repo.refreshVersions()
+        // 刷新不得把特定设置强制改回来
+        assertTrue(repo.getVersionSetting("1.0").isUsesGlobal)
+        // 再次刷新仍保持用户选择
+        repo.refreshVersions()
+        assertTrue(repo.getVersionSetting("1.0").isUsesGlobal)
+    }
+
     /** getVersionSetting 对无本地设置的版本返回全局设置 */
     @Test
     fun getVersionSettingFallsBackToGlobal() {

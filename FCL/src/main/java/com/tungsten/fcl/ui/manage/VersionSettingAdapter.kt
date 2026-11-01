@@ -126,7 +126,6 @@ class VersionSettingAdapter(
                 labelRes = R.string.settings_type_special_enable,
                 value = { enableSpecific },
                 onToggle = { listener.onSpecialSwitch(VersionSettingTag.SPECIAL, it) },
-                disabled = modpack,
                 rowTag = VersionSettingTag.SPECIAL,
                 descriptionRes = R.string.settings_type_special_enable_desc,
             )
@@ -143,7 +142,9 @@ class VersionSettingAdapter(
             )
             result += Row.SwitchRow(
                 R.string.settings_game_working_directory,
-                { versionSetting.isIsolateGameDir },
+                // 整合包版本的游戏目录由 getGameDirectoryType 强制为版本目录，
+                // 开关无效故保持禁用；但展示值须恒为开，避免使用全局设置时读到全局值造成误导
+                { modpack || versionSetting.isIsolateGameDir },
                 { versionSetting.isIsolateGameDir = it },
                 disabled = modpack,
                 descriptionRes = R.string.settings_game_working_directory_desc,
