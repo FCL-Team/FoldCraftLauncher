@@ -603,6 +603,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
                             menu.getViewManager().selectView(this);
                         }
                     } else {
+                        // 写回前记录撤销点：此刻数据仍是拖动前状态
+                        menu.getViewManager().recordForUndo(getData());
                         getData().getBaseInfo().setXPosition(Math.round((1000 * getX()) / (screenWidth - getSize())));
                         getData().getBaseInfo().setYPosition(Math.round((1000 * getY()) / (screenHeight - getSize())));
                         menu.getViewManager().saveController();
@@ -748,6 +750,8 @@ public class ControlDirection extends RelativeLayout implements CustomView {
 
     /** 缩放结束：把最终像素尺寸与当前位置写回宽高同值，并刷新视图 */
     private void writeBackResizeSize() {
+        // 写回前记录撤销点：此刻数据仍是缩放前状态
+        menu.getViewManager().recordForUndo(getData());
         BaseInfoData baseInfo = getData().getBaseInfo();
         int pixel = Math.max(ConvertUtils.dip2px(getContext(), 5), getWidth());
         // 位置夹到屏内后与尺寸一起写回，保证刷新后视觉位置不变

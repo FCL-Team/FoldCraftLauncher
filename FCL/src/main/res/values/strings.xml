@@ -389,6 +389,8 @@
     <string name="edit_view_delete">Delete View</string>
     <string name="edit_bar_cross_group">Cross-Group</string>
     <string name="edit_bar_cross_group_title">Copy or Move to Another Group</string>
+    <string name="edit_history_undo">Undo</string>
+    <string name="edit_history_redo">Redo</string>
     <string name="edit_cross_group">Cross-Group Editing</string>
     <string name="dialog_copy">Copy</string>
     <string name="dialog_move">Move</string>
@@ -640,7 +642,7 @@
     <string name="menu_control_view_group_copy">Copy view group</string>
     <string name="menu_control_view_group_copy_suffix"> - copy</string>
     <string name="menu_control_view_group_copy_failed">Failed to copy view group</string>
-    <string name="menu_control_view_group_delete">Are you sure to delete this view group?</string>
+    <string name="menu_control_view_group_delete">Are you sure to delete this view group? This operation cannot be undone.</string>
     <string name="menu_control_view_group_name">Name</string>
     <string name="menu_control_view_group_visibility">Initial Visibility</string>
     <string name="menu_control_view_group_exist">The view group already exist</string>
