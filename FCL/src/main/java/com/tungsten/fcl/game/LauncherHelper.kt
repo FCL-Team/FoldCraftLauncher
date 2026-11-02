@@ -150,7 +150,7 @@ class LauncherHelper(
         launchingStepsPane.setStages(launchStages)
         // 取消按钮点击时同时取消启动协程
         launchingStepsPane.setCancel(TaskCancellationAction(Runnable { launchJob?.cancel() }))
-        launchJob = CoroutineScope(Dispatchers.IO).launch {
+        launchJob = mainScope.launch(Dispatchers.IO) {
             try {
                 try {
                     launch0()
@@ -637,22 +637,19 @@ class LauncherHelper(
                 JavaManager.getSuitableJavaVersion(version)
             }
 
-        // JavaManager 维护的 Java 列表需在主线程读取
-        val javaVersion = withContext(Dispatchers.Main) {
-            if (setting.java == "Auto") {
-                suggestedJavaVersion()
-            } else {
-                JavaManager.getJavaFromVersionName(setting.java)
-            }
-        }
-        if (setting.isNotCheckJVM) return javaVersion
-
+        // JavaManager 维护的 Java 列表需在主线程读取；Java 名取入口快照，选定与后续检查使用同一值
         return withContext(Dispatchers.Main) {
+            val javaName = setting.java
+            val javaVersion =
+                if (javaName == "Auto") suggestedJavaVersion()
+                else JavaManager.getJavaFromVersionName(javaName)
+            if (setting.isNotCheckJVM) return@withContext javaVersion
+
             val suggested = suggestedJavaVersion()
             if (suggested.getVersion() != -1 &&
-                (setting.java == "Auto" || javaVersion.getVersion() == suggested.getVersion())
+                (javaName == "Auto" || javaVersion.getVersion() == suggested.getVersion())
             ) {
-                return@withContext if (setting.java == "Auto") suggested else javaVersion
+                return@withContext if (javaName == "Auto") suggested else javaVersion
             }
 
             // 当前 Java 不匹配：让用户选择自动切换 / 继续使用 / 不再检查
