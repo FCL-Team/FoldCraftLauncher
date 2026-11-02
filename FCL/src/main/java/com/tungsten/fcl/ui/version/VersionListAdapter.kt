@@ -61,16 +61,17 @@ class VersionListAdapter(val context: Context, initList: List<VersionListItem>) 
         position: Int
     ) {
         bindContent(holder, position)
-        val binding = ItemVersionBinding.bind(holder.itemView)
-        // 入场动画只在整行重绑（新条目进视口）时播放：数据刷新走 PAYLOAD_CONTENT
-        // 局部重绑，若在此重播动画，一次列表刷新会让可见条目整体横滑一遍，
-        // 表现为切换版本时列表异常跳动
-        playTranslationX(
-            binding.root,
-            ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
-            -100f,
-            0f
-        ).start()
+        // 入场动画每个条目视图只播一次：局部刷新或复用视图带来的重绑不再重播，
+        // 否则切换选中版本时被重绑的条目会把可见区整段横滑一遍
+        if (holder.itemView.getTag(R.id.version_item_enter_animated) == null) {
+            holder.itemView.setTag(R.id.version_item_enter_animated, true)
+            playTranslationX(
+                holder.itemView,
+                ThemeEngine.getInstance().getTheme().animationSpeed * 30L,
+                -100f,
+                0f
+            ).start()
+        }
     }
 
     /** 数据字段与交互监听的完整绑定，整行重绑与 PAYLOAD_CONTENT 局部重绑共用 */
