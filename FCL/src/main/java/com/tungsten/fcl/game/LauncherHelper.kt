@@ -142,6 +142,8 @@ class LauncherHelper(
     private enum class LoginChoice { RETRY, SKIP_OFFLINE, CANCEL }
 
     fun launch() {
+        // 同一实例重复触发时忽略，避免正在执行的启动协程被覆盖
+        if (launchJob?.isActive == true) return
         LOG.info("Launching game version: $selectedVersion")
         launchingStepsPane.show()
         // 任务列表形式展示各启动阶段，随协程推进打勾
@@ -390,6 +392,8 @@ class LauncherHelper(
         suspendCancellableCoroutine { cont ->
             executor.addTaskListener(object : TaskListener() {
                 override fun onStop(success: Boolean, executor: TaskExecutor) {
+                    // 取消与任务结束可能同时发生，已完成时不再重复 resume
+                    if (!cont.isActive) return
                     if (success) {
                         cont.resume(Unit)
                     } else {
@@ -398,8 +402,9 @@ class LauncherHelper(
                     }
                 }
             })
-            cont.invokeOnCancellation { executor.cancel() }
+            // 先 start：setExecutor 已把执行器交给取消按钮，此窗口内取消会因 future 尚未建立而抛异常
             executor.start()
+            cont.invokeOnCancellation { runCatching { executor.cancel() } }
         }
     }
 
@@ -411,12 +416,17 @@ class LauncherHelper(
         neutralText: String? = null,
     ): Choice = withContext(Dispatchers.Main) {
         suspendCancellableCoroutine { cont ->
+            // 弹窗按钮与协程取消可能竞争，已完成时不再重复 resume
+            fun choose(choice: Choice) {
+                if (cont.isActive) cont.resume(choice)
+            }
+
             val builder = FCLAlertDialog.Builder(context)
             builder.setCancelable(false)
             builder.setMessage(message)
-            builder.setPositiveButton(positiveText) { cont.resume(Choice.POSITIVE) }
-            builder.setNegativeButton(negativeText) { cont.resume(Choice.NEGATIVE) }
-            if (neutralText != null) builder.setNeutralButton(neutralText) { cont.resume(Choice.NEUTRAL) }
+            builder.setPositiveButton(positiveText) { choose(Choice.POSITIVE) }
+            builder.setNegativeButton(negativeText) { choose(Choice.NEGATIVE) }
+            if (neutralText != null) builder.setNeutralButton(neutralText) { choose(Choice.NEUTRAL) }
             val dialog = builder.create()
             // 启动协程被取消（如任务弹窗点取消）时一并收掉停留屏幕上的检查弹窗
             cont.invokeOnCancellation { dialog.dismiss() }
@@ -716,7 +726,7 @@ class LauncherHelper(
     private suspend fun awaitLoginChoice(create: ((LoginChoice) -> Unit) -> FCLDialog): LoginChoice =
         withContext(Dispatchers.Main) {
             suspendCancellableCoroutine { cont ->
-                val dialog = create { choice -> cont.resume(choice) }
+                val dialog = create { choice -> if (cont.isActive) cont.resume(choice) }
                 // 启动协程被取消（如任务弹窗点取消）时一并收掉停留屏幕上的登录弹窗
                 cont.invokeOnCancellation { dialog.dismiss() }
                 dialog.show()

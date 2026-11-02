@@ -105,6 +105,13 @@ public class TaskDialog extends FCLDialog implements View.OnClickListener {
     }
 
     public void setExecutor(TaskExecutor executor, boolean autoClose) {
+        // 换绑执行器前摘掉旧执行器上的监听，避免启动流程多次接入任务时监听在旧执行器上残留
+        if (this.executor != null) {
+            if (autoCloseListener != null) this.executor.removeTaskListener(autoCloseListener);
+            if (messageUpdateListener != null) this.executor.removeTaskListener(messageUpdateListener);
+            autoCloseListener = null;
+            messageUpdateListener = null;
+        }
         this.executor = executor;
 
         if (executor != null) {
