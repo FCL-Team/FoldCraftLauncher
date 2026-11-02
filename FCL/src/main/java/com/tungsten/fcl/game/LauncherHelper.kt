@@ -41,7 +41,6 @@ import com.tungsten.fcl.control.MenuType
 import com.tungsten.fcl.setting.GameOption
 import com.tungsten.fcl.setting.MenuSetting
 import com.tungsten.fcl.setting.Profile
-import com.tungsten.fcl.setting.Profiles
 import com.tungsten.fcl.setting.VersionSetting
 import com.tungsten.fcl.ui.TaskDialog
 import com.tungsten.fcl.ui.UIManager
@@ -56,6 +55,7 @@ import com.tungsten.fclcore.auth.CharacterDeletedException
 import com.tungsten.fclcore.auth.CredentialExpiredException
 import com.tungsten.fclcore.auth.authlibinjector.AuthlibInjectorDownloadException
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount
+import com.tungsten.fclcore.download.DefaultDependencyManager
 import com.tungsten.fclcore.download.LibraryAnalyzer
 import com.tungsten.fclcore.download.MaintainTask
 import com.tungsten.fclcore.download.game.GameAssetIndexDownloadTask
@@ -135,8 +135,8 @@ class LauncherHelper(
     )
     private var currentStage: String? = null
 
-    /** 启动前确认框的按钮选择：默认 positive 取消启动、negative 继续，调用方可重定义按钮语义（如 Java 检查中 positive 为自动选择） */
-    private enum class Choice { CONTINUE, NEUTRAL, CANCEL }
+    /** 确认框的按钮位置：默认 POSITIVE 取消启动、NEGATIVE 继续，调用方可通过文案与分支重定义（如 Java 检查中 POSITIVE 为自动选择） */
+    private enum class Choice { POSITIVE, NEUTRAL, NEGATIVE }
 
     /** 登录异常弹窗的按钮选择 */
     private enum class LoginChoice { RETRY, SKIP_OFFLINE, CANCEL }
@@ -210,32 +210,10 @@ class LauncherHelper(
         val version = LibFilter.filter(versionRef.get(), false)
 
         if (!setting.isNotCheckGame) {
-            enterStage("launch.state.dependencies")
-            // 游戏文件补全与整合包依赖补全（若存在）在同一执行器下并行，进度展示在弹窗任务列表
-            val tasks = mutableListOf<Task<*>>(
-                dependencyManager.checkGameCompletionAsync(version, integrityCheck)
-            )
-            try {
-                val configuration: ModpackConfiguration<*> =
-                    ModpackHelper.readModpackConfiguration(
-                        repository.getModpackConfiguration(
-                            selectedVersion
-                        )
-                    )
-                ModpackHelper.getProviderByType(configuration.type)
-                    ?.let { tasks.add(it.createCompletionTask(dependencyManager, selectedVersion)) }
-            } catch (_: IOException) {
-            }
-            runTracked(Task.allOf(*tasks.toTypedArray()))
+            completeDependencies(dependencyManager, version, integrityCheck)
         }
 
-        // 解包内置补丁 jar
-        unpackJar("/assets/game/MioLibPatcher.jar", FCLPath.LIB_PATCHER_PATH, "MioLibFixer.jar")
-        unpackJar(
-            "/assets/game/MioLaunchWrapper.jar",
-            FCLPath.MIO_LAUNCH_WRAPPER,
-            "MioLaunchWrapper.jar"
-        )
+        unpackBuiltinJars()
 
         if (gameVersion.isPresent) {
             runTracked(GameVerificationFixTask(dependencyManager, gameVersion.get(), version))
@@ -245,6 +223,52 @@ class LauncherHelper(
         val authInfo = logIn()
 
         enterStage("launch.state.waiting_launching")
+        val fclBridge = prepareLaunch(repository, version, javaVersion, authInfo)
+
+        runPreLaunchChecks(repository, fclBridge, scannedMods)
+        startGame(repository, version, fclBridge, javaVersion)
+    }
+
+    /** 补全游戏文件与整合包依赖，任务接入弹窗任务列表复用进度展示 */
+    private suspend fun completeDependencies(
+        dependencyManager: DefaultDependencyManager,
+        version: Version,
+        integrityCheck: Boolean,
+    ) {
+        enterStage("launch.state.dependencies")
+        // 游戏文件补全与整合包依赖补全（若存在）在同一执行器下并行，进度展示在弹窗任务列表
+        val tasks = mutableListOf<Task<*>>(
+            dependencyManager.checkGameCompletionAsync(version, integrityCheck)
+        )
+        try {
+            val configuration: ModpackConfiguration<*> =
+                ModpackHelper.readModpackConfiguration(
+                    profile.repository.getModpackConfiguration(selectedVersion)
+                )
+            ModpackHelper.getProviderByType(configuration.type)
+                ?.let { tasks.add(it.createCompletionTask(dependencyManager, selectedVersion)) }
+        } catch (_: IOException) {
+        }
+        runTracked(Task.allOf(*tasks.toTypedArray()))
+    }
+
+    /** 解包内置补丁 jar（MioLibPatcher / MioLaunchWrapper），失败仅记录警告不阻断启动 */
+    private fun unpackBuiltinJars() {
+        unpackJar("/assets/game/MioLibPatcher.jar", FCLPath.LIB_PATCHER_PATH, "MioLibFixer.jar")
+        unpackJar(
+            "/assets/game/MioLaunchWrapper.jar",
+            FCLPath.MIO_LAUNCH_WRAPPER,
+            "MioLaunchWrapper.jar"
+        )
+    }
+
+    /** 读取菜单设置、装配 FCLGameLauncher 并拉起游戏进程，返回后续检查与界面配置所用的桥接实例 */
+    private fun prepareLaunch(
+        repository: FCLGameRepository,
+        version: Version,
+        javaVersion: JavaVersion,
+        authInfo: AuthInfo,
+    ): FCLBridge {
         var menuSetting: MenuSetting? = null
         try {
             menuSetting = GsonBuilder().setPrettyPrinting().create()
@@ -297,27 +321,39 @@ class LauncherHelper(
         }
         lwjglVersion?.let(launcher::setLwjglVersion)
 
-        val fclBridge = launcher.launch()
+        return launcher.launch()
+    }
 
+    /** 启动前检查：路径合法性、渲染器与原生插件版本、modloader 及模组兼容性，并记录启动状态 */
+    private suspend fun runPreLaunchChecks(
+        repository: FCLGameRepository,
+        fclBridge: FCLBridge,
+        scannedMods: List<LocalModFile>?,
+    ) {
         checkPathValid(repository)
         val renderer = RendererManager.getRenderer(setting.renderer)
         fclBridge.renderer = renderer.name
-        checkRenderer(
-            renderer,
-            repository.getGameVersion(selectedVersion).orElse(""),
-            scannedMods
-        )
-        checkNativeLibPlugin(repository.getGameVersion(selectedVersion).orElse(""))
+        val gameVersion = repository.getGameVersion(selectedVersion).orElse("")
+        checkRenderer(renderer, gameVersion, scannedMods)
+        checkNativeLibPlugin(gameVersion)
         if (!setting.isNotCheckMod) {
             checkModLoader(repository, scannedMods)
         }
-        checkMod(fclBridge, repository.getGameVersion(selectedVersion).orElse(""), scannedMods)
+        checkMod(fclBridge, gameVersion, scannedMods)
 
         val gameOption = GameOption(repository.getRunDirectory(selectedVersion).absolutePath)
         gameOption.set("preferredGraphicsBackend", setting.graphicsBackend)
         gameOption.set("startedCleanly", "true")
         gameOption.save()
+    }
 
+    /** 切回主线程拉起 JVMActivity，并把桥接配置与控制器设置交给游戏进程 */
+    private suspend fun startGame(
+        repository: FCLGameRepository,
+        version: Version,
+        fclBridge: FCLBridge,
+        javaVersion: JavaVersion,
+    ) {
         withContext(Dispatchers.Main) {
             CallbackBridge.nativeSetUseInputStackQueue(version.arguments.isPresent)
             val intent = Intent(context, JVMActivity::class.java)
@@ -367,7 +403,7 @@ class LauncherHelper(
         }
     }
 
-    /** 弹出不可关闭的确认框并挂起等待选择，取消启动返回 [Choice.CANCEL] */
+    /** 弹出不可关闭的确认框并挂起等待选择，默认 positive 为取消启动 */
     private suspend fun awaitChoice(
         message: String,
         positiveText: String = context.getString(R.string.button_cancel),
@@ -378,8 +414,8 @@ class LauncherHelper(
             val builder = FCLAlertDialog.Builder(context)
             builder.setCancelable(false)
             builder.setMessage(message)
-            builder.setPositiveButton(positiveText) { cont.resume(Choice.CANCEL) }
-            builder.setNegativeButton(negativeText) { cont.resume(Choice.CONTINUE) }
+            builder.setPositiveButton(positiveText) { cont.resume(Choice.POSITIVE) }
+            builder.setNegativeButton(negativeText) { cont.resume(Choice.NEGATIVE) }
             if (neutralText != null) builder.setNeutralButton(neutralText) { cont.resume(Choice.NEUTRAL) }
             val dialog = builder.create()
             // 启动协程被取消（如任务弹窗点取消）时一并收掉停留屏幕上的检查弹窗
@@ -397,7 +433,7 @@ class LauncherHelper(
                             R.string.message_check_path_valid,
                             path
                         )
-                    ) == Choice.CANCEL
+                    ) == Choice.POSITIVE
                 )
                     throw CancellationException()
             }
@@ -441,7 +477,7 @@ class LauncherHelper(
                                 R.string.message_check_renderer,
                                 renderer.name
                             )
-                        ) == Choice.CANCEL
+                        ) == Choice.POSITIVE
                     )
                         throw CancellationException()
                 }
@@ -455,7 +491,7 @@ class LauncherHelper(
                                 R.string.message_check_renderer,
                                 renderer.name
                             )
-                        ) == Choice.CANCEL
+                        ) == Choice.POSITIVE
                     )
                         throw CancellationException()
                 }
@@ -487,7 +523,7 @@ class LauncherHelper(
                             R.string.message_check_plugin,
                             fullString
                         )
-                    ) == Choice.CANCEL
+                    ) == Choice.POSITIVE
                 )
                     throw CancellationException()
             }
@@ -510,7 +546,7 @@ class LauncherHelper(
                     context.getString(R.string.message_check_has_modloader),
                     neutralText = context.getString(R.string.button_install)
                 )) {
-                    Choice.CONTINUE -> {}
+                    Choice.NEGATIVE -> {}
                     Choice.NEUTRAL -> {
                         // 跳转版本管理页的“游戏”标签页（索引 2）引导安装 modloader，随后取消本次启动。
                         // awaitChoice 自身在主线程执行，但返回后恢复在调用方上下文（IO），界面操作须显式切回；
@@ -527,7 +563,7 @@ class LauncherHelper(
                         throw CancellationException()
                     }
 
-                    Choice.CANCEL -> throw CancellationException()
+                    Choice.POSITIVE -> throw CancellationException()
                 }
             }
         } catch (e: CancellationException) {
@@ -539,12 +575,8 @@ class LauncherHelper(
 
     private suspend fun checkMod(bridge: FCLBridge, version: String, mods: List<LocalModFile>?) {
         try {
-            var modList = mods
-            if (modList == null) {
-                // 启动链扫描失败时回退为自行获取（getModManager 每次返回新实例，此处为全量重扫）
-                modList = Profiles.getSelectedProfile().repository
-                    .getModManager(Profiles.getSelectedVersion()).mods
-            }
+            // 启动链扫描失败时回退为按当前选中版本自行获取（getModManager 每次返回新实例，此处为全量重扫）
+            val modList = mods ?: profile.repository.getModManager(selectedVersion).mods
             val modCheckerInfo = StringBuilder()
             val modSummary = StringBuilder()
             val modChecker = ModChecker(context, version)
@@ -566,7 +598,7 @@ class LauncherHelper(
             }
             bridge.modSummary = modSummary.toString()
             if (!setting.isNotCheckMod && modCheckerInfo.toString().trim().isNotEmpty()) {
-                if (awaitChoice(modCheckerInfo.toString()) == Choice.CANCEL)
+                if (awaitChoice(modCheckerInfo.toString()) == Choice.POSITIVE)
                     throw CancellationException()
             }
         } catch (e: CancellationException) {
@@ -587,7 +619,7 @@ class LauncherHelper(
 
         fun suggestedJavaVersion(): JavaVersion =
             if (isCleanroom) {
-                if ((cleanroomVersion != null) && (cleanroomVersion >= "0.5.0"))
+                if (cleanroomVersion != null && cleanroomVersion >= "0.5.0")
                     JavaManager.getSuitableJavaVersion(25)
                 else
                     JavaManager.getJavaFromVersionName("jre21")
@@ -620,7 +652,7 @@ class LauncherHelper(
                 negativeText = context.getString(R.string.launch_error_java_continue),
                 neutralText = context.getString(R.string.launch_error_java_continue_disable)
             )) {
-                Choice.CANCEL -> {
+                Choice.POSITIVE -> {
                     // “自动选择”：切回 Auto 并采用建议版本
                     setting.java = JavaVersion.JAVA_AUTO.name
                     if (suggested == JavaManager.NO_JAVA_FOUND)
@@ -633,7 +665,7 @@ class LauncherHelper(
                     javaVersion
                 }
 
-                Choice.CONTINUE -> javaVersion
+                Choice.NEGATIVE -> javaVersion
             }
         }
     }
