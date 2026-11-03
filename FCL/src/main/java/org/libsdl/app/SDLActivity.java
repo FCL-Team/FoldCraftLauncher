@@ -1461,13 +1461,15 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
     /**
      * This method is called by SDL using JNI.
+     * 文本输入区域参数由 JNI 签名约定保留，编辑框定位见 SdlImeController
      */
     public static boolean showTextInput(int input_type, int x, int y, int w, int h) {
-        return SdlImeController.requestShow(SdlImeController.Source.GAME, input_type, x, y, w, h);
+        return SdlImeController.requestShow(SdlImeController.Source.GAME, input_type);
     }
 
     /**
-     * VMActivity 的 TextureView/SurfaceView 的 IME 可见性上报入口
+     * 键盘真实显隐上报入口：JVMActivity 布局回调以 insets 推导的可见性轮询调用，
+     * 维持 SdlImeController 缓存标志与实际一致
      */
     public static void notifyImeVisibilityChanged(boolean visible) {
         SdlImeController.notifyVisibilityChanged(visible);
