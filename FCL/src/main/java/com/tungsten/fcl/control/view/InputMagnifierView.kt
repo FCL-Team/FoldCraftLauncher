@@ -19,6 +19,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import com.mio.util.getImeOccludedHeight
 import com.tungsten.fcl.R
 import com.tungsten.fcl.control.keyboard.TouchCharInput
 import com.tungsten.fcl.setting.MenuSetting
@@ -202,8 +203,7 @@ class InputMagnifierView @JvmOverloads constructor(
         if (!inputActive) {
             dismissedForInput = false
         }
-        val occludes = inputActive && rootView.height > 0
-                && rootView.height * 2 / 3 > visibleFrame.bottom
+        val occludes = inputActive && rootView.height > 0 && getImeOccludedHeight(rootView) > 0
         if (!occludes) {
             inputOccludesGame = false
             visibility = GONE

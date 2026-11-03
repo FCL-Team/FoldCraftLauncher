@@ -3,7 +3,6 @@ package com.tungsten.fcl.activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
@@ -133,11 +132,9 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             if (menuType == MenuType.GAME && ((GameMenu) menu).getMenuSetting().isDisableSoftKeyAdjust()) {
                 return;
             }
-            int screenHeight = getWindow().getDecorView().getHeight();
-            Rect rect = new Rect();
-            getWindow().getDecorView().getWindowVisibleDisplayFrame(rect);
-            if (screenHeight * 2 / 3 > rect.bottom) {
-                textureView.setTranslationY(rect.bottom - screenHeight);
+            int imeHeight = AndroidUtilKt.getImeOccludedHeight(getWindow().getDecorView());
+            if (imeHeight > 0) {
+                textureView.setTranslationY(-imeHeight);
                 isTranslated = true;
             } else if (isTranslated) {
                 isTranslated = false;

@@ -7,18 +7,22 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.opengl.EGL14
 import android.opengl.EGLConfig
 import android.opengl.GLES20
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.PowerManager
 import android.provider.OpenableColumns
 import android.view.MotionEvent
+import android.view.View
+import android.view.WindowInsets
 import android.webkit.CookieManager
 import android.widget.Toast
 import androidx.core.net.toUri
@@ -220,6 +224,21 @@ fun getScreenHeight(): Int {
 fun getScreenWidth(): Int {
     if (DisplayUtil.screenWidth != -1) return DisplayUtil.screenWidth
     return DisplayUtil.currentDisplayMetrics.widthPixels
+}
+
+/**
+ * 软键盘遮挡窗口底部的高度（px），未弹出或悬浮键盘为 0。
+ * API 30+ 读取系统 IME insets 真值，任意高度的键盘都能识别；
+ * 旧版本没有专用通道，用可视区域底部与根视图高度之比估算（键盘需占满屏高 1/3 以上）
+ */
+fun getImeOccludedHeight(rootView: View): Int {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        return rootView.rootWindowInsets?.getInsets(WindowInsets.Type.ime())?.bottom ?: 0
+    }
+    val frame = Rect()
+    rootView.getWindowVisibleDisplayFrame(frame)
+    val height = rootView.height
+    return if (height * 2 / 3 > frame.bottom) height - frame.bottom else 0
 }
 
 fun getMimeType(filePath: String): String {
