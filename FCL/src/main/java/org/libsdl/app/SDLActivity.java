@@ -1468,7 +1468,8 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
     }
 
     /**
-     * VMActivity 的 TextureView/SurfaceView 的 IME 可见性上报入口
+     * 键盘真实显隐上报入口：JVMActivity 布局回调以 insets 推导的可见性轮询调用，
+     * 维持 SdlImeController 缓存标志与实际一致
      */
     public static void notifyImeVisibilityChanged(boolean visible) {
         SdlImeController.notifyVisibilityChanged(visible);
