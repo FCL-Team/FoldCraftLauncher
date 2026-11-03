@@ -1461,9 +1461,10 @@ public class SDLActivity extends Activity implements View.OnSystemUiVisibilityCh
 
     /**
      * This method is called by SDL using JNI.
+     * 文本输入区域参数由 JNI 签名约定保留，编辑框定位见 SdlImeController
      */
     public static boolean showTextInput(int input_type, int x, int y, int w, int h) {
-        return SdlImeController.requestShow(SdlImeController.Source.GAME, input_type, x, y, w, h);
+        return SdlImeController.requestShow(SdlImeController.Source.GAME, input_type);
     }
 
     /**

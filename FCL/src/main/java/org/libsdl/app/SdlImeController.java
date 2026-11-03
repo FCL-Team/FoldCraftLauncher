@@ -28,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.FrameLayout;
 
 import com.tungsten.fcl.game.sdl.SdlBridge;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
@@ -40,7 +39,6 @@ final class SdlImeController {
     enum Source { GAME, LAUNCHER, BACK }
 
     private static final String TAG = "SDLImeController";
-    private static final int HEIGHT_PADDING = 15;
 
     private static SDLDummyEdit mEdit;
     private static boolean mTextInputActive;
@@ -82,15 +80,15 @@ final class SdlImeController {
     }
 
     static void requestShow(Source source) {
-        requestShow(source, TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_NORMAL, -1, -1, -1, -1);
+        requestShow(source, TYPE_CLASS_TEXT | TYPE_TEXT_VARIATION_NORMAL);
     }
 
-    static boolean requestShow(Source source, int inputType, int x, int y, int w, int h) {
+    static boolean requestShow(Source source, int inputType) {
         Log.i(TAG, "IME: show requested by " + source);
         if (source == Source.GAME) {
             mTextInputActive = true;
         }
-        return post(() -> doShow(source, inputType, x, y, w, h));
+        return post(() -> doShow(source, inputType));
     }
 
     static void requestHide(Source source) {
@@ -133,7 +131,7 @@ final class SdlImeController {
         return SDLActivity.commandHandler.post(task);
     }
 
-    private static void doShow(Source source, int inputType, int x, int y, int w, int h) {
+    private static void doShow(Source source, int inputType) {
         if (SDLActivity.mLayout == null) {
             Log.w(TAG, "IME: no layout available, show by " + source + " ignored");
             return;
@@ -160,18 +158,10 @@ final class SdlImeController {
         }
 
         if (mEdit == null) {
+            // 编辑框固定钉在左上角 1px，不按游戏给的文本输入区域摆放：落在屏幕底部会被软键盘
+            // 遮住，系统为露出焦点平推整个窗口，与 JVMActivity 的画面平移叠加成双倍抬升
             mEdit = new SDLDummyEdit(SDLActivity.getContext());
-            SDLActivity.mLayout.addView(mEdit, makeParams(x, y, w, h));
-        } else if (x >= 0 && w > 0) {
-            // 仅显式提供区域时更新位置，避免启动器请求覆盖游戏设置的输入框。
-            // setLayoutParams 不做类型转换：复用 addView 时已转换的父容器 params
-            // （FCL 游戏布局根为 RelativeLayout，硬编码 FrameLayout.LayoutParams 会强转崩溃）
-            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) mEdit.getLayoutParams();
-            params.width = w;
-            params.height = h + HEIGHT_PADDING;
-            params.leftMargin = x;
-            params.topMargin = y;
-            mEdit.setLayoutParams(params);
+            SDLActivity.mLayout.addView(mEdit, new ViewGroup.LayoutParams(1, 1));
         }
         mEdit.setInputType(inputType);
         mEdit.setFocusable(true);
@@ -198,22 +188,6 @@ final class SdlImeController {
             Log.i(TAG, "IME: shown by " + source);
             SDLActivity.onNativeScreenKeyboardShown();
         }
-    }
-
-    private static FrameLayout.LayoutParams makeParams(int x, int y, int w, int h) {
-        if (x < 0 || w <= 0) {
-            x = 0;
-            y = 0;
-            w = 1;
-            h = 1;
-        }
-        if (h + HEIGHT_PADDING <= 0) {
-            h = 1 - HEIGHT_PADDING;
-        }
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(w, h + HEIGHT_PADDING);
-        params.leftMargin = x;
-        params.topMargin = y;
-        return params;
     }
 
     private static void doHide(Source source) {
