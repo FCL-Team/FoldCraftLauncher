@@ -2,12 +2,8 @@ package com.mio.util
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.view.View
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomViewTarget
-import com.bumptech.glide.request.transition.Transition
 import java.io.File
 import java.util.Optional
 
@@ -37,33 +33,10 @@ class ImageUtil {
 
         @JvmStatic
         fun loadInto(view: View, drawable: Drawable) {
-            Glide.with(view).load(drawable).centerCrop()
-                .into(object : CustomViewTarget<View, Drawable>(view) {
-                    override fun onResourceCleared(placeholder: Drawable?) {
-                    }
-
-                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                    }
-
-            override fun onResourceReady(
-                resource: Drawable,
-                transition: Transition<in Drawable>?
-            ) {
-                // centerCrop 产物的 Bitmap 归 Glide 位图池所有：请求被清除（视图 detach、
-                // 同视图再次加载）或内存紧张触发池回收时会 recycle，而 background 会被
-                // 视图持续绘制，直接引用会导致 "Canvas: trying to use a recycled bitmap" 崩溃，
-                // 必须复制为自持位图后再设背景
-                val source = (resource as? BitmapDrawable)?.bitmap
-                if (source != null && !source.isRecycled) {
-                    view.background = BitmapDrawable(
-                        view.resources,
-                        source.copy(source.config ?: Bitmap.Config.ARGB_8888, false)
-                    )
-                }
-            }
-
-                })
-
+            // 派生独立实例：多个视图共享同一 Drawable 实例时 setBounds 会互相覆盖
+            // （共享的底层 bitmap 数据只读，不受影响）
+            val source = drawable.constantState?.newDrawable() ?: drawable
+            view.background = CenterCropDrawable(source)
         }
     }
 }

@@ -515,7 +515,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     /** 按当前亮暗模式加载主界面背景（Theme.getBackground 按亮暗动态返回）。
      *  ThemeEngine 的刷新回调是全局 Handler 异步排队，Activity 销毁后仍未执行的
-     *  回调无法通过 onDestroy 注销取消，这里需防 Glide 对已销毁 Activity 加载崩溃 */
+     *  回调会持有已销毁实例，这里需跳过 */
     private fun loadBackground() {
         if (isDestroyed || isFinishing) return
         ImageUtil.loadInto(
