@@ -16,7 +16,7 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
     }
 }
-rootProject.name = "Fold Craft Launcher"
+rootProject.name = "Fxl Launcher"
 include(":FCL")
 include(":Terracotta")
 include(":ZipFileSystem")
