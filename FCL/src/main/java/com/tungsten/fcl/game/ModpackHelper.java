@@ -100,7 +100,8 @@ public final class ModpackHelper {
 
     /**
      * 本地探测整合包补全任务将自动恢复的缺失文件（镜像各 Provider 补全任务的存在性判定），
-     * 供启动前弹窗确认。文件名未知的 Curse 条目（首次补全前无法本地核实）不列入。
+     * 供启动前弹窗确认。文件名未知的 Curse 条目（首次补全前无法本地核实）不列入；
+     * Mcbbs/Server 补全任务的远端清单更新（下载新增条目、哈希过期覆盖、删除远端已移除条目）不在探测范围。
      * 任何异常一律返回空表，绝不阻断启动。
      * 注意：不能直接用传入 configuration.getManifest()——ModpackConfiguration<?> 通配反序列化
      * 得到的 manifest 是 LinkedTreeMap 而非具体类型，须按类型重读清单。
@@ -134,18 +135,13 @@ public final class ModpackHelper {
                     }
                 }
             } else if (provider instanceof CurseModpackProvider) {
-                // 与 CurseCompletionTask 同源：只认版本根目录 manifest.json（补全任务也只更新它），缺失时回退 modpack.cfg
+                // 与 CurseCompletionTask 同源：provider 不传清单，任务只读版本根目录 manifest.json，读不到时任务空转，故不回退 modpack.cfg
                 CurseManifest manifest = readJsonFile(new File(repository.getVersionRoot(version), "manifest.json"), CurseManifest.class);
-                if (manifest == null) {
-                    ModpackConfiguration<CurseManifest> typed = JsonUtils.GSON.fromJson(FileUtils.readText(configurationFile),
-                            new TypeToken<ModpackConfiguration<CurseManifest>>() {
-                            }.getType());
-                    manifest = typed == null ? null : typed.getManifest();
-                }
                 if (manifest == null)
                     return Collections.emptyList();
-                File runDirectory = repository.getRunDirectory(version);
-                File resourcePacksRoot = new File(runDirectory, "resourcepacks"), shaderPacksRoot = new File(runDirectory, "shaderpacks");
+                // 资源包/光影包根目录与补全任务 guessFilePath 保持同一表达式（版本根目录）
+                File resourcePacksRoot = new File(repository.getVersionRoot(version), "resourcepacks");
+                File shaderPacksRoot = new File(repository.getVersionRoot(version), "shaderpacks");
                 for (CurseManifestFile file : manifest.getFiles()) {
                     String fileName = file.getFileName();
                     if (StringUtils.isNotBlank(fileName)
@@ -159,21 +155,17 @@ public final class ModpackHelper {
                 ModpackConfiguration<ServerModpackManifest> typed = JsonUtils.GSON.fromJson(FileUtils.readText(configurationFile),
                         new TypeToken<ModpackConfiguration<ServerModpackManifest>>() {
                         }.getType());
-                if (typed == null || typed.getManifest() == null)
+                if (typed == null || typed.getManifest() == null
+                        || StringUtils.isBlank(typed.getManifest().getFileApi()))
+                    // fileApi 为空时补全任务直接空转，视为无需恢复
                     return Collections.emptyList();
                 for (ModpackConfiguration.FileInformation file : typed.getManifest().getFiles()) {
                     if (!Files.exists(repository.getVersionRoot(version).toPath().resolve(file.getPath())))
                         result.add(file.getPath());
                 }
             } else if (provider instanceof ModrinthModpackProvider) {
-                // 与 ModrinthCompletionTask 同源：只认版本根目录 modrinth.index.json，缺失时回退 modpack.cfg
+                // 与 ModrinthCompletionTask 同源：provider 不传清单，任务只读版本根目录 modrinth.index.json，读不到时任务空转，故不回退 modpack.cfg
                 ModrinthManifest manifest = readJsonFile(new File(repository.getVersionRoot(version), "modrinth.index.json"), ModrinthManifest.class);
-                if (manifest == null) {
-                    ModpackConfiguration<ModrinthManifest> typed = JsonUtils.GSON.fromJson(FileUtils.readText(configurationFile),
-                            new TypeToken<ModpackConfiguration<ModrinthManifest>>() {
-                            }.getType());
-                    manifest = typed == null ? null : typed.getManifest();
-                }
                 if (manifest == null)
                     return Collections.emptyList();
                 Path runDirectory = repository.getRunDirectory(version).toPath();

@@ -247,8 +247,36 @@ class LauncherHelper(
                 ModpackHelper.readModpackConfiguration(
                     profile.repository.getModpackConfiguration(selectedVersion)
                 )
-            ModpackHelper.getProviderByType(configuration.type)
-                ?.let { tasks.add(it.createCompletionTask(dependencyManager, selectedVersion)) }
+            ModpackHelper.getProviderByType(configuration.type)?.let { provider ->
+                // 用户已关闭整合包自动补全时不创建补全任务；否则探测将恢复的缺失文件，非空先弹窗确认
+                if (setting.isNotRestoreModpack)
+                    return@let
+                val missing =
+                    ModpackHelper.getMissingModpackFiles(profile.repository, selectedVersion, configuration)
+                if (missing.isNotEmpty()) {
+                    // 文件列表超 20 个折叠，避免弹窗过长
+                    val names = if (missing.size > 20)
+                        missing.take(20).joinToString("\n") + "\n..."
+                    else
+                        missing.joinToString("\n")
+                    val proceed = when (awaitChoice(
+                        context.getString(R.string.modpack_completion_confirm, names),
+                        positiveText = context.getString(R.string.modpack_completion_skip),
+                        negativeText = context.getString(R.string.modpack_completion_continue),
+                        neutralText = context.getString(R.string.modpack_completion_disable),
+                    )) {
+                        Choice.NEGATIVE -> true
+                        Choice.NEUTRAL -> {
+                            setting.isNotRestoreModpack = true
+                            false
+                        }
+                        Choice.POSITIVE -> false
+                    }
+                    if (!proceed)
+                        return@let
+                }
+                tasks.add(provider.createCompletionTask(dependencyManager, selectedVersion))
+            }
         } catch (_: IOException) {
         }
         runTracked(Task.allOf(*tasks.toTypedArray()))
