@@ -126,16 +126,16 @@
             android:process=":crash"
             android:screenOrientation="sensor" />
         <activity
-            android:name="com.tungsten.fcllibrary.browser.FileBrowserActivity"
+            android:name="com.mohsen.fxllibrary.browser.FileBrowserActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode"
             android:screenOrientation="sensorLandscape" />
         <activity
-            android:name="com.tungsten.fcllibrary.crash.CrashReportActivity"
+            android:name="com.mohsen.fxllibrary.crash.CrashReportActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode"
             android:screenOrientation="sensor" />
 
         <service
-            android:name="com.tungsten.fclcore.download.ProcessService"
+            android:name="com.mohsen.fxlcore.download.ProcessService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="dataSync"
@@ -189,7 +189,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
         <provider
-            android:name="com.tungsten.fcllibrary.crash.CrashReporterInitProvider"
+            android:name="com.mohsen.fxllibrary.crash.CrashReporterInitProvider"
             android:authorities="${applicationId}.crashreporterinitprovider"
             android:exported="false"
             android:initOrder="101" />
