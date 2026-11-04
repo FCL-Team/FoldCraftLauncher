@@ -1,4 +1,4 @@
-package com.tungsten.fcl;
+package com.mohsen.fxl;
 
 import android.app.Activity;
 import android.app.Application;
@@ -13,14 +13,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 
-public class FCLApp extends Application implements Application.ActivityLifecycleCallbacks {
-    private static FCLApp instance;
+public class FxlApp extends Application implements Application.ActivityLifecycleCallbacks {
+    private static FxlApp instance;
     private static WeakReference<Activity> currentActivity;
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        // 在 attachBaseContext 赋值，早于任何 Activity/ContentProvider，保证全局可用
+        // في attachBaseContext يتم التعيين مبكراً لضمان توفر السياق عالمياً
         instance = this;
     }
 
@@ -35,7 +35,7 @@ public class FCLApp extends Application implements Application.ActivityLifecycle
     @NotNull
     public static Context getAppContext() {
         if (instance == null) {
-            throw new IllegalStateException("FCLApp is not initialized");
+            throw new IllegalStateException("FxlApp is not initialized");
         }
         return instance;
     }
