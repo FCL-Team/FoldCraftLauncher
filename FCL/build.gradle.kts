@@ -22,7 +22,7 @@ checkstyle {
 // AGP 不提供 Java 插件的 SourceSetContainer，checkstyle 插件不会自动创建任务，
 // 因此手动注册 checkstyle 任务，检查范围为主源码目录的 Java 文件
 tasks.register<Checkstyle>("checkstyle") {
-    description = "Run checkstyle on the FCL Java sources."
+    description = "Run checkstyle on the Fxl Java sources."
     group = "verification"
     source(layout.projectDirectory.dir("src/main/java"))
     include("**/*.java")
@@ -32,7 +32,7 @@ tasks.register<Checkstyle>("checkstyle") {
 }
 
 android {
-    namespace = "com.tungsten.fcl"
+    namespace = "com.mohsen.fxl"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     var localProperty: Properties? = null
@@ -40,7 +40,7 @@ android {
         localProperty = Properties()
         file("${rootDir}/local.properties").inputStream().use { localProperty.load(it) }
     }
-    val pwd = System.getenv("FCL_KEYSTORE_PASSWORD") ?: localProperty?.getProperty("pwd")
+    val pwd = System.getenv("FXL_KEYSTORE_PASSWORD") ?: System.getenv("FCL_KEYSTORE_PASSWORD") ?: localProperty?.getProperty("pwd")
     val curseApiKey = System.getenv("CURSE_API_KEY") ?: localProperty?.getProperty("curse.api.key")
     val oauthApiKey = System.getenv("OAUTH_API_KEY") ?: localProperty?.getProperty("oauth.api.key")
     // 命令行 -Darch 优先；local.properties 仅在命令行未指定时生效
@@ -52,17 +52,17 @@ android {
         System.setProperty("arch", "arm64")
 
     signingConfigs {
-        create("FCLKey") {
+        create("FxlKey") {
             storeFile = file("../key-store.jks")
             storePassword = pwd
-            keyAlias = "FCL-Key"
+            keyAlias = "Fxl-Key"
             keyPassword = pwd
         }
-        create("FCLDebugKey") {
+        create("FxlDebugKey") {
             storeFile = file("../debug-key.jks")
-            storePassword = "FCL-Debug"
-            keyAlias = "FCL-Debug"
-            keyPassword = "FCL-Debug"
+            storePassword = "Fxl-Debug"
+            keyAlias = "Fxl-Debug"
+            keyPassword = "Fxl-Debug"
         }
         // minSdk 26 ≥ 24，v1 已无必要，统一启用 v2 + v3 签名方案
         configureEach {
@@ -73,7 +73,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.tungsten.fcl"
+        applicationId = "com.mohsen.fxl"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1344
@@ -91,18 +91,18 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("FCLKey")
+            signingConfig = signingConfigs.getByName("FxlKey")
         }
         getByName("debug") {
             isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("FCLKey")
+            signingConfig = signingConfigs.getByName("FxlKey")
         }
         create("fordebug") {
             initWith(getByName("debug"))
             applicationIdSuffix = ".debug"
-            signingConfig = signingConfigs.getByName("FCLDebugKey")
-            // 与 FileProvider authority（${applicationId}.provider）保持一致（原 FCLLibrary 模块的 resValue）
-            resValue("string", "file_browser_provider", "com.tungsten.fcl.debug.provider")
+            signingConfig = signingConfigs.getByName("FxlDebugKey")
+            // 与 FileProvider authority（${applicationId}.provider）保持一致
+            resValue("string", "file_browser_provider", "com.mohsen.fxl.debug.provider")
         }
         configureEach {
             resValue("string", "app_version", defaultConfig.versionName.toString())
@@ -186,7 +186,7 @@ androidComponents {
             if (output is com.android.build.api.variant.impl.VariantOutputImpl) {
                 (output.getFilter(ABI)?.identifier ?: "all").let { abi ->
                     output.outputFileName =
-                        "FCL-${variant.buildType}-${project.android.defaultConfig.versionName}-${abi}.apk"
+                        "FxlLauncher-${variant.buildType}-${project.android.defaultConfig.versionName}-${abi}.apk"
                 }
             }
         }
@@ -343,6 +343,6 @@ tasks.register("updateMap") {
                 }
             )
         }
-        mapFile.writeText(list.joinToString("\n"), Charsets.UTF_8)
+        mapFile.writeText(list.joinToString("\n"), Charsets.UTF8)
     }
 }
