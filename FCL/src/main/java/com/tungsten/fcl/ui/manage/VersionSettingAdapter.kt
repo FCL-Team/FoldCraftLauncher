@@ -242,6 +242,13 @@ class VersionSettingAdapter(
                 group = SettingGroup.Check
             )
             result += Row.SwitchRow(
+                R.string.settings_advanced_dont_restore_modpack,
+                { versionSetting.isNotRestoreModpack },
+                { versionSetting.isNotRestoreModpack = it },
+                descriptionRes = R.string.settings_advanced_dont_restore_modpack_desc,
+                group = SettingGroup.Check
+            )
+            result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_jvm_validity,
                 { versionSetting.isNotCheckJVM },
                 { versionSetting.isNotCheckJVM = it },
