@@ -349,16 +349,64 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         activity = this@MainActivity,
                         *buildList {
                             if (Accounts.getAccounts().isEmpty()) {
-                                add(GuideStep(GuideTag.Account, account, getString(R.string.guide_account)))
+                                add(
+                                    GuideStep(
+                                        GuideTag.Account,
+                                        account,
+                                        getString(R.string.guide_account)
+                                    )
+                                )
                             }
-                            add(GuideStep(GuideTag.VersionCard, versionCard, getString(R.string.guide_version_card)))
+                            add(
+                                GuideStep(
+                                    GuideTag.VersionCard,
+                                    versionCard,
+                                    getString(R.string.guide_version_card)
+                                )
+                            )
                             add(GuideStep(GuideTag.Start, start, getString(R.string.guide_start)))
-                            add(GuideStep(GuideTag.Manage, manage, getString(R.string.guide_manage)))
-                            add(GuideStep(GuideTag.Download, download, getString(R.string.guide_download)))
-                            add(GuideStep(GuideTag.Controller, controller, getString(R.string.guide_controller)))
-                            add(GuideStep(GuideTag.Multiplayer, multiplayer, getString(R.string.guide_multiplayer)))
-                            add(GuideStep(GuideTag.Theme2, setting, getString(R.string.guide_theme2)))
-                            add(GuideStep(GuideTag.ShareLog, home, getString(R.string.guide_share_log)))
+                            add(
+                                GuideStep(
+                                    GuideTag.Manage,
+                                    manage,
+                                    getString(R.string.guide_manage)
+                                )
+                            )
+                            add(
+                                GuideStep(
+                                    GuideTag.Download,
+                                    download,
+                                    getString(R.string.guide_download)
+                                )
+                            )
+                            add(
+                                GuideStep(
+                                    GuideTag.Controller,
+                                    controller,
+                                    getString(R.string.guide_controller)
+                                )
+                            )
+                            add(
+                                GuideStep(
+                                    GuideTag.Multiplayer,
+                                    multiplayer,
+                                    getString(R.string.guide_multiplayer)
+                                )
+                            )
+                            add(
+                                GuideStep(
+                                    GuideTag.Theme2,
+                                    setting,
+                                    getString(R.string.guide_theme2)
+                                )
+                            )
+                            add(
+                                GuideStep(
+                                    GuideTag.ShareLog,
+                                    home,
+                                    getString(R.string.guide_share_log)
+                                )
+                            )
                         }.toTypedArray()
                     )
                 }
@@ -810,8 +858,15 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 VulkanEnsureResult.SUPPORTED -> doLaunchVersion(profile, versionId)
                 VulkanEnsureResult.NEED_CHECK ->
                     promptVulkanCheck(gameVersion, useCustomDriver, driver, profile, versionId)
+
                 VulkanEnsureResult.UNSUPPORTED ->
-                    runVulkanCheckAndDecide(gameVersion, useCustomDriver, driver, profile, versionId)
+                    runVulkanCheckAndDecide(
+                        gameVersion,
+                        useCustomDriver,
+                        driver,
+                        profile,
+                        versionId
+                    )
             }
         }
     }

@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.ColorFilter
 import android.graphics.drawable.Drawable
 import kotlin.math.max
+import androidx.core.graphics.withTranslation
 
 /**
  * 等比缩放居中裁剪的 Drawable 包装器：绘制时按目标 bounds 实时计算缩放矩阵，
@@ -19,7 +20,7 @@ class CenterCropDrawable(private val wrapped: Drawable) : Drawable() {
         val srcHeight = wrapped.intrinsicHeight
         if (srcWidth <= 0 || srcHeight <= 0) {
             // 无固有尺寸（纯色等），退化为拉伸铺满
-            wrapped.setBounds(bounds)
+            wrapped.bounds = bounds
             wrapped.draw(canvas)
             return
         }
@@ -29,12 +30,11 @@ class CenterCropDrawable(private val wrapped: Drawable) : Drawable() {
         )
         val dx = bounds.exactCenterX() - srcWidth * scale / 2f
         val dy = bounds.exactCenterY() - srcHeight * scale / 2f
-        canvas.save()
-        canvas.translate(dx, dy)
-        canvas.scale(scale, scale)
-        wrapped.setBounds(0, 0, srcWidth, srcHeight)
-        wrapped.draw(canvas)
-        canvas.restore()
+        canvas.withTranslation(dx, dy) {
+            scale(scale, scale)
+            wrapped.setBounds(0, 0, srcWidth, srcHeight)
+            wrapped.draw(this)
+        }
     }
 
     override fun setAlpha(alpha: Int) {
