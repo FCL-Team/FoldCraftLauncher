@@ -52,8 +52,8 @@ public abstract class FetchTask<T> extends Task<T> {
     protected boolean caching;
     protected CacheRepository repository = CacheRepository.getInstance();
 
-    /** 当前下载进度的字节信息（供 UI 显示"已下载/总量"） */
-    private long downloadedBytes = 0;
+    /** 当前下载进度的字节信息（供 UI 显示"已下载/总量"），并行续传阶段由分块线程并发写 */
+    private volatile long downloadedBytes = 0;
     private long totalBytes = -1;
 
     public long getDownloadedBytes() {
@@ -167,8 +167,14 @@ public abstract class FetchTask<T> extends Task<T> {
                     totalBytes = contentLength;
                     // 保留最后一次重试应对切换节点后的网络错误，避免在末次尝试上白白放弃已建立的连接
                     boolean armSlowNodeRetry = bmclapiHash != null && retryTime < retry - 1;
+                    // 单连接持续低速时允许切换为多连接并行拉取剩余部分（见 downloadParallelRemainder），
+                    // 按连接数限速的服务器（如网盘直链）可借此成倍提速，且保留已下载前缀不浪费
+                    boolean armParallelRemainder = contentLength > 0;
+                    boolean completedByParallel = false;
+                    BMCLAPIRetryPolicy parallelRemainderPolicy = new BMCLAPIRetryPolicy();
                     try (Context context = getContext(conn, checkETag, bmclapiHash); InputStream stream = conn.getInputStream()) {
                         long lastDownloaded = 0, downloaded = 0;
+                        parallelRemainderPolicy.startAttempt(System.nanoTime());
                         if (armSlowNodeRetry)
                             retryPolicy.startAttempt(System.nanoTime());
                         byte[] buffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
@@ -195,6 +201,16 @@ public abstract class FetchTask<T> extends Task<T> {
                             // 主动放弃当前连接，经常规重试流程重新请求主控分配新节点
                             if (armSlowNodeRetry && retryPolicy.shouldRetry(downloaded, contentLength, System.nanoTime()))
                                 throw new SocketTimeoutException("BMCLAPI node is too slow to complete the remaining download in time");
+
+                            // 并行续传判定位于慢速节点切换之后：BMCLAPI 链路两者同时命中时仍优先换节点，
+                            // 仅末次尝试（不再切换节点）才由并行续传接管，此时能保留已下载前缀
+                            if (armParallelRemainder && parallelRemainderPolicy.shouldRetry(downloaded, contentLength, System.nanoTime())) {
+                                armParallelRemainder = false; // 每次连接尝试至多切换一次
+                                if (downloadParallelRemainder(url, downloaded, contentLength, bmclapiHash))
+                                    completedByParallel = true;
+                                if (completedByParallel)
+                                    break;
+                            }
                         }
 
                         if (isCancelled()) break download;
@@ -204,7 +220,8 @@ public abstract class FetchTask<T> extends Task<T> {
                         // 取消与大小校验之间存在竞态窗口（取消瞬间已读部分数据），
                         // 取消时不能视为下载失败，否则取消会被包装成 IOException 报错
                         if (isCancelled()) break download;
-                        if (contentLength >= 0 && downloaded != contentLength)
+                        // 并行续传时单流计数只覆盖前缀，完整大小由实现方在落盘前自行校验
+                        if (!completedByParallel && contentLength >= 0 && downloaded != contentLength)
                             throw new IOException("Unexpected file size: " + downloaded + ", expected: " + contentLength);
 
                         context.withResult(true);
@@ -239,6 +256,24 @@ public abstract class FetchTask<T> extends Task<T> {
         }
     }
 
+    /**
+     * 并行续传阶段由实现方汇报总进度（含单流前缀在内的已下载字节数）。
+     */
+    protected void setDownloadedBytes(long downloadedBytes) {
+        this.downloadedBytes = downloadedBytes;
+    }
+
+    /**
+     * 单连接持续低速时由执行框架调用：尝试用多个分块连接并行拉取 [downloaded, contentLength)
+     * 区间的剩余数据并写入原临时文件。
+     * 返回 true 表示剩余数据已就位，框架应跳过单流大小校验、直接走统一的落盘与完整性校验流程；
+     * 返回 false 表示当前不适合并行（如服务端不支持 Range、剩余量过少），框架继续单流下载；
+     * 分块失败抛出 IOException 走常规重试，用户取消抛出 CancellationException。默认不支持。
+     */
+    protected boolean downloadParallelRemainder(URL url, long downloaded, long contentLength, @Nullable String bmclapiHash) throws IOException {
+        return false;
+    }
+
     /** 重试退避序列（毫秒）：第 1 次失败后 500ms，之后 2s、5s，更多次保持 5s */
     private static final long[] RETRY_DELAYS = {500, 2000, 5000};
 
@@ -246,7 +281,7 @@ public abstract class FetchTask<T> extends Task<T> {
      * 重试前的退避等待。分片轮询 isCancelled()，
      * 等待期间取消任务可在单个分片内退出，不会拖慢取消响应。
      */
-    private void awaitRetryDelay(int retryTime) {
+    protected final void awaitRetryDelay(int retryTime) {
         long delay = RETRY_DELAYS[Math.min(retryTime, RETRY_DELAYS.length - 1)];
         long deadline = System.currentTimeMillis() + delay;
         while (!isCancelled() && System.currentTimeMillis() < deadline) {
@@ -272,7 +307,7 @@ public abstract class FetchTask<T> extends Task<T> {
         }, 0, 1000);
     }
 
-    private static void updateDownloadSpeed(int speed) {
+    protected static void updateDownloadSpeed(int speed) {
         downloadSpeed.addAndGet(speed);
     }
 
