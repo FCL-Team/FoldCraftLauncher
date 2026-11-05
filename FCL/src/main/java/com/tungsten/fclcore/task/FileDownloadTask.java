@@ -104,6 +104,12 @@ public class FileDownloadTask extends FetchTask<Void> {
     private final ArrayList<IntegrityCheckHandler> integrityCheckHandlers = new ArrayList<>();
     /** 当前尝试正在写入的临时文件，getContext 创建，供并行续传阶段按绝对偏移写入 */
     private Path tempFile;
+    /** 当前尝试的完整性校验摘要，getContext 创建；并行续传的分块写入不经过 Context.write，完成时须按最终文件重算 */
+    @Nullable
+    private MessageDigest digest;
+    /** 当前尝试的 BMCLAPI 兜底哈希摘要，语义同上 */
+    @Nullable
+    private MessageDigest bmclapiDigest;
 
     /**
      * @param url the URL of remote file.
@@ -214,9 +220,9 @@ public class FileDownloadTask extends FetchTask<Void> {
         Path temp = Files.createTempFile(null, null);
         tempFile = temp;
         RandomAccessFile rFile = new RandomAccessFile(temp.toFile(), "rw");
-        MessageDigest digest = integrityCheck == null ? null : integrityCheck.createDigest();
+        digest = integrityCheck == null ? null : integrityCheck.createDigest();
         // BMCLAPI 兜底哈希必须边写边算：close() 执行时 temp 已 move 成目标文件，不能再读盘校验
-        MessageDigest bmclapiDigest = bmclapiHash == null ? null : getDigest("SHA-1");
+        bmclapiDigest = bmclapiHash == null ? null : getDigest("SHA-1");
 
         return new Context() {
             @Override
@@ -380,6 +386,8 @@ public class FileDownloadTask extends FetchTask<Void> {
             long size = Files.size(temp);
             if (size != contentLength)
                 throw new IOException("Unexpected file size after parallel download: " + size + ", expected: " + contentLength);
+            // 分块写入不经过 Context.write，摘要只累计了单流前缀，按最终文件整体重建后再交回框架落盘校验
+            recalculateDigests(temp);
             setDownloadedBytes(contentLength);
             return true;
         } catch (InterruptedException e) {
@@ -387,6 +395,30 @@ public class FileDownloadTask extends FetchTask<Void> {
             throw new IOException("Interrupted during parallel download", e);
         } finally {
             pool.shutdownNow();
+        }
+    }
+
+    /**
+     * 并行续传的分块写入不经过 Context.write，digest 与 bmclapiDigest 只累计了单流前缀；
+     * 按已写完的临时文件整体重建两个摘要，供 close() 落盘后的完整性校验使用。
+     * 此时分块线程已全部结束，无并发写摘要。
+     */
+    private void recalculateDigests(Path temp) throws IOException {
+        if (digest == null && bmclapiDigest == null)
+            return;
+        if (digest != null)
+            digest = integrityCheck.createDigest();
+        if (bmclapiDigest != null)
+            bmclapiDigest = getDigest("SHA-1");
+        try (InputStream in = Files.newInputStream(temp)) {
+            byte[] buffer = new byte[IOUtils.DEFAULT_BUFFER_SIZE];
+            int len;
+            while ((len = in.read(buffer)) != -1) {
+                if (digest != null)
+                    digest.update(buffer, 0, len);
+                if (bmclapiDigest != null)
+                    bmclapiDigest.update(buffer, 0, len);
+            }
         }
     }
 

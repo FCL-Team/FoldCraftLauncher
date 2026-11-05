@@ -52,8 +52,8 @@ public abstract class FetchTask<T> extends Task<T> {
     protected boolean caching;
     protected CacheRepository repository = CacheRepository.getInstance();
 
-    /** 当前下载进度的字节信息（供 UI 显示"已下载/总量"） */
-    private long downloadedBytes = 0;
+    /** 当前下载进度的字节信息（供 UI 显示"已下载/总量"），并行续传阶段由分块线程并发写 */
+    private volatile long downloadedBytes = 0;
     private long totalBytes = -1;
 
     public long getDownloadedBytes() {
@@ -202,7 +202,8 @@ public abstract class FetchTask<T> extends Task<T> {
                             if (armSlowNodeRetry && retryPolicy.shouldRetry(downloaded, contentLength, System.nanoTime()))
                                 throw new SocketTimeoutException("BMCLAPI node is too slow to complete the remaining download in time");
 
-                            // 并行续传判定先于慢速节点切换：能保留已下载前缀，优先级更高
+                            // 并行续传判定位于慢速节点切换之后：BMCLAPI 链路两者同时命中时仍优先换节点，
+                            // 仅末次尝试（不再切换节点）才由并行续传接管，此时能保留已下载前缀
                             if (armParallelRemainder && parallelRemainderPolicy.shouldRetry(downloaded, contentLength, System.nanoTime())) {
                                 armParallelRemainder = false; // 每次连接尝试至多切换一次
                                 if (downloadParallelRemainder(url, downloaded, contentLength, bmclapiHash))
