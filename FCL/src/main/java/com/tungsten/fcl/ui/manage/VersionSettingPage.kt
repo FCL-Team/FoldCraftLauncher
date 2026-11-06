@@ -374,7 +374,7 @@ class VersionSettingPage(
                             notes += context.getString(R.string.message_warn_renderer_global_setting)
                         }
                         val selectedVersion = profile.selectedVersion
-                        val selectedOverride = selectedVersion?.let { profile.getRendererOverride(it) }
+                        val selectedOverride = selectedVersion?.let { profile.getEffectiveRendererOverride(it) }
                         val shadowed = if (selectedVersion != null && selectedOverride != null &&
                             selectedOverride != picked.id &&
                             profile.getVersionSetting(selectedVersion).isUsesGlobal
@@ -413,7 +413,7 @@ class VersionSettingPage(
                         val vid = versionId
                         // 特定版本页：该版本有渲染器覆盖时，此处修改不会生效
                         if (vid != null) {
-                            val override = profile.getRendererOverride(vid)
+                            val override = profile.getEffectiveRendererOverride(vid)
                             if (override != null && override != picked.id) {
                                 val builder = FCLAlertDialog.Builder(context)
                                 builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)

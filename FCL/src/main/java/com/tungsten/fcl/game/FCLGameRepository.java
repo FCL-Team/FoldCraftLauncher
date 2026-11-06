@@ -421,8 +421,9 @@ public class FCLGameRepository extends DefaultGameRepository {
 
     public LaunchOptions getLaunchOptions(String version, JavaVersion javaVersion, File gameDir, double scaleFactor, double cursorOffset) {
         VersionSetting vs = getVersionSetting(version);
-        // 每版本渲染器覆盖（Profile.rendererOverrides）优先于版本/全局设置中的渲染器
-        String rendererOverride = profile.getRendererOverride(version);
+        // 每版本渲染器覆盖（Profile.rendererOverrides）优先于版本/全局设置中的渲染器；
+        // 覆盖指向的渲染器已卸载/禁用时视同无覆盖，回到版本设置
+        String rendererOverride = profile.getEffectiveRendererOverride(version);
         String rendererId = rendererOverride != null ? rendererOverride : vs.getRenderer();
         int maxMemory = (int) (getAllocatedMemory(
                 vs.getMaxMemory() * 1024L * 1024L,

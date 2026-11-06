@@ -27,7 +27,15 @@ class RendererOverrideItemAdapter(
 
     private data class Row(val versionId: String, var overrideId: String?)
 
-    private val rows: List<Row> = versions.map { Row(it, profile.getRendererOverride(it)) }
+    private val rows: List<Row> = versions.map { versionId ->
+        val stored = profile.getRendererOverride(versionId)
+        val overrideId = profile.getEffectiveRendererOverride(versionId)
+        // 失效覆盖（渲染器已卸载/禁用）当场清除，配置与界面、启动行为保持一致
+        if (stored != overrideId) {
+            profile.setRendererOverride(versionId, null)
+        }
+        Row(versionId, overrideId)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = ItemRendererOverrideBinding.inflate(LayoutInflater.from(context), parent, false)
@@ -47,10 +55,9 @@ class RendererOverrideItemAdapter(
             val row = rows[position]
             binding.versionName.text = row.versionId
             binding.spinner.setItems(displayItems)
-            // setItems/setSelection 均为程序性设置，不触发监听，行复用安全
-            binding.spinner.setSelection(
-                row.overrideId?.let { rendererIds.indexOf(it) + 1 }?.coerceAtLeast(0) ?: 0
-            )
+            // setItems/setSelection 均为程序性设置，不触发监听，行复用安全；
+            // overrideId 均为有效覆盖，必然映射到 rendererIds
+            binding.spinner.setSelection(row.overrideId?.let { rendererIds.indexOf(it) + 1 } ?: 0)
             binding.spinner.setOnItemSelectedListener { index, _ ->
                 val newOverride = if (index <= 0) null else rendererIds.getOrNull(index - 1)
                 if (newOverride != row.overrideId) {

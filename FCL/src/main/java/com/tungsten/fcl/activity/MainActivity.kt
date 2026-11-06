@@ -228,10 +228,12 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     RendererSelectDialog(this@MainActivity, false) { picked ->
                         val profile = Profiles.getSelectedProfile()
                         val versionId = profile.selectedVersion
-                        val override = versionId?.let { profile.getRendererOverride(it) }
+                        val override = versionId?.let { profile.getEffectiveRendererOverride(it) }
                         if (versionId != null && override != null && override != picked.id) {
                             // 该版本有渲染器覆盖：此处修改会被遮蔽，提示后不直接启动，
-                            // 只有清除覆盖才沿用本次选择继续启动
+                            // 只有更新/清除覆盖才沿用本次选择继续启动
+                            // 长按的选择已写入版本设置，取消时须回滚，避免残留
+                            val previousRenderer = profile.versionSetting.renderer
                             val builder = FCLAlertDialog.Builder(this@MainActivity)
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
                             builder.setMessage(
@@ -249,7 +251,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                                 profile.setRendererOverride(versionId, null)
                                 onClick(view)
                             }
-                            builder.setNegativeButton(getString(R.string.dialog_negative), null)
+                            builder.setNegativeButton(getString(R.string.dialog_negative)) {
+                                profile.versionSetting.renderer = previousRenderer
+                            }
                             builder.create().show()
                         } else {
                             onClick(view)

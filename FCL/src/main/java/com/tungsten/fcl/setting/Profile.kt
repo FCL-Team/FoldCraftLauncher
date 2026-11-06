@@ -9,6 +9,7 @@ import com.google.gson.JsonParseException
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.google.gson.annotations.JsonAdapter
+import com.mio.manager.RendererManager
 import com.tungsten.fcl.game.FCLCacheRepository
 import com.tungsten.fcl.game.FCLGameRepository
 import com.tungsten.fcl.util.WeakListenerHolder
@@ -81,6 +82,10 @@ class Profile {
 
     fun getRendererOverride(versionId: String?): String? =
         versionId?.let { rendererOverrides[it] }
+
+    /** 有效覆盖：指向的渲染器已卸载/禁用时视同无覆盖（启动解析与遮蔽检测共用此判定） */
+    fun getEffectiveRendererOverride(versionId: String?): String? =
+        getRendererOverride(versionId)?.takeIf { RendererManager.findRenderer(it) != null }
 
     /** rendererId 传 null 表示清除覆盖，版本回到跟随设置 */
     fun setRendererOverride(versionId: String, rendererId: String?) {
