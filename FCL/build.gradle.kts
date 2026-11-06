@@ -300,7 +300,6 @@ dependencies {
     implementation(libs.touchcontroller)
     implementation(libs.palette.ktx)
     implementation(libs.gamepad.remapper)
-    implementation(libs.segmented.button)
     implementation(libs.datastore)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.room.runtime)
