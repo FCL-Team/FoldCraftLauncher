@@ -340,10 +340,11 @@ public class DefaultLauncher {
     }
 
     public Map<String, Boolean> getFeatures() {
-        return Collections.singletonMap(
-                "has_custom_resolution",
-                options.getHeight() != null && options.getHeight() != 0 && options.getWidth() != null && options.getWidth() != 0
-        );
+        // 1.6（快照 13w25a）之前的版本不支持自定义分辨率参数，不启用 has_custom_resolution
+        boolean hasCustomResolution = options.getHeight() != null && options.getHeight() != 0
+                && options.getWidth() != null && options.getWidth() != 0
+                && GameVersionNumber.asGameVersion(repository.getGameVersion(version).orElse("0.0")).isAtLeast("1.6", "13w25a");
+        return Collections.singletonMap("has_custom_resolution", hasCustomResolution);
     }
 
     private final Map<String, Supplier<Boolean>> forbiddens;

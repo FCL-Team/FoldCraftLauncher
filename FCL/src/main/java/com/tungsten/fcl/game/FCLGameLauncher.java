@@ -113,6 +113,10 @@ public final class FCLGameLauncher extends DefaultLauncher {
         }
         if (gameOption == null)
             gameOption = new GameOption(optionsFile.getParent());
+        // 13w16a~13w23b 快照缺少非英语语言的外部语言资源，即使格式正确，选了不可用语言也会卡在 Mojang 加载界面，
+        // 历史已写入的 lang 一并重置为默认英语；置于 fixLang 之前，随其规范成该时代的 en_US 格式
+        if (isLangUnavailableSnapshot(gameVersion))
+            gameOption.set("lang", "en_us");
         fixLang(gameOption);
         fixOptions(gameOption);
         gameOption.save();
@@ -125,6 +129,11 @@ public final class FCLGameLauncher extends DefaultLauncher {
             gameOption.set("key_key.fullscreen", "0");
             gameOption.set("key_key.streamStartStop", "0");
         }
+    }
+
+    private static boolean isLangUnavailableSnapshot(GameVersionNumber gameVersion) {
+        return gameVersion instanceof GameVersionNumber.LegacySnapshot
+                && gameVersion.compareTo("13w16a") >= 0 && gameVersion.compareTo("13w23b") <= 0;
     }
 
     private void fixLang(GameOption gameOption) {
