@@ -81,6 +81,7 @@ data class SkinAnimationSetting(
     val animationId: String = "walking",
     val solidLayerEnabled: Boolean = true,
     val upperBodySeparated: Boolean = true,
+    val tapSoundEnabled: Boolean = true,
 )
 
 /**

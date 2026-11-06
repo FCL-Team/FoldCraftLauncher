@@ -24,7 +24,7 @@ import kotlin.math.sqrt
  *
  * 生命周期：onResume/onPause 控制帧循环（surface 未就绪时记忆状态）；
  * surface 销毁时在 UI 线程同步等待渲染线程释放 EGL，避免SurfaceTexture 过早释放。
- * 手势：单指拖动旋转、双指捏合缩放（0.7~2.0）、单击压扁、松手回正、双击弹设置；
+ * 手势：单指拖动旋转、双指捏合缩放（0.7~2.0）、单击压扁（带音效）、松手回正、双指点击弹设置；
  */
 class SkinViewer @JvmOverloads constructor(
     context: Context,
@@ -34,12 +34,12 @@ class SkinViewer @JvmOverloads constructor(
     private var renderer: SkinRenderer? = null
     private var density = 1f
 
-    /** 双击模型回调（UI 线程，SAM 接口便于 Java 侧 lambda 调用） */
-    fun interface OnDoubleClickListener {
-        fun onDoubleClick()
+    /** 双指点击模型回调（UI 线程，SAM 接口便于 Java 侧 lambda 调用） */
+    fun interface OnTwoFingerTapListener {
+        fun onTwoFingerTap()
     }
 
-    var onDoubleClick: OnDoubleClickListener? = null
+    var onTwoFingerTap: OnTwoFingerTapListener? = null
 
     // 触摸状态（仅 UI 线程访问）
     private var previousX = 0f
@@ -51,10 +51,16 @@ class SkinViewer @JvmOverloads constructor(
     private var secondaryPointerId = 0
     private var pinchStartDistance = 0.0
     private var pinchStartScale = 1f
-    private var lastTapTime = 0L
-    private var lastTapX = 0f
-    private var lastTapY = 0f
     private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+
+    // 双指点击检测：双指按下后短时间抬起且未移动即视为点击（与捏合缩放共存）
+    private var twoFingerGesture = false
+    private var twoFingerMoved = false
+    private var twoFingerDownTime = 0L
+    private var heldPointerStartX = 0f
+    private var heldPointerStartY = 0f
+    private var newPointerStartX = 0f
+    private var newPointerStartY = 0f
 
     // 本次按下的起点（单击压扁的位移判定）
     private var downX = 0f
@@ -82,6 +88,7 @@ class SkinViewer @JvmOverloads constructor(
         isOpaque = false
         isClickable = true
         surfaceTextureListener = this
+        SkinTapSound.preload(context)
     }
 
     /** 绑定渲染器与手势密度（须在 surface 可用前调用） */
@@ -109,18 +116,6 @@ class SkinViewer @JvmOverloads constructor(
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     downX = x
                     downY = y
-                    // 双击检测：两次按下间隔短且位置接近
-                    val now = System.currentTimeMillis()
-                    val dx = x - lastTapX
-                    val dy = y - lastTapY
-                    if (now - lastTapTime < DOUBLE_TAP_INTERVAL && dx * dx + dy * dy < touchSlop * touchSlop) {
-                        lastTapTime = 0L
-                        onDoubleClick?.onDoubleClick()
-                    } else {
-                        lastTapTime = now
-                        lastTapX = x
-                        lastTapY = y
-                    }
                 }
                 if (event.action == MotionEvent.ACTION_MOVE) {
                     if (skipNextRotate) {
@@ -130,15 +125,27 @@ class SkinViewer @JvmOverloads constructor(
                     }
                 }
                 if (event.actionMasked == MotionEvent.ACTION_UP) {
-                    // 单击（短按未拖动）触发点按压扁；无论是否拖动，手势结束都开始回正
-                    val dx = x - downX
-                    val dy = y - downY
-                    if (event.eventTime - event.downTime < TAP_INTERVAL &&
-                        dx * dx + dy * dy < touchSlop * touchSlop
-                    ) {
-                        renderer?.squashTap()
+                    if (twoFingerGesture) {
+                        // 双指手势收尾：短按且未移动判定为双指点击，不触发单击压扁
+                        if (!twoFingerMoved && event.eventTime - twoFingerDownTime < TAP_INTERVAL) {
+                            onTwoFingerTap?.onTwoFingerTap()
+                        }
+                        twoFingerGesture = false
+                    } else {
+                        // 单击（短按未拖动）触发点按压扁与音效；无论是否拖动，手势结束都开始回正
+                        val dx = x - downX
+                        val dy = y - downY
+                        if (event.eventTime - event.downTime < TAP_INTERVAL &&
+                            dx * dx + dy * dy < touchSlop * touchSlop
+                        ) {
+                            renderer?.squashTap()
+                            SkinTapSound.play()
+                        }
                     }
                     renderer?.onDragEnd()
+                }
+                if (event.actionMasked == MotionEvent.ACTION_CANCEL) {
+                    twoFingerGesture = false
                 }
                 previousX = x
                 previousY = y
@@ -153,19 +160,39 @@ class SkinViewer @JvmOverloads constructor(
 
                     MotionEvent.ACTION_POINTER_DOWN -> {
                         secondaryPointerId = event.getPointerId(event.actionIndex)
-                        val deltaX = event.getX(event.findPointerIndex(primaryPointerId)) -
-                                event.getX(event.findPointerIndex(secondaryPointerId))
-                        val deltaY = event.getY(event.findPointerIndex(primaryPointerId)) -
-                                event.getY(event.findPointerIndex(secondaryPointerId))
+                        // 进入双指手势：记录按压时刻与两指起点，供双指点击判定
+                        twoFingerGesture = true
+                        twoFingerMoved = false
+                        twoFingerDownTime = event.eventTime
+                        newPointerStartX = event.getX(event.actionIndex)
+                        newPointerStartY = event.getY(event.actionIndex)
+                        val heldIndex = event.findPointerIndex(primaryPointerId)
+                        heldPointerStartX = event.getX(heldIndex)
+                        heldPointerStartY = event.getY(heldIndex)
+                        val deltaX = event.getX(heldIndex) - newPointerStartX
+                        val deltaY = event.getY(heldIndex) - newPointerStartY
                         pinchStartDistance = sqrt((deltaX * deltaX + deltaY * deltaY).toDouble())
                         pinchStartScale = renderer?.getScale() ?: 1f
                     }
 
                     MotionEvent.ACTION_MOVE -> {
-                        val deltaX = event.getX(event.findPointerIndex(primaryPointerId)) -
-                                event.getX(event.findPointerIndex(secondaryPointerId))
-                        val deltaY = event.getY(event.findPointerIndex(primaryPointerId)) -
-                                event.getY(event.findPointerIndex(secondaryPointerId))
+                        val heldIndex = event.findPointerIndex(primaryPointerId)
+                        val newIndex = event.findPointerIndex(secondaryPointerId)
+                        if (!twoFingerMoved && heldIndex >= 0 && newIndex >= 0) {
+                            // 任一指相对起点位移超 touchSlop 即视为捏合/双指平移，取消双指点击判定
+                            val dx0 = event.getX(heldIndex) - heldPointerStartX
+                            val dy0 = event.getY(heldIndex) - heldPointerStartY
+                            val dx1 = event.getX(newIndex) - newPointerStartX
+                            val dy1 = event.getY(newIndex) - newPointerStartY
+                            val slopSq = touchSlop * touchSlop
+                            if (dx0 * dx0 + dy0 * dy0 > slopSq || dx1 * dx1 + dy1 * dy1 > slopSq) {
+                                twoFingerMoved = true
+                            }
+                        }
+                        val deltaX = event.getX(heldIndex) -
+                                event.getX(newIndex)
+                        val deltaY = event.getY(heldIndex) -
+                                event.getY(newIndex)
                         val distance = sqrt((deltaX * deltaX + deltaY * deltaY).toDouble())
                         val delta = (distance - pinchStartDistance).toFloat()
                         val diagonal = sqrt((width * width + height * height).toDouble()).toFloat()
@@ -372,9 +399,7 @@ class SkinViewer @JvmOverloads constructor(
     }
 
     companion object {
-        private const val DOUBLE_TAP_INTERVAL = 300L
-
-        /** 单击压扁的按压时长上限（毫秒） */
+        /** 双指点击/单击压扁的按压时长上限（毫秒） */
         private const val TAP_INTERVAL = 250L
 
         /** 帧率上限 60fps 的帧间隔（略低于 16.67ms，容忍 vsync 时间戳抖动） */

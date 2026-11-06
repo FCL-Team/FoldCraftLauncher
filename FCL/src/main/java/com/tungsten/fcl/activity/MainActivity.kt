@@ -407,6 +407,14 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                                     getString(R.string.guide_share_log)
                                 )
                             )
+                            // 皮肤模型引导：关闭皮肤模型显示时视图不可见，GuideUtil 自动跳过
+                            add(
+                                GuideStep(
+                                    GuideTag.SkinModel,
+                                    UIManager.instance.mainUI.skinViewer,
+                                    getString(R.string.guide_skin_model)
+                                )
+                            )
                         }.toTypedArray()
                     )
                 }

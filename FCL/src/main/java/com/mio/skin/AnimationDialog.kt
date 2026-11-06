@@ -23,7 +23,7 @@ fun interface OnOverlayToggledListener {
 }
 
 /**
- * 皮肤模型设置弹窗：顶部 3D 皮肤层开关，下方列出全部支持的动画并标记当前项；
+ * 皮肤模型设置弹窗：顶部 3D 皮肤层与点击音效开关，下方列出全部支持的动画并标记当前项；
  * 点动画条目即切换并关闭，开关切换即时生效且保持弹窗打开。
  */
 class AnimationDialog(
@@ -46,6 +46,14 @@ class AnimationDialog(
         binding.solidLayerRow.setOnClickListener { binding.solidLayerSwitch.toggle() }
         binding.solidLayerSwitch.setOnCheckedChangeListener { _, checked ->
             onOverlayToggled.onToggled(checked)
+        }
+
+        // 点击音效开关：直接读写 SkinTapSound 单例（全局状态，非渲染器状态）
+        binding.tapSoundSwitch.isChecked = SkinTapSound.isEnabled
+        binding.tapSoundRow.background = dialogCardBackground(context, density)
+        binding.tapSoundRow.setOnClickListener { binding.tapSoundSwitch.toggle() }
+        binding.tapSoundSwitch.setOnCheckedChangeListener { _, checked ->
+            SkinTapSound.setEnabled(checked)
         }
 
         SkinAnimations.entries.forEach { entry ->

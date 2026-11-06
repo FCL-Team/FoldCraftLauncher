@@ -44,7 +44,8 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
     private FCLButton hide;
     private Announcement announcement = null;
 
-    private SkinViewer skinViewer;
+    /** 皮肤模型预览视图（public 供引导遮罩以它为高亮目标） */
+    public SkinViewer skinViewer;
     private SkinRenderer renderer;
     private SkinTextureLoader skinLoader;
 
@@ -75,8 +76,8 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
         skinLoader.load(Accounts.getSelectedAccount(), false);
         // 恢复上次选择的动画与 3D 皮肤层开关
         restoreSkinSettings(getContext(), renderer);
-        // 双击模型弹出皮肤模型设置窗口
-        skinViewer.setOnDoubleClick(() -> {
+        // 双指点击模型弹出皮肤模型设置窗口
+        skinViewer.setOnTwoFingerTap(() -> {
             Context context = getContext();
             if (context instanceof Activity && !((Activity) context).isDestroyed() && !((Activity) context).isFinishing()) {
                 new AnimationDialog(context, renderer.getAnimation(), renderer.getOverlayEnabled(), animation -> {

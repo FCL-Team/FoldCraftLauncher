@@ -26,6 +26,7 @@ sealed interface GuideTag {
     data object Multiplayer : GuideTag
     data object Theme2 : GuideTag
     data object ShareLog : GuideTag
+    data object SkinModel : GuideTag
 }
 
 /**

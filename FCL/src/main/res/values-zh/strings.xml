@@ -1368,6 +1368,7 @@
     <string name="modpack_download_warn_msg">在安装前，你需要明白，绝大多数整合包都是给电脑端制作的，所以当你尝试启动时会有极大概率出现崩溃或是其他问题，这往往不是在启动器层面上能解决的问题。所以你需要自己了解相关知识后尝试自己解决，或是寻求其他人帮忙（不要询问启动器开发者！）。</string>
     <string name="guide_theme2">如果你发现右侧的文字颜色看不清可以在点击这里，再点击“启动器设置”，设置里面的“次要主题色”即可</string>
     <string name="guide_share_log">长按这里分享游戏日志（latest_game.log）。</string>
+    <string name="guide_skin_model">双指点击皮肤模型打开设置菜单</string>
     <string name="guide_version_card">点击版本卡片打开版本列表，管理你的版本。长按快速选择版本。</string>
     <string name="guide_account">还没有账户？点击这里添加。</string>
     <string name="guide_start">点击启动选中的版本，长按可以选择指定渲染器然后直接启动。</string>
@@ -1534,6 +1535,7 @@
     <string name="version_list_refreshing">正在获取远程版本列表…</string>
     <string name="skin_settings">皮肤设置</string>
     <string name="skin_solid_layer">3D 皮肤层</string>
+    <string name="skin_tap_sound">点击音效</string>
     <string name="animation_idle">待机</string>
     <string name="animation_walking">走路</string>
     <string name="animation_running">奔跑</string>
@@ -1543,7 +1545,7 @@
     <string name="animation_crouch">潜行</string>
     <string name="animation_swim">游泳</string>
     <string name="animation_hands_up_running">举手奔跑</string>
-    <string name="animation_hands_up_jumping">举手蹦跳</string>
+    <string name="animation_hands_up_jumping">举手蹦跳 \\😭/</string>
     <string name="animation_spin_jump">邦友的酒</string>
     <string name="quark_promo_title">支持 FCL</string>
     <string name="quark_promo_message">这是你第 %1$d 次启动游戏！\n\n如果 FCL 对你有帮助，欢迎动动手指打开夸克网盘，注册或登录后点击保存到网盘（不用下载），就是对我们最大的支持，十分感谢～</string>
