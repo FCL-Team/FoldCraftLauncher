@@ -356,6 +356,8 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
     @JvmStatic
     fun isSfpewLayerEnabled(renderer: Renderer): Boolean {
         if (fpeEmulatorModPresent) return false
+        // VR 渲染环境自带出口适配，不叠加兼容层
+        if (renderer.vrOnly) return false
         if (renderer.path.isEmpty()) {
             return renderer.id !in FPE_CAPABLE_BUILTIN_IDS
         }

@@ -16,7 +16,11 @@ data class Renderer(
     /** 来源显示名（插件应用名）；内置渲染器为空串 */
     val source: String = "",
     /** 展示用最大兼容版本，空串回落 maxMCver；兼容性判断始终用 maxMCver */
-    val displayMaxMCver: String = ""
+    val displayMaxMCver: String = "",
+    /** 可在 Quest VR 模式下使用 */
+    val vrCompatible: Boolean = false,
+    /** 仅 Quest VR 模式可选（非 VR 渲染器列表中隐藏） */
+    val vrOnly: Boolean = false
 ) {
     companion object {
         const val ID_GL4ES = "f7e985d8-6d4c-f63c-d9f1-06074dab823a"
@@ -27,6 +31,9 @@ data class Renderer(
         const val ID_NGGL4ES = "e7b90ed6-e518-4d4e-93dc-5c7133cd5b31"
         const val ID_MOBILEGLUES = "acaf8100-bbaf-4d68-b30d-38bf42fcd640"
         const val ID_SFPEW = "f3e4280b-db2e-42e2-95eb-671640b7b0eb"
+
+        /** Quest VR 专用 MobileGlues 出口适配渲染器（id 非随机串，供 env/native 判断） */
+        const val ID_QUEST_MOBILEGLUES = "quest_mobileglues"
     }
 
     fun getGLPath(): String {

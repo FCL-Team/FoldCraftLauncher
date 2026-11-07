@@ -22,6 +22,7 @@ import androidx.core.content.FileProvider;
 import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.control.OpenFolderDialog;
 import com.tungsten.fcl.setting.MenuSetting;
+import com.tungsten.fclauncher.FCLConfig;
 import com.tungsten.fclauncher.keycodes.LwjglGlfwKeycode;
 
 import org.lwjgl.glfw.CallbackBridge;
@@ -80,9 +81,39 @@ public class FCLBridge {
     private boolean hasTouchController = false;
     /** 当前实例是否安装 Cleanroom，随启动设置，execute 时同步进 CallbackBridge */
     private volatile boolean cleanroomActive = false;
+    /** 本会话是否为 Quest VR（fcl_loader 退出链路与 VR 界面层按此分流） */
+    private boolean vrEnabled;
+    /** VR 渲染器 id（非 VR 会话为 null） */
+    private String vrRendererId;
+    /** VR 跨进程重启面板时还原启动参数用的配置引用 */
+    private FCLConfig launchConfig;
 
     public void setCleanroomActive(boolean cleanroomActive) {
         this.cleanroomActive = cleanroomActive;
+    }
+
+    public boolean isVrEnabled() {
+        return vrEnabled;
+    }
+
+    public void setVrEnabled(boolean enabled) {
+        this.vrEnabled = enabled;
+    }
+
+    public String getVrRendererId() {
+        return vrRendererId;
+    }
+
+    public void setVrRendererId(String rendererId) {
+        this.vrRendererId = rendererId;
+    }
+
+    public FCLConfig getLaunchConfig() {
+        return launchConfig;
+    }
+
+    public void setLaunchConfig(FCLConfig config) {
+        this.launchConfig = config;
     }
 
     static {

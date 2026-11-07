@@ -13,6 +13,7 @@ object RendererManager {
     lateinit var RENDERER_ZINK: Renderer
     lateinit var RENDERER_NGGL4ES: Renderer
     lateinit var RENDERER_MOBILEGLUES: Renderer
+    lateinit var RENDERER_QUEST_MOBILEGLUES: Renderer
     private var isInit = false
 
     @JvmStatic
@@ -97,6 +98,23 @@ object RendererManager {
             ""
         )
 
+        // Quest VR 专用：GL 出口经 libquest_mobileglues.so 适配层（保护 OpenXR 交换链纹理），
+        // EGL 仍由内置 MobileGlues 承担；仅 VR 版本设置可选
+        RENDERER_QUEST_MOBILEGLUES = Renderer(
+            "MobileGlues VR",
+            context.getString(R.string.settings_vr_renderer_mobileglues),
+            "libquest_mobileglues.so",
+            "libmobileglues.so",
+            "",
+            null,
+            null,
+            Renderer.ID_QUEST_MOBILEGLUES,
+            "",
+            "",
+            vrCompatible = true,
+            vrOnly = true
+        )
+
         RendererPlugin.init(context)
         addRenderer()
         DriverPlugin.init(context)
@@ -108,6 +126,7 @@ object RendererManager {
         rendererList.add(RENDERER_VGPU)
         rendererList.add(RENDERER_ZINK)
         rendererList.add(RENDERER_MOBILEGLUES)
+        rendererList.add(RENDERER_QUEST_MOBILEGLUES)
         rendererList.addAll(RendererPlugin.rendererList)
     }
 
@@ -127,6 +146,20 @@ object RendererManager {
     @JvmStatic
     fun getRenderer(id: String): Renderer {
         return rendererList.find { it.id == id } ?: RENDERER_NGGL4ES
+    }
+
+    /** 按模式过滤可选渲染器：VR 模式仅 vrCompatible，普通模式隐藏 vrOnly 条目 */
+    @JvmStatic
+    fun getRenderersForMode(vrEnabled: Boolean): List<Renderer> = rendererList.filter {
+        if (vrEnabled) it.vrCompatible else !it.vrOnly
+    }
+
+    /** 同 getRenderer，但回落值按模式兜底（非法/跨模式 id 时切到该模式的默认渲染器） */
+    @JvmStatic
+    fun getRendererForMode(id: String, vrEnabled: Boolean): Renderer {
+        val allowed = getRenderersForMode(vrEnabled)
+        return allowed.find { it.id == id }
+            ?: if (vrEnabled) RENDERER_QUEST_MOBILEGLUES else RENDERER_NGGL4ES
     }
 
 }

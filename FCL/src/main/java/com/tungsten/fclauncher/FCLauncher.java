@@ -19,6 +19,7 @@ import com.mio.plugin.DriverPlugin;
 import com.mio.plugin.FFmpegPlugin;
 import com.mio.plugin.NativeLibPlugin;
 import com.mio.plugin.RendererPlugin;
+import com.tungsten.fcl.vr.QuestVrRuntime;
 import com.oracle.dalvik.VMLauncher;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fclauncher.utils.Architecture;
@@ -60,6 +61,7 @@ public class FCLauncher {
     private static void logStartInfo(FCLConfig config, FCLBridge bridge, String task) {
         printTaskTitle(bridge, "Start " + task);
         log(bridge, "Renderer: " + bridge.getRenderer());
+        log(bridge, "Quest VR: " + config.isVrEnabled());
         log(bridge, "Device: " + getDeviceName());
         log(bridge, "Architecture: " + Architecture.archAsString(Architecture.getDeviceArchitecture()));
         log(bridge, "CPU: " + getSocName());
@@ -363,6 +365,11 @@ public class FCLauncher {
 
     private static void addRendererEnvInner(FCLConfig config, HashMap<String, String> envMap) {
         Renderer renderer = config.getRenderer();
+        // Quest VR：渲染环境整体由 VR 运行时接管（外层仅剩 SFPEW 门控与 SDL 库路径补全）
+        if (config.isVrEnabled()) {
+            QuestVrRuntime.applyEnvironment(config, envMap);
+            return;
+        }
         if (!renderer.getPath().isEmpty()) {
             if (!renderer.getPojavRendererId().isEmpty()) {
                 envMap.put("POJAV_RENDERER", renderer.getPojavRendererId());
@@ -462,6 +469,8 @@ public class FCLauncher {
             addRendererEnv(config, envMap);
         }
         addCustomEnv(config, envMap);
+        // 用户自定义环境变量不得覆盖 VR 渲染环境
+        QuestVrRuntime.applyEnvironment(config, envMap);
         printTaskTitle(bridge, "Env Map");
         for (String key : envMap.keySet()) {
             log(bridge, "Env: " + key + "=" + envMap.get(key));
@@ -637,10 +646,21 @@ public class FCLauncher {
         return returnValue;
     }
 
-    private static void setupGraphicAndSoundEngine(FCLConfig config, FCLBridge bridge) {
+    private static void setupGraphicAndSoundEngine(FCLConfig config, FCLBridge bridge) throws IOException {
         String nativeDir = config.getContext().getApplicationInfo().nativeLibraryDir;
 
         bridge.dlopen(nativeDir + "/libopenal.so");
+        if (config.isVrEnabled()) {
+            // VR 依赖链预加载：OpenXR loader、代理出口、VLoader JNI 桥与 GL 出口适配，缺一即失败
+            String[] required = {"libopenxr_loader.so", "libquest_openxr.so", "libvloader.so",
+                    config.getRenderer().getGlName()};
+            for (String library : required) {
+                if (bridge.dlopen(nativeDir + "/" + library) == 0) {
+                    throw new IOException("Cannot load Quest VR library: " + library);
+                }
+            }
+            return;
+        }
         if (!config.getRenderer().getPath().isEmpty()) {
             List<String> envList = config.getRenderer().getPojavEnv();
             if (envList != null) {
@@ -705,6 +725,9 @@ public class FCLauncher {
         // 标志先落在 bridge 实例上：launch 线程无 Looper，不能在此触碰 CallbackBridge（类初始化含 Choreographer）
         bridge.setCleanroomActive(config.getInstalledModLoaders() != null
                 && config.getInstalledModLoaders().getInstallCleanroom());
+        bridge.setLaunchConfig(config);
+        bridge.setVrEnabled(config.isVrEnabled());
+        bridge.setVrRendererId(config.isVrEnabled() ? config.getRenderer().getId() : null);
         return bridge;
     }
 
@@ -745,8 +768,11 @@ public class FCLauncher {
 
                 // launch
                 launch(config, bridge, task);
-            } catch (IOException e) {
+            } catch (Exception | LinkageError e) {
+                // 启动线程失败时走退出回调，界面才能离开等待状态并展示日志
                 Logging.LOG.log(Level.SEVERE, e.toString());
+                bridge.receiveLog("Launch failed: " + e + "\n");
+                bridge.onExit(1);
             }
         });
 

@@ -22,6 +22,10 @@ class FCLConfig(
 
     var lwjglVersion: String = "3.3.3"
 
+    /** 本会话以 Quest VR 模式启动（渲染环境与退出链路均按 VR 处理） */
+    @Transient
+    var isVrEnabled = false
+
     /**
      * 已安装的模组加载器信息
      */
