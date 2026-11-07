@@ -37,6 +37,7 @@ import com.tungsten.fcl.FCLApp
 import com.tungsten.fcl.R
 import com.tungsten.fcl.activity.JVMActivity
 import com.tungsten.fcl.activity.MainActivity
+import com.tungsten.fcl.activity.QuestVrLoadingActivity
 import com.tungsten.fcl.control.MenuType
 import com.tungsten.fcl.setting.GameOption
 import com.tungsten.fcl.setting.MenuSetting
@@ -46,6 +47,11 @@ import com.tungsten.fcl.ui.TaskDialog
 import com.tungsten.fcl.ui.UIManager
 import com.tungsten.fcl.util.JnaNatives
 import com.tungsten.fcl.util.TaskCancellationAction
+import com.tungsten.fcl.vr.QuestGameBootstrap
+import com.tungsten.fcl.vr.QuestVivecraftTargets
+import com.tungsten.fcl.vr.QuestVrRuntime
+import com.tungsten.fcl.vr.VivecraftInspector
+import com.tungsten.fcl.vr.VrWarnings
 import com.tungsten.fclauncher.bridge.FCLBridge
 import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.auth.Account
@@ -116,6 +122,9 @@ class LauncherHelper(
 ) {
 
     private val setting: VersionSetting = profile.getVersionSetting(selectedVersion)
+
+    /** 本次启动是否走 Quest VR（实例已开启且当前设备支持） */
+    private val vrEnabled = setting.isVrEnabled && QuestVrRuntime.isSupported(context)
     private val launchingStepsPane = TaskDialog(context, TaskCancellationAction.NORMAL).apply {
         title = context.getString(R.string.version_launch)
     }
@@ -144,6 +153,7 @@ class LauncherHelper(
     fun launch() {
         // 同一实例重复触发时忽略，避免正在执行的启动协程被覆盖
         if (launchJob?.isActive == true) return
+        if (vrEnabled && QuestGameBootstrap.resumeRunningGame(context)) return
         LOG.info("Launching game version: $selectedVersion")
         launchingStepsPane.show()
         // 任务列表形式展示各启动阶段，随协程推进打勾
@@ -190,6 +200,7 @@ class LauncherHelper(
     private suspend fun launch0() {
         val repository = profile.repository
         val dependencyManager = profile.getDependency()
+        alignRendererWithLaunchMode()
 
         enterStage("launch.state.version")
         // 版本维护/解析较重，协程已在后台线程执行
@@ -204,6 +215,7 @@ class LauncherHelper(
         RendererPlugin.setFpeEmulatorModsPresent(scannedMods)
         // GTNH/lwjgl3ify 兼容：mods 目录存在 lwjgl3ify 时在内存中合并 RFB 启动清单（不落盘），以 RFB + Java17+ 启动
         Lwjgl3ifyPatcher.patchIfNeeded(repository, selectedVersion, scannedMods, versionRef)
+        if (vrEnabled) checkVrRequirements(repository)
         val gameVersion = repository.getGameVersion(versionRef.get())
         val integrityCheck = repository.unmarkVersionLaunchedAbnormally(selectedVersion)
 
@@ -229,6 +241,26 @@ class LauncherHelper(
 
         runPreLaunchChecks(repository, fclBridge, scannedMods)
         startGame(repository, version, fclBridge, javaVersion)
+    }
+
+    /** 渲染器与启动模式对齐：VR 启动只用 VR 渲染器，普通启动还原开启 VR 前的选择 */
+    private fun alignRendererWithLaunchMode() {
+        if (vrEnabled == RendererManager.getRenderer(setting.renderer).vrOnly) return
+        val preferred = if (vrEnabled) setting.renderer else setting.nonVrRenderer
+        setting.renderer = RendererManager.getRendererForMode(preferred, vrEnabled).id
+    }
+
+    /** VR 实例须装有兼容的 Vivecraft：不满足时提示并取消本次启动 */
+    private suspend fun checkVrRequirements(repository: FCLGameRepository) {
+        val status = VivecraftInspector.inspect(File(repository.getRunDirectory(selectedVersion), "mods"))
+        if (status == VivecraftInspector.Status.COMPATIBLE) return
+        val target = QuestVivecraftTargets.capture(repository, selectedVersion)
+        withContext(Dispatchers.Main) {
+            suspendCancellableCoroutine { cont ->
+                VrWarnings.show(context, status, target) { if (cont.isActive) cont.resume(Unit) }
+            }
+        }
+        throw CancellationException("Quest VR: $status")
     }
 
     /** 补全游戏文件与整合包依赖，任务接入弹窗任务列表复用进度展示 */
@@ -350,6 +382,11 @@ class LauncherHelper(
             JnaNatives.ensureNativeLibrary(context, it)
         }
         lwjglVersion?.let(launcher::setLwjglVersion)
+        // 须在 setLwjglVersion 之后：VR 固定使用与 QuestCraft 绑定匹配的 LWJGL 版本
+        if (vrEnabled) {
+            launcher.setVrEnabled(true)
+            launcher.setVrGraphicsSettings(setting.vrRenderScalePercent, setting.vrFsaaEnabled)
+        }
 
         return launcher.launch()
     }
@@ -372,12 +409,13 @@ class LauncherHelper(
         checkMod(fclBridge, gameVersion, scannedMods)
 
         val gameOption = GameOption(repository.getRunDirectory(selectedVersion).absolutePath)
-        gameOption.set("preferredGraphicsBackend", setting.graphicsBackend)
+        // VR 渲染走 OpenXR 的 GLES 交换链，只支持 OpenGL 后端
+        gameOption.set("preferredGraphicsBackend", if (vrEnabled) "opengl" else setting.graphicsBackend)
         gameOption.set("startedCleanly", "true")
         gameOption.save()
     }
 
-    /** 切回主线程拉起 JVMActivity，并把桥接配置与控制器设置交给游戏进程 */
+    /** 切回主线程拉起游戏界面（VR 走 `:game` 进程启动面板），并把桥接配置与控制器设置交给游戏进程 */
     private suspend fun startGame(
         repository: FCLGameRepository,
         version: Version,
@@ -385,24 +423,36 @@ class LauncherHelper(
         javaVersion: JavaVersion,
     ) {
         withContext(Dispatchers.Main) {
-            CallbackBridge.nativeSetUseInputStackQueue(version.arguments.isPresent)
-            val intent = Intent(context, JVMActivity::class.java)
+            if (!vrEnabled) CallbackBridge.nativeSetUseInputStackQueue(version.arguments.isPresent)
+            val intent = Intent(
+                context,
+                if (vrEnabled) QuestVrLoadingActivity::class.java else JVMActivity::class.java
+            )
             fclBridge.scaleFactor = scaleFactor
             fclBridge.controller = setting.controller
             fclBridge.gameDir = repository.getRunDirectory(selectedVersion).absolutePath
             fclBridge.java = javaVersion.getVersion().toString()
-            JVMActivity.setFCLBridge(fclBridge, MenuType.GAME)
+            if (vrEnabled) {
+                QuestGameBootstrap.attachLaunch(context, intent, fclBridge, version.arguments.isPresent)
+            } else {
+                JVMActivity.setFCLBridge(fclBridge, MenuType.GAME)
+            }
             val bundle = Bundle()
             bundle.putString("controller", setting.controller)
             bundle.putString("TERRACOTTA_PLAYER", account.username)
             intent.putExtras(bundle)
             LOG.log(Level.INFO, "Start JVMActivity!")
-            context.startActivity(intent)
+            if (vrEnabled) {
+                QuestGameBootstrap.startLaunch(context, intent) { showLaunchErrorMessage(it) }
+            } else {
+                context.startActivity(intent)
+            }
             if (MainActivity.getInstance().shouldPlayVideo()) {
                 MainActivity.getInstance().mediaPlayer = null
                 MainActivity.getInstance().binding.videoView.stopPlayback()
             }
-            if (context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
+            // VR 退出后须回到启动器任务，启动器不能随游戏启动结束
+            if (!vrEnabled && context.getSharedPreferences("launcher", Context.MODE_PRIVATE)
                     .getBoolean("autoExitLauncher", false)
             ) {
                 FCLApp.getActivity()?.finish()

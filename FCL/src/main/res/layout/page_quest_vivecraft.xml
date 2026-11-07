@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:padding="12dp">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+            android:layout_gravity="center_vertical" android:text="@string/qv_download_title"
+            android:textSize="20sp" android:textStyle="bold" app:auto_text_tint="true" />
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/qv_back" android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/button_back" app:ripple="true" />
+    </LinearLayout>
+
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/qv_target" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:textSize="14sp" app:auto_text_tint="true" />
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" android:text="@string/qv_download_note" android:textSize="12sp"
+        app:auto_text_tint="true" />
+    <com.tungsten.fcllibrary.component.view.FCLTextView
+        android:id="@+id/qv_status" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" android:textSize="14sp" app:auto_text_tint="true" />
+    <ProgressBar android:id="@+id/qv_progress" style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent" android:layout_height="4dp" android:layout_marginTop="6dp"
+        android:max="1000" android:visibility="gone" />
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:layout_marginTop="6dp">
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/qv_refresh" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:text="@string/qv_download_refresh" app:ripple="true" />
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/qv_cancel" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:layout_marginStart="8dp" android:visibility="gone"
+            android:text="@string/button_cancel" app:ripple="true" />
+        <com.tungsten.fcllibrary.component.view.FCLButton
+            android:id="@+id/qv_website" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:layout_marginStart="8dp"
+            android:text="@string/qv_download_website" app:ripple="true" />
+    </LinearLayout>
+
+    <ListView android:id="@+id/qv_list" android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:layout_marginTop="8dp"
+        android:divider="@android:color/transparent" android:dividerHeight="0dp" />
+</LinearLayout>
