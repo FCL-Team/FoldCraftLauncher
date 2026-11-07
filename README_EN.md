@@ -80,6 +80,8 @@ We'd love your help with translations! The project's localization is managed on 
 - [NG-GL4ES](https://github.com/ShirosakiMio/NG-GL4ES): gl4es fork renderer
 - [FCLRendererPlugin](https://github.com/ShirosakiMio/FCLRendererPlugin): renderer plugin extension
 - [FCLDriverPlugin](https://github.com/FCL-Team/FCLDriverPlugin): driver (Turnip etc.) plugin extension
+- [cff1028/FoldCraftLauncher](https://github.com/cff1028/FoldCraftLauncher): origin of the Quest VR implementation
+- [QuestCraft](https://github.com/QuestCraftPlusPlus): Android/OpenXR builds of Vivecraft used by Quest VR
 
 ### Dependencies
 
@@ -115,8 +117,10 @@ This launcher uses the following open source libraries:
 | oboe | Google Inc. | Apache-2.0 | https://github.com/google/oboe |
 | OpenAL Soft | Chris Robinson | LGPL-2.1 | https://github.com/kcat/openal-soft |
 | OpenJDK (multi-arch runtimes, built and released by FCL-Team) | Oracle / OpenJDK contributors | GPL-2.0 + Classpath Exception | https://github.com/FCL-Team/Android-OpenJDK-Build |
+| OpenXR SDK (loader and headers) | The Khronos Group | Apache-2.0 | https://github.com/KhronosGroup/OpenXR-SDK |
 | OpenNBT | Steveice10 (GeyserMC) | MIT | https://github.com/GeyserMC/OpenNBT |
 | pffft (embedded in OpenAL Soft) | Julien Pommier | All rights reserved (ARR) | https://bitbucket.org/jpommier/pffft/src/master/ |
+| Pojlib (OpenXR loader, LWJGL OpenGL ES natives, VLoader JNI interface reference) | QuestCraftPlusPlus | LGPL-3.0 | https://github.com/QuestCraftPlusPlus/Pojlib |
 | SDL3 / SDL2 | Sam Lantinga | Zlib | https://github.com/libsdl-org/SDL |
 | SimpleFPEWrapper | MobileGL-Dev | LGPL-3.0 | https://github.com/MobileGL-Dev/SimpleFPEWrapper |
 | SPIRV-Cross (SPIR-V reflection/translation, natives aar) | Khronos Group | Apache-2.0 | https://github.com/KhronosGroup/SPIRV-Cross |

@@ -82,6 +82,8 @@
 - [NG-GL4ES](https://github.com/ShirosakiMio/NG-GL4ES)：gl4es fork 渲染器
 - [FCLRendererPlugin](https://github.com/ShirosakiMio/FCLRendererPlugin)：渲染器插件扩展
 - [FCLDriverPlugin](https://github.com/FCL-Team/FCLDriverPlugin)：驱动（Turnip 等）插件扩展
+- [cff1028/FoldCraftLauncher](https://github.com/cff1028/FoldCraftLauncher)：Quest VR 实现来源
+- [QuestCraft](https://github.com/QuestCraftPlusPlus)：Quest VR 的 Vivecraft Android/OpenXR 构建
 
 ### 依赖
 
@@ -117,8 +119,10 @@
 | oboe | Google Inc. | Apache-2.0 | https://github.com/google/oboe |
 | OpenAL Soft | Chris Robinson | LGPL-2.1 | https://github.com/kcat/openal-soft |
 | OpenJDK（多架构运行时，FCL-Team 自建发布） | Oracle / OpenJDK contributors | GPL-2.0 + Classpath Exception | https://github.com/FCL-Team/Android-OpenJDK-Build |
+| OpenXR SDK（loader 与头文件） | The Khronos Group | Apache-2.0 | https://github.com/KhronosGroup/OpenXR-SDK |
 | OpenNBT | Steveice10（GeyserMC） | MIT | https://github.com/GeyserMC/OpenNBT |
 | pffft（OpenAL Soft 内嵌） | Julien Pommier | 保留所有权利（ARR） | https://bitbucket.org/jpommier/pffft/src/master/ |
+| Pojlib（OpenXR loader、LWJGL OpenGL ES 原生库，VLoader JNI 接口参考） | QuestCraftPlusPlus | LGPL-3.0 | https://github.com/QuestCraftPlusPlus/Pojlib |
 | SDL3 / SDL2 | Sam Lantinga | Zlib | https://github.com/libsdl-org/SDL |
 | SimpleFPEWrapper | MobileGL-Dev | LGPL-3.0 | https://github.com/MobileGL-Dev/SimpleFPEWrapper |
 | SPIRV-Cross（SPIR-V 反射/转换，natives aar） | Khronos Group | Apache-2.0 | https://github.com/KhronosGroup/SPIRV-Cross |
