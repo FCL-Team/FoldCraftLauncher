@@ -11,6 +11,7 @@ import android.view.View
 import android.view.WindowManager
 import com.mio.util.showErrorDialog
 import com.tungsten.fcl.R
+import com.tungsten.fcl.vr.QuestGameExit
 import com.tungsten.fcl.databinding.ActivityJvmCrashBinding
 import com.tungsten.fclcore.util.Logging
 import com.tungsten.fclcore.util.StringUtils
@@ -103,6 +104,15 @@ class JVMCrashActivity : FCLActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
+        if ((v === binding.restart || v === binding.close) && intent.hasExtra(QuestGameExit.EXTRA_TASK)) {
+            // VR `:game` 进程的崩溃页：先恢复启动器任务再结束本进程（直接 kill 会把用户留在头显空白）
+            startActivity(Intent(this, QuestLauncherReturnActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                .putExtra(QuestGameExit.EXTRA_TASK, intent.getIntExtra(QuestGameExit.EXTRA_TASK, -1)))
+            finishAndRemoveTask()
+            Process.killProcess(Process.myPid())
+            return
+        }
         if (v === binding.restart) {
             val intent = Intent(this, SplashActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED)

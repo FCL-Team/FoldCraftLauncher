@@ -3,6 +3,10 @@ package com.tungsten.fcl.activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
@@ -33,6 +37,7 @@ import com.tungsten.fcl.game.sdl.SdlBridge;
 import com.mio.flite.FliteTts;
 import com.mio.service.GameService;
 import com.tungsten.fcl.setting.GameOption;
+import com.tungsten.fcl.vr.QuestVrSession;
 import com.tungsten.fcl.terracotta.Terracotta;
 import com.mio.util.AndroidUtilKt;
 import com.tungsten.fclauncher.bridge.FCLBridge;
@@ -85,6 +90,9 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         }
     };
 
+    @Nullable private QuestVrSession questSession;
+    private boolean questInputInitialized;
+
     private MenuCallback menu;
     private static MenuType menuType;
     private static FCLBridge fclBridge;
@@ -100,6 +108,24 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         JVMActivity.menuType = menuType;
     }
 
+    /** VR 面板进程内直接取已就绪的 bridge（跨进程启动时无静态传参） */
+    @Nullable
+    public static FCLBridge getPreparedBridge() {
+        return fclBridge;
+    }
+
+    /** VR 平面面板按不透明 RGB 合成：DST_OVER 铺黑修正 GLES 帧的 alpha 通道 */
+    private void configureOpaqueGamePresentation() {
+        textureView.setOpaque(true);
+        Paint presentationPaint = new Paint();
+        presentationPaint.setColorFilter(new PorterDuffColorFilter(Color.BLACK, PorterDuff.Mode.DST_OVER));
+        textureView.setLayerPaint(presentationPaint);
+    }
+
+    private boolean isQuestSession() {
+        return questSession != null;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,10 +136,25 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             return;
         }
 
+        if (fclBridge.isVrEnabled()) {
+            questSession = QuestVrSession.get();
+            if (questSession == null) {
+                finish();
+                return;
+            }
+            questSession.restoreLaunchMetadata(this);
+        }
         menu = menuType == MenuType.GAME ? new GameMenu() : new JarExecutorMenu();
         menu.setup(this, fclBridge);
+        if (questSession != null) {
+            if (!(menu instanceof GameMenu) || !questSession.attachFlat(this, (GameMenu) menu)) {
+                finish();
+                return;
+            }
+        }
         GameService.start(this);
         textureView = findViewById(R.id.texture_view);
+        if (isQuestSession()) configureOpaqueGamePresentation();
         textureView.setSurfaceTextureListener(this);
         if (FCLBridge.FORCE_RESOLUTION) {
             applyForceResolutionLayout();
@@ -310,6 +351,21 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         Surface nativeSurface = new Surface(surfaceTexture);
         gameSurface = nativeSurface;
         applyMaxRefreshRatePolicy();
+        if (isQuestSession()) {
+            // VR：渲染目标由 XR 合成器持有，面板 Surface 仅作平面镜像，游戏线程已在启动面板启动
+            fclBridge.setSurfaceTexture(surfaceTexture);
+            int[] size = resolveWindowSize(i, i1);
+            surfaceTexture.setDefaultBufferSize(size[0], size[1]);
+            CallbackBridge.windowWidth = size[0];
+            CallbackBridge.windowHeight = size[1];
+            if (!questInputInitialized) {
+                menu.getInput().initExternalController(textureView);
+                questInputInitialized = true;
+            }
+            questSession.flatSurface(this, nativeSurface);
+            fclBridge.pushEventWindow(size[0], size[1]);
+            return;
+        }
         if (isRunning) {
             fclBridge.setSurfaceTexture(surfaceTexture);
             CallbackBridge.setupBridgeWindow(nativeSurface);
@@ -364,6 +420,12 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
 
     @Override
     public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surfaceTexture) {
+        if (isQuestSession()) {
+            questSession.flatSurface(this, null);
+            if (gameSurface != null) gameSurface.release();
+            gameSurface = null;
+            return true;
+        }
         fclBridge.setSurfaceDestroyed(true);
         gameSurface = null;
         if (SdlBridge.getSdlEnabled() && SDLActivity.getSDLSurface() != null) {
@@ -391,10 +453,19 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     protected void onPause() {
         if (menu != null) {
-            menu.onPause();
+            if (isQuestSession() && questSession.wantsImmersive() && menu instanceof GameMenu) {
+                // 即将切入沉浸面板：暂停输入但不发 ESC（游戏内菜单状态保持）
+                ((GameMenu) menu).pauseForVrTransition();
+            } else {
+                menu.onPause();
+            }
         }
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, 0);
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 0);
+        if (isQuestSession()) {
+            questSession.flatPaused(this);
+        } else {
+            CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, 0);
+            CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 0);
+        }
         super.onPause();
     }
 
@@ -403,20 +474,25 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         if (menu != null) {
             menu.onResume();
         }
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, 1);
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 1);
+        if (isQuestSession()) {
+            questSession.flatResumed(this);
+        } else {
+            CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, 1);
+            CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_HOVERED, 1);
+        }
         super.onResume();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 1);
+        // VR 平面面板的可见性由 XR 合成状态决定，不经窗口属性上报
+        if (!isQuestSession()) CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 1);
     }
 
     @Override
     protected void onStop() {
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 0);
+        if (!isQuestSession()) CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 0);
         super.onStop();
     }
 
@@ -493,18 +569,26 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         if (displayManager != null) {
             displayManager.unregisterDisplayListener(displayListener);
         }
-        Terracotta.setWaiting(this, true);
-        CallbackBridge.resetInputState();
-        SdlBridge.reset();
-        FliteTts.shutdown();
-        GameService.stop(this);
+        if (isQuestSession()) {
+            // VR 会话的保活与输入复位由会话层统一管理（进程生命周期与游戏一致）
+            questSession.flatDestroyed(this);
+            if (menu instanceof GameMenu) ((GameMenu) menu).releaseSessionPanel();
+        } else {
+            Terracotta.setWaiting(this, true);
+            CallbackBridge.resetInputState();
+            SdlBridge.reset();
+            FliteTts.shutdown();
+            GameService.stop(this);
+        }
         super.onDestroy();
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, hasFocus ? 1 : 0);
+        if (!isQuestSession()) {
+            CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, hasFocus ? 1 : 0);
+        }
         if (menu == null || menuType != MenuType.GAME) {
             return;
         }

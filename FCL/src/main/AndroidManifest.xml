@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:horizonos="http://schemas.horizonos/sdk"
+    xmlns:metavr="http://schemas.meta.com/metavr-sdk"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <metavr:uses-metavr-sdk
+        metavr:minSdkVersion="69"
+        metavr:targetSdkVersion="69" />
+    <horizonos:uses-horizonos-sdk
+        horizonos:minSdkVersion="69"
+        horizonos:targetSdkVersion="69" />
+
     <uses-feature android:glEsVersion="0x00020000" />
+    <uses-feature
+        android:name="android.hardware.vr.headtracking"
+        android:required="false"
+        android:version="1" />
     <uses-feature
         android:name="android.hardware.type.pc"
         android:required="false" />
@@ -28,6 +41,7 @@
         android:name="android.permission.HIGH_SAMPLING_RATE_SENSORS"
         tools:ignore="HighSamplingRate" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="org.khronos.openxr.permission.OPENXR_SYSTEM" />
 
     <application
         android:name=".FCLApp"
@@ -50,6 +64,13 @@
         android:usesCleartextTraffic="true"
         tools:ignore="DiscouragedApi"
         tools:targetApi="33">
+        <meta-data
+            android:name="com.oculus.supportedDevices"
+            android:value="quest2|questpro|quest3|quest3s" />
+        <meta-data
+            android:name="com.oculus.vr.focusaware"
+            android:value="true" />
+
         <activity
             android:name=".activity.SplashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode"
@@ -60,6 +81,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="com.oculus.intent.category.2D" />
             </intent-filter>
         </activity>
 
@@ -126,6 +148,65 @@
             android:process=":crash"
             android:screenOrientation="sensor" />
         <activity
+            android:name=".activity.QuestVrLoadingActivity"
+            android:configChanges="locale|fontScale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode|density"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:process=":game"
+            android:screenOrientation="sensorLandscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.oculus.intent.category.2D" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.QuestFlatActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="locale|fontScale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode|density"
+            android:exported="false"
+            android:launchMode="singleTop"
+            android:process=":game"
+            android:screenOrientation="sensorLandscape">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.oculus.intent.category.2D" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.QuestVrActivity"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="locale|fontScale|keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode|density"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:process=":game"
+            android:screenOrientation="landscape"
+            android:taskAffinity="${applicationId}.questimmersive">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.oculus.intent.category.VR" />
+                <category android:name="org.khronos.openxr.intent.category.IMMERSIVE_HMD" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.QuestLauncherReturnActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.oculus.intent.category.2D" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name="com.tungsten.fcllibrary.browser.FileBrowserActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode"
             android:screenOrientation="sensorLandscape" />
@@ -153,6 +234,16 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Keep game process alive while a Minecraft session is running" />
+        </service>
+        <service
+            android:name="com.mio.service.QuestGameService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse"
+            android:process=":game">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Keep the Quest VR Minecraft process alive while a game session is running" />
         </service>
         <service
             android:name=".terracotta.TerracottaVPNService"
@@ -195,6 +286,15 @@
             android:initOrder="101" />
     </application>
     <queries>
+        <provider android:authorities="org.khronos.openxr.runtime_broker;org.khronos.openxr.system_runtime_broker" />
+
+        <intent>
+            <action android:name="org.khronos.openxr.OpenXRRuntimeService" />
+        </intent>
+        <intent>
+            <action android:name="org.khronos.openxr.OpenXRApiLayerService" />
+        </intent>
+
         <package android:name="net.kdt.pojavlaunch.ffmpeg" />
 
         <intent>

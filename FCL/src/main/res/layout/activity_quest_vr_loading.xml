@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/qv_start_background" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:background="#18202D" android:padding="24dp">
+
+    <com.tungsten.fcllibrary.component.view.FCLLinearLayout
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        android:orientation="vertical" android:padding="24dp"
+        android:background="@drawable/bg_container_white" app:auto_linear_background_tint="true">
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/qv_start_title" android:textSize="26sp" android:textStyle="bold"
+            app:auto_text_tint="true" />
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/qv_start_instance" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:textSize="16sp" android:maxLines="1" android:ellipsize="end" app:auto_text_tint="true" />
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/qv_start_phase" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="20dp"
+            android:text="@string/qv_start_loading" android:textSize="20sp" app:auto_text_tint="true" />
+        <ProgressBar style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent" android:layout_height="6dp"
+            android:layout_marginTop="12dp" android:indeterminate="true" />
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:id="@+id/qv_start_elapsed" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:textSize="13sp" app:auto_text_tint="true" />
+        <com.tungsten.fcllibrary.component.view.FCLTextView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" android:text="@string/qv_start_hint"
+            android:textSize="14sp" app:auto_text_tint="true" />
+        <FrameLayout android:layout_width="match_parent" android:layout_height="0dp"
+            android:layout_weight="1" android:layout_marginTop="12dp">
+            <com.tungsten.fcl.vr.QuestVrLogScrollView android:id="@+id/qv_start_log_scroll" android:layout_width="match_parent"
+                android:layout_height="match_parent" android:visibility="gone" android:fillViewport="true">
+                <com.tungsten.fcllibrary.component.view.FCLTextView
+                    android:id="@+id/qv_start_log" android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:fontFamily="monospace"
+                    android:textSize="11sp" android:textIsSelectable="true" app:auto_text_tint="true" />
+            </com.tungsten.fcl.vr.QuestVrLogScrollView>
+        </FrameLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginTop="12dp">
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/qv_start_show_log" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="@string/qv_start_show_log" app:ripple="true" />
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/qv_start_latest_log" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:layout_marginStart="8dp"
+                android:visibility="gone" android:text="@string/qv_start_latest_log" app:ripple="true" />
+            <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+            <com.tungsten.fcllibrary.component.view.FCLButton
+                android:id="@+id/qv_start_cancel" android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:text="@string/qv_start_cancel" app:ripple="true" />
+        </LinearLayout>
+    </com.tungsten.fcllibrary.component.view.FCLLinearLayout>
+</FrameLayout>
