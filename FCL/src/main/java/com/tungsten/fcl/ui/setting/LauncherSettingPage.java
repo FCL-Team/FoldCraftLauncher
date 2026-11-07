@@ -31,6 +31,7 @@ import com.tungsten.fcl.activity.MainActivity;
 import com.tungsten.fcl.databinding.PageSettingListBinding;
 import com.tungsten.fcl.setting.DownloadSource;
 import com.tungsten.fcl.upgrade.UpdateChecker;
+import com.tungsten.fcl.vr.QuestVrPreferences;
 import com.tungsten.fclcore.mod.RemoteModCache;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.task.FetchTask;
@@ -415,6 +416,9 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         switch (tag) {
             case SWITCH_AUTO_EXIT:
                 sharedPreferences.edit().putBoolean("autoExitLauncher", checked).apply();
+                break;
+            case SWITCH_QUEST_VR_TRANSITION_ANIMATION:
+                QuestVrPreferences.setTransitionAnimationEnabled(getContext(), checked);
                 break;
             case SWITCH_IGNORE_NOTCH:
                 ThemeEngine.getInstance().applyAndSave(getContext(), getActivity().getWindow(), checked);

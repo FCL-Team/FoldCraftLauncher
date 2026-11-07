@@ -21,6 +21,8 @@ import com.tungsten.fcl.databinding.ItemVersionSettingValueBinding
 import com.tungsten.fcl.game.FCLGameRepository
 import com.tungsten.fcl.setting.Controllers
 import com.tungsten.fcl.setting.VersionSetting
+import com.tungsten.fcl.vr.QuestVrGraphicsSettings
+import com.tungsten.fcl.vr.QuestVrRuntime
 import com.tungsten.fcl.ui.setting.SettingGroup
 import com.tungsten.fclcore.util.platform.MemoryUtils
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
@@ -31,6 +33,8 @@ enum class VersionSettingTag {
     // 特殊开关行
     SPECIAL,
     VULKAN,
+    VR,
+    VR_FSAA,
 
     // 按钮行
     EDIT_ICON,
@@ -46,6 +50,7 @@ enum class VersionSettingTag {
     INSTALL_DRIVER,
     EDIT_VULKAN_CHECK,
     EDIT_ENV,
+    EDIT_VR_RENDER_SCALE,
 
     // 编辑行
     JVM_ARGS,
@@ -87,6 +92,22 @@ class VersionSettingAdapter(
     /** 检测入口行展示的缓存摘要（Vulkan 版本或"未检测"），由页面按需更新 */
     var vulkanCheckSummary: String = ""
 
+    /** VR 开启时按需加载的实例图形设置（null=未加载或不可用），供渲染比例/FSAA 行回落展示 */
+    private var vrGraphicsSettings: QuestVrGraphicsSettings? = null
+
+    /** 实例图形设置加载完成后局部刷新 VR 相关行：行内 disabled 在构建时取值，须先重建行对象 */
+    fun setVrGraphicsSettings(settings: QuestVrGraphicsSettings?) {
+        vrGraphicsSettings = settings
+        if (!::versionSetting.isInitialized) return
+        rows = buildRows()
+        refreshRow(VersionSettingTag.EDIT_VR_RENDER_SCALE)
+        refreshRow(VersionSettingTag.VR_FSAA)
+    }
+
+    /** 展示用渲染比例：用户覆写优先，回落实例配置值 */
+    fun vrRenderScalePercent(): Int? =
+        versionSetting.vrRenderScalePercent ?: vrGraphicsSettings?.renderScalePercent
+
     /** 版本/状态变化时全量重建行列表 */
     fun update(
         versionSetting: VersionSetting,
@@ -107,21 +128,38 @@ class VersionSettingAdapter(
     }
 
     /**
-     * 「使用系统 Vulkan 驱动」开关切换后的局部刷新。
-     * 该开关只控制下方自定义驱动行的显隐：全量 rebuild 会把开关行一并重绑，
-     * 而 RecyclerView 复用重绑发生在 detach 状态下，setChecked 会取消用户点按
-     * 触发的滑块动画，表现为开关无动画直接跳变。这里仅插入/移除驱动行，
-     * 开关行保留原视图，动画正常播放。
+     * 开关切换引发行显隐变化后的局部刷新（Vulkan 驱动行、VR 渲染比例/FSAA 行等）。
+     * 全量 rebuild 会把开关行一并重绑，而 RecyclerView 复用重绑发生在 detach 状态下，
+     * setChecked 会取消用户点按触发的滑块动画，表现为开关无动画直接跳变。
+     * 这里按行身份（类型+tag+关键状态）做前缀/后缀差分，仅通知插入/移除的区段，
+     * 未变化的行保留原视图，开关动画正常播放。
      */
-    fun updateVulkanDriverRow() {
+    fun refreshRowDiff() {
         val newRows = buildRows()
-        val oldIndex = rows.indexOfFirst { it is Row.ValueRow && it.editTag == VersionSettingTag.EDIT_DRIVER }
-        val newIndex = newRows.indexOfFirst { it is Row.ValueRow && it.editTag == VersionSettingTag.EDIT_DRIVER }
-        rows = newRows
-        when {
-            oldIndex >= 0 && newIndex < 0 -> notifyItemRemoved(oldIndex)
-            oldIndex < 0 && newIndex >= 0 -> notifyItemInserted(newIndex)
+        var prefix = 0
+        while (prefix < rows.size && prefix < newRows.size
+            && rowKey(rows[prefix]) == rowKey(newRows[prefix])
+        ) prefix++
+        var oldEnd = rows.size
+        var newEnd = newRows.size
+        while (oldEnd > prefix && newEnd > prefix
+            && rowKey(rows[oldEnd - 1]) == rowKey(newRows[newEnd - 1])
+        ) {
+            oldEnd--
+            newEnd--
         }
+        rows = newRows
+        for (index in oldEnd - 1 downTo prefix) notifyItemRemoved(index)
+        for (index in prefix until newEnd) notifyItemInserted(index)
+    }
+
+    /** 行身份标识：值 lambda 每次构建都是新实例，不能直接 equals 比较 */
+    private fun rowKey(row: Row): Any = when (row) {
+        is Row.SwitchRow -> Triple("s", row.rowTag, row.disabled)
+        is Row.ValueRow -> Triple("v", row.rowTag, row.disabled)
+        is Row.EditRow -> "e" to row.rowTag
+        is Row.MemoryRow -> "m"
+        is Row.IconRow -> "i"
     }
 
     /** 对话框修改属性后局部刷新对应行（行未显示时下次 bind 自然读到新值） */
@@ -185,55 +223,92 @@ class VersionSettingAdapter(
                 descriptionRes = R.string.settings_fcl_controller_desc,
                 group = SettingGroup.Common
             )
-            result += Row.ValueRow(
-                R.string.settings_fcl_graphics_backend,
-                { versionSetting.graphicsBackend },
-                VersionSettingTag.EDIT_BACKEND,
-                null,
-                descriptionRes = R.string.settings_fcl_graphics_backend_desc,
-                group = SettingGroup.Render,
-            )
-            result += Row.ValueRow(
-                R.string.settings_fcl_renderer,
-                { rendererText() },
-                VersionSettingTag.EDIT_RENDERER,
-                VersionSettingTag.INSTALL_RENDERER,
-                descriptionRes = R.string.settings_fcl_renderer_desc,
-                group = SettingGroup.Render,
-            )
-            result += Row.SwitchRow(
-                R.string.settings_fcl_vulkan_driver_system,
-                { versionSetting.isVKDriverSystem },
-                { listener.onSpecialSwitch(VersionSettingTag.VULKAN, it) },
-                rowTag = VersionSettingTag.VULKAN,
-                descriptionRes = R.string.settings_fcl_vulkan_driver_system_desc,
-                group = SettingGroup.Render,
-            )
-            if (!versionSetting.isVKDriverSystem) {
+            val vrActive = !globalSetting && QuestVrRuntime.isSupported(context) && versionSetting.isVrEnabled
+            if (!globalSetting && QuestVrRuntime.isSupported(context)) {
+                result += Row.SwitchRow(
+                    R.string.settings_vr_enable,
+                    { versionSetting.isVrEnabled },
+                    { listener.onSpecialSwitch(VersionSettingTag.VR, it) },
+                    rowTag = VersionSettingTag.VR,
+                    descriptionRes = R.string.settings_vr_enable_desc,
+                    group = SettingGroup.Render,
+                )
+            }
+            if (vrActive) {
                 result += Row.ValueRow(
-                    R.string.settings_fcl_driver,
-                    { versionSetting.driver },
-                    VersionSettingTag.EDIT_DRIVER,
-                    VersionSettingTag.INSTALL_DRIVER,
-                    descriptionRes = R.string.settings_fcl_driver_desc,
+                    R.string.settings_vr_render_scale,
+                    { vrRenderScalePercent()?.let { "$it%" }
+                        ?: context.getString(R.string.settings_vr_graphics_loading) },
+                    VersionSettingTag.EDIT_VR_RENDER_SCALE,
+                    null,
+                    disabled = vrRenderScalePercent() == null,
+                    descriptionRes = R.string.settings_vr_render_scale_desc,
+                    group = SettingGroup.Render,
+                )
+                result += Row.SwitchRow(
+                    R.string.settings_vr_fsaa,
+                    { versionSetting.vrFsaaEnabled ?: vrGraphicsSettings?.isFsaaEnabled ?: false },
+                    { versionSetting.vrFsaaEnabled = it },
+                    disabled = versionSetting.vrFsaaEnabled == null && vrGraphicsSettings == null,
+                    rowTag = VersionSettingTag.VR_FSAA,
+                    descriptionRes = R.string.settings_vr_fsaa_desc,
+                    group = SettingGroup.Render,
+                )
+            }
+            // VR 走固定 GLES 出口，图形后端/驱动/检测设置不生效，行随开关隐藏
+            if (!vrActive) {
+                result += Row.ValueRow(
+                    R.string.settings_fcl_graphics_backend,
+                    { versionSetting.graphicsBackend },
+                    VersionSettingTag.EDIT_BACKEND,
+                    null,
+                    descriptionRes = R.string.settings_fcl_graphics_backend_desc,
                     group = SettingGroup.Render,
                 )
             }
             result += Row.ValueRow(
-                R.string.settings_fcl_vulkan_check,
-                { vulkanCheckSummary },
-                VersionSettingTag.EDIT_VULKAN_CHECK,
-                null,
-                descriptionRes = R.string.settings_fcl_vulkan_check_desc,
+                R.string.settings_fcl_renderer,
+                { rendererText() },
+                VersionSettingTag.EDIT_RENDERER,
+                if (vrActive) null else VersionSettingTag.INSTALL_RENDERER,
+                descriptionRes = R.string.settings_fcl_renderer_desc,
                 group = SettingGroup.Render,
             )
-            result += Row.SwitchRow(
-                R.string.settings_fcl_vulkan_check_disable,
-                { versionSetting.isNotCheckVulkan },
-                { versionSetting.isNotCheckVulkan = it },
-                descriptionRes = R.string.settings_fcl_vulkan_check_disable_desc,
-                group = SettingGroup.Render,
-            )
+            if (!vrActive) {
+                result += Row.SwitchRow(
+                    R.string.settings_fcl_vulkan_driver_system,
+                    { versionSetting.isVKDriverSystem },
+                    { listener.onSpecialSwitch(VersionSettingTag.VULKAN, it) },
+                    rowTag = VersionSettingTag.VULKAN,
+                    descriptionRes = R.string.settings_fcl_vulkan_driver_system_desc,
+                    group = SettingGroup.Render,
+                )
+                if (!versionSetting.isVKDriverSystem) {
+                    result += Row.ValueRow(
+                        R.string.settings_fcl_driver,
+                        { versionSetting.driver },
+                        VersionSettingTag.EDIT_DRIVER,
+                        VersionSettingTag.INSTALL_DRIVER,
+                        descriptionRes = R.string.settings_fcl_driver_desc,
+                        group = SettingGroup.Render,
+                    )
+                }
+                result += Row.ValueRow(
+                    R.string.settings_fcl_vulkan_check,
+                    { vulkanCheckSummary },
+                    VersionSettingTag.EDIT_VULKAN_CHECK,
+                    null,
+                    descriptionRes = R.string.settings_fcl_vulkan_check_desc,
+                    group = SettingGroup.Render,
+                )
+                result += Row.SwitchRow(
+                    R.string.settings_fcl_vulkan_check_disable,
+                    { versionSetting.isNotCheckVulkan },
+                    { versionSetting.isNotCheckVulkan = it },
+                    descriptionRes = R.string.settings_fcl_vulkan_check_disable_desc,
+                    group = SettingGroup.Render,
+                )
+            }
             result += Row.SwitchRow(
                 R.string.settings_advanced_dont_check_game_completeness,
                 { versionSetting.isNotCheckGame },
@@ -325,6 +400,7 @@ class VersionSettingAdapter(
             val value: () -> String,
             val editTag: VersionSettingTag?,
             val installTag: VersionSettingTag?,
+            val disabled: Boolean = false,
             override val descriptionRes: Int = 0,
             override val group: SettingGroup? = null
         ) : Row() {
@@ -445,6 +521,7 @@ class VersionSettingAdapter(
         binding.value.text = row.value()
         binding.buttonEdit.visibility = if (row.editTag != null) View.VISIBLE else View.GONE
         binding.buttonInstall.visibility = if (row.installTag != null) View.VISIBLE else View.GONE
+        binding.buttonEdit.isEnabled = !row.disabled
         binding.buttonEdit.setOnClickListener { row.editTag?.let { listener.onButtonClick(it) } }
         binding.buttonInstall.setOnClickListener { row.installTag?.let { listener.onButtonClick(it) } }
     }
