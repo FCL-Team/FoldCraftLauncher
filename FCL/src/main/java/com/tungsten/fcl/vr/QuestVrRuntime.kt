@@ -41,12 +41,29 @@ object QuestVrRuntime {
         "closeWithRuntime"
     )
 
-    /** 当前设备是否具备 Quest VR 条件：arm64 + 头部追踪 + OpenXR loader 就位 */
+    /** 当前设备是否具备 Quest VR 条件：arm64 + 头部追踪（Meta 设备按厂商/型号兜底）+ OpenXR loader 就位 */
     @JvmStatic
     fun isSupported(context: Context): Boolean {
+        // 进程内设备能力不变，首判结果缓存并留排查日志
+        support?.let { return it }
+        val result = checkSupported(context)
+        android.util.Log.i("FCL-QuestVR", "Device VR support: $result " +
+                "(manufacturer=${Build.MANUFACTURER}, model=${Build.MODEL}, " +
+                "abi=${Build.SUPPORTED_ABIS.firstOrNull()}, loader=${OPENXR_LOADER})")
+        support = result
+        return result
+    }
+
+    @Volatile
+    private var support: Boolean? = null
+
+    private fun checkSupported(context: Context): Boolean {
         if (!Build.SUPPORTED_ABIS.contains("arm64-v8a")) return false
-        if (!context.packageManager.hasSystemFeature(PackageManager.FEATURE_VR_HEADTRACKING)) return false
-        return File(context.applicationInfo.nativeLibraryDir, OPENXR_LOADER).isFile
+        if (!File(context.applicationInfo.nativeLibraryDir, OPENXR_LOADER).isFile) return false
+        // Horizon OS 部分版本不向普通应用报告标准头部追踪特性，Meta 设备按厂商/型号兜底
+        if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_VR_HEADTRACKING)) return true
+        return Build.MANUFACTURER.equals("Meta", ignoreCase = true) ||
+                Build.MODEL.contains("Quest", ignoreCase = true)
     }
 
     /** 将内置的 LWJGL 模块 jar 解包到私有目录（哈希不变则跳过） */
