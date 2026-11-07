@@ -80,6 +80,25 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
     }
 
     /**
+     * 反序列化暂存的样式引用：名字引用存样式名，旧格式内联对象存样式本体。
+     * 由所属布局在解析完成后通过 {@link #resolveStyle(StyleResolver)} 挂回样式表对象。
+     */
+    private transient String pendingStyleName;
+    private transient ControlButtonStyle pendingInlineStyle;
+
+    public void resolveStyle(StyleResolver resolver) {
+        if (pendingInlineStyle != null) {
+            resolver.registerInlineButtonStyle(pendingInlineStyle);
+            setStyle(resolver.resolveButtonStyle(pendingInlineStyle.getName()));
+            pendingInlineStyle = null;
+            pendingStyleName = null;
+        } else if (pendingStyleName != null) {
+            setStyle(resolver.resolveButtonStyle(pendingStyleName));
+            pendingStyleName = null;
+        }
+    }
+
+    /**
      * Base info data
      * Contains position and size
      */
@@ -203,15 +222,14 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
             ControlButtonData data = new ControlButtonData(Optional.ofNullable(get(obj, "id")).map(JsonElement::getAsString).orElse(UUID.randomUUID().toString()));
 
             data.setText(Optional.ofNullable(get(obj, "text")).map(JsonElement::getAsString).orElse(""));
-            if (!ButtonStyles.isInitialized()) {
-                ButtonStyles.init();
-            }
+            // 样式归属各布局，按键仅存样式名：解析暂存引用，由所属布局 resolveStyle 挂回样式表对象
             JsonElement style = get(obj, "style");
             if (style != null && style.toString().contains("\"name\"")) {
-                data.setStyle(new ControlButtonStyle.Serializer().deserialize(style, null, null));
-                ButtonStyles.addStyle(data.getStyle());
+                ControlButtonStyle inline = new ControlButtonStyle.Serializer().deserialize(style, null, null);
+                data.setStyle(inline);
+                data.pendingInlineStyle = inline;
             } else {
-                data.setStyle(ButtonStyles.findStyleByName(style != null && style.isJsonPrimitive() ? style.getAsString() : ""));
+                data.pendingStyleName = style != null && style.isJsonPrimitive() ? style.getAsString() : "";
             }
             data.setBaseInfo(Optional.ofNullable(get(obj, "baseInfo")).map(JsonElement::getAsJsonObject).map(baseInfo -> new BaseInfoData.Serializer().deserialize(baseInfo, null, null)).orElseGet(BaseInfoData::new));
             data.setEvent(Optional.ofNullable(get(obj, "event")).map(JsonElement::getAsJsonObject).map(event -> new ButtonEventData.Serializer().deserialize(event, null, null)).orElseGet(ButtonEventData::new));

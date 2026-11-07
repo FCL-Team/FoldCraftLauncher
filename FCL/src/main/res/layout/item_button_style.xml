@@ -20,7 +20,7 @@
         android:id="@+id/button"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/radio_button"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,10 +34,20 @@
         android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/delete"
+        app:layout_constraintEnd_toStartOf="@id/edit"
         app:layout_constraintStart_toEndOf="@id/button"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.5" />
+
+    <com.tungsten.fcllibrary.component.view.FCLImageButton
+        android:id="@+id/edit"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_baseline_edit_24"
+        android:tint="@android:color/darker_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/delete"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.tungsten.fcllibrary.component.view.FCLImageButton
         android:id="@+id/delete"
