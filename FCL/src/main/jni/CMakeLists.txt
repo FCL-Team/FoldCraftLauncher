@@ -157,6 +157,7 @@ add_library(
     native_hooks/chmod_hook.c
     native_hooks/sdl_hook.c
     native_hooks/sdl_dlopen_hook.c
+    questvr/quest_vr.c
 )
 
 target_include_directories(
@@ -177,17 +178,63 @@ target_link_libraries(
         dl
         android
         bytehook::bytehook
+        EGL
+        GLESv3
+        vloader
 )
 
-# 仅在arm64-v8a架构下链接EGL和GLESv2
-if (${ANDROID_ABI} STREQUAL "arm64-v8a")
-    target_link_libraries(
-            pojavexec
-            PRIVATE
-            EGL
-            GLESv2
-    )
-endif ()
+# 模块：vloader - Quest VR 的 Vivecraft VLoader JNI 桥与跨库状态共享
+add_library(
+    vloader
+    SHARED
+    questvr/vloader.c
+)
+target_link_libraries(
+        vloader
+        PRIVATE
+        log
+        dl
+)
+
+# 模块：quest_openxr - OpenXR loader 代理（xrGetInstanceProcAddr 出口拦截与会话校验）
+add_library(
+    quest_openxr
+    SHARED
+    questvr/openxr_adapter.c
+)
+target_include_directories(
+        quest_openxr
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+target_link_libraries(
+        quest_openxr
+        PRIVATE
+        vloader
+        EGL
+        GLESv3
+        log
+        dl
+)
+
+# 模块：quest_mobileglues - LWJGL GL 函数出口适配（保护 OpenXR 交换链纹理）
+add_library(
+    quest_mobileglues
+    SHARED
+    questvr/mobileglues_adapter.c
+)
+target_include_directories(
+        quest_mobileglues
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+)
+target_link_libraries(
+        quest_mobileglues
+        PRIVATE
+        vloader
+        log
+        dl
+)
 
 # 模块：vulkan_check - Vulkan 设备能力检测
 # dlopen 系统 libvulkan 或经 liblinkerhook 加载自定义驱动后枚举物理设备，

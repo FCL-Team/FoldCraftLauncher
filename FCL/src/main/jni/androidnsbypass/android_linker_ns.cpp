@@ -43,9 +43,22 @@ struct android_namespace_t *android_create_namespace_escape(const char *name,
             permitted_when_isolated_path, parent_namespace, caller);
 }
 
-android_get_exported_namespace_t android_get_exported_namespace = private_get_exported_namespace;
-android_link_namespaces_all_libs_t android_link_namespaces_all_libs = private_link_namespaces_all_libs;
-android_link_namespaces_t android_link_namespaces = private_link_namespaces;
+// 以真函数而非函数指针导出：数据符号在部分 linker namespace 组合下不可被跨库解析，
+// Quest VR 的 vloader/quest_openxr 需要跨库直接调用这些入口
+struct android_namespace_t *android_get_exported_namespace(const char *name) {
+    return private_get_exported_namespace(name);
+}
+
+bool android_link_namespaces_all_libs(struct android_namespace_t *from,
+                                      struct android_namespace_t *to) {
+    return private_link_namespaces_all_libs(from, to);
+}
+
+bool android_link_namespaces(struct android_namespace_t *from,
+                             struct android_namespace_t *to,
+                             const char *shared_libs_sonames) {
+    return private_link_namespaces(from, to, shared_libs_sonames);
+}
 
 // Not 1:1 with real implementation.
 // escapeNs has SYSTEM_LIBS_PATH in default_library_path and permitted_when_isolated_path

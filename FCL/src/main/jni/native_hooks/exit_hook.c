@@ -20,6 +20,8 @@ typedef void (*exit_func)(int);
 // Use the exit hook *only* to store the exit code.
 static void custom_exit(int code) {
     exit_code = code;
+    // Quest VR 需要经 Java 侧回收沉浸任务后再退出，直接短路到 nominal_exit
+    if (fcl_is_vr_game()) nominal_exit(code);
     BYTEHOOK_CALL_PREV(custom_exit, exit_func, code);
     BYTEHOOK_POP_STACK();
 }

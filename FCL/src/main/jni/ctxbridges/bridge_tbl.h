@@ -8,6 +8,7 @@
 #include "common.h"
 #include "gl_bridge.h"
 #include "osm_bridge.h"
+#include "questvr/quest_vr.h"
 
 typedef basic_render_window_t* (*br_init_context_t)(basic_render_window_t* share);
 typedef void (*br_make_current_t)(basic_render_window_t* bundle);
@@ -40,6 +41,17 @@ void set_gl_bridge_tbl() {
     br_swap_buffers = gl_swap_buffers;
     br_setup_window = gl_setup_window;
     br_swap_interval = gl_swap_interval;
+}
+
+// Quest VR 渲染桥表：主上下文渲染到 pbuffer，由 OpenXR 合成器取帧
+void set_quest_vr_bridge_tbl() {
+    br_init = quest_vr_init;
+    br_init_context = (br_init_context_t) quest_vr_init_context;
+    br_make_current = (br_make_current_t) quest_vr_make_current;
+    br_get_current = (br_get_current_t) quest_vr_get_current;
+    br_swap_buffers = quest_vr_swap_buffers;
+    br_setup_window = quest_vr_setup_window;
+    br_swap_interval = quest_vr_swap_interval;
 }
 
 #endif //POJAVLAUNCHER_BRIDGE_TBL_H

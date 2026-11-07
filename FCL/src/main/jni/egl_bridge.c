@@ -34,6 +34,7 @@
 #include <androidnsbypass/nsbypass_t.h>
 #include <androidnsbypass/nsbypass.h>
 #include "global_state.h"
+#include "questvr/presentation.h"
 #include "log.h"
 #include <stdatomic.h>
 
@@ -64,6 +65,11 @@ static atomic_uint fps = 0;
 
 EXTERNAL_API void pojavTerminate() {
     printf("EGLBridge: Terminating\n");
+
+    if (quest_vr_enabled()) {
+        quest_vr_terminate();
+        return;
+    }
 
     switch (pojav_environ->config_renderer) {
         case RENDERER_GL4ES: {
@@ -98,6 +104,10 @@ EXTERNAL_API void pojavTerminate() {
 JNIEXPORT void JNICALL
 Java_org_lwjgl_glfw_CallbackBridge_setupBridgeWindow(JNIEnv *env, ABI_COMPAT jclass clazz,
                                                      jobject surface) {
+    if (quest_vr_enabled()) {
+        quest_vr_set_flat_surface(env, surface);
+        return;
+    }
     // 首个窗口由 pojavInit 应用交换间隔；此处处理窗口重建（旋转、分屏等）：
     // 生产者状态会随新窗口重置，若不重新应用，MC 不会再次发起交换间隔调用，帧率会退回锁定在屏幕刷新率
     bool windowRecreated = pojav_environ->pojavWindow != NULL;
@@ -113,6 +123,10 @@ Java_org_lwjgl_glfw_CallbackBridge_setupBridgeWindow(JNIEnv *env, ABI_COMPAT jcl
 JNIEXPORT void JNICALL
 Java_net_kdt_pojavlaunch_utils_JREUtils_releaseBridgeWindow(ABI_COMPAT JNIEnv *env,
                                                             ABI_COMPAT jclass clazz) {
+    if (quest_vr_enabled()) {
+        quest_vr_set_flat_surface(env, NULL);
+        return;
+    }
     ANativeWindow_release(pojav_environ->pojavWindow);
 }
 
@@ -264,6 +278,11 @@ void load_vulkan() {
 }
 
 int pojavInitOpenGL() {
+    if (quest_vr_enabled()) {
+        pojav_environ->config_renderer = RENDERER_GL4ES;
+        set_quest_vr_bridge_tbl();
+        return br_init() ? 1 : 0;
+    }
     // Only affects GL4ES as of now
     const char *forceVsync = getenv("FORCE_VSYNC");
     if (!strcmp(forceVsync, "true"))
@@ -336,6 +355,12 @@ EXTERNAL_API int pojavInit() {
         printf("Failed to attach Java-side JNIEnv to GLFW thread\n");
         return 0;
     }
+    if (quest_vr_enabled()) {
+        pojav_environ->savedWidth = 1280;
+        pojav_environ->savedHeight = 720;
+        updateMonitorSize(1280, 720);
+        return pojavInitOpenGL();
+    }
     ANativeWindow_acquire(pojav_environ->pojavWindow);
     pojav_environ->savedWidth = ANativeWindow_getWidth(pojav_environ->pojavWindow);
     pojav_environ->savedHeight = ANativeWindow_getHeight(pojav_environ->pojavWindow);
@@ -360,6 +385,10 @@ EXTERNAL_API void pojavSetWindowHint(int hint, int value) {
             // pojavInitVulkan();
             break;
         case GLFW_OPENGL_API: {
+            if (quest_vr_enabled()) {
+                pojav_environ->config_renderer = RENDERER_GL4ES;
+                break;
+            }
             const char *renderer = getenv("POJAV_RENDERER");
             if (strncmp(renderer, "opengles", 8) == 0) {
                 pojav_environ->config_renderer = RENDERER_GL4ES;

@@ -7,5 +7,6 @@
 #include "log.h"
 
 _Noreturn void nominal_exit(int code);
+int fcl_is_vr_game(void);
 
 #endif //FOLD_CRAFT_LAUNCHER_FCL_INTERNAL_H

@@ -42,16 +42,14 @@ struct android_namespace_t *android_create_namespace_escape(const char *name,
         struct android_namespace_t *parent_namespace);
 
 // https://cs.android.com/android/platform/superproject/+/dcb01ef31026b3b8aeb72dada3370af63fe66bbd:bionic/linker/linker.cpp;l=3554
-typedef struct android_namespace_t *(*android_get_exported_namespace_t)(const char *);
-extern android_get_exported_namespace_t android_get_exported_namespace;
+// 以真函数声明导出（原为 extern 函数指针）：数据符号无法保证跨 linker namespace 可解析
+struct android_namespace_t *android_get_exported_namespace(const char *);
 
 // https://cs.android.com/android/platform/superproject/+/dcb01ef31026b3b8aeb72dada3370af63fe66bbd:bionic/linker/linker.cpp;l=2499
-typedef bool (*android_link_namespaces_all_libs_t)(struct android_namespace_t *, struct android_namespace_t *);
-extern android_link_namespaces_all_libs_t android_link_namespaces_all_libs;
+bool android_link_namespaces_all_libs(struct android_namespace_t *, struct android_namespace_t *);
 
 // https://cs.android.com/android/platform/superproject/+/dcb01ef31026b3b8aeb72dada3370af63fe66bbd:bionic/linker/linker.cpp;l=2473
-typedef bool (*android_link_namespaces_t)(struct android_namespace_t *, struct android_namespace_t *, const char *);
-extern android_link_namespaces_t android_link_namespaces;
+bool android_link_namespaces(struct android_namespace_t *, struct android_namespace_t *, const char *);
 
 /**
  * @brief Like android_link_namespaces_all_libs but links from the default namespace
