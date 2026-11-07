@@ -48,8 +48,22 @@ private long loadDialogShowTime = 0;
 
     private final GameMenu gameMenu;
 
+    /**
+     * 按键编辑撤销/恢复历史（按组快照，见 EditHistory）
+     */
+    private final EditHistory editHistory;
+
     public ViewManager(GameMenu gameMenu) {
         this.gameMenu = gameMenu;
+        this.editHistory = new EditHistory(this);
+    }
+
+    public GameMenu getGameMenu() {
+        return gameMenu;
+    }
+
+    public EditHistory getEditHistory() {
+        return editHistory;
     }
 
     /** 编辑模式当前选中的控件（缩放手柄与悬浮操作栏的目标） */
@@ -183,6 +197,7 @@ private long loadDialogShowTime = 0;
                 @Override
                 public void onPositive(CustomControl view) {
                     ControlButtonData newData = ((ControlButtonData) view).clone();
+                    editHistory.record(findOwnerGroup(button.getData()));
                     button.getData().setText(newData.getText());
                     button.getData().setBaseInfo(newData.getBaseInfo());
                     button.getData().setStyle(newData.getStyle());
@@ -210,6 +225,7 @@ private long loadDialogShowTime = 0;
                 @Override
                 public void onPositive(CustomControl view) {
                     ControlDirectionData newData = ((ControlDirectionData) view).clone();
+                    editHistory.record(findOwnerGroup(direction.getData()));
                     direction.getData().setBaseInfo(newData.getBaseInfo());
                     direction.getData().setStyle(newData.getStyle());
                     direction.getData().setEvent(newData.getEvent());
@@ -304,20 +320,29 @@ private long loadDialogShowTime = 0;
         // Initialize controller
         setupEditBar();
         initializeController();
-        gameMenu.controllerProperty().addListener(i -> initializeController());
+        // 切换控制器后历史条目全部失效，直接清空
+        gameMenu.controllerProperty().addListener(i -> {
+            editHistory.clear();
+            initializeController();
+        });
         gameMenu.viewGroupProperty().addListener(i -> initializeController());
         gameMenu.editModeProperty().addListener(i -> initializeController());
     }
 
     public void addView(CustomControl control) {
-        addView(control, gameMenu.getViewGroup());
+        addView(control, gameMenu.getViewGroup(), true);
+    }
+
+    public void addView(CustomControl control, ControlViewGroup target) {
+        addView(control, target, true);
     }
 
     /**
      * 向指定控件组添加控件：目标为当前编辑组时走轻量路径直接渲染，
      * 其他组（跨组复制/移动）追加数据后整体重建画布。
+     * record 为 false 时不记录撤销历史（供跨组移动等组合操作统一记录）。
      */
-    public void addView(CustomControl control, ControlViewGroup target) {
+    private void addView(CustomControl control, ControlViewGroup target, boolean record) {
         if (!gameMenu.isEditMode()) {
             return;
         }
@@ -328,6 +353,9 @@ private long loadDialogShowTime = 0;
         if (!target.isDataLoaded()) {
             Toast.makeText(gameMenu.getActivity(), gameMenu.getActivity().getString(R.string.message_data_is_loading), Toast.LENGTH_SHORT).show();
             return;
+        }
+        if (record) {
+            editHistory.record(target);
         }
         if (control instanceof ControlButtonData) {
             target.getViewData().addButton((ControlButtonData) control);
@@ -363,8 +391,16 @@ private long loadDialogShowTime = 0;
 
     /** 从指定控件组删除控件（跨组移动时显式指定来源，避免归属解析歧义） */
     public void removeViewFromGroup(CustomControl control, ControlViewGroup owner) {
+        removeViewFromGroup(control, owner, true);
+    }
+
+    /** 从指定控件组删除控件（跨组移动时显式指定来源，避免归属解析歧义） */
+    private void removeViewFromGroup(CustomControl control, ControlViewGroup owner, boolean record) {
         if (!gameMenu.isEditMode() || owner == null) {
             return;
+        }
+        if (record) {
+            editHistory.record(owner);
         }
         clearSelection();
         for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
@@ -401,9 +437,67 @@ private long loadDialogShowTime = 0;
         }
         ControlViewGroup owner = findOwnerGroup(control);
         if (owner != null) {
-            removeViewFromGroup(control, owner);
+            // 跨组移动作为单条历史：一次性记录来源与目标两组，内部增删不再各自记录，
+            // 否则撤销一次会落在"两边都没有该控件"的中间态
+            editHistory.record(owner, target);
+            removeViewFromGroup(control, owner, false);
+            addView(control, target, false);
+        } else {
+            addView(control, target);
         }
-        addView(control, target);
+    }
+
+    /** 编辑手势（拖动/缩放）写回数据前记录撤销点：此刻数据仍是手势前状态 */
+    public void recordForUndo(CustomControl control) {
+        editHistory.record(findOwnerGroup(control));
+    }
+
+    /**
+     * 撤销/恢复后重建受影响组的画布视图（数据已由 EditHistory 写回组）。
+     * 视图只监听自己的数据对象，列表整表替换后旧视图不会自动更新，须摘除重渲染；
+     * 摘除范围 = 改动前 ∪ 改动后的 id 并集：撤销"添加/复制"时，新增控件的 id 已不在
+     * 现数据里，仅按现数据圈定会漏摘（控件残留到下次整体重建才消失）。
+     * 不在当前渲染目标中的组（隐藏参考组等）只恢复数据，待下次渲染时生效。
+     */
+    public void restoreViewsForGroups(List<ControlViewGroup> groups, List<Set<String>> staleViewIds) {
+        clearSelection();
+        for (int i = 0; i < groups.size(); i++) {
+            ControlViewGroup group = groups.get(i);
+            Set<String> staleIds = staleViewIds.get(i);
+            ArrayList<View> staleViews = new ArrayList<>();
+            for (int j = 0; j < gameMenu.getBaseLayout().getChildCount(); j++) {
+                View view = gameMenu.getBaseLayout().getChildAt(j);
+                if (!(view instanceof CustomView)) {
+                    continue;
+                }
+                String viewId = ((CustomView) view).getViewId();
+                if (staleIds.contains(viewId) || isGroupView(group, viewId)) {
+                    staleViews.add(view);
+                }
+            }
+            for (View view : staleViews) {
+                ((CustomView) view).removeListener();
+                gameMenu.getBaseLayout().removeView(view);
+            }
+            if (targets().contains(group)) {
+                renderGroup(group);
+            }
+        }
+        saveController();
+    }
+
+    /** 视图 id 是否属于该组当前数据 */
+    private boolean isGroupView(ControlViewGroup group, String viewId) {
+        return group.getViewData().buttonList().stream().anyMatch(it -> it.getId().equals(viewId))
+                || group.getViewData().directionList().stream().anyMatch(it -> it.getId().equals(viewId));
+    }
+
+    /** 组当前数据涉及的视图 id 集合（撤销/恢复重建视图前捕获，用于圈定摘除范围） */
+    public Set<String> collectGroupViewIds(ControlViewGroup group) {
+        Set<String> ids = new HashSet<>();
+        group.getViewData().buttonList().forEach(it -> ids.add(it.getId()));
+        group.getViewData().directionList().forEach(it -> ids.add(it.getId()));
+        return ids;
     }
 
     private void loadView(CustomControl control, boolean parentVisibility, float zOrder, boolean ghost) {
