@@ -365,6 +365,9 @@ class VersionSettingPage(
             }
 
             VersionSettingTag.EDIT_RENDERER -> {
+                // RendererSelectDialog 回调前已把选择写入版本设置（usesGlobal 时实为全局设置），
+                // 局部页遮蔽弹窗选择保留覆盖时须回滚，旧值须在对话框打开前捕获
+                val previousRenderer = if (globalSetting) null else getSelectedProfile().versionSetting.renderer
                 RendererSelectDialog(context, globalSetting) { picked ->
                     val profile = getSelectedProfile()
                     if (globalSetting) {
@@ -375,9 +378,9 @@ class VersionSettingPage(
                         }
                         val selectedVersion = profile.selectedVersion
                         val selectedOverride = selectedVersion?.let { profile.getEffectiveRendererOverride(it) }
+                        // 覆盖优先于全局设置，与版本是否启用独立设置无关
                         val shadowed = if (selectedVersion != null && selectedOverride != null &&
-                            selectedOverride != picked.id &&
-                            profile.getVersionSetting(selectedVersion).isUsesGlobal
+                            selectedOverride != picked.id
                         ) {
                             selectedVersion to selectedOverride
                         } else null
@@ -402,7 +405,7 @@ class VersionSettingPage(
                                 builder.setNegativeButton(context.getString(R.string.renderer_keep_override), null)
                             } else {
                                 builder.setNegativeButton(
-                                    context.getString(com.tungsten.fcl.R.string.dialog_positive),
+                                    context.getString(R.string.dialog_positive),
                                     null
                                 )
                             }
@@ -430,7 +433,9 @@ class VersionSettingPage(
                                 builder.setNeutralButton(context.getString(R.string.renderer_clear_override)) {
                                     profile.setRendererOverride(vid, null)
                                 }
-                                builder.setNegativeButton(context.getString(R.string.renderer_keep_override), null)
+                                builder.setNegativeButton(context.getString(R.string.renderer_keep_override)) {
+                                    previousRenderer?.let { profile.versionSetting.renderer = it }
+                                }
                                 builder.create().show()
                             }
                         }

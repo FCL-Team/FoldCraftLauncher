@@ -225,6 +225,9 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 goSetting.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
+                    // RendererSelectDialog 回调前已把选择写入版本设置（usesGlobal 时实为全局设置），
+                    // 旧值须在对话框打开前捕获，取消时回滚才有效
+                    val previousRenderer = Profiles.getSelectedProfile().versionSetting.renderer
                     RendererSelectDialog(this@MainActivity, false) { picked ->
                         val profile = Profiles.getSelectedProfile()
                         val versionId = profile.selectedVersion
@@ -232,8 +235,6 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                         if (versionId != null && override != null && override != picked.id) {
                             // 该版本有渲染器覆盖：此处修改会被遮蔽，提示后不直接启动，
                             // 只有更新/清除覆盖才沿用本次选择继续启动
-                            // 长按的选择已写入版本设置，取消时须回滚，避免残留
-                            val previousRenderer = profile.versionSetting.renderer
                             val builder = FCLAlertDialog.Builder(this@MainActivity)
                             builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
                             builder.setMessage(
