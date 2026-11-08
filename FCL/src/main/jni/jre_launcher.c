@@ -138,12 +138,14 @@ static jint launchJVM(JNIEnv *env, const char *jvmLibPath, char **vmArgs, int vm
     }
     game_vm = gameVM;
     FCL_LOG("Game JVM created");
+    // CreateJavaVM 已成功：此后任何失败都以 1 返回（非 0 退出码，JVM 已常驻可复用）。
+    // 返回负值会让调用方误判 JVM 未创建而在下轮重试创建，撞 JNI_EEXIST 后无法自愈
 
     // mainClass 点分形式转 JNI 斜杠形式（动态分配，不设长度上限）
     char *mainClassPath = strdup(mainClass);
     if (mainClassPath == NULL) {
         FCL_INTERNAL_LOG("Failed to allocate main class buffer");
-        return -1;
+        return 1;
     }
     for (char *p = mainClassPath; *p != '\0'; p++) {
         if (*p == '.') *p = '/';
@@ -154,7 +156,7 @@ static jint launchJVM(JNIEnv *env, const char *jvmLibPath, char **vmArgs, int vm
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionDescribe(gameEnv);
         FCL_INTERNAL_LOG("FindClass(%s) failed", mainClassPath);
         free(mainClassPath);
-        return -1;
+        return 1;
     }
     jmethodID mainMethod = (*gameEnv)->GetStaticMethodID(gameEnv, mainClazz, "main",
                                                          "([Ljava/lang/String;)V");
@@ -162,14 +164,14 @@ static jint launchJVM(JNIEnv *env, const char *jvmLibPath, char **vmArgs, int vm
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionDescribe(gameEnv);
         FCL_INTERNAL_LOG("GetStaticMethodID(main) on %s failed", mainClassPath);
         free(mainClassPath);
-        return -1;
+        return 1;
     }
     free(mainClassPath);
 
     jobjectArray appArgsArray = convert_from_char_array(gameEnv, appArgs, appArgCount);
     if (appArgsArray == NULL) {
         FCL_INTERNAL_LOG("Failed to convert app args");
-        return -1;
+        return 1;
     }
 
     (*gameEnv)->CallStaticVoidMethod(gameEnv, mainClazz, mainMethod, appArgsArray);
@@ -195,7 +197,7 @@ Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, jclass clazz, jstring j
                                             jstring mainClass, jobjectArray appArgsArray) {
     if (jvmLibPath == NULL || vmArgsArray == NULL || mainClass == NULL || appArgsArray == NULL) {
         FCL_LOG("Args array null, returning");
-        return 0;
+        return -1; // JVM 未创建
     }
 
     const char *mainClassUtf = (*env)->GetStringUTFChars(env, mainClass, NULL);
@@ -282,7 +284,12 @@ Java_com_oracle_dalvik_VMLauncher_runMainInExistingVM(JNIEnv *env, jclass clazz,
     for (char *token = strtok_r(cpCopy, ":", &saveptr); token != NULL;
          token = strtok_r(NULL, ":", &saveptr)) {
         char spec[1024];
-        snprintf(spec, sizeof(spec), "file://%s", token);
+        int specLen = snprintf(spec, sizeof(spec), "file://%s", token);
+        if (specLen < 0 || specLen >= (int) sizeof(spec)) {
+            FCL_INTERNAL_LOG("Classpath entry too long: %.100s...", token);
+            free(cpCopy);
+            return -1;
+        }
         jstring specStr = (*gameEnv)->NewStringUTF(gameEnv, spec);
         if (specStr == NULL) break;
         jobject url = (*gameEnv)->NewObject(gameEnv, urlClass, urlCtor, specStr);
@@ -293,10 +300,12 @@ Java_com_oracle_dalvik_VMLauncher_runMainInExistingVM(JNIEnv *env, jclass clazz,
     }
     free(cpCopy);
 
+    // ClassLoader 两参构造器以 NULL 为父（纯 bootstrap 委派）：常驻 JVM 的系统类
+    // 加载器还挂着首阶段的 -Djava.class.path，父优先委派会让本阶段同名类被旧类遮蔽
     jclass loaderClass = (*gameEnv)->FindClass(gameEnv, "java/net/URLClassLoader");
     jmethodID loaderCtor = loaderClass ? (*gameEnv)->GetMethodID(gameEnv, loaderClass, "<init>",
-                                                                 "([Ljava/net/URL;)V") : NULL;
-    jobject loader = loaderCtor ? (*gameEnv)->NewObject(gameEnv, loaderClass, loaderCtor, urls) : NULL;
+                                                                 "([Ljava/net/URL;Ljava/lang/ClassLoader;)V") : NULL;
+    jobject loader = loaderCtor ? (*gameEnv)->NewObject(gameEnv, loaderClass, loaderCtor, urls, NULL) : NULL;
     if (loader == NULL) {
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
         FCL_INTERNAL_LOG("Failed to create URLClassLoader");
@@ -308,9 +317,10 @@ Java_com_oracle_dalvik_VMLauncher_runMainInExistingVM(JNIEnv *env, jclass clazz,
     const char *mainClassUtf = (*env)->GetStringUTFChars(env, mainClass, NULL);
     if (mainClassUtf == NULL) return -1;
     jstring mainClassStr = (*gameEnv)->NewStringUTF(gameEnv, mainClassUtf);
-    (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
+    // UTF 串保留到本阶段装配结束再释放，失败路径的日志要用
     if (mainClassStr == NULL) {
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
+        (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
         return -1;
     }
     jclass mainClazz = (*gameEnv)->CallObjectMethod(gameEnv, loader, loadClass, mainClassStr);
@@ -318,7 +328,8 @@ Java_com_oracle_dalvik_VMLauncher_runMainInExistingVM(JNIEnv *env, jclass clazz,
     if (mainClazz == NULL) {
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionDescribe(gameEnv);
         (*gameEnv)->ExceptionClear(gameEnv);
-        FCL_INTERNAL_LOG("loadClass(%s) failed on stage classloader", mainClass);
+        FCL_INTERNAL_LOG("loadClass(%s) failed on stage classloader", mainClassUtf);
+        (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
         return -1;
     }
 
@@ -327,9 +338,11 @@ Java_com_oracle_dalvik_VMLauncher_runMainInExistingVM(JNIEnv *env, jclass clazz,
     if (mainMethod == NULL) {
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionDescribe(gameEnv);
         (*gameEnv)->ExceptionClear(gameEnv);
-        FCL_INTERNAL_LOG("GetStaticMethodID(main) on %s failed", mainClass);
+        FCL_INTERNAL_LOG("GetStaticMethodID(main) on %s failed", mainClassUtf);
+        (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
         return -1;
     }
+    (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
 
     int appArgCount = (*env)->GetArrayLength(env, appArgsArray);
     char **appArgs = convert_to_char_array(env, appArgsArray);
