@@ -1050,7 +1050,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     binding.versionName.isSelected = true
                     binding.versionHint.text = libraries
                     binding.versionHint.isVisible = true
-                    binding.icon.setBackgroundDrawable(drawable)
+                    binding.icon.setImageDrawable(drawable)
                 }
             }
         } else {
@@ -1058,7 +1058,7 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             binding.versionProgress.visibility = View.GONE
             binding.versionName.text = getString(R.string.version_no_version)
             binding.versionHint.isVisible = false
-            binding.icon.setBackgroundDrawable(pixelAwareIcon(this, R.drawable.img_grass))
+            binding.icon.setImageDrawable(pixelAwareIcon(this, R.drawable.img_grass))
         }
     }
 
