@@ -100,9 +100,11 @@ static void *logger_thread(void *arg) {
                 __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to read log!");
             }
             close(data->readFd);
-            (*vm)->DetachCurrentThread(vm);
+            // 全部 JNI 调用必须先于 DetachCurrentThread：脱离后旧 env 失效，
+            // 再删全局引用会触发 CheckJNI 的 CheckAttachedThread abort 整个进程
             (*env)->DeleteGlobalRef(env, data->bridge);
             free(data);
+            (*vm)->DetachCurrentThread(vm);
             return NULL;
         }
         buffer[_s] = '\0';
