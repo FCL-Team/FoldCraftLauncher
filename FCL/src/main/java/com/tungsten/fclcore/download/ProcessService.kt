@@ -36,13 +36,16 @@ import kotlin.concurrent.thread
  * 这同时消除了 AMS 对同进程名反复创建进程的崩溃计数风险（process is bad）。
  *
  * 文件协议（启动标记/退出码，按会话 ID 命名）与主进程侧 InstallerProcessRunner 保持不变；
- * 若空闲自停与下一个 start 真正撞上，下一 start 会拉起全新进程，协议同样成立。
+ * 空闲自停后进程交系统按空进程策略回收，回收前的下一个 start 会在本进程内重建
+ * Service 实例并复用常驻 JVM——常驻状态记在 FCLauncher 的静态域，JRE 一致性由
+ * FCLauncher 的静态标记校验，不一致即回收进程
  */
 class ProcessService : Service() {
 
     /**
-     * 阶段串行执行器：主进程协议保证同一会话的阶段严格串行；
-     * 异常的并发安装会话也只会在队列上等待，而非同进程内互踩两套 JVM
+     * 阶段排队执行器：主进程协议保证同一会话的阶段严格串行；执行器只把各阶段的
+     * launch 调用排队（真正的 JVM 工作在 bridge 线程上），并发安装会话的隔离
+     * 依赖主进程侧协议
      */
     private val stageExecutor = Executors.newSingleThreadExecutor()
 
@@ -52,9 +55,6 @@ class ProcessService : Service() {
     private val idleStopDelayMs = 60_000L
 
     private val idleStopRunnable = Runnable { stopSelf() }
-
-    /** 本进程最近一次服务的 JRE 版本；常驻 JVM 只能按创建时的 JRE 跑，版本切换必须换进程 */
-    private var lastJava = -1
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
@@ -74,14 +74,16 @@ class ProcessService : Service() {
                 )?.take(200)
             }"
         )
-        if (lastJava != -1 && java != lastJava) {
-            // 常驻 JVM 的字节码能力固定为创建时 JRE，JRE 降级/升级重试链需要全新进程：
-            // 立即回收本进程，主进程侧 started 标记超时后会以新进程重试同一命令
-            Logging.LOG.warning("JRE version changed ($lastJava -> $java), recycling :jvm process")
+        if (FCLauncher.hasResidentHotSpot() && FCLauncher.getHotSpotJavaVersion() != java) {
+            // 常驻 JVM 的字节码能力固定为创建时 JRE，JRE 降级/升级重试链需要全新进程。
+            // 静态校验而非实例字段：空闲自停后进程被缓存复用时 Service 实例已重建，
+            // 实例字段会归零漏判。立即回收本进程，主进程侧 started 标记超时后会以新进程重试
+            Logging.LOG.warning(
+                "JRE version changed (${FCLauncher.getHotSpotJavaVersion()} -> $java), recycling :jvm process"
+            )
             Process.killProcess(Process.myPid())
             return START_NOT_STICKY
         }
-        lastJava = java
         // 记录启动标记，供主进程确认安装器服务已启动；复用进程时 pid 不变，
         // 主进程的 CPU 进度监控按同一 pid 持续有效
         try {
@@ -117,6 +119,7 @@ class ProcessService : Service() {
             ),
             command ?: emptyArray()
         )
+        config.javaVersion = java
         // launchAPIInstaller 抛出即本阶段启动失败：写退出码让主进程走重试/报错，
         // 进程与服务保留供后续阶段复用（不再自杀换进程）
         val bridge = try {

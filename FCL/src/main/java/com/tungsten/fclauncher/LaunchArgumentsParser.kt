@@ -21,7 +21,9 @@ import java.util.jar.JarFile
  * - 模块模式（-m/--module）、launcher 自用命令（-version/--list-modules 等）与
  *   @argfile 显式拒绝——静默误判的破坏面更大；
  * - 已知偏差：java launcher 对未知 JVM 选项报错退出，这里经 ignoreUnrecognized 静默
- *   忽略（JVM 选项与 JRE 由启动器配对，版本错配的报错场景不存在，静默对启动更有利）。
+ *   忽略（JVM 选项与 JRE 由启动器配对，版本错配的报错场景不存在，静默对启动更有利）；
+ *   classpath 通配符不展开——java launcher 会把「目录 + 星号」条目展开为该目录全部 jar，
+ *   JVM 不展开 -Djava.class.path 通配（启动器自建 classpath 均为显式路径）。
  *
  * 解析为纯函数，无 Android 依赖，可单元测试。
  */

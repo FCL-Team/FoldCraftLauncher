@@ -19,11 +19,15 @@ static volatile jmethodID exitTrap_method;
 static JavaVM *exitTrap_jvm;
 static volatile jmethodID log_method;
 static JavaVM *log_pipe_jvm;
-// 当前 stdio 重定向管道两端：读端移交给 logger 线程；原始写端保留（不 close），
-// 供下一轮重定向唤醒旧 logger 退出（同进程多轮 JVM 的安装器复用场景）
-static volatile int fclLogReadFd = -1;
+// 当前 stdio 重定向管道的原始写端：保留（不 close），下一轮重定向关闭它时旧管道
+// 再无任何写端，阻塞中的旧 logger 经 EOF 自然退出（同进程多轮 JVM 的安装器复用场景）
 static volatile int fclLogWriteFd = -1;
-static jobject object_FCLBridge;
+
+// logger 线程的每轮参数：读端与回调引用均由线程退出时自行释放，不进全局
+typedef struct {
+    int readFd;
+    jobject bridge;
+} log_thread_arg;
 
 void correctUtfBytes(char *bytes) {
     char three = 0;
@@ -79,7 +83,7 @@ void correctUtfBytes(char *bytes) {
 }
 
 static void *logger_thread(void *arg) {
-    int *fds = arg;
+    log_thread_arg *data = arg;
     JNIEnv *env;
     JavaVM *vm = log_pipe_jvm;
     (*vm)->AttachCurrentThread(vm, &env, NULL);
@@ -88,17 +92,17 @@ static void *logger_thread(void *arg) {
     jstring str;
     while (1) {
         memset(buffer, '\0', sizeof(buffer));
-        _s = read(fds[0], buffer, sizeof(buffer) - 1);
+        _s = read(data->readFd, buffer, sizeof(buffer) - 1);
         if (_s <= 0) {
-            // 读端被新一轮重定向关闭（EBADF）或管道 EOF：退出本线程。
+            // 管道 EOF（写端全部关闭）或读错误：退出本线程。
             // 旧实现在 EOF 时 continue 会空转烧 CPU，复用场景下必须退出
             if (_s < 0) {
                 __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to read log!");
             }
-            close(fds[0]);
-            close(fds[1]);
+            close(data->readFd);
             (*vm)->DetachCurrentThread(vm);
-            free(fds);
+            (*env)->DeleteGlobalRef(env, data->bridge);
+            free(data);
             return NULL;
         }
         buffer[_s] = '\0';
@@ -108,7 +112,7 @@ static void *logger_thread(void *arg) {
             //fix "input is not valid Modified UTF-8" caused by NewStringUTF
             correctUtfBytes(buffer);
             str = (*env)->NewStringUTF(env, buffer);
-            (*env)->CallVoidMethod(env, object_FCLBridge, log_method, str);
+            (*env)->CallVoidMethod(env, data->bridge, log_method, str);
             (*env)->DeleteLocalRef(env, str);
         }
     }
@@ -119,31 +123,35 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv *env, jobject
                                                             jstring path) {
     setvbuf(stdout, 0, _IOLBF, 0);
     setvbuf(stderr, 0, _IONBF, 0);
-    object_FCLBridge = (*env)->NewGlobalRef(env, jobject);
     int fds[2];
     if (pipe(fds) < 0) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to create log pipe!");
         return 1;
     }
-    int *arg = malloc(sizeof(int) * 2);
+    log_thread_arg *arg = malloc(sizeof(log_thread_arg));
     if (arg == NULL) {
         close(fds[0]);
         close(fds[1]);
         return 1;
     }
-    arg[0] = fds[0];
-    arg[1] = fds[1];
+    arg->readFd = fds[0];
+    arg->bridge = (*env)->NewGlobalRef(env, jobject);
+    if (arg->bridge == NULL) {
+        free(arg);
+        close(fds[0]);
+        close(fds[1]);
+        return 1;
+    }
     if (dup2(fds[1], STDOUT_FILENO) != STDOUT_FILENO ||
         dup2(fds[1], STDERR_FILENO) != STDERR_FILENO) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "failed to redirect stdio!");
+        (*env)->DeleteGlobalRef(env, arg->bridge);
         free(arg);
         close(fds[0]);
         close(fds[1]);
         return 2;
     }
-    int oldRead = fclLogReadFd;
     int oldWrite = fclLogWriteFd;
-    fclLogReadFd = fds[0];
     fclLogWriteFd = fds[1];
     jclass bridge = (*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge");
     log_method = (*env)->GetMethodID(env, bridge, "receiveLog", "(Ljava/lang/String;)V");
@@ -153,18 +161,17 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv *env, jobject
     }
     FCL_LOG("Log pipe ready.");
     (*env)->GetJavaVM(env, &log_pipe_jvm);
-    // 回收上一轮 logger：写一个换行唤醒其 read 返回（内容投递时新回调尚未挂上，会被丢弃），
-    // 再关闭旧读端使其在下一轮 read 时以 EBADF 退出——避免两个线程同读一条管道交错分发
+    // 回收上一轮 logger：stdout/stderr 已改投新管道，关闭旧管道最后一个写端，
+    // 阻塞中的旧 logger 经 EOF 自然退出并自行释放读端与回调引用——避免两线程同读
+    // 一条管道交错分发。不写唤醒字节（EOF 足以唤醒阻塞读），也不从本线程关旧读端：
+    // close 不唤醒阻塞中的 read，fd 号被后续轮次复用会重新引入双读者竞态
     if (oldWrite >= 0) {
-        write(oldWrite, "\n", 1);
         close(oldWrite);
-    }
-    if (oldRead >= 0) {
-        close(oldRead);
     }
     pthread_t logger;
     int result = pthread_create(&logger, 0, logger_thread, arg);
     if (result != 0) {
+        (*env)->DeleteGlobalRef(env, arg->bridge);
         free(arg);
         return 5;
     }

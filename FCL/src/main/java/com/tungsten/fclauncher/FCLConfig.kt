@@ -16,6 +16,11 @@ class FCLConfig(
     val args: Array<String>
 ) : Serializable {
 
+    /**
+     * 运行时 JRE 索引（8/17/21/25），仅安装器流程提供；游戏/Jar 执行器流程不感知，保持 -1
+     */
+    var javaVersion: Int = -1
+
     var useVKDriverSystem = false
 
     var installedModLoaders: InstalledModLoaders? = null

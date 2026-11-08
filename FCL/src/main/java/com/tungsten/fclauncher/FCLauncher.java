@@ -40,8 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 import org.json.JSONException;
@@ -53,9 +51,25 @@ public class FCLauncher {
 
     /**
      * 本进程是否已创建常驻 HotSpot（launchJVM 成功后置位）。安装器多阶段复用时，
-     * 后续阶段经 runMainInExistingVM 在同一 JVM 里跑；游戏进程随退出回收，此标记自然作废
+     * 后续阶段经 runMainInExistingVM 在同一 JVM 里跑；游戏进程随退出回收，此标记自然作废。
+     * :jvm 进程常驻期间会跨安装会话存活（进程被系统缓存复用时 Service 实例已重建），
+     * 因此与 {@link #hotSpotJavaVersion} 一样必须放在静态域，随 Service 生命周期失效的
+     * 字段无法约束它
      */
     private static boolean hotSpotStarted = false;
+
+    /** 常驻 HotSpot 创建时的 JRE 索引；常驻 JVM 字节码能力固定，索引不同必须换进程 */
+    private static int hotSpotJavaVersion = -1;
+
+    /** 本进程是否存在常驻 HotSpot */
+    public static boolean hasResidentHotSpot() {
+        return hotSpotStarted;
+    }
+
+    /** 常驻 HotSpot 创建时的 JRE 索引（未创建返回 -1） */
+    public static int getHotSpotJavaVersion() {
+        return hotSpotJavaVersion;
+    }
 
     private static void log(FCLBridge bridge, String log) {
         bridge.getCallback().onLog(log + "\n");
@@ -723,8 +737,12 @@ public class FCLauncher {
                     launchMainClass, appArgs);
         } else {
             exitCode = VMLauncher.launchJVM(getJvmLibPath(config), vmArgs.toArray(new String[0]), launchMainClass, appArgs);
-            if (exitCode >= 0)
-                hotSpotStarted = true; // JVM 创建成功，保留常驻；-1/-5 为创建失败，下阶段重试
+            if (exitCode >= 0) {
+                // JVM 创建成功，保留常驻；负值为创建失败（未创建），下阶段可重试。
+                // 创建后装配失败经 native 侧收敛为 1，同样落在此分支
+                hotSpotStarted = true;
+                hotSpotJavaVersion = config.getJavaVersion();
+            }
         }
         bridge.onExit(exitCode);
     }
@@ -739,17 +757,6 @@ public class FCLauncher {
         if (isJDK8(javaPath))
             javaLibDir = javaPath + "/jre" + getJavaLibDir(javaPath);
         return javaLibDir + getJvmLibDir(javaPath) + "/libjvm.so";
-    }
-
-    /** -jar 启动的 jar 的主类（java launcher 语义：取 manifest 的 Main-Class） */
-    private static String readJarManifestMainClass(String jarPath) throws IOException {
-        try (JarFile jar = new JarFile(jarPath)) {
-            Attributes attrs = jar.getManifest() == null ? null : jar.getManifest().getMainAttributes();
-            String mainClass = attrs == null ? null : attrs.getValue(Attributes.Name.MAIN_CLASS);
-            if (mainClass == null || mainClass.isEmpty())
-                throw new IOException("Main-Class manifest attribute not found in " + jarPath);
-            return mainClass.trim();
-        }
     }
 
     public static FCLBridge launchMinecraft(FCLConfig config) {
