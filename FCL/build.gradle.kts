@@ -1,8 +1,10 @@
 import com.android.build.api.variant.FilterConfiguration.FilterType.ABI
 import com.android.build.gradle.tasks.MergeSourceSetFolders
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.HexFormat
 import java.util.Properties
 
 plugins {
@@ -178,6 +180,35 @@ val filterJreAssets = tasks.register<FilterJreAssets>("filterJreAssets") {
     if (arch != "all") {
         exclude { it.name.startsWith("bin-") && it.name != "bin-$arch.tar.xz" }
     }
+}
+
+/**
+ * 为 assets/game 下随启动解包的内置 jar 生成同名 .sha1 校验文件（内容为小写十六进制哈希），
+ * 运行时与本地已释放文件比对，一致则跳过重复解包。
+ */
+val updateBuiltinJarSha1 = tasks.register("updateBuiltinJarSha1") {
+    val gameAssetsDir = layout.projectDirectory.dir("src/main/assets/game")
+    val builtinJars = listOf("MioLibPatcher.jar", "MioLaunchWrapper.jar")
+    inputs.files(builtinJars.map { gameAssetsDir.file(it) })
+    outputs.files(builtinJars.map { gameAssetsDir.file("$it.sha1") })
+    doLast {
+        builtinJars.forEach { name ->
+            val jar = gameAssetsDir.file(name).asFile
+            gameAssetsDir.file("$name.sha1").asFile.writeText(
+                HexFormat.of().formatHex(MessageDigest.getInstance("SHA-1").digest(jar.readBytes()))
+            )
+        }
+    }
+}
+
+// 内置 jar 更新后自动续期 .sha1，避免包内校验值过期导致比对恒不一致、每次启动都重复解包。
+// mergeAssets 与 lint 模型任务均以 src/main/assets 为输出目录，须显式声明依赖，
+// 否则 Gradle 任务图校验报隐式依赖错误
+tasks.matching {
+    it.name.matches(Regex("merge.*Assets")) ||
+        (it.name.startsWith("generate") && it.name.contains("Lint"))
+}.configureEach {
+    dependsOn(updateBuiltinJarSha1)
 }
 
 androidComponents {

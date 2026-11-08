@@ -70,6 +70,7 @@ import com.tungsten.fclcore.task.DownloadException
 import com.tungsten.fclcore.task.Task
 import com.tungsten.fclcore.task.TaskExecutor
 import com.tungsten.fclcore.task.TaskListener
+import com.tungsten.fclcore.util.DigestUtils
 import com.tungsten.fclcore.util.LibFilter
 import com.tungsten.fclcore.util.Logging.LOG
 import com.tungsten.fclcore.util.StringUtils
@@ -759,15 +760,26 @@ class LauncherHelper(
             }
         }
 
-    /** 解包内置补丁 jar 到目标路径，失败仅记录警告不阻断启动 */
+    /** 解包内置补丁 jar 到目标路径，本地文件与包内 .sha1 记录一致时跳过，失败仅记录警告不阻断启动 */
     private fun unpackJar(resourcePath: String, targetPath: String, logName: String) {
         try {
+            if (isBuiltinJarUpToDate(resourcePath, targetPath)) return
             LauncherHelper::class.java.getResourceAsStream(resourcePath).use { input ->
                 Files.copy(input, File(targetPath).toPath(), StandardCopyOption.REPLACE_EXISTING)
             }
         } catch (e: IOException) {
             LOG.log(Level.WARNING, "Unable to unpack $logName", e)
         }
+    }
+
+    /** 本地 jar 已存在且 SHA-1 与安装包内同名 .sha1 记录一致时视为无需更新（.sha1 缺失则回退为总是解包） */
+    private fun isBuiltinJarUpToDate(resourcePath: String, targetPath: String): Boolean {
+        val expectedSha1 = LauncherHelper::class.java.getResourceAsStream("$resourcePath.sha1")
+            ?.use { it.readBytes().decodeToString() }
+            ?.trim()
+            ?: return false
+        val target = File(targetPath)
+        return target.isFile && DigestUtils.digestToString("SHA-1", target.toPath()) == expectedSha1
     }
 
     /** 主线程展示启动失败原因（按异常类型整理文案，兜底分支直接打印堆栈） */
