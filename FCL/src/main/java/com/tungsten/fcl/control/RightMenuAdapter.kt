@@ -59,7 +59,7 @@ enum class RightMenuTag {
 
     // 调试
     SHOW_MEMORY, PERFORMANCE_MODE, REQUEST_MAX_REFRESH_RATE, FORCE_RESOLUTION, FORCE_RESOLUTION_SIZE,
-    SHOW_LOG, AUTO_SHOW_LOG, FORCE_EXIT,
+    SHOW_LAUNCH_PROGRESS, SHOW_LOG, AUTO_SHOW_LOG, FORCE_EXIT,
 
     // SDL
     SDL_AUTO_SHOW_IME,
@@ -415,6 +415,11 @@ class RightMenuAdapter(
             Row.ButtonRow(
                 R.string.menu_settings_force_resolution_size,
                 listOf(R.string.menu_settings_force_resolution_edit to RightMenuTag.FORCE_RESOLUTION_SIZE)
+            ),
+            Row.SwitchRow(
+                R.string.menu_settings_show_launch_progress,
+                { menuSetting.isShowLaunchProgress },
+                RightMenuTag.SHOW_LAUNCH_PROGRESS
             ),
             Row.SwitchRow(
                 R.string.menu_settings_show_log,

@@ -844,8 +844,10 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
 
         if (!isSimulated()) {
             inputMagnifier.setup(activity.findViewById(R.id.texture_view), touchCharInput, menuSetting);
-            ImageUtil.loadInto(baseLayout, ThemeEngine.getInstance().getTheme().getBackground(activity));
-            launchProgress.setVisibility(View.VISIBLE);
+            if (menuSetting.isShowLaunchProgress()) {
+                ImageUtil.loadInto(baseLayout, ThemeEngine.getInstance().getTheme().getBackground(activity));
+                launchProgress.setVisibility(View.VISIBLE);
+            }
             assert getBridge() != null;
             gameOption = new GameOption(getBridge().getGameDir());
             touchPad.post(() -> gameItemBar.setup(this, gameOption));
@@ -990,8 +992,12 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         }
     }
 
+    /** 游戏是否已渲染首帧（onGraphicOutput 置位），日志窗自动显隐的阶段判断依据 */
+    private boolean graphicOutput = false;
+
     @Override
     public void onGraphicOutput() {
+        graphicOutput = true;
         baseLayout.setBackground(null);
         baseLayout.removeView(launchProgress);
         if (!menuSetting.isShowLog() && menuSetting.isAutoShowLog()) {
@@ -1338,14 +1344,19 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 // 后续焦点恢复/onPostResume 会按主题值重放全屏标志
                 ThemeEngine.getInstance().applyAndSave(activity, activity.getWindow(), checked);
                 break;
+            case SHOW_LAUNCH_PROGRESS:
+                // 无即时副作用，下次启动生效
+                menuSetting.setShowLaunchProgress(checked);
+                break;
             case SHOW_LOG:
                 menuSetting.setShowLog(checked);
                 logWindow.setVisibility(menuSetting.isShowLog());
                 break;
             case AUTO_SHOW_LOG:
                 menuSetting.setAutoShowLog(checked);
-                if (baseLayout.getBackground() != null) {
-                    logWindow.setVisibility(menuSetting.isAutoShowLog());
+                // 仅首帧渲染前即时生效（此时日志窗由启动流程接管显隐）；首帧后不再打断现状
+                if (!graphicOutput) {
+                    logWindow.setVisibility(menuSetting.isShowLog() || (!isSimulated() && checked));
                 }
                 break;
             case SDL_AUTO_SHOW_IME:

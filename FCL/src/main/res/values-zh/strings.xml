@@ -651,6 +651,7 @@
     <string name="menu_settings_item_bar_scale_width">物品栏缩放（宽度）</string>
     <string name="menu_settings_item_bar_scale_height">物品栏缩放（高度）</string>
     <string name="menu_settings_controls_opacity">控件不透明度</string>
+    <string name="menu_settings_show_launch_progress">显示启动进度遮罩</string>
     <string name="menu_settings_show_log">显示日志</string>
     <string name="menu_settings_show_log_auto">自动显示日志</string>
     <string name="menu_settings_performance_mode">持续性能模式</string>

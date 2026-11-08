@@ -727,6 +727,7 @@
     <string name="menu_settings_item_bar_scale_width">ItemBarScale (Width)</string>
     <string name="menu_settings_item_bar_scale_height">ItemBarScale (Height)</string>
     <string name="menu_settings_controls_opacity">Controls Opacity</string>
+    <string name="menu_settings_show_launch_progress">Show Launch Progress Overlay</string>
     <string name="menu_settings_show_log">Show Log</string>
     <string name="menu_settings_show_log_auto">Show Log Automatically</string>
     <string name="menu_settings_performance_mode">Sustained Performance Mode</string>
