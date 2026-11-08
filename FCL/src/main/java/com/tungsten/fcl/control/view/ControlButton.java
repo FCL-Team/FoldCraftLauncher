@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.GradientDrawable;
@@ -12,6 +13,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -131,10 +133,19 @@ public class ControlButton extends AppCompatButton implements CustomView {
         return dataProperty.get();
     }
 
+    /** 置空 outline：按键悬浮在游戏画面上不投影阴影，elevation 仍决定按键堆叠 z 序 */
+    private static final ViewOutlineProvider NO_SHADOW_OUTLINE = new ViewOutlineProvider() {
+        @Override
+        public void getOutline(@NonNull View view, @NonNull Outline outline) {
+            outline.setEmpty();
+        }
+    };
+
     public ControlButton(@NonNull Context context, GameMenu gameMenu, ViewListener listener) {
         super(context);
         this.menu = gameMenu;
         setElevation(113.0f);
+        setOutlineProvider(NO_SHADOW_OUTLINE);
 
         setStateListAnimator(null);
 
