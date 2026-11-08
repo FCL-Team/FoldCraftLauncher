@@ -283,7 +283,7 @@ class LauncherHelper(
         runTracked(Task.allOf(*tasks.toTypedArray()))
     }
 
-    /** 解包内置补丁 jar（MioLibPatcher / MioLaunchWrapper），失败仅记录警告不阻断启动 */
+    /** 解包内置补丁 jar（MioLibPatcher / MioLaunchWrapper / AwtHelper），失败仅记录警告不阻断启动 */
     private fun unpackBuiltinJars() {
         unpackJar("/assets/game/MioLibPatcher.jar", FCLPath.LIB_PATCHER_PATH, "MioLibFixer.jar")
         unpackJar(
@@ -291,6 +291,7 @@ class LauncherHelper(
             FCLPath.MIO_LAUNCH_WRAPPER,
             "MioLaunchWrapper.jar"
         )
+        unpackJar("/assets/game/AwtHelper.jar", FCLPath.AWT_HELPER_PATH, "AwtHelper.jar")
     }
 
     /** 读取菜单设置、装配 FCLGameLauncher 并拉起游戏进程，返回后续检查与界面配置所用的桥接实例 */

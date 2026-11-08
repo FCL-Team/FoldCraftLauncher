@@ -1,24 +1,27 @@
 package com.tungsten.fcl.awt;
 
-import java.awt.EventQueue;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.Exchanger;
 import javax.swing.JOptionPane;
 
 /**
- * 游戏进程内 AWT 辅助入口（经 -Xbootclasspath/a 注入游戏 JVM）
+ * 游戏进程内 AWT 辅助入口（经 -Xbootclasspath/a|p 注入游戏 JVM）
  *
- * 重新构建：用 JDK17 执行
- * javac --release 8 -cp cacio-tta-1.19.1-SNAPSHOT.jar -d out com/tungsten/fcl/awt/AwtHelper.java
- * jar cf fcl-awt-helper.jar -C out .
+ * 构建任务 :LWJGL:awt-helper:jar，产物 AwtHelper.jar 直接输出到 FCL/src/main/assets/game/
+ * （与 MioLibPatcher 同机制），每次启动由 LauncherHelper.unpackBuiltinJars
+ * 覆盖释放到 PLUGIN_DIR，经 CacioJavaArgs 追加进 cacio 的 -Xbootclasspath 参数
  */
 public final class AwtHelper {
 
     private static final Exchanger<int[]> exchanger = new Exchanger<int[]>();
 
     private static volatile Thread monitorThread;
+
+    /** cacio 1.19+（jre17+）与 1.10（jre8）的 CTCScreen 包名不同，按运行时探测后缓存；仅 monitor 线程访问 */
+    private static Method screenRgbMethod;
 
     private AwtHelper() {
     }
@@ -101,7 +104,7 @@ public final class AwtHelper {
                 System.out.println("[AWT] invalid screen size " + screenW + "x" + screenH);
                 return null;
             }
-            int[] rgb = com.github.caciocavallosilano.cacio.ctc.CTCScreen.getCurrentScreenRGB();
+            int[] rgb = getCurrentScreenRGB();
             if (rgb == null || rgb.length < screenW * screenH) {
                 return null;
             }
@@ -125,6 +128,29 @@ public final class AwtHelper {
         } catch (Throwable t) {
             System.out.println("[AWT] poll failed: " + t);
             return null;
+        }
+    }
+
+    /** 取 cacio 虚拟屏当前帧，两种 CTCScreen 包名按运行时探测（解析失败经 computeFrame 的 catch 上抛留痕） */
+    private static int[] getCurrentScreenRGB() {
+        if (screenRgbMethod == null) {
+            for (String name : new String[]{
+                    "com.github.caciocavallosilano.cacio.ctc.CTCScreen",
+                    "net.java.openjdk.cacio.ctc.CTCScreen"}) {
+                try {
+                    screenRgbMethod = Class.forName(name).getMethod("getCurrentScreenRGB");
+                    break;
+                } catch (ReflectiveOperationException ignored) {
+                }
+            }
+            if (screenRgbMethod == null) {
+                throw new IllegalStateException("CTCScreen not found");
+            }
+        }
+        try {
+            return (int[]) screenRgbMethod.invoke(null);
+        } catch (Throwable t) {
+            throw new IllegalStateException("getCurrentScreenRGB failed", t);
         }
     }
 

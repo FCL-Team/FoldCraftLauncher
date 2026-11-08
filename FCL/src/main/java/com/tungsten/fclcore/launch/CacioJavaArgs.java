@@ -60,6 +60,8 @@ public final class CacioJavaArgs {
                 }
             }
         }
+        // AWT 悬浮层辅助类（启动时由 LauncherHelper 从 assets/game 释放，两种 cacio 运行时通用）
+        cacioClasspath.append(":").append(FCLPath.AWT_HELPER_PATH);
         res.add(cacioClasspath.toString());
     }
 }
