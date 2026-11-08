@@ -225,8 +225,40 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 goSetting.setOnClickListener(this@MainActivity)
                 start.setOnClickListener(this@MainActivity)
                 start.setOnLongClickListener { view ->
-                    RendererSelectDialog(this@MainActivity, false) {
-                        onClick(view)
+                    // RendererSelectDialog 回调前已把选择写入版本设置（usesGlobal 时实为全局设置），
+                    // 旧值须在对话框打开前捕获，取消时回滚才有效
+                    val previousRenderer = Profiles.getSelectedProfile().versionSetting.renderer
+                    RendererSelectDialog(this@MainActivity, false) { picked ->
+                        val profile = Profiles.getSelectedProfile()
+                        val versionId = profile.selectedVersion
+                        val override = versionId?.let { profile.getEffectiveRendererOverride(it) }
+                        if (versionId != null && override != null && override != picked.id) {
+                            // 该版本有渲染器覆盖：此处修改会被遮蔽，提示后不直接启动，
+                            // 只有更新/清除覆盖才沿用本次选择继续启动
+                            val builder = FCLAlertDialog.Builder(this@MainActivity)
+                            builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO)
+                            builder.setMessage(
+                                getString(
+                                    R.string.message_warn_renderer_override_shadow,
+                                    versionId,
+                                    RendererManager.getRenderer(override).des
+                                )
+                            )
+                            builder.setPositiveButton(getString(R.string.renderer_update_override)) {
+                                profile.setRendererOverride(versionId, picked.id)
+                                onClick(view)
+                            }
+                            builder.setNeutralButton(getString(R.string.renderer_clear_override)) {
+                                profile.setRendererOverride(versionId, null)
+                                onClick(view)
+                            }
+                            builder.setNegativeButton(getString(R.string.dialog_negative)) {
+                                profile.versionSetting.renderer = previousRenderer
+                            }
+                            builder.create().show()
+                        } else {
+                            onClick(view)
+                        }
                     }.show()
                     true
                 }

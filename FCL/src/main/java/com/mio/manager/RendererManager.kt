@@ -124,6 +124,10 @@ object RendererManager {
         rendererList.add(renderer)
     }
 
+    /** 按 id 查找渲染器，不存在时返回 null（区别于 [getRenderer] 的 NGGL4ES 兜底） */
+    @JvmStatic
+    fun findRenderer(id: String): Renderer? = rendererList.find { it.id == id }
+
     @JvmStatic
     fun getRenderer(id: String): Renderer {
         return rendererList.find { it.id == id } ?: RENDERER_NGGL4ES
