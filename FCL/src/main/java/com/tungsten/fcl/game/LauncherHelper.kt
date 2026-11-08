@@ -275,7 +275,8 @@ class LauncherHelper(
                     if (!proceed)
                         return@let
                 }
-                tasks.add(provider.createCompletionTask(dependencyManager, selectedVersion))
+                // HMCL / MultiMC 整合包无补全任务，provider 返回 null 时不加入
+                provider.createCompletionTask(dependencyManager, selectedVersion)?.let { tasks.add(it) }
             }
         } catch (_: IOException) {
         }
