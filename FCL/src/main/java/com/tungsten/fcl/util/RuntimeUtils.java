@@ -183,13 +183,6 @@ public class RuntimeUtils {
             if (listener != null && !tarEntry.isDirectory()) {
                 listener.onUpdate(tarEntry.getName());
             }
-            if (tarEntry.getSize() <= 20480) {
-                try {
-                    Thread.sleep(25);
-                } catch (InterruptedException ignored) {
-
-                }
-            }
             File destPath = new File(dest, tarEntry.getName());
             if (tarEntry.isSymbolicLink()) {
                 Objects.requireNonNull(destPath.getParentFile()).mkdirs();
