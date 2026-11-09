@@ -120,11 +120,12 @@ public final class TaskListPane extends FCLAdapter {
 
     /** 解除对 executor 的监听并释放全部行 View，对话框关闭时调用，避免 View 树随长命 executor 泄漏 */
     public void release() {
+        // 先摘监听，避免摘除前的窗口期内事件线程入队的 op 在 release 后触发 flush 复活状态
+        TaskExecutor bound = executor != null ? executor : attachedExecutor;
+        if (bound != null) bound.removeTaskListener(taskListener);
         uiHandler.removeCallbacks(flushAction);
         flushScheduled.set(false);
         pendingRowOps.clear();
-        TaskExecutor bound = executor != null ? executor : attachedExecutor;
-        if (bound != null) bound.removeTaskListener(taskListener);
         nodes.forEach((task, node) -> node.unbind());
         nodes.clear();
         stageNodes.clear();
