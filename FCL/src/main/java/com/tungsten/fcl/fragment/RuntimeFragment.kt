@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +16,7 @@ import com.tungsten.fcl.databinding.FragmentRuntimeBinding
 import com.tungsten.fcl.util.RuntimeUtils
 import com.tungsten.fclauncher.utils.Architecture
 import com.tungsten.fclauncher.utils.FCLPath
+import com.tungsten.fclcore.util.Logging
 import com.tungsten.fcllibrary.component.FCLFragment
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog
 import com.tungsten.fcllibrary.component.theme.ThemeEngine
@@ -24,6 +26,7 @@ import com.tungsten.fcllibrary.component.view.FCLTextView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.logging.Level
 
 class RuntimeFragment : FCLFragment(), View.OnClickListener {
     private lateinit var bind: FragmentRuntimeBinding
@@ -104,12 +107,12 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
         installing = true
         bind.apply {
             if (!lwjgl) {
-                launchInstall(lwjglState, lwjglProgress, lwjglDetail, { lwjgl = true }) {
+                launchInstall("lwjgl", lwjglState, lwjglProgress, lwjglDetail, { lwjgl = true }) {
                     RuntimeUtils.install(context, FCLPath.LWJGL_DIR, "app_runtime/lwjgl", it)
                 }
             }
             if (!cacio) {
-                launchInstall(cacioState, cacioProgress, cacioDetail, { cacio = true }) {
+                launchInstall("caciocavallo", cacioState, cacioProgress, cacioDetail, { cacio = true }) {
                     RuntimeUtils.install(
                         context,
                         FCLPath.CACIOCAVALLO_8_DIR,
@@ -119,7 +122,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                 }
             }
             if (!cacio17) {
-                launchInstall(cacio17State, cacio17Progress, cacio17Detail, { cacio17 = true }) {
+                launchInstall("caciocavallo17", cacio17State, cacio17Progress, cacio17Detail, { cacio17 = true }) {
                     RuntimeUtils.install(
                         context,
                         FCLPath.CACIOCAVALLO_17_DIR,
@@ -129,12 +132,12 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                 }
             }
             if (!java8) {
-                launchInstall(java8State, java8Progress, java8Detail, { java8 = true }) {
+                launchInstall("jre8", java8State, java8Progress, java8Detail, { java8 = true }) {
                     RuntimeUtils.installJava(context, FCLPath.JAVA_8_PATH, "app_runtime/java/jre8", it)
                 }
             }
             if (!java17) {
-                launchInstall(java17State, java17Progress, java17Detail, { java17 = true }) {
+                launchInstall("jre17", java17State, java17Progress, java17Detail, { java17 = true }) {
                     RuntimeUtils.installJava(
                         context,
                         FCLPath.JAVA_17_PATH,
@@ -144,7 +147,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                 }
             }
             if (!java21) {
-                launchInstall(java21State, java21Progress, java21Detail, { java21 = true }) {
+                launchInstall("jre21", java21State, java21Progress, java21Detail, { java21 = true }) {
                     RuntimeUtils.installJava(
                         context,
                         FCLPath.JAVA_21_PATH,
@@ -154,7 +157,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                 }
             }
             if (!java25) {
-                launchInstall(java25State, java25Progress, java25Detail, { java25 = true }) {
+                launchInstall("jre25", java25State, java25Progress, java25Detail, { java25 = true }) {
                     RuntimeUtils.installJava(
                         context,
                         FCLPath.JAVA_25_PATH,
@@ -164,7 +167,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
                 }
             }
             if (!jna) {
-                launchInstall(jnaState, jnaProgress, jnaDetail, { jna = true }) {
+                launchInstall("jna", jnaState, jnaProgress, jnaDetail, { jna = true }) {
                     RuntimeUtils.installJna(context, FCLPath.JNA_PATH, "app_runtime/jna", it)
                 }
             }
@@ -172,6 +175,7 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
     }
 
     private fun launchInstall(
+        component: String,
         state: FCLImageView,
         progress: FCLProgressBar,
         detail: FCLTextView,
@@ -189,7 +193,9 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
             progress.visibility = View.GONE
             detail.visibility = View.GONE
             if (error != null) {
-                showErrorDialog(error.toString())
+                // 异常 message 可能为空（如 ROM 层 IO 错误），仅 toString 无法定位，须落日志并展示完整栈
+                Logging.LOG.log(Level.SEVERE, "Failed to install runtime component: $component", error)
+                showErrorDialog(Log.getStackTraceString(error))
             } else {
                 markDone()
             }
@@ -259,7 +265,8 @@ class RuntimeFragment : FCLFragment(), View.OnClickListener {
             }
             return supportedCount > 0
         } catch (e: Exception) {
-            showErrorDialog(e.toString())
+            Logging.LOG.log(Level.SEVERE, "Failed to check runtime arch support", e)
+            showErrorDialog(Log.getStackTraceString(e))
             return false
         }
     }
