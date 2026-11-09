@@ -6,6 +6,8 @@ import static com.tungsten.fclcore.util.Lang.tryCast;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,9 +61,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public final class TaskListPane extends FCLAdapter {
+
+    /** 任务行增删的批量刷新间隔（毫秒）：高速下载时任务事件每秒可达数百次，逐事件全量刷新 ListView 会卡顿 */
+    private static final long FLUSH_INTERVAL_MS = 100;
 
     @Nullable
     private final TaskExecutor executor;
@@ -72,6 +79,12 @@ public final class TaskListPane extends FCLAdapter {
     private final Map<Task<?>, ProgressListNode> nodes = new HashMap<>();
     private final List<StageNode> stageNodes = new ArrayList<>();
     private final ArrayList<View> listBox = new ArrayList<>();
+
+    /** 排队待应用的任务行增删操作，事件线程入队、UI 线程统一批量应用 */
+    private final ConcurrentLinkedQueue<Runnable> pendingRowOps = new ConcurrentLinkedQueue<>();
+    private final AtomicBoolean flushScheduled = new AtomicBoolean(false);
+    private final Handler uiHandler = new Handler(Looper.getMainLooper());
+    private final Runnable flushAction = this::flushPendingRowOps;
 
     public TaskListPane(Context context, TaskExecutor taskExecutor) {
         super(context);
@@ -107,12 +120,38 @@ public final class TaskListPane extends FCLAdapter {
 
     /** 解除对 executor 的监听并释放全部行 View，对话框关闭时调用，避免 View 树随长命 executor 泄漏 */
     public void release() {
+        // 先摘监听，避免摘除前的窗口期内事件线程入队的 op 在 release 后触发 flush 复活状态
         TaskExecutor bound = executor != null ? executor : attachedExecutor;
         if (bound != null) bound.removeTaskListener(taskListener);
+        uiHandler.removeCallbacks(flushAction);
+        flushScheduled.set(false);
+        pendingRowOps.clear();
         nodes.forEach((task, node) -> node.unbind());
         nodes.clear();
         stageNodes.clear();
         listBox.clear();
+    }
+
+    /** 事件线程调用：排队一行操作并调度一次批量刷新，每个周期至多一次 notifyDataSetChanged */
+    private void enqueueRowOp(Runnable op) {
+        pendingRowOps.add(op);
+        if (flushScheduled.compareAndSet(false, true)) {
+            uiHandler.postDelayed(flushAction, FLUSH_INTERVAL_MS);
+        }
+    }
+
+    /** UI 线程批量应用排队的行操作；期间完成又退出的任务行不再闪现 */
+    private void flushPendingRowOps() {
+        Runnable op;
+        while ((op = pendingRowOps.poll()) != null) {
+            op.run();
+        }
+        notifyDataSetChanged();
+        flushScheduled.set(false);
+        // 排空后新入队的操作会因标志仍为 true 而漏调度，这里补排一次
+        if (!pendingRowOps.isEmpty() && flushScheduled.compareAndSet(false, true)) {
+            uiHandler.postDelayed(flushAction, FLUSH_INTERVAL_MS);
+        }
     }
 
     /** 标记阶段开始（外部流程驱动，任意线程可调） */
@@ -155,13 +194,12 @@ public final class TaskListPane extends FCLAdapter {
                 if (!buildStagesOnStart)
                     return;
                 List<String> stages = Lang.removingDuplicates(executor.getStages());
-                Schedulers.androidUIThread().execute(() -> {
+                enqueueRowOp(() -> {
                     stageNodes.clear();
                     stageNodes.addAll(stages.stream().map(it -> new StageNode(getContext(), it)).collect(Collectors.toList()));
                     for (StageNode stageNode : stageNodes) {
                         listBox.add(stageNode.getView());
                     }
-                    notifyDataSetChanged();
                 });
             }
 
@@ -179,12 +217,12 @@ public final class TaskListPane extends FCLAdapter {
 
                 applyTaskName(task);
 
-                Schedulers.androidUIThread().execute(() -> {
+                enqueueRowOp(() -> {
                     StageNode stageNode = stageNodes.stream().filter(x -> x.stage.equals(task.getInheritedStage())).findAny().orElse(null);
-                    ProgressListNode node = new ProgressListNode(getContext(), stageNode != null && stageNodes.contains(stageNode), task);
+                    boolean hasStage = stageNode != null && stageNodes.contains(stageNode);
+                    ProgressListNode node = new ProgressListNode(getContext(), hasStage, task);
                     nodes.put(task, node);
-                    listBox.add(stageNode == null || !stageNodes.contains(stageNode) ? 0 : listBox.indexOf(stageNode.getView()) + 1, node.getView());
-                    notifyDataSetChanged();
+                    listBox.add(hasStage ? listBox.indexOf(stageNode.getView()) + 1 : 0, node.getView());
                 });
             }
 
@@ -194,13 +232,12 @@ public final class TaskListPane extends FCLAdapter {
                     succeedStage(task.getStage());
                 }
 
-                Schedulers.androidUIThread().execute(() -> {
+                enqueueRowOp(() -> {
                     ProgressListNode node = nodes.remove(task);
                     if (node == null)
                         return;
                     node.unbind();
                     listBox.remove(node.getView());
-                    notifyDataSetChanged();
                 });
             }
 
@@ -209,10 +246,13 @@ public final class TaskListPane extends FCLAdapter {
                 if (task.getStage() != null) {
                     failStage(task.getStage());
                 }
-                ProgressListNode node = nodes.remove(task);
-                if (node == null)
-                    return;
-                Schedulers.androidUIThread().execute(() -> node.setThrowable(throwable));
+
+                enqueueRowOp(() -> {
+                    ProgressListNode node = nodes.remove(task);
+                    if (node == null)
+                        return;
+                    node.setThrowable(throwable);
+                });
             }
 
             @Override
