@@ -14,18 +14,22 @@ import com.mio.util.AndroidUtilKt;
 import com.mio.util.LoginStageTextBinder;
 import com.tungsten.fcl.util.FXUtils;
 import com.tungsten.fclcore.auth.AuthInfo;
+import com.tungsten.fclcore.auth.NoSelectedCharacterException;
+import com.tungsten.fclcore.auth.OAuth;
 import com.tungsten.fclcore.auth.OAuthAccount;
 import com.tungsten.fclcore.auth.microsoft.MicrosoftAccount;
 import com.tungsten.fclcore.fakefx.beans.property.ObjectProperty;
 import com.tungsten.fclcore.fakefx.beans.property.SimpleObjectProperty;
 import com.tungsten.fclcore.task.Schedulers;
 import com.tungsten.fclcore.task.Task;
+import com.tungsten.fclcore.task.TaskExecutor;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 
 import android.widget.TextView;
 
+import java.util.concurrent.CancellationException;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -41,6 +45,8 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
     private final OAuthAccount account;
     private final Consumer<AuthInfo> success;
     private final Runnable failed;
+    /** 进行中的登录任务执行器；非 null 表示正在等待设备码授权，此时允许取消 */
+    private TaskExecutor loginExecutor;
     private final ObjectProperty<OAuthServer.GrantDeviceCodeEvent> deviceCode = new SimpleObjectProperty<>();
 
     // 强引用注册（register），dismiss 时注销，避免对话框关闭后残留监听重复打开登录页
@@ -97,7 +103,6 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
     public void onClick(View view) {
         if (view == positive) {
             positive.setEnabled(false);
-            negative.setEnabled(false);
             // 微软账户注入登录进度回调，实时显示各认证阶段
             MicrosoftAccount microsoftAccount = account instanceof MicrosoftAccount ? (MicrosoftAccount) account : null;
             if (microsoftAccount != null) {
@@ -105,14 +110,19 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
                 progressText.setText(R.string.launch_state_logging_in);
                 microsoftAccount.setProgressCallback(new LoginStageTextBinder(getContext(), progressText));
             }
-            Task.supplyAsync(account::logInWhenCredentialsExpired)
+            loginExecutor = Task.supplyAsync(account::logInWhenCredentialsExpired)
                     .whenComplete(Schedulers.androidUIThread(), (authInfo, exception) -> {
+                        loginExecutor = null;
                         if (microsoftAccount != null) {
                             microsoftAccount.setProgressCallback(null);
                             loginProgress.setVisibility(View.GONE);
                         }
                         if (exception == null) {
                             success.accept(authInfo);
+                            dismiss();
+                        } else if (exception instanceof CancellationException || exception instanceof NoSelectedCharacterException) {
+                            // 用户取消或授权超时：静默关闭，不弹错误
+                            failed.run();
                             dismiss();
                         } else {
                             LOG.log(Level.INFO, "Failed to login when credentials expired: " + account, exception);
@@ -122,14 +132,19 @@ public class OAuthAccountLoginDialog extends FCLDialog implements View.OnClickLi
                             builder.setCancelable(false);
                             builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
                             builder.create().show();
+                            positive.setEnabled(true);
                         }
-                        positive.setEnabled(true);
-                        negative.setEnabled(true);
-                        // 登录流程已终结（成功/失败），通知内嵌登录页自行关闭
+                        // 登录流程已终结（成功/失败/取消），通知内嵌登录页自行关闭
                         Accounts.OAUTH_CALLBACK.onLoginFinished.fireEvent(new OAuthServer.LoginFinishedEvent(this));
-                    }).start();
+                    }).executor(true);
         }
         if (view == negative) {
+            // 登录等待授权期间可随时取消：置位轮询取消标志并终止任务，用户退出浏览器页面后不再卡死
+            if (loginExecutor != null) {
+                OAuth.IS_CANCELED = true;
+                loginExecutor.cancel();
+                loginExecutor = null;
+            }
             Accounts.OAUTH_CALLBACK.onLoginFinished.fireEvent(new OAuthServer.LoginFinishedEvent(this));
             failed.run();
             dismiss();
