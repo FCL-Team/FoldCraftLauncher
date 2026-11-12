@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1345,
-    "versionName": "1.3.4.5",
-    "date": "2026.11.07",
+    "versionCode": 1346,
+    "versionName": "1.3.4.6",
+    "date": "2026.11.12",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Added parallel download resumption: when a single connection stays slow, the remaining data is automatically split into chunks fetched over multiple connections, breaking through per-connection speed caps of slow sources (such as net-disk direct-link mirrors); fast servers are unaffected (#1960)\n2. A confirmation dialog now appears before modpack versions' per-launch auto-restore reinstalls missing files: files to be restored are listed (including mods the user deleted or updated), with options to continue, skip this launch, or disable auto-restore (re-enable anytime in version settings) (#1990)\n3. The skin model settings menu on the main screen is now opened with a two-finger tap instead of a double-click (which conflicted with rotate/zoom gestures), with a new guide hint and a tap sound effect that can be turned off in the skin settings\n4. Fixed the screen being shifted up twice by the input method (causing a black screen) and the in-game keyboard toggle requiring two taps (#1997)\n5. Fixed the background image being stretched after launching while the screen had been off: it is now proportionally center-cropped to the view's live size, staying correct across rotation, folding and other size changes\n6. Fixed an abnormal animation when switching the selected version in the version list\n7. The launch flow was refactored to be coroutine-driven: authentication failures can be retried repeatedly while Microsoft login progress is kept across retries (internal improvement)"
+        "text": "(Translated from Chinese by AI)\n1. Added per-version renderer overrides: a new renderer entry at the bottom-left of the version list lets you assign a renderer to each version individually (defaulting to following the global setting), so switching between versions no longer requires changing renderer settings back and forth; when the renderer is changed elsewhere while an override exists, a dialog offers to update, clear or keep the override (#1975)\n2. Added a \"launch progress overlay\" toggle under the DEBUG category of the in-game right menu: when off, the overlay background and progress spinner are no longer shown at launch and the game screen appears directly from the first frame; also fixed the first-frame misdetection in the log window's auto-show logic (#2005)\n3. Fixed being unable to cancel while waiting for authorization during Microsoft account re-login, and the dialog getting stuck after leaving the login page; retrying after a failed login now works (#2013)\n4. Fixed Controlify requiring a controller reconnection before direct input worked: SDL gamepad device enumeration is now synced proactively at launch, with USB/Bluetooth hotplug monitoring taken over (synced from ZalithLauncher2)\n5. Fixed Minecraft snapshots 13w16a~13w23b failing to launch (#2002)\n6. Fixed runtime installation failures being impossible to diagnose: the full stack trace is now logged and shown in a dialog (#2011)\n7. Removed the shadow in-game control buttons cast onto the screen; elevation now only keeps the buttons' stacking order (#2008)\n8. Fixed main-screen version card icons being squashed when non-square: they are now scaled proportionally\n9. Fixed HMCL/MultiMC modpacks failing to launch\n10. Optimized task-list refreshing: task rows are now added/removed in batches, fixing list jank during high-speed downloads (#2010)\n11. Optimized launch speed: unpacking built-in jars now skips files already released by comparing checksums, and an artificial delay for small files during runtime extraction was removed"
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增文件下载并行续传：单连接持续低速时自动切换多连接分块拉取剩余区间，突破按连接数限速的慢速源（如网盘直链镜像），快服务器不受影响 (#1960)\n2.整合包版本启动时的自动补全在恢复文件前新增弹窗确认：列出将被恢复的缺失文件（含被主动删除或更新的模组），可选继续补全、跳过本次或不再自动补全（版本设置中可随时改回） (#1990)\n3.主界面皮肤模型的设置菜单改双指点击触发（原双击易与旋转缩放手势冲突），新增引导提示与点击音效，音效可在皮肤设置中关闭\n4.修复输入法双倍抬升画面导致黑屏、游戏内软键盘开关需点两次的问题 (#1997)\n5.修复背景图息屏启动后比例拉伸：改按视图实时尺寸等比居中裁剪，旋转、折叠等尺寸变化场景同样保持正确比例\n6.修复版本列表切换选中版本时出现异常动画\n7.启动流程重构为协程驱动，认证失败可反复重试且重试期间保留微软登录进度（内部优化）"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增每版本渲染器覆盖：版本列表页左下角新增渲染器入口，可为每个版本单独指定渲染器（默认跟随全局设置），多版本切换无需反复修改渲染器；存在覆盖时从其他位置修改渲染器会弹窗提示，可选更新覆盖、清除覆盖或保留覆盖 (#1975)\n2.游戏内右侧菜单 DEBUG 分类新增「启动进度遮罩」开关：关闭后启动时不再显示遮罩背景与进度圈，游戏画面自首帧直接显示；并修复日志窗自动显示的首帧误判 (#2005)\n3.修复微软账户重新登录等待授权期间无法取消，退出登录页面后对话框卡死的问题；登录失败后可直接重试 (#2013)\n4.修复 Controlify 需重连手柄才能直通：启动时主动同步 SDL 手柄设备枚举并接管 USB/蓝牙插拔监听（同步 ZalithLauncher2）\n5.修复无法启动 Minecraft 13w16a~13w23b 快照的问题 (#2002)\n6.修复运行环境安装失败时无法定位原因的问题：现会记录日志并在弹窗展示完整调用栈 (#2011)\n7.修复游戏内按键向画面投影阴影的问题，elevation 仅保留按键堆叠层级 (#2008)\n8.修复主界面版本卡片长方形图标被压扁的问题，现按原始比例等比缩放\n9.修复 HMCL/MultiMC 整合包启动崩溃的问题\n10.优化任务列表刷新：任务行增删改为批量刷新，修复高速下载时列表卡顿 (#2010)\n11.优化启动速度：解包内置 jar 前按校验值比对跳过重复释放，并移除运行环境解压时对小文件的人为延时"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/c9037fe0af14",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.5/FCL-release-1.3.4.5-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/f1bc04ac1dd0",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.6/FCL-release-1.3.4.6-all.apk"
   }
 ]
