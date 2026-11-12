@@ -1,5 +1,55 @@
 # Changelog
 
+## [1.3.4.6] - 2026-11-12
+
+### 中文
+
+#### ✨ 新功能
+
+1. **每版本渲染器覆盖 (#1975)**：渲染器设置此前是全局（或版本特定设置）单值，多个版本使用不同渲染器时每次切换都要进设置页反复改；现支持按版本覆盖——Profile 新增 rendererOverrides 映射（版本 id → 渲染器 id），随配置 JSON 持久化、独立于「启用游戏特定设置」；启动解析单点接入 getLaunchOptions，优先级为 覆盖 > 特定设置 > 全局；版本列表页左下角新增渲染器入口，打开「渲染器覆盖」对话框，列出当前配置的全部版本逐行下拉指定渲染器，默认「跟随设置」（即不覆盖）；存在覆盖时从其他位置（全局设置页、版本特定设置页、长按启动）修改渲染器会弹遮蔽提示，提供「更新覆盖 / 清除覆盖 / 保留覆盖」三选项——全局设置页仅检测当前选中版本，并与既有「该版本启用独立设置」提示合并展示；长按启动被遮蔽提示打断时不自动启动，选择更新/清除覆盖后沿用本次选择继续启动；覆盖指向已卸载或禁用的渲染器时视同无覆盖（启动解析不再回落默认渲染器），对话框打开时顺手清除失效覆盖并落盘；遮蔽提示选择取消时回滚本次已写入版本设置的渲染器，避免放弃启动仍残留修改
+2. **游戏内 DEBUG 分类新增「启动进度遮罩」开关 (#2005)**：游戏菜单设置新增 showLaunchProgress（默认开启，随菜单设置持久化）——开启时启动显示遮罩背景与进度圈（既有默认行为），关闭后启动不再显示遮罩，游戏画面自首帧直接显示；顺带修复日志窗自动显示的首帧误判：GameMenu 现记录 onGraphicOutput 置位的 graphicOutput 标志作为「游戏已渲染首帧」的阶段判断依据，日志窗显隐切换仅在首帧渲染前即时生效，首帧渲染后切换开关不再打断当前状态
+
+#### ⚡ 优化
+
+1. **任务列表任务行增删改为批量刷新 (#2010)**：TaskDialog 任务列表此前每个任务行的增删事件都立即全量刷新 ListView，高速下载时任务行高频变动导致整页卡顿；现任务行增删改为 100ms 批量合并刷新，高频变动一帧只刷一次；页面释放（release）时先摘除任务监听再清理批量刷新队列，避免摘除前窗口期入队的操作在释放后触发刷新
+2. **启动解包内置 jar 前按 .sha1 比对跳过重复释放**：assets 内置 jar（MioLaunchWrapper.jar、MioLibPatcher.jar）新增随包 .sha1 校验文件（构建脚本注册 updateBuiltinJarSha1 任务自动生成续期），启动解包前先比对目标文件摘要，一致则跳过释放，二次启动不再重复写盘
+3. **移除运行环境解压时对小文件的人为延时**：RuntimeUtils 解压运行环境的循环中，对 ≤20KB 的小文件每次人为 sleep 25ms 的逻辑删除（历史遗留的进度展示平滑手段），解压耗时回归真实 IO
+
+#### 🐛 修复
+
+1. **微软账户重新登录等待授权期间允许取消，退出登录页面后对话框卡死 (#2013)**：OAuthAccountLoginDialog 触发重新登录后立即禁用了取消按钮，等待设备码授权期间（可能长达数分钟）既不能取消也不能离开，退出登录页面后对话框卡死；现等待授权期间保留取消按钮，点击即取消进行中的登录任务并静默关闭对话框（不弹错误）；授权超时（NoSelectedCharacterException）同样静默关闭；登录失败弹出错误对话框后，确认按钮恢复可用，可直接重试
+2. **Controlify 需重连手柄才能直通（同步 ZalithLauncher2 PR #2204）**：SDL 的 Android 后端初始化设备扫描受 3 秒节流且跨 SDL_Quit 不重置，游戏启动时可能错过已连接的手柄、或残留上一局的失效设备；标准流程中由 SDLActivity.onCreate 创建的 HIDDeviceManager（USB/蓝牙插拔广播接收器与 hidapi 通道）在本项目的启动路径中缺失，而 Controlify 强制启用 HIDAPI，缺少它时 hid_init 静默失败；现 SdlBridge 在 JNI 就绪后立即主动同步一次 SDL 设备列表（与实际设备的差异直接转为热插拔事件，保证 Controlify 初始发现可用），手动 acquire HIDDeviceManager（进程级仅创建一次，其广播接收器在退出游戏后仍存活以持续感知插拔），并注册系统 InputManager 输入设备监听，手柄插拔时主动同步 SDL 设备列表
+3. **无法启动 Minecraft 13w16a~13w23b 快照 (#2002)**：这批快照缺少非英语语言的外部语言资源包，启动前写入 lang（语言）设置后游戏会卡在 Mojang 加载界面；现该区间快照不再写入 lang，历史已写入的 lang 一并重置为默认英语；同时 has_custom_resolution 特性标志增加版本门控——1.6（快照 13w25a）之前的版本不支持自定义分辨率参数，不再注入。参考 HMCL（https://github.com/HMCL-dev/HMCL/commit/087b2b678d51782f0d6bd64db8a2acd7608c8ee7）
+4. **运行环境安装失败无法定位原因 (#2011)**：RuntimeFragment 安装失败时弹窗仅显示 error.toString()，异常 message 可能为空（如 ROM 层 IO 错误）导致无从排查；现按组件名记录 SEVERE 级日志并在弹窗展示完整调用栈
+5. **游戏内按键投影阴影 (#2007 #2008)**：悬浮于游戏画面上的自定义按键因 elevation 绘制投影阴影，视觉上多出一圈模糊黑边；现 ControlButton 置空 outline（ViewOutlineProvider 返回空轮廓），按键不再投影阴影，elevation 仅保留按键堆叠 z 序
+6. **主界面版本卡片长方形图标被压扁**：版本卡片图标此前以 background 方式承载，30dp×30dp 固定尺寸会将长方形 icon 拉伸变形；现改用 setImageDrawable + fitCenter 等比缩放，任意比例图标不再压扁（无版本时的默认草方块图标同步修正）
+7. **HMCL/MultiMC 整合包启动 NPE**：LauncherHelper Kotlin 化时对 createCompletionTask 误加了非空处理，而 HMCL/MultiMC 类型整合包无补全任务、provider 返回 null，启动直接崩溃；现恢复可空约定，null 时不加入任务列表
+8. **渲染器覆盖对话框行内下拉框撞色**：对话框内 FCLSpinner 的 autoTint 与对话框固定背景撞色（对比色文字看不清），行内 Spinner 关闭自动文字着色
+
+### English
+
+#### ✨ New Features
+
+1. **Per-version renderer overrides (#1975)**: Renderer settings were previously a single global (or per-instance) value, forcing repeated trips into the settings page whenever versions using different renderers were switched; overrides are now supported per version — Profile gained a rendererOverrides map (version id → renderer id), persisted with the config JSON and independent of "Enable per-instance settings"; launch resolution hooks into getLaunchOptions at a single point with the priority override > per-instance setting > global; a new renderer entry at the bottom-left of the version list opens a "Renderer Overrides" dialog listing every version in the current config with a per-row dropdown to assign a renderer, defaulting to "Follow settings" (no override); when an override exists and the renderer is changed elsewhere (global settings page, per-instance settings page, or long-press launch), a masking prompt offers "Update override / Clear override / Keep override" — the global settings page only checks the currently selected version and merges the prompt with the existing "this version uses independent settings" notice; when long-press launch is interrupted by the prompt it does not auto-launch, and choosing to update/clear the override continues the launch with the newly chosen renderer; an override pointing to an uninstalled or disabled renderer is treated as no override (launch resolution no longer falls back to the default renderer), and the overrides dialog clears stale overrides and persists when opened; choosing "Cancel" on the masking prompt rolls back the renderer just written into the version's settings, so abandoning the launch leaves no leftover changes
+2. **"Launch progress overlay" toggle under the in-game DEBUG category (#2005)**: The game menu settings gained showLaunchProgress (on by default, persisted with the menu settings) — when on, the launch shows the overlay background and progress spinner (the existing default behavior); when off, no overlay is shown and the game screen appears directly from the first frame; also fixed the first-frame misdetection in the log window's auto-show logic: GameMenu now records a graphicOutput flag set by onGraphicOutput as the "game has rendered its first frame" stage marker, log window visibility switches only take effect immediately before the first frame is rendered, and toggling after the first frame no longer interrupts the current state
+
+#### ⚡ Improvements
+
+1. **Task-list rows are now refreshed in batches (#2010)**: The TaskDialog task list used to refresh the whole ListView immediately on every task-row add/remove event, and high-speed downloads' frequent row changes made the page janky; task-row add/remove is now merged into 100ms batch refreshes so frequent changes only refresh once per frame; on release, task listeners are detached before the batch queue is cleared, so operations queued during the window before detaching cannot trigger a refresh after release
+2. **Unpacking built-in jars at launch now skips files already released via .sha1 comparison**: The built-in jars in assets (MioLaunchWrapper.jar, MioLibPatcher.jar) now ship with .sha1 checksum files (generated and renewed automatically by the new updateBuiltinJarSha1 build task); before unpacking, the target file's digest is compared and identical files are skipped, so subsequent launches no longer rewrite them
+3. **Removed the artificial delay for small files during runtime extraction**: The loop unpacking the runtime environment in RuntimeUtils used to sleep 25ms for every file of ≤20KB (a legacy trick to smooth the progress display); removed, so extraction time now reflects real IO
+
+#### 🐛 Bug Fixes
+
+1. **Cancellation is now allowed while waiting for authorization during Microsoft account re-login, fixing the dialog getting stuck after leaving the login page (#2013)**: OAuthAccountLoginDialog disabled the cancel button as soon as re-login started, so during the device-code authorization wait (which can take minutes) there was no way out and the dialog got stuck after leaving the login page; the cancel button now stays available while waiting, and tapping it cancels the in-progress login task and closes the dialog silently (no error dialog); authorization timeouts (NoSelectedCharacterException) also close silently; after a failed login shows the error dialog, the confirm button becomes available again so the login can be retried directly
+2. **Controlify requiring a controller reconnection before direct input worked (synced from ZalithLauncher2 PR #2204)**: SDL's Android backend throttles its initial device scan by 3 seconds and does not reset that across SDL_Quit, so at game start it could miss already-connected controllers or keep stale devices from the previous session; the HIDDeviceManager (USB/Bluetooth hotplug broadcast receiver and hidapi channel) that SDLActivity.onCreate normally creates was missing from this project's launch path, and since Controlify force-enables HIDAPI, hid_init failed silently without it; now SdlBridge proactively syncs the SDL device list once right after JNI setup (any difference from the actual devices is turned into hotplug events directly, so Controlify's initial discovery works), acquires the HIDDeviceManager manually (created once per process, its broadcast receiver staying alive after leaving the game to keep sensing hotplugs), and registers a system InputManager device listener that syncs the SDL device list on controller plug/unplug
+3. **Minecraft snapshots 13w16a~13w23b failing to launch (#2002)**: This batch of snapshots lacks the external language resource packs for non-English languages, so writing the lang (language) setting before launch made the game hang on the Mojang loading screen; these snapshots no longer get lang written, and any lang already written historically is reset to default English; the has_custom_resolution feature flag is also version-gated — versions before 1.6 (snapshot 13w25a) do not support custom resolution arguments and no longer receive them. Reference: HMCL (https://github.com/HMCL-dev/HMCL/commit/087b2b678d51782f0d6bd64db8a2acd7608c8ee7)
+4. **Runtime installation failures were impossible to diagnose (#2011)**: When a runtime component failed to install, RuntimeFragment's dialog only showed error.toString(), and since an exception's message can be empty (e.g. ROM-level IO errors), there was nothing to go on; the failure is now logged at SEVERE level under the component's name and the dialog shows the full stack trace
+5. **In-game control buttons casting a shadow (#2007 #2008)**: Custom buttons floating over the game screen drew a projection shadow because of their elevation, adding a blurry dark edge; ControlButton now sets an empty outline (a ViewOutlineProvider returning an empty outline) so buttons no longer cast shadows, while elevation keeps only the buttons' stacking order
+6. **Main-screen version card icons squashed when non-square**: The version card icon was previously carried as a background drawable, so the fixed 30dp×30dp size stretched non-square icons out of shape; it now uses setImageDrawable with fitCenter proportional scaling, so icons of any aspect ratio are no longer squashed (the default grass-block icon shown with no version selected is fixed the same way)
+7. **HMCL/MultiMC modpacks failing to launch with an NPE**: When LauncherHelper was migrated to Kotlin, createCompletionTask was mistakenly treated as non-nullable, but HMCL/MultiMC modpacks have no completion task and the provider returns null, crashing at launch; the nullable contract is restored and null results are simply not added to the task list
+8. **Color clash of the inline dropdowns in the renderer overrides dialog**: The dialog's FCLSpinner auto text tinting clashed with the dialog's fixed background (contrast-colored text was unreadable); the inline spinners now disable automatic text coloring
+
 ## [1.3.4.5] - 2026-11-07
 
 ### 中文
