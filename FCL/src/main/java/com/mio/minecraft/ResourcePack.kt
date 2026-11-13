@@ -45,6 +45,27 @@ private fun resourcePackEntry(fileName: String) = "file/$fileName"
 private fun isPackEnabled(fileName: String, entries: Set<String>): Boolean =
     resourcePackEntry(fileName) in entries
 
+/** 列表图标显示尺寸 40dp，按 4x 屏换算为 160px，pack.png 超过该尺寸即降采样 */
+private const val ICON_MAX_SIZE = 160
+
+/**
+ * 解码 pack.png。图片尺寸不受游戏约束，原尺寸解码会得到数百 MB 的位图，
+ * 绘制时报 Canvas: trying to draw too large，因此先读尺寸边界再按 2 的幂降采样
+ */
+private fun decodeIcon(bytes: ByteArray): Bitmap? {
+    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+    BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
+    if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+
+    var sampleSize = 1
+    while (bounds.outWidth / sampleSize > ICON_MAX_SIZE || bounds.outHeight / sampleSize > ICON_MAX_SIZE) {
+        sampleSize *= 2
+    }
+    return BitmapFactory.decodeByteArray(bytes, 0, bytes.size, BitmapFactory.Options().apply {
+        inSampleSize = sampleSize
+    })
+}
+
 /**
  * 解析单个资源包，仅接受文件夹与 zip 文件，有效性由 pack.mcmeta 是否解析成功决定
  */
@@ -85,7 +106,7 @@ fun parseResourcePack(file: File, enabledEntries: Set<String> = emptySet()): Res
         name = if (isDirectory) file.name else file.nameWithoutExtension,
         description = meta?.pack?.description?.toString(),
         packFormat = format,
-        icon = iconBytes?.let { BitmapFactory.decodeByteArray(it, 0, it.size) },
+        icon = iconBytes?.let { decodeIcon(it) },
         isValid = meta != null,
         fileSize = if (isDirectory) null else file.length(),
         enabled = isPackEnabled(file.name, enabledEntries),
