@@ -29,8 +29,9 @@ public class FCLProgressBar extends ProgressBar {
 
                     }
             };
+            // 进度条是状态指示控件，透明度调到 0 时仍需可见，故用不受透明度设置影响的不透明色
             int[] color = {
-                    ThemeEngine.getInstance().getTheme().getDkColor()
+                    ThemeEngine.getInstance().getTheme().getOpaqueDkColor()
             };
             setProgressTintList(new ColorStateList(state, color));
             setSecondaryProgressTintList(new ColorStateList(state, color));

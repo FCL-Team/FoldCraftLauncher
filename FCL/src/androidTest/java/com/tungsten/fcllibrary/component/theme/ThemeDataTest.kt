@@ -33,9 +33,10 @@ class ThemeDataTest {
         color: Int = Color.parseColor("#7797CF"),
         colorDark: Int = Color.DKGRAY,
         color2: Int = Color.BLACK,
-        color2Dark: Int = Color.WHITE
+        color2Dark: Int = Color.WHITE,
+        colorAlpha: Int = 255
     ) = ThemeData(color, colorDark, color2, color2Dark,
-        fullscreen = false, closeSkinModel = false, animationSpeed = 8, colorAlpha = 255,
+        fullscreen = false, closeSkinModel = false, animationSpeed = 8, colorAlpha = colorAlpha,
         backgroundLt = BitmapDrawableStub(), backgroundDk = BitmapDrawableStub())
 
     /** 占位背景（测试不依赖真实图片资源） */
@@ -90,6 +91,17 @@ class ThemeDataTest {
         assertEquals(0x112233, theme.getColor2())
         assertEquals(0x112233, theme.color2)
         assertEquals(0x445566, theme.color2Dark)
+    }
+
+    @Test
+    fun opaqueColorsIgnoreAlphaSetting() {
+        // 透明度调到 0 时派生色完全透明，但 opaque 变体仍不透明（进度条等状态指示控件用）
+        val theme = themeData(colorAlpha = 0)
+        assertEquals(0, Color.alpha(theme.dkColor))
+        assertEquals(0, Color.alpha(theme.ltColor))
+        assertEquals(255, Color.alpha(theme.opaqueColor))
+        assertEquals(255, Color.alpha(theme.opaqueDkColor))
+        assertEquals(255, Color.alpha(theme.opaqueLtColor))
     }
 
     @Test

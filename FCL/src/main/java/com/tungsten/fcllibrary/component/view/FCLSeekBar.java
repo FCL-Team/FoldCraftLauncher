@@ -33,8 +33,9 @@ public class FCLSeekBar extends AppCompatSeekBar {
 
                     }
             };
+            // 滑条是状态指示控件，透明度调到 0 时仍需可见，故用不受透明度设置影响的不透明色
             int[] color = {
-                    ThemeEngine.getInstance().getTheme().getDkColor()
+                    ThemeEngine.getInstance().getTheme().getOpaqueDkColor()
             };
             setThumbTintList(new ColorStateList(state, color));
             setProgressTintList(new ColorStateList(state, color));
