@@ -35,3 +35,4 @@ AGENTS.md
 /.zcode/
 .kotlin/
 .zcodeignore
+/.dsh
