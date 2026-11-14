@@ -256,6 +256,8 @@ public class Controllers {
                     throw new IOException("View group not found: " + viewGroup.getId());
                 }
                 Schedulers.androidUIThread().execute(() -> {
+                    // 按键样式名需挂回布局样式表对象：此处不经过 ensureAllLoaded，否则渲染与保存都会用默认样式
+                    data.resolveStyles(controller);
                     viewGroup.setViewData(data);
                     viewGroup.setDataLoaded(true);
                     callback.onLoaded(viewGroup);

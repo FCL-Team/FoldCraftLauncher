@@ -406,7 +406,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
      */
     private void selectViewGroup(@Nullable ControlViewGroup viewGroup) {
         setViewGroup(viewGroup);
-        if (viewGroup != null) {
+        if (viewGroup != null && getController() != null) {
             Controller controller = getController();
             viewGroup.getViewData().buttonList().forEach(it -> {
                 String name = it.getStyle().getName();

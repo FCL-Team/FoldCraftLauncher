@@ -2,6 +2,7 @@ package com.tungsten.fcl.control.data
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.tungsten.fcl.setting.Controller
@@ -10,6 +11,8 @@ import com.tungsten.fclauncher.utils.FCLPath
 import com.tungsten.fclcore.fakefx.collections.FXCollections
 import com.tungsten.fclcore.util.io.FileUtils
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotSame
+import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -196,6 +199,69 @@ class ControlDataSerializationTest {
         assertTrue(restored.getEvent().getPressEvent().outputKeycodesList().isNotEmpty() ||
                 restored.getEvent().getClickEvent().outputKeycodesList().isNotEmpty() ||
                 restored.getEvent().getDoubleClickEvent().outputKeycodesList().isNotEmpty())
+    }
+
+    // ==================== 布局内样式归属（PR #1958） ====================
+
+    /** 构造含 Default + Custom 两个按钮样式、按键引用 Custom 的控制器 */
+    private fun styledController(): Controller {
+        val viewGroup = ControlViewGroup(UUID.randomUUID().toString())
+        viewGroup.setName("样式布局")
+        val custom = ControlButtonStyle("Custom")
+        val button = ControlButtonData(UUID.randomUUID().toString())
+        button.setText("A")
+        button.setStyle(custom)
+        viewGroup.getViewData().setButtonList(FXCollections.observableArrayList(button))
+        val controller = Controller(
+            UUID.randomUUID().toString(), "样式控制器", "1.0", 1, "author", "desc",
+            Constants.CONTROLLER_VERSION, FXCollections.observableArrayList(viewGroup)
+        )
+        controller.getButtonStyles().addAll(listOf(ControlButtonStyle.DEFAULT_BUTTON_STYLE.clone(), custom))
+        return controller
+    }
+
+    @Test
+    fun buttonStyleReferenceResolvesAfterRoundTrip() {
+        val controller = styledController()
+        val json = Controller.Serializer().serialize(controller, null, null) as JsonObject
+        val restored = Controller.Serializer().deserialize(json, null, null)
+        val tableStyle = restored.getButtonStyles().first { it.getName() == "Custom" }
+        assertSame(tableStyle, restored.viewGroups()[0].getViewData().buttonList()[0].getStyle())
+    }
+
+    @Test
+    fun clonedControllerRebindsStyles() {
+        val controller = styledController()
+        val clone = controller.clone()
+        val sourceStyle = controller.getButtonStyles().first { it.getName() == "Custom" }
+        val clonedStyle = clone.getButtonStyles().first { it.getName() == "Custom" }
+        assertNotSame(sourceStyle, clonedStyle)
+        assertSame(clonedStyle, clone.viewGroups()[0].getViewData().buttonList()[0].getStyle())
+    }
+
+    @Test
+    fun legacyInlineStyleImportsIntoTable() {
+        val controller = styledController()
+        val json = Controller.Serializer().serialize(controller, null, null) as JsonObject
+        // 模拟旧格式：布局内联样式对象、样式表为空
+        json.add("buttonStyles", JsonArray())
+        json.add("directionStyles", JsonArray())
+        val buttonJson = json.getAsJsonArray("viewGroups")[0].asJsonObject
+            .getAsJsonObject("viewData").getAsJsonArray("buttonList")[0].asJsonObject
+        buttonJson.add("style", ControlButtonStyle.Serializer().serialize(ControlButtonStyle("Inline"), null, null))
+        val restored = Controller.Serializer().deserialize(json, null, null)
+        val inline = restored.getButtonStyles().first { it.getName() == "Inline" }
+        assertSame(inline, restored.viewGroups()[0].getViewData().buttonList()[0].getStyle())
+    }
+
+    @Test
+    fun removeStyleFallsBackToDefault() {
+        val controller = styledController()
+        val viewGroup = controller.viewGroups()[0]
+        viewGroup.setDataLoaded(true)
+        controller.removeButtonStyle(controller.getButtonStyles().first { it.getName() == "Custom" })
+        val fallback = controller.getButtonStyles().first { it.getName() == "Default" }
+        assertSame(fallback, viewGroup.getViewData().buttonList()[0].getStyle())
     }
 
     // ==================== 并发保存合并 ====================

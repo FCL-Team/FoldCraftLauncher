@@ -121,7 +121,6 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             buttonStyle.setStrokeColorPressed(style.getButtonStyle().getStrokeColorPressed());
             buttonStyle.setCornerRadiusPressed(style.getButtonStyle().getCornerRadiusPressed());
             buttonStyle.setFillColorPressed(style.getButtonStyle().getFillColorPressed());
-            buttonStyle.setFillColorPressed(style.getButtonStyle().getFillColorPressed());
             this.beforeStyle = buttonStyle.clone();
             style.getButtonStyle().textSizeProperty().bind(buttonStyle.textSizeProperty());
             style.getButtonStyle().textColorProperty().bind(buttonStyle.textColorProperty());
@@ -356,7 +355,6 @@ public class AddDirectionStyleDialog extends FCLDialog implements View.OnClickLi
             buttonStyle.setStrokeWidthPressed(beforeStyle.getStrokeWidthPressed());
             buttonStyle.setStrokeColorPressed(beforeStyle.getStrokeColorPressed());
             buttonStyle.setCornerRadiusPressed(beforeStyle.getCornerRadiusPressed());
-            buttonStyle.setFillColorPressed(beforeStyle.getFillColorPressed());
             buttonStyle.setFillColorPressed(beforeStyle.getFillColorPressed());
             dismiss();
         }
