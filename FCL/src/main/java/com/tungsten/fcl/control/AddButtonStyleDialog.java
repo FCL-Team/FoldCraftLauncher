@@ -63,6 +63,9 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
         this.callback = callback;
         this.style = beforeStyle == null ? new ControlButtonStyle("") : beforeStyle.clone();
         this.isEdit = isEdit;
+        if (isEdit) {
+            ((FCLTextView) findViewById(R.id.title)).setText(R.string.menu_control_style_edit);
+        }
 
         positive = findViewById(R.id.positive);
         negative = findViewById(R.id.negative);

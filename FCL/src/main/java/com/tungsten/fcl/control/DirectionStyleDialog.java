@@ -65,6 +65,7 @@ public class DirectionStyleDialog extends FCLDialog implements View.OnClickListe
 
         if (!select) {
             filterSpinner.setVisibility(View.GONE);
+            positive.setText(R.string.close);
         }
     }
 

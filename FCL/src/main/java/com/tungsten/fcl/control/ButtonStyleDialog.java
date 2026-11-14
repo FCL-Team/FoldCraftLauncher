@@ -65,6 +65,7 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
 
         if (!select) {
             filterSpinner.setVisibility(View.GONE);
+            positive.setText(R.string.close);
         }
     }
 
