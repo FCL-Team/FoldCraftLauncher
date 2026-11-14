@@ -47,7 +47,7 @@ class FCLNumberSeekBar @JvmOverloads constructor(
 
     /** 加减按钮底色画笔：常态为主题色（与填充轨道一致），按压为亮主题色 */
     private val buttonPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ThemeEngine.getTheme().dkColor
+        color = ThemeEngine.getTheme().opaqueDkColor
     }
     private val buttonPressedPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = ThemeEngine.getTheme().ltColor
@@ -76,9 +76,9 @@ class FCLNumberSeekBar @JvmOverloads constructor(
         textAlign = Paint.Align.CENTER
     }
 
-    /** 填充段画笔（文本左侧轨道段），颜色为主题色（dkColor） */
+    /** 填充段画笔（文本左侧轨道段），颜色为主题色（opaqueDkColor） */
     private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = ThemeEngine.getTheme().dkColor
+        color = ThemeEngine.getTheme().opaqueDkColor
     }
 
     /** 未填充段画笔（文本右侧轨道段），颜色为弱化对比色 */
@@ -130,9 +130,9 @@ class FCLNumberSeekBar @JvmOverloads constructor(
     private fun refreshTheme() {
         val theme = ThemeEngine.getTheme()
         textPaint.color = theme.autoTint
-        fillPaint.color = theme.dkColor
+        fillPaint.color = theme.opaqueDkColor
         trackPaint.color = theme.autoHintTint
-        buttonPaint.color = theme.dkColor
+        buttonPaint.color = theme.opaqueDkColor
         buttonPressedPaint.color = theme.ltColor
         minusIcon?.setTint(theme.autoTint)
         plusIcon?.setTint(theme.autoTint)
@@ -160,7 +160,7 @@ class FCLNumberSeekBar @JvmOverloads constructor(
 
     /** 挂载拖动监听：仅用户操作时同步进度属性，程序性变化（setMax/setMin 造成的进度钳制）不进入属性，避免误触发监听 */
     fun addProgressListener() {
-        setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        setOnSeekBarChangeListener(object : OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
                     fromUserOrSystem = true
@@ -430,8 +430,8 @@ class FCLNumberSeekBar @JvmOverloads constructor(
         val viewHeight = height
         val drawable = ShapeDrawable(OvalShape()).apply {
             paint.color = Color.TRANSPARENT
-            setIntrinsicHeight(viewHeight)
-            setIntrinsicWidth(textBounds.width())
+            intrinsicHeight = viewHeight
+            intrinsicWidth = textBounds.width()
         }
         thumbDrawable = drawable
         thumb = drawable

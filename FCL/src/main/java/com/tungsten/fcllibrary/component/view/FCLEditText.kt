@@ -61,9 +61,9 @@ class FCLEditText @JvmOverloads constructor(
         )
         val color = intArrayOf(
             ThemeEngine.getTheme().getColor(),
-            ThemeEngine.getTheme().dkColor
+            ThemeEngine.getTheme().opaqueDkColor
         )
-        setBackgroundTintList(ColorStateList(state, color))
+        backgroundTintList = ColorStateList(state, color)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             textCursorDrawable?.setTint(ThemeEngine.getTheme().getColor())
         }
@@ -145,7 +145,7 @@ class FCLEditText @JvmOverloads constructor(
     }
 
     fun setIntegerFilter(min: Int) {
-        setFilters(arrayOf(SignedIntegerFilter(min)))
+        filters = arrayOf(SignedIntegerFilter(min))
     }
 
     fun setAutoTint(autoTint: Boolean) {

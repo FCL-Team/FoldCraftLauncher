@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 
@@ -35,7 +34,7 @@ public class FCLDynamicIsland extends AppCompatTextView {
             insidePaint = new Paint();
             textPaint = new Paint();
             outlinePaint.setAntiAlias(true);
-            outlinePaint.setColor(ThemeEngine.getInstance().getTheme().getDkColor());
+            outlinePaint.setColor(ThemeEngine.getInstance().getTheme().getOpaqueDkColor());
             outlinePaint.setStyle(Paint.Style.STROKE);
             outlinePaint.setStrokeWidth(ConvertUtils.dip2px(getContext(), 3));
             insidePaint.setAntiAlias(true);
@@ -62,7 +61,7 @@ public class FCLDynamicIsland extends AppCompatTextView {
         insidePaint = new Paint();
         textPaint = new Paint();
         outlinePaint.setAntiAlias(true);
-        outlinePaint.setColor(ThemeEngine.getInstance().getTheme().getDkColor());
+        outlinePaint.setColor(ThemeEngine.getInstance().getTheme().getOpaqueDkColor());
         outlinePaint.setStyle(Paint.Style.STROKE);
         outlinePaint.setStrokeWidth(ConvertUtils.dip2px(getContext(), 3));
         insidePaint.setAntiAlias(true);
