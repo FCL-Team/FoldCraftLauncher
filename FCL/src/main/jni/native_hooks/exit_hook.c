@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <bytehook.h>
 #include <dlfcn.h>
+#include <pthread.h>
 #include <stdlib.h>
 
 #define TAG __FILE_NAME__
@@ -78,13 +79,21 @@ static bool init_hooks() {
     return false;
 }
 
-JNIEXPORT void JNICALL
-Java_com_tungsten_fclauncher_bridge_FCLBridge_initializeHooks(JNIEnv *env, jclass clazz) {
-    bool hooks_ready = init_hooks();
-    if(!hooks_ready) {
+static pthread_once_t hooks_once = PTHREAD_ONCE_INIT;
+
+static void init_hooks_once() {
+    if(!init_hooks()) {
         printf("Failed to initialize native hooks!");
     }
     // Always register atexit, because that's what we will call our exit from.
     // We only use the hook to capture the exit code.
     atexit(custom_atexit);
+}
+
+JNIEXPORT void JNICALL
+Java_com_tungsten_fclauncher_bridge_FCLBridge_initializeHooks(JNIEnv *env, jclass clazz) {
+    // 每个安装器阶段都会调用本入口，bytehook 只允许初始化一次：重复 init 返回
+    // ALREADY_INITED 后若 dlclose 卸载已 hook 的库，已生效的 hook 会随库卸载而失效。
+    // 用 pthread_once 保证初始化与 atexit 注册只执行一次
+    pthread_once(&hooks_once, init_hooks_once);
 }
