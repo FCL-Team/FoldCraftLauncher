@@ -7,7 +7,6 @@ import com.mio.util.getScreenHeight
 import com.tungsten.fcl.R
 import com.tungsten.fcl.control.data.ControlDirectionData
 import com.tungsten.fcl.control.data.DirectionEventData
-import com.tungsten.fcl.control.data.DirectionStyles
 import com.tungsten.fcl.databinding.ViewEditDirectionEventBinding
 import com.tungsten.fcl.databinding.ViewEditDirectionInfoBinding
 import com.tungsten.fcl.util.FXUtils
@@ -65,8 +64,9 @@ internal class EditDirectionDetails(
 
         infoBinding.styleText.text = data.style.name
         infoBinding.style.setOnClickListener {
-            val target = DirectionStyles.findStyleByName(data.style.name)
-            DirectionStyleDialog(context, true, target) { style ->
+            val controller = menu?.controller ?: return@setOnClickListener
+            val target = controller.findDirectionStyleByName(data.style.name)
+            DirectionStyleDialog(context, controller, true, true, target) { style ->
                 data.setStyle(style)
                 infoBinding.styleText.text = style.name
             }.show()

@@ -23,11 +23,12 @@ import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.stream.JsonReader;
 import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
-import com.tungsten.fcl.control.data.ButtonStyles;
+import com.tungsten.fcl.control.data.ControlButtonData;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
+import com.tungsten.fcl.control.data.ControlDirectionData;
 import com.tungsten.fcl.control.data.ControlDirectionStyle;
 import com.tungsten.fcl.control.data.ControlViewGroup;
-import com.tungsten.fcl.control.data.DirectionStyles;
+import com.tungsten.fcl.control.data.StyleResolver;
 import com.tungsten.fcl.util.Constants;
 import com.tungsten.fclauncher.utils.FCLPath;
 import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
@@ -61,10 +62,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.CountDownLatch;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @JsonAdapter(Controller.Serializer.class)
-public class Controller implements Cloneable, Observable {
+public class Controller implements Cloneable, Observable, StyleResolver {
 
     private final SimpleStringProperty id;
 
@@ -163,6 +163,14 @@ public class Controller implements Cloneable, Observable {
     private final ObservableList<ControlViewGroup> viewGroups;
 
     /**
+     * 本布局的按键/方向样式表：样式归属布局，JSON 内嵌于布局文件。
+     * 按键通过样式名引用本表对象；与其他布局相互隔离，
+     * 跨布局复用由样式选择对话框"导入复制"完成。
+     */
+    private final ObservableList<ControlButtonStyle> buttonStyles = FXCollections.observableArrayList();
+    private final ObservableList<ControlDirectionStyle> directionStyles = FXCollections.observableArrayList();
+
+    /**
      * 保存合并标记：有未落盘的修改时为 true；已有保存任务在跑时为 true。
      */
     private final AtomicBoolean saveDirty = new AtomicBoolean(false);
@@ -170,6 +178,148 @@ public class Controller implements Cloneable, Observable {
 
     public ObservableList<ControlViewGroup> viewGroups() {
         return viewGroups;
+    }
+
+    public ObservableList<ControlButtonStyle> getButtonStyles() {
+        return buttonStyles;
+    }
+
+    public ObservableList<ControlDirectionStyle> getDirectionStyles() {
+        return directionStyles;
+    }
+
+    @Override
+    public ControlButtonStyle resolveButtonStyle(String name) {
+        return findButtonStyleByName(name);
+    }
+
+    @Override
+    public ControlDirectionStyle resolveDirectionStyle(String name) {
+        return findDirectionStyleByName(name);
+    }
+
+    @Override
+    public void registerInlineButtonStyle(ControlButtonStyle style) {
+        if (style != null) {
+            addOrUpdateButtonStyle(style);
+        }
+    }
+
+    @Override
+    public void registerInlineDirectionStyle(ControlDirectionStyle style) {
+        if (style != null) {
+            addOrUpdateDirectionStyle(style);
+        }
+    }
+
+    public ControlButtonStyle findButtonStyleByName(String name) {
+        ensureDefaults();
+        return buttonStyles.stream().filter(it -> it.getName().equals(name)).findFirst().orElse(buttonStyles.get(0));
+    }
+
+    public ControlDirectionStyle findDirectionStyleByName(String name) {
+        ensureDefaults();
+        return directionStyles.stream().filter(it -> it.getName().equals(name)).findFirst().orElse(directionStyles.get(0));
+    }
+
+    /**
+     * 注册样式：同名样式就地更新全部属性（保留对象身份，引用按键自动跟随），否则追加。
+     */
+    public void addOrUpdateButtonStyle(ControlButtonStyle style) {
+        if (style == null)
+            return;
+        for (ControlButtonStyle buttonStyle : buttonStyles) {
+            if (buttonStyle.getName().equals(style.getName())) {
+                buttonStyle.setAll(style);
+                return;
+            }
+        }
+        buttonStyles.add(style);
+    }
+
+    public void addOrUpdateDirectionStyle(ControlDirectionStyle style) {
+        if (style == null)
+            return;
+        for (ControlDirectionStyle directionStyle : directionStyles) {
+            if (directionStyle.getName().equals(style.getName())) {
+                directionStyle.setAll(style);
+                return;
+            }
+        }
+        directionStyles.add(style);
+    }
+
+    public void removeButtonStyle(ControlButtonStyle style) {
+        buttonStyles.remove(style);
+        ensureDefaults();
+        retargetButtonStyleReferences(style, findOrAddDefaultButtonStyle());
+    }
+
+    public void removeDirectionStyle(ControlDirectionStyle style) {
+        directionStyles.remove(style);
+        ensureDefaults();
+        retargetDirectionStyleReferences(style, findOrAddDefaultDirectionStyle());
+    }
+
+    /**
+     * 删除样式后把本布局内引用它的控件就地切到回退样式（默认为名为 Default 的样式）：
+     * 对象引用切换经 Data 层监听实时触发重渲染；未加载的布局在按需解析时
+     * 由 findXxxByName 回落语义兜底。
+     */
+    private void retargetButtonStyleReferences(ControlButtonStyle removed, ControlButtonStyle fallback) {
+        for (ControlViewGroup group : viewGroups) {
+            if (!group.isDataLoaded() || group.getViewData() == null) continue;
+            for (ControlButtonData data : group.getViewData().buttonList()) {
+                if (data.getStyle() == removed) {
+                    data.setStyle(fallback);
+                }
+            }
+        }
+    }
+
+    private void retargetDirectionStyleReferences(ControlDirectionStyle removed, ControlDirectionStyle fallback) {
+        for (ControlViewGroup group : viewGroups) {
+            if (!group.isDataLoaded() || group.getViewData() == null) continue;
+            for (ControlDirectionData data : group.getViewData().directionList()) {
+                if (data.getStyle() == removed) {
+                    data.setStyle(fallback);
+                }
+            }
+        }
+    }
+
+    private ControlButtonStyle findOrAddDefaultButtonStyle() {
+        for (ControlButtonStyle style : buttonStyles) {
+            if (style.getName().equals(ControlButtonStyle.DEFAULT_BUTTON_STYLE.getName())) {
+                return style;
+            }
+        }
+        ControlButtonStyle fallback = ControlButtonStyle.DEFAULT_BUTTON_STYLE.clone();
+        buttonStyles.add(fallback);
+        return fallback;
+    }
+
+    private ControlDirectionStyle findOrAddDefaultDirectionStyle() {
+        for (ControlDirectionStyle style : directionStyles) {
+            if (style.getName().equals(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE.getName())) {
+                return style;
+            }
+        }
+        ControlDirectionStyle fallback = ControlDirectionStyle.DEFAULT_DIRECTION_STYLE.clone();
+        directionStyles.add(fallback);
+        return fallback;
+    }
+
+    /**
+     * 样式表为空时补默认样式（克隆件，避免多个布局共享同一个单例被就地改写交叉污染）。
+     */
+    public void ensureDefaults() {
+        if (buttonStyles.isEmpty()) {
+            buttonStyles.add(ControlButtonStyle.DEFAULT_BUTTON_STYLE.clone());
+        }
+        if (directionStyles.isEmpty()) {
+            directionStyles.add(ControlDirectionStyle.DEFAULT_DIRECTION_STYLE.clone());
+        }
     }
 
     public void setViewGroups(ObservableList<ControlViewGroup> viewGroups) {
@@ -266,6 +416,8 @@ public class Controller implements Cloneable, Observable {
             String description = "";
             int versionCode = 1;
             int controllerVersion = Constants.CONTROLLER_VERSION;
+            List<ControlButtonStyle> buttonStyles = new ArrayList<>();
+            List<ControlDirectionStyle> directionStyles = new ArrayList<>();
             List<ControlViewGroup> viewGroups = new ArrayList<>();
 
             reader.beginObject();
@@ -293,10 +445,10 @@ public class Controller implements Cloneable, Observable {
                         controllerVersion = reader.nextInt();
                         break;
                     case "buttonStyles":
-                        registerStyles(reader, false);
+                        buttonStyles = fromJsonStyleList(JsonParser.parseReader(reader));
                         break;
                     case "directionStyles":
-                        registerStyles(reader, true);
+                        directionStyles = fromJsonDirectionStyleList(JsonParser.parseReader(reader));
                         break;
                     case "viewGroups":
                         reader.beginArray();
@@ -345,22 +497,11 @@ public class Controller implements Cloneable, Observable {
                 throw new JsonParseException("Controller id is missing!");
             }
             Controller controller = new Controller(id, name, version, versionCode, author, description, controllerVersion, FXCollections.observableArrayList(viewGroups));
+            controller.getButtonStyles().addAll(buttonStyles);
+            controller.getDirectionStyles().addAll(directionStyles);
+            controller.ensureDefaults();
             controller.setFile(file);
             return controller;
-        }
-    }
-
-    /** 解析并注册按钮/方向样式（轻量加载时完成，按键数据按需解析时样式名可查） */
-    private static void registerStyles(JsonReader reader, boolean direction) throws IOException {
-        JsonElement element = JsonParser.parseReader(reader);
-        ButtonStyles.init();
-        DirectionStyles.init();
-        if (direction) {
-            List<ControlDirectionStyle> styles = fromJsonDirectionStyleList(element);
-            if (styles != null) styles.forEach(DirectionStyles::addStyle);
-        } else {
-            List<ControlButtonStyle> styles = fromJsonStyleList(element);
-            if (styles != null) styles.forEach(ButtonStyles::addStyle);
         }
     }
 
@@ -405,11 +546,15 @@ public class Controller implements Cloneable, Observable {
         try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
             reader.beginObject();
             while (reader.hasNext()) {
-                if ("viewGroups".equals(reader.nextName())) {
-                    JsonElement element = findViewData(reader, viewGroup.getId());
-                    if (element == null) return null;
-                    return new ControlViewGroup.ViewData.Serializer().deserialize(element, null, null);
+            if ("viewGroups".equals(reader.nextName())) {
+                JsonElement element = findViewData(reader, viewGroup.getId());
+                if (element == null) return null;
+                ControlViewGroup.ViewData data = new ControlViewGroup.ViewData.Serializer().deserialize(element, null, null);
+                if (data != null) {
+                    data.resolveStyles(this);
                 }
+                return data;
+            }
                 reader.skipValue();
             }
             return null;
@@ -565,7 +710,11 @@ public class Controller implements Cloneable, Observable {
     public Controller clone() {
         ObservableList<ControlViewGroup> viewGroups = FXCollections.observableArrayList(new ArrayList<>());
         viewGroups.addAll(viewGroups().stream().map(ControlViewGroup::clone).collect(Collectors.toList()));
-        return new Controller(generateRandomId(), getName() + "_clone", getVersion(), getVersionCode(), getAuthor(), getDescription(), getControllerVersion(), viewGroups);
+        Controller controller = new Controller(generateRandomId(), getName() + "_clone", getVersion(), getVersionCode(), getAuthor(), getDescription(), getControllerVersion(), viewGroups);
+        // 样式表深克隆：复制布局的样式表必须与源布局完全隔离，编辑互不影响
+        controller.getButtonStyles().addAll(buttonStyles.stream().map(ControlButtonStyle::clone).collect(Collectors.toList()));
+        controller.getDirectionStyles().addAll(directionStyles.stream().map(ControlDirectionStyle::clone).collect(Collectors.toList()));
+        return controller;
     }
 
     // function
@@ -680,10 +829,9 @@ public class Controller implements Cloneable, Observable {
             jsonObject.addProperty("author", src.getAuthor());
             jsonObject.addProperty("description", src.getDescription());
             jsonObject.addProperty("controllerVersion", src.getControllerVersion());
-            Stream<ControlButtonStyle> buttonStyleStream = src.viewGroups().stream().map(viewGroup -> viewGroup.getViewData().buttonList()).flatMap(buttonList -> buttonList.stream().map(data -> data.getStyle().getName()).distinct()).distinct().map(ButtonStyles::findStyleByName);
-            Stream<ControlDirectionStyle> directionStyleStream = src.viewGroups().stream().map(viewGroup -> viewGroup.getViewData().directionList()).flatMap(directionList -> directionList.stream().map(data -> data.getStyle().getName()).distinct()).distinct().map(DirectionStyles::findStyleByName);
-            jsonObject.add("buttonStyles", toJsonStyleList(buttonStyleStream.collect(Collectors.toList())));
-            jsonObject.add("directionStyles", toJsonDirectionStyleList(directionStyleStream.collect(Collectors.toList())));
+            // 样式表是布局自身数据：未引用的样式同样保留（可预先创建备用）
+            jsonObject.add("buttonStyles", toJsonStyleList(new ArrayList<>(src.getButtonStyles())));
+            jsonObject.add("directionStyles", toJsonDirectionStyleList(new ArrayList<>(src.getDirectionStyles())));
             jsonObject.add("viewGroups", toJsonViewGroupList(src.viewGroups()));
 
             return jsonObject;
@@ -734,18 +882,24 @@ public class Controller implements Cloneable, Observable {
 
                 List<ControlButtonStyle> buttonStyles = fromJsonStyleList(obj.get("buttonStyles"));
                 List<ControlDirectionStyle> directionStyles = fromJsonDirectionStyleList(obj.get("directionStyles"));
-                ButtonStyles.init();
-                DirectionStyles.init();
-                buttonStyles.forEach(ButtonStyles::addStyle);
-                directionStyles.forEach(DirectionStyles::addStyle);
                 ObservableList<ControlViewGroup> viewGroups = FXCollections.observableList(fromJsonViewGroupList(obj.get("viewGroups")));
 
                 if (controllerVersion < Constants.CONTROLLER_VERSION) {
                     showUpgradeDialog(name, id);
                 }
-                // 完整反序列化的布局按键数据已就绪（轻量解析构造的布局默认未加载，按需补全）
-                viewGroups.forEach(viewGroup -> viewGroup.setDataLoaded(true));
-                return new Controller(id, name, version, versionCode, author, description, controllerVersion, viewGroups);
+                Controller controller = new Controller(id, name, version, versionCode, author, description, controllerVersion, viewGroups);
+                controller.getButtonStyles().addAll(buttonStyles);
+                controller.getDirectionStyles().addAll(directionStyles);
+                controller.ensureDefaults();
+                // 完整反序列化的布局按键数据已就绪（轻量解析构造的布局默认未加载，按需补全）；
+                // 按键暂存的样式引用挂回本布局的样式表对象
+                viewGroups.forEach(viewGroup -> {
+                    viewGroup.setDataLoaded(true);
+                    if (viewGroup.getViewData() != null) {
+                        viewGroup.getViewData().resolveStyles(controller);
+                    }
+                });
+                return controller;
             } catch (Exception e) {
                 throw new JsonParseException("Controller file may broken!\n" + e);
             }
