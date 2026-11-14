@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ import com.tungsten.fcl.control.data.DirectionStyles;
 import com.tungsten.fcl.control.data.QuickInputTexts;
 import com.tungsten.fcl.control.keyboard.LwjglCharSender;
 import com.tungsten.fcl.control.keyboard.TouchCharInput;
+import com.tungsten.fcl.control.view.EditHistory;
 import com.tungsten.fcl.control.view.GameItemBar;
 import com.tungsten.fcl.control.view.InputMagnifierView;
 import com.tungsten.fcl.control.view.LogWindow;
@@ -142,6 +144,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
     private FCLTextView rightMenuTitle;
     private FCLTabLayout menuTabs;
     private FCLButton addGroupButton;
+    private LinearLayout editHistoryBar;
+    private FCLButton editHistoryUndoButton;
+    private FCLButton editHistoryRedoButton;
     private RecyclerView rightMenuList;
 
     private MultiplayerDialog multiplayerDialog;
@@ -506,6 +511,16 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         leftMenuList.addItemDecoration(new SpacingDecoration(
                 Math.round(6 * activity.getResources().getDisplayMetrics().density)));
 
+        // 撤销/恢复操作区（抽屉底部固定、列表之外）：编辑历史由 ViewManager 持有，历史变化刷新置灰态
+        editHistoryBar = findViewById(R.id.edit_history_bar);
+        editHistoryUndoButton = findViewById(R.id.edit_history_undo);
+        editHistoryRedoButton = findViewById(R.id.edit_history_redo);
+        editHistoryUndoButton.setOnClickListener(v -> getViewManager().getEditHistory().undo());
+        editHistoryRedoButton.setOnClickListener(v -> getViewManager().getEditHistory().redo());
+        getViewManager().getEditHistory().setOnChanged(this::updateEditHistoryState);
+        editHistoryBar.setVisibility(isEditMode() ? View.VISIBLE : View.GONE);
+        updateEditHistoryState();
+
         getController().addListener(i -> leftMenuAdapter.rebuild());
         controllerProperty.addListener(invalidate -> {
             setViewGroup(null);
@@ -531,6 +546,9 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                 if (addGroupButton != null) {
                     addGroupButton.setVisibility(View.GONE);
                 }
+                if (editHistoryBar != null) {
+                    editHistoryBar.setVisibility(View.GONE);
+                }
                 if (rightMenuTitle != null) {
                     rightMenuTitle.setVisibility(View.GONE);
                 }
@@ -545,6 +563,12 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             }
             if (addGroupButton != null) {
                 addGroupButton.setVisibility(View.VISIBLE);
+            }
+            if (editHistoryBar != null) {
+                editHistoryBar.setVisibility(View.VISIBLE);
+            }
+            if (editHistoryBar != null) {
+                editHistoryBar.setVisibility(View.VISIBLE);
             }
             if (rightMenuTitle != null) {
                 rightMenuTitle.setVisibility(View.VISIBLE);
@@ -776,6 +800,20 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         menuTabs.setVisibility(isEditMode() ? View.GONE : View.VISIBLE);
 
         logWindow.setVisibility(menuSetting.isShowLog() || (!isSimulated() && menuSetting.isAutoShowLog()));
+    }
+
+    /** 撤销/恢复可用性：空栈半透明置灰禁点（EditHistory 每次记录/回放/清空后回调） */
+    private void updateEditHistoryState() {
+        if (editHistoryUndoButton == null || editHistoryRedoButton == null) {
+            return;
+        }
+        EditHistory history = getViewManager().getEditHistory();
+        boolean canUndo = history.canUndo();
+        boolean canRedo = history.canRedo();
+        editHistoryUndoButton.setEnabled(canUndo);
+        editHistoryUndoButton.setAlpha(canUndo ? 1f : 0.4f);
+        editHistoryRedoButton.setEnabled(canRedo);
+        editHistoryRedoButton.setAlpha(canRedo ? 1f : 0.4f);
     }
 
     @Override
