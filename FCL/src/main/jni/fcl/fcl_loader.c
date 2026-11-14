@@ -5,6 +5,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <jni.h>
+#include <signal.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <android/log.h>
@@ -14,7 +16,9 @@
 #include <sys/mman.h>
 #include <pthread.h>
 
-static volatile jobject exitTrap_bridge;
+// exitTrap 的全局引用：每阶段 setupExitTrap 重设，旧引用经原子交换后删除；
+// 该变量只在 native 线程与退出线程间共享，读写统一走 __atomic_* 内建
+static jobject exitTrap_bridge;
 static volatile jmethodID exitTrap_method;
 static JavaVM *exitTrap_jvm;
 static volatile jmethodID log_method;
@@ -84,9 +88,20 @@ void correctUtfBytes(char *bytes) {
 
 static void *logger_thread(void *arg) {
     log_thread_arg *data = arg;
-    JNIEnv *env;
     JavaVM *vm = log_pipe_jvm;
-    (*vm)->AttachCurrentThread(vm, &env, NULL);
+    if (vm == NULL) {
+        close(data->readFd);
+        free(data);
+        return NULL;
+    }
+    JNIEnv *env;
+    if ((*vm)->AttachCurrentThread(vm, &env, NULL) != JNI_OK || env == NULL) {
+        // 未能 attach 就无法删除 bridge 全局引用，只能释放读端与参数
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to attach log thread!");
+        close(data->readFd);
+        free(data);
+        return NULL;
+    }
     char buffer[2048];
     ssize_t _s;
     jstring str;
@@ -144,6 +159,23 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv *env, jobject
         close(fds[1]);
         return 1;
     }
+    // 先解析回调再重定向：失败时 stdout/stderr 尚未改投，无需清理已生效的管道
+    jclass bridgeClass = (*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge");
+    jmethodID receiveLog = bridgeClass == NULL ? NULL
+                                               : (*env)->GetMethodID(env, bridgeClass,
+                                                                     "receiveLog",
+                                                                     "(Ljava/lang/String;)V");
+    if (receiveLog == NULL) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find receive method!");
+        (*env)->ExceptionClear(env);
+        (*env)->DeleteGlobalRef(env, arg->bridge);
+        free(arg);
+        close(fds[0]);
+        close(fds[1]);
+        return 4;
+    }
+    log_method = receiveLog;
+    (*env)->DeleteLocalRef(env, bridgeClass);
     if (dup2(fds[1], STDOUT_FILENO) != STDOUT_FILENO ||
         dup2(fds[1], STDERR_FILENO) != STDERR_FILENO) {
         __android_log_print(ANDROID_LOG_ERROR, "FCL", "failed to redirect stdio!");
@@ -153,16 +185,19 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv *env, jobject
         close(fds[1]);
         return 2;
     }
+    JavaVM *vm = NULL;
+    if ((*env)->GetJavaVM(env, &vm) != JNI_OK || vm == NULL) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to get JavaVM for log pipe!");
+        (*env)->DeleteGlobalRef(env, arg->bridge);
+        free(arg);
+        close(fds[0]);
+        close(fds[1]);
+        return 6;
+    }
+    log_pipe_jvm = vm;
     int oldWrite = fclLogWriteFd;
     fclLogWriteFd = fds[1];
-    jclass bridge = (*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge");
-    log_method = (*env)->GetMethodID(env, bridge, "receiveLog", "(Ljava/lang/String;)V");
-    if (!log_method) {
-        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find receive method!");
-        return 4;
-    }
     FCL_LOG("Log pipe ready.");
-    (*env)->GetJavaVM(env, &log_pipe_jvm);
     // 回收上一轮 logger：stdout/stderr 已改投新管道，关闭旧管道最后一个写端，
     // 阻塞中的旧 logger 经 EOF 自然退出并自行释放读端与回调引用——避免两线程同读
     // 一条管道交错分发。不写唤醒字节（EOF 足以唤醒阻塞读），也不从本线程关旧读端：
@@ -173,6 +208,10 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_redirectStdio(JNIEnv *env, jobject
     pthread_t logger;
     int result = pthread_create(&logger, 0, logger_thread, arg);
     if (result != 0) {
+        // 重定向已生效无法回滚：归还读端并恢复写端记录，写端关闭后 stdout 退化为 EPIPE
+        fclLogWriteFd = oldWrite;
+        close(fds[0]);
+        close(fds[1]);
         (*env)->DeleteGlobalRef(env, arg->bridge);
         free(arg);
         return 5;
@@ -194,6 +233,13 @@ Java_com_tungsten_fclauncher_bridge_FCLBridge_setenv(JNIEnv *env, jobject jobjec
 }
 
 _Noreturn void nominal_exit(int code) {
+    // System.exit(0) 会经 libc exit 再次触发 atexit → nominal_exit：第一次执行时
+    // 已删除过全局引用，重复进入会对已释放引用做 JNI 调用并撞 CheckJNI。用原子交换
+    // 保证退出流程只执行一次，重入直接终止进程
+    static bool nominal_exit_entered = false;
+    if (__atomic_exchange_n(&nominal_exit_entered, true, __ATOMIC_SEQ_CST)) {
+        _exit(0);
+    }
     JNIEnv *env;
     jint errorCode = (*exitTrap_jvm)->GetEnv(exitTrap_jvm, (void **) &env, JNI_VERSION_1_6);
     if (errorCode == JNI_EDETACHED) {
@@ -204,14 +250,17 @@ _Noreturn void nominal_exit(int code) {
         // Dalvik.
         // I mean, if Zygote can do that, why can't I?
         killpg(getpgrp(), SIGTERM);
+        _exit(1);
     }
-    if (code != 0) {
-        // Exit code 0 is pretty established as "eh it's fine"
-        // so only open the GUI if the code is != 0
-        (*env)->CallVoidMethod(env, exitTrap_bridge, exitTrap_method, code);
+    jobject trapBridge = __atomic_load_n(&exitTrap_bridge, __ATOMIC_SEQ_CST);
+    if (trapBridge != NULL) {
+        // 退出码 0 也必须回调：安装器阶段 main 内调用 System.exit(0) 时，
+        // 主进程只有收到退出码文件才会开始下一阶段
+        (*env)->CallVoidMethod(env, trapBridge, exitTrap_method, code);
+        // Delete the reference, not gonna need 'em later anyway
+        (*env)->DeleteGlobalRef(env, trapBridge);
+        __atomic_store_n(&exitTrap_bridge, NULL, __ATOMIC_SEQ_CST);
     }
-    // Delete the reference, not gonna need 'em later anyway
-    (*env)->DeleteGlobalRef(env, exitTrap_bridge);
 
     // A hat trick, if you will
     // Call the Android System.exit() to perform Android's shutdown hooks and do a
@@ -232,10 +281,31 @@ _Noreturn void nominal_exit(int code) {
 JNIEXPORT void JNICALL
 Java_com_tungsten_fclauncher_bridge_FCLBridge_setupExitTrap(JNIEnv *env, jobject jobject1,
                                                             jobject bridge) {
-    exitTrap_bridge = (*env)->NewGlobalRef(env, bridge);
+    jclass exitTrapClass = (*env)->FindClass(env, "com/tungsten/fclauncher/bridge/FCLBridge");
+    if (exitTrapClass == NULL) {
+        (*env)->ExceptionClear(env);
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find FCLBridge for exit trap!");
+        return;
+    }
+    jmethodID onExitMethod = (*env)->GetMethodID(env, exitTrapClass, "onExit", "(I)V");
+    if (onExitMethod == NULL) {
+        (*env)->ExceptionClear(env);
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to find onExit method!");
+        (*env)->DeleteLocalRef(env, exitTrapClass);
+        return;
+    }
+    jobject newRef = (*env)->NewGlobalRef(env, bridge);
+    if (newRef == NULL) {
+        __android_log_print(ANDROID_LOG_ERROR, "FCL", "Failed to create exit trap reference!");
+        (*env)->DeleteLocalRef(env, exitTrapClass);
+        return;
+    }
+    // 每阶段都会重设：旧全局引用经原子交换取出后删除，避免多阶段累积泄漏
+    jobject oldRef = __atomic_exchange_n(&exitTrap_bridge, newRef, __ATOMIC_SEQ_CST);
+    if (oldRef != NULL && oldRef != newRef) {
+        (*env)->DeleteGlobalRef(env, oldRef);
+    }
     (*env)->GetJavaVM(env, &exitTrap_jvm);
-    jclass exitTrap_exitClass = (*env)->NewGlobalRef(env, (*env)->FindClass(env,
-                                                                            "com/tungsten/fclauncher/bridge/FCLBridge"));
-    exitTrap_method = (*env)->GetMethodID(env, exitTrap_exitClass, "onExit", "(I)V");
-    (*env)->DeleteGlobalRef(env, exitTrap_exitClass);
+    exitTrap_method = onExitMethod;
+    (*env)->DeleteLocalRef(env, exitTrapClass);
 }
