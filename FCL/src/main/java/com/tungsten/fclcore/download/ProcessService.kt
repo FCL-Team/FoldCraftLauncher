@@ -31,14 +31,15 @@ import kotlin.concurrent.thread
 
 /**
  * 安装器宿主服务（:jvm 进程），常驻复用：安装的多个阶段在本进程内排队依次运行，
- * 每阶段一轮完整 JVM 生命周期。直启实现（launch 层）每阶段 main 返回后 DestroyJavaVM，
- * HotSpot 支持完整销毁后重建，因此不再需要旧架构"每阶段自杀换新进程"——
- * 这同时消除了 AMS 对同进程名反复创建进程的崩溃计数风险（process is bad）。
+ * 首个阶段经 VMLauncher.launchJVM 创建 HotSpot 后不再销毁，后续阶段经
+ * VMLauncher.runMainInExistingVM 在同一 JVM 里以独立 URLClassLoader 运行。
+ * 阶段内出现 System.exit/abort 时 JVM option hook 停车并走 nominal_exit 结束进程，
+ * 这属于正常退出路径，不是本服务管理的生命周期。
  *
  * 文件协议（启动标记/退出码，按会话 ID 命名）与主进程侧 InstallerProcessRunner 保持不变；
- * 空闲自停后进程交系统按空进程策略回收，回收前的下一个 start 会在本进程内重建
- * Service 实例并复用常驻 JVM——常驻状态记在 FCLauncher 的静态域，JRE 一致性由
- * FCLauncher 的静态标记校验，不一致即回收进程
+ * 常驻 JVM 的 JRE 由 [InstallerProcessRunner.JVM_STATE_FILE] 记录，主进程在启动下一阶段前
+ * 读该文件预判 JRE 是否一致，不一致时主动回收进程——本服务内的静态校验仅作兜底。
+ * 空闲自停时 onDestroy 主动结束进程释放常驻 JVM 内存，空闲期内到达的下一阶段直接复用本进程
  */
 class ProcessService : Service() {
 
@@ -67,6 +68,11 @@ class ProcessService : Service() {
         val command = intent.extras!!.getStringArray("command")
         val java = intent.extras!!.getInt("java")
         val session = intent.extras!!.getString(InstallerProcessRunner.EXTRA_SESSION) ?: ""
+        if (session.isEmpty()) {
+            Logging.LOG.warning("Installer process service started without session id, ignoring")
+            stopSelf()
+            return START_NOT_STICKY
+        }
         Logging.LOG.info(
             "Installer process service started, java: $java, command: ${
                 command?.joinToString(
@@ -75,12 +81,12 @@ class ProcessService : Service() {
             }"
         )
         if (FCLauncher.hasResidentHotSpot() && FCLauncher.getHotSpotJavaVersion() != java) {
-            // 常驻 JVM 的字节码能力固定为创建时 JRE，JRE 降级/升级重试链需要全新进程。
-            // 静态校验而非实例字段：空闲自停后进程被缓存复用时 Service 实例已重建，
-            // 实例字段会归零漏判。立即回收本进程，主进程侧 started 标记超时后会以新进程重试
+            // 兜底：主进程在 start 前已按状态文件回收过不匹配的常驻进程。这里仍保留
+            // 校验，防止主进程预判与本次 start 之间进程状态被外部改动（竞态窗口）
             Logging.LOG.warning(
                 "JRE version changed (${FCLauncher.getHotSpotJavaVersion()} -> $java), recycling :jvm process"
             )
+            deleteJvmState()
             Process.killProcess(Process.myPid())
             return START_NOT_STICKY
         }
@@ -126,6 +132,7 @@ class ProcessService : Service() {
             FCLauncher.launchAPIInstaller(config)
         } catch (e: Throwable) {
             Logging.LOG.log(Level.WARNING, "Installer JVM failed to launch", e)
+            deleteJvmState()
             writeExitCode(session, -1)
             scheduleIdleStop()
             return
@@ -157,9 +164,14 @@ class ProcessService : Service() {
                     return
                 }
                 writeExitCode(session, code)
-                // 阶段结束不自杀：JVM 已被完整销毁，进程常驻等待下一阶段复用；
-                // 空闲超时后 stopSelf 交还前台服务（进程交系统按空进程策略回收，
-                // 或下次 start 直接复用本进程，无需冷启）
+                // 阶段结束不结束进程：JVM 保持常驻，主进程启动下一阶段时若 JRE 一致
+                // 直接在本进程内复用。记录常驻 JVM 的 JRE，供主进程在 start 前预判
+                if (FCLauncher.hasResidentHotSpot()) {
+                    writeJvmState(java)
+                } else {
+                    deleteJvmState()
+                }
+                // 空闲超时后 stopSelf 交还前台服务，由 onDestroy 释放常驻 JVM
                 scheduleIdleStop()
             }
         }
@@ -171,6 +183,7 @@ class ProcessService : Service() {
                 if (exitCodeWritten.getAndSet(true)) {
                     return@postDelayed
                 }
+                deleteJvmState()
                 writeExitCode(session, -1)
                 scheduleIdleStop()
                 return@postDelayed
@@ -185,6 +198,7 @@ class ProcessService : Service() {
                 }
                 if (!exitCodeWritten.getAndSet(true)) {
                     Logging.LOG.warning("Installer JVM terminated unexpectedly, writing exit code -1")
+                    deleteJvmState()
                     writeExitCode(session, -1)
                     scheduleIdleStop()
                 }
@@ -212,11 +226,26 @@ class ProcessService : Service() {
         }
     }
 
+    private fun writeJvmState(java: Int) {
+        try {
+            val stateFile = File(applicationContext.cacheDir, InstallerProcessRunner.JVM_STATE_FILE)
+            FileUtils.writeText(stateFile, "${Process.myPid()}:$java")
+        } catch (e: IOException) {
+            Logging.LOG.log(Level.WARNING, "Can't write installer JVM state file", e)
+        }
+    }
+
+    private fun deleteJvmState() {
+        File(applicationContext.cacheDir, InstallerProcessRunner.JVM_STATE_FILE).delete()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(idleStopRunnable)
-        // 不杀进程：服务停止后进程由系统按空进程策略回收，下次 start 可直接复用
         stageExecutor.shutdownNow()
+        // 空闲自停后主动释放常驻 JVM 占用的内存；系统低内存回收时是 SIGKILL，
+        // 不会走到这里，下次 start 新进程冷启即可
+        Process.killProcess(Process.myPid())
     }
 
     private fun createNotificationChannel() {

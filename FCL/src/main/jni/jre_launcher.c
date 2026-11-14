@@ -65,7 +65,11 @@ _Noreturn static void vm_exit_hook(jint code) {
     exit_info_code = code;
     futex_word = 0;
     syscall(SYS_futex, &futex_word, FUTEX_WAKE, 1);
-    while (true) {}
+    // 用户态停车，等 waiter 线程经 nominal_exit 结束整个进程；用 pause 阻塞而不是
+    // 空转自旋，避免占用一个核心
+    while (true) {
+        pause();
+    }
 }
 
 // JVM "abort" hook：JVM 致命错误（VM_error/os::abort）路径；外部 SIGABRT 也会被
@@ -238,6 +242,29 @@ Java_com_oracle_dalvik_VMLauncher_launchJVM(JNIEnv *env, jclass clazz, jstring j
  * attach 后 invoke main。返回 0=main 正常返回，1=main 抛异常，-1=启动失败。
  * 阶段内若发生 System.exit 仍走 exit hook 停车流程（进程终止，不返回）。
  */
+// JDK 9+ 平台类加载器：java.xml/java.sql 等平台模块由其定义，纯 bootstrap 委派
+// 在 JDK 9+ 看不到这些类；JDK 8 没有 getPlatformClassLoader，回退 bootstrap(NULL)
+static jobject get_platform_class_loader(JNIEnv *env) {
+    jclass classLoaderClass = (*env)->FindClass(env, "java/lang/ClassLoader");
+    if (classLoaderClass == NULL) {
+        (*env)->ExceptionClear(env);
+        return NULL;
+    }
+    jmethodID getPlatform = (*env)->GetStaticMethodID(env, classLoaderClass,
+                                                      "getPlatformClassLoader",
+                                                      "()Ljava/lang/ClassLoader;");
+    jobject platformLoader = NULL;
+    if (getPlatform != NULL) {
+        platformLoader = (*env)->CallStaticObjectMethod(env, classLoaderClass, getPlatform);
+    }
+    if ((*env)->ExceptionCheck(env)) {
+        (*env)->ExceptionClear(env);
+        platformLoader = NULL;
+    }
+    (*env)->DeleteLocalRef(env, classLoaderClass);
+    return platformLoader;
+}
+
 jint JNICALL
 Java_com_oracle_dalvik_VMLauncher_runMainInExistingVM(JNIEnv *env, jclass clazz, jstring classpath,
                                                       jstring mainClass, jobjectArray appArgsArray) {
@@ -252,76 +279,134 @@ Java_com_oracle_dalvik_VMLauncher_runMainInExistingVM(JNIEnv *env, jclass clazz,
 
     JNIEnv *gameEnv;
     jint attachResult = (*game_vm)->GetEnv(game_vm, (void **) &gameEnv, JNI_VERSION_1_6);
-    if (attachResult == JNI_EDETACHED)
+    bool attached = false;
+    if (attachResult == JNI_EDETACHED) {
         attachResult = (*game_vm)->AttachCurrentThread(game_vm, &gameEnv, NULL);
-    if (attachResult != JNI_OK) {
+        attached = true;
+    }
+    if (attachResult != JNI_OK || gameEnv == NULL) {
         FCL_INTERNAL_LOG("Failed to attach to resident JVM: %d", attachResult);
         return -1;
     }
 
-    // URL[] urls = classpath.split(":") 各项加 file:// 前缀
+    jint result = -1;
+    char *cpCopy = NULL;
+    const char *mainClassUtf = NULL;
+    jobject previousTccl = NULL;
+    jobject currentThread = NULL;
+    jmethodID setTccl = NULL;
+    bool tcclSet = false;
+
+    // 空 classpath 无法构造出有效 URL 数组（会留下 null 元素），明确拒绝而不是崩溃
     const char *classpathUtf = (*env)->GetStringUTFChars(env, classpath, NULL);
-    if (classpathUtf == NULL) return -1;
+    if (classpathUtf == NULL) goto cleanup;
+    if (classpathUtf[0] == '\0') {
+        (*env)->ReleaseStringUTFChars(env, classpath, classpathUtf);
+        FCL_INTERNAL_LOG("Empty classpath for stage main");
+        goto cleanup;
+    }
     int urlCount = 1;
     for (const char *p = classpathUtf; *p != '\0'; p++)
         if (*p == ':') urlCount++;
-    char *cpCopy = strdup(classpathUtf);
+    cpCopy = strdup(classpathUtf);
     (*env)->ReleaseStringUTFChars(env, classpath, classpathUtf);
-    if (cpCopy == NULL) return -1;
+    if (cpCopy == NULL) goto cleanup;
 
+    // URL[] urls = classpath.split(":")，用 File.toURI().toURL() 构造：路径中的
+    // 空格与非 ASCII 由 JDK 正确编码，手拼 "file://" + 原始路径会失效
+    jclass fileClass = (*gameEnv)->FindClass(gameEnv, "java/io/File");
+    jclass uriClass = (*gameEnv)->FindClass(gameEnv, "java/net/URI");
     jclass urlClass = (*gameEnv)->FindClass(gameEnv, "java/net/URL");
-    jmethodID urlCtor = urlClass ? (*gameEnv)->GetMethodID(gameEnv, urlClass, "<init>",
-                                                           "(Ljava/lang/String;)V") : NULL;
-    jobjectArray urls = urlCtor ? (*gameEnv)->NewObjectArray(gameEnv, urlCount, urlClass, NULL) : NULL;
-    if (urls == NULL) {
+    if (fileClass == NULL || uriClass == NULL || urlClass == NULL) {
+        if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
+        FCL_INTERNAL_LOG("Failed to find URL support classes");
+        goto cleanup;
+    }
+    jmethodID fileCtor = (*gameEnv)->GetMethodID(gameEnv, fileClass, "<init>",
+                                                 "(Ljava/lang/String;)V");
+    jmethodID toUri = (*gameEnv)->GetMethodID(gameEnv, fileClass, "toURI", "()Ljava/net/URI;");
+    jmethodID toUrl = (*gameEnv)->GetMethodID(gameEnv, uriClass, "toURL", "()Ljava/net/URL;");
+    jobjectArray urls = (*gameEnv)->NewObjectArray(gameEnv, urlCount, urlClass, NULL);
+    if (fileCtor == NULL || toUri == NULL || toUrl == NULL || urls == NULL) {
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
         FCL_INTERNAL_LOG("Failed to prepare URL array");
-        free(cpCopy);
-        return -1;
+        goto cleanup;
     }
     int urlIndex = 0;
     char *saveptr = NULL;
     for (char *token = strtok_r(cpCopy, ":", &saveptr); token != NULL;
          token = strtok_r(NULL, ":", &saveptr)) {
-        char spec[1024];
-        int specLen = snprintf(spec, sizeof(spec), "file://%s", token);
-        if (specLen < 0 || specLen >= (int) sizeof(spec)) {
-            FCL_INTERNAL_LOG("Classpath entry too long: %.100s...", token);
-            free(cpCopy);
-            return -1;
+        jstring tokenStr = (*gameEnv)->NewStringUTF(gameEnv, token);
+        jobject file = tokenStr ? (*gameEnv)->NewObject(gameEnv, fileClass, fileCtor, tokenStr)
+                                : NULL;
+        if (tokenStr != NULL) (*gameEnv)->DeleteLocalRef(gameEnv, tokenStr);
+        jobject uri = file ? (*gameEnv)->CallObjectMethod(gameEnv, file, toUri) : NULL;
+        if (file != NULL) (*gameEnv)->DeleteLocalRef(gameEnv, file);
+        jobject url = uri ? (*gameEnv)->CallObjectMethod(gameEnv, uri, toUrl) : NULL;
+        if (uri != NULL) (*gameEnv)->DeleteLocalRef(gameEnv, uri);
+        if (url == NULL) {
+            if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
+            FCL_INTERNAL_LOG("Failed to convert classpath entry to URL: %.100s", token);
+            break;
         }
-        jstring specStr = (*gameEnv)->NewStringUTF(gameEnv, spec);
-        if (specStr == NULL) break;
-        jobject url = (*gameEnv)->NewObject(gameEnv, urlClass, urlCtor, specStr);
-        (*gameEnv)->DeleteLocalRef(gameEnv, specStr);
-        if (url == NULL) break;
         (*gameEnv)->SetObjectArrayElement(gameEnv, urls, urlIndex++, url);
         (*gameEnv)->DeleteLocalRef(gameEnv, url);
     }
-    free(cpCopy);
+    if (urlIndex != urlCount) {
+        if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
+        goto cleanup;
+    }
 
-    // ClassLoader 两参构造器以 NULL 为父（纯 bootstrap 委派）：常驻 JVM 的系统类
-    // 加载器还挂着首阶段的 -Djava.class.path，父优先委派会让本阶段同名类被旧类遮蔽
+    // 父加载器用平台类加载器：常驻 JVM 的系统类加载器挂着首阶段 -Djava.class.path，
+    // 直接做父会让同名类被旧阶段遮蔽；纯 bootstrap 又看不到 JDK 9+ 平台模块
+    jobject platformLoader = get_platform_class_loader(gameEnv);
     jclass loaderClass = (*gameEnv)->FindClass(gameEnv, "java/net/URLClassLoader");
-    jmethodID loaderCtor = loaderClass ? (*gameEnv)->GetMethodID(gameEnv, loaderClass, "<init>",
-                                                                 "([Ljava/net/URL;Ljava/lang/ClassLoader;)V") : NULL;
-    jobject loader = loaderCtor ? (*gameEnv)->NewObject(gameEnv, loaderClass, loaderCtor, urls, NULL) : NULL;
+    jmethodID loaderCtor = loaderClass ? (*gameEnv)->GetMethodID(
+            gameEnv, loaderClass, "<init>", "([Ljava/net/URL;Ljava/lang/ClassLoader;)V") : NULL;
+    jobject loader = loaderCtor ? (*gameEnv)->NewObject(gameEnv, loaderClass, loaderCtor, urls,
+                                                        platformLoader) : NULL;
+    if (platformLoader != NULL) (*gameEnv)->DeleteLocalRef(gameEnv, platformLoader);
     if (loader == NULL) {
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
         FCL_INTERNAL_LOG("Failed to create URLClassLoader");
-        return -1;
+        goto cleanup;
     }
     jmethodID loadClass = (*gameEnv)->GetMethodID(gameEnv, loaderClass, "loadClass",
                                                   "(Ljava/lang/String;)Ljava/lang/Class;");
+    if (loadClass == NULL) {
+        if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
+        FCL_INTERNAL_LOG("Failed to find loadClass on stage classloader");
+        goto cleanup;
+    }
 
-    const char *mainClassUtf = (*env)->GetStringUTFChars(env, mainClass, NULL);
-    if (mainClassUtf == NULL) return -1;
+    // 阶段 main 里的 ServiceLoader / 框架的类加载器查找走 TCCL，必须指向本阶段 loader
+    jclass threadClass = (*gameEnv)->FindClass(gameEnv, "java/lang/Thread");
+    jmethodID currentThreadMethod = threadClass ? (*gameEnv)->GetStaticMethodID(
+            gameEnv, threadClass, "currentThread", "()Ljava/lang/Thread;") : NULL;
+    jmethodID getTccl = threadClass ? (*gameEnv)->GetMethodID(
+            gameEnv, threadClass, "getContextClassLoader", "()Ljava/lang/ClassLoader;") : NULL;
+    setTccl = threadClass ? (*gameEnv)->GetMethodID(
+            gameEnv, threadClass, "setContextClassLoader", "(Ljava/lang/ClassLoader;)V") : NULL;
+    if (currentThreadMethod != NULL && getTccl != NULL && setTccl != NULL) {
+        currentThread = (*gameEnv)->CallStaticObjectMethod(gameEnv, threadClass, currentThreadMethod);
+        if (currentThread != NULL) {
+            previousTccl = (*gameEnv)->CallObjectMethod(gameEnv, currentThread, getTccl);
+            if ((*gameEnv)->ExceptionCheck(gameEnv)) {
+                (*gameEnv)->ExceptionClear(gameEnv);
+                previousTccl = NULL;
+            }
+            (*gameEnv)->CallVoidMethod(gameEnv, currentThread, setTccl, loader);
+            tcclSet = true;
+        }
+    }
+    if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
+
+    mainClassUtf = (*env)->GetStringUTFChars(env, mainClass, NULL);
+    if (mainClassUtf == NULL) goto cleanup;
     jstring mainClassStr = (*gameEnv)->NewStringUTF(gameEnv, mainClassUtf);
-    // UTF 串保留到本阶段装配结束再释放，失败路径的日志要用
     if (mainClassStr == NULL) {
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
-        (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
-        return -1;
+        goto cleanup;
     }
     jclass mainClazz = (*gameEnv)->CallObjectMethod(gameEnv, loader, loadClass, mainClassStr);
     (*gameEnv)->DeleteLocalRef(gameEnv, mainClassStr);
@@ -329,8 +414,7 @@ Java_com_oracle_dalvik_VMLauncher_runMainInExistingVM(JNIEnv *env, jclass clazz,
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionDescribe(gameEnv);
         (*gameEnv)->ExceptionClear(gameEnv);
         FCL_INTERNAL_LOG("loadClass(%s) failed on stage classloader", mainClassUtf);
-        (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
-        return -1;
+        goto cleanup;
     }
 
     jmethodID mainMethod = (*gameEnv)->GetStaticMethodID(gameEnv, mainClazz, "main",
@@ -339,30 +423,42 @@ Java_com_oracle_dalvik_VMLauncher_runMainInExistingVM(JNIEnv *env, jclass clazz,
         if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionDescribe(gameEnv);
         (*gameEnv)->ExceptionClear(gameEnv);
         FCL_INTERNAL_LOG("GetStaticMethodID(main) on %s failed", mainClassUtf);
-        (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
-        return -1;
+        goto cleanup;
     }
-    (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
 
     int appArgCount = (*env)->GetArrayLength(env, appArgsArray);
     char **appArgs = convert_to_char_array(env, appArgsArray);
-    if (appArgs == NULL) return -1;
+    if (appArgs == NULL) goto cleanup;
     jobjectArray appArgsArray2 = convert_from_char_array(gameEnv, appArgs, appArgCount);
     free_char_array(env, appArgsArray, (const char **) appArgs);
     if (appArgsArray2 == NULL) {
         FCL_INTERNAL_LOG("Failed to convert app args");
-        return -1;
+        goto cleanup;
     }
 
     FCL_LOG("Running stage main in resident JVM");
     (*gameEnv)->CallStaticVoidMethod(gameEnv, mainClazz, mainMethod, appArgsArray2);
     // System.exit 已被 vm_exit_hook 接管并停车；能走到这里说明 main 正常返回或抛了异常
-    jint exitCode = 0;
+    result = 0;
     if ((*gameEnv)->ExceptionCheck(gameEnv)) {
         (*gameEnv)->ExceptionDescribe(gameEnv);
         (*gameEnv)->ExceptionClear(gameEnv);
-        exitCode = 1;
+        result = 1;
     }
-    (*game_vm)->DetachCurrentThread(game_vm);
-    return exitCode;
+
+cleanup:
+    // 恢复阶段线程原来的 TCCL：同一线程后续可能被其它阶段/框架复用
+    if (tcclSet && currentThread != NULL && setTccl != NULL) {
+        (*gameEnv)->CallVoidMethod(gameEnv, currentThread, setTccl, previousTccl);
+        if ((*gameEnv)->ExceptionCheck(gameEnv)) (*gameEnv)->ExceptionClear(gameEnv);
+    }
+    if (mainClassUtf != NULL) {
+        (*env)->ReleaseStringUTFChars(env, mainClass, mainClassUtf);
+    }
+    free(cpCopy);
+    // 只 detach 本函数自己 attach 的线程；线程原本已 attached 时不能 detach
+    if (attached) {
+        (*game_vm)->DetachCurrentThread(game_vm);
+    }
+    return result;
 }

@@ -805,7 +805,10 @@ public class FCLauncher {
                 // launch
                 launch(config, bridge, task);
             } catch (IOException e) {
+                // 启动参数解析或运行环境装配失败：补发退出码，避免界面（游戏/Jar 执行器）
+                // 与安装器主进程一直等不到结束信号
                 Logging.LOG.log(Level.SEVERE, e.toString());
+                bridge.onExit(-1);
             }
         });
 
