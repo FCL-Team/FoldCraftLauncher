@@ -1274,6 +1274,7 @@
     <string name="style_name_from">%1$s (from %2$s)</string>
     <string name="style_warning_delete_refs">This style is referenced by %1$d view(s). They will fall back to the default style after deletion. Continue?</string>
     <string name="style_warning_delete_unused">This style is not used by any view. Delete it?</string>
+    <string name="style_import_warning">Style %1$s from layout %2$s will be copied into the current layout. Later changes or deletion will not affect the source layout.</string>
     <string name="style_warning_name">Fill the style name first!</string>
     <string name="style_button">Button Style</string>
     <string name="style_button_normal">Normal</string>

@@ -12,6 +12,7 @@ import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ControlButtonStyle;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
+import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.component.dialog.FCLDialog;
 import com.tungsten.fcllibrary.component.view.FCLButton;
 import com.tungsten.fcllibrary.component.view.FCLSpinner;
@@ -158,20 +159,41 @@ public class ButtonStyleDialog extends FCLDialog implements View.OnClickListener
             dialog.show();
         }
         if (v == positive) {
-            dismiss();
-            if (callback != null && select) {
-                ButtonStyleAdapter.Entry entry = adapter.getSelectedEntry();
-                if (entry == null) {
-                    return;
-                }
-                ControlButtonStyle selected = entry.style;
-                if (entry.sourceName != null) {
-                    controller.addOrUpdateButtonStyle(selected.clone());
-                    controller.saveToDisk();
-                    selected = controller.findButtonStyleByName(selected.getName());
-                }
-                callback.onStyleSelect(selected);
+            if (callback == null || !select) {
+                dismiss();
+                return;
             }
+            ButtonStyleAdapter.Entry entry = adapter.getSelectedEntry();
+            if (entry == null) {
+                dismiss();
+                return;
+            }
+            if (entry.sourceName != null) {
+                showImportConfirm(entry);
+                return;
+            }
+            dismiss();
+            callback.onStyleSelect(entry.style);
         }
+    }
+
+    /**
+     * 跨布局来源的样式先复制进当前布局再回调：之后修改或删除只作用于当前布局。
+     */
+    private void showImportConfirm(ButtonStyleAdapter.Entry entry) {
+        FCLAlertDialog.Builder builder = new FCLAlertDialog.Builder(getContext());
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.INFO);
+        builder.setMessage(getContext().getString(R.string.style_import_warning, entry.style.getName(), entry.sourceName));
+        builder.setPositiveButton(() -> {
+            controller.addOrUpdateButtonStyle(entry.style.clone());
+            controller.saveToDisk();
+            ControlButtonStyle imported = controller.findButtonStyleByName(entry.style.getName());
+            dismiss();
+            if (callback != null) {
+                callback.onStyleSelect(imported);
+            }
+        });
+        builder.setNegativeButton(null);
+        builder.create().show();
     }
 }
