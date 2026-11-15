@@ -357,7 +357,9 @@ public class AddButtonStyleDialog extends FCLDialog implements View.OnClickListe
                 Toast.makeText(getContext(), getContext().getString(R.string.style_warning_name), Toast.LENGTH_SHORT).show();
             } else {
                 dismiss();
-                callback.onStyleAdd(style);
+                // style 的 name 等属性在对话框内绑定到控件，直接回调会把绑定对象交给样式注册表，
+                // 之后编辑该样式时 setAll 写入绑定属性会抛 "A bound value cannot be set"
+                callback.onStyleAdd(style.clone());
             }
         }
         if (v == negative) {
