@@ -263,14 +263,17 @@ public class Controller implements Cloneable, Observable, StyleResolver {
 
     /**
      * 删除样式后把本布局内引用它的控件就地切到回退样式（默认为名为 Default 的样式）：
-     * 对象引用切换经 Data 层监听实时触发重渲染；未加载的布局在按需解析时
+     * 引用按样式名判断而非对象身份，复制控件等路径可能持有同名的克隆件；
+     * 对象引用切换经 Data 层监听实时触发重渲染，未加载的布局在按需解析时
      * 由 findXxxByName 回落语义兜底。
      */
     private void retargetButtonStyleReferences(ControlButtonStyle removed, ControlButtonStyle fallback) {
+        if (removed == null || fallback == null) return;
         for (ControlViewGroup group : viewGroups) {
             if (!group.isDataLoaded() || group.getViewData() == null) continue;
             for (ControlButtonData data : group.getViewData().buttonList()) {
-                if (data.getStyle() == removed) {
+                ControlButtonStyle style = data.getStyle();
+                if (style != null && style.getName().equals(removed.getName())) {
                     data.setStyle(fallback);
                 }
             }
@@ -278,10 +281,12 @@ public class Controller implements Cloneable, Observable, StyleResolver {
     }
 
     private void retargetDirectionStyleReferences(ControlDirectionStyle removed, ControlDirectionStyle fallback) {
+        if (removed == null || fallback == null) return;
         for (ControlViewGroup group : viewGroups) {
             if (!group.isDataLoaded() || group.getViewData() == null) continue;
             for (ControlDirectionData data : group.getViewData().directionList()) {
-                if (data.getStyle() == removed) {
+                ControlDirectionStyle style = data.getStyle();
+                if (style != null && style.getName().equals(removed.getName())) {
                     data.setStyle(fallback);
                 }
             }
