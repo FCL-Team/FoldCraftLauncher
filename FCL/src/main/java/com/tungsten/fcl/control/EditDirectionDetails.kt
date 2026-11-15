@@ -7,7 +7,6 @@ import com.mio.util.getScreenHeight
 import com.tungsten.fcl.R
 import com.tungsten.fcl.control.data.ControlDirectionData
 import com.tungsten.fcl.control.data.DirectionEventData
-import com.tungsten.fcl.control.data.DirectionStyles
 import com.tungsten.fcl.databinding.ViewEditDirectionEventBinding
 import com.tungsten.fcl.databinding.ViewEditDirectionInfoBinding
 import com.tungsten.fcl.util.FXUtils
@@ -29,15 +28,31 @@ internal class EditDirectionDetails(
     private val infoBinding = ViewEditDirectionInfoBinding.inflate(LayoutInflater.from(context))
     private val eventBinding = ViewEditDirectionEventBinding.inflate(LayoutInflater.from(context))
 
+    /** 样式表增删时回退已删除样式的引用，保证对话框显示与数据一致 */
+    private val stylesChangedListener = InvalidationListener {
+        val controller = menu?.controller ?: return@InvalidationListener
+        val styles = controller.directionStyles
+        if (styles.isEmpty()) return@InvalidationListener
+        if (styles.none { it.name == data.style.name }) {
+            data.setStyle(styles.first())
+            infoBinding.styleText.text = data.style.name
+        }
+    }
+
     override val infoLayout: View get() = infoBinding.root
     override val eventLayout: View get() = eventBinding.root
 
     init {
         setupInfo()
         setupEvent()
+        menu?.controller?.directionStyles?.addListener(stylesChangedListener)
     }
 
     override fun getView() = data.clone()
+
+    override fun dispose() {
+        menu?.controller?.directionStyles?.removeListener(stylesChangedListener)
+    }
 
     @Suppress("UNCHECKED_CAST")
     private fun setupInfo() {
@@ -65,8 +80,9 @@ internal class EditDirectionDetails(
 
         infoBinding.styleText.text = data.style.name
         infoBinding.style.setOnClickListener {
-            val target = DirectionStyles.findStyleByName(data.style.name)
-            DirectionStyleDialog(context, true, target) { style ->
+            val controller = menu?.controller ?: return@setOnClickListener
+            val target = controller.findDirectionStyleByName(data.style.name)
+            DirectionStyleDialog(context, controller, true, true, target) { style ->
                 data.setStyle(style)
                 infoBinding.styleText.text = style.name
             }.show()

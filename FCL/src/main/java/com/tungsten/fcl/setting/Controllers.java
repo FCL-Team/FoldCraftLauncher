@@ -106,6 +106,7 @@ public class Controllers {
             if (initialized)
                 return;
 
+            migrateLegacyStyleFiles();
             addControllersFromDisk();
             checkControllers();
 
@@ -113,6 +114,22 @@ public class Controllers {
         }
         CALLBACKS.forEach(callback -> Schedulers.androidUIThread().execute(callback));
         CALLBACKS.clear();
+    }
+
+    /**
+     * 旧版全局样式缓存（styles/button_styles.json、direction_styles.json）已废弃：
+     * 样式归属各布局并内嵌于布局 JSON,该目录只是历史上的派生缓存。
+     * 改名为 .bak 保留数据,代码从此不再读写。
+     */
+    private static void migrateLegacyStyleFiles() {
+        File stylesDir = new File(FCLPath.CONTROLLER_DIR, "styles");
+        for (String name : new String[]{"button_styles.json", "direction_styles.json"}) {
+            File legacy = new File(stylesDir, name);
+            File backup = new File(stylesDir, name + ".bak");
+            if (legacy.isFile() && !backup.exists()) {
+                legacy.renameTo(backup);
+            }
+        }
     }
 
     /**
@@ -239,6 +256,8 @@ public class Controllers {
                     throw new IOException("View group not found: " + viewGroup.getId());
                 }
                 Schedulers.androidUIThread().execute(() -> {
+                    // 按键样式名需挂回布局样式表对象：此处不经过 ensureAllLoaded，否则渲染与保存都会用默认样式
+                    data.resolveStyles(controller);
                     viewGroup.setViewData(data);
                     viewGroup.setDataLoaded(true);
                     callback.onLoaded(viewGroup);

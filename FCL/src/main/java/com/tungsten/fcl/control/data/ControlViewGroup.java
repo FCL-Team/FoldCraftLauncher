@@ -255,6 +255,19 @@ public class ControlViewGroup implements Cloneable, Observable {
             }
         }
 
+        /**
+         * 把本组所有按键/方向键暂存的样式引用挂回所属布局的样式表对象。
+         * 在布局解析完成或按需加载 viewData 后调用。
+         */
+        public void resolveStyles(StyleResolver resolver) {
+            for (ControlButtonData data : buttonList()) {
+                data.resolveStyle(resolver);
+            }
+            for (ControlDirectionData data : directionList()) {
+                data.resolveStyle(resolver);
+            }
+        }
+
         public ViewData() {
             addPropertyChangedListener(onInvalidating(this::invalidate));
         }

@@ -35,6 +35,9 @@ class EditViewDialog(
         val eventLayout: View
 
         fun getView(): CustomControl
+
+        /** 对话框关闭时释放页面持有的监听 */
+        fun dispose() {}
     }
 
     private val details: Details = if (cloneView.type == CustomControl.ViewType.CONTROL_BUTTON) {
@@ -78,6 +81,11 @@ class EditViewDialog(
         binding.negative.setOnClickListener { dismiss() }
 
         showLayout(0)
+    }
+
+    override fun dismiss() {
+        details.dispose()
+        super.dismiss()
     }
 
     private fun showLayout(position: Int) {

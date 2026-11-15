@@ -16,6 +16,7 @@ import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.control.data.CustomControl;
 import com.tungsten.fcl.setting.Controller;
 import com.tungsten.fcl.setting.Controllers;
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 import com.tungsten.fcllibrary.ui.ProgressDialog;
 import com.tungsten.fcllibrary.util.ConvertUtils;
@@ -47,6 +48,10 @@ private ProgressDialog loadDialog;
 private long loadDialogShowTime = 0;
 
     private final GameMenu gameMenu;
+
+    /** 样式表监听：删除样式后把画布上仍引用它的控件就地回退到默认样式 */
+    private final InvalidationListener stylesInvalidationListener = observable -> refreshStyleReferences();
+    private Controller stylesObservedController;
 
     public ViewManager(GameMenu gameMenu) {
         this.gameMenu = gameMenu;
@@ -185,7 +190,9 @@ private long loadDialogShowTime = 0;
                     ControlButtonData newData = ((ControlButtonData) view).clone();
                     button.getData().setText(newData.getText());
                     button.getData().setBaseInfo(newData.getBaseInfo());
-                    button.getData().setStyle(newData.getStyle());
+                    // 按名挂回布局样式表对象：编辑副本持有的是脱离样式表的克隆件，
+                    // 直接写回会让该按键失去与样式表的对象身份，后续样式修改不再同步
+                    button.getData().setStyle(gameMenu.getController().findButtonStyleByName(newData.getStyle().getName()));
                     button.getData().setEvent(newData.getEvent());
                     saveController();
                     if (selectedView == button) {
@@ -211,7 +218,8 @@ private long loadDialogShowTime = 0;
                 public void onPositive(CustomControl view) {
                     ControlDirectionData newData = ((ControlDirectionData) view).clone();
                     direction.getData().setBaseInfo(newData.getBaseInfo());
-                    direction.getData().setStyle(newData.getStyle());
+                    // 同按键：按名挂回布局样式表对象，保持对象身份一致
+                    direction.getData().setStyle(gameMenu.getController().findDirectionStyleByName(newData.getStyle().getName()));
                     direction.getData().setEvent(newData.getEvent());
                     saveController();
                     if (selectedView == direction) {
@@ -614,6 +622,7 @@ private long loadDialogShowTime = 0;
     }
 
     public void initializeController() {
+        refreshControllerStyleListeners();
         removeAllCustomViews();
         loadingGroups.clear();
         loadTotal = 0;
@@ -626,6 +635,48 @@ private long loadDialogShowTime = 0;
             }
         }
         updateLoadProgress();
+    }
+
+    /** 跟随当前布局注册样式表监听，切换布局时迁移到新 controller */
+    private void refreshControllerStyleListeners() {
+        Controller controller = gameMenu.getController();
+        if (stylesObservedController == controller) return;
+        if (stylesObservedController != null) {
+            stylesObservedController.getButtonStyles().removeListener(stylesInvalidationListener);
+            stylesObservedController.getDirectionStyles().removeListener(stylesInvalidationListener);
+        }
+        stylesObservedController = controller;
+        if (controller != null) {
+            controller.getButtonStyles().addListener(stylesInvalidationListener);
+            controller.getDirectionStyles().addListener(stylesInvalidationListener);
+        }
+    }
+
+    /**
+     * 画布控件按样式名回退：组数据里的克隆件可能未被 retarget 命中，
+     * 这里按名判断，删除样式后画布立即恢复默认样式，不必重新进入布局。
+     */
+    private void refreshStyleReferences() {
+        Controller controller = gameMenu.getController();
+        if (controller == null) return;
+        for (int i = 0; i < gameMenu.getBaseLayout().getChildCount(); i++) {
+            View view = gameMenu.getBaseLayout().getChildAt(i);
+            if (view instanceof ControlButton button) {
+                ControlButtonData data = button.getData();
+                if (data == null || data.getStyle() == null) continue;
+                String name = data.getStyle().getName();
+                if (controller.getButtonStyles().stream().noneMatch(it -> it.getName().equals(name))) {
+                    data.setStyle(controller.findButtonStyleByName(name));
+                }
+            } else if (view instanceof ControlDirection direction) {
+                ControlDirectionData data = direction.getData();
+                if (data == null || data.getStyle() == null) continue;
+                String name = data.getStyle().getName();
+                if (controller.getDirectionStyles().stream().noneMatch(it -> it.getName().equals(name))) {
+                    data.setStyle(controller.findDirectionStyleByName(name));
+                }
+            }
+        }
     }
 
     /**

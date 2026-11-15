@@ -8,12 +8,12 @@ import com.mio.util.getScreenWidth
 import com.mio.util.getScreenHeight
 import com.tungsten.fcl.control.data.BaseInfoData
 import com.tungsten.fcl.control.data.ButtonEventData
-import com.tungsten.fcl.control.data.ButtonStyles
 import com.tungsten.fcl.control.data.ControlButtonData
 import com.tungsten.fcl.databinding.ViewEditButtonEventBinding
 import com.tungsten.fcl.databinding.ViewEditButtonEventChildBinding
 import com.tungsten.fcl.databinding.ViewEditButtonInfoBinding
 import com.tungsten.fcl.util.FXUtils
+import com.tungsten.fclcore.fakefx.beans.InvalidationListener
 import com.tungsten.fcllibrary.component.view.FCLSpinner
 import com.tungsten.fcllibrary.util.ConvertUtils
 
@@ -29,15 +29,31 @@ internal class EditButtonDetails(
     private val infoBinding = ViewEditButtonInfoBinding.inflate(LayoutInflater.from(context))
     private val eventBinding = ViewEditButtonEventBinding.inflate(LayoutInflater.from(context))
 
+    /** 样式表增删时回退已删除样式的引用，保证对话框显示与数据一致 */
+    private val stylesChangedListener = InvalidationListener {
+        val controller = menu?.controller ?: return@InvalidationListener
+        val styles = controller.buttonStyles
+        if (styles.isEmpty()) return@InvalidationListener
+        if (styles.none { it.name == data.style.name }) {
+            data.style = styles.first()
+            infoBinding.styleText.text = data.style.name
+        }
+    }
+
     override val infoLayout: View get() = infoBinding.root
     override val eventLayout: View get() = eventBinding.root
 
     init {
         setupInfo()
         setupEvent()
+        menu?.controller?.buttonStyles?.addListener(stylesChangedListener)
     }
 
     override fun getView() = data.clone()
+
+    override fun dispose() {
+        menu?.controller?.buttonStyles?.removeListener(stylesChangedListener)
+    }
 
     @Suppress("UNCHECKED_CAST")
     private fun setupInfo() {
@@ -65,8 +81,9 @@ internal class EditButtonDetails(
 
         infoBinding.styleText.text = data.style.name
         infoBinding.style.setOnClickListener {
-            val target = ButtonStyles.findStyleByName(data.style.name)
-            ButtonStyleDialog(context, true, target) { style ->
+            val controller = menu?.controller ?: return@setOnClickListener
+            val target = controller.findButtonStyleByName(data.style.name)
+            ButtonStyleDialog(context, controller, true, true, target) { style ->
                 data.style = style
                 infoBinding.styleText.text = style.name
             }.show()
