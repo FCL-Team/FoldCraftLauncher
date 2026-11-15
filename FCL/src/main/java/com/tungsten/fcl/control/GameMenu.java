@@ -567,9 +567,6 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             if (editHistoryBar != null) {
                 editHistoryBar.setVisibility(View.VISIBLE);
             }
-            if (editHistoryBar != null) {
-                editHistoryBar.setVisibility(View.VISIBLE);
-            }
             if (rightMenuTitle != null) {
                 rightMenuTitle.setVisibility(View.VISIBLE);
             }

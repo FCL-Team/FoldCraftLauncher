@@ -80,6 +80,16 @@ public class ControlButtonData implements Cloneable, Observable, CustomControl {
     }
 
     /**
+     * 断开与样式对象的监听：数据被丢弃（删除控件、整表替换）前调用，
+     * 避免样式对象继续持有已废弃的数据实例。
+     */
+    public void detachStyleListener() {
+        ControlButtonStyle style = styleProperty.get();
+        if (style != null)
+            style.removeListener(styleInvalidationListener);
+    }
+
+    /**
      * Base info data
      * Contains position and size
      */

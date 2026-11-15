@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ViewManager {
@@ -386,7 +387,17 @@ private long loadDialogShowTime = 0;
     }
 
     public void removeView(CustomControl control) {
-        removeViewFromGroup(control, findOwnerGroup(control));
+        ControlViewGroup owner = findOwnerGroup(control);
+        if (owner == null) {
+            return;
+        }
+        // 删除即丢弃数据：先断开样式监听，避免样式对象持续持有废弃实例
+        if (control instanceof ControlButtonData buttonData) {
+            buttonData.detachStyleListener();
+        } else if (control instanceof ControlDirectionData directionData) {
+            directionData.detachStyleListener();
+        }
+        removeViewFromGroup(control, owner);
     }
 
     /** 从指定控件组删除控件（跨组移动时显式指定来源，避免归属解析歧义） */
@@ -394,7 +405,11 @@ private long loadDialogShowTime = 0;
         removeViewFromGroup(control, owner, true);
     }
 
-    /** 从指定控件组删除控件（跨组移动时显式指定来源，避免归属解析歧义） */
+    /**
+     * 从指定控件组删除控件。
+     * record 为 false 时不记录撤销历史（供跨组移动等组合操作统一记录）。
+     * 数据对象在跨组移动中会被复用，因此样式监听只在删除路径（removeView）断开。
+     */
     private void removeViewFromGroup(CustomControl control, ControlViewGroup owner, boolean record) {
         if (!gameMenu.isEditMode() || owner == null) {
             return;
@@ -458,12 +473,14 @@ private long loadDialogShowTime = 0;
      * 摘除范围 = 改动前 ∪ 改动后的 id 并集：撤销"添加/复制"时，新增控件的 id 已不在
      * 现数据里，仅按现数据圈定会漏摘（控件残留到下次整体重建才消失）。
      * 不在当前渲染目标中的组（隐藏参考组等）只恢复数据，待下次渲染时生效。
+     *
+     * @param restores 组 → 改动前该组数据涉及的视图 id 集合（按组绑定，避免与组列表错位）
      */
-    public void restoreViewsForGroups(List<ControlViewGroup> groups, List<Set<String>> staleViewIds) {
+    public void restoreViewsForGroups(Map<ControlViewGroup, Set<String>> restores) {
         clearSelection();
-        for (int i = 0; i < groups.size(); i++) {
-            ControlViewGroup group = groups.get(i);
-            Set<String> staleIds = staleViewIds.get(i);
+        for (Map.Entry<ControlViewGroup, Set<String>> restore : restores.entrySet()) {
+            ControlViewGroup group = restore.getKey();
+            Set<String> staleIds = restore.getValue();
             ArrayList<View> staleViews = new ArrayList<>();
             for (int j = 0; j < gameMenu.getBaseLayout().getChildCount(); j++) {
                 View view = gameMenu.getBaseLayout().getChildAt(j);
