@@ -455,6 +455,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
                             menu.getViewManager().selectView(this);
                         }
                     } else {
+                        // 写回前记录撤销点：此刻数据仍是拖动前状态
+                        menu.getViewManager().recordForUndo(getData());
                         getData().getBaseInfo().setXPosition(Math.round((1000 * getX()) / (screenWidth - getMeasuredWidth())));
                         getData().getBaseInfo().setYPosition(Math.round((1000 * getY()) / (screenHeight - getMeasuredHeight())));
                         menu.getViewManager().saveController();
@@ -575,6 +577,8 @@ public class ControlButton extends AppCompatButton implements CustomView {
 
     /** 缩放结束：把最终像素尺寸与当前位置写回数据（百分比保持各自参考轴，[1,1000]；绝对为 dp），并刷新视图 */
     private void writeBackResizeSize() {
+        // 写回前记录撤销点：此刻数据仍是缩放前状态
+        menu.getViewManager().recordForUndo(getData());
         BaseInfoData baseInfo = getData().getBaseInfo();
         int width = getWidth();
         int height = getHeight();
