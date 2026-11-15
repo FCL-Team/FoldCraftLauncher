@@ -18,6 +18,14 @@ static void* driverHandle;
 
 static struct android_namespace_t* driverNs;
 
+/* 驱动加载状态：0 未尝试，1 成功，2 失败。
+ * 加载器句柄可用不代表自定义驱动已生效，检测侧据此判定实际使用的驱动 */
+static int driverLoadState;
+
+__attribute__((visibility("default"), used)) int fcl_linkerhook_driver_state(void) {
+    return driverLoadState;
+}
+
 static uint64_t (*atrace_get_enabled_tags_p)();
 
 __attribute__((visibility("default"), used)) void *android_dlopen_ext(const char *filename, int flags, const android_dlextinfo *extinfo) {
@@ -40,11 +48,14 @@ __attribute__((visibility("default"), used)) void *android_dlopen_ext(const char
         const char* driverLib = getenv("DRIVER_LIB");
         if (driverLib == NULL || !*driverLib)
             driverLib = "libvulkan_freedreno.so";
-        driverHandle = linker_ns_dlopen(driverLib, RTLD_LOCAL | RTLD_NOW, driverNs);
+        if (driverNs != NULL)
+            driverHandle = linker_ns_dlopen(driverLib, RTLD_LOCAL | RTLD_NOW, driverNs);
         if(driverHandle == NULL) {
+            driverLoadState = 2;
             printf("DriverSupp: Failed to load %s!\n%s\n", driverLib, dlerror());
             return NULL;
         }
+        driverLoadState = 1;
     }
     return driverHandle;
 }

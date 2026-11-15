@@ -167,7 +167,8 @@ static bool check_driver_gpu() {
  * 与 egl_bridge.c 的 loadCustomVulkan 同链路：创建隔离命名空间并预载 liblinkerhook，
  * 由 hook 拦截系统 libvulkan 的驱动加载转至 DRIVER_PATH 下的 DRIVER_LIB
  */
-static void *load_custom_vulkan(const char *cache_dir) {
+static void *load_custom_vulkan(const char *cache_dir, void **hookHandle) {
+    *hookHandle = NULL;
     if (!check_driver_gpu())
         return NULL;
 
@@ -183,7 +184,7 @@ static void *load_custom_vulkan(const char *cache_dir) {
     if (!ns) return NULL;
 
     // 先加载 hook，使其符号优先进入符号表从而拦截 android_dlopen_ext
-    linker_ns_dlopen("liblinkerhook.so", RTLD_LOCAL | RTLD_NOW, ns);
+    *hookHandle = linker_ns_dlopen("liblinkerhook.so", RTLD_LOCAL | RTLD_NOW, ns);
     // 授予命名空间访问系统库的权限
     private_link_namespaces_all_libs(ns, get_escape_namespace());
 
@@ -192,15 +193,44 @@ static void *load_custom_vulkan(const char *cache_dir) {
 
 #endif
 
+/* 读取 liblinkerhook 记录的驱动加载状态：0 未尝试，1 成功，2 失败 */
+static int hook_driver_state(void *hookHandle) {
+    if (!hookHandle) return 0;
+    int (*query)(void) = (int (*)(void)) dlsym(hookHandle, "fcl_linkerhook_driver_state");
+    if (!query) dlerror();
+    return query ? query() : 0;
+}
+
+/**
+ * 确认实际生效的驱动并记录日志；返回自定义驱动是否真正加载。
+ * 加载器句柄可用只说明系统 libvulkan 已加载，驱动在首次 vkCreateInstance 时才经 hook 装载
+ */
+static bool resolve_custom_driver(JNIEnv *env, void *hookHandle, bool loaderIsCustom, const char *driverLib) {
+    if (!loaderIsCustom) {
+        LOG_I("Vulkan library loaded: system loader");
+        return false;
+    }
+    int driverState = hook_driver_state(hookHandle);
+    if (driverState != 1) {
+        LOG_W("Custom driver %s was not loaded (%s); the system loader is used instead.",
+              driverLib && *driverLib ? driverLib : "custom driver",
+              driverState == 2 ? "load failed" : "linker hook inactive");
+        return false;
+    }
+    LOG_I("Vulkan library loaded: %s", driverLib && *driverLib ? driverLib : "custom driver");
+    return true;
+}
+
 #define LOAD_VK_FUNC(name) PFN_##name p##name = (PFN_##name)dlsym(vulkan_handle, #name)
 
 static jobject do_check_vulkan(JNIEnv *env, jboolean jUseCustomDriver, const char *driverPath, const char *driverLib, const char *cacheDir) {
     void *vulkan_handle = NULL;
+    void *hookHandle = NULL;
     bool customDriver = false;
     if (jUseCustomDriver == JNI_TRUE && driverPath && cacheDir) {
 #ifdef CUSTOM_VKDRIVER_POSSIBLE
         if (android_get_device_api_level() >= 28) {
-            vulkan_handle = load_custom_vulkan(cacheDir);
+            vulkan_handle = load_custom_vulkan(cacheDir, &hookHandle);
             customDriver = vulkan_handle != NULL;
         }
 #endif
@@ -212,11 +242,6 @@ static jobject do_check_vulkan(JNIEnv *env, jboolean jUseCustomDriver, const cha
     if (!vulkan_handle) {
         LOG_E("Failed to load Vulkan library.");
         return NULL;
-    }
-
-    LOG_I("Vulkan library loaded: %s", customDriver ? (driverLib && *driverLib ? driverLib : "custom driver") : "system loader");
-    if (jUseCustomDriver == JNI_TRUE && !customDriver) {
-        LOG_W("Custom driver was requested but failed to load; using the system loader instead.");
     }
 
     LOAD_VK_FUNC(vkGetInstanceProcAddr);
@@ -289,11 +314,13 @@ static jobject do_check_vulkan(JNIEnv *env, jboolean jUseCustomDriver, const cha
         appInfo.apiVersion = instanceApiVersion;
         vkRes = pvkCreateInstance(&createInfo, NULL, &instance);
         if (vkRes != VK_SUCCESS) {
+            resolve_custom_driver(env, hookHandle, customDriver, driverLib);
             LOG_E("vkCreateInstance failed, result=%d", vkRes);
             dlclose(vulkan_handle);
             return NULL;
         }
     }
+    customDriver = resolve_custom_driver(env, hookHandle, customDriver, driverLib);
 
     // 实例创建后经 vkGetInstanceProcAddr 重新解析 1.1+ 入口（部分加载器不经 dlsym 导出）
     if (pvkGetInstanceProcAddr) {
