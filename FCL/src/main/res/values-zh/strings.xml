@@ -517,7 +517,6 @@
     <string name="install_new_game_already_exists">当前版本已存在，请换一个名称。</string>
     <string name="install_new_game_malformed">无效的名称</string>
     <string name="install_success">安装成功</string>
-
     <string name="modpack_completion_confirm">检测到以下整合包文件缺失，启动时将自动补全恢复。如属主动删除或更新，可跳过本次，或直接关闭自动补全。\n%s</string>
     <string name="modpack_completion_continue">继续补全</string>
     <string name="modpack_completion_skip">跳过本次</string>
@@ -1456,7 +1455,7 @@
     <string name="renderer_keep_override">保留覆盖</string>
     <string name="message_warn_renderer_override_shadow">版本 %1$s 已设置独立渲染器覆盖（当前生效：%2$s），刚才选择的渲染器不会应用到该版本。</string>
     <string name="message_select_url">请选择一个链接进行下载（将会跳转至浏览器）</string>
-    <string name="supported_mc_version">MC版本：</string>
+    <string name="supported_mc_version">支持的MC版本：</string>
     <string name="renderer_source">来源：</string>
     <string name="renderer_source_builtin">内置</string>
     <string name="message_check_renderer">当前渲染器 %s 不支持该游戏版本，继续使用可能导致渲染错误或游戏崩溃！是否继续？</string>
