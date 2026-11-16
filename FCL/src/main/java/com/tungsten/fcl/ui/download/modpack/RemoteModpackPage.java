@@ -1,7 +1,6 @@
 package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
-import android.text.Html;
 import android.view.View;
 import android.widget.Toast;
 
@@ -102,8 +101,7 @@ public class RemoteModpackPage extends ModpackPage {
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT);
         builder.setCancelable(false);
         builder.setTitle(getContext().getString(R.string.modpack_description));
-        CharSequence charSequence = Html.fromHtml(manifest.getDescription(), 0);
-        builder.setMessage(charSequence);
+        builder.setMessage(formatDescription(manifest.getDescription()));
         builder.setNegativeButton(getContext().getString(com.tungsten.fcl.R.string.dialog_positive), null);
         builder.create().show();
     }

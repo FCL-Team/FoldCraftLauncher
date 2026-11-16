@@ -2,6 +2,7 @@ package com.tungsten.fcl.ui.download.modpack;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.text.Html;
 import android.view.View;
 import android.widget.ScrollView;
 
@@ -16,6 +17,8 @@ import com.tungsten.fcllibrary.component.view.FCLEditText;
 import com.tungsten.fcllibrary.component.view.FCLLinearLayout;
 import com.tungsten.fcllibrary.component.view.FCLProgressBar;
 import com.tungsten.fcllibrary.component.view.FCLTextView;
+
+import java.util.regex.Pattern;
 
 public abstract class ModpackPage extends FCLPage implements View.OnClickListener {
 
@@ -60,6 +63,22 @@ public abstract class ModpackPage extends FCLPage implements View.OnClickListene
     protected abstract void onInstall();
 
     protected abstract void onDescribe();
+
+    private static final Pattern HTML_TAG = Pattern.compile("<\\/?[a-zA-Z][a-zA-Z0-9]*(\\s[^>]*)?\\/?>");
+
+    /**
+     * 将整合包描述转换为富文本：纯文本中的换行符转为换行标签，HTML 描述按原样解析。
+     */
+    protected CharSequence formatDescription(String description) {
+        if (description == null) {
+            return "";
+        }
+        String text = description.replace("\r\n", "\n").replace('\r', '\n');
+        if (HTML_TAG.matcher(text).find()) {
+            return Html.fromHtml(text, 0);
+        }
+        return Html.fromHtml(text.replace("\n", "<br>"), 0);
+    }
 
     @Override
     public void onClick(View v) {
