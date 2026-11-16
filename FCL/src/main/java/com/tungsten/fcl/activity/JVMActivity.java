@@ -505,6 +505,7 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_FOCUSED, hasFocus ? 1 : 0);
+        notifySdlWindowFocus(hasFocus);
         if (menu == null || menuType != MenuType.GAME) {
             return;
         }
@@ -514,6 +515,24 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
             menu.getInput().resetExternalMouseState();
         } else {
             menu.getInput().ensurePointerCapture();
+        }
+    }
+
+    /**
+     * 窗口焦点转交 SDL：本活动不继承 SDLActivity，SDL 窗口的焦点事件只能在此转达，
+     * 否则失焦清理输入的实现不会生效——例如 Cleanroom 的 SDL 窗口在失焦时释放仍按下的按键与鼠标键，
+     * 并把失焦状态反馈给 LWJGL 2 兼容层的 Display.isActive()，
+     * 参考 Window 的焦点处理
+     * （https://github.com/CleanroomMC/Cleanroom/blob/0.7.14-alpha/module/cleanroom/src/main/java/com/cleanroommc/client/sdl/Window.java）
+     */
+    private void notifySdlWindowFocus(boolean hasFocus) {
+        if (!SdlBridge.getSdlEnabled()) {
+            return;
+        }
+        try {
+            SDLActivity.nativeFocusChanged(hasFocus);
+        } catch (Throwable throwable) {
+            Logging.LOG.log(Level.WARNING, "Failed to forward window focus to SDL", throwable);
         }
     }
 
