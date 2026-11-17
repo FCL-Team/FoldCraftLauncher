@@ -136,7 +136,12 @@ public class CallbackBridge {
     public static volatile int windowWidth, windowHeight;
     public static volatile int physicalWidth, physicalHeight;
     public static float mouseX, mouseY, deltaX, deltaY;
+    /** SDL 通道的按键状态（Android 按钮位掩码），SDL 的 Android 后端按新旧掩码差量换算按钮 */
     private static int sMouseButtonState = 0;
+    private static final int[] SDL_MOUSE_BUTTONS = {
+            MotionEvent.BUTTON_PRIMARY, MotionEvent.BUTTON_SECONDARY, MotionEvent.BUTTON_TERTIARY,
+            MotionEvent.BUTTON_BACK, MotionEvent.BUTTON_FORWARD
+    };
     public volatile static boolean holdingAlt, holdingCapslock, holdingCtrl,
             holdingNumlock, holdingShift;
 
@@ -171,8 +176,26 @@ public class CallbackBridge {
             // 鼠标被游戏捕获（锁指针转视角）时下发相对增量
             SDLActivity.onNativeMouse(0, MotionEvent.ACTION_MOVE, dx, dy, true);
         } else {
-            SDLActivity.onNativeMouse(0, MotionEvent.ACTION_MOVE, x, y, false);
+            SDLActivity.onNativeMouse(0, MotionEvent.ACTION_MOVE, sdlCursorX(), sdlCursorY(), false);
         }
+    }
+
+    /**
+     * SDL 通道下发的绝对坐标收敛进游戏窗口范围：SDL 的 Android 后端以越界判定鼠标离开窗口并清除鼠标焦点，
+     * 焦点丢失后按键事件的窗口 ID 为 0，按窗口 ID 过滤事件的实现会整条丢弃事件
+     * （参考 Cleanroom 的 SDL 窗口按键分发
+     * https://github.com/CleanroomMC/Cleanroom/blob/0.7.14-alpha/module/cleanroom/src/main/java/com/cleanroommc/client/sdl/Window.java），
+     * 按下事件的释放随之丢失，游戏侧的按键绑定停在按下状态。视角增量在捕获态累加进光标坐标，
+     * 与窗口无关，故只收敛绝对坐标，相对增量原样下发
+     */
+    private static float sdlCursorX() {
+        int width = windowWidth;
+        return width > 0 ? Math.max(0f, Math.min(width - 1f, mouseX)) : mouseX;
+    }
+
+    private static float sdlCursorY() {
+        int height = windowHeight;
+        return height > 0 ? Math.max(0f, Math.min(height - 1f, mouseY)) : mouseY;
     }
 
     public static void sendCursorDelta(float x, float y) {
@@ -293,7 +316,7 @@ public class CallbackBridge {
             } else {
                 sMouseButtonState &= ~aKey;
             }
-            SDLActivity.onNativeMouse(sMouseButtonState, isDown ? MotionEvent.ACTION_DOWN : MotionEvent.ACTION_UP, mouseX, mouseY, false);
+            SDLActivity.onNativeMouse(sMouseButtonState, isDown ? MotionEvent.ACTION_DOWN : MotionEvent.ACTION_UP, sdlCursorX(), sdlCursorY(), false);
         }
     }
 
@@ -322,9 +345,7 @@ public class CallbackBridge {
 
     public static void resetInputState() {
         nativeResetInputState();
-        if (SdlBridge.getSdlEnabled() && sMouseButtonState != 0) {
-            SDLActivity.onNativeMouse(0, MotionEvent.ACTION_UP, mouseX, mouseY, false);
-        }
+        releaseSdlMouseButtons();
         deltaX = 0f;
         deltaY = 0f;
         sMouseButtonState = 0;
@@ -333,6 +354,24 @@ public class CallbackBridge {
         holdingCtrl = false;
         holdingNumlock = false;
         holdingShift = false;
+    }
+
+    /**
+     * SDL 通道的鼠标键复位：SDL 的 Android 后端按新旧按钮掩码的差量换算单个按钮，
+     * 掩码一次性清零只会补发其中一个按钮的释放，其余按钮会停在按下状态，故逐位清空补发
+     */
+    private static void releaseSdlMouseButtons() {
+        if (!SdlBridge.getSdlEnabled()) {
+            return;
+        }
+        int state = sMouseButtonState;
+        for (int button : SDL_MOUSE_BUTTONS) {
+            if ((state & button) == 0) {
+                continue;
+            }
+            state &= ~button;
+            SDLActivity.onNativeMouse(state, MotionEvent.ACTION_UP, sdlCursorX(), sdlCursorY(), false);
+        }
     }
 
     // Called from JRE side
