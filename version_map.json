@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1346,
-    "versionName": "1.3.4.6",
-    "date": "2026.11.12",
+    "versionCode": 1347,
+    "versionName": "1.3.4.7",
+    "date": "2026.11.17",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Added per-version renderer overrides: a new renderer entry at the bottom-left of the version list lets you assign a renderer to each version individually (defaulting to following the global setting), so switching between versions no longer requires changing renderer settings back and forth; when the renderer is changed elsewhere while an override exists, a dialog offers to update, clear or keep the override (#1975)\n2. Added a \"launch progress overlay\" toggle under the DEBUG category of the in-game right menu: when off, the overlay background and progress spinner are no longer shown at launch and the game screen appears directly from the first frame; also fixed the first-frame misdetection in the log window's auto-show logic (#2005)\n3. Fixed being unable to cancel while waiting for authorization during Microsoft account re-login, and the dialog getting stuck after leaving the login page; retrying after a failed login now works (#2013)\n4. Fixed Controlify requiring a controller reconnection before direct input worked: SDL gamepad device enumeration is now synced proactively at launch, with USB/Bluetooth hotplug monitoring taken over (synced from ZalithLauncher2)\n5. Fixed Minecraft snapshots 13w16a~13w23b failing to launch (#2002)\n6. Fixed runtime installation failures being impossible to diagnose: the full stack trace is now logged and shown in a dialog (#2011)\n7. Removed the shadow in-game control buttons cast onto the screen; elevation now only keeps the buttons' stacking order (#2008)\n8. Fixed main-screen version card icons being squashed when non-square: they are now scaled proportionally\n9. Fixed HMCL/MultiMC modpacks failing to launch\n10. Optimized task-list refreshing: task rows are now added/removed in batches, fixing list jank during high-speed downloads (#2010)\n11. Optimized launch speed: unpacking built-in jars now skips files already released by comparing checksums, and an artificial delay for small files during runtime extraction was removed"
+        "text": "(Translated from Chinese by AI)\n1. Added undo/redo for control editing: the left drawer in edit mode now has undo and redo buttons at the bottom, keeping up to 30 edit steps; adding/removing controls, dragging, resizing, cross-group copy or move and style changes can all be reverted (#1991)\n2. Fixed a crash when editing saved button or direction styles, caused by draft style properties bound to the dialog controls leaking into the style registry (#2018)\n3. Fixed a launcher crash caused by oversized pack.png resource pack icons, which are now downsampled to their display size instead of being decoded at full size (#2015)\n4. Fixed progress bars, sliders, the dynamic island, text fields and number seek bars becoming invisible when the theme color alpha is set to 0 (#2016)\n5. Fixed Vulkan detection reporting the custom driver as loaded when the driver is actually missing\n6. Fixed line breaks not taking effect in the modpack description dialog"
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增每版本渲染器覆盖：版本列表页左下角新增渲染器入口，可为每个版本单独指定渲染器（默认跟随全局设置），多版本切换无需反复修改渲染器；存在覆盖时从其他位置修改渲染器会弹窗提示，可选更新覆盖、清除覆盖或保留覆盖 (#1975)\n2.游戏内右侧菜单 DEBUG 分类新增「启动进度遮罩」开关：关闭后启动时不再显示遮罩背景与进度圈，游戏画面自首帧直接显示；并修复日志窗自动显示的首帧误判 (#2005)\n3.修复微软账户重新登录等待授权期间无法取消，退出登录页面后对话框卡死的问题；登录失败后可直接重试 (#2013)\n4.修复 Controlify 需重连手柄才能直通：启动时主动同步 SDL 手柄设备枚举并接管 USB/蓝牙插拔监听（同步 ZalithLauncher2）\n5.修复无法启动 Minecraft 13w16a~13w23b 快照的问题 (#2002)\n6.修复运行环境安装失败时无法定位原因的问题：现会记录日志并在弹窗展示完整调用栈 (#2011)\n7.修复游戏内按键向画面投影阴影的问题，elevation 仅保留按键堆叠层级 (#2008)\n8.修复主界面版本卡片长方形图标被压扁的问题，现按原始比例等比缩放\n9.修复 HMCL/MultiMC 整合包启动崩溃的问题\n10.优化任务列表刷新：任务行增删改为批量刷新，修复高速下载时列表卡顿 (#2010)\n11.优化启动速度：解包内置 jar 前按校验值比对跳过重复释放，并移除运行环境解压时对小文件的人为延时"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增按键编辑撤销/恢复：编辑模式左抽屉底部新增撤销与恢复按钮，最多保留 30 步编辑历史，增删控件、拖动、缩放、跨组复制移动与样式修改均可回退 (#1991)\n2.修复编辑已保存的按键、方向样式时因属性绑定泄漏导致的崩溃 (#2018)\n3.修复超大 pack.png 资源包图标导致启动器崩溃的问题，图标现按显示尺寸降采样解码 (#2015)\n4.修复主题色透明度调为 0 时进度条、滑条、动态岛、输入框与数字滑条不可见的问题 (#2016)\n5.修复自定义驱动缺失时 Vulkan 检测误报驱动已加载的问题\n6.修复整合包描述对话框换行符不生效的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/f1bc04ac1dd0",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.6/FCL-release-1.3.4.6-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/da5128f8986c",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.7/FCL-release-1.3.4.7-all.apk"
   }
 ]
