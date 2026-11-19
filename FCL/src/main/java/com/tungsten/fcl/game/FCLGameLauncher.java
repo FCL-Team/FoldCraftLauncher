@@ -25,6 +25,7 @@ import com.mio.manager.RendererManager;
 import com.mio.util.LauncherUtilKt;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.setting.GameOption;
+import com.tungsten.fcl.setting.VersionSetting;
 import com.tungsten.fcl.util.RuntimeUtils;
 import com.tungsten.fclauncher.bridge.FCLBridge;
 import com.tungsten.fcl.FCLApp;
@@ -48,8 +49,11 @@ import java.util.logging.Level;
 
 public final class FCLGameLauncher extends DefaultLauncher {
 
-    public FCLGameLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options) {
+    private final VersionSetting setting;
+
+    public FCLGameLauncher(Context context, GameRepository repository, Version version, AuthInfo authInfo, LaunchOptions options, VersionSetting setting) {
         super(context, repository, version, authInfo, options);
+        this.setting = setting;
     }
 
     @Override
@@ -73,14 +77,15 @@ public final class FCLGameLauncher extends DefaultLauncher {
         } catch (IOException e) {
             Logging.LOG.log(Level.WARNING, "Unable to disable forge animation", e);
         }
-        // 对带 Vulkan 后端的版本（MC 26.2+）关闭 FML 早期加载屏：26.2 的早期窗口先以 OpenGL 渲染，
-        // 游戏复用该窗口创建 Vulkan surface 时在 vkCreateAndroidSurfaceKHR 处崩溃；
-        // 26.3+ 的 ANGLE/Vulkan 渲染线程还会在启动扫描期反复分配 gralloc 缓冲，
-        // 与启动器 UI 的 present 在 vendor gralloc 锁上互堵（UI 冻死直至 ANR）。
-        // 更早版本无此冲突，须清掉残留的关闭键，保留模组加载进度动画。
+        // FML 早期加载屏在 Vulkan 后端下会崩或冻死：26.2 的早期窗口先以 OpenGL 渲染，游戏复用该窗口
+        // 创建 Vulkan surface 时在 vkCreateAndroidSurfaceKHR 处崩溃；26.3+ 的 ANGLE/Vulkan 渲染线程还会
+        // 在启动扫描期反复分配 gralloc 缓冲，与启动器 UI 的 present 在 vendor gralloc 锁上互堵（冻死直至 ANR）。
+        // 26.2+ 仅在显式选择 OpenGL 后端时保留早期加载屏，default 无法判断游戏实际后端、与 Vulkan 一并关闭；
+        // 更早版本无此冲突，清掉残留的关闭键以恢复模组加载动画。
         File fmlToml = new File(configFolder, "fml.toml");
-        boolean disableEarlyWindow = VulkanCheckManager.INSTANCE.hasVulkanBackend(
+        boolean hasVulkanBackend = VulkanCheckManager.INSTANCE.hasVulkanBackend(
                 repository.getGameVersion(version).orElse(null));
+        boolean disableEarlyWindow = hasVulkanBackend && !setting.getGraphicsBackend().equals("opengl");
         applyFmlEarlyWindowControl(fmlToml, disableEarlyWindow);
         GameOption gameOption = null;
         if (!optionsFile.exists()) {
