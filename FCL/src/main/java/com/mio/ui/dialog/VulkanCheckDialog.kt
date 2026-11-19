@@ -64,6 +64,10 @@ class VulkanCheckDialog(
                 context.getString(R.string.vulkan_check_support_partial)
         }
         content.addView(textView(summary))
+        //Vulkan 完全不可用时提示改用 OpenGL 后端启动
+        if (profiles.none { it.supported }) {
+            content.addView(textView(context.getString(R.string.vulkan_check_gl_alternative)))
+        }
 
         //仅在部分版本区间受支持时，展示各版本区间的支持情况
         if (profiles.distinctBy { it.supported }.size > 1) {

@@ -870,7 +870,8 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
 
     /**
      * 启动前校验 26.2+（带 Vulkan 渲染后端）版本的设备支持情况：
-     * 缓存判定支持则直接启动，无缓存时询问是否检测，不支持时按版本警告或阻止
+     * OpenGL 后端不经过 Vulkan，直接启动；缓存判定支持则直接启动，
+     * 无缓存时询问是否检测，不支持时按已缓存结论警告并提示可改用 OpenGL 后端
      */
     private fun checkVulkanThenLaunch(profile: Profile, versionId: String?) {
         lifecycleScope.launch {
@@ -889,6 +890,11 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                 doLaunchVersion(profile, versionId)
                 return@launch
             }
+            //显式选择 OpenGL 后端时不经过 Vulkan，无需检测
+            if (versionSetting.graphicsBackend == "opengl") {
+                doLaunchVersion(profile, versionId)
+                return@launch
+            }
             val useCustomDriver = !versionSetting.isVKDriverSystem
             val driver = if (useCustomDriver) {
                 DriverPlugin.driverList.find { it.driver == versionSetting.driver }
@@ -900,15 +906,21 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
                     promptVulkanCheck(gameVersion, useCustomDriver, driver, profile, versionId)
 
                 VulkanEnsureResult.UNSUPPORTED ->
-                    runVulkanCheckAndDecide(
-                        gameVersion,
-                        useCustomDriver,
-                        driver,
-                        profile,
-                        versionId
-                    )
+                    warnVulkanUnsupported(profile, versionId)
             }
         }
+    }
+
+    /** 缓存判定不支持时沿用已缓存结论警告，不再重复检测；可改用 OpenGL 后端启动 */
+    private fun warnVulkanUnsupported(profile: Profile, versionId: String?) {
+        val builder = FCLAlertDialog.Builder(this)
+        builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
+        builder.setMessage(getString(R.string.vulkan_check_launch_warning_cached))
+        builder.setPositiveButton(getString(R.string.vulkan_check_launch_continue)) {
+            doLaunchVersion(profile, versionId)
+        }
+        builder.setNegativeButton { }
+        builder.create().show()
     }
 
     /** 无有效检测结果时询问用户是否立即检测；取消则不检测直接启动 */
@@ -962,12 +974,18 @@ class MainActivity : FCLActivity(), OnSelectListener, View.OnClickListener {
             doLaunchVersion(profile, versionId)
             return
         }
-        val missing = support?.missingRequired
-            ?.joinToString("\n") { "· ${it.dependency.name}" }
-            .orEmpty()
+        val message = if (support == null) {
+            //检测失败没有缺失项可展示，使用不含明细的说明
+            getString(R.string.vulkan_check_launch_warning_cached)
+        } else {
+            getString(
+                R.string.vulkan_check_launch_warning,
+                support.missingRequired.joinToString("\n") { "· ${it.dependency.name}" }
+            )
+        }
         val builder = FCLAlertDialog.Builder(this)
         builder.setAlertLevel(FCLAlertDialog.AlertLevel.ALERT)
-        builder.setMessage(getString(R.string.vulkan_check_launch_warning, missing))
+        builder.setMessage(message)
         builder.setPositiveButton(getString(R.string.vulkan_check_launch_continue)) {
             doLaunchVersion(profile, versionId)
         }
