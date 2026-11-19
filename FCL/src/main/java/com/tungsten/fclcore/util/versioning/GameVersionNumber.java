@@ -123,7 +123,11 @@ public abstract sealed class GameVersionNumber implements Comparable<GameVersion
     }
 
     public boolean isAprilFools() {
-        if (this instanceof Special) {
+        if (this instanceof Special special) {
+            // 无法识别的版本号（如远古版本旧格式串、自定义整合包名）不是愚人节版本
+            if (special.isUnknown())
+                return false;
+
             String normalizedVersion = this.toNormalizedString();
             return !normalizedVersion.startsWith("1.") && !normalizedVersion.equals("13w12~")
                     || normalizedVersion.equals("1.RV-Pre1");

@@ -66,6 +66,20 @@ public final class GameVersion {
                 .findFirst();
     }
 
+    /**
+     * 远古版本 jar 内 Minecraft 类的版本串形如 "Alpha v1.0.17_04"、"Beta 1.7.3"，
+     * 归一化为版本清单使用的 "a1.0.17_04"、"b1.7.3" 形式，便于按版本号解析
+     */
+    private static String normalizeOldVersion(String version) {
+        if (version.startsWith("Alpha ")) {
+            String alphaVersion = version.substring("Alpha ".length());
+            return "a" + (alphaVersion.startsWith("v") ? alphaVersion.substring(1) : alphaVersion);
+        }
+        if (version.startsWith("Beta "))
+            return "b" + version.substring("Beta ".length());
+        return version;
+    }
+
     private static Optional<String> getVersionFromClassMinecraftServer(InputStream bytecode) throws IOException {
         ConstantPool pool = ConstantPoolScanner.parse(bytecode, ConstantType.STRING);
 
@@ -105,11 +119,7 @@ public final class GameVersion {
                 try (InputStream is = gameJar.getInputStream(minecraft)) {
                     Optional<String> result = getVersionOfClassMinecraft(is);
                     if (result.isPresent()) {
-                        String version = result.get();
-                        if (version.startsWith("Beta ")) {
-                            result = Optional.of("b" + version.substring("Beta ".length()));
-                        }
-                        return result;
+                        return Optional.of(normalizeOldVersion(result.get()));
                     }
                 }
             }

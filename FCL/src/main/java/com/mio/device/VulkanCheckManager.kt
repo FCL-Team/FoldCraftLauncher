@@ -85,6 +85,8 @@ object VulkanCheckManager {
      */
     fun hasVulkanBackend(gameVersion: String?): Boolean {
         val version = gameVersion?.let(::normalizeMcVersion) ?: return false
+        // 未识别的版本号无法参与版本比较，按不带 Vulkan 后端处理，避免远古/自定义版本触发检测
+        if (!GameVersionNumber.isKnown(version)) return false
         return GameVersionNumber.compare(version, VulkanRequirements.MIN_MC_VERSION) >= 0
     }
 
