@@ -74,12 +74,16 @@ object SdlBridge {
 
     /**
      * 创建 SDL 的 HID 设备管理器（USB/蓝牙插拔广播、hidapi 通道）。
-     * 标准流程由 SDLActivity.onCreate 创建，本项目不走该流程，须在 JNI 就绪后手动创建；
+     * 标准流程由 SDLActivity.onCreate 创建，本项目不走该流程，须在 libSDL3 加载后手动创建；
+     * HIDDeviceManager 的 native 方法由 libSDL3 的 JNI_OnLoad 动态注册，库未加载时调用会抛
+     * UnsatisfiedLinkError，故只能在此处（System.loadLibrary("SDL3") 之后）调用。
      * Controlify 会强制启用 HIDAPI，缺少它时 hid_init 将静默失败
      */
     private fun acquireHIDDeviceManager() {
         if (hidAcquired) return
-        val context = SDL.getContext() ?: return
+        // prepareSurface 先于游戏 JVM 启动，SDL 上下文与 Activity 引用此时均已就绪，
+        // SDL.getContext() 为空时用最后一次绑定的 Activity 兜底
+        val context = SDL.getContext() ?: activityRef?.get() ?: return
         hidAcquired = true // 只尝试一次，失败也不重试，避免反复注册广播
         try {
             HIDDeviceManager.acquire(context)
@@ -175,9 +179,6 @@ object SdlBridge {
         } else {
             SDLSurface.setNativeSurface(surface)
         }
-
-        // 游戏侧 setupJNI 先于本方法时拿不到 context 而错过 HID 创建，在此兜底（幂等）
-        acquireHIDDeviceManager()
     }
 
     @JvmStatic
