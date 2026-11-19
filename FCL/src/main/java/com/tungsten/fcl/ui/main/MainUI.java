@@ -36,6 +36,9 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
     public static final String ANNOUNCEMENT_URL = "https://raw.githubusercontent.com/FCL-Team/FCL-Repo/refs/heads/main/res/announcement_v2.txt";
     public static final String ANNOUNCEMENT_URL_CN = "https://gitee.com/fcl-team/FCL-Repo/raw/main/res/announcement_v2.txt";
 
+    /** 主界面皮肤视图纵向铺满（原为 0.8 倍高），按比例缩小基础 zoom 保持站立大小不变并为跳跃动画留出顶部余量 */
+    private static final float MAIN_SKIN_ZOOM = SkinRenderer.DEFAULT_ZOOM * 0.8f;
+
     private LinearLayoutCompat announcementContainer;
     private LinearLayoutCompat announcementLayout;
     private FCLTextView title;
@@ -70,7 +73,7 @@ public class MainUI extends FCLCommonUI implements View.OnClickListener {
         hide.setOnClickListener(this);
 
         skinViewer = findViewById(R.id.skin_viewer);
-        renderer = new SkinRenderer(getContext());
+        renderer = new SkinRenderer(getContext(), MAIN_SKIN_ZOOM);
         skinViewer.setRenderer(renderer, 5f);
         skinLoader = new SkinTextureLoader(renderer);
         skinLoader.load(Accounts.getSelectedAccount(), false);

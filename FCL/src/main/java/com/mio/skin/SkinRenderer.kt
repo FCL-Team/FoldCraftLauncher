@@ -19,7 +19,7 @@ import kotlin.math.tan
  * 皮肤 3D 渲染器（GLES 2.0，由 [SkinViewer] 的渲染线程驱动 onSurfaceCreated /
  * onSurfaceChanged / onDrawFrame）。模型与动画按 skinview3d 移植。
  *
- * 相机在 +Z 轴上对准原点：fov=50、zoom=0.9，
+ * 相机在 +Z 轴上对准原点：fov=50、默认 zoom=0.9（可由构造参数覆盖），
  * 距离 = 4.5 + 16.5/tan(fov/2)/zoom/scale（clamp 10~256），
  * scale 为手势缩放（等价旧版 0.7~2.0 的模型缩放）。
  * 纹理经 GLUtils.texImage2D 上传（预乘 alpha），混合 GL_ONE/GL_ONE_MINUS_SRC_ALPHA，
@@ -28,7 +28,10 @@ import kotlin.math.tan
  * 全不透明像素立体化并施加方向光照（环境光 0.70 + 漫反射 0.42），半透明像素回落
  * 零厚度面片（第二遍关深度写绘制）；关闭时第二层整体回落原版面片。
  */
-class SkinRenderer(context: Context) {
+class SkinRenderer @JvmOverloads constructor(
+    context: Context,
+    private val zoom: Float = DEFAULT_ZOOM
+) {
 
     private val appContext = context.applicationContext
 
@@ -93,6 +96,7 @@ class SkinRenderer(context: Context) {
     private var pendingHasUpdate = false
 
     init {
+        require(zoom > 0f) { "zoom must be positive: $zoom" }
         // 初始默认皮肤 alex 为 slim 布局，模型须与之匹配，否则手臂贴图采样到透明区域
         model.setSlim(true)
     }
@@ -365,7 +369,7 @@ class SkinRenderer(context: Context) {
     }
 
     private fun cameraDistance(): Float {
-        val distance = 4.5f + 16.5f / FOV_TAN / ZOOM / scale
+        val distance = 4.5f + 16.5f / FOV_TAN / zoom / scale
         return distance.coerceIn(10f, 256f)
     }
 
@@ -508,7 +512,7 @@ class SkinRenderer(context: Context) {
         """
 
         private const val FOV = 50f
-        private const val ZOOM = 0.9f
+        const val DEFAULT_ZOOM = 0.9f
         private const val NEAR_PLANE = 0.5f
         private const val FAR_PLANE = 1500f
         private const val MIN_SCALE = 0.7f
