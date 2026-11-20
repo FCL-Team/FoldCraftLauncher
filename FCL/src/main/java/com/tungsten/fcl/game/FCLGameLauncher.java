@@ -197,7 +197,7 @@ public final class FCLGameLauncher extends DefaultLauncher {
 
     private void fixLang(GameOption gameOption) {
         GameVersionNumber gameVersion = GameVersionNumber.asGameVersion(repository.getGameVersion(version).orElse("0.0"));
-        if (gameVersion.compareTo("1.1") < 0) {
+        if (gameVersion.compareTo("11w49a") < 0) {
             return;
         }
         boolean toUpper = gameVersion.compareTo("1.11") < 0;
