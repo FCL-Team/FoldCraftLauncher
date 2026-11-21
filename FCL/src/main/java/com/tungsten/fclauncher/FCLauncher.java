@@ -49,6 +49,28 @@ public class FCLauncher {
 
     private static int FCL_VERSION_CODE = -1;
 
+    /**
+     * 本进程是否已创建常驻 HotSpot（launchJVM 成功后置位）。安装器多阶段复用时，
+     * 后续阶段经 runMainInExistingVM 在同一 JVM 里跑；游戏进程随退出回收，此标记自然作废。
+     * :jvm 进程常驻期间会跨安装会话存活（进程被系统缓存复用时 Service 实例已重建），
+     * 因此与 {@link #hotSpotJavaVersion} 一样必须放在静态域，随 Service 生命周期失效的
+     * 字段无法约束它
+     */
+    private static boolean hotSpotStarted = false;
+
+    /** 常驻 HotSpot 创建时的 JRE 索引；常驻 JVM 字节码能力固定，索引不同必须换进程 */
+    private static int hotSpotJavaVersion = -1;
+
+    /** 本进程是否存在常驻 HotSpot */
+    public static boolean hasResidentHotSpot() {
+        return hotSpotStarted;
+    }
+
+    /** 常驻 HotSpot 创建时的 JRE 索引（未创建返回 -1） */
+    public static int getHotSpotJavaVersion() {
+        return hotSpotJavaVersion;
+    }
+
     private static void log(FCLBridge bridge, String log) {
         bridge.getCallback().onLog(log + "\n");
     }
@@ -696,8 +718,45 @@ public class FCLauncher {
         bridge.setupExitTrap(bridge);
         FCLBridge.initializeHooks();
         log(bridge, "Hook success");
-        int exitCode = VMLauncher.launchJVM(args);
+        // 三段拆分直启（native 侧 JNI_CreateJavaVM，不再经 JLI 解析 argv）。
+        // 拆分语义对齐 java launcher，见 LaunchArgumentsParser；主类动态识别——
+        // 游戏流程是 mio.Wrapper，安装器流程直接是目标工具类（如 FART/ConsoleTool）
+        LaunchArgumentsParser.LaunchSpec spec = LaunchArgumentsParser.parse(args);
+        ArrayList<String> vmArgs = new ArrayList<>(spec.getVmArgs());
+        String classpath = spec.getClasspath();
+        String launchMainClass = spec.getMainClass();
+        String[] appArgs = spec.getAppArgs().toArray(new String[0]);
+        if (classpath != null)
+            vmArgs.add("-Djava.class.path=" + classpath);
+        int exitCode;
+        if (hotSpotStarted) {
+            // 常驻 JVM 复用（安装器多阶段）：同进程内 DestroyJavaVM+重建的 HotSpot
+            // 存在并发调度残留问题（patch processor 卡 MonitorWait），改用独立
+            // URLClassLoader 直接 invoke 本阶段 main
+            exitCode = VMLauncher.runMainInExistingVM(classpath == null ? "" : classpath,
+                    launchMainClass, appArgs);
+        } else {
+            exitCode = VMLauncher.launchJVM(getJvmLibPath(config), vmArgs.toArray(new String[0]), launchMainClass, appArgs);
+            if (exitCode >= 0) {
+                // JVM 创建成功，保留常驻；负值为创建失败（未创建），下阶段可重试。
+                // 创建后装配失败经 native 侧收敛为 1，同样落在此分支
+                hotSpotStarted = true;
+                hotSpotJavaVersion = config.getJavaVersion();
+            }
+        }
         bridge.onExit(exitCode);
+    }
+
+    /**
+     * 推导目标 JRE 的 libjvm.so 绝对路径（与 setUpJavaRuntime 的定位一致），
+     * 供 launchJVM 显式 dlopen——RTLD_DEFAULT 在 app 进程会命中 ART 的同名导出（EEXIST）
+     */
+    private static String getJvmLibPath(FCLConfig config) throws IOException {
+        String javaPath = config.getJavaPath();
+        String javaLibDir = javaPath + getJavaLibDir(javaPath);
+        if (isJDK8(javaPath))
+            javaLibDir = javaPath + "/jre" + getJavaLibDir(javaPath);
+        return javaLibDir + getJvmLibDir(javaPath) + "/libjvm.so";
     }
 
     public static FCLBridge launchMinecraft(FCLConfig config) {
@@ -746,7 +805,10 @@ public class FCLauncher {
                 // launch
                 launch(config, bridge, task);
             } catch (IOException e) {
+                // 启动参数解析或运行环境装配失败：补发退出码，避免界面（游戏/Jar 执行器）
+                // 与安装器主进程一直等不到结束信号
                 Logging.LOG.log(Level.SEVERE, e.toString());
+                bridge.onExit(-1);
             }
         });
 
