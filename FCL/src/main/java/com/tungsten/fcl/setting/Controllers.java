@@ -7,7 +7,6 @@ import com.google.gson.JsonParseException;
 import com.tungsten.fcl.control.data.ControlViewGroup;
 import com.tungsten.fcl.util.Constants;
 import com.tungsten.fclauncher.utils.FCLPath;
-import com.tungsten.fclcore.fakefx.beans.Observable;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListProperty;
 import com.tungsten.fclcore.fakefx.beans.property.ReadOnlyListWrapper;
 import com.tungsten.fclcore.fakefx.collections.ObservableList;
@@ -29,7 +28,12 @@ public class Controllers {
     private Controllers() {
     }
 
-    private static final ObservableList<Controller> controllers = observableArrayList(controller -> new Observable[]{controller});
+    /**
+     * 布局列表：不注册元素监听，列表失效只由增删元素触发。
+     * 元素（单个布局）的属性变化不应触发 {@link #updateControllerStorages()} 保存全部布局，
+     * 否则加载/编辑任意布局都会把其余未加载的布局完整解析后写盘。
+     */
+    private static final ObservableList<Controller> controllers = observableArrayList();
     private static final ReadOnlyListWrapper<Controller> controllersWrapper = new ReadOnlyListWrapper<>(controllers);
     public static Controller DEFAULT_CONTROLLER;
 

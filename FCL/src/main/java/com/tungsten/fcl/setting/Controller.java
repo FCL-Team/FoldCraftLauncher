@@ -20,7 +20,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.JsonAdapter;
-import com.google.gson.stream.JsonReader;
 import com.tungsten.fcl.FCLApp;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.data.ButtonStyles;
@@ -48,11 +47,8 @@ import com.tungsten.fclcore.util.io.FileUtils;
 import com.tungsten.fcllibrary.component.dialog.FCLAlertDialog;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -241,10 +237,10 @@ public class Controller implements Cloneable, Observable {
     }
 
     /**
-     * 轻量解析：按 JsonReader 流式读取控制器元数据与各布局的元数据（id/name/visibility），
-     * 并注册按钮/方向样式（按键数据解析依赖样式注册表）。布局的按键数据（viewData）留空，
-     * 由 {@link #loadViewGroupData(ControlViewGroup)} 按需补全。相比完整反序列化不实例化
-     * 任何按键对象，启动/列表加载零卡顿。
+     * 轻量解析：按字节扫描控制器元数据与各布局的元数据（id/name/visibility），
+     * 并注册按钮/方向样式（按键数据解析依赖样式注册表）。布局的按键数据（viewData）跳过，
+     * 由 {@link #loadViewGroupData(ControlViewGroup)} 按需补全。不实例化任何按键对象，
+     * 也不逐 token 解析按键数据，启动/列表加载不随布局复杂程度变慢。
      */
     public static Controller parseLightweight(File file) throws IOException {
         try {
@@ -252,115 +248,48 @@ public class Controller implements Cloneable, Observable {
         } catch (JsonParseException e) {
             throw e;
         } catch (Exception e) {
-            // 流式解析的非法状态（缺失字段/类型不符等）统一转为损坏文件异常
+            // 扫描的非法状态（缺失字段/类型不符等）统一转为损坏文件异常
             throw new JsonParseException("Controller file may broken!\n" + e);
         }
     }
 
     private static Controller parseLightweight0(File file) throws IOException {
-        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-            String id = null;
-            String name = "";
-            String version = "";
-            String author = "";
-            String description = "";
-            int versionCode = 1;
-            int controllerVersion = Constants.CONTROLLER_VERSION;
-            List<ControlViewGroup> viewGroups = new ArrayList<>();
-
-            reader.beginObject();
-            while (reader.hasNext()) {
-                switch (reader.nextName()) {
-                    case "id":
-                        id = reader.nextString();
-                        break;
-                    case "name":
-                        name = reader.nextString();
-                        break;
-                    case "version":
-                        version = reader.nextString();
-                        break;
-                    case "author":
-                        author = reader.nextString();
-                        break;
-                    case "description":
-                        description = reader.nextString();
-                        break;
-                    case "versionCode":
-                        versionCode = reader.nextInt();
-                        break;
-                    case "controllerVersion":
-                        controllerVersion = reader.nextInt();
-                        break;
-                    case "buttonStyles":
-                        registerStyles(reader, false);
-                        break;
-                    case "directionStyles":
-                        registerStyles(reader, true);
-                        break;
-                    case "viewGroups":
-                        reader.beginArray();
-                        while (reader.hasNext()) {
-                            String groupId = null;
-                            String groupName = "";
-                            ControlViewGroup.Visibility visibility = ControlViewGroup.Visibility.VISIBLE;
-                            reader.beginObject();
-                            while (reader.hasNext()) {
-                                switch (reader.nextName()) {
-                                    case "id":
-                                        groupId = reader.nextString();
-                                        break;
-                                    case "name":
-                                        groupName = reader.nextString();
-                                        break;
-                                    case "visibility":
-                                        String vis = reader.nextString();
-                                        try {
-                                            visibility = ControlViewGroup.Visibility.valueOf(vis);
-                                        } catch (IllegalArgumentException e) {
-                                            // 未知取值回退为可见
-                                        }
-                                        break;
-                                    default:
-                                        reader.skipValue();
-                                }
-                            }
-                            reader.endObject();
-                            if (groupId != null) {
-                                ControlViewGroup group = new ControlViewGroup(groupId);
-                                group.setName(groupName);
-                                group.setVisibility(visibility);
-                                viewGroups.add(group);
-                            }
-                        }
-                        reader.endArray();
-                        break;
-                    default:
-                        reader.skipValue();
-                }
-            }
-            reader.endObject();
-
-            if (id == null) {
-                throw new JsonParseException("Controller id is missing!");
-            }
-            Controller controller = new Controller(id, name, version, versionCode, author, description, controllerVersion, FXCollections.observableArrayList(viewGroups));
-            controller.setFile(file);
-            return controller;
+        LayoutMetadataScanner.Metadata meta = LayoutMetadataScanner.scan(file, null);
+        if (meta.id == null) {
+            throw new JsonParseException("Controller id is missing!");
         }
-    }
 
-    /** 解析并注册按钮/方向样式（轻量加载时完成，按键数据按需解析时样式名可查） */
-    private static void registerStyles(JsonReader reader, boolean direction) throws IOException {
-        JsonElement element = JsonParser.parseReader(reader);
         ButtonStyles.init();
         DirectionStyles.init();
-        if (direction) {
-            List<ControlDirectionStyle> styles = fromJsonDirectionStyleList(element);
-            if (styles != null) styles.forEach(DirectionStyles::addStyle);
-        } else {
-            List<ControlButtonStyle> styles = fromJsonStyleList(element);
+        if (meta.buttonStylesJson != null) {
+            List<ControlButtonStyle> styles = fromJsonStyleList(JsonParser.parseString(meta.buttonStylesJson));
             if (styles != null) styles.forEach(ButtonStyles::addStyle);
+        }
+        if (meta.directionStylesJson != null) {
+            List<ControlDirectionStyle> styles = fromJsonDirectionStyleList(JsonParser.parseString(meta.directionStylesJson));
+            if (styles != null) styles.forEach(DirectionStyles::addStyle);
+        }
+
+        List<ControlViewGroup> viewGroups = new ArrayList<>(meta.groups.size());
+        for (LayoutMetadataScanner.GroupInfo info : meta.groups) {
+            ControlViewGroup group = new ControlViewGroup(info.id);
+            group.setName(info.name);
+            group.setVisibility(parseVisibility(info.visibility));
+            viewGroups.add(group);
+        }
+
+        int controllerVersion = meta.controllerVersion < 0 ? Constants.CONTROLLER_VERSION : meta.controllerVersion;
+        Controller controller = new Controller(meta.id, meta.name, meta.version, meta.versionCode, meta.author, meta.description, controllerVersion, FXCollections.observableArrayList(viewGroups));
+        controller.setFile(file);
+        return controller;
+    }
+
+    /** 未知可见性取值回退为可见 */
+    private static ControlViewGroup.Visibility parseVisibility(String value) {
+        try {
+            return ControlViewGroup.Visibility.valueOf(value);
+        } catch (IllegalArgumentException e) {
+            return ControlViewGroup.Visibility.VISIBLE;
         }
     }
 
@@ -395,54 +324,21 @@ public class Controller implements Cloneable, Observable {
     }
 
     /**
-     * 完整解析单个布局的按键数据：流式定位 viewGroups 数组中 id 匹配的布局并解析其
-     * viewData，其余布局跳过（不实例化按键对象）。只做解析不触碰模型，可在任意线程调用。
+     * 完整解析单个布局的按键数据：扫描文件时跳过其余布局的 viewData，只截取并解析
+     * 目标布局的按键数据。只做解析不触碰模型，可在任意线程调用。
      *
      * @return 完整 viewData，布局不存在或解析失败时返回 null
      */
     public ControlViewGroup.ViewData loadViewGroupData(ControlViewGroup viewGroup) {
         if (file == null) return null;
-        try (JsonReader reader = new JsonReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-            reader.beginObject();
-            while (reader.hasNext()) {
-                if ("viewGroups".equals(reader.nextName())) {
-                    JsonElement element = findViewData(reader, viewGroup.getId());
-                    if (element == null) return null;
-                    return new ControlViewGroup.ViewData.Serializer().deserialize(element, null, null);
-                }
-                reader.skipValue();
-            }
-            return null;
+        try {
+            LayoutMetadataScanner.Metadata meta = LayoutMetadataScanner.scan(file, viewGroup.getId());
+            if (meta.viewDataJson == null) return null;
+            return new ControlViewGroup.ViewData.Serializer().deserialize(JsonParser.parseString(meta.viewDataJson), null, null);
         } catch (IOException e) {
             Logging.LOG.log(Level.SEVERE, "Failed to load view group " + viewGroup.getId() + " of " + getFileName(), e);
             return null;
         }
-    }
-
-    /** 流式定位：仅解析目标布局的 viewData（依赖序列化顺序 id 先于 viewData，FCL 自身格式） */
-    private static JsonElement findViewData(JsonReader reader, String groupId) throws IOException {
-        reader.beginArray();
-        while (reader.hasNext()) {
-            String id = null;
-            JsonElement viewData = null;
-            reader.beginObject();
-            while (reader.hasNext()) {
-                String key = reader.nextName();
-                if ("id".equals(key)) {
-                    id = reader.nextString();
-                } else if ("viewData".equals(key) && groupId.equals(id)) {
-                    viewData = JsonParser.parseReader(reader);
-                } else {
-                    reader.skipValue();
-                }
-            }
-            reader.endObject();
-            if (groupId.equals(id) && viewData != null) {
-                return viewData;
-            }
-        }
-        reader.endArray();
-        return null;
     }
 
     /**

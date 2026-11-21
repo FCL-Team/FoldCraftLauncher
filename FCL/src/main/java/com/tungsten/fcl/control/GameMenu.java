@@ -345,6 +345,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
         // 副本在编辑画布立即显示
         setEditorGroupHidden(copy, false);
         rightMenuAdapter.rebuild();
+        viewManager.saveController();
         viewManager.initializeController();
     }
 
@@ -360,6 +361,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
             viewGroup.setDataLoaded(true);
             getController().addViewGroup(viewGroup);
             rightMenuAdapter.rebuild();
+            viewManager.saveController();
             viewManager.initializeController();
         });
         dialog.show();
@@ -659,6 +661,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                         group.setName(name);
                         group.setVisibility(visibility);
                         getController().updateViewGroup(group);
+                        viewManager.saveController();
                         rightMenuAdapter.rebuild();
                     }
 
@@ -701,6 +704,7 @@ public class GameMenu implements MenuCallback, FCLBridgeCallback {
                         setViewGroup(null);
                     }
                     rightMenuAdapter.rebuild();
+                    viewManager.saveController();
                     viewManager.initializeController();
                 });
                 builder.setNegativeButton(null);
