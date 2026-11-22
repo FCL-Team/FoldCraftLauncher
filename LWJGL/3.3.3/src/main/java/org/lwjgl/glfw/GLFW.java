@@ -23,6 +23,7 @@ import static org.lwjgl.system.JNI.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import java.util.*;
+import java.util.concurrent.locks.LockSupport;
 
 public class GLFW
 {
@@ -1315,16 +1316,11 @@ public class GLFW
     public static void glfwWaitEvents() {}
 
     public static void glfwWaitEventsTimeout(double timeout) {
-        // Boardwalk: this isn't how you do a frame limiter, but oh well
-        // System.out.println("Frame limiter");
-    /*
-        try {
-            Thread.sleep((long)(timeout * 1000));
-        } catch (InterruptedException ie) {
+        // 限帧等待：睡到截止时间即可（Minecraft 的 RenderSystem.limitDisplayFPS 循环调用）。
+        // 保持原空实现不处理事件的行为，事件仍由主循环的 glfwPollEvents 处理。
+        if (timeout > 0.0 && !Double.isInfinite(timeout)) {
+            LockSupport.parkNanos((long) (timeout * 1_000_000_000.0));
         }
-    */
-        // System.out.println("Out of the frame limiter");
-
     }
 
     public static void glfwPostEmptyEvent() {}
