@@ -1,5 +1,49 @@
 # Changelog
 
+## [1.3.4.8] - 2026-11-22
+
+### 中文
+
+#### 🐛 修复
+
+1. **带 Vulkan 后端的 MC 26.2 启动崩溃 (#2029)**：26.2 的早期窗口先以 OpenGL 渲染，游戏复用该窗口创建 Vulkan surface 时在 vkCreateAndroidSurfaceKHR 处崩溃；此前关闭 FML 早期加载屏（fml.toml 的 earlyWindowControl）仅限 26.3+，更早版本还会删除已存在的关闭键、恢复默认 true。现改为按「带 Vulkan 后端」判定（经 VulkanCheckManager.hasVulkanBackend，26.2 起），与启动前 Vulkan 检测共用同一条件；FCLGameLauncher 改为接收版本设置，26.2+ 仅显式选择 OpenGL 后端时保留早期加载屏（模组加载动画），default（无法判断游戏实际后端）与 vulkan 时写入 earlyWindowControl = false，LauncherHelper 传入当前 VersionSetting。合并逻辑抽出为 buildFmlTomlContent：关闭键写到文件头部以免落入表作用域，并移除文件中已有的同名键；已有唯一的根作用域关闭键时原样返回，不再改动用户文件排版；内容没有变化时不写盘。新增 FCLGameLauncherTest，覆盖写入、保留排版、表作用域搬迁、旧版本清理等分支。
+2. **LWJGL 3.4.1 的 libshaderc 缺少 SPIRV-Tools 符号**：libshaderc 由 SPIRV-Tools 的 opt 组件提供 fuzzer / reducer 选项接口，此前打包进 FCL/libs/lwjgl-3.4.1-natives-release.aar 的 libshaderc.so（arm64-v8a / armeabi-v7a / x86 / x86_64 四个 ABI）在构建时裁掉了 spvFuzzerOptions*（创建与销毁、随机种子、重放范围、启用全部 pass 等）与 spvReducerOptions* 系列符号，加载该库时会因符号未找到失败。现重新构建 natives aar 补齐这些符号（arm64-v8a 的 libshaderc.so 由 8.6MB 增至 8.9MB），并同步刷新 app_runtime/lwjgl/3.4.1/version（1793255575983 → 1795229008840）：SplashActivity 解包运行环境时按该版本号比对，已安装的旧 3.4.1 natives 会在下次启动自动重新解压，无需清除数据。影响 DefaultLauncher 中按游戏 LWJGL 版本选用 3.4.1 的版本（≥3.4.1，即 26.x 系列）。
+
+3. **Cleanroom 0.7.x（SDL 输入）返回游戏后鼠标按键卡在按下状态 (#2023)**：Cleanroom 0.7.x 的窗口与输入改由 SDL 承载，其按键分发按事件窗口 ID 过滤；FCL 的虚拟光标坐标在捕获态累加视角增量后可越出 SDL 窗口，SDL 据此清除鼠标焦点，按键事件的窗口 ID 随之变为 0 并被整条丢弃，按下事件的释放丢失后游戏按键绑定停在按下状态。现 CallbackBridge 新增 sdlCursorX/sdlCursorY，把 SDL 通道下发的绝对坐标收敛进窗口范围（[0, 宽/高 - 1]），相对增量原样下发；JVMActivity.onWindowFocusChanged 新增 notifySdlWindowFocus，经 SDLActivity.nativeFocusChanged 把窗口焦点转交 SDL，使 Cleanroom 失焦时释放仍按下的输入、Display.isActive() 反映真实焦点；resetInputState 的 SDL 鼠标键复位改为逐位补发释放——SDL 的 Android 后端按新旧按钮掩码的差量换算按钮，一次性清零只会补发其中一个按钮的释放。
+
+4. **远古 Alpha 版本被误判为愚人节版本并触发 Vulkan 检测 (#2028)**：远古版本 jar 没有 version.json 时，GameVersion 从 Minecraft.class 常量池读取版本串，原先只归一化了 "Beta " 前缀，Alpha 版本保留为 "Alpha v1.0.17_04" 无法按版本号解析，落为未知版本：版本列表据此按愚人节版本显示愚人节图标，启动时又因未知版本比较结果恒为最大而误判为 26.2+ 触发 Vulkan 检测。现 GameVersion 新增 normalizeOldVersion，把 "Alpha v" 前缀归一化为 "a" 前缀（a1.0.17_04）、"Beta " 归一化为 "b" 前缀（b1.7.3）；GameVersionNumber.isAprilFools 对 Special.isUnknown() 返回 false；VulkanCheckManager.hasVulkanBackend 对无法识别的版本按不带 Vulkan 后端处理。
+
+5. **11w49a~12w01a 快照无法启动 (#2033)**：fixLang 的语言键归一化起点此前为 1.1，Beta 1.1 的首个快照 11w49a 起语言代码已改为 zh_CN 形式的大写后缀，但该区间版本号小于 1.1，被提前 return 跳过，语言设置未被归一化导致无法正常启动。现起点改为 11w49a。
+
+6. **Vulkan 启动校验重复检测且提示信息不完整**：显式选择 OpenGL 后端时不再经过 Vulkan 检测，直接启动；缓存判定不支持时不再重复执行检测，改为按已缓存结论弹出警告，并提示可在版本设置中将图形后端切换为 OpenGL、改用内置的 MobileGlues 渲染器。检测结果为 null（无缺失项可展示）时改用不含明细的新文案 vulkan_check_launch_warning_cached，避免以空列表格式化旧文案；VulkanCheckDialog 在 Vulkan 完全不可用时追加 vulkan_check_gl_alternative 提示。新增两个字符串资源。
+
+7. **SDL 手柄 HID 管理器在 libSDL3 加载前被创建**：HIDDeviceManager 的 native 方法由 libSDL3 的 JNI_OnLoad 动态注册，库未加载时调用会抛 UnsatisfiedLinkError。acquireHIDDeviceManager 不再在 prepareSurface 中兜底调用，改在 libSDL3 加载后创建；SDL 上下文为空时以最后绑定的 Activity 兜底，保证 Controlify 强制启用的 HIDAPI 正常初始化。
+
+#### 🔧 其他
+
+1. **内置版本列表更新**：versions.txt 新增 26.3-rc-1~3、26.4-snapshot-1~7 与 2.0 三个愚人节版本（2.0_purple / 2.0_red / 2.0_blue）。
+
+### English
+
+#### 🐛 Bug Fixes
+
+1. **Launch crash on MC 26.2 with the Vulkan backend (#2029)**: The early window of 26.2 renders with OpenGL first, and when the game reuses that window to create the Vulkan surface it crashed in vkCreateAndroidSurfaceKHR; previously disabling the FML early loading screen (earlyWindowControl in fml.toml) was limited to 26.3+, and older versions even deleted an existing disabled key and restored the default true. It is now decided by "has a Vulkan backend" (through VulkanCheckManager.hasVulkanBackend, from 26.2), sharing the same condition as the pre-launch Vulkan check; FCLGameLauncher now receives the version settings, and on 26.2+ keeps the early loading screen (the mod loading animation) only when the OpenGL backend is explicitly selected, writing earlyWindowControl = false for default (the game's actual backend cannot be determined) and vulkan, with LauncherHelper passing in the current VersionSetting. The merge logic was extracted into buildFmlTomlContent: the disabled key is written at the top of the file so it does not land in any table scope, existing keys of the same name are removed, a file that already has a single root-scope disabled key is returned unchanged without touching the user's layout, and nothing is written when the content did not change. A new FCLGameLauncherTest covers writing, layout preservation, moving out of table scope and cleanup for older versions.
+2. **libshaderc in LWJGL 3.4.1 missing SPIRV-Tools symbols**: libshaderc exposes the fuzzer/reducer option interfaces from SPIRV-Tools' opt component, but the libshaderc.so shipped in FCL/libs/lwjgl-3.4.1-natives-release.aar (arm64-v8a, armeabi-v7a, x86 and x86_64) had the spvFuzzerOptions* (create/destroy, random seed, replay range, enable all passes, ...) and spvReducerOptions* symbols stripped at build time, so loading the library failed on the missing symbols. The natives aar was rebuilt with these symbols (libshaderc.so for arm64-v8a grows from 8.6MB to 8.9MB), and app_runtime/lwjgl/3.4.1/version was refreshed (1793255575983 -> 1795229008840): SplashActivity compares the runtime assets against that version, so the old 3.4.1 natives already installed are unpacked again on the next launch without clearing data. Affects versions that pick LWJGL 3.4.1 by the game's LWJGL version in DefaultLauncher (>=3.4.1, i.e. the 26.x series).
+
+3. **Mouse buttons staying pressed after returning to the game with Cleanroom 0.7.x (SDL input) (#2023)**: Cleanroom 0.7.x hands its window and input to SDL, whose key dispatch filters events by window ID; FCL's virtual cursor position accumulates look deltas in the captured state and can leave the SDL window, so SDL clears the mouse focus and the key events' window ID becomes 0 and the whole event is dropped, losing the release of the press so the in-game binding stays pressed. CallbackBridge gained sdlCursorX/sdlCursorY, clamping the absolute coordinates sent over the SDL channel into the window range ([0, width/height - 1]) while relative deltas pass through unchanged; JVMActivity.onWindowFocusChanged gained notifySdlWindowFocus, forwarding window focus to SDL through SDLActivity.nativeFocusChanged so Cleanroom releases still-pressed input on focus loss and Display.isActive() reflects the real focus; the SDL mouse-button reset in resetInputState now sends releases bit by bit — SDL's Android backend derives buttons from the difference between the old and new button mask, so clearing the mask in one go only emits the release of one button.
+
+4. **Ancient Alpha versions mistaken for April Fools versions and triggering the Vulkan check (#2028)**: When an ancient version jar has no version.json, GameVersion reads the version string from the Minecraft.class constant pool; only the "Beta " prefix was normalized, so Alpha versions stayed as "Alpha v1.0.17_04", could not be parsed by version number and became unknown versions — the version list showed the April Fools icon for them, and at launch the unknown version compared as the maximum, so it was mistaken for 26.2+ and triggered the Vulkan check. GameVersion now has normalizeOldVersion, turning the "Alpha v" prefix into "a" (a1.0.17_04) and "Beta " into "b" (b1.7.3); GameVersionNumber.isAprilFools returns false for Special.isUnknown(); VulkanCheckManager.hasVulkanBackend treats unrecognized versions as having no Vulkan backend.
+
+5. **11w49a~12w01a snapshots failing to launch (#2033)**: fixLang's language-key normalization started at 1.1, but from 11w49a (the first Beta 1.1 snapshot) language codes already use the uppercase zh_CN form while those versions compare below 1.1 and were skipped by the early return, so the language setting was left unnormalized and the game failed to launch. The threshold is now 11w49a.
+
+6. **Repeated Vulkan checks and incomplete prompts at launch**: Explicitly selecting the OpenGL backend now skips the Vulkan check and launches directly; when the cache says unsupported, the check is no longer run again and a warning based on the cached result is shown instead, pointing to switching Graphics Backend to OpenGL in version settings and launching with the built-in MobileGlues renderer. When the result is null (no missing dependencies to show), the new string vulkan_check_launch_warning_cached without details is used instead of formatting the old text with an empty list; VulkanCheckDialog appends the vulkan_check_gl_alternative hint when Vulkan is entirely unavailable. Two new string resources were added.
+
+7. **SDL gamepad HID manager created before libSDL3 was loaded**: HIDDeviceManager's native methods are registered dynamically by libSDL3's JNI_OnLoad, so calling them before the library is loaded throws UnsatisfiedLinkError. acquireHIDDeviceManager no longer runs from prepareSurface as a fallback but is created after libSDL3 is loaded; when the SDL context is null it falls back to the last bound Activity, so the HIDAPI that Controlify force-enables still initializes.
+
+#### 🔧 Other
+
+1. **Built-in version list update**: versions.txt gained 26.3-rc-1~3, 26.4-snapshot-1~7 and the three 2.0 April Fools versions (2.0_purple / 2.0_red / 2.0_blue).
+
 ## [1.3.4.7] - 2026-11-17
 
 ### 中文
