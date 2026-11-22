@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1347,
-    "versionName": "1.3.4.7",
-    "date": "2026.11.17",
+    "versionCode": 1348,
+    "versionName": "1.3.4.8",
+    "date": "2026.11.22",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Added undo/redo for control editing: the left drawer in edit mode now has undo and redo buttons at the bottom, keeping up to 30 edit steps; adding/removing controls, dragging, resizing, cross-group copy or move and style changes can all be reverted (#1991)\n2. Fixed a crash when editing saved button or direction styles, caused by draft style properties bound to the dialog controls leaking into the style registry (#2018)\n3. Fixed a launcher crash caused by oversized pack.png resource pack icons, which are now downsampled to their display size instead of being decoded at full size (#2015)\n4. Fixed progress bars, sliders, the dynamic island, text fields and number seek bars becoming invisible when the theme color alpha is set to 0 (#2016)\n5. Fixed Vulkan detection reporting the custom driver as loaded when the driver is actually missing\n6. Fixed line breaks not taking effect in the modpack description dialog"
+        "text": "(Translated from Chinese by AI)\n1. Fixed a launch crash on MC 26.2 versions with the Vulkan backend: the FML early loading screen is now disabled together with the Vulkan backend, while an explicitly selected OpenGL backend keeps the mod loading animation (#2029)\n2. Fixed libshaderc in LWJGL 3.4.1 missing SPIRV-Tools symbols such as spvFuzzerOptions and spvReducerOptions; the natives were rebuilt and the runtime asset version is refreshed so the updated libraries are unpacked on the next launch\n3. Fixed mouse buttons staying pressed after returning to the game with Cleanroom 0.7.x (SDL input) (#2023)\n4. Fixed ancient Alpha versions being mistaken for April Fools versions and triggering the Vulkan check (#2028)\n5. Fixed 11w49a to 12w01a snapshots failing to launch (#2033)\n6. The pre-launch Vulkan check now reuses cached detection results, and unsupported devices are told to switch to the OpenGL backend\n7. Fixed a startup error caused by the SDL gamepad HID manager being created before libSDL3 was loaded\n8. Updated the built-in version list with 26.3-rc, 26.4 snapshots and the 2.0 April Fools versions"
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增按键编辑撤销/恢复：编辑模式左抽屉底部新增撤销与恢复按钮，最多保留 30 步编辑历史，增删控件、拖动、缩放、跨组复制移动与样式修改均可回退 (#1991)\n2.修复编辑已保存的按键、方向样式时因属性绑定泄漏导致的崩溃 (#2018)\n3.修复超大 pack.png 资源包图标导致启动器崩溃的问题，图标现按显示尺寸降采样解码 (#2015)\n4.修复主题色透明度调为 0 时进度条、滑条、动态岛、输入框与数字滑条不可见的问题 (#2016)\n5.修复自定义驱动缺失时 Vulkan 检测误报驱动已加载的问题\n6.修复整合包描述对话框换行符不生效的问题"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复带 Vulkan 后端的 MC 26.2 启动崩溃：随 Vulkan 后端关闭 FML 早期加载屏，显式选择 OpenGL 后端时仍保留模组加载动画 (#2029)\n2.修复 LWJGL 3.4.1 的 libshaderc 缺少 spvFuzzerOptions、spvReducerOptions 等 SPIRV-Tools 符号的问题，重新构建 natives 并刷新资源版本号，下次启动自动重新解压\n3.修复 Cleanroom 0.7.x（SDL 输入）返回游戏后鼠标按键卡在按下状态的问题 (#2023)\n4.修复远古 Alpha 版本被误判为愚人节版本并触发 Vulkan 检测的问题 (#2028)\n5.修复 11w49a~12w01a 快照无法正常启动的问题 (#2033)\n6.Vulkan 启动校验复用已有检测结果，设备不支持时提示可在版本设置中改用 OpenGL 后端启动\n7.修复 SDL 手柄 HID 管理器在 libSDL3 加载前被创建导致的启动报错\n8.更新内置版本列表，新增 26.3-rc、26.4 快照与 2.0 愚人节版本"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/da5128f8986c",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.7/FCL-release-1.3.4.7-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/5175c32001af",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.8/FCL-release-1.3.4.8-all.apk"
   }
 ]
