@@ -1363,10 +1363,19 @@ public class GLFW
     public static void glfwWaitEvents() {}
 
     public static void glfwWaitEventsTimeout(double timeout) {
-        // 限帧等待：睡到截止时间即可（Minecraft 的 RenderSystem.limitDisplayFPS 循环调用）。
+        // 限帧等待：睡到截止时间前，末尾自旋吸收调度唤醒延迟（Minecraft 的 RenderSystem.limitDisplayFPS 循环调用）。
+        // 自旋余量需覆盖线程从 park 唤醒到实际被调度的延迟；剩余时间不足自旋余量时不再 park。
         // 保持原空实现不处理事件的行为，事件仍由主循环的 glfwPollEvents 处理。
         if (timeout > 0.0 && !Double.isInfinite(timeout)) {
-            LockSupport.parkNanos((long) (timeout * 1_000_000_000.0));
+            long deadline = System.nanoTime() + (long) (timeout * 1_000_000_000.0);
+            long spinNanos = 2_000_000L;
+            long remaining;
+            while ((remaining = deadline - System.nanoTime()) > spinNanos) {
+                LockSupport.parkNanos(remaining - spinNanos);
+            }
+            while (System.nanoTime() < deadline) {
+                // 自旋等待，保证退出时刻精度
+            }
         }
     }
 
