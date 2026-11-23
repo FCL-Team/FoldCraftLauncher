@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.logging.Level
 import java.util.stream.Collectors
 import kotlin.io.path.isRegularFile
+import kotlin.io.path.name
 
 /**
  * 版本列表的会话级快照缓存：按 Profile 实例缓存各版本的派生数据
@@ -164,7 +165,13 @@ object VersionCache {
         // use 关闭 DirectoryStream，否则文件描述符泄漏（CloseGuard 报资源未关闭）
         val modCount = runCatching {
             Files.list(repository.getModsDirectory(id)).use { stream ->
-                stream.filter { it.isRegularFile() }.count().toInt()
+                stream.filter { it.isRegularFile() }
+                    .map { 
+                        it.name
+                    }
+                    .filter { it.endsWith(".zip") || it.endsWith(".jar") || it.endsWith(".litemod") }
+                    .count()
+                    .toInt()
             }
         }.getOrNull() ?: 0
         scope.ensureActive()
