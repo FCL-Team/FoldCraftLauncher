@@ -49,6 +49,11 @@ public class FCLauncher {
 
     private static int FCL_VERSION_CODE = -1;
 
+    /**
+     * 启动器进程的原始 PATH：环境变量会被 setenv 逐次改写，重复启动时不能直接读回
+     */
+    private static final String SYSTEM_PATH = Os.getenv("PATH");
+
     private static void log(FCLBridge bridge, String log) {
         bridge.getCallback().onLog(log + "\n");
     }
@@ -226,7 +231,7 @@ public class FCLauncher {
         envMap.put("DRIVER_LIB", DriverPlugin.getSelected().getLib());
         envMap.put("DRIVER_GPU", DriverPlugin.getSelected().getGpu());
         envMap.put("TMPDIR", config.getContext().getCacheDir().getAbsolutePath());
-        envMap.put("PATH", config.getJavaPath() + "/bin:" + Os.getenv("PATH"));
+        envMap.put("PATH", config.getJavaPath() + "/bin:" + (SYSTEM_PATH == null ? "" : SYSTEM_PATH));
         envMap.put("LD_LIBRARY_PATH", getLibraryPath(config.getContext(), config.getRenderer().getPath(), config.getLwjglVersion()));
         envMap.put("FORCE_VSYNC", "false");
         envMap.put("ALSOFT_DRIVERS", "opensl");
@@ -251,9 +256,13 @@ public class FCLauncher {
         envMap.put("DALVIK_APPLICATION", FCLBridge.jObjectToString(config.getContext().getApplicationContext()));
 
         FFmpegPlugin.discover(config.getContext());
-        if (FFmpegPlugin.isAvailable) {
-            envMap.put("PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("PATH"));
-            envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.libraryPath + ":" + envMap.get("LD_LIBRARY_PATH"));
+        if (FFmpegPlugin.isAvailable()) {
+            // 插件可执行文件是无 RUNPATH 的 libffmpeg.so，依赖库都在插件 native 目录内
+            envMap.put("LD_LIBRARY_PATH", FFmpegPlugin.getLibraryPath() + ":" + envMap.get("LD_LIBRARY_PATH"));
+            // 插件目录内没有标准命令名，PATH 需要指向 FFmpegPlugin 维护符号链接的命令目录
+            if (FFmpegPlugin.getBinPath() != null) {
+                envMap.put("PATH", FFmpegPlugin.getBinPath() + ":" + envMap.get("PATH"));
+            }
         }
         if (config.getUseVKDriverSystem()) {
             envMap.put("VULKAN_DRIVER_SYSTEM", "1");

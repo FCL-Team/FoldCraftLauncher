@@ -28,6 +28,10 @@ public class FCLPath {
 
     public static String FILES_DIR;
     public static String PLUGIN_DIR;
+    /**
+     * FFmpeg 插件命令目录：内含指向插件可执行文件的标准命令名符号链接
+     */
+    public static String FFMPEG_BIN_DIR;
     public static String BACKGROUND_DIR;
     public static String SKIN_DIR;
     public static String CONTROLLER_DIR;
@@ -64,6 +68,7 @@ public class FCLPath {
 
         FILES_DIR = context.getFilesDir().getAbsolutePath();
         PLUGIN_DIR = FILES_DIR + "/plugins";
+        FFMPEG_BIN_DIR = FILES_DIR + "/ffmpeg_bin";
         BACKGROUND_DIR = FILES_DIR + "/background";
         SKIN_DIR = FILES_DIR + "/skin";
         CONTROLLER_DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + "/FCL/control";
@@ -94,6 +99,7 @@ public class FCLPath {
         init(CACIOCAVALLO_17_DIR);
         init(FILES_DIR);
         init(PLUGIN_DIR);
+        init(FFMPEG_BIN_DIR);
         init(BACKGROUND_DIR);
         init(SKIN_DIR);
         init(CONTROLLER_DIR);
