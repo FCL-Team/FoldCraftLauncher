@@ -365,7 +365,9 @@ class SkinRenderer(context: Context) {
     }
 
     private fun cameraDistance(): Float {
-        val distance = 4.5f + 16.5f / FOV_TAN / ZOOM / scale
+        // 动画内容（如举起双手蹦跳的抬升）会越过取景上沿时，由动画声明固定后拉量，
+        // 整个动画期间保持同一取景，不随动画内部相位变化
+        val distance = 4.5f + 16.5f / FOV_TAN / ZOOM / scale + animation.cameraPullback
         return distance.coerceIn(10f, 256f)
     }
 

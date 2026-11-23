@@ -10,6 +10,9 @@ abstract class PlayerAnimation {
     var speed = 1f
     var progress = 0f
 
+    /** 动画内容超出静态取景时相机的额外后拉距离（模型像素），0 为沿用默认取景 */
+    open val cameraPullback = 0f
+
     fun update(player: PlayerModel, deltaTime: Float) {
         val delta = deltaTime * speed
         animate(player, delta)

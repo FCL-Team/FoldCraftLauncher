@@ -9,6 +9,9 @@ import kotlin.math.sin
  */
 class HandsUpJumpingAnimation : PlayerAnimation() {
 
+    /** 蹦跳抬升会把头顶帽层推出取景上沿，整个动画期间固定后拉相机（不随蹦跳相位变化） */
+    override val cameraPullback = 4.2f
+
     override fun animate(player: PlayerModel, delta: Float) {
         // 0.45s 一个蹦跳周期（起跳→落地）
         val t = progress * PI / 0.45f
