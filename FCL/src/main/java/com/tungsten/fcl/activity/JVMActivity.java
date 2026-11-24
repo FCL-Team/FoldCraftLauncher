@@ -114,6 +114,8 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
         menu.setup(this, fclBridge);
         GameService.start(this);
         textureView = findViewById(R.id.texture_view);
+        textureView.setOpaque(true);
+        textureView.setAlpha(1.0f);
         textureView.setSurfaceTextureListener(this);
         if (FCLBridge.FORCE_RESOLUTION) {
             applyForceResolutionLayout();
