@@ -1046,6 +1046,8 @@
     <string name="settings_launcher_debug_desc">导出日志文件，便于反馈问题</string>
     <string name="settings_launcher_request_recording_permission">请求麦克风权限（用于语音聊天模组）</string>
     <string name="settings_launcher_request_recording_permission_desc">请求录音权限（游戏内语音等场景需要）</string>
+    <string name="settings_launcher_bluetooth_microphone">优先使用蓝牙耳机麦克风</string>
+    <string name="settings_launcher_bluetooth_microphone_desc">Minecraft 游戏界面可见时使用已连接的蓝牙耳机进行语音通话。请先授予上方的麦克风权限。耳机麦克风启用时，游戏音质可能发生变化。</string>
     <string name="settings_launcher_upgrade">启动器更新</string>
     <string name="settings_launcher_upgrade_desc">检查启动器是否有新版本可用</string>
     <string name="settings_launcher_upgrade_check">检测</string>

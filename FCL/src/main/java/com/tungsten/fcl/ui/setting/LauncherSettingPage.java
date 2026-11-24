@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat;
 import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.mio.audio.BluetoothMicrophoneRoute;
 import com.mio.ui.adapter.SpacingItemDecoration;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.activity.MainActivity;
@@ -415,6 +416,9 @@ public class LauncherSettingPage extends FCLPage implements LauncherSettingAdapt
         switch (tag) {
             case SWITCH_AUTO_EXIT:
                 sharedPreferences.edit().putBoolean("autoExitLauncher", checked).apply();
+                break;
+            case SWITCH_BLUETOOTH_MICROPHONE:
+                sharedPreferences.edit().putBoolean(BluetoothMicrophoneRoute.PREFERENCE_KEY, checked).apply();
                 break;
             case SWITCH_IGNORE_NOTCH:
                 ThemeEngine.getInstance().applyAndSave(getContext(), getActivity().getWindow(), checked);

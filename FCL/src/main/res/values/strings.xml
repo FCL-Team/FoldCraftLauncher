@@ -1168,6 +1168,8 @@
     <string name="settings_launcher_debug_desc">Export log files for troubleshooting and feedback.</string>
     <string name="settings_launcher_request_recording_permission">Request recording permission (for voice chat mod)</string>
     <string name="settings_launcher_request_recording_permission_desc">Request the audio recording permission (needed for in-game voice).</string>
+    <string name="settings_launcher_bluetooth_microphone">Prefer Bluetooth headset microphone</string>
+    <string name="settings_launcher_bluetooth_microphone_desc">Use a connected Bluetooth headset for voice while Minecraft is visible. Allow microphone access above. Game audio quality may change while the headset microphone is active.</string>
     <string name="settings_launcher_upgrade">Update Launcher</string>
     <string name="settings_launcher_upgrade_desc">Check whether a new version of the launcher is available.</string>
     <string name="settings_launcher_upgrade_check">Check</string>

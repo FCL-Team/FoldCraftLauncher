@@ -1,10 +1,13 @@
 package com.tungsten.fcl.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
 import android.hardware.display.DisplayManager;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -23,6 +26,7 @@ import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.mio.audio.BluetoothMicrophoneRoute;
 import com.tungsten.fcl.R;
 import com.tungsten.fcl.control.GameMenu;
 import com.tungsten.fcl.control.JarExecutorMenu;
@@ -86,6 +90,8 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     };
 
     private MenuCallback menu;
+    @Nullable
+    private BluetoothMicrophoneRoute bluetoothMicrophoneRoute;
     private static MenuType menuType;
     private static FCLBridge fclBridge;
     private boolean isTranslated = false;
@@ -413,11 +419,25 @@ public class JVMActivity extends FCLActivity implements TextureView.SurfaceTextu
     @Override
     protected void onStart() {
         super.onStart();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                && menu != null && menuType == MenuType.GAME
+                && checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
+                && getSharedPreferences("launcher", MODE_PRIVATE).getBoolean(BluetoothMicrophoneRoute.PREFERENCE_KEY, false)) {
+            AudioManager audioManager = getSystemService(AudioManager.class);
+            if (audioManager != null) {
+                bluetoothMicrophoneRoute = new BluetoothMicrophoneRoute(audioManager);
+                bluetoothMicrophoneRoute.start();
+            }
+        }
         CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 1);
     }
 
     @Override
     protected void onStop() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && bluetoothMicrophoneRoute != null) {
+            bluetoothMicrophoneRoute.stop();
+            bluetoothMicrophoneRoute = null;
+        }
         CallbackBridge.nativeSetWindowAttrib(LwjglGlfwKeycode.GLFW_VISIBLE, 0);
         super.onStop();
     }

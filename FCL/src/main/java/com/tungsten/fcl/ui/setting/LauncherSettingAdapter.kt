@@ -3,6 +3,7 @@ package com.tungsten.fcl.ui.setting
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.res.ColorStateList
+import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.edit
 import androidx.recyclerview.widget.RecyclerView
+import com.mio.audio.BluetoothMicrophoneRoute
 import com.tungsten.fcl.R
 import com.tungsten.fcl.databinding.ItemLauncherSettingButtonBinding
 import com.tungsten.fcl.databinding.ItemLauncherSettingSeekbarBinding
@@ -60,6 +62,7 @@ enum class LauncherSettingTag {
 
     // 开关行
     SWITCH_AUTO_EXIT,
+    SWITCH_BLUETOOTH_MICROPHONE,
     SWITCH_IGNORE_NOTCH,
     SWITCH_CLOSE_SKIN_MODEL,
     SWITCH_DISABLE_FULLSCREEN_INPUT,
@@ -163,6 +166,12 @@ class LauncherSettingAdapter(
                 listOf(Triple(0, R.string.settings_launcher_request, LauncherSettingTag.REQUEST_AUDIO)),
                 R.string.settings_launcher_request_recording_permission_desc,
             ),
+            Row.SwitchRow(
+                R.string.settings_launcher_bluetooth_microphone,
+                { prefs.getBoolean(BluetoothMicrophoneRoute.PREFERENCE_KEY, false) },
+                LauncherSettingTag.SWITCH_BLUETOOTH_MICROPHONE,
+                R.string.settings_launcher_bluetooth_microphone_desc,
+            ).takeIf { Build.VERSION.SDK_INT >= Build.VERSION_CODES.S },
             Row.SwitchRow(
                 R.string.settings_launcher_exit_after_launching,
                 { prefs.getBoolean("autoExitLauncher", false) },
@@ -355,7 +364,7 @@ class LauncherSettingAdapter(
                 R.string.settings_launcher_mod_cache_desc,
                 group = SettingGroup.Download
             )
-        )
+        ).filterNotNull()
     }
 
     private val downloadSourceList = listOf(
