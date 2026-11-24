@@ -445,7 +445,10 @@ public class FCLauncher {
                 // 内置版使用独立配置：不共用 /sdcard/MG，配置写在应用私有存储并经 MG_DIR_PATH 指向
                 Map<String, String> mgPrefs = RendererPlugin.builtinEnvPrefs(Renderer.ID_MOBILEGLUES);
                 File mgDir = new File(config.getContext().getFilesDir(), "mobileglues");
-                writeMobileGluesConfig(mgDir, mgPrefs);
+                // 整份落盘当前生效配置：用户未配置的项按启动器默认写入，避免 MG 回落到自身默认
+                // （enableExtTimerQuery=false、maxGlslCacheSize=0 等与启动器默认不一致）
+                writeMobileGluesConfig(mgDir,
+                        RendererPlugin.builtinEnvConfigMap(config.getContext(), Renderer.ID_MOBILEGLUES));
                 envMap.put("MG_DIR_PATH", mgDir.getAbsolutePath());
                 if (RendererPlugin.toggleEnabled(mgPrefs, "MG_COUNT_LAUNCH", true)) {
                     envMap.put("MG_COUNT_LAUNCH", "1");
@@ -485,9 +488,9 @@ public class FCLauncher {
     }
 
     /**
-     * 把内置 MobileGlues 的用户配置合并进 MG/config.json（键名与默认值对齐官方 MGConfig）。
-     * 只覆盖启动器里显式配置过的键；未配置的已知键与原生侧写入的未知键（如 hideMGEnvLevel）
-     * 保留原值交给 MG 自管（MG 上游调整默认值时不受启动器钉死）。内容无变化时不重写。
+     * 把内置 MobileGlues 的完整生效配置写入 MG/config.json（键名与默认值对齐官方 MGConfig）。
+     * 键值来自 RendererPlugin.builtinEnvConfigMap：用户配置优先、未配置的项回落启动器默认；
+     * 原生侧写入的未知键（如 hideMGEnvLevel）保留原值。内容无变化时不重写。
      */
     private static void writeMobileGluesConfig(File mgDir, Map<String, String> prefs) {
         if (prefs.isEmpty()) return;

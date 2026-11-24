@@ -558,6 +558,32 @@ object RendererPlugin : AbstractPlugin<Renderer>() {
         return envPrefs[key].orEmpty()
     }
 
+    /**
+     * 内置渲染器的完整配置键值：用户配置优先，未配置的项回落启动器默认。
+     * 启动链路据此整份落盘 MG/config.json——MG 缺省文件时使用自身默认
+     * （enableExtTimerQuery=false、maxGlslCacheSize=0 等），与启动器默认不一致。
+     */
+    @JvmStatic
+    fun builtinEnvConfigMap(context: Context, rendererId: String): Map<String, String> {
+        val map = LinkedHashMap<String, String>()
+        for (spec in builtinEnvSpecs(context, rendererId)) {
+            when {
+                // 启动次数开关是环境变量，不写 config.json
+                spec.key == "MG_COUNT_LAUNCH" -> Unit
+                // 函数级 MultiDraw 异常项：未启用保持未配置（跟随全局序），启用时落当前快照序
+                spec.type == EnvType.ORDERED && spec.checkable -> {
+                    if (spec.enabled) {
+                        map[spec.key + ENABLED_SUFFIX] = "true"
+                        map[spec.key] = spec.value
+                    }
+                }
+                spec.type == EnvType.TOGGLEABLE -> map[spec.key + ENABLED_SUFFIX] = spec.enabled.toString()
+                else -> map[spec.key] = spec.value
+            }
+        }
+        return map
+    }
+
     /** 开关型配置的启用状态读取（键名后缀约定收口于此，供 Java 侧注入 env / 写 MG 配置用；未配置回落默认值） */
     @JvmStatic
     fun toggleEnabled(prefs: Map<String, String>, key: String, def: Boolean): Boolean =
