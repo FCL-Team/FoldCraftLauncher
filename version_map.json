@@ -1,20 +1,20 @@
 [
   {
     "type": "release",
-    "versionCode": 1348,
-    "versionName": "1.3.4.8",
-    "date": "2026.11.22",
+    "versionCode": 1349,
+    "versionName": "1.3.4.9",
+    "date": "2026.11.27",
     "description": [
       {
         "lang": "en",
-        "text": "(Translated from Chinese by AI)\n1. Fixed a launch crash on MC 26.2 versions with the Vulkan backend: the FML early loading screen is now disabled together with the Vulkan backend, while an explicitly selected OpenGL backend keeps the mod loading animation (#2029)\n2. Fixed libshaderc in LWJGL 3.4.1 missing SPIRV-Tools symbols such as spvFuzzerOptions and spvReducerOptions; the natives were rebuilt and the runtime asset version is refreshed so the updated libraries are unpacked on the next launch\n3. Fixed mouse buttons staying pressed after returning to the game with Cleanroom 0.7.x (SDL input) (#2023)\n4. Fixed ancient Alpha versions being mistaken for April Fools versions and triggering the Vulkan check (#2028)\n5. Fixed 11w49a to 12w01a snapshots failing to launch (#2033)\n6. The pre-launch Vulkan check now reuses cached detection results, and unsupported devices are told to switch to the OpenGL backend\n7. Fixed a startup error caused by the SDL gamepad HID manager being created before libSDL3 was loaded\n8. Updated the built-in version list with 26.3-rc, 26.4 snapshots and the 2.0 April Fools versions"
+        "text": "(Translated from Chinese by AI)\n1. Added new built-in Java runtimes: 1.8.0_482, 17.0.21.1, 21.0.13.1 and 25.0.5.1, which are re-unpacked on the next launch\n2. Fixed the FFmpeg plugin not being exposed under standard command names: ffmpeg / ffprobe can now be called through PATH inside the game, so mods that probe for them (such as Frameback) work again (#2039)\n3. Fixed some built-in MobileGlues options falling back to MG's own defaults; options not configured in the launcher are now written with the launcher defaults\n4. Fixed abnormal CPU usage with the frame limiter enabled: the frame limiter wait no longer busy-waits but sleeps with an adaptive spin, so high frame rates still hold the cap (#2036)\n5. Optimized the game window to use opaque composition, reducing GPU composition overhead at high frame rates\n6. Fixed the mod count in the version list not matching the actual mods; only jar / zip / litemod files are counted now (#2034)\n7. Fixed the top of the head being clipped during the jumping hands-up animation in the skin preview"
       },
       {
         "lang": "zh_CN",
-        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.修复带 Vulkan 后端的 MC 26.2 启动崩溃：随 Vulkan 后端关闭 FML 早期加载屏，显式选择 OpenGL 后端时仍保留模组加载动画 (#2029)\n2.修复 LWJGL 3.4.1 的 libshaderc 缺少 spvFuzzerOptions、spvReducerOptions 等 SPIRV-Tools 符号的问题，重新构建 natives 并刷新资源版本号，下次启动自动重新解压\n3.修复 Cleanroom 0.7.x（SDL 输入）返回游戏后鼠标按键卡在按下状态的问题 (#2023)\n4.修复远古 Alpha 版本被误判为愚人节版本并触发 Vulkan 检测的问题 (#2028)\n5.修复 11w49a~12w01a 快照无法正常启动的问题 (#2033)\n6.Vulkan 启动校验复用已有检测结果，设备不支持时提示可在版本设置中改用 OpenGL 后端启动\n7.修复 SDL 手柄 HID 管理器在 libSDL3 加载前被创建导致的启动报错\n8.更新内置版本列表，新增 26.3-rc、26.4 快照与 2.0 愚人节版本"
+        "text": "(若启动器内下载缓慢请使用网盘下载,64位的请下载arm64，不知道该下哪个的请下载all）\n1.新增：内置 Java 运行环境更新至 1.8.0_482、17.0.21.1、21.0.13.1、25.0.5.1，下次启动自动重新解压\n2.修复 FFmpeg 插件未以标准命令名暴露的问题：游戏内可通过 PATH 直接调用 ffmpeg / ffprobe，依赖其探测的模组（如 Frameback）恢复可用 (#2039)\n3.修复内置 MobileGlues 的部分配置回落到 MG 自身默认值的问题，启动器里未配置过的选项也按启动器默认整份落盘\n4.修复开启限帧时的 CPU 异常占用：限帧等待不再忙等，改为休眠加自适应自旋，高帧率下仍能贴住上限 (#2036)\n5.优化游戏窗口改为不透明合成，降低高帧率下的 GPU 合成开销\n6.修复版本列表中的模组数量与实际不一致的问题，现在只统计 jar / zip / litemod 文件 (#2034)\n7.修复皮肤预览中「举手蹦跳」动画跳跃时头顶被裁切的问题"
       }
     ],
-    "netdiskUrl": "https://pan.quark.cn/s/5175c32001af",
-    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.8/FCL-release-1.3.4.8-all.apk"
+    "netdiskUrl": "https://pan.quark.cn/s/a9b90379435e",
+    "url": "https://github.com/FCL-Team/FoldCraftLauncher/releases/download/1.3.4.9/FCL-release-1.3.4.9-all.apk"
   }
 ]
