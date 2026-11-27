@@ -1,5 +1,43 @@
 # Changelog
 
+## [1.3.4.9] - 2026-11-27
+
+### 中文
+
+#### ✨ 新功能
+
+1. **内置 Java 运行环境更新**：JRE 8 升至 1.8.0_482（jreAssets 的 version 13 → 14）、JRE 17 升至 17.0.21.1（12 → 13）、JRE 21 升至 21.0.13.1（12 → 13）、JRE 25 升至 25.0.5.1（3 → 4）。各 ABI 的 bin-*.tar.xz 与 universal.tar.xz 整体替换；SplashActivity 解包运行环境时按 version 文件比对，已安装的旧运行时会在下次启动自动重新解压，无需清除数据。
+
+#### ⚡ 优化
+
+1. **游戏窗口改为不透明合成**：JVMActivity 对游戏 TextureView 显式调用 setOpaque(true) 与 setAlpha(1.0f)，HWUI 合成时直接覆盖而不做全屏混合；values / values-night / values-v31 三套主题移除 windowTranslucentNavigation，避免窗口被 SurfaceFlinger 判定为半透明而无法走 HWC 直出、每帧退回 GPU 客户端合成。在无限制帧率下可减少每帧固定合成开销。
+
+#### 🐛 修复
+
+1. **FFmpeg 插件以标准命令名暴露进游戏 PATH (#2039)**：插件把 ffmpeg / ffprobe 打包为 native 目录内的 libffmpeg.so、libffprobe.so，此前只把插件目录加入 PATH，命令名对不上，游戏内按 PATH 探测 ffmpeg 的模组（如 Frameback）无法命中；java_exec_hooks.c 的 exec hook 也只覆盖程序名为 "ffmpeg" 的 Java 调用。FFmpegPlugin 由 Java 重写为 Kotlin object：新增 FCLPath.FFMPEG_BIN_DIR（files/ffmpeg_bin），在目录内维护名为 ffmpeg / ffprobe、指向插件可执行文件的符号链接，启动时把该目录置于 PATH 最前；插件目录仍保留在 LD_LIBRARY_PATH（libffmpeg.so 无 RUNPATH，依赖库同在插件目录内）。链接缺失、悬空或仍指向旧插件目录时重建；插件禁用、卸载或升级后重置状态并清理悬空链接；单个链接失败只跳过该项，主命令 ffmpeg 链接不可用时目录不进入 PATH。FCLauncher 缓存启动器进程的原始 PATH（SYSTEM_PATH），修复重复启动时环境变量逐次叠加的问题。
+2. **内置 MobileGlues 配置回落到 MG 自身默认**：用户未在启动器里配置过 MG 选项时 prefs 为空，writeMobileGluesConfig 直接返回，MG 于是使用自身默认（enableExtTimerQuery=false、maxGlslCacheSize=0 等），与启动器默认不一致。RendererPlugin 新增 builtinEnvConfigMap，按 builtinEnvSpecs 汇总用户配置与启动器默认值：启动次数开关 MG_COUNT_LAUNCH 是环境变量，不写 config.json；函数级 MultiDraw 异常项（ORDERED 且 checkable）未启用时保持未配置（跟随全局序），启用时写入 enabled 后缀与当前快照序；其余开关型写 enabled 后缀，普通项写值。启动时整份写入 MG/config.json，原生侧写入的未知键（如 hideMGEnvLevel）保留原值，内容无变化时不重写。
+3. **开启限帧时的 CPU 异常占用 (#2036)**：Minecraft 的 RenderSystem.limitDisplayFPS 在每帧末尾调用 glfwWaitEventsTimeout 等待到下一帧截止时间，LWJGL 移植里的该实现为空，渲染线程在 while 循环里反复读取时钟，形成忙等。现按截止时间 LockSupport.parkNanos 睡到点，并在末尾留自旋窗口吸收线程从 park 唤醒到实际被调度的延迟；剩余时间不足自旋余量时不再 park，高帧率场景退化为纯自旋以保证退出时刻精确；等待超过 3ms（120 帧及以下）时自旋余量由 2ms 降到 1.5ms，减少低帧率下的空转。不处理事件（事件仍由主循环 glfwPollEvents 处理），timeout 为 0 / NaN / Inf 时立即返回。3.3.3 与 3.4.1 的 merged-modules 组件同步重建，资源 version 文件刷新使设备端重新解压新 jar。
+4. **版本列表的模组数量与实际不一致 (#2034)**：VersionCache 统计模组数量时把 mods 目录下所有普通文件都计入，已禁用的文件与非模组附属文件同样被统计。现按扩展名过滤，只统计 .jar / .zip / .litemod。
+5. **举手蹦跳动画跳跃时头顶被裁切**：蹦跳抬升 3 像素使头顶帽层越过取景上沿。PlayerAnimation 新增 open val cameraPullback（模型像素，0 为沿用默认取景），SkinRenderer.cameraDistance 在基础距离上叠加该值并保持 10~256 的钳制，HandsUpJumpingAnimation 固定后拉 4.2 模型像素，整个动画期间取景不随蹦跳相位变化，其余动画沿用默认取景。
+
+### English
+
+#### ✨ New Features
+
+1. **Built-in Java runtimes updated**: JRE 8 is now 1.8.0_482 (jreAssets version 13 -> 14), JRE 17 is 17.0.21.1 (12 -> 13), JRE 21 is 21.0.13.1 (12 -> 13) and JRE 25 is 25.0.5.1 (3 -> 4). The bin-*.tar.xz and universal.tar.xz archives of every ABI were replaced wholesale; SplashActivity compares the runtime assets against the version file, so an already installed older runtime is unpacked again on the next launch without clearing data.
+
+#### ⚡ Improvements
+
+1. **Opaque composition for the game window**: JVMActivity explicitly calls setOpaque(true) and setAlpha(1.0f) on the game TextureView so HWUI overwrites instead of blending over the whole screen; all three theme sets (values / values-night / values-v31) drop windowTranslucentNavigation so SurfaceFlinger no longer treats the window as translucent and can send it through HWC instead of falling back to per-frame GPU client composition. At an unlimited frame rate this removes a fixed per-frame composition cost.
+
+#### 🐛 Bug Fixes
+
+1. **FFmpeg plugin exposed under standard command names in the game PATH (#2039)**: The plugin ships ffmpeg / ffprobe as libffmpeg.so and libffprobe.so inside its native directory, but only that directory was added to PATH, so the command names did not match and mods probing PATH for ffmpeg (such as Frameback) could not find it; the exec hook in java_exec_hooks.c also only covered Java calls whose program name is "ffmpeg". FFmpegPlugin was rewritten from Java into a Kotlin object: the new FCLPath.FFMPEG_BIN_DIR (files/ffmpeg_bin) holds symlinks named ffmpeg / ffprobe pointing at the plugin executables, and the directory is placed at the front of PATH at launch; the plugin directory stays in LD_LIBRARY_PATH because libffmpeg.so has no RUNPATH and its dependencies live next to it. A missing, dangling or stale link is recreated; disabling, uninstalling or upgrading the plugin resets the state and cleans up dangling links; a single failing link only skips that command, and when the primary ffmpeg link is unavailable the directory is left out of PATH. FCLauncher caches the launcher process' original PATH (SYSTEM_PATH), fixing the environment variable growing on every relaunch.
+2. **Built-in MobileGlues falling back to MG's own defaults**: When the user had never configured MG options in the launcher the prefs map was empty and writeMobileGluesConfig returned early, so MG used its own defaults (enableExtTimerQuery=false, maxGlslCacheSize=0, ...), which differ from the launcher defaults. RendererPlugin gained builtinEnvConfigMap, which walks builtinEnvSpecs to combine user configuration with launcher defaults: the launch counter MG_COUNT_LAUNCH is an environment variable and is not written to config.json; per-function MultiDraw exceptions (ORDERED and checkable) stay unconfigured while disabled (following the global order) and write the enabled suffix plus the current snapshot order when enabled; other toggles write the enabled suffix and plain options write their value. The whole map is written to MG/config.json at launch, unknown keys written by the native side (such as hideMGEnvLevel) are preserved, and the file is not rewritten when nothing changed.
+3. **Abnormal CPU usage with the frame limiter enabled (#2036)**: Minecraft's RenderSystem.limitDisplayFPS calls glfwWaitEventsTimeout at the end of every frame to wait for the next frame deadline, but that method was empty in the LWJGL port, so the render thread kept reading the clock in a while loop and busy-waited. It now sleeps with LockSupport.parkNanos until the deadline and spins at the end to absorb the delay between waking from park and actually being scheduled; when the remaining time is shorter than the spin window it no longer parks, and at high frame rates it degrades to pure spinning so it still exits exactly on time. For waits longer than 3ms (120 FPS and below) the spin window shrinks from 2ms to 1.5ms to reduce idle spinning at low frame rates. Events are not processed (the main loop still calls glfwPollEvents), and a timeout of 0 / NaN / Inf returns immediately. The 3.3.3 and 3.4.1 merged-modules components were rebuilt and the runtime version files refreshed so the new jars are unpacked on the device.
+4. **Mod count in the version list not matching the actual mods (#2034)**: VersionCache counted every regular file in the mods directory, including disabled files and non-mod side files. It now filters by extension and only counts .jar / .zip / .litemod.
+5. **Top of the head clipped while jumping in the hands-up animation**: The 3-pixel jump lift pushed the hat layer above the top edge of the framing. PlayerAnimation gained an open val cameraPullback (model pixels, 0 keeps the default framing), SkinRenderer.cameraDistance adds it to the base distance while keeping the 10..256 clamp, and HandsUpJumpingAnimation pulls the camera back by a fixed 4.2 model pixels for the whole animation instead of varying with the jump phase; other animations keep the default framing.
+
 ## [1.3.4.8] - 2026-11-22
 
 ### 中文
