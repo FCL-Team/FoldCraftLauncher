@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 import com.tungsten.fcl.R;
 import com.tungsten.fcllibrary.component.FCLAdapter;
 
@@ -52,6 +53,7 @@ public class ControllerScreenshotAdapter extends FCLAdapter {
         Glide.with(getContext())
                 .load(url)
                 .override(SCREENSHOT_MAX_SIZE, SCREENSHOT_MAX_SIZE)
+                .downsample(DownsampleStrategy.FIT_CENTER)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .into(imageView);
         return view;
