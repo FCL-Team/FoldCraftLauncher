@@ -120,6 +120,7 @@ public class ViewGroupAdapter extends FCLAdapter {
             }
             Collections.swap(list, i, pos);
             menu.getController().updateViewGroup(group);
+            menu.getViewManager().saveController();
             notifyDataSetChanged();
         };
         viewHolder.up.setOnClickListener(upDownListener);
@@ -129,6 +130,7 @@ public class ViewGroupAdapter extends FCLAdapter {
                 group.setName(n);
                 group.setVisibility(vi);
                 menu.getController().updateViewGroup(group);
+                menu.getViewManager().saveController();
                 notifyDataSetChanged();
             });
             dialog.show();
@@ -140,6 +142,7 @@ public class ViewGroupAdapter extends FCLAdapter {
             builder.setMessage(getContext().getString(R.string.menu_control_view_group_delete));
             builder.setPositiveButton(() -> {
                 menu.getController().removeViewGroup(group);
+                menu.getViewManager().saveController();
                 notifyDataSetChanged();
             });
             builder.setNegativeButton(null);
