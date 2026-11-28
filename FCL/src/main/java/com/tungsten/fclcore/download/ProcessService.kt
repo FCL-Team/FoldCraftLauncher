@@ -100,6 +100,9 @@ class ProcessService : Service() {
         } catch (e: IOException) {
             Logging.LOG.log(Level.WARNING, "Can't write installer started marker", e)
         }
+        // 新阶段已投递：取消上一阶段的空闲自停计时，否则运行时长超过剩余空闲窗口的
+        // 阶段会在运行中被 stopSelf 误杀
+        handler.removeCallbacks(idleStopRunnable)
         stageExecutor.execute { runStage(session, command, java) }
         return START_NOT_STICKY
     }

@@ -61,10 +61,13 @@ public class FCLauncher {
      * 因此与 {@link #hotSpotJavaVersion} 一样必须放在静态域，随 Service 生命周期失效的
      * 字段无法约束它
      */
-    private static boolean hotSpotStarted = false;
+    private static volatile boolean hotSpotStarted = false;
 
-    /** 常驻 HotSpot 创建时的 JRE 索引；常驻 JVM 字节码能力固定，索引不同必须换进程 */
-    private static int hotSpotJavaVersion = -1;
+    /**
+     * 常驻 HotSpot 创建时的 JRE 索引；常驻 JVM 字节码能力固定，索引不同必须换进程。
+     * launch 线程写、退出回调与 onStartCommand 线程读，两个标志均须 volatile 保证可见性
+     */
+    private static volatile int hotSpotJavaVersion = -1;
 
     /** 本进程是否存在常驻 HotSpot */
     public static boolean hasResidentHotSpot() {
