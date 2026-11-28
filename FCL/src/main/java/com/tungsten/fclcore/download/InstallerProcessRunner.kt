@@ -36,6 +36,9 @@ object InstallerProcessRunner {
     /** ProcessService 接收会话 ID 的 extra 键，同一会话内主进程与 :jvm 进程读写同名文件 */
     const val EXTRA_SESSION = "installer_session"
 
+    /** 常驻 JVM 状态文件名：:jvm 阶段结束且 JVM 保留时写入，内容为“pid:java版本” */
+    const val JVM_STATE_FILE = "fcl_process_jvm_state.txt"
+
     /** 安装器日志文件名，位于 FCLPath.LOG_DIR 下 */
     const val INSTALLER_LOG_FILE = "latest_api_installer.log"
 
@@ -172,6 +175,7 @@ object InstallerProcessRunner {
         startedFile.delete()
         logFile.delete()
 
+        awaitCompatibleResidentJvm(context, java)
         startProcessService(context, command, java, sessionId)
 
         var consumedChars = 0
@@ -301,6 +305,55 @@ object InstallerProcessRunner {
             if (tail.isBlank()) "" else "\n" + context.getString(R.string.installer_recent_logs) + "\n$tail"
         } catch (e: Exception) {
             ""
+        }
+    }
+
+    /**
+     * 常驻 JVM 的 JRE 与本次阶段不一致时先回收 :jvm 进程。
+     *
+     * 常驻 JVM 创建后无法再接受另一版本 JRE 的字节码，而换 JRE 重试链要求同一阶段
+     * 以新 JRE 重跑；只靠 :jvm 内静态校验会被动等到本次阶段失败后才回收，主进程侧
+     * 看到的退出码会一直对应旧 JRE，无法推进。这里在 start 前按状态文件预判并等待
+     * 进程退出，确保新进程不会与旧进程竞争同名文件。
+     */
+    private suspend fun awaitCompatibleResidentJvm(context: Context, java: Int) {
+        val stateFile = File(context.cacheDir, JVM_STATE_FILE)
+        val (pid, residentJava) = readResidentJvm(stateFile) ?: return
+        if (residentJava == java) {
+            return
+        }
+        Logging.LOG.info("Resident installer JVM runs JRE $residentJava, restarting for JRE $java")
+        Process.killProcess(pid)
+        for (i in 0 until 40) {
+            if (!File("/proc/$pid").exists()) {
+                break
+            }
+            delay(50L)
+        }
+    }
+
+    /** 读取常驻 JVM 状态文件（内容 pid:java），文件缺失/格式非法/进程已退出时返回 null */
+    private fun readResidentJvm(file: File): Pair<Int, Int>? {
+        val text = try {
+            FileUtils.readText(file).trim()
+        } catch (e: IOException) {
+            return null
+        }
+        val parts = text.split(':')
+        val pid = parts.getOrNull(0)?.toIntOrNull() ?: return null
+        val java = parts.getOrNull(1)?.toIntOrNull() ?: return null
+        return if (isInstallerProcess(pid)) pid to java else null
+    }
+
+    /** /proc/<pid> 存在且命令行指向 :jvm，避免 pid 被系统复用后误杀其他进程 */
+    private fun isInstallerProcess(pid: Int): Boolean {
+        if (!File("/proc/$pid").exists()) {
+            return false
+        }
+        return try {
+            File("/proc/$pid/cmdline").readText().contains(":jvm")
+        } catch (e: IOException) {
+            false
         }
     }
 
